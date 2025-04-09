@@ -1,0 +1,47 @@
+
+@import './backend.css';
+@import './frontend.css';
+@import './rtl.css';
+/* Bootstrap */
+@import './plugin/bootstrap.min.css';
+@import './plugin/bootstrap-extended.css';
+
+
+
+
+@import './plugin/select2-bootstrap4.css';
+
+@import './plugin/icons.css';
+
+/* plugins */
+@import './plugin/simplebar.css';
+@import './plugin/perfect-scrollbar.css';
+@import './plugin/metisMenu.min.css';
+@import './plugin/jquery-jvectormap-2.0.2.css';
+@import './plugin/dataTables.bootstrap5.min.css';
+
+
+/* Theme */
+@import './plugin/dark-theme.css';
+@import './plugin/light-theme.css';
+@import './plugin/semi-dark.css';
+@import './plugin/header-colors.css';
+@import './plugin/pace.min.css';
+
+/* Data Table */
+@import 'datatables.net-dt/css/dataTables.dataTables.css';
+@import 'datatables.net-buttons-dt/css/buttons.dataTables.min.css';
+
+
+
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,600;1,600&display=swap');
+
+
+@import './style.css';
+/*@import '../fonts/AraJozoor-Regular.woff';*/

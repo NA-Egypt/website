@@ -1,0 +1,95 @@
+[dir="rtl"] .ms-auto {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+[dir="rtl"] .me-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* SideBar */
+
+[dir="rtl"] .sidebar-wrapper {
+    left: auto;  /* Remove 'left' positioning */
+    right: 0;    /* Position sidebar on the right for RTL */
+    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+    border-right: none; /* Remove right border */
+}
+
+/* RTL Adjustment for Sidebar Header */
+[dir="rtl"] .sidebar-wrapper .sidebar-header {
+    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+    border-right: none; /* Remove right border */
+}
+
+/* RTL Adjustment for Menu Items */
+[dir="rtl"] .sidebar-wrapper .metismenu a {
+    justify-content: right; /* Align items to the right for RTL */
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu ul a i {
+    margin-left: 10px; /* Icons should be on the left in RTL */
+}
+
+/* RTL Adjustment for Parent Icons */
+[dir="rtl"] .sidebar-wrapper .metismenu a .parent-icon {
+    margin-left: 10px; /* Adjust icon position for RTL */
+}
+
+/* Adjust RTL menu title alignment */
+[dir="rtl"] .sidebar-wrapper .metismenu a .menu-title {
+    margin-right: 10px; /* Move title to the right for RTL */
+}
+
+/* Adjust spacing in menu items */
+[dir="rtl"] .sidebar-wrapper .metismenu li+li {
+    margin-top: 5px;
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu li:first-child {
+    margin-top: 5px;
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu li:last-child {
+    margin-bottom: 5px;
+}
+
+/* / SideBar */
+
+/* Main content */
+
+[dir="rtl"] .page-content {
+    margin-left: 0;  /* Remove left margin */
+    margin-right: 250px;  /* Add margin to the right to accommodate the sidebar */
+}
+/* / Main content */
+
+/* Nav */
+
+[dir="rtl"] .top-header .navbar{
+    left: 0;
+    right: 250px;
+}
+
+[dir="rtl"] .dropdown-menu-end[data-bs-popper]{
+    right: -121px;
+}
+/* / Nav */
+
+.digital-clock {
+    font-size: 1.3rem;
+    font-family: Roboto, sans-serif;
+    background: #ede9e9;
+    /* color: #1F2937; */
+    color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: inline-block;
+    min-width: 90px;
+    text-align: center;
+    letter-spacing: 2px;
+    box-shadow: 0 0 5px rgb(15 16 15 / 80%);
+}
+
+

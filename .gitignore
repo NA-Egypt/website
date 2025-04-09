@@ -2,7 +2,11 @@
 node_modules/
 npm-debug.log
 yarn-error.log
+<<<<<<< HEAD
 
+=======
+/.idea
+>>>>>>> 3edfdcf (Initial commit)
 # Laravel 4 specific
 bootstrap/compiled.php
 app/storage/
@@ -28,3 +32,12 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+<<<<<<< HEAD
+=======
+node_modules
+/storage
+/vendor
+artisan
+composer.lock
+
+>>>>>>> 3edfdcf (Initial commit)
