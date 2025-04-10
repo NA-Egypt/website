@@ -52,6 +52,7 @@
                             <td>{{ $group->neighborhood->name}}</td>
                             <td>
                                 <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
+                                <x-button-a href="{{ route('group.show', $group->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
                                 <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$group->id}}" routeName="group.destroy" />
                             </td>
                         </tr>

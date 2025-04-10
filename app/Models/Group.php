@@ -38,4 +38,9 @@ class Group extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

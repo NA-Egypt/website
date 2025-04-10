@@ -29,7 +29,7 @@ class GroupsRequest extends FormRequest
             'email'             =>'required|email',
             'phone'             => 'required|numeric',
             'location'          => 'required',
-            'group_type'              => 'required',
+            'group_type'        => 'required',
             'service_body_id'   => 'required',
             'neighborhood_id'   => 'required',
         ];

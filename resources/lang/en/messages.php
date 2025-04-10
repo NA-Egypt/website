@@ -120,5 +120,12 @@ return [
     'Assign Permissions to'     =>'Assign Permissions to',
     'Users'                     =>'Users',
     'Roles'                     =>'Roles',
-    'Display Name'              =>'Display Name'
+    'Display Name'              =>'Display Name',
+    'Show'                      =>'Show',
+    'Group information for'    =>'Group information for',
+    'Edit Group'                =>'Edit Group',
+    'Meetings'                  =>'Meetings',
+    'open'                      =>'open',
+    'close'                     =>'close',
+    'Edit Meeting'              =>'Edit Meeting'
 ];

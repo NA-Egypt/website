@@ -7,6 +7,7 @@
     'neighborhoods'=>'',
     'topics' => '',
     'groups' => '',
+    'users'=>'',
     'value'=>''
 ])
 
@@ -77,6 +78,10 @@
             $options = $topics;
             $field = 'title';
             $placeholder = "Choose Topic";
+        }
+        if(!empty($users)){
+            $options = $users;
+            $field = 'email';
         }
         if (!empty($groups)) {
             $options = $groups;

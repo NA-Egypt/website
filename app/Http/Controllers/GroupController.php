@@ -6,7 +6,9 @@ use App\Http\Requests\GroupsRequest;
 use App\Models\Group;
 use App\Models\Neighborhood;
 use App\Models\ServiceBody;
+use App\Models\User;
 use Illuminate\Http\Request;
+
 
 class GroupController extends Controller
 {
@@ -29,17 +31,21 @@ class GroupController extends Controller
 
         $neighborhoods = Neighborhood::all();
 
+        $users = User::all();
+
         return view('group.create', [
             'serviceBodies' => $serviceBodies,
             'neighborhoods' => $neighborhoods,
+            'users'         =>$users
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(GroupsRequest $request)
+    public function store(Request $request)
     {
+        dd($request->all());
 
         $validatedData = $request->validated();
 
@@ -74,6 +80,22 @@ class GroupController extends Controller
         $group->update($validatedData);
 
         return redirect()->route('group.index');
+    }
+
+    public function show(Group $group)
+    {
+//        return view('group.show', ['group'=>$group]);
+        // Eager load meetings with days relationship and ordering
+        $group->load(['meetings' => function($query) {
+            $query->with('day', 'options') // Load the day relationship
+            ->orderBy('day_id') // Order by day_id
+            ->orderBy('start_time');
+        }]);
+
+        return view('group.show', [
+            'group' => $group,
+            'meetings' => $group->meetings
+        ]);
     }
 
     /**

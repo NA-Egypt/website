@@ -22,7 +22,8 @@
                 </div>
             </div>
 
-            <x-forms.input name="email" label="{{ __('messages.Email')}}"/>
+{{--            <x-forms.input name="email" label="{{ __('messages.Email')}}"/>--}}
+            <x-forms.select :$users name="email" label="{{ __('messages.Email')}}"/>
             <x-forms.input name="phone" label="{{ __('messages.Phone')}}"/>
             <div class="row align-items-end mx-1">
                 <div class="form-check form-switch col-md-2">

@@ -9,12 +9,6 @@
           <img src="{{ asset('assets/images/na.png') }}" alt="" width="150" height="50">
         </a>
       </div>
-      
-      <div class="top-navbar-center ms-auto ">
-        <a href="{{ route('frontend.home') }}">
-          <h2>Web Site</h2>
-        </a>
-      </div>
 
 
 
@@ -82,46 +76,46 @@
                 </a>
               </li>
               <li><hr class="dropdown-divider"></li>
-              <li>
-                  <a class="dropdown-item" href="pages-user-profile.html">
-                    <div class="d-flex align-items-center">
-                      <div class="setting-icon"><i class="bi bi-person-fill"></i></div>
-                      <div class="setting-text ms-3"><span>Profile</span></div>
-                    </div>
-                  </a>
-                </li>
+{{--              <li>--}}
+{{--                  <a class="dropdown-item" href="pages-user-profile.html">--}}
+{{--                    <div class="d-flex align-items-center">--}}
+{{--                      <div class="setting-icon"><i class="bi bi-person-fill"></i></div>--}}
+{{--                      <div class="setting-text ms-3"><span>Profile</span></div>--}}
+{{--                    </div>--}}
+{{--                  </a>--}}
+{{--                </li>--}}
                 <li>
-                  <a class="dropdown-item" href="#">
-                    <div class="d-flex align-items-center">
-                      <div class="setting-icon"><i class="bi bi-gear-fill"></i></div>
-                      <div class="setting-text ms-3"><span>Setting</span></div>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="index2.html">
+                  <a class="dropdown-item" href="{{ route('frontend.home') }}">
                     <div class="d-flex align-items-center">
                       <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                      <div class="setting-text ms-3"><span>Dashboard</span></div>
+                      <div class="setting-text ms-3"><span>Web Site</span></div>
                     </div>
                   </a>
                 </li>
-                <li>
-                  <a class="dropdown-item" href="#">
-                    <div class="d-flex align-items-center">
-                      <div class="setting-icon"><i class="bi bi-piggy-bank-fill"></i></div>
-                      <div class="setting-text ms-3"><span>Earnings</span></div>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#">
-                    <div class="d-flex align-items-center">
-                      <div class="setting-icon"><i class="bi bi-cloud-arrow-down-fill"></i></div>
-                      <div class="setting-text ms-3"><span>Downloads</span></div>
-                    </div>
-                  </a>
-                </li>
+{{--                <li>--}}
+{{--                  <a class="dropdown-item" href="index2.html">--}}
+{{--                    <div class="d-flex align-items-center">--}}
+{{--                      <div class="setting-icon"><i class="bi bi-speedometer"></i></div>--}}
+{{--                      <div class="setting-text ms-3"><span>Dashboard</span></div>--}}
+{{--                    </div>--}}
+{{--                  </a>--}}
+{{--                </li>--}}
+{{--                <li>--}}
+{{--                  <a class="dropdown-item" href="#">--}}
+{{--                    <div class="d-flex align-items-center">--}}
+{{--                      <div class="setting-icon"><i class="bi bi-piggy-bank-fill"></i></div>--}}
+{{--                      <div class="setting-text ms-3"><span>Earnings</span></div>--}}
+{{--                    </div>--}}
+{{--                  </a>--}}
+{{--                </li>--}}
+{{--                <li>--}}
+{{--                  <a class="dropdown-item" href="#">--}}
+{{--                    <div class="d-flex align-items-center">--}}
+{{--                      <div class="setting-icon"><i class="bi bi-cloud-arrow-down-fill"></i></div>--}}
+{{--                      <div class="setting-text ms-3"><span>Downloads</span></div>--}}
+{{--                    </div>--}}
+{{--                  </a>--}}
+{{--                </li>--}}
                 <li><hr class="dropdown-divider"></li>
 {{--                <li>--}}
 {{--                  <a class="dropdown-item" href="#">--}}

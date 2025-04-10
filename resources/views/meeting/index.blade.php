@@ -26,7 +26,7 @@
                     @foreach ($meetings as $meeting)                    
                         <tr>
                             <td>{{ $meeting->id }}</td>
-                            <td>{{ $meeting->group->name }}</td>
+                            <td>{{ $meeting->group->ar_name }}</td>
                             <td>{{ $meeting->topic->title }}</td>
                             <td>{{ $meeting->day->name }}</td>
                             <td>{{ $meeting->formatted_start_time }}</td>
