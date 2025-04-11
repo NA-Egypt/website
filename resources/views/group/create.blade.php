@@ -33,12 +33,12 @@
                             class="form-check-input"
                             type="checkbox"
                             id="group-type"
-                            value="اون لاين"
-                    {{ old('group_type', $group->type ?? 'فعلي') === 'اون لاين' ? 'checked' : '' }}
+                            value="اونلاين"
+                    {{ old('group_type', $group->type ?? 'فعلي') === 'اونلاين' ? 'checked' : '' }}
                     >
 
                     <label class="form-check-label" for="meeting-type" id="switcGrouphLabel">
-                        {{ old('group_type', $group->type ?? 'فعلي') === 'اون لاين' ? 'اون لاين' : 'فعلي' }}
+                        {{ old('group_type', $group->type ?? 'فعلي') === 'اونلاين' ? 'اونلاين' : 'فعلي' }}
                     </label>
                 </div>
             </div>
