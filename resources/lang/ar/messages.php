@@ -32,7 +32,7 @@ return [
     'Topic'                                                 => 'موضوع',
     'Topics'                                                => 'الموضوعات',
     'Topic Title'                                           => 'عنوان الموضوع',
-    'Topic Description'                                     => 'وصف الموضوع',
+    'Notes'                                                 => 'ملاحظات',
     'Groups'                                                => 'المجموعات',
     'Group'                                                 => 'المجموعة',
     'GSR Name'                                              => 'ممثل المجموعة',
@@ -127,5 +127,11 @@ return [
     'Meetings'                                              =>'الاجتماعات',
     'open'                                                  =>'مفتوح',
     'close'                                                 =>'مغلق',
-    'Edit Meeting'                                          =>'تعديل بيانات الاجتماع'
+    'Edit Meeting'                                          =>'تعديل بيانات الاجتماع',
+    'No meetings scheduled'                                 =>'لا يوجد اجتماعات',
+    'Options'                                               =>'ملاحظات',
+    'Candle'                                                =>'علي ضوء الشموع',
+    'Parking'                                               =>'يوجد اماكن انتظار السيارات',
+    'Topic Arabic Name'                                     =>'موضوع الاجتماع بالعربية',
+    'Topic English Name'                                    =>'موضوع الاجتماع بالانجليزية'
 ];

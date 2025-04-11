@@ -31,8 +31,9 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $fields = request()->validate([
-            'title'         => 'required|min:2',
-            'description'   => 'required'
+            'ar_name'       => 'required|min:2',
+            'en_name'       => 'required|min:2',
+            'description'   => 'nullable'
         ]);
 
         Topic::create($fields);
@@ -54,8 +55,9 @@ class TopicController extends Controller
     public function update(Request $request, Topic $topic)
     {
         $fields = request()->validate([
-            'title'         => 'required|min:2',
-            'description'   => 'required'
+            'ar_name'       => 'required|min:2',
+            'en_name'       => 'required|min:2',
+            'description'   => 'nullable'
         ]);
 
         $topic->update($fields);

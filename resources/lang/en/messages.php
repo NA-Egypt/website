@@ -32,7 +32,7 @@ return [
     'Topics'                =>'Topics',
     'Topic'                 =>'Topic',
     'Topic Title'           =>'Topic Title',
-    'Topic Description'     =>'Topic Description',
+    'Notes'                 =>'Notes',
     'Groups'                =>'Groups',
     'Group'                 =>'Group',
     'GSR Name'              =>'GSR Name',
@@ -127,5 +127,11 @@ return [
     'Meetings'                  =>'Meetings',
     'open'                      =>'open',
     'close'                     =>'close',
-    'Edit Meeting'              =>'Edit Meeting'
+    'Edit Meeting'              =>'Edit Meeting',
+    'No meetings scheduled'     =>'No meetings scheduled',
+    'Options'                   =>'Options',
+    'Candle'                    =>'Candle',
+    'Parking'                   =>'Parking',
+    'Topic Arabic Name'         =>'Topic Arabic Name',
+    'Topic English Name'        =>'Topic English Name'
 ];

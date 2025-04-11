@@ -56,7 +56,11 @@
                                     {{ in_array($option->id, old('options', $meeting->options->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
                                 >
                                 <label class="form-check-label" for="option-{{ $option->id }}">
-                                    {{ ucfirst($option->name) }}
+                                    @if(app()->getLocale() === 'ar')
+                                        {{$option->ar_name}}
+                                    @else
+                                        {{$option->en_name}}
+                                    @endif
                                 </label>
                             </div>
                         @endforeach

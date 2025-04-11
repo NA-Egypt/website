@@ -44,12 +44,24 @@
                             <td>{{ $group->en_name }}</td>
                             <td>{{ $group->ar_gsr_name }}</td>
                             <td>{{ $group->en_gsr_name }}</td>
-                            <td>{{ $group->email }}</td>
+                            <td>{{ $group->user->email }}</td>
                             <td>{{ $group->phone }}</td>
                             <td>{{ $group->location }}</td>
                             <td>{{ $group->group_type }}</td>
-                            <td>{{ $group->serviceBody->name }}</td>
-                            <td>{{ $group->neighborhood->name}}</td>
+                            <td>
+                                @if(app()->getLocale() === 'ar')
+                                    {{$group->serviceBody->ar_name}}
+                                @else
+                                    {{$group->serviceBody->en_name}}
+                                @endif
+                            </td>
+                            <td>
+                                @if(app()->getLocale() === 'ar')
+                                    {{$group->neighborhood->ar_name}}
+                                @else
+                                    {{$group->neighborhood->en_name}}
+                                @endif
+                            </td>
                             <td>
                                 <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
                                 <x-button-a href="{{ route('group.show', $group->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />

@@ -12,7 +12,7 @@ class Group extends Model
         'en_name',
         'ar_gsr_name',
         'en_gsr_name',
-        'email',
+        'user_id',
         'phone',
         'location',
         'group_type',
@@ -39,8 +39,8 @@ class Group extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function users()
+    public function user()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(User::class);
     }
 }

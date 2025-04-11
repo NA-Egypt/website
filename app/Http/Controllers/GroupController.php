@@ -43,9 +43,9 @@ class GroupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GroupsRequest $request)
     {
-        dd($request->all());
+
 
         $validatedData = $request->validated();
 
@@ -63,10 +63,13 @@ class GroupController extends Controller
 
         $neighborhoods = Neighborhood::all();
 
+        $users = User::all();
+
         return view('group.edit', [
             'group'         => $group,
             'serviceBodies' => $serviceBodies,
             'neighborhoods' => $neighborhoods,
+            'users'         =>$users
         ]);
     }
 

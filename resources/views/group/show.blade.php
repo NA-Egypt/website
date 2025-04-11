@@ -13,6 +13,10 @@
 
         {{-- Group Section  --}}
 
+        {{-- Button of edit group details  --}}
+        <div class="mb-3">
+            <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-secondary' name="{{  __('messages.Edit Group') }}" />
+        </div>
         <!-- Arabic Group Name -->
         <div class="info-block">
             <div class="info-label">{{ __('messages.Arabic Group Name') }}:</div>
@@ -40,7 +44,7 @@
         <!-- Email -->
         <div class="info-block">
             <div class="info-label">{{ __('messages.Email')}}:</div>
-            <div class="info-value">{{$group->email}}</div>
+            <div class="info-value">{{$group->user->email}}</div>
         </div>
 
         <!-- Phone -->
@@ -66,9 +70,6 @@
             <div class="info-label">{{ __('messages.Neighborhood')}}:</div>
             <div class="info-value">{{$group->neighborhood->ar_name}}</div>
         </div>
-
-        {{-- Button of edit group details  --}}
-        <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-secondary' name="{{  __('messages.Edit Group') }}" />
 
         {{-- / Group Section  --}}
 
@@ -122,9 +123,9 @@ a
                                         <i class="fas fa-comment-dots"></i>
 
                                         @if(app()->getLocale() === 'ar')
-                                            {{ __("messages." . $meeting->topic->title) }}
+                                            {{$meeting->topic->ar_name }}
                                         @else
-                                            {{ $meeting->topic->title }}
+                                            {{ $meeting->topic->en_name }}
                                         @endif
 
                                     </div>
@@ -150,9 +151,9 @@ a
                                             <div class="option-item">
                                                 <span class="option-name">
                                                     @if(app()->getLocale() === 'ar')
-                                                        {{ __("messages." . $option->name) }}
+                                                        {{ $option->ar_name }}
                                                     @else
-                                                        {{ $option->name }}
+                                                        {{ $option->en_name }}
                                                     @endif
                                                 </span>
                                                 <span class="option-value">

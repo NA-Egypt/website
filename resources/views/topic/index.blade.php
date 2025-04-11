@@ -12,15 +12,17 @@
             <table class="main-table manage-member text-center table table-bordered">
                 <tr>
                     <td>#{{ __('messages.ID')}}</td>
-                    <td>{{  __('messages.Topic Title') }}</td>
-                    <td>{{  __('messages.Topic Description') }}</td>
+                    <td>{{  __('messages.Topic Arabic Name') }}</td>
+                    <td>{{  __('messages.Topic English Name') }}</td>
+                    <td>{{  __('messages.Notes') }}</td>
                     <td>{{  __('messages.Control') }}</td>
                 </tr>
                 
                 @foreach ($topics as $topic)                 
                     <tr>
                         <td>{{ $topic->id }}</td>
-                        <td>{{ $topic->title }}</td>
+                        <td>{{ $topic->ar_name }}</td>
+                        <td>{{ $topic->en_name }}</td>
                         <td>{{ $topic->description }}</td>
                         <td>
                             <x-button-a href="{{ route('topic.edit', $topic->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />

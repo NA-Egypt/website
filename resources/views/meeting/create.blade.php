@@ -48,7 +48,11 @@
                                     class="form-check-input" 
                                     id="option-{{ $option->id }}">
                                 <label class="form-check-label" for="option-{{ $option->id }}">
-                                    {{ ucfirst($option->name) }}
+                                    @if(app()->getLocale() === 'ar')
+                                        {{$option->ar_name}}
+                                    @else
+                                        {{$option->en_name}}
+                                    @endif
                                 </label>
                             </div>
                         @endforeach

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Topic extends Model
 {
 
-    protected $fillable = ['title', 'description'];
+    protected $fillable = ['ar_name', 'en_name', 'description'];
     public function meetings() {
         return $this->hasMany(Meeting::class);
     }

@@ -23,7 +23,8 @@
                 </div>
             </div>
 
-            <x-forms.input name="email" label="{{ __('messages.Email')}}" value="{{ $group->email }}"/>
+{{--            <x-forms.input name="email" label="{{ __('messages.Email')}}" value="{{ $group->email }}"/>--}}
+            <x-forms.select :$users name="user_id" label="{{ __('messages.Email')}}" value="{{ $group->user_id }}"/>
             <x-forms.input name="phone" label="{{ __('messages.Phone')}}" value="{{ $group->phone }}"/>
             <div class="form-check form-switch col-md-2">
                 <input type="hidden" name="group_type" value="فعلي"> <!-- Sends "فعلي" when unchecked -->

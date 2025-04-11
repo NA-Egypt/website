@@ -76,7 +76,13 @@
         }
         if (!empty($topics)) {
             $options = $topics;
-            $field = 'title';
+            if(app()->getLocale() === 'ar'){
+
+                $field = 'ar_name';
+            }else{
+
+                $field = 'en_name';
+            }
             $placeholder = "Choose Topic";
         }
         if(!empty($users)){
@@ -99,18 +105,18 @@
     
     @if ($options)
         <select {{ $attributes->merge($default) }} data-placeholder={{ $placeholder }}>
-            <option></option> 
+            <option></option>
             @foreach ($options as $option)
-                @if ($value=='')      
+                @if ($value=='')
                     <option value="{{ $option->id }}" {{ old($name) == $option->id ? 'selected' : '' }}>
                         {{ $option->$field}}
                     </option>
-                @else    
+                @else
                     <option value="{{ $option->id }}" {{ $value == $option->id ? 'selected' : '' }}>
                         {{ $option->$field }}
                     </option>
                 @endif
-                
+
             @endforeach
         </select>
 
