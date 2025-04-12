@@ -27,8 +27,20 @@
                         <tr>
                             <td>{{ $meeting->id }}</td>
                             <td>{{ $meeting->group->ar_name }}</td>
-                            <td>{{ $meeting->topic->title }}</td>
-                            <td>{{ $meeting->day->name }}</td>
+                            <td>
+                                @if(app()->getLocale() === 'ar')
+                                    {{$meeting->topic->ar_name}}
+                                @else
+                                    {{$meeting->topic->en_name}}
+                                @endif
+                            </td>
+                            <td>
+                                @if(app()->getLocale() === 'ar')
+                                    {{$meeting->day->ar_name}}
+                                @else
+                                    {{$meeting->day->en_name}}
+                                @endif
+                            </td>
                             <td>{{ $meeting->formatted_start_time }}</td>
                             <td>{{ $meeting->formatted_end_time }}</td>
                             <td>{{ $meeting->description }}</td>

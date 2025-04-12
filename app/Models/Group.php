@@ -15,6 +15,8 @@ class Group extends Model
         'user_id',
         'phone',
         'location',
+        'ar_address',
+        'en_address',
         'group_type',
         'service_body_id',
         'neighborhood_id'

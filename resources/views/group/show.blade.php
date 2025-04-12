@@ -55,9 +55,21 @@
 
         <!-- Location -->
         <div class="info-block">
-            <div class="info-label">{{ __('messages.Location')}}:</div>
+            <div class="info-label">{{ __('messages.Locations')}}:</div>
             <div class="info-value">{{$group->location}}</div>
         </div>
+
+        <!-- Arabic Address -->
+        <div class="info-block">
+            <div class="info-label">{{ __('messages.Arabic Address')}}:</div>
+            <div class="info-value">{{$group->ar_address}}</div>
+        </div>
+
+        <!-- English Address -->
+                <div class="info-block">
+                    <div class="info-label">{{ __('messages.English Address')}}:</div>
+                    <div class="info-value">{{$group->en_address}}</div>
+                </div>
 
         <!-- Service Body -->
         <div class="info-block">

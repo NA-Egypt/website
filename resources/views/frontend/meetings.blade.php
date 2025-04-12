@@ -3,11 +3,22 @@
     <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
 
     <form method="GET" action="{{ route('frontend.meetings') }}">
-
+        <input type="hidden" name="day" id="day-input">
+        <div id="crouton">
+            <label>{{ __('messages.Day') }}</label>
+            <ul>
+                @foreach($days as $day)
+                <li>
+                    <a href="#" data-day="{{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}">
+                        {{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}
+                    </a>
+                </li>
+                @endforeach
+                <!--<x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />-->
+            </ul>
+        </div>
         <div class="row g-4">
-            <div class="col-md-4">
-                <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
-            </div>
+            
             <div class="col-md-4">
                 <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" />
             </div>
@@ -59,6 +70,14 @@
         document.querySelectorAll("select").forEach(select => {
             select.addEventListener("change", function() {
                 form.submit(); 
+            });
+        });
+
+        document.querySelectorAll('#crouton ul li a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                document.getElementById('day-input').value = link.getAttribute('data-day');
+                link.closest('form').submit();
             });
         });
 

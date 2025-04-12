@@ -8,15 +8,15 @@
 }
 
 [dir="rtl"] .ms-auto {
-    margin-right: auto !important;
-    margin-left: -10px !important;
-    direction: rtl;
+  margin-right: auto !important;
+  margin-left: -10px !important;
+  direction: rtl;
 }
 
 [dir="rtl"] .me-auto {
-    margin-left: auto !important;
-    margin-right: 0 !important;
-    direction: rtl;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  direction: rtl;
 }
 
 .ms-3 {
@@ -25,94 +25,94 @@
 /* SideBar */
 
 [dir="rtl"] .sidebar-wrapper {
-    left: auto;  /* Remove 'left' positioning */
-    right: 0;    /* Position sidebar on the right for RTL */
-    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
-    border-right: none; /* Remove right border */
-    direction: rtl;
+  left: auto;  /* Remove 'left' positioning */
+  right: 0;    /* Position sidebar on the right for RTL */
+  border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+  border-right: none; /* Remove right border */
+  direction: rtl;
 }
 
 /* RTL Adjustment for Sidebar Header */
 [dir="rtl"] .sidebar-wrapper .sidebar-header {
-    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
-    border-right: none; /* Remove right border */
-    direction: rtl;
+  border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+  border-right: none; /* Remove right border */
+  direction: rtl;
 }
 
 /* RTL Adjustment for Menu Items */
 [dir="rtl"] .sidebar-wrapper .metismenu a {
-    justify-content: right; /* Align items to the right for RTL */
-    direction: rtl;
-    text-align: right;
+  justify-content: right; /* Align items to the right for RTL */
+  direction: rtl;
+  text-align: right;
 }
 
 [dir="rtl"] .sidebar-wrapper .metismenu ul a i {
-    margin-left: 10px; /* Icons should be on the left in RTL */
-    direction: rtl;
+  margin-left: 10px; /* Icons should be on the left in RTL */
+  direction: rtl;
 }
 
 /* RTL Adjustment for Parent Icons */
 [dir="rtl"] .sidebar-wrapper .metismenu a .parent-icon {
-    margin-left: 10px; /* Adjust icon position for RTL */
-    direction: rtl;
+  margin-left: 10px; /* Adjust icon position for RTL */
+  direction: rtl;
 }
 
 /* Adjust RTL menu title alignment */
 [dir="rtl"] .sidebar-wrapper .metismenu a .menu-title {
-    margin-right: 10px; /* Move title to the right for RTL */
-    direction: rtl;
+  margin-right: 10px; /* Move title to the right for RTL */
+  direction: rtl;
 }
 
 /* Adjust spacing in menu items */
 [dir="rtl"] .sidebar-wrapper .metismenu li+li {
-    margin-top: 5px;
-    direction: rtl;
+  margin-top: 5px;
+  direction: rtl;
 }
 
 [dir="rtl"] .sidebar-wrapper .metismenu li:first-child {
-    margin-top: 5px;
-    direction: rtl;
+  margin-top: 5px;
+  direction: rtl;
 }
 
 [dir="rtl"] .sidebar-wrapper .metismenu li:last-child {
-    margin-bottom: 5px;
-    direction: rtl;
+  margin-bottom: 5px;
+  direction: rtl;
 }
 
 /* Main content */
 
 [dir="rtl"] .page-content {
-    margin-left: 0;  /* Remove left margin */
-    margin-right: 250px;  /* Add margin to the right to accommodate the sidebar */
-    direction: rtl;
+  margin-left: 0;  /* Remove left margin */
+  margin-right: 250px;  /* Add margin to the right to accommodate the sidebar */
+  direction: rtl;
 }
 
 /* Nav */
 
 [dir="rtl"] .top-header .navbar{
-    left: 0;
-    right: 250px;
-    direction: rtl;
+  left: 0;
+  right: 250px;
+  direction: rtl;
 }
 
 [dir="rtl"] .dropdown-menu-end[data-bs-popper]{
-    right: -121px;
-    direction: rtl;
+  right: -121px;
+  direction: rtl;
 }
 
 .digital-clock {
-    font-size: 1.3rem;
-    font-family: Roboto, sans-serif;
-    background: #ede9e9;
-    /* color: #1F2937; */
-    color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-    padding: 10px 15px;
-    border-radius: 5px;
-    display: inline-block;
-    min-width: 90px;
-    text-align: center;
-    letter-spacing: 2px;
-    box-shadow: 0 0 5px rgb(15 16 15 / 80%);
+  font-size: 1.3rem;
+  font-family: Roboto, sans-serif;
+  background: #ede9e9;
+  /* color: #1F2937; */
+  color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
+  padding: 10px 15px;
+  border-radius: 5px;
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  letter-spacing: 2px;
+  box-shadow: 0 0 5px rgb(15 16 15 / 80%);
 }
 
 [dir="rtl"] .container {
@@ -249,5 +249,71 @@
   color: #ddd; /* Optional: Change to a lighter color when hovering */
 }
 
+/*NEW*/
+#crouton ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  list-style: none;
+}
 
+#crouton li {
+  float: left;
+  margin: 0 10px;
+}
+
+#crouton a {
+  background: #ddd;
+  padding: .7em 1em;
+  float: left;
+  text-decoration: none;
+  color: #444;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  position: relative;
+}
+
+#crouton li:first-child a {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+#crouton li:last-child a {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+#crouton a:hover {
+  background: #4aa2ff;
+}
+
+#crouton li:not(:first-child) > a::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -1.5em;   
+  border-width: 1.5em 0 1.5em 1em;
+  border-style: solid;
+  border-color: #ddd #ddd #ddd transparent;
+  left: -1em;
+}
+
+#crouton li:not(:first-child) > a:hover::before {
+  border-color: #4aa2ff #4aa2ff #4aa2ff transparent;
+}
+
+#crouton li:not(:last-child) > a::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -1.5em;   
+  border-top: 1.5em solid transparent;
+  border-bottom: 1.5em solid transparent;
+  border-left: 1em solid #ddd;
+  right: -1em;
+}
+
+#crouton li:not(:last-child) > a:hover::after {
+  border-left-color: #4aa2ff;
+}
 

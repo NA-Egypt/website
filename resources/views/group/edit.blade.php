@@ -47,7 +47,8 @@
             @else
                 <x-forms.input id="location" name="location" label="{{ __('messages.Arabic Address') }}" value="{{ $group->location }}"/>
             @endif
-
+            <x-forms.input id="ar_address" name="ar_address" label="{{ __('messages.Arabic Address')}}" value="{{ $group->ar_address }}"/>
+            <x-forms.input id="en_address" name="en_address" label="{{ __('messages.English Address')}}" value="{{ $group->en_address }}"/>
             <x-forms.select :$serviceBodies name="service_body_id" label="{{ __('messages.Service Body')}}" value="{{ $group->service_body_id }}"/>
             <x-forms.select :$neighborhoods name="neighborhood_id" label="{{ __('messages.Neighborhood')}}" value="{{ $group->neighborhood_id }}"/>
             <x-forms.normal-button color='outline-dark' name="{{ __('messages.Update') }}" />

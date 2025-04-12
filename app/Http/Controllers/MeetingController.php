@@ -49,7 +49,6 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
-
         $fields = request()->validate([
             'group_id'      => 'required',
             'topic_id'      => 'required',
@@ -57,7 +56,7 @@ class MeetingController extends Controller
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
             'description'   => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
-            'type'          => 'required|in:open,close',
+            'type'          => 'required',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);
@@ -117,7 +116,7 @@ class MeetingController extends Controller
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
             'description'   => 'nullable|string',
-            'type'          => 'required|in:open,close',
+            'type'          => 'required',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);

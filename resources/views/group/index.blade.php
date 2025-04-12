@@ -27,6 +27,7 @@
                         <th>{{  __('messages.Email') }}</th>
                         <th>{{  __('messages.Phone') }}</th>
                         <th>{{  __('messages.Address') }}</th>
+                        <th>{{  __('messages.Locations') }}</th>
                         <th>{{  __('messages.Group Type') }}</th>
                         <th>{{  __('messages.Service Body Name') }}</th>
                         <th>{{  __('messages.Neighborhood Name') }}</th>
@@ -46,7 +47,14 @@
                             <td>{{ $group->en_gsr_name }}</td>
                             <td>{{ $group->user->email }}</td>
                             <td>{{ $group->phone }}</td>
-                            <td>{{ $group->location }}</td>
+                            <td>
+                            @if(app()->getLocale() === 'ar')
+                                {{$group->ar_address}}
+                            @else
+                                {{$group->en_address}}
+                            @endif
+                        </td>
+                        <td>{{ $group->location }}</td>
                             <td>{{ $group->group_type }}</td>
                             <td>
                                 @if(app()->getLocale() === 'ar')

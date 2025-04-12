@@ -23,17 +23,17 @@
             <div class="m-2 p-2" >
                 <div class="row align-items-end mx-1">
                     <div class="form-check form-switch col-md-2">
-                        <input type="hidden" name="type" value="close">
+                        <input type="hidden" name="type" value="closed">
                         <input 
                             name="type" 
                             class="form-check-input" 
                             type="checkbox" 
                             id="meeting-type" 
                             value="open"
-                            {{ old('type', $meeting->type ?? 'close') === 'open' ? 'checked' : '' }}
+                            {{ old('type', $meeting->type ?? 'closed') === 'open' ? 'checked' : '' }}
                         >
                         <label class="form-check-label" for="meeting-type" id="switchLabel">
-                            {{ old('type', $meeting->type ?? 'close') === 'open' ? 'Open' : 'Close' }}
+                            {{ old('type', $meeting->type ?? 'closed') === 'open' ? 'Open' : 'Closed' }}
                         </label>
                     </div>
 

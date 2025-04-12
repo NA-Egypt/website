@@ -1,7 +1,8 @@
 <!doctype html>
 
 {{-- <html lang="en" class="minimal-theme"> --}}
-<html lang="{{ app()->getLocale() }}" dir="{{ $direction }}" class="minimal-theme">
+{{--<html lang="{{ app()->getLocale() }}" dir="{{ $direction }}" class="minimal-theme">--}}
+<html lang="{{ app()->getLocale() }}"  class="minimal-theme">
 
 <head>
   <!-- Required meta tags -->
@@ -15,7 +16,8 @@
 
     <!-- Include RTL CSS dynamically -->
     @if ($direction === 'rtl')
-      <link rel="stylesheet" href="../../css/rtl.css">
+{{--      <link rel="stylesheet" href="../../css/rtl.css">--}}
+      <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
     @endif
 
   <title>NA</title>

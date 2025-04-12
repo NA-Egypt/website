@@ -42,7 +42,9 @@
                     </label>
                 </div>
             </div>
-            <x-forms.input id="location" name="location" label="{{ __('messages.Arabic Address')}}"/>
+            <x-forms.input id="location" name="location" label="{{ __('messages.Locations')}}"/>
+            <x-forms.input id="ar_address" name="ar_address" label="{{ __('messages.Arabic Address')}}"/>
+            <x-forms.input id="en_address" name="en_address" label="{{ __('messages.English Address')}}"/>
             <x-forms.select :$serviceBodies name="service_body_id" label="{{ __('messages.Service Body')}}"/>
             <x-forms.select :$neighborhoods name="neighborhood_id" label="{{ __('messages.Neighborhood')}}"/>
             <x-forms.normal-button color='outline-dark' name="{{ __('messages.Save') }}" />
