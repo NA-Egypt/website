@@ -4,25 +4,27 @@
 
     <form method="GET" action="{{ route('frontend.meetings') }}">
         <input type="hidden" name="day" id="day-input">
-        <div id="crouton">
-            <label>{{ __('messages.Day') }}</label>
-            <ul>
-                @foreach($days as $day)
-                <li>
-                    <a href="#" data-day="{{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}">
-                        {{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}
-                    </a>
-                </li>
-                @endforeach
-                <!--<x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />-->
-            </ul>
+        <div class="row g-4">
+            <div id="crouton">
+                <label>{{ __('messages.Day') }}</label>
+                <ul>
+                    @foreach($days as $day)
+                    <li>
+                        <a href="#" data-day="{{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}">
+                            {{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}
+                        </a>
+                    </li>
+                    @endforeach
+                    <!--<x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />-->
+                </ul>
+            </div>
         </div>
         <div class="row g-4">
             
             <div class="col-md-4">
                 <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" />
             </div>
-            <div class="col-md-4">
+            <div class="col-md-8">
                 <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" />
             </div>
             
@@ -37,10 +39,10 @@
                 <select name="type" data-allow-clear="true" class="select2">
                     <option value="">{{__('messages.Choose Type')}}</option>
                     <option value="open" {{ request('type') == 'open' ? 'selected' : '' }}>
-                        {{ __('messages.open (for non addict)') }}
+                        {{ __('messages.open') }}
                     </option>
                     <option value="close" {{ request('type') == 'close' ? 'selected' : '' }}>
-                        {{ __('messages.close (only for addict)') }}
+                        {{ __('messages.closed') }}
                     </option>
                 </select>
             </div>

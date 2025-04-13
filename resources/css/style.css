@@ -8,15 +8,16 @@
     url("../fonts/95cecf452d3208890088a5b4c19c7ecf.ttf") format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
     url("../fonts/95cecf452d3208890088a5b4c19c7ecf.svg#Helvetica Neue ME") format("svg"); /* iOS 4.1- */
   }
-  /* General Styles */
-  body {
-    font-family: "Helvetica Neue ME";
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-    direction: ltr; /* Default direction */
-  }
+/* General Styles */
+body {
+	font-family: "Helvetica Neue ME";
+	margin: 0;
+	padding: 0;
+	background-color: #f4f4f4;
+	color: #333;
+	direction: ltr; /* Default direction */
+}
+
 .wrapper{
     width: auto;
 	position: relative

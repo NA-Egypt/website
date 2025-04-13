@@ -70,15 +70,12 @@
                 <div class="meetings-section mt-5 ">
 
                     @if($meetings->count() > 0)
-                        <div class="meetings-list ">
+                        <div class="meetings-list">
                             @foreach($meetings as $meeting)
                                 <div class="meeting-item">
-
-
-                                    <div class="font-bold text-xl text-primary meeting-day text-center">
+                                    <div class="font-bold text-xl text-primary text-center meeting-day">
                                         {{ app()->getLocale() === 'ar' ? $meeting->group->ar_name : $meeting->group->en_name }}
                                     </div>
-
                                     <!-- Day and Time Row -->
                                     <div class="meeting-time-row">
                                         <div class="meeting-day text-warning mb-2">

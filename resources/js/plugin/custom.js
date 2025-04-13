@@ -218,7 +218,7 @@ $(function () {
     if (meetingType) {
         meetingType.addEventListener('change', function () {
             const label = document.getElementById('switchLabel');
-            label.textContent = this.checked ? 'Open' : 'Close';
+            label.textContent = this.checked ? 'Open' : 'Closed';
         });
     }
 
