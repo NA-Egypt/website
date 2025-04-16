@@ -3,23 +3,6 @@
     <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
 
     <form method="GET" action="{{ route('frontend.meetings') }}">
-        {{-- <input type="hidden" name="day" id="day-input">
-        <div class="row g-4">
-            <div id="crouton">
-                <label>{{ __('messages.Day') }}</label>
-                <ul>
-                    <li><a href="?day=all" data-day="all">{{ __('messages.All Days') }}</a></li>
-                    @foreach($days as $day)
-                    <li>
-                        <a href="?day={{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}" data-day="{{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}">
-                            {{ app()->getLocale() == 'ar' ? $day->ar_name : $day->en_name }}
-                        </a>
-                    </li>
-                    @endforeach
-                    <!---->
-                </ul>
-            </div>
-        </div> --}}
         <div class="row g-4">
             <div class="col-md-4">
                 <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
