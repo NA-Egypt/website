@@ -1,5 +1,3 @@
-
-
 @font-face {font-family: "Helvetica Neue ME";
     src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot"); /* IE9*/
     src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
@@ -36,8 +34,8 @@ a {
 .top-header .navbar{
     position: fixed;
     top: 0;
-    left: 250px;
-    right: 0;
+    right: 250px;
+    left: 0;
     background-color: #f7f8fa;
     border-bottom: 1px solid #e2e3e4;
     background-clip: padding-box;

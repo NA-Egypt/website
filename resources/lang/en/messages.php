@@ -125,7 +125,6 @@ return [
     'Show'                      =>'Show',
     'Group information for'     =>'Group information for',
     'Edit Group'                =>'Edit Group',
-    'Meetings'                  =>'Meetings',
     'open'                      =>'Open (Visitors Allowed)',
     'closed'                     =>'Closed (Addicts Only)',
     'Edit Meeting'              =>'Edit Meeting',
@@ -135,5 +134,17 @@ return [
     'Parking'                   =>'Parking',
     'Topic Arabic Name'         =>'Topic Arabic Name',
     'Topic English Name'        =>'Topic English Name',
-    'Locations'                 =>'Locations'
+    'Locations'                 =>'Locations',
+    'Create New Permission'     =>'Create New Permission',
+    'Group Details'             =>'Group Details',
+    'Logout'                    =>'Logout',
+    'Dashboard'                 =>'Dashboard',
+    'Web Site'                  =>'Web Site',
+    'Language'                  =>'Language',
+    'arabic'                    =>'Arabic',
+    'english'                   =>'English',
+    'available'                 =>'available',
+    'suspended'                 =>'suspended',
+    'Status'                    =>'Status',
+    'Capacity'                  =>'Capacity'
 ];

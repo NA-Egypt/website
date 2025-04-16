@@ -17,9 +17,12 @@ class Meeting extends Model
         'day_id',
         'start_time',
         'end_time',
-        'description',
+        'notes',
         'type',
-        'options'
+        'options',
+        'lang',
+        'status',
+        'capacity'
     ];
     public function group() {
         return $this->belongsTo(Group::class);

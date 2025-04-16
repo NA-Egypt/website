@@ -1,18 +1,24 @@
-<nav class="navbar navbar-expand border border-slate-400">
+<nav class="navbar navbar-expand">
     <div class="container-fluid px-3">
-        <div class="top-navbar d-block d-xl-block">
+        <div class="top-navbar d-block d-xl-block logo">
             <a href="{{ route('frontend.home') }}">
-                <img src="{{ asset('assets/images/na.png') }}" alt="" width="240" height="80">
+                <img src="{{ asset('assets/images/na.png') }}" alt="NA Egypt" width="210" height="70">
             </a>
         </div>
-        
-        <div class="top-navbar-center ms-auto">
-{{--            <a class="admin-link" href="{{ route('dashboard') }}">{{__('messages.Admin Panel')}}</a>--}}
-            <a class="admin-link mx-3" href="{{ route('frontend.meetings') }}">{{__('messages.Meetings')}}</a>
-            <a class="admin-link mx-3" href="{{ route('frontend.home') }}">{{__('messages.Home')}}</a>
+        <div class="container nav-container">
+            <input class="checkbox" type="checkbox" name="" id="" />
+            <div class="hamburger-lines">
+              <span class="line line1"></span>
+              <span class="line line2"></span>
+              <span class="line line3"></span>
+            </div> 
+            <div class="top-navbar-center ms-auto menu-items">
+    {{--            <a class="admin-link" href="{{ route('dashboard') }}">{{__('messages.Admin Panel')}}</a>--}}
+                <li><a class="admin-link mx-3" href="{{ route('frontend.home') }}">{{__('messages.Home')}}</a></li>
+                <li><a class="admin-link mx-3" href="{{ route('frontend.meetings') }}">{{__('messages.Meetings')}}</a></li>
+            </div>
         </div>
-
-        <div class="top-navbar-right ms-auto ">
+        <div class="top-navbar" style="margin-right: 40px;">
             <ul class="navbar-nav align-items-center">
 
                 {{-- Languages Switcher --}}
@@ -36,13 +42,12 @@
                     </ul>
                 </li>
 
-
                 {{-- User Image --}}
                 <li class="nav-item dropdown dropdown-large">
                     <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
                         <div class="user-setting d-flex align-items-center gap-1">
                             <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img" alt="">
-                            <div class="user-name d-none d-sm-block text-white">
+                            <div class="user-name d-none d-sm-block">
                                 @auth
                                     {{ Auth::user()->name }} <!-- Displays the logged-in user's name -->
                                 @else
@@ -76,30 +81,46 @@
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-{{--                        <li>--}}
-{{--                            <a class="dropdown-item" href="pages-user-profile.html">--}}
-{{--                                <div class="d-flex align-items-center">--}}
-{{--                                    <div class="setting-icon"><i class="bi bi-person-fill"></i></div>--}}
-{{--                                    <div class="setting-text ms-3"><span>Profile</span></div>--}}
-{{--                                </div>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li>--}}
-{{--                            <a class="dropdown-item" href="#">--}}
-{{--                                <div class="d-flex align-items-center">--}}
-{{--                                    <div class="setting-icon"><i class="bi bi-gear-fill"></i></div>--}}
-{{--                                    <div class="setting-text ms-3"><span>Setting</span></div>--}}
-{{--                                </div>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-                        <li>
-                            <a class="dropdown-item" href="{{ route('dashboard') }}">
-                                <div class="d-flex align-items-center">
-                                    <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                                    <div class="setting-text ms-3"><span>Dashboard</span></div>
-                                </div>
-                            </a>
-                        </li>
+
+
+                        {{-- Handle menues for login depend on role  --}}
+                        @php
+                            $user = Auth::user();
+                        @endphp
+
+                        @if($user)
+
+                            {{-- If Have Super Admin Role --}}
+                            @if ($user->hasRole('super admin'))
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
+                                            <div class="setting-text ms-3"><span>{{__('messages.Dashboard')}}</span></div>
+                                        </div>
+                                    </a>
+                                </li>
+
+                            {{-- If Have gsr Role --}}
+                            @elseif ($user->hasRole('gsr'))
+                                @php
+                                    $group = \App\Models\Group::whereHas('user', function ($q) use ($user) {
+                                        $q->where('email', $user->email);
+                                    })->first();
+                                @endphp
+
+                                @if ($group)
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('group.show', ['group' => $group->id]) }}">
+                                            <div class="d-flex align-items-center">
+                                                <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
+                                                <div class="setting-text ms-3"><span>{{__('messages.Group Details')}}</span></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @endif
+                            @endif
+                        @endif
 
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -109,7 +130,7 @@
                                     <a class="dropdown-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                                         <div class="d-flex align-items-center">
                                             <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                                            <div class="setting-text ms-3"><span>Logout</span></div>
+                                            <div class="setting-text ms-3"><span>{{__('messages.Logout')}}</span></div>
                                         </div>
                                     </a>
                                 </form>
@@ -134,4 +155,5 @@
         </div>
 
     </div>
+
 </nav>

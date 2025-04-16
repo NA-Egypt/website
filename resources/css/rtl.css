@@ -8,15 +8,15 @@
 }
 
 [dir="rtl"] .ms-auto {
-  margin-right: auto !important;
-  margin-left: -10px !important;
-  direction: rtl;
+  margin-right: 45px !important;
+  margin-left: 85px !important;
+  /* direction: rtl; */
 }
 
 [dir="rtl"] .me-auto {
   margin-left: auto !important;
   margin-right: 0 !important;
-  direction: rtl;
+  /* direction: rtl; */
 }
 
 .ms-3 {
@@ -92,7 +92,7 @@
 [dir="rtl"] .top-header .navbar{
   left: 0;
   right: 250px;
-  direction: rtl;
+  /* direction: rtl; */
 }
 
 [dir="rtl"] .dropdown-menu-end[data-bs-popper]{
@@ -235,18 +235,18 @@
   
 [dir="rtl"] .frontend .navbar {
     /*background-image: linear-gradient(to top, rgb(0, 198, 251) 0%, rgb(0, 91, 234) 100%); */
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));;
+  /*background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));*/
   height: 100px;  /* Increase height */
   /*text-align: right;*/
   direction: rtl;
 }
 
 [dir="rtl"] .admin-link {
-  color: #fff; /* Change this to your desired color */
+  color: #007bff; /* Change this to your desired color */
 }
 
 [dir="rtl"] .admin-link:hover {
-  color: #ddd; /* Optional: Change to a lighter color when hovering */
+  color: #000487; /* Optional: Change to a lighter color when hovering */
 }
 
 /*NEW*/
@@ -285,6 +285,7 @@
 
 #crouton a:hover {
   background: #4aa2ff;
+  color: #fff;
 }
 
 #crouton li:not(:first-child) > a::before {

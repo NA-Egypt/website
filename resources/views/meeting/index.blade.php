@@ -18,7 +18,10 @@
                         <th>{{  __('messages.Day') }}</th>
                         <th>{{  __('messages.From') }}</th>
                         <th>{{  __('messages.To') }}</th>
-                        <th>{{  __('messages.Description') }}</th>
+                    <th>{{  __('messages.Language') }}</th>
+                    <th>{{  __('messages.Status') }}</th>
+                    <th>{{  __('messages.Capacity') }}</th>
+                        <th>{{  __('messages.Notes') }}</th>
                         <th>{{  __('messages.Control') }}</th>
                     </tr>
                 </thead>
@@ -43,7 +46,22 @@
                             </td>
                             <td>{{ $meeting->formatted_start_time }}</td>
                             <td>{{ $meeting->formatted_end_time }}</td>
-                            <td>{{ $meeting->description }}</td>
+                            <td>
+                            @if(app()->getLocale() === 'ar')
+                                {{__('messages.'. $meeting->lang)}}
+                            @else
+                                {{$meeting->lang}}
+                            @endif
+                        </td>
+                        <td>
+                            @if(app()->getLocale() === 'ar')
+                                {{__('messages.'. $meeting->status)}}
+                            @else
+                                {{$meeting->status}}
+                            @endif
+                        </td>
+                        <td>{{ $meeting->capacity }}</td>
+                        <td>{{ $meeting->notes }}</td>
                             <td>
                                 <x-button-a href="{{ route('meeting.edit', $meeting->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
                                 <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$meeting->id}}" routeName="meeting.destroy" />

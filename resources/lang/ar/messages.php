@@ -135,5 +135,19 @@ return [
     'Parking'                                               =>'يوجد اماكن انتظار السيارات',
     'Topic Arabic Name'                                     =>'موضوع الاجتماع بالعربية',
     'Topic English Name'                                    =>'موضوع الاجتماع بالانجليزية',
-    'Locations'                                              =>'الموقع'
+    'Locations'                                             =>'الموقع',
+    'Create New Permission'                                 =>'انشاء اذن جديد',
+    'Group Details'                                         =>'تفاصيل المجموعه',
+    'Logout'                                                =>'تسجيل الخروج',
+    'Dashboard'                                             =>'مدير النظام',
+    'Web Site'                                              =>'الموقع الالكتروني',
+    'Language'                                              =>'لغة الاجتماع',
+    'arabic'                                                =>'اللغة العربية',
+    'english'                                               =>'اللغة الانجليزية',
+    'available'                                             =>'متاح',
+    'suspended'                                             =>'معلق',
+    'Status'                                                =>'حالة الاجتماع',
+    'Capacity'                                              =>'سعة الاجتماع'
+
+
 ];

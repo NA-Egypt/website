@@ -76,19 +76,12 @@
                 </a>
               </li>
               <li><hr class="dropdown-divider"></li>
-{{--              <li>--}}
-{{--                  <a class="dropdown-item" href="pages-user-profile.html">--}}
-{{--                    <div class="d-flex align-items-center">--}}
-{{--                      <div class="setting-icon"><i class="bi bi-person-fill"></i></div>--}}
-{{--                      <div class="setting-text ms-3"><span>Profile</span></div>--}}
-{{--                    </div>--}}
-{{--                  </a>--}}
-{{--                </li>--}}
+
                 <li>
                   <a class="dropdown-item" href="{{ route('frontend.home') }}">
                     <div class="d-flex align-items-center">
                       <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                      <div class="setting-text ms-3"><span>Web Site</span></div>
+                      <div class="setting-text ms-3"><span>{{__('messages.Web Site')}}</span></div>
                     </div>
                   </a>
                 </li>
@@ -132,7 +125,7 @@
                     <a class="dropdown-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                       <div class="d-flex align-items-center">
                         <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                        <div class="setting-text ms-3"><span>Logout</span></div>
+                        <div class="setting-text ms-3"><span>{{__('messages.Logout')}}</span></div>
                       </div>
                     </a>
                   </form>

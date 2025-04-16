@@ -1,5 +1,7 @@
 <x-layout>
-    
+    @php
+        $user = Auth::user();
+    @endphp
     <x-section-head>{{__('messages.Edit') . ' ' . __('messages.Group')}}</x-section-head>
 
     <div class="container d-flex justify-content-center align-items-center">
@@ -23,8 +25,13 @@
                 </div>
             </div>
 
-{{--            <x-forms.input name="email" label="{{ __('messages.Email')}}" value="{{ $group->email }}"/>--}}
-            <x-forms.select :$users name="user_id" label="{{ __('messages.Email')}}" value="{{ $group->user_id }}"/>
+            @auth
+                @can('is-super-admin')
+                    <x-forms.select :$users name="user_id" label="{{ __('messages.Email')}}" value="{{ $group->user_id }}"/>
+                @else
+                    <input type="hidden" name="user_id"  value="{{ $group->user_id }}"/>
+                @endcan
+            @endauth
             <x-forms.input name="phone" label="{{ __('messages.Phone')}}" value="{{ $group->phone }}"/>
             <div class="form-check form-switch col-md-2">
                 <input type="hidden" name="group_type" value="فعلي"> <!-- Sends "فعلي" when unchecked -->
@@ -45,12 +52,20 @@
             @if($group->group_type === 'اون لاين')
                 <x-forms.input id="location" name="location" label="URL" value="{{ $group->location }}"/>
             @else
-                <x-forms.input id="location" name="location" label="{{ __('messages.Arabic Address') }}" value="{{ $group->location }}"/>
+                <x-forms.input id="location" name="location" label="{{ __('messages.Locations') }}" value="{{ $group->location }}"/>
             @endif
             <x-forms.input id="ar_address" name="ar_address" label="{{ __('messages.Arabic Address')}}" value="{{ $group->ar_address }}"/>
             <x-forms.input id="en_address" name="en_address" label="{{ __('messages.English Address')}}" value="{{ $group->en_address }}"/>
-            <x-forms.select :$serviceBodies name="service_body_id" label="{{ __('messages.Service Body')}}" value="{{ $group->service_body_id }}"/>
-            <x-forms.select :$neighborhoods name="neighborhood_id" label="{{ __('messages.Neighborhood')}}" value="{{ $group->neighborhood_id }}"/>
+
+            @auth
+                @can('is-super-admin')
+                    <x-forms.select :$serviceBodies name="service_body_id" label="{{ __('messages.Service Body')}}" value="{{ $group->service_body_id ?? '' }}"/>
+                    <x-forms.select :$neighborhoods name="neighborhood_id" label="{{ __('messages.Neighborhood')}}" value="{{ $group->neighborhood_id ?? '' }}"/>
+                @else
+                    <input type="hidden" name="service_body_id" value="{{ $group->service_body_id ?? '' }}">
+                    <input type="hidden" name="neighborhood_id" value="{{ $group->neighborhood_id ?? '' }}">
+                @endcan
+            @endauth
             <x-forms.normal-button color='outline-dark' name="{{ __('messages.Update') }}" />
 
         </form>

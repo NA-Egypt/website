@@ -21,20 +21,25 @@
     @endif
 
   <title>NA</title>
-</head>
 
+</head>
+<style>
+    body:not(:has(.sidebar-wrapper)) .top-header .navbar {
+        left: 0 !important;
+    }
+</style>
 <body class="hanken-grotesk">
-    {{-- wrapper --}}
+{{--     wrapper--}}
     <div class="wrapper">
-    
+
         <!-- Nav Bar-->
         <x-nav-bar />
         <!-- / Nav Bar-->
-      
+         @can('is-super-admin')
         <!-- sidebar -->
         <x-side-bar />
         <!-- / sidebar -->
-
+    @endcan
         <main class="page-content hanken-grotesk ">
           {{ $slot }}
         </main>
@@ -46,7 +51,7 @@
         <!--Start Back To Top Button-->
         <x-back-to-top />
         <!--End Back To Top Button-->
-        
+
         <!--start switcher-->
         <x-switch-themes />
         <!--end switcher-->

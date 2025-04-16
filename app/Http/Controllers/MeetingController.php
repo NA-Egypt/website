@@ -49,27 +49,34 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
+//        dd(request()->all());
         $fields = request()->validate([
             'group_id'      => 'required',
             'topic_id'      => 'required',
             'day_id'        => 'required',
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
-            'description'   => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
+            'notes'         => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
             'type'          => 'required',
+            'lang'          => 'required|in:arabic,english',
+            'status'        => 'required|in:suspended,available',
+            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);
 
 
         $meeting = Meeting::create([
-            'group_id'    => $fields['group_id'],
-            'topic_id'    => $fields['topic_id'],
-            'day_id'      => $fields['day_id'],
-            'start_time'  => $fields['start_time'],
-            'end_time'    => $fields['end_time'],
-            'description' => $fields['description'],
-            'type'        => $fields['type'],
+            'group_id'      => $fields['group_id'],
+            'topic_id'      => $fields['topic_id'],
+            'day_id'        => $fields['day_id'],
+            'start_time'    => $fields['start_time'],
+            'end_time'      => $fields['end_time'],
+            'notes'         => $fields['notes'],
+            'type'          => $fields['type'],
+            'lang'          =>$fields['lang'],
+            'status'        =>$fields['status'],
+            'capacity'      =>$fields['capacity'],
         ]);
 
         if (!empty($fields['options'])) {
@@ -115,8 +122,11 @@ class MeetingController extends Controller
             'day_id'        => 'required|exists:days,id',
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
-            'description'   => 'nullable|string',
+            'notes'         => 'nullable|string',
             'type'          => 'required',
+            'lang'          => 'required|in:arabic,english',
+            'status'        => 'required|in:suspended,available',
+            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);
@@ -127,8 +137,11 @@ class MeetingController extends Controller
             'day_id'      => $fields['day_id'],
             'start_time'  => $fields['start_time'],
             'end_time'    => $fields['end_time'],
-            'description' => $fields['description'],
+            'notes'       => $fields['notes'],
             'type'        => $fields['type'],
+            'lang'          =>$fields['lang'],
+            'status'        =>$fields['status'],
+            'capacity'      =>$fields['capacity'],
         ]);
     
         $meeting->options()->sync($fields['options'] ?? []);

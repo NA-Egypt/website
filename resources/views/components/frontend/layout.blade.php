@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}" dir="{{ $direction }}">
+<html lang="{{ app()->getLocale() }}" dir="ltr">
+    {{-- $direction --}}
 
     <head>
     <meta charset="utf-8">
@@ -11,17 +12,168 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{{--    <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">--}}
+
     <script src="{{ asset('assets/js/frontend.js') }}"></script>
-        <link rel="stylesheet" href="{{ asset('css/frontend.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}">
     <!-- Include RTL CSS dynamically -->
-    @if ($direction === 'rtl')
-        {{-- <link rel="stylesheet" href="../../css/rtl.css"> --}}
-        <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
+    {{-- @if ($direction === 'rtl') --}}
+        <link rel="stylesheet" href="{{ asset('assets/css/rtl.css') }}">
+        {{--<link rel="stylesheet" href="{{ asset('css/rtl.css') }}">--}}
+    {{--@endif--}}
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    @endif
+.container {
+  /* max-width: 1050px; */
+  /* width: 100%; */
+  margin: auto;
+  direction:rtl;
+}
 
+.navbar {
+  width: 100%;
+  box-shadow: 0 1px 4px rgb(146 161 176);
+  direction: rtl;
+}
 
+.nav-container {
+  display: block;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  position: fixed;
+}
+
+.navbar .menu-items {
+  display: flex;
+  background-color: whitesmoke;
+}
+
+.navbar .nav-container li {
+  list-style: none;
+}
+
+.navbar .nav-container a {
+  text-decoration: none;
+  color: #000487;
+  font-weight: 500;
+  font-size: 1.2rem;
+  padding: 0.7rem;
+}
+
+.navbar .nav-container a:hover{
+    font-weight: bolder;
+}
+
+.nav-container .checkbox {
+  position: absolute;
+  display: block;
+  height: 32px;
+  width: 32px;
+  top: 20px;
+  /* left: 20px; */
+  z-index: 5;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.nav-container .hamburger-lines {
+  display: block;
+  height: 26px;
+  width: 32px;
+  position: absolute;
+  top: 37px;
+  /* left: 20px; */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nav-container .hamburger-lines .line {
+  display: block;
+  height: 4px;
+  width: 100%;
+  border-radius: 10px;
+  background: #000487;
+}
+
+.nav-container .hamburger-lines .line1 {
+  transform-origin: 0% 0%;
+  transition: transform 0.4s ease-in-out;
+}
+
+.nav-container .hamburger-lines .line2 {
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-container .hamburger-lines .line3 {
+  transform-origin: 0% 100%;
+  transition: transform 0.4s ease-in-out;
+}
+
+.navbar .menu-items {
+  padding-top: 120px;
+  box-shadow: inset 0 0 2000px rgb(255, 255, 255);
+  height: 100vh;
+  width: 100%;
+  transform: translate(-150%);
+  display: flex;
+  flex-direction: column;
+  margin-left: 0px;
+  padding-left: 0px;
+  transition: transform 0.5s ease-in-out;
+  text-align: center;
+}
+
+.navbar .menu-items li {
+  margin-bottom: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.logo {
+  position: absolute;
+  top: 17px;
+  left: 21px;
+  float: left;
+
+  /* font-size: 1.2rem; */
+  /* color: #0e2431; */
+}
+
+.nav-container input[type="checkbox"]:checked ~ .menu-items {
+  transform: translateX(0);
+}
+
+.nav-container input[type="checkbox"]:checked ~ .hamburger-lines .line1 {
+  transform: rotate(45deg);
+}
+
+.nav-container input[type="checkbox"]:checked ~ .hamburger-lines .line2 {
+  transform: scaleY(0);
+}
+
+.nav-container input[type="checkbox"]:checked ~ .hamburger-lines .line3 {
+  transform: rotate(-45deg);
+}
+
+.nav-container input[type="checkbox"]:checked ~ .logo{
+  display: none;
+}
+
+.me-2 {
+  width: 0.5rem; 
+  height: 0.5rem; 
+  background-color: crimson; 
+  display: inline-block;
+  margin-left: .5rem !important;
+}
+</style>
     <title>NA EGYPT</title>
     
     </head>
@@ -35,7 +187,14 @@
             <div class="container mt-2">
 
                 <main class="mt-10 max-w-[986px] mx-auto">
-                    {{$slot}}
+                  <div style="
+                    background: #fffce0;
+                    border: 1px #dbd06a solid;
+                    text-align: center;
+                    padding: 10px;">
+                
+                  <p style="margin-bottom: 0 !important">زمالة المدمنين المجهولين لا تنتسب لأي مؤسسات لعلاج الإدمان أو أي مؤسسات أخرى</p>
+                </div>
                 </main>
 
             </div>
