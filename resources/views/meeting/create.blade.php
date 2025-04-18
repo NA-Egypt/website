@@ -6,7 +6,13 @@
         <form action="{{ route('meeting.store') }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">
             @csrf
 
-            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
+{{--            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>--}}
+            @if(Auth::user()->can('is-super-admin'))
+                <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
+            @else
+                <input type="hidden" name="group_id" value="{{ $group_id }}">
+            @endif
+
             <x-forms.select :$topics name="topic_id" label="{{ __('messages.Meeting Topic')}}"/>
             <div class="row align-items-end">
                 <div class="col-md-3">

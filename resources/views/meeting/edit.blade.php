@@ -6,8 +6,16 @@
         <form action="{{ route('meeting.update', $meeting->id) }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">
             @csrf
             @method('PUT')
-    
-            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name') }}" value="{{ $meeting->group_id }}" />
+
+            @auth
+                @can('is-super-admin')
+
+                    <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name') }}" value="{{ $meeting->group_id }}" />
+                @else
+                    <input type="hidden" name="group_id"  value="{{ $meeting->group_id }}"/>
+                @endcan
+            @endauth
+
             <x-forms.select :$topics name="topic_id" label="{{ __('messages.Meeting Topic') }}" value="{{ $meeting->topic_id }}" />
     
             <div class="row align-items-end">

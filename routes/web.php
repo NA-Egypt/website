@@ -132,8 +132,9 @@ Route::group(
             return view('frontend.home');
         })->name('frontend.home');
 
-        Route::get('/frontend/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
-       
+//        Route::get('/frontend/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
+        Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
+
 
         // Searches:
         Route::get('/searches/city/{id}/groups', [SearchController::class, 'city'])->name('searches.city');

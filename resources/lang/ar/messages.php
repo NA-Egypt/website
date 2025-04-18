@@ -147,7 +147,8 @@ return [
     'available'                                             =>'متاح',
     'suspended'                                             =>'معلق',
     'Status'                                                =>'حالة الاجتماع',
-    'Capacity'                                              =>'سعة الاجتماع'
+    'Capacity'                                              =>'سعة الاجتماع',
+    'suspended'=>'هذا الاجتماع مُعلق مؤقتًا'
 
 
 ];

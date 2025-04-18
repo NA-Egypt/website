@@ -146,5 +146,6 @@ return [
     'available'                 =>'available',
     'suspended'                 =>'suspended',
     'Status'                    =>'Status',
-    'Capacity'                  =>'Capacity'
+    'Capacity'                  =>'Capacity',
+    'suspended'=>'This meeting is temporarily suspended'
 ];

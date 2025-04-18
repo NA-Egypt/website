@@ -17,6 +17,11 @@
 {{--                            @foreach($meetings as $meeting)--}}
                             @if($meeting->type=="open")
                                 <div class="meeting-item" style="border: 4px solid crimson;">
+                            @elseif($meeting->status=="suspended")
+                                <div class="meeting-item-suspended" style="border: 4px dashed #444;">
+                                    <div style="text-align: center;font-size: x-large;color: crimson;">
+                                        {{ __('messages.suspended') }}
+                                    </div>
                             @else
                                 <div class="meeting-item">
                             @endif
@@ -110,25 +115,30 @@
                                             <div class="options-list">
                                                 @foreach($meeting->options as $option)
                                                     <div class="option-item">
-                                                <span class="option-name">
-                                                    @if(app()->getLocale() === 'ar')
-                                                        {{ $option->ar_name }}
-                                                    @else
-                                                        {{ $option->en_name }}
-                                                    @endif
-                                                </span>
-                                                    <span class="option-value">
-                                                        @if($option->pivot->value)
-                                                            {{ $option->pivot->value }}
+                                                    <span class="option-name">
+                                                        @if(app()->getLocale() === 'ar')
+                                                            {{ $option->ar_name }}
                                                         @else
-                                                            &NonBreakingSpace;<x-fas-circle style="width:16px; height:16px;"/>
+                                                            {{ $option->en_name }}
                                                         @endif
-                                            </span>
+                                                    </span>
+                                                    <span class="option-value">
+                                                        @if($option->id == 15)
+                                                        &NonBreakingSpace;<x-fas-smoking style="width:16px; height:16px;"/>
+                                                        @elseif($option->id == 14)
+                                                            &NonBreakingSpace;<x-fas-parking style="width:16px; height:16px;"/>
+                                                        @elseif($option->id == 13)
+                                                        &NonBreakingSpace;<x-fas-wheelchair style="width:16px; height:16px;"/>
+                                                        @elseif($option->id == 16)
+                                                        &NonBreakingSpace;<x-fas-fire style="width:16px; height:16px;"/>
+                                                        @endif
+                                                    </span>
                                                     </div>
                                                 @endforeach
                                             </div>
                                             @if($meeting->notes)
-                                            <div class="meeting-description">
+                                            <br />
+                                            <div>
                                                 <x-fas-asterisk style="width:16px; height:16px;"/>
                                                 {{ $meeting->notes }}
                                             </div>
@@ -136,7 +146,7 @@
                                     @endif
                                 </div>
                                     @if($meeting->group->ar_address)
-                                    <div class="meeting-description">
+                                    <div class="meeting-options">
                                         <x-fas-map-pin style="width:16px; height:16px;"/>
                                         @if(app()->getLocale() === 'ar')
                                         {{ $meeting->group->ar_address }}
@@ -148,8 +158,9 @@
                                             @endif
                                         @endif
                                         @if($meeting->group->location)
+                                        <br />
                                         <x-fas-map-marker style="width:16px; height:16px;"/>
-                                        <a href="{{ $meeting->group->location }}" target="_blank">الموقع</a>
+                                        <a href="{{ $meeting->group->location }}" target="_blank">{{ $meeting->group->location }}</a>
                                         @endif
                                     </div>
                                     @endif
@@ -225,7 +236,7 @@
             flex-direction: column;
             align-items: flex-start;
             padding: 12px 15px;
-        }
+        }ß
 
         .info-value {
             border-left: none;
@@ -252,6 +263,20 @@
         box-shadow: 0 3px 6px rgba(0,0,0,0.05);
         border-left: 4px solid #4f46e5;
         border-right: 4px solid #4f46e5;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px; /* Added space between cards */
+        transition: all 0.3s ease;
+    }
+
+    .meeting-item-suspended {
+        background-color: #aaaaaa;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        /*border-left: 4px dashed #444;
+        border-right: 4px dashed #444;*/
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -313,7 +338,7 @@
 
     .meeting-options {
         margin-top: 10px;
-        padding: 12px;
+        padding: 10px;
         background-color: #f9fafb;
         border-radius: 8px;
         border: 1px dashed #e2e8f0;
@@ -323,16 +348,16 @@
         font-weight: 600;
         color: #4b5563;
         font-size: 0.95rem;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 3px;
     }
 
     .options-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 3px;
     }
 
     .option-item {
@@ -340,15 +365,16 @@
         align-items: center;
         font-size: 0.85rem;
         background-color: white;
-        padding: 8px 12px;
+        padding: 4px 4px;
         border-radius: 6px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         border: 1px solid #e5e7eb;
+        direction: ltr;
     }
 
     .option-name {
         color: #374151;
-        margin-right: 6px;
+        /* margin-right: 6px; */
         font-weight: 500;
     }
 
@@ -399,7 +425,7 @@
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .meeting-item {
-            padding: 15px;
+            padding: 10px;
         }
 
         .meeting-type-topic {

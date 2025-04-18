@@ -24,32 +24,62 @@ class MeetingController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
     public function create()
     {
         $topics = Topic::all();
-
         $groups = Group::all();
-
         $days = Day::all();
-
         $options = Option::all();
 
+        $group_id = null;
+
+        // If user is not super admin, get their assigned group
+        if (auth()->user()->cannot('is-super-admin')) {
+            $group = Group::whereHas('user', function ($q) {
+                $q->where('email', auth()->user()->email);
+            })->first();
+
+            if ($group) {
+                $group_id = $group->id;
+            }
+        }
 
         return view('meeting.create', [
-
             'topics'    => $topics,
             'groups'    => $groups,
             'days'      => $days,
-            'options'   => $options
+            'options'   => $options,
+            'group_id'  => $group_id
         ]);
     }
+
+//    public function create()
+//    {
+//        $topics = Topic::all();
+//
+//        $groups = Group::all();
+//
+//        $days = Day::all();
+//
+//        $options = Option::all();
+//
+//
+//        return view('meeting.create', [
+//
+//            'topics'    => $topics,
+//            'groups'    => $groups,
+//            'days'      => $days,
+//            'options'   => $options
+//        ]);
+//    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-//        dd(request()->all());
+
         $fields = request()->validate([
             'group_id'      => 'required',
             'topic_id'      => 'required',

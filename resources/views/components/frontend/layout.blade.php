@@ -141,6 +141,7 @@
   top: 17px;
   left: 12px;
   float: left;
+  z-index: 3;
 
   /* font-size: 1.2rem; */
   /* color: #0e2431; */
@@ -173,9 +174,96 @@
   display: inline-block;
   margin-left: .5rem !important;
 }
+.helpline-box {
+  background-color: #f7f7f7;
+  border: 4px solid #00698f;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
+  width: 250px;
+  height: 140px;
+  display: inline-block;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.calc-box {
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
+  width: 250px;
+  height: 100%;
+  display: inline-block;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.helpline-box h4 {
+  color: #00698f;
+  margin-top: 0;
+}
+
+.helpline-box a {
+  text-decoration: none;
+  color: #337ab7;
+}
+
+.helpline-box a:hover {
+  color: #23527c;
+}
 </style>
     <title>NA EGYPT</title>
-    
+    <script language="JavaScript">
+
+      var myDate;
+      
+      function setDate(datest){
+      myDate = datest.value;
+      myDate = new Date(myDate);
+      }
+      
+      function FindTime(form){
+      var diff;
+      today = new Date();
+      diff = today.getTime() - myDate.getTime();
+      
+      console.log(today.getTime());
+      console.log(myDate.getTime());
+      console.log(diff);
+      
+      years = Math.floor(diff / 31536000000);
+      
+      days = Math.floor(diff / 86400000);
+      
+      H = Math.floor(days % 365);
+      
+      R = Math.floor(H % 30)
+      
+      dMy = Math.floor(days % 365);
+      
+      bM = Math.floor(dMy % 30);
+      
+      bm = Math.floor(dMy - bM);
+      
+      month = Math.floor(bm / 30);
+      
+      
+      
+      
+      form.Fyears.value = years;
+      
+      form.Fmonth.value = month;
+      
+      form.FR.value = R;
+      
+      console.log(years+"/"+month+"/"+R);
+      
+      }
+      
+      </script>
+      
     </head>
 
     <body class="hanken-grotesk">
@@ -188,16 +276,6 @@
              
                 <main class="mt-10 max-w-[986px] mx-auto">
                   {{$slot}}
-                  {{-- <h1 style="text-align: center;">زمالة المدمنين المجهولين مصر</h1>
-                  <div style="
-                    background: #fffce0;
-                    border: 1px #dbd06a solid;
-                    text-align: center;
-                    padding: 10px;">
-                
-                  <p style="margin-bottom: 0 !important">زمالة المدمنين المجهولين لا تنتسب لأي مؤسسات لعلاج الإدمان أو أي مؤسسات أخرى</p>
-                </div>
-                <p style="text-align: center;">برنامج زمالة المدمنين المجهولين هو زمالة أو جمعية لا تهدف إلى الربح وتتكون من رجال ونساء أصبحت المخدرات مشكلة رئيسية بالنسبة لهم فنحن مدمنون نتعافى ونجتمع معاً بانتظام لنساعد بعضنا البعض كي نبقى ممتنعين. إنه برنامج للامتناع التام عن كافة أنواع المخدرات وعضويته لا تتطلب إلا شيئاً واحداً وهو الرغبة في الامتناع عن التعاطي، نقترح عليك أن تكون متفتحاً ذهنياً وتعطي نفسك فرصة، برنامجنا عبارة عن مجموعة من المبادئ مكتوبة ببساطة شديدة ونستطيع إتباعها فى حياتنا اليومية وأهم ما يميزها هو أنها ناجحة. لا توجد قيود على زمالة المدمنين المجهولين فنحن غير منتسبين لأية منظمات أخرى وليس لنا أية رسوم إشتراك أو مستحقات ولا نوقع تعهدات ولا نقدم وعوداً لأي شخص ولا صلة لنا بأية جهة سياسية أو دينية أو بأجهزة تطبيق القانون ولا نخضع للمراقبة إطلاقاً. يستطيع أي شخص أن ينضم لنا بغض النظر عن عمره أو جنسه أو هويته الجنسية أو عقيدته أو ديانته أو افتقاره إلى الدين.</p> --}}
                 </main>
 
             </div>

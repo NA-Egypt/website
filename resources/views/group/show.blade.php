@@ -87,9 +87,11 @@
 
         {{--  Meetings Section  --}}
         <div class="meetings-section mt-5">
-            <h4 class="section-title mb-3">{{ __('messages.Meetings') }}</h4>
-
-            @if($meetings->count() > 0)
+            <h4 class="section-title mb-3 text-center">{{ __('messages.Meetings') }}</h4>
+            <div class="mb-3">
+                <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" />
+            </div>
+                @if($meetings->count() > 0)
                 <div class="meetings-list">
                     @foreach($meetings as $meeting)
                         <div class="meeting-item">

@@ -3,7 +3,7 @@
     <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
 
     <form method="GET" action="{{ route('frontend.meetings') }}">
-        <div class="row g-4">
+        <div class="row g-6 mt-2">
             <div class="col-md-4">
                 <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
             </div>
