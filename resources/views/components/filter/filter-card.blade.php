@@ -1,18 +1,18 @@
 @props(['meetings'])
 
-<div class="container" style="padding: 0px;">
-    <div class="row justify-content-center" style="margin: 0px; width:100%;">
-        <div class="col-12 col-md-10">
+<div class="container" style="">
+    <div class="row justify-content-center" style="">
+        <div class="col-11 col-md-6">
 
             <!-- Search Input -->
             <input type="search" id="search-input" class="form-control mb-3" placeholder="{{__('messages.Search meetings')}}...">
 
             @foreach($meetings as $meeting)
-                <div class="meetings-section mt-5">
+                <div class="meetings-section mt-4">
                     @if(app()->getLocale() === 'en')
                         <div class="meetings-list" dir="ltr">
                     @else
-                        <div class="meetings-list">
+                        <div class="meetings-list" dir="rtl">
                     @endif
 {{--                            @foreach($meetings as $meeting)--}}
                             @if($meeting->type=="open")
@@ -89,6 +89,14 @@
 
                                             </div>
                                         @endif
+                                        @if($meeting->capacity)
+                                            <div class="meeting-topic-badge">
+                                                <x-fas-users style="width:16px; height:16px;"/>
+
+                                                {{$meeting->capacity }}
+
+                                            </div>
+                                        @endif
                                     </div>
                                     <!-- GSR DATA -->
                                     @if($meeting->group->phone)
@@ -111,42 +119,44 @@
                                         <div class="options-title">
                                             <x-fas-circle style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.Options') }}
                                         </div>
-                                    @if($meeting->options->count() > 0)
-                                            <div class="options-list">
-                                                @foreach($meeting->options as $option)
-                                                    <div class="option-item">
-                                                    <span class="option-name">
-                                                        @if(app()->getLocale() === 'ar')
-                                                            {{ $option->ar_name }}
-                                                        @else
-                                                            {{ $option->en_name }}
-                                                        @endif
-                                                    </span>
-                                                    <span class="option-value">
-                                                        @if($option->id == 15)
-                                                        &NonBreakingSpace;<x-fas-smoking style="width:16px; height:16px;"/>
-                                                        @elseif($option->id == 14)
-                                                            &NonBreakingSpace;<x-fas-parking style="width:16px; height:16px;"/>
-                                                        @elseif($option->id == 13)
-                                                        &NonBreakingSpace;<x-fas-wheelchair style="width:16px; height:16px;"/>
-                                                        @elseif($option->id == 16)
-                                                        &NonBreakingSpace;<x-fas-fire style="width:16px; height:16px;"/>
-                                                        @endif
-                                                    </span>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            @if($meeting->notes)
-                                            <br />
-                                            <div>
-                                                <x-fas-asterisk style="width:16px; height:16px;"/>
-                                                {{ $meeting->notes }}
-                                            </div>
+                                        @if($meeting->options->count() > 0)
+                                                <div class="options-list">
+                                                    @foreach($meeting->options as $option)
+                                                        <div class="option-item">
+                                                        <span class="option-name">
+                                                            @if(app()->getLocale() === 'ar')
+                                                                {{ $option->ar_name }}
+                                                            @else
+                                                                {{ $option->en_name }}
+                                                            @endif
+                                                        </span>
+                                                        <span class="option-value">
+                                                            @if($option->id == 15)
+                                                            &NonBreakingSpace;<x-fas-smoking style="width:16px; height:16px;"/>
+                                                            @elseif($option->id == 14)
+                                                                &NonBreakingSpace;<x-fas-parking style="width:16px; height:16px;"/>
+                                                            @elseif($option->id == 13)
+                                                            &NonBreakingSpace;<x-fas-wheelchair style="width:16px; height:16px;"/>
+                                                            @elseif($option->id == 16)
+                                                            &NonBreakingSpace;<x-fas-fire style="width:16px; height:16px;"/>
+                                                            @endif
+                                                        </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                         @endif
-                                    @endif
-                                </div>
-                                    @if($meeting->group->ar_address)
+
+                                    </div>
+                                    @if($meeting->notes)
                                     <div class="meeting-options">
+                                        <x-fas-asterisk style="width:16px; height:16px;"/>
+                                        {{ $meeting->notes }}
+
+                                    </div>
+                                    @endif
+
+                                    @if($meeting->group->ar_address)
+                                        <div class="meeting-options">
                                         <x-fas-map-pin style="width:16px; height:16px;"/>
                                         @if(app()->getLocale() === 'ar')
                                         {{ $meeting->group->ar_address }}
@@ -236,7 +246,7 @@
             flex-direction: column;
             align-items: flex-start;
             padding: 12px 15px;
-        }ß
+        }
 
         .info-value {
             border-left: none;
@@ -445,62 +455,3 @@
 
 </style>
 
-
-{{--            @foreach ($meetings as $meeting)--}}
-{{--                <div class="row bg-white rounded filter-card-border meeting-item mb-3 p-3 d-flex align-items-stretch">--}}
-{{--                    --}}
-{{--                    <!-- Left Section: Day & Options -->--}}
-{{--                    <div class="col-12 col-md-4 d-flex flex-column align-items-md-start align-items-center text-center text-md-start h-100">--}}
-{{--                        <p class="digital-clock meeting-start-time">--}}
-{{--                            {{ date('h:i a', strtotime($meeting->formatted_start_time)) }}  --}}
-{{--                        </p>--}}
-{{--                        <p class="duration-clock meeting-end-time">--}}
-{{--                            {{ $meeting->duration }}--}}
-{{--                        </p>--}}
-{{--                        <div class="pt-1">--}}
-{{--                            <p>--}}
-{{--                                @php--}}
-{{--                                    $groupType = $meeting->group->group_type;--}}
-{{--                                    $locale = app()->getLocale();--}}
-{{--                                    $translatedType = ($groupType === 'فعلي') ? ($locale === 'ar' ? '' : '') : ($locale === 'ar' ? 'اون لاين' : 'Online');--}}
-{{--                                @endphp--}}
-{{--                                {{ $translatedType }}--}}
-{{--                            </p>--}}
-
-{{--                        </div>--}}
-
-{{--                    </div>--}}
-
-{{--                    <!-- Center Section: Group Name & Topic -->--}}
-{{--                    <div class="col-12 col-md-4 d-flex flex-column text-center justify-content-center flex-grow-1">--}}
-{{--                        <h4 class="font-bold text-xl text-primary meeting-day">--}}
-{{--                            {{ app()->getLocale() === 'ar' ? $meeting->group->ar_name : $meeting->group->en_name }}--}}
-{{--                        </h4>--}}
-
-{{--                        <p class="text-sm text-gray-400 meeting-topic">{{ __('messages.' . strtolower($meeting->topic->title)) }}</p>--}}
-{{--                        <p class="text-sm text-gray-400">{{ $meeting->group->location }}</p>--}}
-{{--                        <div class="font-bold text-danger meeting-type">--}}
-{{--                            @if ($meeting->type == 'open')--}}
-{{--                                {{ __('messages.open (for non addict)') }}--}}
-{{--                            @else--}}
-{{--                                {{ __('messages.close (only for addict)') }}--}}
-{{--                            @endif--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
-{{--                    <!-- Right Section: Timings -->--}}
-{{--                    <div class="col-12 col-md-4 d-flex flex-column align-items-md-end align-items-center text-center text-md-end h-100">--}}
-
-{{--                        <p class="font-bold text-xl text-primary meeting-day">--}}
-{{--                            {{ app()->getLocale() === 'ar' ? $meeting->day->ar_name : $meeting->day->en_name }}--}}
-{{--                        </p>--}}
-
-{{--                        <div class="d-flex flex-wrap gap-1 justify-content-center justify-content-md-end">--}}
-{{--                            @foreach ($meeting->options as $option)--}}
-{{--                                <x-dashboard.rounded-details class="text-nowrap px-2 py-1">{{ __('messages.' . strtolower($option->name)) }}</x-dashboard.rounded-details>--}}
-{{--                            @endforeach--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
-{{--                </div>--}}
-{{--            @endforeach--}}

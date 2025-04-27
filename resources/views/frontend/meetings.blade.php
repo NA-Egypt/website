@@ -1,7 +1,7 @@
 <x-frontend.layout>
 
     <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
-
+    <div class="col-10" style="padding: 10px;width: auto;">
     <form method="GET" action="{{ route('frontend.meetings') }}">
         <div class="row g-6 mt-2">
             <div class="col-md-4">
@@ -49,7 +49,7 @@
         </div>
 
     </form>
-
+    </div>
     @if($meetings->isEmpty())
         <p>{{__('messages.No meetings found')}}</p>
     @else

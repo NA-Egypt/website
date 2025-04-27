@@ -1,46 +1,48 @@
-<nav class="navbar navbar-expand">
+<nav class="">
+    <section class="top-nav">
+
     <div class="container-fluid px-3">
-        <div class="top-navbar d-block d-xl-block logo">
+        <div class="d-block d-xl-block logo">
             <a href="{{ route('frontend.home') }}">
                 <img src="{{ asset('assets/images/na.png') }}" alt="NA Egypt" width="210" height="70">
             </a>
         </div>
-        <div class="container nav-container">
-            <input class="checkbox" type="checkbox" name="" id="" />
-            <div class="hamburger-lines">
-              <span class="line line1"></span>
-              <span class="line line2"></span>
-              <span class="line line3"></span>
-            </div> 
-            <div class="top-navbar-center ms-auto menu-items">
+        <div class="container">
+            <input id="menu-toggle" type="checkbox" />
+            <label class='menu-button-container' for="menu-toggle">
+                <div class='menu-button'></div>
+            </label>
+            <ul class="menu">
     {{--            <a class="admin-link" href="{{ route('dashboard') }}">{{__('messages.Admin Panel')}}</a>--}}
                 <li><a class="admin-link mx-3" href="{{ route('frontend.home') }}">{{__('messages.Home')}}</a></li>
                 <li><a class="admin-link mx-3" href="{{ route('frontend.meetings') }}">{{__('messages.Meetings')}}</a></li>
-            </div>
+                @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                    <li>
+                        <a class="dropdown-item" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" style="width: 20px; height: 20px;">
+                                <div class="setting-text ms-3"><span>{{ $properties['native'] }}</span></div>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         </div>
-        <div class="top-navbar" style="margin-right: 40px;">
+    </section>
+        <div class="top-navbar" style="">
             <ul class="navbar-nav align-items-center">
 
                 {{-- Languages Switcher --}}
-                <li class="nav-item dropdown">
+                {{-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         <div class="user-name">
                             <img src="{{ asset('assets/images/flags/global.png') }}" alt="global Flag" style="width: 25px; height: 25px;">
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
-                            <li>
-                                <a class="dropdown-item" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" style="width: 20px; height: 20px;">
-                                        <div class="setting-text ms-3"><span>{{ $properties['native'] }}</span></div>
-                                    </div>
-                                </a>
-                            </li>
-                        @endforeach
+                        
                     </ul>
-                </li>
+                </li> --}}
 
                 {{-- User Image --}}
                 <li class="nav-item dropdown dropdown-large">
@@ -155,5 +157,4 @@
         </div>
 
     </div>
-
 </nav>
