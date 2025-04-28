@@ -1,7 +1,7 @@
 
 @import './backend.css';
-@import './frontend.css';
-@import './rtl.css';
+@import '../../public/assets/css/frontend.css';
+@import '../../public/assets/css/rtl.css';
 /* Bootstrap */
 @import './plugin/bootstrap.min.css';
 @import './plugin/bootstrap-extended.css';
@@ -40,7 +40,7 @@
 @tailwind utilities; */
 
 
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,600;1,600&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,600;1,600&display=swap'); */
 
 
 @import './style.css';

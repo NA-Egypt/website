@@ -18,12 +18,6 @@
       <link rel="stylesheet" href="{{ asset('assets/css/rtl.css') }}" />
   @endif
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .top-nav {
   display: flex;
   flex-direction: row;
@@ -35,7 +29,7 @@
   color: #FFF;
   height: 100px;
   /* padding: 1em; */
-  direction: ltr;
+  direction: rtl;
 }
 
 .menu {
@@ -123,7 +117,7 @@
     transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   #menu-toggle:checked ~ .menu li {
-    border: 1px solid #333;
+    border: 1px solid #000487;
     height: 2.5em;
     padding: 0.5em;
     transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -139,6 +133,9 @@
   }
   .menu > li:not(:last-child) {
     border-bottom: 1px solid #444;
+  }
+  .meetings-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -269,64 +266,15 @@
 
 </style>
     <title>NA EGYPT</title>
-    <script language="JavaScript">
-
-      var myDate;
-      
-      function setDate(datest){
-      myDate = datest.value;
-      myDate = new Date(myDate);
-      }
-      
-      function FindTime(form){
-      var diff;
-      today = new Date();
-      diff = today.getTime() - myDate.getTime();
-      
-      console.log(today.getTime());
-      console.log(myDate.getTime());
-      console.log(diff);
-      
-      years = Math.floor(diff / 31536000000);
-      
-      days = Math.floor(diff / 86400000);
-      
-      H = Math.floor(days % 365);
-      
-      R = Math.floor(H % 30)
-      
-      dMy = Math.floor(days % 365);
-      
-      bM = Math.floor(dMy % 30);
-      
-      bm = Math.floor(dMy - bM);
-      
-      month = Math.floor(bm / 30);
-      
-      
-      
-      
-      form.Fyears.value = years;
-      
-      form.Fmonth.value = month;
-      
-      form.FR.value = R;
-      
-      console.log(years+"/"+month+"/"+R);
-      
-      }
-      
-      </script>
-      
     </head>
 
     <body class="hanken-grotesk">
       <x-frontend.nav-bar />
-        {{-- <div class="container"> --}}
+        <div class="container">
           <main class="mt-10 max-w-[986px] mx-auto">
             {{$slot}}
           </main>
-        {{-- </div> --}}
+        </div>
     </body>
 
 </html>

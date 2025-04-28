@@ -100,13 +100,6 @@ body {
   color: #555;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .meetings-grid {
-      grid-template-columns: 1fr;
-  }
-}
-
 .admin-link {
   color: #007bff; /* Change this to your desired color */
 }
@@ -120,4 +113,11 @@ body {
   height: 40px;
   padding: 4px;
   border-radius: 50%;
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

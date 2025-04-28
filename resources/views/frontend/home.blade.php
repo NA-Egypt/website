@@ -48,52 +48,58 @@
         <p dir="ltr"><a href="tel:+201003694690">+201003694690</a></p>
     </div>
 </div>
-{{--
+
 <div class="row justify-content-center">
-    <div class="calc-box">
-        <form method="post"> 
-        
-        
-أدخل تاريخ امتناعك
-        <b>mm/dd/yyyy</b>
-        <br />
-        
-        
-        <input type="text" name="FmyDate" size="10" onchange="setDate(this)" />
-        
-        <input type="button" onclick="FindTime(this.form)" value="إحسب مدة امتناعي" class="button" />
-        
-        <div class="results">
-مدة امتناعك هي
-        
-        <div id="fork">
-        
-        <input type="text" name="Fyears" size="2" disabled="disabled" class="red" />
-        <div class="text">
-سنوات
-        </div>
-        
-        
-        
-        <input type="text" name="Fmonth" size="2" disabled="disabled" class="red" />
-        <div class="text">
-شهور
-        </div>
-        
-        
-        
-        
-        <input type="text" name="FR" size="2"  disabled="disabled" class="red" />
-        <div class="text">
-أيام
-        </div></div>
-        
-        </div>
+<input type="date" onchange="setDate(this)"><br>
 
-        </form>
-        </div>
+  <form name="myForm">
+    <input type="text" name="Fyears" placeholder="السنوات" readonly>
+    <input type="text" name="Fmonth" placeholder="الشهور" readonly>
+    <input type="text" name="FR" placeholder="الأيام" readonly><br>
+    <button type="button" onclick="findTime(document.myForm)">احسب مدة امتناعك</button>
+  </form>
+
+  <script>
+    let selectedDate = null;
+
+    function setDate(input) {
+    selectedDate = new Date(input.value);
+    }
+
+    function findTime(form) {
+    if (!selectedDate) {
+        alert("Please select a date first!");
+        return;
+    }
+
+    const today = new Date();
+    
+    let totalYears = today.getFullYear() - selectedDate.getFullYear();
+    let totalMonths = today.getMonth() - selectedDate.getMonth();
+    let totalDays = today.getDate() - selectedDate.getDate();
+
+    if (totalDays < 0) {
+        totalMonths--;
+        const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        totalDays += previousMonth.getDate();
+    }
+
+    if (totalMonths < 0) {
+        totalYears--;
+        totalMonths += 12;
+    }
+
+    form.Fyears.value = totalYears;
+    form.Fmonth.value = totalMonths;
+    form.FR.value = totalDays;
+
+    console.log(`Difference: ${totalYears} years / ${totalMonths} months / ${totalDays} days`);
+    }
+
+  </script>
 </div>
-
+</x-frontend.layout>
+{{--
 <form class="" id="">
     <fieldset class="" id="">
         <legend class="" id="">
@@ -247,4 +253,3 @@
             </div>
         </fieldset>
     </form>--}}
-</x-frontend.layout>

@@ -1,5 +1,14 @@
+@font-face {font-family: "Helvetica Neue ME";
+    src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot"); /* IE9*/
+    src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.woff2") format("woff2"), /* chrome、firefox */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.woff") format("woff"), /* chrome、firefox */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.ttf") format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.svg#Helvetica Neue ME") format("svg"); /* iOS 4.1- */
+  }
+
 .hanken-grotesk{
-    /*font-family: "Hanken Grotesk", serif;*/
+    font-family: "Helvetica Neue ME";
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: normal;
