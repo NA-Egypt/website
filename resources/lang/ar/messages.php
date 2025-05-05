@@ -148,7 +148,12 @@ return [
     'suspended'                                             =>'معلق',
     'Status'                                                =>'حالة الاجتماع',
     'Capacity'                                              =>'سعة الاجتماع',
-    'suspended'=>'هذا الاجتماع مُعلق مؤقتًا'
+    'suspended'                                             =>'هذا الاجتماع مُعلق مؤقتًا',
+    'Service Committees'                                    =>'اللجان الخدمية',
+    'Arabic Service Committee Name'                        =>'اسم اللجنة بالعربية',
+    'English Service Committee Name'                       =>'اسم اللجنة بالانجليزية',
+    'Chairman Name'                                        =>'اسم رئيس اللجنة',
+    'Chairman Phone'                                       =>'رقم رئيس اللجنة'
 
 
 ];

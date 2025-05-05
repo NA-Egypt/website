@@ -108,6 +108,7 @@
     width: 100%;
     justify-content: center;
     align-items: center;
+    z-index:1;
   }
   #menu-toggle ~ .menu li {
     height: 0;
@@ -117,8 +118,8 @@
     transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   #menu-toggle:checked ~ .menu li {
-    border: 1px solid #000487;
-    height: 2.5em;
+    border: 0px solid #000487;
+    height: 3.5em;
     padding: 0.5em;
     transition: height 400ms cubic-bezier(0.23, 1, 0.32, 1);
   }
@@ -162,7 +163,7 @@
   background-color: #f7f7f7;
   border: 4px solid #00698f;
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   margin: 10px;
   width: 250px;
   height: 140px;

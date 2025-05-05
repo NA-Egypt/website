@@ -147,5 +147,10 @@ return [
     'suspended'                 =>'suspended',
     'Status'                    =>'Status',
     'Capacity'                  =>'Capacity',
-    'suspended'=>'This meeting is temporarily suspended'
+    'suspended'                 =>'This meeting is temporarily suspended',
+    'Service Committees'        =>'Service Committees',
+    'Arabic Service Committee Name'    =>'Arabic Service Committee Name',
+    'English Service Committee Name'    =>'English Service Committee Name',
+    'Chairman Name'             =>'Chairman Name',
+    'Chairman Phone'            =>'Chairman Phone'
 ];

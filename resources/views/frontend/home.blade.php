@@ -35,17 +35,27 @@
   <div class="row justify-content-center">
     <div class="helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خطوط المساعدة</h4>
-        <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a></p>
+        <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
+            <br />
+            <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+        </p>
     </div>
     <div class="helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خط المساعدة</h4>
         <div>الاسكندرية</div>
-        <p dir="ltr"><a href="tel:+201503884411">+201503884411</a></p>
+        <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
+            <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+        </p>
     </div>
     <div class="helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خط المساعدة</h4> 
         <div>غرب الجيزة</div>
-        <p dir="ltr"><a href="tel:+201003694690">+201003694690</a></p>
+        <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
+            <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+        </p>
     </div>
 </div>
 

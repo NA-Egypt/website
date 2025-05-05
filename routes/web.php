@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceBodyController;
+use App\Http\Controllers\ServiceCommitteeController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -77,6 +78,14 @@ Route::group(
             Route::get('/group/{group}',[GroupController::class,'edit'])->name('group.edit');
             Route::put('/group/{group}',[GroupController::class,'update'])->name('group.update');
             Route::delete('/group/{group}',[GroupController::class,'destroy'])->name('group.destroy');
+
+            // Service Committees Routes:
+            Route::get('/serviceCommittee',[serviceCommitteeController::class,'index'])->name('serviceCommittee.index');
+            Route::get('/serviceCommittee/create',[serviceCommitteeController::class,'create'])->name('serviceCommittee.create');
+            Route::post('/serviceCommittee',[serviceCommitteeController::class,'store'])->name('serviceCommittee.store');
+//            Route::get('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'edit'])->name('serviceCommittee.edit');
+//            Route::put('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'update'])->name('serviceCommittee.update');
+//            Route::delete('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'destroy'])->name('serviceCommittee.destroy');
 
             // Meeting Routes:
             Route::get('/meeting',[MeetingController::class,'index'])->name('meeting.index');
