@@ -17,22 +17,33 @@
         <!-- Main Menu -->
         <ul class="menu">
           <li><a href="https://facebook.com/OfficialNAEgyPage" target="_blank" style="color:white;"><x-fab-facebook style="width:32px; height:32px;"/></a></li>
+          @if (Route::currentRouteName() !== 'frontend.home')
           <li><a href="{{ route('frontend.home') }}" class="btn btn-outline-light">
             <img src="{{ asset('assets/images/icons/na-logo.png') }}" alt="" style="width:18px; height:18px; vertical-align: sub;">
             &nbsp;{{ __('messages.Home') }}
            </a>
           </li>
-          <li><a href="{{ route('frontend.meetings') }}" class="btn btn-outline-light">{{ __('messages.Meetings') }}</a></li>
+          @endif
+          <li><a href="{{ route('frontend.meetings') }}" class="btn btn-outline-light"><x-fas-users style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Meetings') }}</a></li>
   
           <!-- Language Switcher -->
-          @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+          @php
+            $currentLocale = LaravelLocalization::getCurrentLocale();
+            $supportedLocales = LaravelLocalization::getSupportedLocales();
+            $otherLocales = collect($supportedLocales)->reject(function ($value, $key) use ($currentLocale) {
+                return $key === $currentLocale;
+            });
+            $localeCode = $otherLocales->keys()->first();
+            $properties = $otherLocales->first();
+          @endphp
+          @if ($localeCode && $properties)
           <li class="dropdown">
             <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-outline-light">
               <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15">
               <span>{{ $properties['native'] }}</span>
             </a>
           </li>
-          @endforeach
+          @endif
   
           <!-- User Dropdown -->
           <li class="dropdown">

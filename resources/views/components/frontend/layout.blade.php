@@ -162,24 +162,43 @@
 .helpline-box {
   background-color: #f7f7f7;
   border: 4px solid #00698f;
+  color: #00698f !important;
   border-radius: 10px;
   padding: 10px;
   margin: 10px;
-  width: 250px;
+  width: 30%;
+  min-width: 200px;
   height: 140px;
   display: inline-block;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  background-image: url('{{ asset('assets/images/icons/na-logo.png') }}');
+  background-size: 140px;
+  background-position: right 125px bottom -4px;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.helpline-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent overlay */
+  z-index: -1;
 }
 
 .calc-box {
   background-color: #f7f7f7;
-  border: 1px solid #ddd;
+  border: 4px solid #00698f;
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   margin: 10px;
-  width: 250px;
-  height: 100%;
+  width: 30%;
+  min-width: 200px;
   display: inline-block;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -201,7 +220,7 @@
 
 .warpper {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: center;
   /* float: left; */
 }
@@ -213,17 +232,17 @@
   background: #32557f;
   display: inline-block;
   color: #fff;
-  border-radius: 0px 0px 3px 3px;
+  border-radius: 3px 3px 0px 0px;
   /* box-shadow: 0 0.5rem 0.8rem #00000080; */
 }
 
 .panels {
   background: #fff;
-  box-shadow: 0 2rem 2rem #00000080;
+  /* box-shadow: 0 2rem 2rem #000000; */
   min-height: 200px;
-  width: 100%;
-  max-width: 500px;
-  border-radius: 3px;
+  width: 98%;
+  max-width: 700px;
+  border-radius: 10px;
   overflow: hidden;
   padding: 20px;
 }
@@ -262,7 +281,7 @@
 #three:checked ~ .tabs #three-tab {
   background: #fff;
   color: #000;
-  border-bottom: 3px solid #32557f;
+  border-top: 3px solid #32557f;
 }
 
 </style>
@@ -276,6 +295,7 @@
             {{$slot}}
           </main>
         </div>
+      <x-frontend.footer />
     </body>
 
 </html>
