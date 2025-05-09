@@ -38,7 +38,7 @@
           @endphp
           @if ($localeCode && $properties)
           <li class="dropdown">
-            <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-outline-light">
+            <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-outline-warning">
               <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15">
               <span>{{ $properties['native'] }}</span>
             </a>

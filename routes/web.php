@@ -149,7 +149,9 @@ Route::group(
         Route::get('/searches/city/{id}/groups', [SearchController::class, 'city'])->name('searches.city');
         Route::get('/group/{id}/meetings', [SearchController::class, 'groupMeetings'])->name('searches.meeting');
 
-
+        Route::get('/literature', function(){
+            return view('frontend.literature');
+        })->name('frontend.literature');
 
     }
 );

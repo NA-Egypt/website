@@ -153,7 +153,8 @@ return [
     'Arabic Service Committee Name'                        =>'اسم اللجنة بالعربية',
     'English Service Committee Name'                       =>'اسم اللجنة بالانجليزية',
     'Chairman Name'                                        =>'اسم رئيس اللجنة',
-    'Chairman Phone'                                       =>'رقم رئيس اللجنة'
+    'Chairman Phone'                                       =>'رقم رئيس اللجنة',
+    'Literature'                                           =>'الأدبيات'
 
 
 ];

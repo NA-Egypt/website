@@ -152,5 +152,6 @@ return [
     'Arabic Service Committee Name'    =>'Arabic Service Committee Name',
     'English Service Committee Name'    =>'English Service Committee Name',
     'Chairman Name'             =>'Chairman Name',
-    'Chairman Phone'            =>'Chairman Phone'
+    'Chairman Phone'            =>'Chairman Phone',
+    'Literature'                =>'Literature'
 ];

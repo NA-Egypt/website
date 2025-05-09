@@ -1,1 +1,1 @@
-<div class="d-flex flex-row-reverse justify-content-center">حقوق النشر محفوظة &copy; 2025 زمالة المدمنين المجهولين - مصر</div>
+<footer>حقوق النشر محفوظة &copy; 2025 المدمنين المجهولين - مصر</footer>

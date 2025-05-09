@@ -283,6 +283,14 @@
   color: #000;
   border-top: 3px solid #32557f;
 }
+footer {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+}
 
 </style>
     <title>NA EGYPT</title>
