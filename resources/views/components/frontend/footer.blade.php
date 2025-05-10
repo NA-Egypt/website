@@ -1,1 +1,1 @@
-<footer>حقوق النشر محفوظة &copy; 2025 المدمنين المجهولين - مصر</footer>
+<footer>{{ __('messages.copyrights') }} &copy; {{ __('messages.Egypt') }}</footer>

@@ -1,7 +1,7 @@
 <x-frontend.layout>
-<h1 style="text-align: center;">زمالة المدمنين المجهولين مصر</h1><br />
+<h1 style="text-align: center;">{{ __('messages.NA') }}</h1><br />
 <div style="background: #fffce0;border: 1px #dbd06a solid;text-align: center;padding: 10px;border-radius: 10px;">
-<p style="margin-bottom: 0 !important">زمالة المدمنين المجهولين لا تنتسب لأي مؤسسات لعلاج الإدمان أو أي مؤسسات أخرى</p>
+<p style="margin-bottom: 0 !important">{{ __('messages.thewarning') }}</p>
 </div>
 <br />
 <div class="warpper">
@@ -10,19 +10,19 @@
     {{-- <input class="radio" id="three" name="group" type="radio"> --}}
   
     <div class="tabs">
-      <label class="tab" id="one-tab" for="one">نبذة عنا</label>
-      <label class="tab" id="three-tab" for="two">نحن بالفعل نتعافى</label>
+      <label class="tab" id="one-tab" for="one">{{__('messages.aboutus') }}</label></label>
+      <label class="tab" id="three-tab" for="two">{{ __('messages.wedorecover') }}</label>
       {{-- <label class="tab" id="two-tab" for="three">من هو المدمن؟</label> --}}
     </div>
   
     <div class="panels">
       <div class="panel" id="one-panel">
-        <div class="panel-title">ماهو برنامج زمالة المدمنين المجهولين</div>
-        <p style="text-align: center;">برنامج زمالة المدمنين المجهولين هو زمالة أو جمعية لا تهدف إلى الربح وتتكون من رجال ونساء أصبحت المخدرات مشكلة رئيسية بالنسبة لهم فنحن مدمنون نتعافى ونجتمع معاً بانتظام لنساعد بعضنا البعض كي نبقى ممتنعين. إنه برنامج للامتناع التام عن كافة أنواع المخدرات وعضويته لا تتطلب إلا شيئاً واحداً وهو الرغبة في الامتناع عن التعاطي، نقترح عليك أن تكون متفتحاً ذهنياً وتعطي نفسك فرصة، برنامجنا عبارة عن مجموعة من المبادئ مكتوبة ببساطة شديدة ونستطيع إتباعها فى حياتنا اليومية وأهم ما يميزها هو أنها ناجحة. لا توجد قيود على زمالة المدمنين المجهولين فنحن غير منتسبين لأية منظمات أخرى وليس لنا أية رسوم إشتراك أو مستحقات ولا نوقع تعهدات ولا نقدم وعوداً لأي شخص ولا صلة لنا بأية جهة سياسية أو دينية أو بأجهزة تطبيق القانون ولا نخضع للمراقبة إطلاقاً. يستطيع أي شخص أن ينضم لنا بغض النظر عن عمره أو جنسه أو هويته الجنسية أو عقيدته أو ديانته أو افتقاره إلى الدين.</p>
+        <div class="panel-title">{{ __('messages.whatistheprogram') }}</div>
+        <p>{{ __('messages.whatistheprogramtxt') }}</p>
       </div>
       <div class="panel" id="two-panel">
-        <div class="panel-title">نحن بالفعل نتعافى</div>
-        <p>عندما نكتشف في نهاية الطريق أننا لا نستطيع بعد الآن أن نحيا كبشر سواء بالمخدرات أو بدونها، نواجه جميعاً نفس المأزق. ماذا بقي أمامنا لنفعله؟ ويبرز أمامنا هذا الاختيار: إما أن نستمر بكل ما نستطيع لنصل لنهايات مريرة – السجون أو المصحات أو الموت – أو نجد أسلوباً جديداً للحياة. في الماضي لم يُتَح هذا الاختيار الأخير إلا للقليل من المدمنين، والمدمنون اليوم أوفر حظاً، فلأول مرة في التاريخ يثبت أسلوب بسيط نفسه في حياة الكثير من المدمنين، وهو متاح لنا جميعاً، إنه برنامج بسيط وروحاني ولكنه ليس ديني، يُعرَف باسم “زمالة المدمنين المجهولين.”</p>
+        <div class="panel-title">{{ __('messages.wedorecover') }}</div>
+        <p>{{ __('messages.wedorecovertxt') }}</p>
       </div>
       {{-- <div class="panel" id="three-panel">
         <div class="panel-title">من هو المدمن؟</div>
@@ -32,7 +32,7 @@
   </div>
   <div class="row justify-content-center">
     <div class="helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خطوط المساعدة</h4>
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
         <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
             <br />
             <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
@@ -40,16 +40,16 @@
         </p>
     </div>
     <div class="helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خط المساعدة</h4>
-        <div>الاسكندرية</div>
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
+        <div>{{ __('messages.alexandria') }}</div>
         <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
             <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
             <br />
         </p>
     </div>
     <div class="helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;خط المساعدة</h4> 
-        <div>غرب الجيزة</div>
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4> 
+        <div>{{ __('messages.westgiza') }}</div>
         <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
             <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
             <br />
@@ -60,31 +60,31 @@
 <!--Calculator-->
 <div class="calc-box">
     <div class="form-group">
-        <h5><label for="date">تاريخ امتناعك</label></h5>
+        <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
         <input type="date" class="form-control mb-3" onchange="setDate(this)">
     </div>
   <form name="myForm">
     <div class="form-group">
       <div class="input-group mb-3">
-        <input type="text" class="form-control" name="Fyears" placeholder="السنوات" readonly>
+        <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
         <div class="input-group-append">
-            <span class="input-group-text" id="basic-addon3">سنوات</span>
+            <span class="input-group-text" id="basic-addon3">{{ __('messages.years') }}</span>
         </div>
         </div>
         <div class="input-group mb-3">
-        <input type="text" class="form-control" name="Fmonth" placeholder="الشهور" readonly>
+        <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
             <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon3">شهور</span>
+                <span class="input-group-text" id="basic-addon3">{{ __('messages.months') }}</span>
             </div>
         </div>
         <div class="input-group mb-3">
-        <input type="text" class="form-control" name="FR" placeholder="الأيام" readonly>
+        <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
             <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon3">أيام</span>
+                <span class="input-group-text" id="basic-addon3">{{ __('messages.days') }}</span>
             </div>
         </div>
     </div>
-    <button type="button" onclick="findTime(document.myForm)" class="btn btn-primary">احسب مدة امتناعك</button>
+    <button type="button" onclick="findTime(document.myForm)" class="btn btn-primary">{{ __('messages.calculate') }}</button>
   </form>
 </div>
 <!--Calculator End-->

@@ -71,7 +71,7 @@
               </li>
               @else
               <li>
-                <a href="{{ url('/login/microsoft') }}" class="btn btn-primary">Sign-in <x-fas-sign-in-alt style="width:16px; height:16px;"/></a>
+                <a href="{{ url('/login/microsoft') }}" class="btn btn-primary">{{ __('messages.Login') }} <x-fas-sign-in-alt style="width:16px; height:16px;"/></a>
               </li>
               @endauth
             </li>
