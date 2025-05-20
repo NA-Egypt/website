@@ -33,7 +33,11 @@ class ServiceCommitteeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fields = request()->all();
+
+        ServiceCommittee::create($fields);
+
+        return redirect()->route('serviceCommittee.index');
     }
 
     /**

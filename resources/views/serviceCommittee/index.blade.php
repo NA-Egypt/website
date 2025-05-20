@@ -28,8 +28,8 @@
                     <th>{{  __('messages.Arabic Address') }}</th>
                     <th>{{  __('messages.English Address') }}</th>
                     <th>{{  __('messages.Locations') }}</th>
-                    <th>{{  __('messages.Control') }}</th>
                 </tr>
+                <th>{{  __('messages.Control') }}</th>
 
                 </thead>
 
@@ -47,9 +47,9 @@
                         <td>{{ $sc->en_address }}</td>
                         <td>{{ $sc->location }}</td>
                         <td>
-                            <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                            <x-button-a href="{{ route('group.show', $group->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
-                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$group->id}}" routeName="group.destroy" />
+                            <x-button-a href="{{ route('group.edit', $sc->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
+                            <x-button-a href="{{ route('group.show', $sc->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
+                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$sc->id}}" routeName="group.destroy" />
                         </td>
                     </tr>
                 @endforeach

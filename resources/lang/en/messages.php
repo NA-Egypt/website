@@ -155,7 +155,7 @@ return [
     'Chairman Phone'            =>'Chairman Phone',
     'Literature'                =>'Literature',
     'Login'                   =>'Login',
-    'NA'                        =>'Narcotics Anonymous - Egypt',
+    'NA'                        =>'Narcotics Anonymous Egypt',
     'thewarning'                =>'Narcotics Anonymous is not affiliated with any addiction treatment facilities or any other institutions',
     'aboutus'                 =>'About Us',
     'helplines'               =>'Helplines',
