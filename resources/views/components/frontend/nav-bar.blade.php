@@ -25,7 +25,7 @@
           </li>
           @endif
           <li><a href="{{ route('frontend.meetings') }}" class="btn btn-outline-light"><x-fas-users style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Meetings') }}</a></li>
-  
+          <li><a href="{{ route('frontend.literature') }}" class="btn btn-outline-light"><x-fas-book style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Literature') }}</a></li>
           <!-- Language Switcher -->
           @php
             $currentLocale = LaravelLocalization::getCurrentLocale();
