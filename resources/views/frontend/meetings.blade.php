@@ -45,7 +45,7 @@
         
         <div class="d-flex justify-content-center align-items-center m-3" >
             {{-- <button class="btn btn-outline-dark px-4 mx-3" type="submit">{{__('messages.Filter')}}</button> --}}
-            <a href="{{ route('frontend.meetings') }}" class="btn btn-outline-dark px-4">{{__('messages.Clear Filters')}}</a>
+            <a href="{{ route('frontend.meetings') }}" class="btn btn-outline-danger px-4">{{__('messages.Clear Filters')}}</a>
         </div>
 
     </form>
