@@ -20,7 +20,7 @@ body {
   display: flex;
   flex-direction: row-reverse;
   margin: auto;
-  /* padding: 0%; */
+  padding: 0%;
 }
 
 .sidebar {
@@ -127,7 +127,15 @@ h1 {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 1.5;
+  line-height: normal;
+}
+h2 {
+  background: -webkit-linear-gradient(#eee, #000487);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: normal;
+  font-weight: bold;
 }
 .top-nav {
   display: flex;
@@ -135,11 +143,11 @@ h1 {
   align-items: center;
   justify-content: space-between;
   background-color: #00BAF0;
-  background: linear-gradient(to left, #000487 2%, transparent 50%);
+  background: linear-gradient(to left, #000487 2%, transparent 80%);
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: #FFF;
   height: 100px;
-  /* padding: 1em; */
+  padding: 1em;
   direction: rtl;
 }
 
@@ -152,7 +160,7 @@ h1 {
 }
 
 .menu > li {
-  margin: 0 1rem;
+  margin: 0 0.3rem;
   overflow: hidden;
 }
 
@@ -240,11 +248,11 @@ h1 {
     margin: 0;
     padding: 0.5em 0;
     width: 100%;
-    color: white;
-    background-color: #222;
+    color: #000;
+    background-color: #000;
   }
   .menu > li:not(:last-child) {
-    border-bottom: 1px solid #444;
+    border-bottom: 0px solid #444;
   }
   .meetings-grid {
     grid-template-columns: 1fr;
@@ -347,4 +355,28 @@ footer {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.ltr .card,
+.ltr .meeting-card,
+.ltr .tab {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.rtl .card,
+.rtl .meeting-card,
+.rtl .tab {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.ltr .user-img {
+  margin-right: 0.5rem !important;
+  margin-left: 0 !important;
+}
+
+.rtl .user-img {
+  margin-left: 0.5rem !important;
+  margin-right: 0 !important;
 }

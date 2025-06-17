@@ -45,30 +45,37 @@ class ServiceCommitteeController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $serviceCommittee = ServiceCommittee::findOrFail($id);
+
+        return view('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(ServiceCommittee $serviceCommittee)
     {
-        //
+        $users = User::all();
+        return view('serviceCommittee.edit', ['serviceCommittee' => $serviceCommittee, 'users' => $users]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, ServiceCommittee $serviceCommittee)
     {
-        //
+        $serviceCommittee->update($request->all());
+
+        return redirect()->route('serviceCommittee.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ServiceCommittee $serviceCommittee)
     {
-        //
+        $serviceCommittee->delete();
+
+        return redirect()->route('serviceCommittee.index');
     }
 }

@@ -74,7 +74,7 @@
   
   [dir="rtl"] .page-content {
     margin-left: 0;  /* Remove left margin */
-    margin-right: 250px;  /* Add margin to the right to accommodate the sidebar */
+    margin-right: 250px;  
     direction: rtl;
   }
   
@@ -115,7 +115,7 @@
   
   .card {
     background: white;
-    padding: 15px;
+    padding: 5px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;

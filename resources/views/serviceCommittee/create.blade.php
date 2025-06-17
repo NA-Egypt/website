@@ -21,6 +21,7 @@
             <x-forms.input id="location" name="location" label="{{ __('messages.Locations')}}"/>
             <x-forms.input id="ar_address" name="ar_address" label="{{ __('messages.Arabic Address')}}"/>
             <x-forms.input id="en_address" name="en_address" label="{{ __('messages.English Address')}}"/>
+            <x-forms.input id="notes" name="notes" label="{{ __('messages.Committee Meetings')}}"/>
             <x-forms.normal-button color='outline-dark' name="{{ __('messages.Save') }}" />
 
         </form>

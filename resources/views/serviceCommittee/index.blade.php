@@ -28,8 +28,9 @@
                     <th>{{  __('messages.Arabic Address') }}</th>
                     <th>{{  __('messages.English Address') }}</th>
                     <th>{{  __('messages.Locations') }}</th>
+                    <th>{{  __('messages.Committee Meetings') }}</th>
+                    <th>{{  __('messages.Control') }}</th>
                 </tr>
-                <th>{{  __('messages.Control') }}</th>
 
                 </thead>
 
@@ -46,10 +47,11 @@
                         <td>{{ $sc->ar_address }}</td>
                         <td>{{ $sc->en_address }}</td>
                         <td>{{ $sc->location }}</td>
+                        <td>{{ $sc->notes }}</td>
                         <td>
-                            <x-button-a href="{{ route('group.edit', $sc->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                            <x-button-a href="{{ route('group.show', $sc->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
-                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$sc->id}}" routeName="group.destroy" />
+                            <x-button-a href="{{ route('serviceCommittee.edit', $sc->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
+                            <x-button-a href="{{ route('serviceCommittee.show', $sc->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
+                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$sc->id}}" routeName="serviceCommittee.destroy" />
                         </td>
                     </tr>
                 @endforeach

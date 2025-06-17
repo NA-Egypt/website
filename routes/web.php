@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MeetingFilterController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
+use App\Http\Controllers\ContactUsController;
 
 // Localization Routes:
 Route::group(
@@ -83,9 +84,10 @@ Route::group(
             Route::get('/serviceCommittee',[serviceCommitteeController::class,'index'])->name('serviceCommittee.index');
             Route::get('/serviceCommittee/create',[serviceCommitteeController::class,'create'])->name('serviceCommittee.create');
             Route::post('/serviceCommittee',[serviceCommitteeController::class,'store'])->name('serviceCommittee.store');
-//            Route::get('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'edit'])->name('serviceCommittee.edit');
-//            Route::put('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'update'])->name('serviceCommittee.update');
-//            Route::delete('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'destroy'])->name('serviceCommittee.destroy');
+            Route::get('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'edit'])->name('serviceCommittee.edit');
+            Route::put('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'update'])->name('serviceCommittee.update');
+            Route::get('/serviceCommittee/show/{serviceCommittee}',[serviceCommitteeController::class,'show'])->name('serviceCommittee.show');
+            Route::delete('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'destroy'])->name('serviceCommittee.destroy');
 
             // Meeting Routes:
             Route::get('/meeting',[MeetingController::class,'index'])->name('meeting.index');
@@ -136,12 +138,6 @@ Route::group(
         // Logout:
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');
 
-        // Frontend:
-        Route::get('/', function(){
-            return view('frontend.home');
-        })->name('frontend.home');
-
-//        Route::get('/frontend/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
         Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
 
 
@@ -149,10 +145,21 @@ Route::group(
         Route::get('/searches/city/{id}/groups', [SearchController::class, 'city'])->name('searches.city');
         Route::get('/group/{id}/meetings', [SearchController::class, 'groupMeetings'])->name('searches.meeting');
 
+        // Frontend:
+        Route::get('/', function(){
+            return view('frontend.home');
+        })->name('frontend.home');
+
         Route::get('/literature', function(){
             return view('frontend.literature');
         })->name('frontend.literature');
 
+        Route::get('/forpublic', function(){
+            return view('frontend.forpublic');
+        })->name('frontend.forpublic');
+
+        Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
+        Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');
     }
 );
 

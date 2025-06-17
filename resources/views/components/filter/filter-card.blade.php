@@ -1,4 +1,7 @@
 @props(['meetings'])
+@php
+$direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
+@endphp
 
 <div class="container" style="">
     <div class="row justify-content-center" style="">
@@ -8,12 +11,8 @@
             <input type="search" id="search-input" class="form-control mb-3" placeholder="{{__('messages.Search meetings')}}...">
 
             @foreach($meetings as $meeting)
-                    <div class="meetings-section mt-4">
-                        @if(app()->getLocale() === 'en')
-                            <div class="meetings-list" dir="ltr">
-                        @else
-                            <div class="meetings-list" dir="rtl">
-                        @endif
+                <div class="meetings-section mt-4">
+                    <div class="meetings-list" dir="{{ $direction }}">
 
                         @if($meeting->type=="open")
                             <div class="meeting-item" style="border: 4px solid crimson;">
@@ -26,17 +25,13 @@
                             <div class="meeting-item">
                         @endif
                         <div style="text-align: center;font-size: x-large;color: blue;">
-                            {{ app()->getLocale() === 'ar' ? $meeting->group->ar_name : $meeting->group->en_name }}
+                            {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
                         </div>
                         <!-- Day and Time Row -->
                         <div class="meeting-time-row">
-                            <div class="meeting-day text-danger mb-2" style="text-align: -webkit-right;">
+                            <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-end' : 'text-end' }}">
                                 <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
-                                @if(app()->getLocale() === 'ar')
-                                    {{ $meeting->day->ar_name }}
-                                @else
-                                    {{ $meeting->day->en_name }}
-                                @endif
+                                {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
                                 
                                 <span class="meeting-start-time" dir="ltr" style="float: left;">
                                     <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;
@@ -48,28 +43,16 @@
                     
                         <!-- Type and Topic in a single row -->
                         <div class="meeting-type-topic">
-
                             @if($meeting->topic)
                                 <div class="meeting-type-badge">
                                     <x-fas-book-open style="width:16px; height:16px;"/>
-                                    @if(app()->getLocale() === 'ar')
-                                        {{$meeting->topic->ar_name }}
-                                    @else
-                                        {{ $meeting->topic->en_name }}
-                                    @endif
-
+                                    {{ $direction === 'rtl' ? $meeting->topic->ar_name : $meeting->topic->en_name }}
                                 </div>
                             @endif
                             @if($meeting->lang)
                             <div class="meeting-topic-badge">
                                 <x-fas-language style="width:16px; height:16px;"/>
-
-                                @if(app()->getLocale() === 'ar')
-                                    {{ __("messages." . $meeting->lang) }}
-                                @else
-                                    {{ __("messages." . $meeting->lang) }}
-                                @endif
-
+                                {{ __("messages." . $meeting->lang) }}
                             </div>
                             @endif
                             @if($meeting->type)
@@ -80,20 +63,13 @@
                                     <div class="meeting-type-badge">
                                         <x-fas-user-alt-slash style="width:16px; height:16px;"/>
                                 @endif
-                                    @if(app()->getLocale() === 'ar')
-                                        {{ __("messages." . $meeting->type) }}
-                                    @else
-                                        {{ __("messages." . $meeting->type) }}
-                                    @endif
-
+                                    {{ __("messages." . $meeting->type) }}
                                 </div>
                             @endif
                             @if($meeting->capacity)
                                 <div class="meeting-topic-badge">
                                     <x-fas-users style="width:16px; height:16px;"/>
-
                                     {{$meeting->capacity }}
-
                                 </div>
                             @endif
                         </div>
@@ -101,11 +77,7 @@
                         @if($meeting->group->phone)
                         <div>
                             <x-fas-user-circle style="width:16px; height:16px;"/>
-                            @if(app()->getLocale() === 'ar')
-                            {{ $meeting->group->ar_gsr_name }}
-                            @else
-                            {{ $meeting->group->en_gsr_name }}
-                            @endif
+                            {{ $direction === 'rtl' ? $meeting->group->ar_gsr_name : $meeting->group->en_gsr_name }}
                             <br />
                             <x-fas-mobile-alt style="width:16px; height:16px;"/>
                             <a href="tel:{{ $meeting->group->phone }}" itemprop="telephone">
@@ -123,11 +95,7 @@
                                 @foreach($meeting->options as $option)
                                     <div class="option-item">
                                     <span class="option-name">
-                                        @if(app()->getLocale() === 'ar')
-                                            {{ $option->ar_name }}
-                                        @else
-                                            {{ $option->en_name }}
-                                        @endif
+                                        {{ $direction === 'rtl' ? $option->ar_name : $option->en_name }}
                                     </span>
                                     <span class="option-value">
                                         @if($option->id == 15)
@@ -155,15 +123,11 @@
                         @if($meeting->group->ar_address)
                             <div class="meeting-options">
                                 <x-fas-map-pin style="width:16px; height:16px;"/>
-                                @if(app()->getLocale() === 'ar')
-                                {{ $meeting->group->ar_address }}
-                                @else
-                                    @if($meeting->group->en_address)
-                                    {{ $meeting->group->en_address }}
-                                    @else
-                                    {{ $meeting->group->ar_address }}
-                                    @endif
-                                @endif
+                                {{
+                                    $direction === 'rtl'
+                                        ? $meeting->group->ar_address
+                                        : ($meeting->group->en_address ?: $meeting->group->ar_address)
+                                }}
                                 @if($meeting->group->location)
                                 <br />
                                 <x-fas-map-marker style="width:16px; height:16px;"/>
