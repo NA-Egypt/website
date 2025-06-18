@@ -219,4 +219,5 @@ return [
     'BasicText' => 'النص الأساسي صوتي بالعربية',
     'BasicTextdownload' => 'تحميل',
     'BasicTextlisten' => 'استماع',
+    'Account' => 'حساب المستخدم',
 ];

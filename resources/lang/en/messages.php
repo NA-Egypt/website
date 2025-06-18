@@ -218,4 +218,5 @@ return [
     'BasicText' => 'Basic Text Arabic Audio',
     'BasicTextdownload' => 'Download',
     'BasicTextlisten' => 'Listen',
+    'Account' => 'User Account',
 ];

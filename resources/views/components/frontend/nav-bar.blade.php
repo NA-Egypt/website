@@ -48,36 +48,41 @@
           @endif
   
           <!-- User Dropdown -->
-          <li>
-              <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img" alt="">
-              @auth
-              <a href="#" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="bottom" title="{{ Auth::user()->name }}">
-                <span class="badge-dark">{{ Auth::user()->email }}</span>
-              </a>
-              @endauth
-              @auth
-              @if(Auth::user()->hasRole('super admin'))
-              <li><a href="{{ route('dashboard') }}" class="btn btn-outline-primary">{{ __('messages.Dashboard') }} <x-fas-gear style="width:16px; height:16px;"/></a></li>
-              @elseif(Auth::user()->hasRole('gsr'))
-              @php
-                $group = \App\Models\Group::whereHas('user', function ($q) { $q->where('email', Auth::user()->email); })->first();
-              @endphp
-              @if ($group)
-              <li><a href="{{ route('group.show', ['group' => $group->id]) }}">{{ __('messages.Group Details') }}</a></li>
-              @endif
-              @endif
-              <li>
-                <form method="POST" action="{{ route('logout') }}">
-                  @csrf
-                  <a href="#" onclick="event.preventDefault(); this.closest('form').submit();" class="btn btn-outline-primary">{{ __('messages.Logout') }} <x-fas-sign-out-alt style="width:16px; height:16px;"/></a>
-                </form>
-              </li>
-              @else
-              <li>
-                <a href="{{ url('/login/microsoft') }}" class="btn btn-primary">{{ __('messages.Login') }} <x-fas-sign-in-alt style="width:16px; height:16px;"/></a>
-              </li>
-              @endauth
-            </li>
+          <li class="dropdown">
+    <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <x-fas-user style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Account') }}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
+      <li class="py-2">
+        <img src="{{ asset('assets/images/icons/na-logo.png') }}" alt="" class="rounded-circle" width="40" height="40">
+      </li>
+      @auth
+        <li><strong>{{ Auth::user()->name }}</strong></li>
+        <li><small>{{ Auth::user()->email }}</small></li>
+        <li><hr class="dropdown-divider"></li>
+        @if(Auth::user()->hasRole('super admin'))
+          <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('messages.Dashboard') }} <x-fas-gear style="width:16px; height:16px;"/></a></li>
+        @elseif(Auth::user()->hasRole('gsr'))
+          @php
+            $group = \App\Models\Group::whereHas('user', function ($q) { $q->where('email', Auth::user()->email); })->first();
+          @endphp
+          @if ($group)
+            <li><a class="dropdown-item" href="{{ route('group.show', ['group' => $group->id]) }}">{{ __('messages.Group Details') }}</a></li>
+          @endif
+        @endif
+        <li>
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <a class="dropdown-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+              {{ __('messages.Logout') }} <x-fas-sign-out-alt style="width:16px; height:16px;"/>
+            </a>
+          </form>
+        </li>
+      @else
+        <li><a class="dropdown-item" href="{{ url('/login/microsoft') }}">{{ __('messages.Login') }} <x-fas-sign-in-alt style="width:16px; height:16px;"/></a></li>
+      @endauth
+    </ul>
+  </li>
         </ul>
       </div>
     </section>
