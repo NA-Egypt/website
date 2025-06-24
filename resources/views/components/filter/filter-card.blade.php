@@ -2,143 +2,143 @@
 @php
 $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
+<div class="container px-4 justify-content-center">
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-12 col-lg-12">
+            <input type="search" id="search-input" class="form-control" placeholder="{{__('messages.Search meetings')}}...">
+        </div>
+    </div>
 
-<div class="container" style="">
-    <div class="row justify-content-center" style="">
-        <div class="col-11 col-md-6">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach($meetings as $meeting)
+            <div class="meetings-list mt-4" dir="{{ $direction }}">
 
-            <!-- Search Input -->
-            <input type="search" id="search-input" class="form-control mb-3" placeholder="{{__('messages.Search meetings')}}...">
-
-            @foreach($meetings as $meeting)
-                <div class="meetings-section mt-4">
-                    <div class="meetings-list" dir="{{ $direction }}">
-
-                        @if($meeting->type=="open")
-                            <div class="meeting-item" style="border: 4px solid crimson;">
-                        @elseif($meeting->status=="suspended")
-                            <div class="meeting-item-suspended" style="border: 4px dashed #444;">
-                                <div style="text-align: center;font-size: x-large;color: crimson;">
-                                    {{ __('messages.suspended') }}
-                                </div>
-                        @else
-                            <div class="meeting-item">
-                        @endif
-                        <div style="text-align: center;font-size: x-large;color: blue;">
-                            {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
-                        </div>
-                        <!-- Day and Time Row -->
-                        <div class="meeting-time-row">
-                            <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-end' : 'text-end' }}">
-                                <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
-                                {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
-                                
-                                <span class="meeting-start-time" dir="ltr" style="float: left;">
-                                    <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;
-                                    {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} -
-                                    {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
-                                </span>
-                            </div>
-                        </div>
-                    
-                        <!-- Type and Topic in a single row -->
-                        <div class="meeting-type-topic">
-                            @if($meeting->topic)
-                                <div class="meeting-type-badge">
-                                    <x-fas-book-open style="width:16px; height:16px;"/>
-                                    {{ $direction === 'rtl' ? $meeting->topic->ar_name : $meeting->topic->en_name }}
-                                </div>
-                            @endif
-                            @if($meeting->lang)
-                            <div class="meeting-topic-badge">
-                                <x-fas-language style="width:16px; height:16px;"/>
-                                {{ __("messages." . $meeting->lang) }}
-                            </div>
-                            @endif
-                            @if($meeting->type)
-                                @if($meeting->type=="open")
-                                    <div class="meeting-open-badge" style="border: 2px solid pink;">
-                                        <x-fas-circle-notch style="width:16px; height:16px;"/>
-                                @else
-                                    <div class="meeting-type-badge">
-                                        <x-fas-user-alt-slash style="width:16px; height:16px;"/>
-                                @endif
-                                    {{ __("messages." . $meeting->type) }}
-                                </div>
-                            @endif
-                            @if($meeting->capacity)
-                                <div class="meeting-topic-badge">
-                                    <x-fas-users style="width:16px; height:16px;"/>
-                                    {{$meeting->capacity }}
-                                </div>
-                            @endif
-                        </div>
-                        <!-- GSR DATA -->
-                        @if($meeting->group->phone)
-                        <div>
-                            <x-fas-user-circle style="width:16px; height:16px;"/>
-                            {{ $direction === 'rtl' ? $meeting->group->ar_gsr_name : $meeting->group->en_gsr_name }}
-                            <br />
-                            <x-fas-mobile-alt style="width:16px; height:16px;"/>
-                            <a href="tel:{{ $meeting->group->phone }}" itemprop="telephone">
-                                {{ $meeting->group->phone }}
-                            </a>
-                        </div>
-                        @endif
-                        <!-- Meeting Options -->
-                        @if($meeting->options->count() > 0)
-                        <div class="meeting-options">
-                            <div class="options-title">
-                                <x-fas-circle style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.Options') }}
-                            </div>
-                            <div class="options-list">
-                                @foreach($meeting->options as $option)
-                                    <div class="option-item">
-                                    <span class="option-name">
-                                        {{ $direction === 'rtl' ? $option->ar_name : $option->en_name }}
-                                    </span>
-                                    <span class="option-value">
-                                        @if($option->id == 15)
-                                        &NonBreakingSpace;<x-fas-smoking style="width:16px; height:16px;"/>
-                                        @elseif($option->id == 14)
-                                            &NonBreakingSpace;<x-fas-parking style="width:16px; height:16px;"/>
-                                        @elseif($option->id == 13)
-                                        &NonBreakingSpace;<x-fas-wheelchair style="width:16px; height:16px;"/>
-                                        @elseif($option->id == 16)
-                                        &NonBreakingSpace;<x-fas-fire style="width:16px; height:16px;"/>
-                                        @endif
-                                    </span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
-                        @if($meeting->notes)
-                        <div class="meeting-options">
-                            <x-fas-asterisk style="width:16px; height:16px;"/>
-                            {{ $meeting->notes }}
-                        </div>
-                        @endif
-
-                        @if($meeting->group->ar_address)
-                            <div class="meeting-options">
-                                <x-fas-map-pin style="width:16px; height:16px;"/>
-                                {{
-                                    $direction === 'rtl'
-                                        ? $meeting->group->ar_address
-                                        : ($meeting->group->en_address ?: $meeting->group->ar_address)
-                                }}
-                                @if($meeting->group->location)
-                                <br />
-                                <x-fas-map-marker style="width:16px; height:16px;"/>
-                                <a href="{{ $meeting->group->location }}" target="_blank">الخريطة</a>
-                                @endif
-                            </div>
-                        @endif
-                        </div>
+            @if($meeting->type=="open")
+                <div class="meeting-item" style="border: 4px solid crimson;">
+            @elseif($meeting->status=="suspended")
+                <div class="meeting-item-suspended" style="border: 4px dashed #444;">
+                    <div style="text-align: center;font-size: x-large;color: crimson;">
+                        {{ __('messages.suspended') }}
                     </div>
+            @else
+                <div class="meeting-item">
+            @endif
+            <div style="text-align: center;font-size: x-large;color: blue;">
+                {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
+            </div>
+            <!-- Day and Time Row -->
+            <div class="meeting-time-row">
+                <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-end' : 'text-end' }}">
+                    <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
+                    {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
+                    
+                    <span class="meeting-start-time" dir="ltr" style="float: left;">
+                        <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;
+                        {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} -
+                        {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
+                    </span>
                 </div>
-            @endforeach
+            </div>
+        
+            <!-- Type and Topic in a single row -->
+            <div class="meeting-type-topic">
+                @if($meeting->topic)
+                    <div class="meeting-type-badge">
+                        <x-fas-book-open style="width:16px; height:16px;"/>
+                        {{ $direction === 'rtl' ? $meeting->topic->ar_name : $meeting->topic->en_name }}
+                    </div>
+                @endif
+                @if($meeting->lang)
+                <div class="meeting-topic-badge">
+                    <x-fas-language style="width:16px; height:16px;"/>
+                    {{ __("messages." . $meeting->lang) }}
+                </div>
+                @endif
+                @if($meeting->type)
+                    @if($meeting->type=="open")
+                        <div class="meeting-open-badge" style="border: 2px solid pink;">
+                            <x-fas-circle-notch style="width:16px; height:16px;"/>
+                    @else
+                        <div class="meeting-type-badge">
+                            <x-fas-user-alt-slash style="width:16px; height:16px;"/>
+                    @endif
+                        {{ __("messages." . $meeting->type) }}
+                    </div>
+                @endif
+                @if($meeting->capacity)
+                    <div class="meeting-topic-badge">
+                        <x-fas-users style="width:16px; height:16px;"/>
+                        {{$meeting->capacity }}
+                    </div>
+                @endif
+            </div>
+            <!-- GSR DATA -->
+            @if($meeting->group->phone)
+            <div>
+                <x-fas-user-circle style="width:16px; height:16px;"/>
+                {{ $direction === 'rtl' ? $meeting->group->ar_gsr_name : $meeting->group->en_gsr_name }}
+                <br />
+                <x-fas-mobile-alt style="width:16px; height:16px;"/>
+                <a href="tel:{{ $meeting->group->phone }}" itemprop="telephone">
+                    {{ $meeting->group->phone }}
+                </a>
+            </div>
+            @endif
+            <!-- Meeting Options -->
+            @if($meeting->options->count() > 0)
+            <div class="meeting-options">
+                <div class="options-title">
+                    <x-fas-circle style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.Options') }}
+                </div>
+                <div class="options-list">
+                    @foreach($meeting->options as $option)
+                        <div class="option-item">
+                        <span class="option-name">
+                            {{ $direction === 'rtl' ? $option->ar_name : $option->en_name }}
+                        </span>
+                        <span class="option-value">
+                            @if($option->id == 15)
+                            &NonBreakingSpace;<x-fas-smoking style="width:16px; height:16px;"/>
+                            @elseif($option->id == 14)
+                                &NonBreakingSpace;<x-fas-parking style="width:16px; height:16px;"/>
+                            @elseif($option->id == 13)
+                            &NonBreakingSpace;<x-fas-wheelchair style="width:16px; height:16px;"/>
+                            @elseif($option->id == 16)
+                            &NonBreakingSpace;<x-fas-fire style="width:16px; height:16px;"/>
+                            @endif
+                        </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @if($meeting->notes)
+            <div class="meeting-options">
+                <x-fas-asterisk style="width:16px; height:16px;"/>
+                {{ $meeting->notes }}
+            </div>
+            @endif
+
+            @if($meeting->group->ar_address)
+                <div class="meeting-options">
+                    <x-fas-map-pin style="width:16px; height:16px;"/>
+                    {{
+                        $direction === 'rtl'
+                            ? $meeting->group->ar_address
+                            : ($meeting->group->en_address ?: $meeting->group->ar_address)
+                    }}
+                    @if($meeting->group->location)
+                    <br />
+                    <x-fas-map-marker style="width:16px; height:16px;"/>
+                    <a href="{{ $meeting->group->location }}" target="_blank">{{__('messages.Map')}}</a>
+                    @endif
+                </div>
+            @endif
+            </div>
+        @endforeach
+            </div>
         </div>
     </div>
 </div>
@@ -227,31 +227,39 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     }
 
     .meeting-item {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-        border-left: 4px solid #4f46e5;
-        border-right: 4px solid #4f46e5;
+        background-color: #ffffff;
+        padding: 24px;
+        border-radius: 12px;
+        border-left: 5px solid #1e40af;
+        border-right: 5px solid #1e40af;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin-bottom: 24px;
+        min-width: 340px;
+        min-height: 360px;
+        height: auto;
+        width: 100%;
+        max-width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px; /* Added space between cards */
-        transition: all 0.3s ease;
+        justify-content: space-between;
     }
 
     .meeting-item-suspended {
-        background-color: #aaaaaa;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-        /*border-left: 4px dashed #444;
-        border-right: 4px dashed #444;*/
+        background-color: #f1f1f1;
+        padding: 24px;
+        border-radius: 12px;
+        border: 3px dashed #777;
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
+        min-width: 340px;
+        min-height: 360px;
+        height: auto;
+        width: 100%;
+        max-width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px; /* Added space between cards */
-        transition: all 0.3s ease;
+        justify-content: space-between;
     }
 
     .meeting-item:hover {
@@ -394,24 +402,70 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .meeting-item {
-            padding: 10px;
+        .meeting-item,
+        .meeting-item-suspended {
+            padding: 12px;
+            margin-bottom: 16px;
         }
 
         .meeting-type-topic {
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
+            margin: 6px 0;
+        }
+
+        .meeting-type-badge,
+        .meeting-topic-badge,
+        .meeting-open-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 16px;
+        }
+
+        .meeting-options {
+            padding: 8px;
+            font-size: 0.85rem;
+        }
+
+        .option-item {
+            padding: 3px 6px;
+            font-size: 0.75rem;
         }
 
         .meeting-actions {
             flex-direction: column;
+            gap: 6px;
         }
 
         .action-btn {
             width: 100%;
             text-align: center;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .no-meetings {
+            padding: 16px;
+            font-size: 0.9rem;
         }
     }
 
 </style>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        if (!searchInput) return;
+
+        searchInput.addEventListener("input", function () {
+            const keyword = this.value.trim().toLowerCase();
+            const meetingCards = document.querySelectorAll(".meeting-item, .meeting-item-suspended");
+
+            meetingCards.forEach(card => {
+                const content = card.textContent.toLowerCase();
+                const visible = content.includes(keyword);
+                card.style.display = visible ? "block" : "none";
+            });
+        });
+    });
+</script>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c6e940b3db9b414497d65e818a07290",
+    "content-hash": "afca9327bf71caf65812a072aae68f43",
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
@@ -2476,6 +2476,65 @@
                 }
             ],
             "time": "2024-12-05T17:15:07+00:00"
+        },
+        {
+            "name": "mydnic/laravel-subscribers",
+            "version": "v1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mydnic/laravel-subscribers.git",
+                "reference": "3528ee6d7ae0b99763c267f620d338573205fed5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mydnic/laravel-subscribers/zipball/3528ee6d7ae0b99763c267f620d338573205fed5",
+                "reference": "3528ee6d7ae0b99763c267f620d338573205fed5",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=8.40.0",
+                "php": "^7.1|8.*"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^6.17.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mydnic\\Subscribers\\SubscribersServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mydnic\\Subscribers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Clément Rigo",
+                    "email": "rigoclement@mydnic.be"
+                }
+            ],
+            "description": "Easily Manage Internal Newsletter Subscribers in Laravel",
+            "homepage": "https://github.com/mydnic/laravel-subscribers",
+            "keywords": [
+                "customer",
+                "feedback",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/mydnic/laravel-subscribers/issues",
+                "source": "https://github.com/mydnic/laravel-subscribers/tree/v1.9.1"
+            },
+            "time": "2024-09-03T07:14:13+00:00"
         },
         {
             "name": "nesbot/carbon",

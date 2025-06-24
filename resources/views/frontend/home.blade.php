@@ -31,7 +31,7 @@
     </div>
   </div>
   <div class="row justify-content-center">
-    <div class="helpline-box">
+    <div class="col-md-4 helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
         <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
             <br />
@@ -39,7 +39,7 @@
             <br />
         </p>
     </div>
-    <div class="helpline-box">
+    <div class="col-md-4 helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
         <div>{{ __('messages.alexandria') }}</div>
         <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
@@ -47,7 +47,7 @@
             <br />
         </p>
     </div>
-    <div class="helpline-box">
+    <div class="col-md-4 helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4> 
         <div>{{ __('messages.westgiza') }}</div>
         <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
@@ -57,37 +57,54 @@
     </div>
 </div>
 <div class="row justify-content-center">
-<!--Calculator-->
-<div class="calc-box">
+  <div class="col-md-4 helpline-box">
+    <button class="btn btn-outline-primary" type="submit">{{ __('messages.contactus') }}&nbsp;<x-fas-message style="width:16px; height:16px;"/></button>
+  </div>
+  <div class="col-md-4 helpline-box">
+    <form action="{{ route('subscribers.store') }}" method="post">
+      @csrf
+      <div class="form-group">
+        <input type="email" name="email" class="form-control" placeholder="{{ __('messages.Enter your email') }}">
+        <br />
+        <button class="btn btn-outline-primary" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
+      </div>
+    </form>
+    @if (session('subscribed'))
+      <div class="alert alert-success">
+        {{ session('subscribed') }}
+      </div>
+    @endif
+  </div>
+
+  <div class="col-md-4 calc-box">
     <div class="form-group">
-        <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
-        <input type="date" class="form-control mb-3" onchange="setDate(this)">
+      <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
+      <input type="date" class="form-control mb-3" onchange="setDate(this)">
     </div>
-  <form name="myForm">
-    <div class="form-group">
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
-        <div class="input-group-append">
-            <span class="input-group-text" id="basic-addon3">{{ __('messages.years') }}</span>
-        </div>
+    <form name="myForm">
+      <div class="form-group">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.years') }}</span>
+          </div>
         </div>
         <div class="input-group mb-3">
-        <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
-            <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon3">{{ __('messages.months') }}</span>
-            </div>
+          <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.months') }}</span>
+          </div>
         </div>
         <div class="input-group mb-3">
-        <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
-            <div class="input-group-append">
-                <span class="input-group-text" id="basic-addon3">{{ __('messages.days') }}</span>
-            </div>
+          <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.days') }}</span>
+          </div>
         </div>
-    </div>
-    <button type="button" onclick="findTime(document.myForm)" class="btn btn-primary">{{ __('messages.calculate') }}</button>
-  </form>
-</div>
-<!--Calculator End-->
+      </div>
+      <button type="button" onclick="findTime(document.myForm)" class="btn btn-primary">{{ __('messages.calculate') }}</button>
+    </form>
+  </div>
 </div>
   <script>
     let selectedDate = null;

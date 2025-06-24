@@ -220,4 +220,7 @@ return [
     'BasicTextdownload' => 'تحميل',
     'BasicTextlisten' => 'استماع',
     'Account' => 'حساب المستخدم',
+    'Enter your email' => 'أدخل بريدك الإلكتروني',
+    'Subscribe' => 'الإشتراك',
+    'Map' => 'الخريطة',
 ];

@@ -219,4 +219,7 @@ return [
     'BasicTextdownload' => 'Download',
     'BasicTextlisten' => 'Listen',
     'Account' => 'User Account',
+    'Enter your email' => 'Enter your email',
+    'Subscribe' => 'Subscribe',
+    'Map' => 'Map',
 ];

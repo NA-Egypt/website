@@ -1,74 +1,99 @@
 <x-frontend.layout>
+<div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center py-4">
+    <div class="w-100" style="max-width: 1140px;">
 
     <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
-    <div class="col-10" style="padding: 10px;width: auto;">
-    <form method="GET" action="{{ route('frontend.meetings') }}">
-        <div class="row g-6 mt-2">
-            <div class="col-md-4">
-                <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
-            </div>
-            <div class="col-md-4">
-                <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" />
-            </div>
-            <div class="col-md-4">
-                <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" />
-            </div>
-            
-        </div>
-        <div class="row g-6 mt-2">
-            
-            <div class="col-md-4">
-                <div class="d-flex align-items-center mb-2">
-                    <span class="me-2"></span>
-                    <label class="fw-bold" for="type" id = type>{{__('messages.Type')}}</label>
+    <div class="container px-4 py-3 justify-content-center">
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-12">
+                <form method="GET" action="{{ route('frontend.meetings') }}">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2">
+                    <div class="col">
+                        <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
+                    </div>
+                    <div class="col">
+                        <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" />
+                    </div>
+                    <div class="col">
+                        <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" />
+                    </div>
+                    <div class="col">
+                        <label class="fw-bold d-block mb-2" for="type">{{__('messages.Type')}}</label>
+                        <select name="type" data-allow-clear="true" class="select2 form-control">
+                            <option value="">{{__('messages.Choose Type')}}</option>
+                            <option value="open" {{ request('type') == 'open' ? 'selected' : '' }}>
+                                {{ __('messages.open') }}
+                            </option>
+                            <option value="closed" {{ request('type') == 'closed' ? 'selected' : '' }}>
+                                {{ __('messages.closed') }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <x-filter.select :options="$neighborhoods" name="neighborhood" label="{{__('messages.Neighborhood')}}" />
+                    </div>
+                    <div class="col">
+                        <x-filter.select :options="$cities" name="city" label="{{__('messages.City')}}" />
+                    </div>
                 </div>
-                <select name="type" data-allow-clear="true" class="select2">
-                    <option value="">{{__('messages.Choose Type')}}</option>
-                    <option value="open" {{ request('type') == 'open' ? 'selected' : '' }}>
-                        {{ __('messages.open') }}
-                    </option>
-                    <option value="closed" {{ request('type') == 'closed' ? 'selected' : '' }}>
-                        {{ __('messages.closed') }}
-                    </option>
-                </select>
-            </div>
+                
+                <div class="d-flex justify-content-center align-items-center m-3" >
+                    <button class="btn btn-outline-primary px-4 mx-3" type="submit">{{__('messages.Filter')}}</button>
+                    <a href="{{ route('frontend.meetings') }}" class="btn btn-outline-danger px-4">{{__('messages.Clear Filters')}}</a>
+                </div>
 
-            <div class="col-md-4">
-                <x-filter.select :options="$neighborhoods" name="neighborhood" label="{{__('messages.Neighborhood')}}" />
+                </form>
             </div>
-
-            <div class="col-md-4">
-                <x-filter.select :options="$cities" name="city" label="{{__('messages.City')}}" />
-            </div>
-
         </div>
-        
-        <div class="d-flex justify-content-center align-items-center m-3" >
-            {{-- <button class="btn btn-outline-dark px-4 mx-3" type="submit">{{__('messages.Filter')}}</button> --}}
-            <a href="{{ route('frontend.meetings') }}" class="btn btn-outline-danger px-4">{{__('messages.Clear Filters')}}</a>
-        </div>
-
-    </form>
     </div>
     @if($meetings->isEmpty())
-        <p>{{__('messages.No meetings found')}}</p>
+        <div class="row justify-content-center mt-4">
+            <div class="col-auto">
+                <p class="text-center text-muted">{{ __('messages.No meetings found') }}</p>
+            </div>
+        </div>
     @else
 
-        <ul style="padding: 0px; width: 100%;">
-            <x-filter.filter-card :$meetings />
-        </ul>
+        <div class="container px-4 mt-4">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        <x-filter.filter-card :$meetings />
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
-    <script>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("search-input");
+        if (!searchInput) return;
 
-     document.addEventListener("DOMContentLoaded", function() {
-        const form = document.querySelector("form");
-        if (!form) return;
+        searchInput.addEventListener("input", function () {
+            const keyword = this.value.trim().toLowerCase();
+            const meetingSections = document.querySelectorAll(".meeting-item, .meeting-item-suspended");
 
-        document.querySelectorAll("select").forEach(select => {
-            select.addEventListener("change", function() {
-                form.submit();
+            meetingSections.forEach(section => {
+                const content = section.textContent.toLowerCase();
+                const visible = content.includes(keyword);
+                section.style.display = visible ? "block" : "none";
             });
         });
+    });
+</script>
+<script>
+
+ document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    document.querySelectorAll("select").forEach(select => {
+        select.addEventListener("change", function() {
+            form.submit();
+        });
+    });
 
     //     document.querySelectorAll('#crouton ul li a').forEach(link => {
     //         link.addEventListener('click', function() {
@@ -79,10 +104,16 @@
     //         });
     //     });
 
-        // Ensure Select2 works correctly
-        $('.select2').on('change', function() {
-            form.submit();
-        });
+    // Ensure Select2 works correctly
+    $('.select2').on('change', function() {
+        form.submit();
     });
-    </script>
+});
+</script>
+<style>
+.px-4 {
+    padding-left: 1rem!important;
+    padding-right: 1rem!important;
+}
+</style>
 </x-frontend.layout>
