@@ -5,7 +5,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 <div class="container px-4 justify-content-center">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="row row-cols-12 row-cols-md-12 row-cols-lg-12 g-4">
             @foreach($meetings as $meeting)
             <div class="meetings-list mt-4" dir="{{ $direction }}">
 
