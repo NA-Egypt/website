@@ -139,6 +139,7 @@ Route::group(
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');
 
         Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
+        Route::get('/export-meetings-pdf', [MeetingFilterController::class, 'exportMeetingsToPDF']);
 
 
         // Searches:
@@ -160,6 +161,7 @@ Route::group(
 
         Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
         Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');
+
     }
 );
 
