@@ -41,7 +41,8 @@
                         type="checkbox"
                         id="group-type"
                         value="اون لاين"
-                {{ old('group_type', $group->group_type ?? 'فعلي') === 'اون لاين' ? 'checked' : '' }} <!-- Ensure the checkbox reflects the value -->
+                {{ old('group_type', $group->group_type ?? 'فعلي') === 'اون لاين' ? 'checked' : '' }} 
+                 {{-- Ensure the checkbox reflects the value in the database --}}
                 >
 
                 <label class="form-check-label" for="group-type" id="switcGrouphLabel">

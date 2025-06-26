@@ -4,17 +4,6 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
 <div class="container px-4 justify-content-center">
     <div class="row justify-content-center">
-        <div class="d-flex justify-content-right mb-3">
-            <a href="{{ url('/export-meetings-pdf') }}" class="btn btn-primary">تحميل الاجتماعات PDF</a>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="d-flex justify-content-center mb-3">
-            <input type="search" id="search-input" class="form-control" placeholder="{{__('messages.Search meetings')}}...">
-        </div>
-    </div>
-
-    <div class="row justify-content-center">
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach($meetings as $meeting)

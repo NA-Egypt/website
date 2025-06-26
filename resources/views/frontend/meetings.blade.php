@@ -46,14 +46,23 @@
             </div>
         </div>
     </div>
-    @if($meetings->isEmpty())
+        @if($meetings->isEmpty())
         <div class="row justify-content-center mt-4">
             <div class="col-auto">
                 <p class="text-center text-muted">{{ __('messages.No meetings found') }}</p>
             </div>
         </div>
-    @else
-
+        @else
+        <div class="row justify-content-center">
+            <div class="d-flex justify-content-center mb-3">
+                <a href="{{ url('/export-meetings-pdf') }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">تحميل الاجتماعات PDF</a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="d-flex justify-content-center mb-3">
+                <input type="search" id="search-input" class="form-control" style="max-width: 340px; width: 100%;" placeholder="{{__('messages.Search meetings')}}...">
+            </div>
+        </div>
         <div class="container px-4 mt-4">
             <div class="row justify-content-center">
                 <div class="col-12">
@@ -63,7 +72,7 @@
                 </div>
             </div>
         </div>
-    @endif
+        @endif
     </div>
 </div>
 <script>
@@ -95,15 +104,6 @@
         });
     });
 
-    //     document.querySelectorAll('#crouton ul li a').forEach(link => {
-    //         link.addEventListener('click', function() {
-    //             //event.preventDefault();
-    //             document.getElementById('day-input').value = link.getAttribute('data-day');
-    //             //link.closest('form').submit();
-    //             form.submit();
-    //         });
-    //     });
-
     // Ensure Select2 works correctly
     $('.select2').on('change', function() {
         form.submit();
@@ -114,6 +114,22 @@
 .px-4 {
     padding-left: 1rem!important;
     padding-right: 1rem!important;
+}
+.meeting-item, .meeting-item-suspended {
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.3s ease;
+    border-left: 5px solid #1e40af;
+    border-right: 5px solid #1e40af;
+}
+.meeting-item:hover, .meeting-item-suspended:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    padding: 6px 12px;
+    font-size: 1rem;
 }
 </style>
 </x-frontend.layout>
