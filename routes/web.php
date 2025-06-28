@@ -18,10 +18,11 @@ use App\Http\Controllers\MeetingFilterController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
-
+use Illuminate\Support\Facades\App;
 // Localization Routes:
 Route::group(
     [
+        
         'prefix' => LaravelLocalization::setLocale(),
         'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'setLanguageDirection']
     ],
