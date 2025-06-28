@@ -9,21 +9,216 @@
     direction: ltr;
   }
 
-  [dir="rtl"] .page-content {
-    margin-left: 0;
-    margin-right: 250px;
-    direction: rtl;
-  }
-
   .top-header .navbar {
     left: 250px;
-  }
-
-  [dir="rtl"] .top-header .navbar {
-    left: 0;
   }
 
   [dir="rtl"] .dropdown-menu-end[data-bs-popper] {
     right: -121px;
     direction: rtl;
   }
+    [dir="rtl"] .ms-auto {
+    margin-right: 45px !important;
+    margin-left: 85px !important;
+    /* direction: rtl; */
+  }
+  
+  [dir="rtl"] .me-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    /* direction: rtl; */
+  }
+  
+  .ms-3 {
+    margin-right: 5px;
+  }
+  /* SideBar */
+  
+  [dir="rtl"] .sidebar-wrapper {
+    left: auto;  /* Remove 'left' positioning */
+    right: 0;    /* Position sidebar on the right for RTL */
+    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+    border-right: none; /* Remove right border */
+    direction: rtl;
+  }
+  
+  /* RTL Adjustment for Sidebar Header */
+  [dir="rtl"] .sidebar-wrapper .sidebar-header {
+    border-left: 1px solid #e2e3e4; /* Use left border instead of right */
+    border-right: none; /* Remove right border */
+    direction: rtl;
+  }
+  
+  /* RTL Adjustment for Menu Items */
+  [dir="rtl"] .sidebar-wrapper .metismenu a {
+    justify-content: right; /* Align items to the right for RTL */
+    direction: rtl;
+    text-align: right;
+  }
+  
+  [dir="rtl"] .sidebar-wrapper .metismenu ul a i {
+    margin-left: 10px; /* Icons should be on the left in RTL */
+    direction: rtl;
+  }
+  
+  /* RTL Adjustment for Parent Icons */
+  [dir="rtl"] .sidebar-wrapper .metismenu a .parent-icon {
+    margin-left: 10px; /* Adjust icon position for RTL */
+    direction: rtl;
+  }
+  
+  /* Adjust RTL menu title alignment */
+  [dir="rtl"] .sidebar-wrapper .metismenu a .menu-title {
+    margin-right: 10px; /* Move title to the right for RTL */
+    direction: rtl;
+  }
+  
+  /* Adjust spacing in menu items */
+  [dir="rtl"] .sidebar-wrapper .metismenu li+li {
+    margin-top: 5px;
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .sidebar-wrapper .metismenu li:first-child {
+    margin-top: 5px;
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .sidebar-wrapper .metismenu li:last-child {
+    margin-bottom: 5px;
+    direction: rtl;
+  }
+  
+  /* Main content */
+  
+  [dir="rtl"] .page-content {
+    margin-left: 0;  /* Remove left margin */
+    margin-right: 250px;  
+    direction: rtl;
+  }
+  
+  /* Nav */
+  
+  [dir="rtl"] .top-header .navbar{
+    left: 0;
+    /* right: 250px; */
+    /* direction: rtl; */
+  }
+  
+  [dir="rtl"] .dropdown-menu-end[data-bs-popper]{
+    right: -121px;
+    direction: rtl;
+  }
+
+  [dir="rtl"] .container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    direction: rtl;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    direction: rtl;
+  }
+   
+  .card {
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    direction: ltr;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 10px;
+    direction: rtl;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    direction: rtl;
+  }
+  
+  .table th {
+    background: #007bff;
+    color: white;
+    direction: rtl;
+  }
+  
+  /* RTL Styles */
+  [dir="rtl"] {
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .sidebar {
+    text-align: right;
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .table th, [dir="rtl"] .table td {
+    text-align: right;
+    direction: rtl;
+  }
+  
+  /* Meetings Layout */
+  .meetings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    direction: ltr;
+  }
+  
+  .meeting-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    direction: ltr;
+  }
+  
+  .meeting-card:hover {
+    transform: translateY(-5px);
+    direction: ltr;
+  }
+  
+  .meeting-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    direction: ltr;
+  }
+  
+  .meeting-details {
+    font-size: 1rem;
+    color: #555;
+    direction: ltr;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .meetings-grid {
+        grid-template-columns: 1fr;
+        direction: rtl;
+    }
+  }
+ 
+  [dir="rtl"] .admin-link {
+    color: #007bff; /* Change this to your desired color */
+  }
+  
+  [dir="rtl"] .admin-link:hover {
+    color: #000487; /* Optional: Change to a lighter color when hovering */
+  }
+  

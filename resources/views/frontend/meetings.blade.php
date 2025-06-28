@@ -55,7 +55,7 @@
         @else
         <div class="row justify-content-center">
             <div class="d-flex justify-content-center mb-3">
-                <a href="{{ url('/export-meetings-pdf') }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">تحميل الاجتماعات PDF</a>
+                <a href="{{ route('exportMeetingsToPDF', request()->query()) }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">تحميل الاجتماعات PDF</a>
             </div>
         </div>
         <div class="row justify-content-center">

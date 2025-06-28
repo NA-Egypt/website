@@ -58,22 +58,25 @@
 </div>
 <div class="row justify-content-center">
   <div class="col-md-4 helpline-box">
-    <button class="btn btn-outline-primary" type="submit">{{ __('messages.contactus') }}&nbsp;<x-fas-message style="width:16px; height:16px;"/></button>
+    <button class="btn btn-outline-primary" type="link">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></button>
+    <br /><br />
+    <button class="btn btn-outline-info" type="link">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></button>
   </div>
   <div class="col-md-4 helpline-box">
+    @if (session('subscribed'))
+      <div class="alert alert-success">
+        {{ __('messages.' .session('subscribed')) }}
+      </div>
+    @endif
     <form action="{{ route('subscribers.store') }}" method="post">
       @csrf
       <div class="form-group">
         <input type="email" name="email" class="form-control" placeholder="{{ __('messages.Enter your email') }}">
         <br />
-        <button class="btn btn-outline-primary" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
+        <button class="btn btn-outline-success" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
       </div>
+      {{-- <a href="{{ route('subscribers.delete', ['email' => $subscriber->email]) }}">unsubscribe</a> --}}
     </form>
-    @if (session('subscribed'))
-      <div class="alert alert-success">
-        {{ session('subscribed') }}
-      </div>
-    @endif
   </div>
 
   <div class="col-md-4 calc-box">
@@ -82,7 +85,7 @@
       <input type="date" class="form-control mb-3" onchange="setDate(this)">
     </div>
     <form name="myForm">
-      <div class="form-group">
+      <div class="form-group" dir="ltr">
         <div class="input-group mb-3">
           <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
           <div class="input-group-append">
@@ -102,7 +105,7 @@
           </div>
         </div>
       </div>
-      <button type="button" onclick="findTime(document.myForm)" class="btn btn-primary">{{ __('messages.calculate') }}</button>
+      <button type="button" onclick="findTime(document.myForm)" class="btn btn-info">{{ __('messages.calculate') }}</button>
     </form>
   </div>
 </div>

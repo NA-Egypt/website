@@ -33,7 +33,7 @@ class GroupsRequest extends FormRequest
                 'regex:~^(https?://)?(www\.)?(google\.com/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl/maps)[^\s]*$|^https?://[^\s]+$~'
             ],
             'ar_address'        => 'required|min:3',
-            'en_address'        => 'requiredmin:3',
+            'en_address'        => 'required|min:3',
             'group_type'        => 'required',
             'service_body_id'   => 'required',
             'neighborhood_id'   => 'required',

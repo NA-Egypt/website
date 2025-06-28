@@ -139,7 +139,7 @@ Route::group(
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');
 
         Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
-        Route::get('/export-meetings-pdf', [MeetingFilterController::class, 'exportMeetingsToPDF']);
+        Route::get('/export-meetings-pdf', [MeetingFilterController::class, 'exportMeetingsToPDF'])->name('exportMeetingsToPDF');
 
 
         // Searches:

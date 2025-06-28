@@ -45,6 +45,7 @@ class MeetingFilterController extends Controller
 
         return view('frontend.meetings', compact('meetings', 'days', 'serviceBodies', 'groups', 'neighborhoods', 'cities'));
     }
+    
     public function exportMeetingsToPDF()
     {
         $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']);
@@ -70,7 +71,7 @@ class MeetingFilterController extends Controller
                     'R' => 'Cairo-Regular.ttf',
                 ],
             ],
-            'default_font' => 'amiri',
+            'default_font' => 'xbriyaz',
         ]);
         $mpdf->autoArabic = true;
         $mpdf->autoScriptToLang = true;

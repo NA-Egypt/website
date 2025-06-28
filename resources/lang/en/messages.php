@@ -163,7 +163,7 @@ return [
     'calculator'                =>'Your Clean Date',
     'alexandria'               =>'Alexandria',
     'westgiza'                      =>'West Giza',
-    'copyrights'               =>'Copyrights reserved 2025 Narcotics Anonymous',
+    'copyrights'               =>'Copyrights 2025 Narcotics Anonymous',
     'Egypt'                   =>'Egypt',
     'years'                   =>'Years',
     'months'                  =>'Months',
@@ -222,4 +222,7 @@ return [
     'Enter your email' => 'Enter your email',
     'Subscribe' => 'Subscribe',
     'Map' => 'Map',
+    'You are successfully subscribed to our list!' => 'You are successfully subscribed to our list!',
+    'You are successfully unsubscribed from our list!' => 'You are successfully unsubscribed from our list!',
+    'contact' => 'Contact',
 ];

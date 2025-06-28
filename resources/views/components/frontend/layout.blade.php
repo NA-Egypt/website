@@ -7,7 +7,7 @@
 
   <!-- Include common styles -->
   @vite(['resources/js/app.js', 'resources/css/app.css'])
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  {{-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"> --}}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -84,7 +84,7 @@
     <body class="hanken-grotesk {{$direction}}">
       <x-frontend.nav-bar />
         <div class="container">
-          <main class="mt-10 max-w-[986px] mx-auto">
+          <main class="mt-12 max-w-[986px] mx-auto">
             {{$slot}}
           </main>
         </div>
