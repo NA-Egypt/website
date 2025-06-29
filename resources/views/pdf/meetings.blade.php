@@ -1,3 +1,6 @@
+@php
+$direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
+@endphp
 @php($filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']))
 <!DOCTYPE html>
 <html lang="ar">

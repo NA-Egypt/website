@@ -1,10 +1,10 @@
-<nav class="main-nav">
+<nav class="main-nav" style="box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);">
     <section class="top-nav">
       <div class="container-fluid px-3">
         <!-- Logo -->
         <div class="logo">
           <a href="{{ route('frontend.home') }}">
-            <img src="{{ asset('assets/images/na.png') }}" alt="NA Egypt" width="210" height="70">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" width="307">
           </a>
         </div>
   
@@ -24,10 +24,18 @@
            </a>
           </li>
           @endif
+          @if (Route::currentRouteName() !== 'frontend.meetings')
           <li><a href="{{ route('frontend.meetings') }}" class="btn btn-outline-light"><x-fas-users style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Meetings') }}</a></li>
+          @endif
+          @if (Route::currentRouteName() !== 'frontend.literature')
           <li><a href="{{ route('frontend.literature') }}" class="btn btn-outline-light"><x-fas-book style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Literature') }}</a></li>
+          @endif
+          @if (Route::currentRouteName() !== 'frontend.forpublic')
           <li><a href="{{ route('frontend.forpublic') }}" class="btn btn-outline-light"><x-fas-bullhorn style="width:16px; height:16px;"/>&nbsp;{{ __('messages.forpublic') }}</a></li>
+          @endif
+          @if (Route::currentRouteName() !== 'contactus.create')
           <li><a href="{{ route('contactus.create') }}" class="btn btn-outline-light"><x-fas-message style="width:16px; height:16px;"/>&nbsp;{{ __('messages.contactus') }}</a></li>
+          @endif
           <!-- Language Switcher -->
           @php
             $currentLocale = LaravelLocalization::getCurrentLocale();

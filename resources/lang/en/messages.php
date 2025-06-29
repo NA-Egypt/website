@@ -225,4 +225,5 @@ return [
     'You are successfully subscribed to our list!' => 'You are successfully subscribed to our list!',
     'You are successfully unsubscribed from our list!' => 'You are successfully unsubscribed from our list!',
     'contact' => 'Contact',
+    'downloadmeetingspdf' => 'Download Meetings PDF',
 ];

@@ -112,9 +112,10 @@
 
   [dir="rtl"] .container {
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+    flex-wrap: nowrap;
+    flex-direction: column;
     direction: rtl;
+    align-items: center;
   }
   
   .sidebar {

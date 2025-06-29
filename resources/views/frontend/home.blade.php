@@ -1,9 +1,5 @@
 <x-frontend.layout>
-<h1 style="text-align: center;">{{ __('messages.NA') }}</h1><br />
-<div style="background: #fffce0;border: 1px #dbd06a solid;text-align: center;padding: 10px;border-radius: 10px;">
-<p style="margin-bottom: 0 !important">{{ __('messages.thewarning') }}</p>
-</div>
-<br />
+<x-section-head>{{ __('messages.NA') }}</x-section-head>
 <div class="warpper">
     <input class="radio" id="one" name="group" type="radio" checked>
     <input class="radio" id="two" name="group" type="radio">
@@ -11,8 +7,8 @@
   
     <div class="tabs">
       <label class="tab" id="one-tab" for="one">{{__('messages.aboutus') }}</label></label>
-      <label class="tab" id="three-tab" for="two">{{ __('messages.wedorecover') }}</label>
-      {{-- <label class="tab" id="two-tab" for="three">من هو المدمن؟</label> --}}
+      <label class="tab" id="two-tab" for="two">{{ __('messages.wedorecover') }}</label>
+      {{-- <label class="tab" id="three-tab" for="three">من هو المدمن؟</label> --}}
     </div>
   
     <div class="panels">

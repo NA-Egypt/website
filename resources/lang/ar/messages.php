@@ -226,4 +226,5 @@ return [
     'You are successfully subscribed to our list!' => 'لقد اشتركت في قائمتنا!',
     'You are successfully unsubscribed from our list!' => 'لقد حذفت اشتراكك من قائمتنا!',
     'contact' => 'للتواصل',
+    'downloadmeetingspdf' => 'تحميل الاجتماعات PDF',
 ];

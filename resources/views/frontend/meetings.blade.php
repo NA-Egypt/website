@@ -1,8 +1,7 @@
 <x-frontend.layout>
-<div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center py-4">
+<x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
+<div class="container min-vh-100 d-flex flex-column justify-content-topcenter align-items-center">
     <div class="w-100" style="max-width: 1140px;">
-
-    <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
     <div class="container px-4 py-3 justify-content-center">
         <div class="row">
             <div class="col-12 col-md-12 col-lg-12">
@@ -55,18 +54,26 @@
         @else
         <div class="row justify-content-center">
             <div class="d-flex justify-content-center mb-3">
-                <a href="{{ route('exportMeetingsToPDF', request()->query()) }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">تحميل الاجتماعات PDF</a>
+                <a href="{{ route('exportMeetingsToPDF', request()->query()) }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">
+                {{__('messages.downloadmeetingspdf')}}
+                <x-fas-file-pdf style="width:16px; height:16px;"/>
+                </a>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="d-flex justify-content-center mb-3">
-                <input type="search" id="search-input" class="form-control" style="max-width: 340px; width: 100%;" placeholder="{{__('messages.Search meetings')}}...">
+                <div class="position-relative" style="max-width: 340px; width: 100%;">
+                    <input type="search" id="search-input" class="form-control ps-5" placeholder="{{ __('messages.Search meetings') }}...">
+                    <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                        <x-fas-search style="width:16px; height:16px;" />
+                    </span>
+                </div>
             </div>
         </div>
         <div class="container px-4 mt-4">
             <div class="row justify-content-center">
                 <div class="col-12">
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
                         <x-filter.filter-card :$meetings />
                     </div>
                 </div>
