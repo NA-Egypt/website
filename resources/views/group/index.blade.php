@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Manage') . ' ' . __('messages.Group')}}</x-section-head>
+    <x-backhead>{{__('messages.Manage') . ' ' . __('messages.Group')}}</x-backhead>
 
     <div class="container">
 
@@ -14,21 +14,21 @@
         </div>
         {{-- / Add Button --}}
 
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
             <table class="main-tables text-center table table-bordered display" id="example">
                 <thead>
 
                     <tr>
-                        <th>#{{ __('messages.ID')}}</th>
+                        {{-- <th>#{{ __('messages.ID')}}</th> --}}
                         <th>{{  __('messages.Arabic Group Name') }}</th>
                         <th>{{  __('messages.English Group Name') }}</th>
-                        <th>{{  __('messages.Arabic GSR Name') }}</th>
-                        <th>{{  __('messages.English GSR Name') }}</th>
+                        {{-- <th>{{  __('messages.Arabic GSR Name') }}</th>
+                        <th>{{  __('messages.English GSR Name') }}</th> --}}
                         <th>{{  __('messages.Email') }}</th>
-                        <th>{{  __('messages.Phone') }}</th>
+                        {{-- <th>{{  __('messages.Phone') }}</th>
                         <th>{{  __('messages.Address') }}</th>
                         <th>{{  __('messages.Locations') }}</th>
-                        <th>{{  __('messages.Group Type') }}</th>
+                        <th>{{  __('messages.Group Type') }}</th> --}}
                         <th>{{  __('messages.Service Body Name') }}</th>
                         <th>{{  __('messages.Neighborhood Name') }}</th>
                         <th>{{  __('messages.Control') }}</th>
@@ -40,13 +40,13 @@
                     @foreach ($groups as $group)                    
 
                         <tr>
-                            <td>{{ $group->id }}</td>
+                            {{-- <td>{{ $group->id }}</td> --}}
                             <td>{{ $group->ar_name }}</td>
                             <td>{{ $group->en_name }}</td>
-                            <td>{{ $group->ar_gsr_name }}</td>
-                            <td>{{ $group->en_gsr_name }}</td>
+                            {{-- <td>{{ $group->ar_gsr_name }}</td>
+                            <td>{{ $group->en_gsr_name }}</td> --}}
                             <td>{{ $group->user->email }}</td>
-                            <td>{{ $group->phone }}</td>
+                            {{-- <td>{{ $group->phone }}</td>
                             <td>
                             @if(app()->getLocale() === 'ar')
                                 {{$group->ar_address}}
@@ -55,7 +55,7 @@
                             @endif
                         </td>
                         <td>{{ $group->location }}</td>
-                            <td>{{ $group->group_type }}</td>
+                            <td>{{ $group->group_type }}</td> --}}
                             <td>
                                 @if(app()->getLocale() === 'ar')
                                     {{$group->serviceBody->ar_name}}

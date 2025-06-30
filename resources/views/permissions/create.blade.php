@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__("messages.Create New Permission")}}</x-section-head>
+    <x-backhead>{{__("messages.Create New Permission")}}</x-backhead>
 
     <div class="container d-flex justify-content-center align-items-center">
         <form action="{{ route('permissions.store') }}" method="post" class="row g-2 col-md-12 col-lg-8">

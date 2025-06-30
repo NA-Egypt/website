@@ -1,1 +1,1 @@
-<a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+<a href="javaScript:;" class="back-to-top"><x-fas-arrow-up style="width:16px; height:16px;"/></a>

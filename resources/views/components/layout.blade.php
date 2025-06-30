@@ -1,8 +1,10 @@
 <!doctype html>
-
+@php
+$direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
+@endphp
 {{-- <html lang="en" class="minimal-theme"> --}}
 {{--<html lang="{{ app()->getLocale() }}" dir="{{ $direction }}" class="minimal-theme">--}}
-<html lang="{{ app()->getLocale() }}"  class="minimal-theme">
+<html lang="{{ app()->getLocale() }}"  dir="{{ $direction }}" class="minimal-theme">
 
 <head>
   <!-- Required meta tags -->
@@ -10,15 +12,13 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="{{ asset('assets/images/na-logo.jpg') }}" type="image/png" />
-  {{-- <link href="assets/css/style.css" rel="stylesheet" /> --}}
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
     <!-- Include RTL CSS dynamically -->
-    @if ($direction === 'rtl')
-{{--      <link rel="stylesheet" href="../../css/rtl.css">--}}
+    {{-- @if ($direction === 'rtl')
       <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
-    @endif
+    @endif --}}
 
   <title>NA</title>
 
@@ -53,7 +53,7 @@
         <!--End Back To Top Button-->
 
         <!--start switcher-->
-        <x-switch-themes />
+        {{-- <x-switch-themes /> --}}
         <!--end switcher-->
 
     </div>

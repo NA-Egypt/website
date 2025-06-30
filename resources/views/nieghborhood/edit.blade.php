@@ -1,6 +1,6 @@
 <x-layout>
     
-    <x-section-head>{{__('messages.Edit') . ' ' . __('messages.Neighborhood')}}</x-section-head>
+    <x-backhead>{{__('messages.Edit') . ' ' . __('messages.Neighborhood')}}</x-backhead>
 
     <div class="container d-flex justify-content-center align-items-center">
         <form action="{{ route('neighborhood.update', $neighborhood->id) }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">

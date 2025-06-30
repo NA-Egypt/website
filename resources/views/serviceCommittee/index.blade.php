@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Manage') . ' ' . __('messages.Service Committees')}}</x-section-head>
+    <x-backhead>{{__('messages.Manage') . ' ' . __('messages.Service Committees')}}</x-backhead>
 
     <div class="container">
 
@@ -14,20 +14,20 @@
         </div>
         {{-- / Add Button --}}
 
-        <div class="table-responsive">
+                <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
             <table class="main-tables text-center table table-bordered display" id="example">
                 <thead>
 
                 <tr>
-                    <th>#{{ __('messages.ID')}}</th>
+                    {{-- <th>#{{ __('messages.ID')}}</th> --}}
                     <th>{{  __('messages.Arabic Service Committee Name') }}</th>
-                    <th>{{  __('messages.English Service Committee Name') }}</th>
+                    {{-- <th>{{  __('messages.English Service Committee Name') }}</th> --}}
                     <th>{{  __('messages.Email') }}</th>
-                    <th>{{  __('messages.Chairman Name') }}</th>
+                    {{-- <th>{{  __('messages.Chairman Name') }}</th>
                     <th>{{  __('messages.Chairman Phone') }}</th>
                     <th>{{  __('messages.Arabic Address') }}</th>
                     <th>{{  __('messages.English Address') }}</th>
-                    <th>{{  __('messages.Locations') }}</th>
+                    <th>{{  __('messages.Locations') }}</th> --}}
                     <th>{{  __('messages.Committee Meetings') }}</th>
                     <th>{{  __('messages.Control') }}</th>
                 </tr>
@@ -38,15 +38,15 @@
                 @foreach ($ServiceCommittee as $sc)
 
                     <tr>
-                        <td>{{ $sc->id }}</td>
+                        {{-- <td>{{ $sc->id }}</td> --}}
                         <td>{{ $sc->ar_name }}</td>
-                        <td>{{ $sc->en_name }}</td>
+                        {{-- <td>{{ $sc->en_name }}</td> --}}
                         <td>{{ $sc->user->email }}</td>
-                        <td>{{ $sc->chairman_name }}</td>
+                        {{-- <td>{{ $sc->chairman_name }}</td>
                         <td>{{ $sc->chairman_phone }}</td>
                         <td>{{ $sc->ar_address }}</td>
                         <td>{{ $sc->en_address }}</td>
-                        <td>{{ $sc->location }}</td>
+                        <td>{{ $sc->location }}</td> --}}
                         <td>{{ $sc->notes }}</td>
                         <td>
                             <x-button-a href="{{ route('serviceCommittee.edit', $sc->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />

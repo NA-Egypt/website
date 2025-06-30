@@ -1,5 +1,5 @@
 <x-layout>
-    <x-section-head>{{__("messages.Service Committee information") }}
+    <x-backhead>{{__("messages.Service Committee information") }}
 
         @if(app()->getLocale() === 'ar')
             {{$serviceCommittee->ar_name}}
@@ -7,7 +7,7 @@
             {{$serviceCommittee->en_name}}
         @endif
 
-    </x-section-head>
+    </x-backhead>
 
     <div class="group-info-container">
 

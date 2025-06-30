@@ -1,6 +1,6 @@
 <x-layout>
-    <x-section-head>{{__('messages.Assign Permissions to')}} <span style="color: red">{{ $role->name }}</span>
-    </x-section-head>
+    <x-backhead>{{__('messages.Assign Permissions to')}} <span style="color: red">{{ $role->name }}</span>
+    </x-backhead>
     <form action="{{ route('roles.update-permissions', $role->id) }}" method="POST">
         @csrf
         <div class="mb-2">

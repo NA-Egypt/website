@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Edit Permission')}}</x-section-head>
+    <x-backhead>{{__('messages.Edit Permission')}}</x-backhead>
 
     <div class="container d-flex justify-content-center align-items-center">
         <form action="{{ route('permissions.update', $permission->id) }}" method="post"

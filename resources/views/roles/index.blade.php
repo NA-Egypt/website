@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Manage Roles')}}</x-section-head>
+    <x-backhead>{{__('messages.Manage Roles')}}</x-backhead>
 
     <div class="container">
 
@@ -16,18 +16,20 @@
 {{--                <li>{{ $role->name }} - Permissions: {{ $role->permissions->pluck('name')->implode(', ') }}</li>--}}
 {{--            @endforeach--}}
 {{--        </ul>--}}
-        <div class="table-responsive">
-            <table class="main-table manage-member text-center table table-bordered">
-                <tr>
-                    <td>{{__("messages.#ID")}}</td>
-                    <td>{{__('messages.Role Name')}}</td>
-                    <td>{{__('messages.Permission Name')}}</td>
-                    <td>{{__('messages.Control')}}</td>
-                </tr>
+        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+                <thead>
+                    <tr>
+                        <th>{{__('messages.Role Name')}}</th>
+                        <th>{{__('messages.Permission Name')}}</th>
+                        <th>{{__('messages.Control')}}</th>
+                    </tr>
+                </thead>
+                <tbody>
 
                 @foreach ($roles as $role)
                     <tr>
-                        <td>{{ $role->id }}</td>
+                        {{-- <td>{{ $role->id }}</td> --}}
                         <td>{{ $role->name }}</td>
                         <td>
                             @foreach($role->permissions as $permission)
@@ -50,6 +52,7 @@
                         </td>
                     </tr>
                 @endforeach
+                </tbody>
             </table>
         </div>
     </div>

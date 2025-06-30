@@ -161,3 +161,41 @@
     display: none;
   }
   
+
+/* RTL Support */
+[dir="rtl"] .page-header {
+    text-align: right;
+}
+
+[dir="rtl"] .activate {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+[dir="rtl"] .show-pass {
+    right: auto;
+    left: -20px;
+}
+
+[dir="rtl"] .transaction-details {
+    text-align: center; /* already centered, but retained for clarity */
+}
+
+[dir="rtl"] .main-table tr:first-child td,
+[dir="rtl"] .sub-row-table tr:first-child td {
+    text-align: right;
+}
+
+[dir="rtl"] .main-table td,
+[dir="rtl"] .sub-row-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .fixed-size,
+[dir="rtl"] .meeting-card-size {
+    text-align: right;
+}
+
+[dir="rtl"] .main-form .form-group {
+    direction: rtl;
+}

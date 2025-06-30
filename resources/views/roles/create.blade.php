@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Create New Roles')}}</x-section-head>
+    <x-backhead>{{__('messages.Create New Roles')}}</x-backhead>
 {{--    <form method="POST" action="{{ route('roles.store') }}">--}}
 {{--        @csrf--}}
 {{--        <div>--}}

@@ -1,0 +1,1 @@
+<h2 class="text-center" style="line-height: normal;">{{ $slot }}</h2>

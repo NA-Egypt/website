@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Manage') . ' ' . __('messages.City')}}</x-section-head>
+    <x-backhead>{{__('messages.Manage') . ' ' . __('messages.City')}}</x-backhead>
 
     <div class="container">
 
@@ -9,17 +9,20 @@
         </div>
 
         <div class="table-responsive">
-            <table class="main-table manage-member text-center table table-bordered">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+                <thead>
                 <tr>
-                    <td>#{{ __('messages.ID')}}</td>
-                    <td>{{  __('messages.City Arabic Name') }}</td>
-                    <td>{{  __('messages.City English Name') }}</td>
-                    <td>{{  __('messages.Control') }}</td>
+                    {{-- <td>#{{ __('messages.ID')}}</td> --}}
+                    <th>{{  __('messages.City Arabic Name') }}</th>
+                    <th>{{  __('messages.City English Name') }}</th>
+                    <th>{{  __('messages.Control') }}</th>
                 </tr>
+                </thead>
+                <tbody>
                 
                 @foreach ($cities as $city)                 
                     <tr>
-                        <td>{{ $city->id }}</td>
+                        {{-- <td>{{ $city->id }}</td> --}}
                         <td>{{ $city->ar_name }}</td>
                         <td>{{ $city->en_name }}</td>
                         <td>
@@ -28,6 +31,7 @@
                         </td>
                     </tr>
                 @endforeach
+                </tbody>
             </table>
         </div>
         {{-- {{$items->links()}} --}}

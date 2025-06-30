@@ -1,14 +1,14 @@
 <x-layout>
 
-    <x-section-head>{{ __('messages.Logs')}}</x-section-head>
+    <x-backhead>{{ __('messages.Logs')}}</x-backhead>
 
     <div class="container">
 
-        <div class="table-responsive">
-            <table class="main-table manage-member text-center table table-bordered">
-               
+        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+               <thead>
                 <tr>
-                    <td>#{{ __('messages.ID')}}</td>
+                    {{-- <td>#{{ __('messages.ID')}}</td> --}}
                     <td>{{  __('messages.Operation') }}</td>
                     <td>{{  __('messages.Model') }}</td>
                     <td>{{  __('messages.User') }}</td>
@@ -16,23 +16,25 @@
                     <td>{{  __('messages.Time') }}</td>
                     <td>{{  __('messages.Name') }}</td>
                 </tr>
+                </thead>
+                <tbody>
                 
                 
                 @foreach ($transactions as $trans)                    
                     <tr>
-                        <td>{{ $trans->id }}</td>
+                        {{-- <td>{{ $trans->id }}</td> --}}
                         <td>{{ ucfirst($trans->operation) }}</td>
                         <td>{{ $trans->model }}</td>
-                        <td>{{ $trans->user->name ?? 'System' }}</td>
+                        <td>{{ $trans->user->email ?? 'System' }}</td>
                         <td>{{ $trans->created_at->format('Y-m-d') }}</td>
                         <td>{{ $trans->created_at->format('H:i:s') }}</td>
                         <td>
                             {{-- <x-forms.normal-button name='Show' color='outline-info' class="transaction-row" data-transaction-id="{{ $trans->id }}" /> --}}
 
                             @if ($trans->model === 'Meeting')
-                                {{ $trans->group_name }}
-                            @else
-                                {{ $trans->details['name'] }}
+                                {{ $trans->user->name ?? $trans->group_name }}
+                            @elseif ($trans->model === 'Group')
+                                {{ $trans->user->name ?? $trans->group_name }}
                             @endif
                         </td>
                     </tr>
@@ -67,6 +69,7 @@
                         </td>
                     </tr> --}}
                 @endforeach
+                </tbody>
                 
             </table>
         </div>

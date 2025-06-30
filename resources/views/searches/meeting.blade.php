@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>Meetings in {{ $group->name  }}</x-section-head>
+    <x-backhead>Meetings in {{ $group->name  }}</x-backhead>
 
     <div class="d-flex justify-content-center ">
         <input type="search" id="search-input" class="rounded-xl bg-white/10 border border-white/10 px-3 py-2 mb-4 w-50" placeholder="Search">

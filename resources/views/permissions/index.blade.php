@@ -1,6 +1,6 @@
 <x-layout>
 
-    <x-section-head>{{__('messages.Manage Permissions')}}</x-section-head>
+    <x-backhead>{{__('messages.Manage Permissions')}}</x-backhead>
 
     <div class="container">
 
@@ -8,19 +8,22 @@
             <x-button-a href="{{ route('permissions.create') }}" color='outline-dark' name='{{__("messages.New Permission")}}' />
         </div>
 
-        <div class="table-responsive">
-            <table class="main-table manage-member text-center table table-bordered">
+        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+               <thead>
                 <tr>
-                    <td>{{__('messages.#ID')}}</td>
-                    <td>{{__('messages.Permission Name')}}</td>
-                    <td>{{__('messages.Permission Description')}}</td>
-                    <td>{{__('messages.Control')}}</td>
+                    {{-- <td>{{__('messages.#ID')}}</td> --}}
+                    <th>{{__('messages.Permission Name')}}</th>
+                    <th>{{__('messages.Permission Description')}}</th>
+                    <th>{{__('messages.Control')}}</th>
                 </tr>
+                </thead>
+                <tbody>
 
                 @forelse ($permissions as $permission)
 
                     <tr>
-                        <td>{{ $permission->id }}</td>
+                        {{-- <td>{{ $permission->id }}</td> --}}
                         <td>{{ $permission->name }}</td>
                         <td>{{ $permission->description }}</td>
                         <td>
@@ -36,6 +39,7 @@
                             <td colspan="4">{{ __('messages.No permissions found') }}</td>
                         </tr>
                     @endforelse
+                </tbody>
             </table>
         </div>
 

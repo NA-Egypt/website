@@ -1,6 +1,6 @@
 <x-layout>
     
-    <x-section-head>{{__('messages.Add') . ' ' . __('messages.Topic')}}</x-section-head>
+    <x-backhead>{{__('messages.Add') . ' ' . __('messages.Topic')}}</x-backhead>
 
     <div class="container d-flex justify-content-center align-items-center">
         <form action="{{ route('topic.store') }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">
