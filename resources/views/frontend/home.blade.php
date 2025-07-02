@@ -54,9 +54,12 @@
 </div>
 <div class="row justify-content-center">
   <div class="col-md-4 helpline-box">
-    <button class="btn btn-outline-primary" type="link">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></button>
-    <br /><br />
-    <button class="btn btn-outline-info" type="link">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></button>
+    <div class="row px-4 py-1">
+      <a class="btn btn-outline-light" href="{{ route('frontend.meetings') }}">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
+    </div>
+    <div class="row px-4 py-1">
+      <a class="btn btn-outline-info" href="{{ route('frontend.comms') }}">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
+    </div>
   </div>
   <div class="col-md-4 helpline-box">
     @if (session('subscribed'))

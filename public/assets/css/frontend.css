@@ -33,7 +33,7 @@ body {
 
 [dir="rtl"] .page-content {
   margin-left: 0;
-  margin-right: 250px;
+  margin-right: 0;
   direction: rtl;
 }
 
@@ -407,7 +407,7 @@ footer {
 }
 
 [dir="rtl"] .container {
-  flex-direction: row;
+  flex-direction: row-reverse;
 }
 
 [dir="rtl"] .dropdown-menu-end[data-bs-popper]{

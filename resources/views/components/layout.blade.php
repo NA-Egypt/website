@@ -12,12 +12,11 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="{{ asset('assets/images/na-logo.jpg') }}" type="image/png" />
-  <link href="assets/css/style.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
     <!-- Include RTL CSS dynamically -->
     {{-- @if ($direction === 'rtl')
-      <link rel="stylesheet" href="{{ asset('css/rtl.css') }}">
+      <link rel="stylesheet" href="public/assets/css/rtl.css">
     @endif --}}
 
   <title>NA</title>

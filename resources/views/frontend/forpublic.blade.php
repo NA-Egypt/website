@@ -8,8 +8,8 @@
                 <li class="mb-2 fade-in fade-in-delay-1"><a href="#global" class="text-decoration-none text-primary">معلومات عن الزمالة العالمية</a></li>
                 <li class="mb-2 fade-in fade-in-delay-2"><a href="#local" class="text-decoration-none text-primary">معلومات عن الزمالة المحلية</a></li>
                 <li class="mb-2 fade-in fade-in-delay-3"><a href="#statistics" class="text-decoration-none text-primary">الإحصائيات العالمية</a></li>
-                <li class="mb-2"><a href="#not-do" class="text-decoration-none text-primary">ما لا تقوم به الزمالة</a></li>
-                <li class="mb-2"><a href="#meetings" class="text-decoration-none text-primary">الاجتماعات</a></li>
+                <li class="mb-2 fade-in fade-in-delay-4"><a href="#not-do" class="text-decoration-none text-primary">ما لا تقوم به الزمالة</a></li>
+                <li class="mb-2 fade-in fade-in-delay-5"><a href="#meetings" class="text-decoration-none text-primary">الاجتماعات</a></li>
             </ul>
         </div>
         <div id="global" class="mb-5 p-5 rounded shadow-lg border flip-in" style="animation-delay: 0.1s; background-color: #ffffff; border-right: 6px solid #198754;">

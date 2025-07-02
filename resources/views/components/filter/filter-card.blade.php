@@ -2,12 +2,12 @@
 @php
 $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
-<div class="container px-4 justify-content-center">
+<div class="container px-4 justify-content-center" style="max-width: 1140px;">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
             @foreach($meetings as $meeting)
-            <div class="meetings-list mt-4" dir="{{ $direction }}">
+            <div class="meetings-list mt-4 w-100" dir="{{ $direction }}">
 
             @if($meeting->type=="open")
                 <div class="meeting-item" style="border: 4px solid crimson;">
@@ -84,7 +84,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             @if($meeting->options->count() > 0)
             <div class="meeting-options">
                 <div class="options-title">
-                    <x-fas-circle style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.Options') }}
+                    <x-fas-circle style="width:12px; height:12px;"/>&NonBreakingSpace;{{ __('messages.Options') }}
                 </div>
                 <div class="options-list">
                     @foreach($meeting->options as $option)

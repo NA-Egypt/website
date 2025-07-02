@@ -17,7 +17,8 @@
     right: -121px;
     direction: rtl;
   }
-    [dir="rtl"] .ms-auto {
+  
+  [dir="rtl"] .ms-auto {
     margin-right: 45px !important;
     margin-left: 85px !important;
     /* direction: rtl; */
@@ -93,7 +94,7 @@
   
   [dir="rtl"] .page-content {
     margin-left: 0;  /* Remove left margin */
-    margin-right: 250px;  
+    margin-right: 0px;  
     direction: rtl;
   }
   
@@ -222,4 +223,3 @@
   [dir="rtl"] .admin-link:hover {
     color: #000487; /* Optional: Change to a lighter color when hovering */
   }
-  

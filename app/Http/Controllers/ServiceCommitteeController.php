@@ -18,6 +18,13 @@ class ServiceCommitteeController extends Controller
         return view('serviceCommittee.index', ['ServiceCommittee'=>$ServiceCommittee]);
     }
 
+    public function __invoke()
+    {
+        $serviceCommittees = ServiceCommittee::all();
+
+        return view('frontend.comms', ['serviceCommittees'=>$serviceCommittees]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

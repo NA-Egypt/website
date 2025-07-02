@@ -160,6 +160,8 @@ Route::group(
             return view('frontend.forpublic');
         })->name('frontend.forpublic');
 
+        Route::get('/committees', [ServiceCommitteeController::class, '__invoke'])->name('frontend.comms');
+
         Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
         Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');
 
