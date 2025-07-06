@@ -1,7 +1,8 @@
 <header class="top-header">        
     <nav class="navbar navbar-expand">
       <div class="mobile-toggle-icon d-xl-none">
-        <i class="bi bi-list"></i>
+        <x-fas-bars style="width:16px; height:16px;"/>
+        {{-- <i class="bi bi-list"></i> --}}
       </div>
       <div class="top-navbar d-none d-xl-block">
         <a href="{{ route('dashboard') }}">
@@ -12,29 +13,27 @@
 
 
 
-      <div class="top-navbar-right ms-auto ">
+      <div class="top-navbar-left ms-auto ">
         <ul class="navbar-nav align-items-center">
 
-          {{-- Languages Switcher --}}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-            <div class="user-name">
-                <img src="{{ asset('assets/images/flags/global.png') }}" alt="global Flag" style="width: 25px; height: 25px;">
-            </div>
+          <!-- Language Switcher -->
+          @php
+            $currentLocale = LaravelLocalization::getCurrentLocale();
+            $supportedLocales = LaravelLocalization::getSupportedLocales();
+            $otherLocales = collect($supportedLocales)->reject(function ($value, $key) use ($currentLocale) {
+                return $key === $currentLocale;
+            });
+            $localeCode = $otherLocales->keys()->first();
+            $properties = $otherLocales->first();
+          @endphp
+          @if ($localeCode && $properties)
+          <li>
+            <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-outline-warning">
+              <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15">
+              <span>{{ $properties['native'] }}</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-            @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
-                <li>
-                <a class="dropdown-item" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
-                    <div class="d-flex align-items-center">
-                    <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" style="width: 20px; height: 20px;">
-                    <div class="setting-text ms-3"><span>{{ $properties['native'] }}</span></div>
-                    </div>
-                </a>
-                </li>
-            @endforeach
-            </ul>
           </li>
+          @endif
       
 
           {{-- User Image --}}

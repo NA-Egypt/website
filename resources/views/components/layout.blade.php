@@ -2,10 +2,7 @@
 @php
 $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
-{{-- <html lang="en" class="minimal-theme"> --}}
-{{--<html lang="{{ app()->getLocale() }}" dir="{{ $direction }}" class="minimal-theme">--}}
 <html lang="{{ app()->getLocale() }}"  dir="{{ $direction }}" class="minimal-theme">
-
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -19,7 +16,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       <link rel="stylesheet" href="public/assets/css/rtl.css">
     @endif --}}
 
-  <title>NA</title>
+  <title>{{__('messages.NA')}}</title>
 
 </head>
 <style>
@@ -57,8 +54,6 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
     </div>
     <!-- / wrapper-->
-
-
 </body>
 
 </html>

@@ -234,4 +234,7 @@ return [
     'Essential PDFs' => 'Group Readings',
     'Additional PDFs' => 'Recovery Pamphlets',
     'Service Items' => 'Service Pamphlets',
+    'Done'=>'Done',
+    'Choose'=>'Choose',
+    'Mail has been sent successfully.'=>'Mail has been sent successfully.',
 ];

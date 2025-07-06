@@ -214,7 +214,7 @@ return [
     'Please enter your email' => 'الرجاء إدخال بريدك الإلكتروني',
     'Please enter your message' => 'الرجاء إدخال رسالتك',
     'mail-sent' => 'تم إرسال الرسالة بنجاح، شكرًا لتواصلك معنا',
-    'Success!' => 'نجاح!',
+    'Success!' => 'تم الإرسال!',
     'groupreadings' => 'قراءات المجموعة',
     'BasicText' => 'النص الأساسي صوتي بالعربية',
     'BasicTextdownload' => 'تحميل',
@@ -235,4 +235,7 @@ return [
     'Essential PDFs' => 'قراءات المجموعة',
     'Additional PDFs' => 'نشرات التعافي',
     'Service Items' => 'النشرات الخدمية',
+    'Done'=>'تم',
+    'Choose'=>'اختر',
+    'Mail has been sent successfully.'=>'تم إرسال الرسالة بنجاح',
 ];

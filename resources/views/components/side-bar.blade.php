@@ -1,12 +1,12 @@
 <aside class="sidebar-wrapper" data-simplebar="true">
         
-    {{-- Logo --}}
-    <div class="sidebar-header">
+    {{-- Logo --}} 
+    {{-- <div class="sidebar-header">
       <div>
-        <img src="{{ asset('assets/images/na.png') }}" class="logo-icon" alt="logo icon">
+        <img src="{{ asset('assets/images/logo.png') }}" class="w-100" alt="logo icon">
       </div>
-    </div>
-    {{-- / Logo --}}
+    </div> --}}
+     {{--/ Logo --}}
 
     <!--navigation-->
     <ul class="metismenu" id="menu">
