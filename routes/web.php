@@ -141,6 +141,7 @@ Route::group(
 
         Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
         Route::get('/export-meetings-pdf', [MeetingFilterController::class, 'exportMeetingsToPDF'])->name('exportMeetingsToPDF');
+        Route::get('/export-meetings-csv', [MeetingFilterController::class, 'exportMeetingsToCSV'])->name('exportMeetingsToCSV');
 
 
         // Searches:
@@ -167,5 +168,4 @@ Route::group(
 
     }
 );
-
 

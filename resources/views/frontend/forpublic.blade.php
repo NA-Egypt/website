@@ -3,7 +3,7 @@
 
     <div id="top" class="container py-4" style="direction: rtl; text-align: right; background: linear-gradient(to bottom, #ffffff, #f0f4f8); border-radius: 12px;">
         <div class="mb-5">
-            <h5 class="fw-bold mb-4 fade-in fade-in-delay-1">فهرس الصفحة</h5>
+            <h5 class="mb-4 fade-in fade-in-delay-1">فهرس الصفحة</h5>
             <ul class="list-unstyled mb-5">
                 <li class="mb-2 fade-in fade-in-delay-1"><a href="#global" class="text-decoration-none text-primary">معلومات عن الزمالة العالمية</a></li>
                 <li class="mb-2 fade-in fade-in-delay-2"><a href="#local" class="text-decoration-none text-primary">معلومات عن الزمالة المحلية</a></li>
@@ -13,7 +13,7 @@
             </ul>
         </div>
         <div id="global" class="mb-5 p-5 rounded shadow-lg border flip-in" style="animation-delay: 0.1s; background-color: #ffffff; border-right: 6px solid #198754;">
-            <h4 class="fw-bold mb-4 fade-in fade-in-delay-1"><i class="fas fa-globe-asia text-success me-2 fa-bounce fade-icon fade-icon-delay-1"></i>معلومات عن الزمالة العالمية</h4>
+            <h4 class="mb-4 fade-in fade-in-delay-1"><i class="fas fa-globe-asia text-success me-2 fa-bounce fade-icon fade-icon-delay-1"></i>معلومات عن الزمالة العالمية</h4>
             <p class="mb-4 fade-in fade-in-delay-1">
                 إنبثقت زمالة المدمنون المجهولون من برنامج مدمني الخمر في أواخر الأربعينيات، حيث عقدت إجتماعاته الأولى
                 في منطقة لوس أنجلوس بكاليفورنيا في الولايات المتحدة الأمريكية في أوائل الخمسينيات. بدأ برنامج المدمنون
@@ -32,7 +32,7 @@
         </div>
 
         <div id="local" class="mb-5 p-5 rounded shadow-lg border flip-in" style="animation-delay: 0.2s; background-color: #ffffff; border-right: 6px solid #0d6efd;">
-            <h4 class="fw-bold mb-4 fade-in fade-in-delay-1"><i class="fas fa-map-marker-alt text-primary me-2 fa-bounce fade-icon fade-icon-delay-2"></i>معلومات عن الزمالة المحلية</h4>
+            <h4 class="mb-4 fade-in fade-in-delay-1"><i class="fas fa-map-marker-alt text-primary me-2 fa-bounce fade-icon fade-icon-delay-2"></i>معلومات عن الزمالة المحلية</h4>
             <ul class="list-group list-group-flush mb-4" style="direction: rtl; text-align: right;">
                 <li class="list-group-item mb-2 fade-in fade-in-delay-1">أول اجتماع تم انعقاده في مدرسة بمصر الجديدة بتاريخ ٢٦ نوفمبر ١٩٨٩.</li>
                 <li class="list-group-item mb-2 fade-in fade-in-delay-2">كان عدد الأعضاء ٤.</li>
@@ -41,7 +41,7 @@
         </div>
 
         <div id="statistics" class="mb-5 flip-in" style="animation-delay: 0.3s;">
-            <h4 class="fw-bold mb-4 fade-in fade-in-delay-1">الإحصائيات العالمية</h4>
+            <h4 class="mb-4 fade-in fade-in-delay-1">الإحصائيات العالمية</h4>
             <p class="fade-in fade-in-delay-1">
               <a href="https://na.org/wp-content/uploads/2024/06/2301-Membership-Survey-English-2018-11-19.pdf" target="_blank" class="text-decoration-underline text-info">
                 (متوفرة باللغة الإنجليزية فقط)
@@ -52,7 +52,7 @@
         <div id="not-do" class="mb-5 p-5 rounded shadow-lg border flip-in" style="animation-delay: 0.4s; background-color: #ffffff; border-right: 6px solid #007bff;">
             <div class="d-flex align-items-center mb-4">
                 <i class="fas fa-ban text-danger fs-4 me-2 fa-bounce fade-icon fade-icon-delay-3"></i>
-                <h4 class="fw-bold mb-0 fade-in fade-in-delay-1">زمالة المدمنين المجهولين لا تقوم بما يلي:</h4>
+                <h4 class="mb-0 fade-in fade-in-delay-1">زمالة المدمنين المجهولين لا تقوم بما يلي:</h4>
             </div>
             <p class="mb-4 text-muted fade-in fade-in-delay-1">
                 إليك بعض الأمثلة على ما لا تقوم به الزمالة، توضيحًا لطبيعة دورها ونطاق خدماتها:
@@ -73,14 +73,14 @@
         </div>
 
         <div id="meetings" class="mb-5 p-5 rounded shadow-lg border flip-in" style="animation-delay: 0.5s; background-color: #ffffff; border-right: 6px solid #6f42c1;">
-            <h4 class="fw-bold mb-4 fade-in fade-in-delay-1"><i class="fas fa-handshake text-purple me-2 fa-bounce fade-icon fade-icon-delay-1"></i>الاجتماعات</h4>
+            <h4 class="mb-4 fade-in fade-in-delay-1"><i class="fas fa-handshake text-purple me-2 fa-bounce fade-icon fade-icon-delay-1"></i>الاجتماعات</h4>
 
-            <h5 class="fw-bold text-dark mb-3 fade-in fade-in-delay-1">من هم أعضاء زمالة المدمنين المجهولين؟</h5>
+            <h5 class="text-dark mb-3 fade-in fade-in-delay-1">من هم أعضاء زمالة المدمنين المجهولين؟</h5>
             <p class="mb-4 fade-in fade-in-delay-1">
                 أي شخص لديه الرغبة في الامتناع عن تعاطي المخدرات يمكنه أن يكون عضواً في زمالة المدمنين المجهولين. فإن العضوية ليست مقتصرة على مدمنين يتعاطون مخدر معين. إن الأشخاص الذين قد يكون لديهم مشكلة مع مخدر ممنوع أو مخدر بوصفة طبية وبالإضافة إلى مادة “الخمر” فهم مرحب بهم في زمالـة “المدمنين المجهولين”. ما تركز عليه زمالة “المدمنين المجهولين” هو التعافي من الإدمان والامتناع الكلي عن جميع المخدرات وليس على مادة مخدرة معينة.
             </p>
 
-            <h5 class="fw-bold text-dark mb-3 fade-in fade-in-delay-1">ما هي الاجتماعات المفتوحة والمغلقة؟</h5>
+            <h5 class="text-dark mb-3 fade-in fade-in-delay-1">ما هي الاجتماعات المفتوحة والمغلقة؟</h5>
             <p class="mb-4 fade-in fade-in-delay-2">
                 الاجتماعات المغلقة في زمالة “المدمنين المجهولين” هي للمدمنين فقط، أو الناس الذين يعتقدون بأن لديهم مشكلة مع المخدرات. إن الاجتماعات المغلقة تهيأ الجو المناسب للمدمنين لكي يستطيعوا الإحساس بثقة أكبر، وإن هؤلاء المدمنين الذين يحضرون الاجتماعات قادرون على الاتفاق فيما بينهم. إن من يدير الأجتماع عادة يلفت نظر الأعضاء إلى أن هذا الاجتماع مغلق، وذلك لشرح فعالية الاجتماع المغلق، وفى نفس الوقت يوجه غير المدمنين إلى الاجتماع المفتوح.
             </p>

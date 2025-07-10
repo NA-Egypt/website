@@ -25,7 +25,7 @@
       {{-- / Total cities --}}
 
       {{-- Total Users --}}
-      <div class="col">
+      <div class="col-12 col-lg-12 col-xl-12 d-flex">
         <div class="card radius-10">
           <div class="card-body">
               <div class="d-flex align-items-center">
@@ -46,7 +46,7 @@
     <div class="row">
 
       {{-- Groups --}}
-      <div class="col-12 col-lg-12 col-xl-4 d-flex">
+      <div class="col-3 col-lg-3 col-xl-3 d-flex">
         <div class="card radius-10 w-100">
           <x-dashboard.card-header>{{ __('messages.Groups') }}</x-dashboard.card-header>
           <div class="d-flex justify-content-end">
@@ -60,7 +60,7 @@
       {{-- Groups --}}
 
       {{-- List Of Meetings in Spacific City --}}
-      <div class="col-12 col-lg-12 col-xl-4 d-flex">
+      <div class="col-3 col-lg-3 col-xl-3 d-flex">
         <div class="card radius-10 w-100">
           <x-dashboard.card-header>{{ __('messages.Meetings') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
           <div class="card-body">
@@ -77,7 +77,7 @@
 
 
       {{-- List Of Groups in Spacific City --}}
-      <div class="col-12 col-lg-12 col-xl-4 d-flex">
+      <div class="col-3 col-lg-3 col-xl-3 d-flex">
         <div class="card radius-10 w-100">
           <x-dashboard.card-header>{{ __('messages.Groups') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
           <div class="card-body">
@@ -94,32 +94,32 @@
     </div>
   
     {{-- Recent Transactions --}}
-    <div class="card radius-10">
+    <div class="card radius-10 w-50" dir="ltr">
       <div class="card-header bg-secondary bg-gradient">
         <div class="row g-3 align-items-center ">
-          <div class="col ">
+          <div class="col-12 col-lg-6 col-xl-6 d-flex" dir="ltr">
             <p class="mb-0 text-black">{{ __('messages.Recent Logs')}}</p>
           </div>
         </div>
       </div>
       <div class="card-body">
-        <div class="table-responsive">
-          <table class="table align-middle mb-0">
-            <thead class="table-light">
+        <div class="table-responsive w-100">
+          <table class="table align-middle mb-0" dir="ltr">
+            <thead class="table-dark">
               <tr>
-                <th>#{{ __('messages.ID')}}</th>
+                {{-- <th>#{{ __('messages.ID')}}</th> --}}
                 <th>{{  __('messages.Operation') }}</th>
                 <th>{{  __('messages.Model') }}</th>
                 <th>{{  __('messages.User') }}</th>
                 <th>{{  __('messages.Date') }}</th>
                 <th>{{  __('messages.Time') }}</th>
-                <th>{{  __('messages.Name') }}</th>
+                <th>{{  __('messages.Email') }}</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($transactions as $trans)                    
                 <tr>
-                  <td>{{ $trans->id }}</td>
+                  {{-- <td>{{ $trans->id }}</td> --}}
                   <td>{{ ucfirst($trans->operation) }}</td>
                   <td>{{ $trans->model }}</td>
                   <td>{{ $trans->user->name ?? 'System' }}</td>
@@ -127,10 +127,10 @@
                   <td>{{ $trans->created_at->format('H:i:s') }}</td>
                   <td>
                       @if ($trans->model === 'Meeting')
-                          {{ $trans->group_name }}
+                          {{ $trans->user->email }}
 
                       @else
-                      {{ $trans->details['en_name'] ?? '' }}
+                      {{  $trans->user->email ?? $trans->details['en_name'] }}
                       @endif
                   </td>
                 </tr>

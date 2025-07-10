@@ -9,6 +9,7 @@ use App\Models\Day;
 use App\Models\ServiceBody;
 use App\Models\Group;
 use App\Models\Neighborhood;
+use App\Models\Meeting;
 use Mpdf\Mpdf;
 
 class MeetingFilterController extends Controller
@@ -83,5 +84,63 @@ class MeetingFilterController extends Controller
         return response($mpdf->Output('meetings.pdf', 'S'), 200)
                ->header('Content-Type', 'application/pdf')
                ->header('Content-Disposition', 'attachment; filename="meetings.pdf"');
+    }
+
+    public function exportMeetingsToCSV()
+    {
+        $meetings = Meeting::all();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="meetings.csv"',
+        ];
+
+        $callback = function() use ($meetings) {
+            $handle = fopen('php://output', 'w');
+
+            // Add CSV header
+            fputcsv($handle, [
+                'ID',
+                'Day',
+                'Group',
+                'Time',
+                'Topic',
+                'Language',
+                'Neighborhood',
+                'City',
+                'Type',
+                'Options',
+                'Status',
+                'Address',
+                'GSR',
+                'Phone',
+                'Notes'
+            ]);
+
+            // Add meeting rows
+            foreach ($meetings as $meeting) {
+                fputcsv($handle, [
+                    $meeting->id,
+                    $meeting->day->ar_name ?? '',
+                    $meeting->group->ar_name ?? '',
+                    $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
+                    $meeting->topic->ar_name ?? '',
+                    $meeting->lang ?? '',
+                    $meeting->group->neighborhood->ar_name ?? '',
+                    $meeting->group->city->ar_name ?? '',
+                    is_object($meeting->type) ? $meeting->type->ar_name ?? '' : $meeting->type ?? '',
+                    $meeting->options()->pluck('ar_name')->implode(', ') ?? '',
+                    $meeting->status ?? '',
+                    $meeting->group->ar_address ?? '',
+                    $meeting->group->ar_gsr_name ?? '',
+                    $meeting->group->phone ?? '',
+                    $meeting->notes ?? ''
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -7,7 +7,7 @@
             <div class="d-flex align-items-center mb-3">
                 <span
                     style="width: 0.5rem; height: 0.5rem; background-color: white; display: inline-block; margin-inline-end: 0.5rem;"></span>
-                <label class="fw-bold " for="permissions">{{__('messages.Permissions')}}</label>
+                <label class="text-primary" for="permissions">{{__('messages.Permissions')}}</label>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 @foreach ($permissions as $permission)

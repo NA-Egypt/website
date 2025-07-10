@@ -636,7 +636,7 @@ body[dir="rtl"] {
     /* RTL page content - Desktop */
     [dir="rtl"] .page-content {
         margin-left: 0px;
-        margin-right: 0px;
+        margin-right: 70px;
     }
 
     [dir="rtl"] .wrapper.toggled .page-content {

@@ -238,4 +238,5 @@ return [
     'Done'=>'تم',
     'Choose'=>'اختر',
     'Mail has been sent successfully.'=>'تم إرسال الرسالة بنجاح',
+    'downloadmeetingscsv' => 'تحميل الاجتماعات CSV',
 ];

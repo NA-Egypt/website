@@ -17,7 +17,7 @@
                         <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" />
                     </div>
                     <div class="col-10">
-                        <label class="fw-bold d-block mb-2 text-danger" for="type">{{__('messages.Type')}}</label>
+                        <label class="d-block mb-2 text-danger" for="type">{{__('messages.Type')}}</label>
                         <select name="type" data-allow-clear="true" class="select2 form-control">
                             <option value="">{{__('messages.Choose Type')}}</option>
                             <option value="open" {{ request('type') == 'open' ? 'selected' : '' }}>
@@ -57,6 +57,12 @@
                 <a href="{{ route('exportMeetingsToPDF', request()->query()) }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">
                 {{__('messages.downloadmeetingspdf')}}
                 <x-fas-file-pdf style="width:16px; height:16px;"/>
+                </a>
+            </div>
+            <div class="d-flex justify-content-center mb-3">
+                <a href="{{ route('exportMeetingsToCSV', request()->query()) }}" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">
+                {{__('messages.downloadmeetingscsv')}}
+                <x-fas-file-csv style="width:16px; height:16px;"/>
                 </a>
             </div>
         </div>

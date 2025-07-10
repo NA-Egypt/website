@@ -237,4 +237,5 @@ return [
     'Done'=>'Done',
     'Choose'=>'Choose',
     'Mail has been sent successfully.'=>'Mail has been sent successfully.',
+    'downloadmeetingscsv' => 'Download Meetings CSV',
 ];

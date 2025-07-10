@@ -32,9 +32,9 @@
                             <td>{{ $meeting->group->ar_name }}</td>
                             <td>
                                 @if(app()->getLocale() === 'ar')
-                                    {{$meeting->topic->ar_name}}
+                                    {{$meeting->topic?->ar_name}}
                                 @else
-                                    {{$meeting->topic->en_name}}
+                                    {{$meeting->topic?->en_name}}
                                 @endif
                             </td>
                             <td>

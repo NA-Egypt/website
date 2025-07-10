@@ -1,7 +1,7 @@
 {{-- First 4 cards in dashboard --}}
 
 @props(['name', 'qty', 'icon'])
-<div class="col ">
+<div class="col-12 col-lg-6 col-xl-6 d-flex">
     <div class="card radius-10 ">
       <div class="card-body custom-shadow">
           <div class="d-flex align-items-center ">

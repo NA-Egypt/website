@@ -7,7 +7,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <div class="card-body" dir="{{ $direction }}">
             <div id="top" class="container py-4" dir="{{ $direction }}" style="text-align: center; background: linear-gradient(to top, #ffffff, #f0f4f8); border-radius: 12px;">
                 <div class="mb-2 mt-2">
-                    <h2 class="mb-3 fw-bold" style="font-size: 1.75rem; color: #1a73e8;">تعرف على اللجان الخدمية ومواعيد اجتماعاتها</h2>
+                    <h2 class="mb-3" style="font-size: 1.75rem; color: #1a73e8;">تعرف على اللجان الخدمية ومواعيد اجتماعاتها</h2>
                     <style>
                         [dir="rtl"] .meeting-card {
                             background: #ffffff;
