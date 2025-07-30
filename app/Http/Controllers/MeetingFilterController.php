@@ -97,45 +97,76 @@ class MeetingFilterController extends Controller
 
         $callback = function() use ($meetings) {
             $handle = fopen('php://output', 'w');
-
-            // Add CSV header
-            fputcsv($handle, [
-                'ID',
-                'Day',
-                'Group',
-                'Time',
-                'Topic',
-                'Language',
-                'Neighborhood',
-                'City',
-                'Type',
-                'Options',
-                'Status',
-                'Address',
-                'GSR',
-                'Phone',
-                'Notes'
-            ]);
-
-            // Add meeting rows
-            foreach ($meetings as $meeting) {
+            if (app()->getLocale() == 'en') {
                 fputcsv($handle, [
-                    $meeting->id,
-                    $meeting->day->ar_name ?? '',
-                    $meeting->group->ar_name ?? '',
-                    $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
-                    $meeting->topic->ar_name ?? '',
-                    $meeting->lang ?? '',
-                    $meeting->group->neighborhood->ar_name ?? '',
-                    $meeting->group->city->ar_name ?? '',
-                    is_object($meeting->type) ? $meeting->type->ar_name ?? '' : $meeting->type ?? '',
-                    $meeting->options()->pluck('ar_name')->implode(', ') ?? '',
-                    $meeting->status ?? '',
-                    $meeting->group->ar_address ?? '',
-                    $meeting->group->ar_gsr_name ?? '',
-                    $meeting->group->phone ?? '',
-                    $meeting->notes ?? ''
+                    'Day',
+                    'Group',
+                    'Time',
+                    'Topic',
+                    'Language',
+                    'Neighborhood',
+                    'City',
+                    'Type',
+                    'Options',
+                    'Status',
+                    'Address',
+                    'GSR',
+                    'Phone',
+                    'Notes'
                 ]);
+                foreach ($meetings as $meeting) {
+                    fputcsv($handle, [
+                        $meeting->day->en_name ?? '',
+                        $meeting->group->en_name ?? '',
+                        $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
+                        $meeting->topic->en_name ?? '',
+                        $meeting->lang ?? '',
+                        $meeting->group->neighborhood->en_name ?? '',
+                        $meeting->group->neighborhood->city->en_name ?? '',
+                        $meeting->type ?? '',
+                        $meeting->options()->pluck('en_name')->implode(', ') ?? '',
+                        $meeting->status ?? '',
+                        $meeting->group->en_address ?? '',
+                        $meeting->group->en_gsr_name ?? '',
+                        $meeting->group->phone ?? '',
+                        $meeting->notes ?? ''
+                    ]);
+                }
+            } else {
+                fputcsv($handle, [
+                    'اليوم',
+                    'المجموعة',
+                    'الوقت',
+                    'الموضوع',
+                    'اللغة',
+                    'الحي',
+                    'المدينة',
+                    'النوع',
+                    'خصائص',
+                    'الحالة',
+                    'العنوان',
+                    'المسؤول',
+                    'الهاتف',
+                    'الملاحظات'
+                ]);
+                foreach ($meetings as $meeting) {
+                    fputcsv($handle, [
+                        $meeting->day->ar_name ?? '',
+                        $meeting->group->ar_name ?? '',
+                        $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
+                        $meeting->topic->ar_name ?? '',
+                        $meeting->lang ?? '',
+                        $meeting->group->neighborhood->ar_name ?? '',
+                        $meeting->group->neighborhood->city->ar_name ?? '',
+                        $meeting->type ?? '',
+                        $meeting->options()->pluck('ar_name')->implode(', ') ?? '',
+                        $meeting->status ?? '',
+                        $meeting->group->ar_address ?? '',
+                        $meeting->group->ar_gsr_name ?? '',
+                        $meeting->group->phone ?? '',
+                        $meeting->notes ?? ''
+                    ]);
+                }
             }
 
             fclose($handle);

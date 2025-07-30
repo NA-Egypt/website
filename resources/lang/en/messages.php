@@ -218,7 +218,7 @@ return [
     'BasicText' => 'Basic Text Arabic Audio',
     'BasicTextdownload' => 'Download',
     'BasicTextlisten' => 'Listen',
-    'Account' => 'User Account',
+    'Account' => 'Account',
     'Enter your email' => 'Enter your email',
     'Subscribe' => 'Subscribe',
     'Map' => 'Map',
@@ -238,4 +238,5 @@ return [
     'Choose'=>'Choose',
     'Mail has been sent successfully.'=>'Mail has been sent successfully.',
     'downloadmeetingscsv' => 'Download Meetings CSV',
+    'zoomlink' => 'Zoom Link',
 ];

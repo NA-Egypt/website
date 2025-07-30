@@ -155,7 +155,7 @@ return [
     'Chairman Name'                                        =>'اسم رئيس اللجنة',
     'Chairman Phone'                                       =>'رقم رئيس اللجنة',
     'Literature'                                           =>'النشرات',
-    'Login'                                                 =>'تسجيل الدخول',
+    'Login'                                                 =>'الدخول',
     'NA'                                                    =>'زمالة المدمنين المجهولين مصر',
     'thewarning'                                            =>'زمالة المدمنين المجهولين لا تنتسب لأي مؤسسات لعلاج الإدمان أو أي مؤسسات أخرى',
     'aboutus'                 =>'نبذة عنا',
@@ -219,7 +219,7 @@ return [
     'BasicText' => 'النص الأساسي صوتي بالعربية',
     'BasicTextdownload' => 'تحميل',
     'BasicTextlisten' => 'استماع',
-    'Account' => 'حساب المستخدم',
+    'Account' => 'المستخدم',
     'Enter your email' => 'أدخل بريدك الإلكتروني',
     'Subscribe' => 'الإشتراك',
     'Map' => 'الخريطة',
@@ -239,4 +239,5 @@ return [
     'Choose'=>'اختر',
     'Mail has been sent successfully.'=>'تم إرسال الرسالة بنجاح',
     'downloadmeetingscsv' => 'تحميل الاجتماعات CSV',
+    'zoomlink' => 'رابط زووم',
 ];

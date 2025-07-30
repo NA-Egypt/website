@@ -126,7 +126,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                     @if($meeting->group->location)
                     <br />
                     <x-fas-map-marker style="width:16px; height:16px;"/>
-                    <a href="{{ $meeting->group->location }}" target="_blank">{{__('messages.Map')}}</a>
+                    <a href="{{ $meeting->group->location }}" target="_blank">
+                    @if($meeting->group->group_type !== 'فعلي')
+                        {{__('messages.zoomlink')}}
+                    @else
+                        {{__('messages.Map')}}
+                    @endif
+                    </a>
                     @endif
                 </div>
             @endif
