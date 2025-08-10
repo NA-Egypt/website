@@ -162,7 +162,7 @@ return [
     'helpline'               =>'Helpline',
     'calculator'                =>'Your Clean Date',
     'alexandria'               =>'Alexandria',
-    'westgiza'                      =>'West Giza',
+    'westgiza'                      =>'Al-Ahram Area',
     'copyrights'               =>'Copyrights 2025 Narcotics Anonymous',
     'Egypt'                   =>'Egypt',
     'years'                   =>'Years',
