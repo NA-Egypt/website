@@ -240,4 +240,7 @@ return [
     'Mail has been sent successfully.'=>'تم إرسال الرسالة بنجاح',
     'downloadmeetingscsv' => 'تحميل الاجتماعات CSV',
     'zoomlink' => 'رابط زووم',
+    'leactiming' => '١٢ ظ - ١٠ م',
+    'ahramtiming' => '١٠ ص - ١٠ م',
+    'regionaltiming' => '١٠ ص - ١٢ منتصف الليل',
 ];

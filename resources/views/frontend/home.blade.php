@@ -33,6 +33,8 @@
             <br />
             <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
             <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.regionaltiming') }}
+            <br />
         </p>
     </div>
     <div class="col-md-4 helpline-box">
@@ -41,6 +43,8 @@
         <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
             <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
             <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.leactiming') }}
+            <br />
         </p>
     </div>
     <div class="col-md-4 helpline-box">
@@ -48,6 +52,8 @@
         <div>{{ __('messages.westgiza') }}</div>
         <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
             <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.ahramtiming') }}
             <br />
         </p>
     </div>

@@ -35,7 +35,10 @@ class RoleRedirect
 //                return $this->handleYourNewRole($request, $next, $user);
 //            }
 
-            // fallback: no permission
+            // Allow access to dashboard and general routes
+            if (in_array($request->route()->getName(), ['dashboard'])) {
+                return $next($request);
+            }
             return redirect('/')->withErrors(['You do not have access.']);
         }
 
@@ -50,6 +53,11 @@ class RoleRedirect
        })->first();
 
        if ($serviceCommittee) {
+           // For dashboard or initial access, redirect Committee users to their assigned committee
+           if ($request->route()->getName() === 'dashboard') {
+               return redirect()->route('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee->id]);
+           }
+
            $routeName = $request->route()->getName();
            $currentServiceCommitteeId = null;
 
@@ -71,6 +79,11 @@ class RoleRedirect
                return $next($request);
            }
 
+           // Only redirect to service committee if accessing committee-specific routes
+           if ($request->route()->getName() === 'dashboard') {
+               return $next($request);
+           }
+
            // Redirect to assigned service committee
            return redirect()->route('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee->id]);
        }
@@ -87,6 +100,12 @@ class RoleRedirect
 
         if ($group) {
             $routeName = $request->route()->getName();
+            
+            // For dashboard or initial access, redirect GSR to their assigned group
+            if ($routeName === 'dashboard') {
+                return redirect()->route('group.show', ['group' => $group->id]);
+            }
+            
             $currentGroupId = null;
 
             // Allow direct access to meeting.create (no group check needed)
@@ -131,7 +150,13 @@ class RoleRedirect
                 return $next($request);
             }
 
-            // Redirect to assigned group if mismatch
+            // Only redirect to assigned group if they're trying to access group-specific routes
+            // Allow dashboard and other general routes to proceed
+            if ($request->route()->getName() === 'dashboard') {
+                return $next($request);
+            }
+
+            // Redirect to assigned group for other routes
             return redirect()->route('group.show', ['group' => $group->id]);
         }
 

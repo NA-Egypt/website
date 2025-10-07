@@ -1,7 +1,5 @@
 
-@import './backend.css';
-@import '../../public/assets/css/frontend.css';
-@import '../../public/assets/css/rtl.css';
+
 /* Bootstrap */
 @import './plugin/bootstrap.min.css';
 @import './plugin/bootstrap-extended.css';
@@ -43,5 +41,23 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,600;1,600&display=swap'); */
 
 
-@import './style.css';
+@import "./style.css";
 /*@import '../fonts/AraJozoor-Regular.woff';*/
+
+/* Backend layout fixes */
+body.has-sidebar .page-content { margin-left: 250px; /*margin-right: 0;*/ }
+[dir="rtl"].has-sidebar .page-content { margin-left: 0; margin-right: 250px; }
+
+body:not(.has-sidebar) .page-content { margin-left: 0 !important; margin-right: 0 !important; }
+
+@media (min-width: 1026px) {
+  body:not(.has-sidebar) .top-header .navbar { left: 0 !important; width: 100% !important; }
+  [dir="rtl"] body:not(.has-sidebar) .top-header .navbar { right: 0 !important; width: 100% !important; }
+}
+
+body.has-sidebar .wrapper.toggled .page-content { margin-left: 70px; }
+[dir="rtl"].has-sidebar .wrapper.toggled .page-content { margin-right: 70px; }
+
+.page-content { overflow-x: hidden; }
+
+html.minimal-theme, html.minimal-theme body { overflow-x: hidden; }

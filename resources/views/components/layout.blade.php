@@ -1,3 +1,4 @@
+
 <!doctype html>
 @php
 $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
@@ -11,20 +12,40 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   <link rel="icon" href="{{ asset('assets/images/na-logo.jpg') }}" type="image/png" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
-    <!-- Include RTL CSS dynamically -->
-    {{-- @if ($direction === 'rtl')
-      <link rel="stylesheet" href="public/assets/css/rtl.css">
-    @endif --}}
+  <!-- Add Bootstrap RTL CSS conditionally -->
+  @if ($direction === 'rtl')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  @else
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  @endif
+
+  <!-- Override Bootstrap font with your custom font -->
+  <style>
+  * {
+    font-family: "Helvetica Neue ME" !important;
+  }
+
+  /* Fix spacing issues in RTL */
+  [dir="rtl"] .container-fluid {
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+  }
+
+  [dir="rtl"] .row {
+    margin-right: -15px !important;
+    margin-left: -15px !important;
+  }
+
+  [dir="rtl"] .col-md-3, [dir="rtl"] .col-md-4 {
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+  }
+  </style>
 
   <title>{{__('messages.NA')}}</title>
 
 </head>
-<style>
-    body:not(:has(.sidebar-wrapper)) .top-header .navbar {
-        left: 0 !important;
-    }
-</style>
-<body class="hanken-grotesk">
+<body class="hanken-grotesk @can('is-super-admin') has-sidebar @endcan">
 {{--     wrapper--}}
     <div class="wrapper">
 
@@ -36,8 +57,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <x-side-bar />
         <!-- / sidebar -->
     @endcan
-        <main class="page-content hanken-grotesk ">
-          {{ $slot }}
+        <main class="page-content hanken-grotesk">
+          <div class="container-fluid">
+            {{ $slot }}
+          </div>
         </main>
 
         <!--start overlay-->

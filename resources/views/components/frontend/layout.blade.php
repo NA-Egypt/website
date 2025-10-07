@@ -28,7 +28,7 @@
   width: 30%;
   min-width: 220px;
   max-width: 220px;
-  height: 140px;
+  height: 160px;
   display: inline-block;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
