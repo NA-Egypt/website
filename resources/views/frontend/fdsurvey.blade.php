@@ -130,8 +130,8 @@
                 <label for="groupNameSelect">اسم المجموعة:</label>
                 <select class="select2" id="groupNameSelect" name="groupNameSelect" onchange="toggleGroupFields()" required>
                     <option value="">اختر من القائمة...</option>
-                    <option value="مجموعة غير مدرجة">مجموعة غير مدرجة على الجدول</option>
-                    <option value="عضو منعزل">عضو منعزل</option>
+                    <option value="other_group">مجموعة غير مدرجة على الجدول</option>
+                    <option value="isolated_member">عضو منعزل</option>
                     @foreach($groups as $group)
                         <option value="{{ $group->id }}">{{ $group->ar_name }}</option>
                     @endforeach
@@ -186,7 +186,7 @@
                         <option value="جغرافي">جغرافي</option>
                         <option value="صحي">صحي</option>
                         <option value="اجتماعي">اجتماعي</option>
-                        <option value="أسباب أخرى">أسباب أخرى</option>
+                        <option value="other">أسباب أخرى</option>
                     </select>
                 </div>
                 <div id="otherReasonText" class="hidden">
@@ -236,10 +236,10 @@
                 <label for="serviceLevel">هل تقوم بالخدمة؟</label>
                 <select id="serviceLevel" class="select2" name="serviceLevel" onchange="toggleServiceFields()">
                     <option value="لا">لا</option>
-                    <option value="مجموعة">مجموعة</option>
-                    <option value="منتدى/منطفة">منتدى دعم مجموعات / لجنة خدمة منطقة</option>
-                    <option value="لجنة خدمية">لجنة خدمية</option>
-                    <option value="الإقليم">لجنة خدمة الإقليم</option>
+                    <option value="group">مجموعة</option>
+                    <option value="forum">منتدى دعم مجموعات / لجنة خدمة منطقة</option>
+                    <option value="committee">لجنة خدمية</option>
+                    <option value="regional">لجنة خدمة الإقليم</option>
                 </select>
             </div>
 
@@ -335,8 +335,8 @@
             <div class="form-group">
                 <label for="addMoreTopics">6. هل تود إضافة موضوعات أخرى؟</label>
                 <select id="addMoreTopics" class="select2" name="addMoreTopics" onchange="toggleOtherTopics()">
-                    <option value="لا">لا</option>
-                    <option value="نعم">نعم</option>
+                    <option value="no">لا</option>
+                    <option value="yes">نعم</option>
                 </select>
             </div>
             <div id="otherTopicsField" class="hidden">
