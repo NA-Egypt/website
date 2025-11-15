@@ -19,6 +19,10 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
 use Illuminate\Support\Facades\App;
+use App\Models\Group;
+use App\Models\ServiceCommittee;
+use App\Models\ServiceBody;
+
 // Localization Routes:
 Route::group(
     [
@@ -160,6 +164,17 @@ Route::group(
         Route::get('/forpublic', function(){
             return view('frontend.forpublic');
         })->name('frontend.forpublic');
+
+        Route::get('/speakers', function(){
+            return view('frontend.speakers');
+        })->name('frontend.speakers');
+        
+        Route::get('/fdsurvey', function () {
+            $groups = Group::all();
+            $serviceBody = ServiceBody::all();
+            $serviceCommittee = ServiceCommittee::all();
+            return view('frontend.fdsurvey', compact('groups', 'serviceBody', 'serviceCommittee'));
+        })->name('frontend.fdsurvey');
 
         Route::get('/committees', [ServiceCommitteeController::class, '__invoke'])->name('frontend.comms');
 

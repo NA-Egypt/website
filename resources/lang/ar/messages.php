@@ -243,4 +243,6 @@ return [
     'leactiming' => '١٢ ظ - ١٠ م',
     'ahramtiming' => '١٠ ص - ١٠ م',
     'regionaltiming' => '١٠ ص - ١٢ منتصف الليل',
+    'callforspeakers' => 'دعوة للتقديم كمتحدث',
+    'fdcomm' => 'لجنة الدعم والتطوير',
 ];

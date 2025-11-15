@@ -242,4 +242,6 @@ return [
     'leactiming' => '12 PM - 10 PM',
     'ahramtiming' => '10 AM - 10 PM',
     'regionaltiming' => '10 AM - 12 Midnight',
+    'callforspeakers' => 'Call for Speakers',
+    'fdcomm' => 'FD Committee',
 ];
