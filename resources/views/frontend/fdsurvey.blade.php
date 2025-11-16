@@ -111,7 +111,7 @@
         </div>
     </header>
 
-    <form id="educationSurveyForm" action="https://getform.io/f/bgdjexwa" method="POST">
+    <form id="educationSurveyForm" action="https://formcarry.com/s/NiRt3kihplw" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_gotcha" style="display:none !important">
         <div class="section">
             <h2> بيانات المشارك</h2>
