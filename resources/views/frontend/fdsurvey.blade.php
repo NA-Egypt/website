@@ -111,7 +111,7 @@
         </div>
     </header>
 
-    <form id="educationSurveyForm" action="https://formcarry.com/s/NiRt3kihplw" method="POST">
+    <form id="educationSurveyForm" action="https://www.formingo.co/submit/410f9b7a-d5ca-40e6-820a-476fe380ae69" method="POST">
         <input type="hidden" name="_gotcha" style="display:none !important">
         <div class="section">
             <h2> بيانات المشارك</h2>
