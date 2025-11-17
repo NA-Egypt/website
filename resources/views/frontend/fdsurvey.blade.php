@@ -133,7 +133,7 @@
                     <option value="other_group">مجموعة غير مدرجة على الجدول</option>
                     <option value="isolated_member">عضو منعزل</option>
                     @foreach($groups as $group)
-                        <option value="{{ $group->id }}">{{ $group->ar_name }}</option>
+                        <option value="{{ $group->ar_name }}">{{ $group->ar_name }}</option>
                     @endforeach
                 </select>
             </div>
