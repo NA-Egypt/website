@@ -241,7 +241,7 @@ return [
     'downloadmeetingscsv' => 'تحميل الاجتماعات CSV',
     'zoomlink' => 'رابط زووم',
     'leactiming' => '١٢ ظ - ١٠ م',
-    'ahramtiming' => '١٠ ص - ١٠ م',
+    'ahramtiming' => '١٢ ظ - ١٠ م',
     'regionaltiming' => '١٠ ص - ١٢ منتصف الليل',
     'callforspeakers' => 'دعوة للتقديم كمتحدث',
     'fdcomm' => 'لجنة الدعم والتطوير',
