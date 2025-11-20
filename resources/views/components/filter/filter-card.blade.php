@@ -8,17 +8,17 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
             @foreach($meetings as $meeting)
             <div class="meetings-list mt-4 w-100" dir="{{ $direction }}">
-
-            @if($meeting->type=="open")
-                <div class="meeting-item" style="border: 4px solid crimson;">
-            @elseif($meeting->status=="suspended")
+            @if($meeting->status=="suspended")
                 <div class="meeting-item-suspended" style="border: 4px dashed #444;">
                     <div style="text-align: center;font-size: x-large;color: crimson;">
                         {{ __('messages.suspended') }}
                     </div>
+            @elseif($meeting->type=="open" && $meeting->status=="active")
+                <div class="meeting-item" style="border: 4px solid crimson;">
             @else
                 <div class="meeting-item">
             @endif
+
             <div style="text-align: center;font-size: x-large;color: blue;">
                 {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
             </div>
