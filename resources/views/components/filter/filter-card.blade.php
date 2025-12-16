@@ -13,10 +13,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                     <div style="text-align: center;font-size: x-large;color: crimson;">
                         {{ __('messages.suspended') }}
                     </div>
-            @elseif($meeting->type=="open" && $meeting->status=="active")
+            @elseif($meeting->type=="open")
                 <div class="meeting-item" style="border: 4px solid crimson;">
             @else
-                <div class="meeting-item">
+                <div class="meeting-item" style="border: 4px solid royalblue;">
             @endif
 
             <div style="text-align: center;font-size: x-large;color: blue;">
