@@ -1163,7 +1163,8 @@ body[dir="rtl"] {
 
 .top-sellers-list {
     position: relative;
-    height: 460px
+    height: 460px;
+    overflow: hidden;
 }
 
 .top-sellers-list .sellers-list-item {

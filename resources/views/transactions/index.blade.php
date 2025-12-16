@@ -17,6 +17,16 @@
                     <td>{{  __('messages.Name') }}</td>
                 </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <td>{{  __('messages.Operation') }}</td>
+                        <td>{{  __('messages.Model') }}</td>
+                        <td>{{  __('messages.User') }}</td>
+                        <td>{{  __('messages.Date') }}</td>
+                        <td>{{  __('messages.Time') }}</td>
+                        <td>{{  __('messages.Name') }}</td>
+                    </tr>
+                </tfoot>
                 <tbody>
                 
                 
