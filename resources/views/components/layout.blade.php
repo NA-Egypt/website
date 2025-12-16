@@ -19,27 +19,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   @endif
 
-  <!-- Override Bootstrap font with your custom font -->
-  <style>
-  * {
-    font-family: "Helvetica Neue ME" !important;
-  }
-
-  /* Fix spacing issues in RTL */
-  [dir="rtl"] .container-fluid {
-    padding-right: 15px !important;
-    padding-left: 15px !important;
-  }
-
-  [dir="rtl"] .row {
-    margin-right: -15px !important;
-    margin-left: -15px !important;
-  }
-
-  [dir="rtl"] .col-md-3, [dir="rtl"] .col-md-4 {
-    padding-right: 15px !important;
-    padding-left: 15px !important;
-  }
+  /* Custom font override */
   </style>
 
   <title>{{__('messages.NA')}}</title>
