@@ -92,17 +92,17 @@
     {{-- Recent Transactions --}}
     <div class="row">
       <div class="col-12">
-        <div class="card radius-10 w-100" dir="ltr">
+        <div class="card radius-10 w-100">
           <div class="card-header bg-secondary bg-gradient">
             <div class="row g-3 align-items-center ">
-              <div class="col-12 col-lg-6 col-xl-6 d-flex" dir="ltr">
+              <div class="col-12 col-lg-6 col-xl-6 d-flex">
                 <p class="mb-0 text-black">{{ __('messages.Recent Logs')}}</p>
               </div>
             </div>
           </div>
           <div class="card-body">
             <div class="table-responsive w-100">
-              <table class="table align-middle mb-0" dir="ltr">
+              <table class="table align-middle mb-0">
                 <thead class="table-dark">
                   <tr>
                     {{-- <th>#{{ __('messages.ID')}}</th> --}}
