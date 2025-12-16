@@ -1497,6 +1497,89 @@ body[dir="rtl"] {
 	border-bottom-right-radius: .25rem
 }
 
+/* FIX: Global RTL Alignments */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .text-end {
+  text-align: left !important;
+}
+
+[dir="rtl"] .text-start {
+  text-align: right !important;
+}
+
+/* FIX: Sidebar Menu RTL */
+[dir="rtl"] .sidebar-wrapper .metismenu a {
+  text-align: right;
+  justify-content: flex-start; /* Icon on right, text on left */
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu a .parent-icon {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu a .menu-title {
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+[dir="rtl"] .sidebar-wrapper .metismenu .has-arrow:after {
+  right: auto;
+  left: 15px;
+  transform: rotate(135deg) translateY(-50%);
+}
+
+/* FIX: Navbar RTL */
+[dir="rtl"] .top-header .navbar .dropdown-menu {
+  text-align: right;
+}
+
+[dir="rtl"] .top-header .navbar .dropdown-item {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+[dir="rtl"] .top-header .navbar .ms-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir="rtl"] .me-3 {
+  margin-left: 1rem !important;
+  margin-right: 0 !important;
+}
+
+[dir="rtl"] .ms-3 {
+  margin-right: 1rem !important;
+  margin-left: 0 !important;
+}
+
+/* FIX: Page Content RTL */
+[dir="rtl"] .page-content {
+  margin-right: 250px;
+  margin-left: 0;
+}
+
+@media screen and (max-width: 1024px) {
+  [dir="rtl"] .page-content {
+    margin-right: 0;
+  }
+}
+
+/* FIX: Table Alignment RTL */
+[dir="rtl"] .table {
+  text-align: right;
+}
+[dir="rtl"] .table th, [dir="rtl"] .table td {
+  text-align: right;
+}
+
+/* FIX: Footer/Chat adjustments if needed */
 .chat-footer-menu a {
 	display: inline-block;
 	width: 40px;
