@@ -5,16 +5,16 @@
     <div class="container">
 
         <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example" data-server-pagination="true">
                <thead>
                 <tr>
-                    {{-- <td>#{{ __('messages.ID')}}</td> --}}
-                    <td>{{  __('messages.Operation') }}</td>
-                    <td>{{  __('messages.Model') }}</td>
-                    <td>{{  __('messages.User') }}</td>
-                    <td>{{  __('messages.Date') }}</td>
-                    <td>{{  __('messages.Time') }}</td>
-                    <td>{{  __('messages.Name') }}</td>
+                    {{-- <th>#{{ __('messages.ID')}}</th> --}}
+                    <th>{{  __('messages.Operation') }}</th>
+                    <th>{{  __('messages.Model') }}</th>
+                    <th>{{  __('messages.User') }}</th>
+                    <th>{{  __('messages.Date') }}</th>
+                    <th>{{  __('messages.Time') }}</th>
+                    <th>{{  __('messages.Name') }}</th>
                 </tr>
                 </thead>
                 <tfoot>

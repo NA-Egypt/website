@@ -9,15 +9,9 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   <meta charset="utf-8">
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="{{ asset('assets/images/na-logo.jpg') }}" type="image/png" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
-  <!-- Add Bootstrap RTL CSS conditionally -->
-  @if ($direction === 'rtl')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  @else
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  @endif
+
+
 
   /* Custom font override */
   </style>

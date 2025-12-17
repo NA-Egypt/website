@@ -1,7 +1,11 @@
-import $ from 'jquery';
 import PerfectScrollbar from 'perfect-scrollbar';
 
-document.addEventListener("DOMContentLoaded", function () {
+
+window.jQuery(function () {
+	"use strict";
+	var $ = window.jQuery;
+
+	// Initialize PerfectScrollbar
 	const bestProductElement = document.querySelector(".best-product");
 	const topSellersListElement = document.querySelector(".top-sellers-list");
 
@@ -12,42 +16,25 @@ document.addEventListener("DOMContentLoaded", function () {
 	if (topSellersListElement) {
 		new PerfectScrollbar(topSellersListElement);
 	}
-});
 
 
 
-$(function () {
-	"use strict";
-
-	// $('.select2').select2();
-
+	// Initialize Select2
 	$('.select2').select2({
 		theme: 'bootstrap4',
 		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
 		placeholder: $(this).data('placeholder'),
 		allowClear: Boolean($(this).data('allow-clear')),
 	});
-	// Tooltops
 
-	// $(function () {
-	//     $('[data-bs-toggle="tooltip"]').tooltip();
-	// })
-
-
+	// Toggle Sidebar
 	$(".nav-toggle-icon").on("click", function () {
 		$(".wrapper").toggleClass("toggled")
-	})
+	});
 
 	$(".mobile-toggle-icon").on("click", function () {
 		$(".wrapper").addClass("toggled")
-	})
-
-	$(function () {
-		for (var e = window.location, o = $(".metismenu li a").filter(function () {
-			return this.href == e
-		}).addClass("").parent().addClass("mm-active"); o.is("li");) o = o.parent("").addClass("mm-show").parent("").addClass("mm-active")
-	})
-
+	});
 
 	$(".toggle-icon").click(function () {
 		$(".wrapper").hasClass("toggled") ? ($(".wrapper").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover")) : ($(".wrapper").addClass("toggled"), $(".sidebar-wrapper").hover(function () {
@@ -55,23 +42,17 @@ $(function () {
 		}, function () {
 			$(".wrapper").removeClass("sidebar-hovered")
 		}))
-	})
+	});
 
-
-
-	$(function () {
-		$("#menu").metisMenu()
-	})
-
-
+	// Search Bar Toggle
 	$(".search-toggle-icon").on("click", function () {
 		$(".top-header .navbar form").addClass("full-searchbar")
-	})
+	});
 	$(".search-close-icon").on("click", function () {
 		$(".top-header .navbar form").removeClass("full-searchbar")
-	})
+	});
 
-
+	// Chat/Email Toggles
 	$(".chat-toggle-btn").on("click", function () {
 		$(".chat-wrapper").toggleClass("chat-toggled")
 	}), $(".chat-toggle-btn-mobile").on("click", function () {
@@ -84,39 +65,32 @@ $(function () {
 		$(".compose-mail-popup").show()
 	}), $(".compose-mail-close").on("click", function () {
 		$(".compose-mail-popup").hide()
-	})
+	});
 
+	// Back to Top
+	$(window).on("scroll", function () {
+		$(this).scrollTop() > 300 ? $(".back-to-top").fadeIn() : $(".back-to-top").fadeOut()
+	}), $(".back-to-top").on("click", function () {
+		return $("html, body").animate({
+			scrollTop: 0
+		}, 600), !1
+	});
 
-	$(function () {
-		$(window).on("scroll", function () {
-			$(this).scrollTop() > 300 ? $(".back-to-top").fadeIn() : $(".back-to-top").fadeOut()
-		}), $(".back-to-top").on("click", function () {
-			return $("html, body").animate({
-				scrollTop: 0
-			}, 600), !1
-		})
-	})
-
-
-	// switcher 
-
+	// Theme Switcher
 	$("#LightTheme").on("click", function () {
 		$("html").attr("class", "light-theme")
 	}),
-
 		$("#DarkTheme").on("click", function () {
 			$("html").attr("class", "dark-theme")
 		}),
-
 		$("#SemiDarkTheme").on("click", function () {
 			$("html").attr("class", "semi-dark")
 		}),
-
 		$("#MinimalTheme").on("click", function () {
 			$("html").attr("class", "minimal-theme")
-		})
+		});
 
-
+	// Header Colors
 	$("#headercolor1").on("click", function () {
 		$("html").addClass("color-header headercolor1"), $("html").removeClass("headercolor2 headercolor3 headercolor4 headercolor5 headercolor6 headercolor7 headercolor8")
 	}), $("#headercolor2").on("click", function () {
@@ -133,66 +107,62 @@ $(function () {
 		$("html").addClass("color-header headercolor7"), $("html").removeClass("headercolor1 headercolor2 headercolor4 headercolor5 headercolor6 headercolor3 headercolor8")
 	}), $("#headercolor8").on("click", function () {
 		$("html").addClass("color-header headercolor8"), $("html").removeClass("headercolor1 headercolor2 headercolor4 headercolor5 headercolor6 headercolor7 headercolor3")
-	})
-
-
-	// new PerfectScrollbar(".header-message-list")
-	// new PerfectScrollbar(".header-notifications-list")
-
-
-
-});
-
-// Customize Data Table:
-$(function () {
-	"use strict";
-
-
-
-	$('#example').DataTable({
-		initComplete: function () {
-			this.api()
-				.columns()
-				.every(function () {
-					var column = this;
-					var title = column.footer().textContent;
-
-					// Create input element
-					var input = document.createElement('input');
-					input.placeholder = title;
-					input.className = 'form-control form-control-sm'; // Bootstrap styling
-					column.footer().replaceChildren(input);
-
-					// Event listener for user input
-					input.addEventListener('keyup', () => {
-						if (column.search() !== input.value) {
-							column.search(input.value).draw();
-						}
-					});
-				});
-		}
 	});
 
 
-	// var table = $('#example2').DataTable( {
-	// 	lengthChange: false,
-	// 	buttons: [ 'copy', 'excel', 'pdf', 'print']
-	// } );
+	// DataTables Initialization
+	// DataTables Initialization
+	var tableSelector = 'table.display, table.data-table, .main-tables';
 
-	// table.buttons().container()
-	// 	.appendTo( '#example2_wrapper .col-md-6:eq(0)' );
+	console.log('Custom.js: Checking for tables with selector:', tableSelector);
+	var $foundTables = $(tableSelector);
+	console.log('Custom.js: Found ' + $foundTables.length + ' tables.');
 
+	if ($foundTables.length) {
+		$foundTables.each(function () {
+			var $table = $(this);
+			console.log('Custom.js: Initializing DataTable for table ID:', $table.attr('id'));
+			var isServerSide = $table.data('server-pagination') === true;
+			console.log('Custom.js: Server-side pagination?', isServerSide);
 
-	// 	$('#myTable').DataTable({
-	// 		// responsive: true,
-	// 	});
+			$table.DataTable({
+				paging: !isServerSide,  // Disable paging if server-side
+				info: !isServerSide,    // Disable info if server-side
+				ordering: true,         // Explicitly enable sorting
+				destroy: true,          // Allow re-initialization if it happened elsewhere
+				initComplete: function () {
+					console.log('Custom.js: DataTable initialization complete for', $table.attr('id'));
+					this.api()
+						.columns()
+						.every(function () {
+							var column = this;
+							var footer = column.footer();
+							if (footer) {
+								var title = footer.textContent;
+								// Create input element
+								var input = document.createElement('input');
+								input.placeholder = title;
+								input.className = 'form-control form-control-sm'; // Bootstrap styling
+								footer.replaceChildren(input);
 
+								// Event listener for user input
+								input.addEventListener('keyup', () => {
+									if (column.search() !== input.value) {
+										column.search(input.value).draw();
+									}
+								});
+								// Stop propagation of click events
+								input.addEventListener('click', function (e) {
+									e.stopPropagation();
+								});
+							}
+						});
+				}
+			});
+		});
+	}
 
-
-
-});
-// Search bar:
-$(function () {
+	// Custom Search Function
 	function setupSearch(inputSelector, containerSelector, itemSelector, fields) {
 		$(inputSelector).on('input', function () {
 			var searchTerm = $(this).val().toLowerCase(); // Get search input value
@@ -213,7 +183,6 @@ $(function () {
 				}
 			});
 		});
-
 	}
 
 	// Meeting search
@@ -232,12 +201,7 @@ $(function () {
 		'.group-service-body'
 	]);
 
-});
-
-
-$(function () {
-
-	// Meeting Radio Button [ open-close]
+	// Meeting/Group Radio Buttons
 	const meetingType = document.getElementById('meeting-type');
 	if (meetingType) {
 		meetingType.addEventListener('change', function () {
@@ -246,7 +210,6 @@ $(function () {
 		});
 	}
 
-	// Group Radio Button [physical-online]
 	const groupType = document.getElementById('group-type');
 	if (groupType) {
 		groupType.addEventListener('change', function () {
@@ -256,24 +219,9 @@ $(function () {
 			label.textContent = this.checked ? 'online' : 'physical';
 		});
 	}
+
+	// MetisMenu Removed - Switched to Bootstrap Collapse
+
 });
 
-
-
-
-
-
-// Show Logs Details button:
-// $(function(){
-
-// 	// JavaScript to toggle visibility of transaction rows - [ index page ]:
-// 	document.querySelectorAll('.transaction-row').forEach(row => {
-// 		row.addEventListener('click', function() {
-// 			const transactionId = this.dataset.transactionId;
-// 			const transactionRow = document.getElementById(`transactions-${transactionId}`);
-// 			// Toggle visibility
-// 			transactionRow.style.display = transactionRow.style.display === 'none' ? 'table-row' : 'none';
-// 		});
-// 	});
-// });
 

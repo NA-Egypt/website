@@ -12,7 +12,7 @@
 /* plugins */
 @import './plugin/simplebar.css';
 @import './plugin/perfect-scrollbar.css';
-@import './plugin/metisMenu.min.css';
+
 @import './plugin/jquery-jvectormap-2.0.2.css';
 @import './plugin/dataTables.bootstrap5.min.css';
 

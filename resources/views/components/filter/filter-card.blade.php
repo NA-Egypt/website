@@ -19,12 +19,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <div class="meeting-item" style="border: 4px solid royalblue;">
             @endif
 
-            <div style="text-align: center;font-size: x-large;color: blue;">
-                {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
-            </div>
+
             <!-- Day and Time Row -->
             <div class="meeting-time-row">
-                <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-end' : 'text-end' }}">
+                <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-start' : 'text-end' }}">
                     <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
                     {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
                     
@@ -34,6 +32,9 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                         {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                     </span>
                 </div>
+            </div>
+            <div style="text-align: center;font-size: x-large;color: blue;">
+                {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
             </div>
         
             <!-- Type and Topic in a single row -->

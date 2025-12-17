@@ -9,6 +9,7 @@ use App\Models\Neighborhood;
 use App\Models\ServiceBody;
 use App\Models\User;
 use App\Observers\GenericObserver;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -37,5 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('is-super-admin', function (User $user) {
             return $user->hasRole('super admin');
         });
+
+        Paginator::useBootstrapFive();
     }
 }
