@@ -245,4 +245,5 @@ return [
     'regionaltiming' => '١٠ ص - ١٢ منتصف الليل',
     'callforspeakers' => 'دعوة للتقديم كمتحدث',
     'fdcomm' => 'لجنة الدعم والتطوير',
+    'Filter Options' => 'خيارات البحث'
 ];

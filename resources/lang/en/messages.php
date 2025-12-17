@@ -244,4 +244,5 @@ return [
     'regionaltiming' => '10 AM - 12 Midnight',
     'callforspeakers' => 'Call for Speakers',
     'fdcomm' => 'FD Committee',
+    'Filter Options' => 'Filter Options',
 ];
