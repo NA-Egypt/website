@@ -11,14 +11,14 @@
                         <x-filter.select :options="$days" name="day" label="{{ __('messages.Day') }}" />
                     </div>
                     <div class="col-10">
-                        <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" />
+                        <x-filter.select :options="$groups" name="group" label="{{__('messages.Group')}}" :disabled="!!request('serviceBody')" />
                     </div>
                     <div class="col-10">
-                        <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" />
+                        <x-filter.select :options="$serviceBodies" name="serviceBody" label="{{__('messages.Service Body')}}" :disabled="!!request('group') || !!request('city') || !!request('neighborhood')" />
                     </div>
                     <div class="col-10">
                         <label class="d-block mb-2 text-danger" for="type">{{__('messages.Type')}}</label>
-                        <select name="type" data-allow-clear="true" class="select2 form-control">
+                        <select name="type" data-allow-clear="true" class="select2 form-control" {{ request('group') ? 'disabled' : '' }}>
                             <option value="">{{__('messages.Choose Type')}}</option>
                             <option value="open" {{ request('type') == 'open' ? 'selected' : '' }}>
                                 {{ __('messages.open') }}
@@ -29,10 +29,10 @@
                         </select>
                     </div>
                     <div class="col-10">
-                        <x-filter.select :options="$neighborhoods" name="neighborhood" label="{{__('messages.Neighborhood')}}" />
+                        <x-filter.select :options="$cities" name="city" label="{{__('messages.City')}}" :disabled="!!request('serviceBody') || !!request('group')" />
                     </div>
                     <div class="col-10">
-                        <x-filter.select :options="$cities" name="city" label="{{__('messages.City')}}" />
+                        <x-filter.select :options="$neighborhoods" name="neighborhood" label="{{__('messages.Neighborhood')}}" :disabled="!!request('serviceBody') || !!request('group')" />
                     </div>
                 </div>
                 

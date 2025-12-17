@@ -28,8 +28,28 @@ class MeetingFilterController extends Controller
         $days = Day::all();
         $serviceBodies = ServiceBody::all();
         $groups = Group::all();
-        $neighborhoods = Neighborhood::all();
         $cities = City::all();
+        
+        $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
+
+        if ($request->filled('city') || $request->filled('neighborhood')) {
+             $request->merge(['serviceBody' => null]);
+             
+             if ($request->filled('neighborhood')) {
+                 $groups = Group::whereHas('neighborhood', fn($q) => $q->where($field, $request->neighborhood))->get();
+             } elseif ($request->filled('city')) {
+                 $groups = Group::whereHas('neighborhood.city', fn($q) => $q->where($field, $request->city))->get();
+             }
+        }
+        
+        $neighborhoods = Neighborhood::all();
+        if ($request->filled('city')) {
+            $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
+            $city = City::where($field, $request->city)->first();
+            if ($city) {
+                $neighborhoods = $city->neighborhoods;
+            }
+        }
 
         // Apply filters
 //        $filters = $request->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']);
