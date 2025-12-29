@@ -26,6 +26,7 @@
     "dependencies": {
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.3",
+        "bootstrap-icons": "^1.13.1",
         "datatables.net": "^2.1.8",
         "datatables.net-bs5": "^2.3.5",
         "datatables.net-buttons": "^3.1.2",
@@ -39,6 +40,7 @@
         "rollup": "^4.30.1",
         "select2": "^4.1.0-rc.0",
         "swagger-autogen": "^2.23.7",
+        "sweetalert2": "^11.26.17",
         "vue": "^3.5.13"
     }
 }

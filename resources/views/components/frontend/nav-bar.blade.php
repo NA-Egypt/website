@@ -16,7 +16,7 @@
   
         <!-- Main Menu -->
         <ul class="menu">
-          <li><a href="https://facebook.com/OfficialNAEgyPage" target="_blank" style="color:white;"><x-fab-facebook style="width:32px; height:32px;"/></a></li>
+
           @if (Route::currentRouteName() !== 'frontend.home')
           <li><a href="{{ route('frontend.home') }}" class="btn btn-outline-light">
             <img src="{{ asset('assets/images/icons/na-logo.png') }}" alt="" style="width:18px; height:18px; vertical-align: sub;">

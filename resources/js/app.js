@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@popperjs/core';
+import Swal from 'sweetalert2';
+window.Swal = Swal;
 // 1. Initialize Globals explicitly
 window.jQuery = window.$ = $;
 import select2 from 'select2'; // Import Select2 JS
@@ -30,7 +32,7 @@ const loadPlugins = async () => {
     try {
         // Libraries first
         await import('./plugin/jquery-jvectormap-2.0.2.min');
-        // await import('./plugin/jquery-jvectormap-world-mill-en'); // If exists
+        await import('./plugin/jquery-jvectormap-world-mill-en'); // If exists
         await import('./plugin/jquery.peity.min');
         await import('./plugin/pace.min');
         await import('./plugin/simplebar.min');

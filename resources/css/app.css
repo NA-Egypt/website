@@ -8,6 +8,7 @@
 @import './plugin/select2-bootstrap4.css';
 
 @import './plugin/icons.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 /* plugins */
 @import './plugin/simplebar.css';

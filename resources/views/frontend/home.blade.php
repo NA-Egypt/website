@@ -1,32 +1,105 @@
 <x-frontend.layout>
 <x-section-head>{{ __('messages.NA') }}</x-section-head>
-<div class="warpper">
-    <input class="radio" id="one" name="group" type="radio" checked>
-    <input class="radio" id="two" name="group" type="radio">
-    {{-- <input class="radio" id="three" name="group" type="radio"> --}}
-  
-    <div class="tabs">
-      <label class="tab" id="one-tab" for="one">{{__('messages.aboutus') }}</label></label>
-      <label class="tab" id="two-tab" for="two">{{ __('messages.wedorecover') }}</label>
-      {{-- <label class="tab" id="three-tab" for="three">من هو المدمن؟</label> --}}
+
+<div class="row justify-content-center mb-3">
+    <div class="col-12 text-center">
+        <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" class="social-icon"><x-fab-facebook class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" class="social-icon"><x-fab-instagram class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" class="social-icon"><x-fab-tiktok class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="mailto:pr@naegypt.org" class="social-icon"><x-fas-envelope class="mx-2" style="width:32px; height:32px;" /></a>
     </div>
-  
-    <div class="panels">
-      <div class="panel" id="one-panel">
-        <div class="panel-title">{{ __('messages.whatistheprogram') }}</div>
-        <p>{{ __('messages.whatistheprogramtxt') }}</p>
+</div>
+
+<style>
+    .info-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .card-icon-wrapper {
+        height: 60px;
+        width: 60px;
+        background: rgba(0, 105, 143, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%;
+    }
+    .social-icon {
+        color: #32557f;
+        transition: all 0.3s ease;
+    }
+    .social-icon:hover, .social-icon:active, .social-icon:focus {
+        filter: drop-shadow(0 0 5px rgba(50, 85, 127, 0.5));
+        color: #32557f; /* Ensure color stays same */
+    }
+    .gradient-text {
+        background: -webkit-linear-gradient(#eee, #000487);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    /* Ensure icon inherits the gradient if possible, or force it */
+    .gradient-icon {
+        background: -webkit-linear-gradient(#eee, #000487);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block; /* Required for transform/gradient sometimes */
+    }
+    .card-title {
+        line-height: normal !important;
+    }
+</style>
+
+<div id="infoCarousel" class="carousel carousel-dark slide mt-4 mb-5" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <!-- Slide 1 -->
+    <div class="carousel-item active" data-bs-interval="15000">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center">
+                    <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3" style="width:80px; height:80px; object-fit: contain;">
+                    <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
+                    <p class="card-text text-muted">{{ __('messages.whatistheprogramtxt') }}</p>
+                </div>
+            </div>
+        </div>
       </div>
-      <div class="panel" id="two-panel">
-        <div class="panel-title">{{ __('messages.wedorecover') }}</div>
-        <p>{{ __('messages.wedorecovertxt') }}</p>
+    </div>
+    <!-- Slide 2 -->
+    <div class="carousel-item" data-bs-interval="15000">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center">
+                    <img src="{{ asset('assets/images/slide-icon-recover.png') }}" alt="Recover Logo" class="mb-3" style="width:80px; height:80px; object-fit: contain;">
+                    <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.wedorecover') }}</h3>
+                    <p class="card-text text-muted">{{ __('messages.wedorecovertxt') }}</p>
+                </div>
+            </div>
+        </div>
       </div>
-      {{-- <div class="panel" id="three-panel">
-        <div class="panel-title">من هو المدمن؟</div>
-        <p>معظمنا لا يحتاج للتفكير مرتين في هذا السؤال، فنحن نعلم! أن حياتنا وتفكيرنا تمركزا بالكامل في المخدّرات بشكل أو بآخر- في الحصول عليها وتعاطيها وإيجاد الطرق والوسائل للحصول على المزيد، فقد عشنا لنتعاطى وتعاطينا لنعيش. بمنتهى البساطة المدمن هو رجل أو إمرأة تسيطر المخدّرات على حياته، فنحن أناس في قبضة مرض مستمر ومتفاقم نهاياته دائماً لا تتغير: السجون أو المصحات أو الموت.</p>
-      </div> --}}
     </div>
   </div>
-  <div class="row justify-content-center">
+  
+  <button class="carousel-control-prev" type="button" data-bs-target="#infoCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#infoCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+  <div class="row justify-content-center mt-5">
     <div class="col-md-4 helpline-box">
         <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
         <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
