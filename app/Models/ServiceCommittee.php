@@ -13,9 +13,13 @@ class ServiceCommittee extends Model
         return $this->hasMany(ScMeeting::class);
     }
 
- public function user()
-{
-    return $this->belongsTo(User::class, 'email', 'id');
-}
+    public function reports()
+    {
+        return $this->hasMany(CommitteeReport::class);
+    }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'email', 'email');
+    }
 }

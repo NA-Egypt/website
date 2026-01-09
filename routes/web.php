@@ -134,6 +134,11 @@ Route::group(
                 [RoleController::class, 'destroy'])->name('roles.destroy');
             Route::delete('/users/{user}',
                 [UserController::class, 'destroy'])->name('users.destroy');
+
+            // Committee Reports:
+            Route::resource('committee-reports', \App\Http\Controllers\CommitteeReportController::class);
+            Route::get('committee-reports/{id}/pdf', [\App\Http\Controllers\CommitteeReportController::class, 'pdf'])->name('committee-reports.pdf');
+            Route::post('committee-reports/{id}/send', [\App\Http\Controllers\CommitteeReportController::class, 'send'])->name('committee-reports.send');
         });
 
         // Auth:

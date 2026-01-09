@@ -13,6 +13,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
 
 
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+  
+  body, .hanken-grotesk {
+    font-family: 'Cairo', sans-serif !important;
+  }
+  
   /* Custom font override */
   </style>
 

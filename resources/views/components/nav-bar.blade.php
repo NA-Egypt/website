@@ -17,6 +17,7 @@
         <ul class="navbar-nav align-items-center">
 
           <!-- Language Switcher -->
+          <!-- Language Switcher -->
           @php
             $currentLocale = LaravelLocalization::getCurrentLocale();
             $supportedLocales = LaravelLocalization::getSupportedLocales();
@@ -27,119 +28,84 @@
             $properties = $otherLocales->first();
           @endphp
           @if ($localeCode && $properties)
-          <li>
-            <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-outline-warning">
-              <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15">
-              <span>{{ $properties['native'] }}</span>
+          <li class="me-3">
+            <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-light rounded-pill border shadow-sm d-flex align-items-center gap-2 px-3">
+              <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15" class="rounded-1">
+              <span class="fw-bold text-dark small">{{ $properties['native'] }}</span>
             </a>
           </li>
           @endif
       
-
-          {{-- User Image --}}
+          {{-- User Menu --}}
           <li class="nav-item dropdown dropdown-large">
-            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
-              <div class="user-setting d-flex align-items-center gap-1">
-                <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img" alt="">
+            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret p-0" href="#" data-bs-toggle="dropdown">
+              <div class="user-setting d-flex align-items-center gap-2 bg-light rounded-pill p-1 pe-3 border">
+                <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img rounded-circle border" alt="" style="width: 32px; height: 32px;">
                 <div class="user-name d-none d-sm-block">
+                  <span class="fw-bold text-dark small">
                   @auth
-                    {{ Auth::user()->name }} <!-- Displays the logged-in user's name -->
+                    {{ Auth::user()->name }}
                   @else
-                    Guest <!-- Fallback if no user is logged in (optional) -->
+                    Guest
                   @endauth
+                  </span>
                 </div>
+                <i class="bi bi-chevron-down small text-muted"></i>
               </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu {{ app()->getLocale() === 'ar' ? 'dropdown-menu-start' : 'dropdown-menu-end' }} shadow-lg border-0 rounded-4 p-0 overflow-hidden mt-2" style="min-width: 240px;">
               <li>
-                <a class="dropdown-item" href="#">
-                  <div class="d-flex align-items-center">
-                    <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img" alt="">
+                <div class="d-flex align-items-center p-3 bg-light bg-gradient border-bottom">
+                    <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img rounded-circle border bg-white p-1" alt="" style="width: 48px; height: 48px;">
                     <div class="ms-3">
-                        <h6 class="mb-0 dropdown-user-name">
+                        <h6 class="mb-0 fw-bold text-dark">
                           @auth
-                            {{ Auth::user()->name }} <!-- Displays the logged-in user's name -->
+                            {{ Auth::user()->name }}
                           @else
-                            Guest <!-- Fallback if no user is logged in (optional) -->
+                            Guest
                           @endauth
                         </h6>
-                        <small class="mb-0 dropdown-user-designation text-secondary">
+                        <small class="text-muted small">
                           @auth
-                            {{ Auth::user()->email }} <!-- Displays the logged-in user's name -->
+                            {{ Str::limit(Auth::user()->email, 20) }}
                           @else
-                            Guest <!-- Fallback if no user is logged in (optional) -->
+                            Welcome
                           @endauth
                         </small>
-                      </div>
-                  </div>
-                </a>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-
-                <li>
-                  <a class="dropdown-item" href="{{ route('frontend.home') }}">
-                    <div class="d-flex align-items-center">
-                      <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                      <div class="setting-text ms-3"><span>{{__('messages.Web Site')}}</span></div>
                     </div>
+                </div>
+              </li>
+              <li class="p-1">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 hover-bg-light" href="{{ route('frontend.home') }}">
+                      <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-globe fs-6"></i>
+                      </div>
+                      <span class="fw-medium">{{__('messages.Web Site')}}</span>
                   </a>
-                </li>
-{{--                <li>--}}
-{{--                  <a class="dropdown-item" href="index2.html">--}}
-{{--                    <div class="d-flex align-items-center">--}}
-{{--                      <div class="setting-icon"><i class="bi bi-speedometer"></i></div>--}}
-{{--                      <div class="setting-text ms-3"><span>Dashboard</span></div>--}}
-{{--                    </div>--}}
-{{--                  </a>--}}
-{{--                </li>--}}
-{{--                <li>--}}
-{{--                  <a class="dropdown-item" href="#">--}}
-{{--                    <div class="d-flex align-items-center">--}}
-{{--                      <div class="setting-icon"><i class="bi bi-piggy-bank-fill"></i></div>--}}
-{{--                      <div class="setting-text ms-3"><span>Earnings</span></div>--}}
-{{--                    </div>--}}
-{{--                  </a>--}}
-{{--                </li>--}}
-{{--                <li>--}}
-{{--                  <a class="dropdown-item" href="#">--}}
-{{--                    <div class="d-flex align-items-center">--}}
-{{--                      <div class="setting-icon"><i class="bi bi-cloud-arrow-down-fill"></i></div>--}}
-{{--                      <div class="setting-text ms-3"><span>Downloads</span></div>--}}
-{{--                    </div>--}}
-{{--                  </a>--}}
-{{--                </li>--}}
-                <li><hr class="dropdown-divider"></li>
-{{--                <li>--}}
-{{--                  <a class="dropdown-item" href="#">--}}
-{{--                    <div class="d-flex align-items-center">--}}
-{{--                      <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>--}}
-{{--                      <div class="setting-text ms-3"><span>Logout</span></div>--}}
-{{--                    </div>--}}
-{{--                  </a>--}}
-{{--                </li>--}}
-              <li>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li class="p-1">
                 @auth
                   <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
-                      <div class="d-flex align-items-center">
-                        <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                        <div class="setting-text ms-3"><span>{{__('messages.Logout')}}</span></div>
+                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger hover-bg-danger-light" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                      <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-box-arrow-right fs-6"></i>
                       </div>
+                      <span class="fw-bold">{{__('messages.Logout')}}</span>
                     </a>
                   </form>
                 @else
-              <a href="{{ url('/login/microsoft') }}" class="btn btn-primary d-flex align-items-center">
-                <svg width="20" height="20" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-2">
-                  <path d="M11.5 11.5H1V1H11.5V11.5Z" fill="#F25022"/> <!-- Red -->
-                  <path d="M22 11.5H11.5V1H22V11.5Z" fill="#7FBA00"/> <!-- Green -->
-                  <path d="M11.5 22H1V11.5H11.5V22Z" fill="#00A4EF"/> <!-- Blue -->
-                  <path d="M22 22H11.5V11.5H22V22Z" fill="#FFB900"/> <!-- Yellow -->
-                </svg>
-                Sign in with Microsoft
-              </a>
+                  <a href="{{ url('/login/microsoft') }}" class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3">
+                     <svg width="24" height="24" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.5 11.5H1V1H11.5V11.5Z" fill="#F25022"/>
+                      <path d="M22 11.5H11.5V1H22V11.5Z" fill="#7FBA00"/>
+                      <path d="M11.5 22H1V11.5H11.5V22Z" fill="#00A4EF"/>
+                      <path d="M22 22H11.5V11.5H22V22Z" fill="#FFB900"/>
+                    </svg>
+                    <span class="fw-medium">Sign in</span>
+                  </a>
                 @endauth
-
               </li>
             </ul>
           </li>

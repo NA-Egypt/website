@@ -58,7 +58,14 @@ class RoleRedirect
                return redirect()->route('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee->id]);
            }
 
+
            $routeName = $request->route()->getName();
+
+           // Allow committee reports routes
+           if (str_starts_with($routeName, 'committee-reports.')) {
+               return $next($request);
+           }
+
            $currentServiceCommitteeId = null;
 
            // Handle service committee routes

@@ -1,25 +1,21 @@
 @props(['city'])
 
-<div class="best-product-item">
-  <div class="d-flex align-items-center gap-3">
-    <div class="product-info">
-      <p class="product-name mb-1 text-primary group-name fs-md-1 ">
-        <a href="{{ route('searches.city', $city->id) }}" class="text-danger">
-
-          @if(app()->getLocale() === 'ar')
-            {{ $city->ar_name }}
-          @else
-            {{ $city->en_name }}
-          @endif
-        </a>
-      </p>
+<div class="d-flex align-items-center justify-content-between p-3 border-bottom dashed-border">
+  <div class="d-flex align-items-center">
+    <div class="icon-shape icon-sm bg-success bg-opacity-10 text-success rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+       <i class="bi bi-building"></i>
     </div>
-    <div class="sales-count ms-auto">
-      <p class="mb-0">
-        {{ $slot }}
-      </p>
-    </div>
+    <a href="{{ route('searches.city', $city->id) }}" class="text-decoration-none text-dark hover-primary">
+        <h6 class="mb-0 fw-bold">
+            @if(app()->getLocale() === 'ar')
+              {{ $city->ar_name }}
+            @else
+              {{ $city->en_name }}
+            @endif
+        </h6>
+    </a>
+  </div>
+  <div>
+       <span class="badge bg-success rounded-pill">{{ $slot }}</span>
   </div>
 </div>
-
-<x-divider />

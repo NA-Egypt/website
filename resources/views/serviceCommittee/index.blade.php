@@ -41,7 +41,7 @@
                         {{-- <td>{{ $sc->id }}</td> --}}
                         <td>{{ $sc->ar_name }}</td>
                         {{-- <td>{{ $sc->en_name }}</td> --}}
-                        <td>{{ $sc->user->email }}</td>
+                        <td>{{ $sc->email }}</td>
                         {{-- <td>{{ $sc->chairman_name }}</td>
                         <td>{{ $sc->chairman_phone }}</td>
                         <td>{{ $sc->ar_address }}</td>

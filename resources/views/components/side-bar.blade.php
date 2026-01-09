@@ -87,35 +87,14 @@
       {{-- /Transactions Area --}}
 
       {{-- Reports Area --}}
-{{--      <li class="menu-label">Reports</li>--}}
-{{--      <li>--}}
-{{--        <a href="javascript:" class="has-arrow">--}}
-{{--          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i>--}}
-{{--          </div>--}}
-{{--          <div class="menu-title">Standard Report</div>--}}
-{{--        </a>--}}
-{{--        <ul>--}}
-{{--          <li> <a href="#"><i class="bi bi-arrow-right-short"></i>Report One</a>--}}
-{{--          </li>--}}
-{{--          <li> <a href="#"><i class="bi bi-arrow-right-short"></i>Report Two</a>--}}
-{{--          </li>--}}
-{{--          </li>--}}
-{{--        </ul>--}}
-{{--      </li>--}}
-{{--      <li>--}}
-{{--        <a href="javascript:" class="has-arrow">--}}
-{{--          <div class="parent-icon"><i class="bi bi-graph-up"></i>--}}
-{{--          </div>--}}
-{{--          <div class="menu-title">Custom Report</div>--}}
-{{--        </a>--}}
-{{--        <ul>--}}
-{{--          <li> <a href="#"><i class="bi bi-arrow-right-short"></i>Report One</a>--}}
-{{--          </li>--}}
-{{--          <li> <a href="#"><i class="bi bi-arrow-right-short"></i>Report Two</a>--}}
-{{--          </li>--}}
-{{--          </li>--}}
-{{--        </ul>--}}
-{{--      </li>--}}
+      <li class="menu-label">{{ __('messages.Committee Reports') }}</li>
+      <li>
+        <a href="{{ route('committee-reports.index') }}">
+          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Committee Reports') }}</div>
+        </a>
+      </li>
       {{-- /Reports Area --}}
 
     </ul>
