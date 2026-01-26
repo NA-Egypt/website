@@ -26,7 +26,7 @@ class ServiceBodyRequest extends FormRequest
             'en_name' => 'required|min:2|regex:/^[A-Za-z0-9 ]+$/u',
             'description'   => 'required',
             'day_id'        => 'required|exists:days,id',
-            'date'          => 'required|date',
+            'date'          => 'nullable|date',
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
             'location'      => 'required',

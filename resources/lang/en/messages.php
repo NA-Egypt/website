@@ -245,4 +245,7 @@ return [
     'callforspeakers' => 'Call for Speakers',
     'fdcomm' => 'FD Committee',
     'Filter Options' => 'Filter Options',
+    'Search'=>'Search',
+    'Yearly Calendar'=>'Yearly Calendar',
+    'Calendar'=>'Calendar',
 ];

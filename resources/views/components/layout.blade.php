@@ -5,7 +5,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
 <html lang="{{ app()->getLocale() }}"  dir="{{ $direction }}" class="minimal-theme">
 <head>
-  <!-- Required meta tags -->
+  <meta charset="utf-8">
   <meta charset="utf-8">
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">

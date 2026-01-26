@@ -139,6 +139,9 @@ Route::group(
             Route::resource('committee-reports', \App\Http\Controllers\CommitteeReportController::class);
             Route::get('committee-reports/{id}/pdf', [\App\Http\Controllers\CommitteeReportController::class, 'pdf'])->name('committee-reports.pdf');
             Route::post('committee-reports/{id}/send', [\App\Http\Controllers\CommitteeReportController::class, 'send'])->name('committee-reports.send');
+
+            // Calendar
+            Route::get('/calendar', \App\Livewire\YearlyCalendar::class)->name('calendar.index');
         });
 
         // Auth:

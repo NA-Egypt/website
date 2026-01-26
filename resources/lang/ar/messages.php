@@ -270,4 +270,7 @@ return [
     'Excused' => 'معتذر',
     'Vacant' => 'شاغر',
     'Open' => 'مفتوح',
+    'Search'=>'بحث',
+    'Yearly Calendar'=>'التقويم السنوي',
+    'Calendar'=>'التقويم',
 ];

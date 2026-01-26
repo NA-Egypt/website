@@ -11,6 +11,7 @@
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.19",
         "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.7",
         "mcamara/laravel-localization": "^2.2",
         "mpdf/mpdf": "^8.2",
         "mydnic/laravel-subscribers": "^1.9",

@@ -1,5 +1,20 @@
 import $ from 'jquery';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import multiMonthPlugin from '@fullcalendar/multimonth';
+
+window.FullCalendar = {
+    Calendar,
+    dayGridPlugin,
+    timeGridPlugin,
+    interactionPlugin,
+    multiMonthPlugin
+};
+
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
 import '@popperjs/core';
 import Swal from 'sweetalert2';
 window.Swal = Swal;

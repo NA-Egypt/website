@@ -97,6 +97,17 @@
       </li>
       {{-- /Reports Area --}}
 
+      {{-- Calendar Area --}}
+      <li class="menu-label">{{ __('messages.Calendar') }}</li>
+      <li>
+        <a href="{{ route('calendar.index') }}">
+          <div class="parent-icon"><i class="bi bi-calendar-check"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Yearly Calendar') }}</div>
+        </a>
+      </li>
+      {{-- /Calendar Area --}}
+
     </ul>
     <!--end navigation-->
 
