@@ -160,7 +160,16 @@
             'title' => __('messages.EgyptPRCommitteeFacebookPage'),
             'file' => 'https://na.org/wp-content/uploads/2024/06/Egypt-PR-Committee-Facebook-page-SP.pdf'
         ],
-                
+                [
+            'type' => 'pdf',
+            'title' => __('messages.phonelinedoc'),
+            'file' => 'https://na.org/wp-content/uploads/2025/08/%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85-%D9%85%D8%AA%D8%B7%D9%88%D8%B9-%D8%A7%D9%84%D8%B1%D8%AF-%D8%B9%D9%84%D9%89-%D8%AE%D8%B7-%D8%A7%D9%84%D9%87%D8%A7%D8%AA%D9%81-.pdf'
+        ],
+                [
+            'type' => 'pdf',
+            'title' => __('messages.replacementdubs'),
+            'file' => 'https://na.org/wp-content/uploads/2025/08/%D9%86%D8%B4%D8%B1%D8%A9-%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D9%86%D8%A7%D8%B9-%D8%A8%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D9%82%D9%8A%D8%B1-%D8%A7%D9%84%D8%A8%D8%AF%D9%8A%D9%84%D8%A9-%D9%84%D9%84%D9%85%D8%AE%D8%AF%D8%B1%D8%A7%D8%AA-%D9%88-%D8%A7%D8%B3%D8%AA%D8%A8%D8%AF%D8%A7%D9%84-%D8%A7%D9%84%D9%85%D8%AE%D8%AF%D8%B1.pdf'
+        ],        
         
         // Add more items here
     ];

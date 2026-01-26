@@ -273,4 +273,6 @@ return [
     'Search'=>'بحث',
     'Yearly Calendar'=>'التقويم السنوي',
     'Calendar'=>'التقويم',
+    'replacementdubs'=>'نشرة الامتناع بالعقاقير البديلة',
+    'phonelinedoc'=>'دليل استخدام خط الهاتف',
 ];

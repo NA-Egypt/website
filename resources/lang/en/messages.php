@@ -248,4 +248,6 @@ return [
     'Search'=>'Search',
     'Yearly Calendar'=>'Yearly Calendar',
     'Calendar'=>'Calendar',
+    'replacementdubs'=>'Replacement Drugs (Arabic)',
+    'phonelinedoc'=>'Phone Line Guide (Arabic)',
 ];
