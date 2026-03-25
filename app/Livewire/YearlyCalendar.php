@@ -6,6 +6,7 @@ use Livewire\Component;
 
 class YearlyCalendar extends Component
 {
+    public $eventId;
     public $title;
     public $start;
     public $end;
@@ -49,16 +50,67 @@ class YearlyCalendar extends Component
 
         $validatedData = $this->validate();
 
-        \App\Models\CalendarEvent::create([
-            'title' => $validatedData['title'],
-            'start' => $validatedData['start'],
-            'end' => $validatedData['end'],
-            'description' => $validatedData['description'],
-            'color' => $validatedData['color'],
-            'user_id' => auth()->id(),
-        ]);
+        if ($this->eventId) {
+            $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
+            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole('super admin')) {
+                 abort(403, 'Unauthorized action.');
+            }
+            $event->update([
+                'title' => $validatedData['title'],
+                'start' => $validatedData['start'],
+                'end' => $validatedData['end'],
+                'description' => $validatedData['description'],
+                'color' => $validatedData['color'],
+            ]);
+        } else {
+            \App\Models\CalendarEvent::create([
+                'title' => $validatedData['title'],
+                'start' => $validatedData['start'],
+                'end' => $validatedData['end'],
+                'description' => $validatedData['description'],
+                'color' => $validatedData['color'],
+                'user_id' => auth()->id(),
+            ]);
+        }
 
-        $this->reset(['title', 'start', 'end', 'description', 'color']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color']);
+        $this->dispatch('event-saved');
+    }
+
+    public function editEvent($id)
+    {
+        if (!auth()->check() || !auth()->user()->hasPermission('can_manage_calendar')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $event = \App\Models\CalendarEvent::findOrFail($id);
+        
+        $this->eventId = $event->id;
+        $this->title = $event->title;
+        // Format to YYYY-MM-DDTHH:MM which datetime-local expects
+        $this->start = $event->start->format('Y-m-d\TH:i');
+        $this->end = $event->end->format('Y-m-d\TH:i');
+        $this->description = $event->description;
+        $this->color = $event->color;
+
+        $this->dispatch('open-modal');
+    }
+
+    public function deleteEvent()
+    {
+        if (!auth()->check() || !auth()->user()->hasPermission('can_manage_calendar')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($this->eventId) {
+            $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
+            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole('super admin')) {
+                 abort(403, 'Unauthorized action.');
+            }
+            $event->delete();
+        }
+
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color']);
         $this->dispatch('event-saved');
     }
 

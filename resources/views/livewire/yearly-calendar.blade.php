@@ -20,8 +20,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel">Add Event</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="eventModalLabel">{{ $eventId ? 'Edit Event' : 'Add Event' }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" wire:click="$set('eventId', null)"></button>
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="saveEvent">
@@ -48,7 +48,14 @@
                             <label for="color" class="form-label">Color</label>
                             <input type="color" class="form-control form-control-color" id="color" wire:model="color" title="Choose your color">
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Event</button>
+                        <div class="d-flex justify-content-between">
+                            @if($eventId)
+                                <button type="button" wire:click="deleteEvent" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?')">Delete</button>
+                            @else
+                                <div></div>
+                            @endif
+                            <button type="submit" class="btn btn-primary">Save Event</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -82,6 +89,7 @@
                 
                 select: function(info) {
                     if (canManage) {
+                        @this.set('eventId', null);
                         // Set values directly to inputs to avoid network roundtrip of @this.set
                         let startInput = document.getElementById('start');
                         let endInput = document.getElementById('end');
@@ -115,9 +123,9 @@
                 },
 
                 eventClick: function(info) {
-                    // if (canManage && confirm("Are you sure you want to delete this event?")) {
-                    //    @this.call('deleteEvent', info.event.id);
-                    // }
+                    if (canManage) {
+                        @this.call('editEvent', info.event.id);
+                    }
                 }
             });
             calendar.render();
@@ -125,14 +133,15 @@
             @this.on('event-saved', (event) => {
                 var modalEl = document.getElementById('eventModal');
                 var modal = bootstrap.Modal.getInstance(modalEl);
-                modal.hide();
-                // Refresh events simply by adding the new one or refetching
-                // calendar.addEvent(event); // If event data is passed back
-                // Or easier:
-                calendar.refetchEvents(); // If we used a URL source
-                // Since we used static @json($events), refetch wont work unless we updated the events property and re-rendered.
-                // For now, let's just reload the page to be safe, or just manually add if we had the event object.
-               location.reload(); 
+                if(modal) {
+                    modal.hide();
+                }
+                location.reload(); 
+            });
+
+            @this.on('open-modal', () => {
+                var modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                modal.show();
             });
         });
     </script>

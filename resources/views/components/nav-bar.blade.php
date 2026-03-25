@@ -38,7 +38,7 @@
       
           {{-- User Menu --}}
           <li class="nav-item dropdown dropdown-large">
-            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret p-0" href="#" data-bs-toggle="dropdown">
+            <a class="nav-link p-0" href="#" data-bs-toggle="dropdown">
               <div class="user-setting d-flex align-items-center gap-2 bg-light rounded-pill p-1 pe-3 border">
                 <img src="{{ asset('assets/images/icons/na-logo.png') }}" class="user-img rounded-circle border" alt="" style="width: 32px; height: 32px;">
                 <div class="user-name d-none d-sm-block">
@@ -50,7 +50,6 @@
                   @endauth
                   </span>
                 </div>
-                <i class="bi bi-chevron-down small text-muted"></i>
               </div>
             </a>
             <ul class="dropdown-menu {{ app()->getLocale() === 'ar' ? 'dropdown-menu-start' : 'dropdown-menu-end' }} shadow-lg border-0 rounded-4 p-0 overflow-hidden mt-2" style="min-width: 240px;">

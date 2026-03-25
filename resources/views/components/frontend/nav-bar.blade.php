@@ -27,6 +27,9 @@
           @if (Route::currentRouteName() !== 'frontend.meetings')
           <li><a href="{{ route('frontend.meetings') }}" class="btn btn-outline-light"><x-fas-users style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Meetings') }}</a></li>
           @endif
+          @if (Route::currentRouteName() !== 'frontend.events')
+          <li><a href="{{ route('frontend.events') }}" class="btn btn-outline-light"><x-fas-calendar-alt style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Events') ?? 'Events' }}</a></li>
+          @endif
           @if (Route::currentRouteName() !== 'frontend.literature')
           <li><a href="{{ route('frontend.literature') }}" class="btn btn-outline-light"><x-fas-book style="width:16px; height:16px;"/>&nbsp;{{ __('messages.Literature') }}</a></li>
           @endif

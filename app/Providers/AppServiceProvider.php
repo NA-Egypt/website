@@ -11,7 +11,10 @@ use App\Models\User;
 use App\Observers\GenericObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,5 +43,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::useBootstrapFive();
+
+        // Fix Livewire 404 with LaravelLocalization
+        Livewire::setUpdateRoute(function ($handle) {
+            return Route::post(LaravelLocalization::setLocale() . '/livewire/update', $handle)
+                ->middleware(['web', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath']);
+        });
     }
 }

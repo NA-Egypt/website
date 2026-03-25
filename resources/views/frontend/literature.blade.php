@@ -240,7 +240,7 @@
                 @foreach($literatureItems as $item)
                     @if($item['type'] === 'pdf')
                         @php $pdfCount++; @endphp
-                        @if($pdfCount > 1 && $pdfCount <= count(array_filter($literatureItems, fn($i) => $i['type'] === 'pdf')) - 4)
+                        @if($pdfCount > 1 && $pdfCount <= count(array_filter($literatureItems, fn($i) => $i['type'] === 'pdf')) - 6)
                             <div class="literature-item">
                                 <div class="literature-pdf">
                                     <a href="{{ $item['file'] }}" target="_blank">
@@ -269,7 +269,7 @@
                 @foreach($literatureItems as $item)
                     @if($item['type'] === 'pdf')
                         @php $pdfCount++; @endphp
-                        @if($pdfCount > $totalPdfs - 4)
+                        @if($pdfCount > $totalPdfs - 6)
                             <div class="literature-item">
                                 <div class="literature-pdf">
                                     <a href="{{ $item['file'] }}" target="_blank">
