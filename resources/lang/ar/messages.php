@@ -291,4 +291,7 @@ return [
     'Committee Report' => 'تقرير لجنة',
     'Events' => 'الفعاليات',
     'No upcoming events.' => 'لا توجد فعاليات قادمة.',
+    'Slider View' => 'عرض الفعاليات',
+    'Calendar View' => 'عرض التقويم',
+    'Event Details' => '',
 ];

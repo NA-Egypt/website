@@ -262,4 +262,7 @@ return [
     'Introduction to Narcotics Anonymous Meetings'  => 'Introduction to Narcotics Anonymous Meetings',
     'Events' => 'Events',
     'No upcoming events.' => 'No upcoming events.',
+    'Slider View' => 'Slider View',
+    'Calendar View' => 'Calendar View',
+    'Event Details' => '',
 ];

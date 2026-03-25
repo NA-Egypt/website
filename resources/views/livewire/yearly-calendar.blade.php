@@ -45,6 +45,16 @@
                             <textarea class="form-control" id="description" wire:model="description"></textarea>
                         </div>
                         <div class="mb-3">
+                            <label for="organizer" class="form-label">Organizer</label>
+                            <input type="text" class="form-control" id="organizer" wire:model="organizer">
+                            @error('organizer') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" wire:model="location">
+                            @error('location') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="mb-3">
                             <label for="color" class="form-label">Color</label>
                             <input type="color" class="form-control form-control-color" id="color" wire:model="color" title="Choose your color">
                         </div>

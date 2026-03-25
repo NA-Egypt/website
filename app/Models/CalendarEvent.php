@@ -16,6 +16,8 @@ class CalendarEvent extends Model
         'description',
         'user_id',
         'color',
+        'organizer',
+        'location',
     ];
 
     protected $casts = [

@@ -12,6 +12,8 @@ class YearlyCalendar extends Component
     public $end;
     public $description;
     public $color = '#3788d8'; // Default FullCalendar blue
+    public $organizer;
+    public $location;
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -19,6 +21,8 @@ class YearlyCalendar extends Component
         'end' => 'required|date|after_or_equal:start',
         'description' => 'nullable|string',
         'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
+        'organizer' => 'nullable|string|max:255',
+        'location' => 'nullable|string|max:255',
     ];
 
     public function fetchEvents($start, $end)
@@ -37,6 +41,8 @@ class YearlyCalendar extends Component
                     'extendedProps' => [
                         'description' => $event->description,
                         'user_id' => $event->user_id,
+                        'organizer' => $event->organizer,
+                        'location' => $event->location,
                     ],
                 ];
             });
@@ -61,6 +67,8 @@ class YearlyCalendar extends Component
                 'end' => $validatedData['end'],
                 'description' => $validatedData['description'],
                 'color' => $validatedData['color'],
+                'organizer' => $validatedData['organizer'] ?? null,
+                'location' => $validatedData['location'] ?? null,
             ]);
         } else {
             \App\Models\CalendarEvent::create([
@@ -69,11 +77,13 @@ class YearlyCalendar extends Component
                 'end' => $validatedData['end'],
                 'description' => $validatedData['description'],
                 'color' => $validatedData['color'],
+                'organizer' => $validatedData['organizer'] ?? null,
+                'location' => $validatedData['location'] ?? null,
                 'user_id' => auth()->id(),
             ]);
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location']);
         $this->dispatch('event-saved');
     }
 
@@ -92,6 +102,8 @@ class YearlyCalendar extends Component
         $this->end = $event->end->format('Y-m-d\TH:i');
         $this->description = $event->description;
         $this->color = $event->color;
+        $this->organizer = $event->organizer;
+        $this->location = $event->location;
 
         $this->dispatch('open-modal');
     }
@@ -110,7 +122,7 @@ class YearlyCalendar extends Component
             $event->delete();
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location']);
         $this->dispatch('event-saved');
     }
 
@@ -130,6 +142,8 @@ class YearlyCalendar extends Component
                 'end' => $event->end->toIso8601String(),
                 'color' => $event->color,
                 'description' => $event->description,
+                'organizer' => $event->organizer,
+                'location' => $event->location,
             ];
         });
 
