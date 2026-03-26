@@ -1,0 +1,200 @@
+@font-face {font-family: "Helvetica Neue ME";
+    src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot"); /* IE9*/
+    src: url("../fonts/95cecf452d3208890088a5b4c19c7ecf.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.woff2") format("woff2"), /* chrome、firefox */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.woff") format("woff"), /* chrome、firefox */
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.ttf") format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+    url("../fonts/95cecf452d3208890088a5b4c19c7ecf.svg#Helvetica Neue ME") format("svg"); /* iOS 4.1- */
+  }
+
+.hanken-grotesk{
+    font-family: "Helvetica Neue ME";
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.page-header  {
+    font-size: 35px ;
+    margin: 40px 0;
+    color: #666;
+    font-weight: bold;
+}
+
+
+/* Start tables for Pages */
+
+.main-table {
+
+    box-shadow: 0 4px 10px #ccc;
+}
+
+.main-table td {
+
+    background-color: #fff;
+    vertical-align: middle !important;
+}
+
+.main-table .btn {
+
+    padding: 3px 9px;
+}
+
+.main-table tr:first-child td {
+
+    background-color: #4e73df;
+    color: #fff;
+}
+
+.activate {
+
+    margin-left: 8px;
+}
+
+.manage-member img{
+    width:50px;
+    height: 50px;
+}
+
+
+
+.show-pass{
+
+    position: absolute;
+    top: 12px;
+    right: -20px;
+}
+
+ .main-form .form-group {
+
+    margin-top: 0;
+    position: relative;
+}
+
+/* End tables for Pages */
+
+/* Start Dashboard */
+
+.custom-shadow{
+    box-shadow: 0 1px 10px #ccc;
+    border-radius: 10px;
+}
+
+.fixed-size {
+    width: 107px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden; /* Prevent content overflow */
+    white-space: nowrap; /* Prevent wrapping of text */
+    text-overflow: ellipsis; /* Add ellipsis if text overflows */
+  }
+
+  .meeting-card-size{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden; /* Prevent content overflow */
+    white-space: nowrap; /* Prevent wrapping of text */
+    text-overflow: ellipsis; /* Add ellipsis if text overflows */
+    
+  }
+
+/* End Dashboard */
+
+/* Start select2 */
+.select2-container .select2-selection--single {
+    height: 35px !important;
+}
+
+
+/* End select2 */
+
+
+/* Start Datatable */
+
+.main-tables tr:first-child th {
+
+    background-color: #4e73df;
+    color: #fff;
+}
+
+/* End Datatable */
+
+
+/* Start Sub Rows in tables */
+.transaction-details{
+    text-align: center; 
+    margin: 0 auto;
+}
+
+.sub-row-table {
+
+    box-shadow: 0 4px 10px #7adee6;
+}
+
+.sub-row-table td {
+
+    background-color: #fff;
+    vertical-align: middle !important;
+}
+
+.sub-row-table .btn {
+
+    padding: 3px 9px;
+}
+
+.sub-row-table tr:first-child td {
+
+    background-color: #10b3cf;
+    color: #fff;
+}
+
+/* End Sub Rows in tables */
+
+
+.nav-item .dropdown-toggle::after {
+    display: none;
+  }
+  
+
+/* RTL Support */
+[dir="rtl"] .page-header {
+    text-align: right;
+}
+
+[dir="rtl"] .activate {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+[dir="rtl"] .show-pass {
+    right: auto;
+    left: -20px;
+}
+
+[dir="rtl"] .transaction-details {
+    text-align: center; /* already centered, but retained for clarity */
+}
+
+[dir="rtl"] .main-table tr:first-child td,
+[dir="rtl"] .sub-row-table tr:first-child td {
+    text-align: right;
+}
+
+[dir="rtl"] .main-table td,
+[dir="rtl"] .sub-row-table td {
+    text-align: right;
+}
+
+[dir="rtl"] .fixed-size,
+[dir="rtl"] .meeting-card-size {
+    text-align: right;
+}
+
+[dir="rtl"] .main-form .form-group {
+    direction: rtl;
+}

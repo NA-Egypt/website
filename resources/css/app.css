@@ -1,0 +1,89 @@
+/* Bootstrap */
+@import './plugin/bootstrap.min.css';
+@import './plugin/bootstrap-extended.css';
+
+
+
+
+@import './plugin/select2-bootstrap4.css';
+
+@import './plugin/icons.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* plugins */
+@import './plugin/simplebar.css';
+@import './plugin/perfect-scrollbar.css';
+
+@import './plugin/jquery-jvectormap-2.0.2.css';
+@import './plugin/dataTables.bootstrap5.min.css';
+
+
+/* Theme */
+@import './plugin/dark-theme.css';
+@import './plugin/light-theme.css';
+@import './plugin/semi-dark.css';
+@import './plugin/header-colors.css';
+@import './plugin/pace.min.css';
+
+/* Data Table */
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
+@import 'datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css';
+
+
+
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+
+/* @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,600;1,600&display=swap'); */
+
+
+@import "./style.css";
+/*@import '../fonts/AraJozoor-Regular.woff';*/
+
+/* Backend layout fixes */
+body.has-sidebar .page-content {
+  margin-left: 250px;
+  /*margin-right: 0;*/
+}
+
+[dir="rtl"].has-sidebar .page-content {
+  margin-left: 0;
+  margin-right: 250px;
+}
+
+body:not(.has-sidebar) .page-content {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+@media (min-width: 1026px) {
+  body:not(.has-sidebar) .top-header .navbar {
+    left: 0 !important;
+    width: 100% !important;
+  }
+
+  [dir="rtl"] body:not(.has-sidebar) .top-header .navbar {
+    right: 0 !important;
+    width: 100% !important;
+  }
+}
+
+body.has-sidebar .wrapper.toggled .page-content {
+  margin-left: 70px;
+}
+
+[dir="rtl"].has-sidebar .wrapper.toggled .page-content {
+  margin-right: 70px;
+}
+
+.page-content {
+  overflow-x: hidden;
+}
+
+html.minimal-theme,
+html.minimal-theme body {
+  overflow-x: hidden;
+}

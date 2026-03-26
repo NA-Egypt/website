@@ -1,0 +1,228 @@
+<x-frontend.layout>
+<x-section-head>{{ __('messages.NA') }}</x-section-head>
+
+<div class="row justify-content-center mb-3">
+    <div class="col-12 text-center">
+        <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" class="social-icon"><x-fab-facebook class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" class="social-icon"><x-fab-instagram class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" class="social-icon"><x-fab-tiktok class="mx-2" style="width:32px; height:32px;" /></a>
+        <a href="mailto:pr@naegypt.org" class="social-icon"><x-fas-envelope class="mx-2" style="width:32px; height:32px;" /></a>
+    </div>
+</div>
+
+<style>
+    .info-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .card-icon-wrapper {
+        height: 60px;
+        width: 60px;
+        background: rgba(0, 105, 143, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%;
+    }
+    .social-icon {
+        color: #32557f;
+        transition: all 0.3s ease;
+    }
+    .social-icon:hover, .social-icon:active, .social-icon:focus {
+        filter: drop-shadow(0 0 5px rgba(50, 85, 127, 0.5));
+        color: #32557f; /* Ensure color stays same */
+    }
+    .gradient-text {
+        background: -webkit-linear-gradient(#eee, #000487);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    /* Ensure icon inherits the gradient if possible, or force it */
+    .gradient-icon {
+        background: -webkit-linear-gradient(#eee, #000487);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block; /* Required for transform/gradient sometimes */
+    }
+    .card-title {
+        line-height: normal !important;
+    }
+</style>
+
+<div id="infoCarousel" class="carousel carousel-dark slide mt-4 mb-5" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <!-- Slide 1 -->
+    <div class="carousel-item active" data-bs-interval="15000">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center">
+                    <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3" style="width:80px; height:80px; object-fit: contain;">
+                    <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
+                    <p class="card-text text-muted">{{ __('messages.whatistheprogramtxt') }}</p>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="carousel-item" data-bs-interval="15000">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center">
+                    <img src="{{ asset('assets/images/slide-icon-recover.png') }}" alt="Recover Logo" class="mb-3" style="width:80px; height:80px; object-fit: contain;">
+                    <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.wedorecover') }}</h3>
+                    <p class="card-text text-muted">{{ __('messages.wedorecovertxt') }}</p>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <button class="carousel-control-prev" type="button" data-bs-target="#infoCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#infoCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-4 helpline-box">
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
+        <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
+            <br />
+            <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.regionaltiming') }}
+            <br />
+        </p>
+    </div>
+    <div class="col-md-4 helpline-box">
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
+        <div>{{ __('messages.alexandria') }}</div>
+        <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
+            <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.leactiming') }}
+            <br />
+        </p>
+    </div>
+    <div class="col-md-4 helpline-box">
+        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4> 
+        <div>{{ __('messages.westgiza') }}</div>
+        <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
+            <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+            <br />
+              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.ahramtiming') }}
+            <br />
+        </p>
+    </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-4 helpline-box">
+    <div class="row px-4 py-1">
+      <a class="btn btn-outline-light" href="{{ route('frontend.meetings') }}">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
+    </div>
+    <div class="row px-4 py-1">
+      <a class="btn btn-outline-info" href="{{ route('frontend.comms') }}">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
+    </div>
+  </div>
+  <div class="col-md-4 helpline-box">
+    @if (session('subscribed'))
+      <div class="alert alert-success">
+        {{ __('messages.' .session('subscribed')) }}
+      </div>
+    @endif
+    <form action="{{ route('subscribers.store') }}" method="post">
+      @csrf
+      <div class="form-group">
+        <input type="email" name="email" class="form-control" placeholder="{{ __('messages.Enter your email') }}">
+        <br />
+        <button class="btn btn-outline-success" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
+      </div>
+      {{-- <a href="{{ route('subscribers.delete', ['email' => $subscriber->email]) }}">unsubscribe</a> --}}
+    </form>
+  </div>
+
+  <div class="col-md-4 calc-box">
+    <div class="form-group">
+      <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
+      <input type="date" class="form-control mb-3" onchange="setDate(this)">
+    </div>
+    <form name="myForm">
+      <div class="form-group" dir="ltr">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.years') }}</span>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.months') }}</span>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
+          <div class="input-group-append">
+            <span class="input-group-text">{{ __('messages.days') }}</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="findTime(document.myForm)" class="btn btn-info">{{ __('messages.calculate') }}</button>
+    </form>
+  </div>
+</div>
+  <script>
+    let selectedDate = null;
+
+    function setDate(input) {
+    selectedDate = new Date(input.value);
+    }
+
+    function findTime(form) {
+    if (!selectedDate) {
+        alert("Please select a date first!");
+        return;
+    }
+
+    const today = new Date();
+    
+    let totalYears = today.getFullYear() - selectedDate.getFullYear();
+    let totalMonths = today.getMonth() - selectedDate.getMonth();
+    let totalDays = today.getDate() - selectedDate.getDate();
+
+    if (totalDays < 0) {
+        totalMonths--;
+        const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        totalDays += previousMonth.getDate();
+    }
+
+    if (totalMonths < 0) {
+        totalYears--;
+        totalMonths += 12;
+    }
+
+    form.Fyears.value = totalYears;
+    form.Fmonth.value = totalMonths;
+    form.FR.value = totalDays;
+
+    console.log(`Difference: ${totalYears} years / ${totalMonths} months / ${totalDays} days`);
+    }
+
+  </script>
+</x-frontend.layout>
