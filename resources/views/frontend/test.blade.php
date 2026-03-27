@@ -572,6 +572,7 @@
         .nav-card.card-3 { color: #7c3aed; }
         .nav-card.card-4 { color: #dc2626; }
         .nav-card.card-5 { color: #4f46e5; }
+        .nav-card.card-6 { color: #0284c7; }
 
         .nav-card:hover h5,
         .nav-card:focus-visible h5 {
@@ -598,6 +599,7 @@
         .nav-card.card-3 .card-icon { color: #7c3aed; background: rgba(245, 243, 255, 0.95); }
         .nav-card.card-4 .card-icon { color: #dc2626; background: rgba(254, 242, 242, 0.95); }
         .nav-card.card-5 .card-icon { color: #4f46e5; background: rgba(238, 242, 255, 0.95); }
+        .nav-card.card-6 .card-icon { color: #0284c7; background: rgba(240, 249, 255, 0.96); }
 
         .card-kicker {
             font-size: 0.78rem;
@@ -689,6 +691,7 @@
         .header-icon.icon-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .header-icon.icon-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
         .header-icon.icon-indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .header-icon.icon-sky { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
 
         .section-header h2 {
             font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -1080,6 +1083,11 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+
+        .qa-section .faq-item {
+            background: linear-gradient(180deg, #f8fbff, #ffffff);
+            border: 1px solid rgba(14, 165, 233, 0.12);
         }
 
         .faq-item {

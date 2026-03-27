@@ -36,6 +36,12 @@
           @if (Route::currentRouteName() !== 'frontend.forpublic')
           <li><a href="{{ route('frontend.forpublic') }}" class="btn btn-outline-light"><x-fas-bullhorn style="width:16px; height:16px;"/>&nbsp;{{ __('messages.forpublic') }}</a></li>
           @endif
+          <li>
+            <a href="{{ route('frontend.questions') }}"
+               class="btn {{ Route::currentRouteName() === 'frontend.questions' ? 'btn-light text-primary' : 'btn-outline-light' }}">
+              <i class="bi bi-patch-question-fill" style="font-size:16px;"></i>&nbsp;{{ __('messages.test_page.nav.questions.title') }}
+            </a>
+          </li>
           @if (Route::currentRouteName() !== 'contactus.create')
           <li><a href="{{ route('contactus.create') }}" class="btn btn-outline-light"><x-fas-message style="width:16px; height:16px;"/>&nbsp;{{ __('messages.contactus') }}</a></li>
           @endif

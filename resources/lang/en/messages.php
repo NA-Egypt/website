@@ -292,6 +292,11 @@ return [
                 'title' => 'How NA Benefits Society',
                 'desc' => 'The fellowship’s role in supporting people and society',
             ],
+            'questions' => [
+                'kicker' => 'Q&A',
+                'title' => 'Common Questions',
+                'desc' => 'Clear answers about the fellowship and its meetings',
+            ],
         ],
         'definition' => [
             'paragraphs' => [
@@ -404,6 +409,78 @@ return [
                 'Many believe that what Narcotics Anonymous offers benefits not only addicts themselves, but also helps reduce social problems and challenges associated with addiction, such as social isolation, deterioration of family life, and burdens placed on society. It also helps reduce the harm and mistakes an addict may commit due to lack of awareness or desperation to obtain and use drugs at any cost, which in some cases may lead to violence or unethical and illegal acts rejected by society.',
                 'The success of the Narcotics Anonymous program in changing the lives of thousands of addicts around the world has made the support it offers widely accessible, with members volunteering to provide an opportunity for a new life to any addict who has the desire to stop using drugs, without exception, regardless of gender, race, age, or type of substance. The fellowship also works to raise awareness of its role in helping addicts and providing information through presentations, helplines, websites, social media platforms, initiatives, and community and media dialogue.',
                 'By instilling principles such as honesty, integrity, and uprightness, and values such as goodwill, giving, and mutual support, the Narcotics Anonymous program encourages personal growth and strengthens a person’s sense of being part of society rather than merely being seen as a difficult case or a problem. In short, the program can help any addict become a productive and responsible member of society.',
+            ],
+        ],
+        'qa' => [
+            'title' => 'Questions and Answers About Narcotics Anonymous',
+            'items' => [
+                [
+                    'q' => 'Who are the members of Narcotics Anonymous (NA)?',
+                    'a' => [
+                        'Anyone who has a desire to stop using drugs can become a member of Narcotics Anonymous. We define drugs as any substance that affects the mind and changes mood, so membership is not limited to people who use one specific drug.',
+                        'People who may have a problem with illegal drugs, prescription drugs, or even alcohol are welcome in Narcotics Anonymous. What NA focuses on is recovery from addiction and complete abstinence from all drugs, not one particular substance.',
+                    ],
+                ],
+                [
+                    'q' => 'How can we find Narcotics Anonymous (NA) meetings?',
+                    'a' => [
+                        'To know the locations and times of Narcotics Anonymous recovery meetings in Egypt, you can contact us through the helpline numbers shown on the home page. Recovering addicts answer these lines to help you find the nearest meeting in your area and respond to questions about the fellowship.',
+                        'You can also find meetings through the local website at: https://naegypt.org/en/meetings',
+                    ],
+                ],
+                [
+                    'q' => 'What happens in Narcotics Anonymous meetings?',
+                    'a' => [
+                        'Narcotics Anonymous meetings are not classrooms or group therapy sessions. We do not lecture or give advice. We simply share our personal experience with addiction and recovery.',
+                        'We are not concerned with the types or amounts of drugs used. We focus on the ways addiction and recovery affect our lives.',
+                        'NA meetings are autonomous and there is great variety among them. Some are topic discussions, some are speaker meetings, some focus on our literature, and some are a mix of these formats. Some are open to the public and others are only for addicts.',
+                        'There are a few things shared by all meetings: the primary purpose of any NA meeting is to carry the message to the addict who still suffers. No counselor or professional is in charge, and NA meetings are run on a voluntary basis by addicts for addicts. Regardless of the meeting format, meetings usually begin with readings, move into the main sharing portion, include time for NA announcements, may end with a short reading, and usually close with a prayer.',
+                    ],
+                ],
+                [
+                    'q' => 'What are open and closed meetings?',
+                    'a' => [
+                        'Closed meetings are for addicts only, or for people who think they may have a problem with drugs. Closed meetings create an atmosphere in which addicts can feel more trust and identify more easily with one another. The person leading the meeting usually explains that the meeting is closed while also directing non-addicts to open meetings.',
+                        'Open meetings are for anyone who wishes to attend. Some groups hold one open meeting each month to allow non-addict friends and family members to celebrate recovery anniversaries with members. It should be made clear during the meeting that NA groups do not accept outside assistance from non-members.',
+                        'It is important to read the tradition related to anonymity, the Eleventh Tradition, and remind guests not to take photographs, mention members’ names, or share personal details when describing meetings to others.',
+                    ],
+                ],
+                [
+                    'q' => 'Are there membership fees in Narcotics Anonymous? How much does it cost to attend meetings and join the fellowship?',
+                    'a' => [
+                        'It costs nothing. There are no fees to attend meetings and no dues for membership. Narcotics Anonymous is non-professional, and we are all addicts who came here to recover.',
+                    ],
+                ],
+                [
+                    'q' => 'How can I make someone stop using drugs?',
+                    'a' => [
+                        'We have learned from our personal experience that an addict cannot be forced to stop using. An addict stops only when they want to and then seek help.',
+                        'If you know someone who uses drugs, you can give them some of our informational pamphlets and a meeting schedule so they can attend a meeting and decide for themselves whether Narcotics Anonymous can help them stop using. You can also take them to an open meeting or encourage them to call our helpline.',
+                        'Narcotics Anonymous does not intervene to force addicts to stop using. Our program is based on asking for help, and we do not advise family members, friends, or employers on how to deal with addicts while they are using.',
+                    ],
+                ],
+                [
+                    'q' => 'Does Narcotics Anonymous run any treatment centers or detox facilities?',
+                    'a' => [
+                        'No. Narcotics Anonymous does not run treatment centers or detox facilities. It is not a professional organization, nor are we affiliated with specialized institutions or treatment facilities. We do not employ counselors or treatment staff.',
+                        'Although many treatment facilities introduce their patients to Narcotics Anonymous before discharge, NA itself is a fellowship of recovering addicts who meet regularly on a voluntary basis to help one another stay abstinent.',
+                    ],
+                ],
+                [
+                    'q' => 'I do not use drugs, but I believe in the message of Narcotics Anonymous and want to help. What can I do?',
+                    'a' => [
+                        'First of all, thank you for your interest in helping addicts. Speaking positively about our fellowship to others is already a good step. We do not accept donations or services from non-members, and we do not recruit volunteers from outside the fellowship.',
+                        'The best thing you can do is tell someone struggling with drug addiction that Narcotics Anonymous is available, that joining requires no money, and that it may be able to help.',
+                    ],
+                ],
+                [
+                    'q' => 'What is the difference between Narcotics Anonymous and addiction treatment centers or psychotherapy?',
+                    'a' => [
+                        'Narcotics Anonymous is not profit-oriented and does not charge fees or dues. We do not have medical staff or professional counselors, and we do not give members advice. We are a non-professional fellowship and do not present ourselves as specialists to addicts who come seeking recovery.',
+                        'Instead, we present ourselves as recovering addicts who have learned how to stop using drugs, lose the desire to use, and find a new way of life.',
+                        'As for psychotherapy, our meetings are not run as therapy sessions. We do not allow interruption or cross-talk, and we do not have specialists or professionals conducting our meetings in a clinical way.',
+                    ],
+                ],
             ],
         ],
         'back_to_top' => 'Back to Top',

@@ -173,6 +173,10 @@ Route::group(
             return view('frontend.forpublic');
         })->name('frontend.forpublic');
 
+        Route::get('/questions', function(){
+            return view('frontend.questions');
+        })->name('frontend.questions');
+
         Route::get('/events', [\App\Http\Controllers\FrontendEventController::class, 'index'])->name('frontend.events');
 
         Route::get('/test', [ForPublicController::class, 'index'])->name('frontend.test');
@@ -199,4 +203,3 @@ Route::group(
 
     }
 );
-
