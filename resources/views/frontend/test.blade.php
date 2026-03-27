@@ -1,7 +1,126 @@
 <x-frontend.layout>
     <x-section-head>{{ __('messages.forpublic') }}</x-section-head>
 
-    <div id="top" class="modern-page" style="direction: rtl; text-align: right;">
+    @php
+        $isArabic = app()->getLocale() === 'ar';
+        $pageDir = $isArabic ? 'rtl' : 'ltr';
+        $pageAlign = $isArabic ? 'right' : 'left';
+        $cardArrowIcon = $isArabic ? 'bi-arrow-left' : 'bi-arrow-right';
+        $definitionParagraphs = __('messages.test_page.definition.paragraphs');
+        $statsItems = __('messages.test_page.stats.items');
+        $benefitParagraphs = __('messages.test_page.benefits.paragraphs');
+        $statHighlights = [
+            ['label' => __('messages.test_page.stats.respondents'), 'value' => 679, 'accent' => 'purple'],
+            ['label' => __('messages.test_page.stats.egypt_residents'), 'value' => 654, 'accent' => 'blue'],
+            ['label' => __('messages.test_page.stats.cairo_residents'), 'value' => 366, 'accent' => 'green'],
+            ['label' => __('messages.test_page.stats.weekly_attendance'), 'value' => 415, 'accent' => 'amber'],
+        ];
+        $statsCharts = [
+            [
+                'title' => __('messages.test_page.stats.chart_titles.gender'),
+                'desc' => __('messages.test_page.stats.chart_desc.gender'),
+                'items' => [
+                    ['label' => __('messages.test_page.stats.labels.male'), 'count' => 577, 'percent' => 84.98, 'color' => '#6366f1'],
+                    ['label' => __('messages.test_page.stats.labels.female'), 'count' => 102, 'percent' => 15.02, 'color' => '#ec4899'],
+                ],
+            ],
+            [
+                'title' => __('messages.test_page.stats.chart_titles.age'),
+                'desc' => __('messages.test_page.stats.chart_desc.age'),
+                'items' => [
+                    ['label' => __('messages.test_page.stats.labels.under_18'), 'count' => 1, 'percent' => 0.15, 'color' => '#94a3b8'],
+                    ['label' => __('messages.test_page.stats.labels.age_18_25'), 'count' => 66, 'percent' => 9.72, 'color' => '#0ea5e9'],
+                    ['label' => __('messages.test_page.stats.labels.age_26_32'), 'count' => 158, 'percent' => 23.27, 'color' => '#14b8a6'],
+                    ['label' => __('messages.test_page.stats.labels.age_33_39'), 'count' => 225, 'percent' => 33.14, 'color' => '#8b5cf6'],
+                    ['label' => __('messages.test_page.stats.labels.age_40_46'), 'count' => 149, 'percent' => 21.94, 'color' => '#f97316'],
+                    ['label' => __('messages.test_page.stats.labels.age_47_53'), 'count' => 60, 'percent' => 8.84, 'color' => '#ef4444'],
+                    ['label' => __('messages.test_page.stats.labels.age_54_60'), 'count' => 16, 'percent' => 2.36, 'color' => '#64748b'],
+                    ['label' => __('messages.test_page.stats.labels.over_60'), 'count' => 4, 'percent' => 0.59, 'color' => '#334155'],
+                ],
+            ],
+            [
+                'title' => __('messages.test_page.stats.chart_titles.education'),
+                'desc' => __('messages.test_page.stats.chart_desc.education'),
+                'items' => [
+                    ['label' => __('messages.test_page.stats.labels.no_certificate'), 'count' => 17, 'percent' => 2.50, 'color' => '#94a3b8'],
+                    ['label' => __('messages.test_page.stats.labels.primary'), 'count' => 13, 'percent' => 1.91, 'color' => '#38bdf8'],
+                    ['label' => __('messages.test_page.stats.labels.preparatory'), 'count' => 26, 'percent' => 3.83, 'color' => '#22c55e'],
+                    ['label' => __('messages.test_page.stats.labels.secondary'), 'count' => 109, 'percent' => 16.05, 'color' => '#f59e0b'],
+                    ['label' => __('messages.test_page.stats.labels.technical'), 'count' => 63, 'percent' => 9.28, 'color' => '#f97316'],
+                    ['label' => __('messages.test_page.stats.labels.bachelor'), 'count' => 401, 'percent' => 59.06, 'color' => '#6366f1'],
+                    ['label' => __('messages.test_page.stats.labels.postgraduate'), 'count' => 50, 'percent' => 7.36, 'color' => '#a855f7'],
+                ],
+            ],
+            [
+                'title' => __('messages.test_page.stats.chart_titles.employment'),
+                'desc' => __('messages.test_page.stats.chart_desc.employment'),
+                'items' => [
+                    ['label' => __('messages.test_page.stats.labels.student'), 'count' => 37, 'percent' => 5.45, 'color' => '#06b6d4'],
+                    ['label' => __('messages.test_page.stats.labels.full_time'), 'count' => 477, 'percent' => 70.25, 'color' => '#10b981'],
+                    ['label' => __('messages.test_page.stats.labels.part_time'), 'count' => 78, 'percent' => 11.49, 'color' => '#f59e0b'],
+                    ['label' => __('messages.test_page.stats.labels.retired'), 'count' => 12, 'percent' => 1.77, 'color' => '#64748b'],
+                    ['label' => __('messages.test_page.stats.labels.home_care'), 'count' => 23, 'percent' => 3.39, 'color' => '#ec4899'],
+                    ['label' => __('messages.test_page.stats.labels.not_working'), 'count' => 73, 'percent' => 10.75, 'color' => '#ef4444'],
+                ],
+            ],
+            [
+                'title' => __('messages.test_page.stats.chart_titles.quality_of_life'),
+                'desc' => __('messages.test_page.stats.chart_desc.quality_of_life'),
+                'items' => [
+                    ['label' => __('messages.test_page.stats.labels.stable_housing'), 'count' => 393, 'percent' => 57.88, 'color' => '#0ea5e9'],
+                    ['label' => __('messages.test_page.stats.labels.work'), 'count' => 493, 'percent' => 72.61, 'color' => '#10b981'],
+                    ['label' => __('messages.test_page.stats.labels.education_progress'), 'count' => 271, 'percent' => 39.91, 'color' => '#f59e0b'],
+                    ['label' => __('messages.test_page.stats.labels.social_relations'), 'count' => 584, 'percent' => 86.01, 'color' => '#8b5cf6'],
+                    ['label' => __('messages.test_page.stats.labels.family_relations'), 'count' => 585, 'percent' => 86.16, 'color' => '#ec4899'],
+                    ['label' => __('messages.test_page.stats.labels.hobbies'), 'count' => 444, 'percent' => 65.39, 'color' => '#f97316'],
+                ],
+            ],
+        ];
+        $buildDonut = function (array $items) {
+            $parts = [];
+            $current = 0;
+            foreach ($items as $item) {
+                $next = min($current + $item['percent'], 100);
+                $parts[] = "{$item['color']} {$current}% {$next}%";
+                $current = $next;
+            }
+            if ($current < 100) {
+                $parts[] = "#e2e8f0 {$current}% 100%";
+            }
+            return 'conic-gradient(' . implode(', ', $parts) . ')';
+        };
+        $statsDonuts = [
+            [
+                'title' => $statsCharts[0]['title'],
+                'desc' => $statsCharts[0]['desc'],
+                'gradient' => $buildDonut($statsCharts[0]['items']),
+                'center' => '679',
+                'center_label' => __('messages.test_page.stats.respondents'),
+                'items' => $statsCharts[0]['items'],
+            ],
+            [
+                'title' => $statsCharts[1]['title'],
+                'desc' => $statsCharts[1]['desc'],
+                'gradient' => $buildDonut($statsCharts[1]['items']),
+                'center' => '33-39',
+                'center_label' => __('messages.test_page.stats.labels.age_33_39'),
+                'items' => $statsCharts[1]['items'],
+            ],
+        ];
+        $statsDonuts = array_merge($statsDonuts, array_map(function ($chart) use ($buildDonut) {
+            $maxItem = collect($chart['items'])->sortByDesc('percent')->first();
+            return [
+                'title' => $chart['title'],
+                'desc' => $chart['desc'],
+                'gradient' => $buildDonut($chart['items']),
+                'center' => rtrim(rtrim(number_format($maxItem['percent'], 2), '0'), '.').'%',
+                'center_label' => $maxItem['label'],
+                'items' => $chart['items'],
+            ];
+        }, array_slice($statsCharts, 2)));
+    @endphp
+
+    <div id="top" class="modern-page" dir="{{ $pageDir }}" style="text-align: {{ $pageAlign }};">
 
         {{-- Hero Section --}}
         <div class="hero-section">
@@ -14,78 +133,82 @@
         {{-- Navigation Cards --}}
         <div class="container py-5">
             <div class="nav-grid">
-                <a href="#global" class="nav-card card-1 fade-in">
+                <a href="#definition" class="nav-card card-1 fade-in">
                     <div class="card-icon">
-                        <i class="fas fa-globe-asia"></i>
+                        <i class="bi bi-globe2"></i>
                     </div>
-                    <h5>تعريف زمالة المدمنين»»»»»»»</h5>
-                    <p>اعرف أكثر عن الزمالة العالمية</p>
+                    <span class="card-kicker">{{ __('messages.test_page.nav.definition.kicker') }}</span>
+                    <h5>{{ __('messages.test_page.nav.definition.title') }}</h5>
+                    <p>{{ __('messages.test_page.nav.definition.desc') }}</p>
+                    <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
-                <a href="#local" class="nav-card card-2 fade-in fade-in-delay-1">
+                <a href="#local-fellowship" class="nav-card card-2 fade-in fade-in-delay-1">
                     <div class="card-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+                        <i class="bi bi-geo-alt-fill"></i>
                     </div>
-                    <h5>الزمالة المحلية</h5>
-                    <p>معلومات عن الزمالة في مصر</p>
+                    <span class="card-kicker">{{ __('messages.test_page.nav.local.kicker') }}</span>
+                    <h5>{{ __('messages.test_page.nav.local.title') }}</h5>
+                    <p>{{ __('messages.test_page.nav.local.desc') }}</p>
+                    <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
-                <a href="#statistics" class="nav-card card-3 fade-in fade-in-delay-2">
+                <a href="#local-statistics" class="nav-card card-3 fade-in fade-in-delay-2">
                     <div class="card-icon">
-                        <i class="fas fa-chart-pie"></i>
+                        <i class="bi bi-pie-chart-fill"></i>
                     </div>
-                    <h5>الإحصائيات المحلية</h5>
-                    <p>بيانات عن أعضاء الزمالة</p>
+                    <span class="card-kicker">{{ __('messages.test_page.nav.stats.kicker') }}</span>
+                    <h5>{{ __('messages.test_page.nav.stats.title') }}</h5>
+                    <p>{{ __('messages.test_page.nav.stats.desc') }}</p>
+                    <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
-                <a href="#not-do" class="nav-card card-4 fade-in fade-in-delay-3">
+                <a href="#arabic-brochures" class="nav-card card-4 fade-in fade-in-delay-3">
                     <div class="card-icon">
-                        <i class="fas fa-ban"></i>
+                        <i class="bi bi-journals"></i>
                     </div>
-                    <h5>النشرات الإعلامية</h5>
-                    <p>معلومات هامة وإرشادات</p>
+                    <span class="card-kicker">{{ __('messages.test_page.nav.brochures.kicker') }}</span>
+                    <h5>{{ __('messages.test_page.nav.brochures.title') }}</h5>
+                    <p>{{ __('messages.test_page.nav.brochures.desc') }}</p>
+                    <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
-                <a href="#meetings" class="nav-card card-5 fade-in fade-in-delay-4">
+                <a href="#community-benefits" class="nav-card card-5 fade-in fade-in-delay-4">
                     <div class="card-icon">
-                        <i class="fas fa-handshake"></i>
+                        <i class="bi bi-people-fill"></i>
                     </div>
-                    <h5>الاجتماعات</h5>
-                    <p>تفاصيل اجتماعات الزمالة</p>
+                    <span class="card-kicker">{{ __('messages.test_page.nav.benefits.kicker') }}</span>
+                    <h5>{{ __('messages.test_page.nav.benefits.title') }}</h5>
+                    <p>{{ __('messages.test_page.nav.benefits.desc') }}</p>
+                    <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
             </div>
         </div>
 
         {{-- Definition of Narcotics Anonymous--}}
-        <div id="global" class="content-section flip-in" style="animation-delay: 0.1s;">
+        <div id="definition" class="content-section flip-in" style="animation-delay: 0.1s;">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-green">
-                        <i class="fas fa-globe-asia"></i>
+                        <i class="bi bi-globe2"></i>
                     </div>
                     <h2>{{__('messages.Definition of Narcotics Anonymous')}}</h2>
                 </div>
                 <div class="content-box">
-                    <p class="fade-in fade-in-delay-1">
-                        زمالة المدمنين المجهولين (NA)؛ زمالة عالمية غير ربحية، ويمكن اعتبارها مجتمع عالمي من المتعافين من إدمان المخدرات، تضم رجال ونساء لديهم مشكلة مع إدمان المواد المخدرة من مختلف الخلفيات الاجتماعية والثقافات واللغات، يشاركون خبراتهم وقوتهم وأملهم مع بعضهم البعض بهدف التعافي من مرض الإدمان ومساعدة الآخرين على التعافي.
-                        نحن نعمل معًا من خلال برنامج عملي قائم على المشاركة والدعم المتبادل، بهدف الامتناع التام عن التعاطي وبناء حياة جديدة قائمة على التعافي، مما يتيح الفرصة لكل مدمن أن يصبح عضوًا مسؤولًا ومنتجًا في المجتمع. العضوية في الزمالة مفتوحة لكل من لديه رغبة في التوقف عن التعاطي، دون تمييز على أساس نوع المخدر أو السن أو الجنس أو الخلفية الاجتماعية أو الدينية أو الثقافية.
-                        زمالة المدمنين المجهولين (NA) ليست مؤسسة علاجية أو طبية ولا توفر معالجين أو أطباء، ولا تنتمي إلى أي جهة سياسية أو دينية، بل هي مجتمع تطوعي قائم على الدعم المتبادل بين أعضائه، وتدار الزمالة بالكامل من خلال أعضائها وفق مبادئ الخدمة والمسؤولية المشتركة.
-                        تتمثل زمالة المدمنين المجهولين بشكل أساسي في اجتماعات تعافي (مفتوحة أو مغلقة) تعقد بشكل دوري حضوريًا أو افتراضيًا عبر الإنترنت، وتوفر بيئة آمنة "خالية من المخدرات" تتيح للأعضاء مشاركة تجاربهم الشخصية في التعافي دون إصدار أحكام أو تقديم توجيهات مباشرة.
-                        لا توجد قيادة فردية أو سلطة مركزية في المدمنين المجهولين، بل تعتمد الزمالة على الضمير الجماعي لكل مجموعة والخدمة الناكرة للذات. وتعتمد الاجتماعات على مبدأ المساواة بين جميع الأعضاء، وتشجع على الصدق والأمانة والتفتح والمسؤولية الفردية والجماعية المشتركة. باستخدام برنامج عملي قائم على المبادئ التي تضمنها الخطوات الاثنى عشر والتقاليد الاثنى عشر ومفاهيم الخدمة الاثنى عشر.
-                        تنتشر زمالة المدمنين المجهولين (NA) في أكثر من 140 دولة حول العالم، وتعقد عشرات الآلاف من الاجتماعات أسبوعيًا بلغات متعددة في بيئات ثقافية متنوعة، تشمل المدن والقرى والمؤسسات الإصلاحية والمرافق الاجتماعية والعلاجية وغيره من الأماكن العامة. ويعكس هذا الانتشار الواسع عالمية الزمالة وقدرتها على الوصول إلى المدمنين في مختلف البيئات.
-                        برنامج زمالة المدمنين المجهولين (NA) هو اسلوب حياة للتعافي وليس مجرد التوقف عن التعاطي، ويهدف إلى تغيير نمط التفكير والسلوك وبناء حياة متوازنة قائمة على الصدق والمسؤولية وتطوير علاقة مع الله (بشكل روحاني كما يعتقد كل عضو) فالبرنامج ليس ديني ولا يتناول المعتقدات الخاصة بالأعضاء.
-                    </p>
+                    @foreach ($definitionParagraphs as $index => $paragraph)
+                        <p class="fade-in fade-in-delay-{{ min($index + 1, 5) }}">{{ $paragraph }}</p>
+                    @endforeach
 
                     <div class="definition-box fade-in fade-in-delay-2">
-                        <h5 class="definition-title">المقصود باسم "زمالة المدمنين المجهولين"</h5>
+                        <h5 class="definition-title">{{ __('messages.test_page.definition.box_title') }}</h5>
                         <div class="definition-items">
                             <div class="definition-item">
-                                <span class="term">زمالة:</span>
-                                <p>تعبر عن روح المشاركة والدعم المتبادل والمساواة بين الأعضاء وعدم وجود تدرج أو تمييز، فكل الأعضاء متساوون ويتعلمون من بعضهم البعض اسلوب حياة جديد خالي من المخدرات.</p>
+                                <span class="term">{{ __('messages.test_page.definition.items.fellowship.term') }}</span>
+                                <p>{{ __('messages.test_page.definition.items.fellowship.text') }}</p>
                             </div>
                             <div class="definition-item">
-                                <span class="term">المدمنين:</span>
-                                <p>تشير إلى التركيز على الإدمان كمرض واحد دون تمييز بين أنواع المواد المخدرة، مع التركيز على طبيعة التعافي دون التطرق لأي قضية أخرى خارجية.</p>
+                                <span class="term">{{ __('messages.test_page.definition.items.addicts.term') }}</span>
+                                <p>{{ __('messages.test_page.definition.items.addicts.text') }}</p>
                             </div>
                             <div class="definition-item">
-                                <span class="term">المجهولين:</span>
-                                <p>تؤكد على حماية الهوية الشخصية بهدف توفير بيئة آمنة قائمة على الثقة واحترام الخصوصية ووضع المبادئ قبل الأشخاص، فالمجهولية هي الأساس الروحي لتقاليد الزمالة.</p>
+                                <span class="term">{{ __('messages.test_page.definition.items.anonymous.term') }}</span>
+                                <p>{{ __('messages.test_page.definition.items.anonymous.text') }}</p>
                             </div>
                         </div>
                     </div>
@@ -94,11 +217,11 @@
         </div>
 
         {{-- Information about the local fellowship--}}
-        <div id="local" class="content-section flip-in" style="animation-delay: 0.2s;">
+        <div id="local-fellowship" class="content-section flip-in" style="animation-delay: 0.2s;">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-blue">
-                        <i class="fas fa-map-marker-alt"></i>
+                        <i class="bi bi-geo-alt-fill"></i>
                     </div>
                     <h2>{{__('messages.Information about the local fellowship')}}</h2>
                 </div>
@@ -106,29 +229,29 @@
                     <div class="timeline">
                         <div class="timeline-item fade-in fade-in-delay-1">
                             <div class="timeline-marker">
-                                <i class="fas fa-calendar-alt"></i>
+                                <i class="bi bi-calendar-event-fill"></i>
                             </div>
                             <div class="timeline-content">
-                                <h5>البداية الأولى</h5>
-                                <p>أول اجتماع تم انعقاده في مدرسة بمصر الجديدة بتاريخ ٢٦ نوفمبر ١٩٨٩</p>
+                                <h5>{{ __('messages.test_page.local.timeline.first.title') }}</h5>
+                                <p>{{ __('messages.test_page.local.timeline.first.text') }}</p>
                             </div>
                         </div>
                         <div class="timeline-item fade-in fade-in-delay-2">
                             <div class="timeline-marker">
-                                <i class="fas fa-users"></i>
+                                <i class="bi bi-people-fill"></i>
                             </div>
                             <div class="timeline-content">
-                                <h5>الأعضاء الأوائل</h5>
-                                <p>كان عدد الأعضاء ٤ فقط في البداية</p>
+                                <h5>{{ __('messages.test_page.local.timeline.members.title') }}</h5>
+                                <p>{{ __('messages.test_page.local.timeline.members.text') }}</p>
                             </div>
                         </div>
                         <div class="timeline-item fade-in fade-in-delay-3">
                             <div class="timeline-marker">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="bi bi-graph-up-arrow"></i>
                             </div>
                             <div class="timeline-content">
-                                <h5>النمو المستمر</h5>
-                                <p>كان الانتشار بطئ فى البداية ثم أخذت فى النمو تدريجياً حتى أصبح اليوم هناك ٦٥ مجموعة فى ٢٦ محافظات/مدينة يعقدوا اكثر من ٢٠٠ اجتماعاً في الأسبوع.</p>
+                                <h5>{{ __('messages.test_page.local.timeline.growth.title') }}</h5>
+                                <p>{{ __('messages.test_page.local.timeline.growth.text') }}</p>
                             </div>
                         </div>
                     </div>
@@ -137,76 +260,73 @@
         </div>
 
         {{-- Local statistics (general characteristics of members) --}}
-        <div id="statistics" class="content-section flip-in" style="animation-delay: 0.3s;">
+        <div id="local-statistics" class="content-section flip-in" style="animation-delay: 0.3s;">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-purple">
-                        <i class="fas fa-chart-pie"></i>
+                        <i class="bi bi-pie-chart-fill"></i>
                     </div>
                     <h2>{{__('messages.Local statistics (general characteristics of members)')}}</h2>
                 </div>
                 <div class="content-box">
-                    <p class="fade-in fade-in-delay-1">
-                        تعكس هذه الإحصائيات لمحة عن التعافي من خلال برنامج زمالة المدمنين المجهولين كخيار فعال للتعافي ومورد مجتمعي يبعث الأمل دون تمييز قائم على أي اختلافات من أي نوع. وتعتمد البيانات على مسح شمل 689 عضوًا خلال المؤتمر السنوي بمصر (مايو 2025).
-                    </p>
-                    <p class="fade-in fade-in-delay-2">
-                        ومع الالتزام بمبدأ عدم الكشف عن الهوية الشخصية للأعضاء، يتم عمل مسح دوري يقدم لمحة عامة عن العضوية وتنوعها دون تسجيل بيانات خاصة بالأعضاء، بهدف دعم جهود العلاقات العامة وإيصال رسالة عن التعافي من خلال برنامج الزمالة.
-                    </p>
+                    <p class="fade-in fade-in-delay-1">{{ __('messages.test_page.stats.intro_1') }}</p>
+                    <p class="fade-in fade-in-delay-2">{{ __('messages.test_page.stats.intro_2') }}</p>
 
-                    <div class="stats-grid fade-in fade-in-delay-3">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-venus-mars"></i>
+                    <div class="stats-highlights fade-in fade-in-delay-3">
+                        @foreach ($statHighlights as $highlight)
+                            <div class="highlight-card {{ $highlight['accent'] }}">
+                                <span class="highlight-label">{{ $highlight['label'] }}</span>
+                                <strong class="highlight-value">{{ number_format($highlight['value']) }}</strong>
                             </div>
-                            <p>النوع (Gender)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-birthday-cake"></i>
-                            </div>
-                            <p>معدل الأعمار (Age)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-hourglass-end"></i>
-                            </div>
-                            <p>مدة الامتناع (Years Drug – Free)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <p>المخدرات المستخدمة (Drugs Used)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <p>مستوى التعليم (Educational Status)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <p>الحالة الوظيفية (Employment Status)</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <p>تحسن جودة الحياة (Quality of Life)</p>
-                        </div>
+                        @endforeach
                     </div>
+
+                    <div class="stats-legend fade-in fade-in-delay-3">
+                        @foreach ($statsItems as $item)
+                            <span class="stats-pill">{{ $item }}</span>
+                        @endforeach
+                    </div>
+
+                    <div class="donut-grid fade-in fade-in-delay-4">
+                        @foreach ($statsDonuts as $donut)
+                            <article class="donut-card">
+                                <div class="chart-card-head">
+                                    <h3>{{ $donut['title'] }}</h3>
+                                    <p>{{ $donut['desc'] }}</p>
+                                </div>
+
+                                <div class="donut-layout">
+                                    <div class="donut-visual" style="--donut-gradient: {{ $donut['gradient'] }};">
+                                        <div class="donut-hole">
+                                            <strong>{{ $donut['center'] }}</strong>
+                                            <span>{{ $donut['center_label'] }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="donut-legend">
+                                        @foreach ($donut['items'] as $item)
+                                            <div class="legend-row">
+                                                <span class="legend-dot" style="--legend-color: {{ $item['color'] }};"></span>
+                                                <span class="legend-label">{{ $item['label'] }}</span>
+                                                <span class="legend-value">{{ $item['percent'] }}%</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+
                 </div>
             </div>
         </div>
 
         {{-- Informational brochures (Arabic) --}}
-        <div id="not-do" class="content-section flip-in" style="animation-delay: 0.4s;">
+        <div id="arabic-brochures" class="content-section flip-in" style="animation-delay: 0.4s;">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-red">
-                        <i class="fas fa-ban"></i>
+                        <i class="bi bi-journals"></i>
                     </div>
                     <h2>{{__('messages.Informational brochures (Arabic)')}}</h2>
                 </div>
@@ -216,28 +336,73 @@
                         {{-- Who, what, how and why --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
-                                <i class="fas fa-star"></i>
+                                <i class="bi bi-star-fill"></i>
                                 <h5><a href="#" class="brochure-link">{{__('messages.Who, what, how and why')}}</a></h5>
                             </div>
-                            <p>هذه النشرة توضح أن المدمن هو شخص تسيطر المخدرات على حياته، وأن زمالة المدمنين المجهولين هي تجمّع للمدمنين المتعافين الذين يساعدون بعضهم البعض في البقاء ممتنعين</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'هذه النشرة توضح أن المدمن هو شخص تسيطر المخدرات على حياته، وأن زمالة المدمنين المجهولين هي تجمّع للمدمنين المتعافين الذين يساعدون بعضهم البعض في البقاء ممتنعين' : 'This pamphlet explains that an addict is a person whose life is controlled by drugs, and that Narcotics Anonymous is a fellowship of recovering addicts who help one another stay abstinent.' }}</p>
                         </div>
 
                         {{-- Welcome to Narcotics Anonymous --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
-                                <i class="fas fa-star"></i>
+                                <i class="bi bi-star-fill"></i>
                                 <h5><a href="#" class="brochure-link">{{__('messages.Welcome to Narcotics Anonymous')}}</a></h5>
                             </div>
-                            <p>هي نشرة ترحيبية توضح أساسيات زمالة المدمنين المجهولين وتبين أن الزمالة تتكون من مدمنين يتعافون من الإدمان من خلال دعم بعضهم البعض في اجتماعات منتظمة</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'هي نشرة ترحيبية توضح أساسيات زمالة المدمنين المجهولين وتبين أن الزمالة تتكون من مدمنين يتعافون من الإدمان من خلال دعم بعضهم البعض في اجتماعات منتظمة' : 'A welcoming pamphlet that explains the basics of Narcotics Anonymous and shows that the fellowship consists of addicts recovering from addiction by supporting one another in regular meetings.' }}</p>
                         </div>
 
                         {{-- Introduction to Narcotics Anonymous Meetings --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
-                                <i class="fas fa-star"></i>
+                                <i class="bi bi-star-fill"></i>
                                 <h5><a href="#" class="brochure-link">{{__('messages.Introduction to Narcotics Anonymous Meetings')}}</a></h5>
                             </div>
-                            <p>القصد من المعلومات المتوفرة في هذا المنشور هي إعطائك مفهوم عن ما نقوم به عندما نجتمع لمشاركة التعافي</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'القصد من المعلومات المتوفرة في هذا المنشور هي إعطائك مفهوم عن ما نقوم به عندما نجتمع لمشاركة التعافي' : 'The purpose of the information in this pamphlet is to give you an idea of what we do when we gather to share recovery.' }}</p>
+                        </div>
+
+                        {{-- Another Look --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-2">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.another_look.title') }}</a></h5>
+                            </div>
+                            <p>{{ __('messages.test_page.brochures.another_look.text') }}</p>
+                        </div>
+
+                        {{-- By Young Addicts, For Young Addicts --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-2">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.young_addicts.title') }}</a></h5>
+                            </div>
+                            <p>{{ __('messages.test_page.brochures.young_addicts.text') }}</p>
+                        </div>
+
+                        {{-- Staying Clean on the Outside --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-3">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.staying_clean.title') }}</a></h5>
+                            </div>
+                            <p>{{ __('messages.test_page.brochures.staying_clean.text') }}</p>
+                        </div>
+
+                        {{-- For the Parents or Guardians of Young People in NA --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-3">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.parents.title') }}</a></h5>
+                            </div>
+                            <p>{{ __('messages.test_page.brochures.parents.text') }}</p>
+                        </div>
+
+                        {{-- Accessibility for Those with Additional Needs --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-4">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.accessibility.title') }}</a></h5>
+                            </div>
+                            <p>{{ __('messages.test_page.brochures.accessibility.text') }}</p>
                         </div>
 
                     </div>
@@ -245,44 +410,26 @@
             </div>
         </div>
 
-        {{-- Meetings Section --}}
-        <div id="meetings" class="content-section flip-in" style="animation-delay: 0.5s;">
+        {{-- Society Benefits Section --}}
+        <div id="community-benefits" class="content-section flip-in" style="animation-delay: 0.5s;">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-indigo">
-                        <i class="fas fa-handshake"></i>
+                        <i class="bi bi-people-fill"></i>
                     </div>
-                    <h2>الاجتماعات</h2>
+                    <h2>{{ __('messages.test_page.benefits.title') }}</h2>
                 </div>
                 <div class="content-box">
                     <div class="faq-section">
                         <div class="faq-item fade-in fade-in-delay-1">
                             <h5 class="faq-question">
-                                <i class="fas fa-question-circle"></i>
-                                من هم أعضاء زمالة المدمنين المجهولين؟
+                                <i class="bi bi-question-circle-fill"></i>
+                                {{ __('messages.test_page.benefits.card_title') }}
                             </h5>
                             <div class="faq-answer">
-                                <p>
-                                    أي شخص لديه الرغبة في الامتناع عن تعاطي المخدرات يمكنه أن يكون عضواً في زمالة المدمنين المجهولين. فإن العضوية ليست مقتصرة على مدمنين يتعاطون مخدر معين. إن الأشخاص الذين قد يكون لديهم مشكلة مع مخدر ممنوع أو مخدر بوصفة طبية وبالإضافة إلى مادة "الخمر" فهم مرحب بهم في زمالـة "المدمنين المجهولين". ما تركز عليه زمالة "المدمنين المجهولين" هو التعافي من الإدمان والامتناع الكلي عن جميع المخدرات وليس على مادة مخدرة معينة.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="faq-item fade-in fade-in-delay-2">
-                            <h5 class="faq-question">
-                                <i class="fas fa-question-circle"></i>
-                                ما هي الاجتماعات المفتوحة والمغلقة؟
-                            </h5>
-                            <div class="faq-answer">
-                                <p>
-                                    الاجتماعات المغلقة في زمالة "المدمنين المجهولين" هي للمدمنين فقط، أو الناس الذين يعتقدون بأن لديهم مشكلة مع المخدرات. إن الاجتماعات المغلقة تهيأ الجو المناسب للمدمنين لكي يستطيعوا الإحساس بثقة أكبر، وإن هؤلاء المدمنين الذين يحضرون الاجتماعات قادرون على الاتفاق فيما بينهم. إن من يدير الأجتماع عادة يلفت نظر الأعضاء إلى أن هذا الاجتماع مغلق، وذلك لشرح فعالية الاجتماع المغلق، وفى نفس الوقت يوجه غير المدمنين إلى الاجتماع المفتوح.
-                                </p>
-                                <p>
-                                    الاجتماعات المفتوحة في زمالة "المدمنين المجهولين" هي لكل من يرغب حضور هذه الاجتماعات، بعض المجموعات لديها اجتماعات مفتوحة مرة واحدة في الشهر، وذلك للسماح للأصدقاء غير المدمنين وأقارب الأعضاء المشاركة في الاحتفال بمناسبات التعافي. يجب أن يوضح أثناء الاجتماع بأن مجموعات زمالة "م.م" لا تقبل المساعدات الخارجية من غير الأعضاء.
-                                </p>
-                                <p>
-                                    إن بعض المجموعات تستخدم التخطيط الدقيق للاجتماعات المفتوحة وخاصة اجتماعات "المتحدث"، وذلك لإعطاء الفرصة للمجتمع لكي يتسنى له الاطلاع على زمالة المدمنين المجهولين NA عن قرب وإتاحة الفرصة لهم للأسئلة.
-                                </p>
+                                @foreach ($benefitParagraphs as $paragraph)
+                                    <p>{{ $paragraph }}</p>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -293,7 +440,7 @@
         {{-- Back to Top Button --}}
         <div class="text-center py-5">
             <a href="#top" class="back-to-top-btn">
-                <i class="fas fa-arrow-up"></i> الرجوع إلى الأعلى
+                <i class="bi bi-arrow-up"></i> {{ __('messages.test_page.back_to_top') }}
             </a>
         </div>
     </div>
@@ -371,76 +518,143 @@
         /* Navigation Grid */
         .nav-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
             padding: 40px 0;
         }
 
         .nav-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px 20px;
-            text-align: center;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border-radius: 24px;
+            padding: 26px 22px 22px;
+            text-align: start;
             text-decoration: none;
             color: #1e293b;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-top: 4px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(148, 163, 184, 0.2);
             position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 220px;
         }
 
-        .nav-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0));
+            pointer-events: none;
         }
 
-        .nav-card.card-1 { border-top-color: #10b981; }
-        .nav-card.card-2 { border-top-color: #3b82f6; }
-        .nav-card.card-3 { border-top-color: #8b5cf6; }
-        .nav-card.card-4 { border-top-color: #ef4444; }
-        .nav-card.card-5 { border-top-color: #6366f1; }
+        .nav-card::after {
+            content: '';
+            position: absolute;
+            inset-inline-start: 0;
+            top: 0;
+            width: 6px;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.12;
+        }
 
-        .nav-card:hover h5 {
-            color: #3b82f6;
+        .nav-card:hover,
+        .nav-card:focus-visible {
+            transform: translateY(-8px);
+            box-shadow: 0 26px 50px -30px rgba(15, 23, 42, 0.5);
+            border-color: currentColor;
+        }
+
+        .nav-card.card-1 { color: #059669; }
+        .nav-card.card-2 { color: #2563eb; }
+        .nav-card.card-3 { color: #7c3aed; }
+        .nav-card.card-4 { color: #dc2626; }
+        .nav-card.card-5 { color: #4f46e5; }
+
+        .nav-card:hover h5,
+        .nav-card:focus-visible h5 {
+            color: inherit;
         }
 
         .card-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            background: #f8fafc;
-            width: 70px;
-            height: 70px;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.82);
+            width: 72px;
+            height: 72px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            margin-left: auto;
-            margin-right: auto;
+            border-radius: 22px;
+            margin-inline-start: 0;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+            position: relative;
+            z-index: 1;
         }
 
-        .nav-card.card-1 .card-icon { color: #10b981; }
-        .nav-card.card-2 .card-icon { color: #3b82f6; }
-        .nav-card.card-3 .card-icon { color: #8b5cf6; }
-        .nav-card.card-4 .card-icon { color: #ef4444; }
-        .nav-card.card-5 .card-icon { color: #6366f1; }
+        .nav-card.card-1 .card-icon { color: #059669; background: rgba(236, 253, 245, 0.95); }
+        .nav-card.card-2 .card-icon { color: #2563eb; background: rgba(239, 246, 255, 0.95); }
+        .nav-card.card-3 .card-icon { color: #7c3aed; background: rgba(245, 243, 255, 0.95); }
+        .nav-card.card-4 .card-icon { color: #dc2626; background: rgba(254, 242, 242, 0.95); }
+        .nav-card.card-5 .card-icon { color: #4f46e5; background: rgba(238, 242, 255, 0.95); }
+
+        .card-kicker {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: currentColor;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+        }
 
         .nav-card h5 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 1.12rem;
+            font-weight: 700;
+            margin-bottom: 0;
             transition: color 0.3s ease;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         .nav-card p {
-            font-size: 0.9rem;
-            color: #64748b;
-            line-height: 1.5;
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-arrow {
+            margin-top: auto;
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: currentColor;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.22);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .nav-card:hover .card-arrow,
+        .nav-card:focus-visible .card-arrow {
+            transform: translateX(var(--arrow-shift, -4px));
+            background: rgba(255, 255, 255, 1);
         }
 
         /* Content Sections */
         .content-section {
             padding: 60px 20px;
             animation-fill-mode: forwards;
+            scroll-margin-top: 90px;
         }
 
         .content-section:nth-child(odd) {
@@ -499,7 +713,7 @@
         /* Definition Box */
         .definition-box {
             background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border-left: 4px solid #10b981;
+            border-inline-start: 4px solid #10b981;
             padding: 30px;
             border-radius: 12px;
             margin-top: 30px;
@@ -547,7 +761,7 @@
         .timeline::before {
             content: '';
             position: absolute;
-            right: 30px;
+            inset-inline-start: 30px;
             top: 0;
             bottom: 0;
             width: 3px;
@@ -556,13 +770,13 @@
 
         .timeline-item {
             margin-bottom: 30px;
-            padding-right: 120px;
+            padding-inline-start: 120px;
             position: relative;
         }
 
         .timeline-marker {
             position: absolute;
-            right: 0;
+            inset-inline-start: 0;
             top: 0;
             width: 65px;
             height: 65px;
@@ -580,7 +794,7 @@
             background: #f8fafc;
             padding: 20px;
             border-radius: 8px;
-            border-right: 3px solid #3b82f6;
+            border-inline-start: 3px solid #3b82f6;
         }
 
         .timeline-content h5 {
@@ -595,36 +809,181 @@
         }
 
         /* Stats Grid */
-        .stats-grid {
+        .stats-highlights {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-top: 28px;
         }
 
-        .stat-item {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            padding: 25px 20px;
+        .highlight-card {
+            padding: 22px 18px;
             border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
+            background: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .stat-item:hover {
-            transform: translateY(-5px);
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            color: #ffffff;
+        .highlight-card.purple { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+        .highlight-card.blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+        .highlight-card.green { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+        .highlight-card.amber { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+
+        .highlight-label {
+            font-size: 0.88rem;
+            color: #475569;
+            line-height: 1.6;
         }
 
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+        .highlight-value {
+            font-size: clamp(1.6rem, 3vw, 2.3rem);
+            color: #0f172a;
+            font-weight: 800;
         }
 
-        .stat-item p {
+        .stats-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .stats-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
             font-size: 0.9rem;
             font-weight: 600;
+        }
+
+        .donut-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            margin-top: 28px;
+        }
+
+        .donut-card,
+        .chart-card {
+            background: linear-gradient(180deg, #f8fbff, #eef6ff);
+            border-radius: 24px;
+            border: 1px solid rgba(96, 165, 250, 0.16);
+            padding: 24px;
+            box-shadow: 0 20px 50px -34px rgba(30, 64, 175, 0.28);
+        }
+
+        .chart-card-head {
+            margin-bottom: 18px;
+        }
+
+        .chart-card-head h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .chart-card-head p {
             margin-bottom: 0;
+            color: #64748b;
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        .donut-layout {
+            display: grid;
+            grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+            gap: 22px;
+            align-items: center;
+        }
+
+        .donut-visual {
+            width: min(220px, 100%);
+            aspect-ratio: 1;
+            margin-inline: auto;
+            border-radius: 50%;
+            background: var(--donut-gradient);
+            display: grid;
+            place-items: center;
+            position: relative;
+            box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.22);
+        }
+
+        .donut-visual::after {
+            content: '';
+            position: absolute;
+            inset: 18px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border-radius: 50%;
+        }
+
+        .donut-hole {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 6px;
+            width: 55%;
+        }
+
+        .donut-hole strong {
+            font-size: clamp(1.5rem, 3vw, 2.3rem);
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        .donut-hole span {
+            font-size: 0.82rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .legend-row {
+            display: grid;
+            grid-template-columns: 14px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--legend-color);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--legend-color) 16%, white);
+        }
+
+        .legend-label {
+            font-size: 0.92rem;
+            color: #1e293b;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .legend-value {
+            font-size: 0.9rem;
+            color: #0f172a;
+            font-weight: 700;
         }
 
         /* Brochure Section */
@@ -643,12 +1002,12 @@
 
         .brochure-item.featured {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border-left: 4px solid #f97316;
+            border-inline-start: 4px solid #f97316;
         }
 
         .brochure-item:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transform: translateX(-5px);
+            transform: translateX(var(--brochure-shift, -5px));
         }
 
         .brochure-header {
@@ -811,9 +1170,21 @@
 
         .flip-in {
             animation: flipIn 0.8s ease forwards;
-            transform-origin: right center;
+            transform-origin: var(--flip-origin, right) center;
             opacity: 0;
             backface-visibility: hidden;
+        }
+
+        .modern-page[dir="ltr"] {
+            --arrow-shift: 4px;
+            --brochure-shift: 5px;
+            --flip-origin: left;
+        }
+
+        .modern-page[dir="rtl"] {
+            --arrow-shift: -4px;
+            --brochure-shift: -5px;
+            --flip-origin: right;
         }
 
         @keyframes fadeInUp {
@@ -872,15 +1243,23 @@
             }
 
             .nav-card {
-                padding: 25px 20px;
+                min-height: unset;
+                padding: 22px 18px 18px;
+                gap: 10px;
+            }
+
+            .card-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 1.7rem;
             }
 
             .timeline::before {
-                right: 20px;
+                inset-inline-start: 20px;
             }
 
             .timeline-item {
-                padding-right: 100px;
+                padding-inline-start: 100px;
             }
 
             .timeline-marker {
@@ -893,8 +1272,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .stats-highlights,
+            .donut-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .donut-layout {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -919,12 +1303,25 @@
                 font-size: 1.4rem;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .legend-row {
+                grid-template-columns: 12px minmax(0, 1fr) auto;
+                padding: 9px 10px;
+            }
+
+            .donut-hole strong {
+                font-size: 1.35rem;
+            }
+
+            .nav-card h5 {
+                font-size: 1rem;
+            }
+
+            .nav-card p {
+                font-size: 0.88rem;
             }
 
             .timeline-item {
-                padding-right: 80px;
+                padding-inline-start: 80px;
             }
 
             .faq-question {
@@ -978,4 +1375,3 @@
         });
     </script>
 </x-frontend.layout>
-
