@@ -18,7 +18,7 @@
                     <div class="card-icon">
                         <i class="fas fa-globe-asia"></i>
                     </div>
-                    <h5>تعريف زمالة المدمنين</h5>
+                    <h5>تعريف زمالة المدمنين»»»»»»»</h5>
                     <p>اعرف أكثر عن الزمالة العالمية</p>
                 </a>
                 <a href="#local" class="nav-card card-2 fade-in fade-in-delay-1">
