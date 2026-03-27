@@ -294,6 +294,11 @@ return [
     'Slider View' => 'عرض الفعاليات',
     'Calendar View' => 'عرض التقويم',
     'Event Details' => '',
+    'weekly_meetings' => 'الاجتماعات أسبوعيًا',
+    'groups_count' => 'عدد المجموعات',
+    'governorates_count' => 'عدد المحافظات',
+    'recovery_network' => 'إحصائيات الزمالة في مصر',
+    'recovery_network_desc' => 'أرقام حية من قاعدة بيانات الزمالة المحلية يتم تحديثها مباشرة من السجلات الحالية.',
     'test_page' => [
         'nav' => [
             'definition' => [

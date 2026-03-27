@@ -19,9 +19,11 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
 use Illuminate\Support\Facades\App;
+use App\Models\City;
 use App\Models\Group;
 use App\Models\ServiceCommittee;
 use App\Models\ServiceBody;
+use App\Models\Meeting;
 
 // Localization Routes:
 Route::group(
@@ -162,7 +164,13 @@ Route::group(
 
         // Frontend:
         Route::get('/', function(){
-            return view('frontend.home');
+            $homeStats = [
+                'weekly_meetings' => Meeting::count(),
+                'groups' => Group::count(),
+                'governorates' => City::count(),
+            ];
+
+            return view('frontend.home', compact('homeStats'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){

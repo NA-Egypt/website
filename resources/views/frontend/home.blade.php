@@ -11,6 +11,105 @@
 </div>
 
 <style>
+    .home-stats-wrap {
+        margin: 8px 0 34px;
+    }
+    .home-stats-shell {
+        background:
+            radial-gradient(circle at top right, rgba(50, 85, 127, 0.08), transparent 24%),
+            linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        border-radius: 20px;
+        padding: 24px 22px;
+        color: #1e293b;
+        border: 1px solid rgba(50, 85, 127, 0.10);
+        box-shadow: 0 14px 36px -28px rgba(50, 85, 127, 0.22);
+        overflow: hidden;
+        position: relative;
+    }
+    .home-stats-shell::after {
+        content: '';
+        position: absolute;
+        inset-inline-end: -26px;
+        top: -26px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(50, 85, 127, 0.06);
+    }
+    .stats-heading {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 20px;
+    }
+    .stats-heading h3 {
+        font-size: clamp(1.35rem, 3vw, 1.9rem);
+        font-weight: 800;
+        margin-bottom: 6px;
+        color: #32557f;
+    }
+    .stats-heading p {
+        margin: 0;
+        max-width: 700px;
+        color: #64748b;
+        line-height: 1.75;
+        margin-inline: auto;
+        font-size: 0.96rem;
+    }
+    .stats-grid-home {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .stat-card-home {
+        background: #ffffff;
+        border: 1px solid rgba(50, 85, 127, 0.10);
+        border-radius: 18px;
+        padding: 18px 16px;
+        min-height: 132px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .stat-card-home:hover {
+        transform: translateY(-3px);
+        border-color: rgba(50, 85, 127, 0.18);
+        box-shadow: 0 16px 30px -26px rgba(50, 85, 127, 0.25);
+    }
+    .stat-card-home .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .stat-card-home .stat-icon-home {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(50, 85, 127, 0.08);
+        color: #32557f;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .stat-card-home .stat-label-home {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: #64748b;
+        font-weight: 600;
+    }
+    .stat-card-home .stat-value-home {
+        font-size: clamp(1.8rem, 4vw, 2.35rem);
+        line-height: 1;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: #0f172a;
+    }
     .info-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         background: #fff;
@@ -55,6 +154,23 @@
     .card-title {
         line-height: normal !important;
     }
+    @media (max-width: 991px) {
+        .stats-grid-home {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    @media (max-width: 576px) {
+        .home-stats-shell {
+            padding: 20px 16px;
+            border-radius: 18px;
+        }
+        .stats-grid-home {
+            grid-template-columns: 1fr;
+        }
+        .stat-card-home {
+            min-height: unset;
+        }
+    }
 </style>
 
 <div id="infoCarousel" class="carousel carousel-dark slide mt-4 mb-5" data-bs-ride="carousel">
@@ -97,6 +213,46 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
+</div>
+
+<div class="home-stats-wrap">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="home-stats-shell">
+                <div class="stats-heading text-center">
+                    <h3>{{ __('messages.recovery_network') }}</h3>
+                    <p>{{ __('messages.recovery_network_desc') }}</p>
+                </div>
+
+                <div class="stats-grid-home">
+                    <div class="stat-card-home">
+                        <div class="stat-top">
+                            <span class="stat-icon-home"><i class="bi bi-calendar-week-fill"></i></span>
+                            <span class="stat-label-home">{{ __('messages.weekly_meetings') }}</span>
+                        </div>
+                        <div class="stat-value-home">{{ number_format($homeStats['weekly_meetings']) }}</div>
+                    </div>
+
+                    <div class="stat-card-home">
+                        <div class="stat-top">
+                            <span class="stat-icon-home"><i class="bi bi-people-fill"></i></span>
+                            <span class="stat-label-home">{{ __('messages.groups_count') }}</span>
+                        </div>
+                        <div class="stat-value-home">{{ number_format($homeStats['groups']) }}</div>
+                    </div>
+
+                    <div class="stat-card-home">
+                        <div class="stat-top">
+                            <span class="stat-icon-home"><i class="bi bi-map-fill"></i></span>
+                            <span class="stat-label-home">{{ __('messages.governorates_count') }}</span>
+                        </div>
+                        <div class="stat-value-home">{{ number_format($homeStats['governorates']) }}</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
   <div class="row justify-content-center mt-5">

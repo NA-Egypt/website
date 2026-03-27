@@ -265,6 +265,11 @@ return [
     'Slider View' => 'Slider View',
     'Calendar View' => 'Calendar View',
     'Event Details' => '',
+    'weekly_meetings' => 'Meetings Per Week',
+    'groups_count' => 'Groups',
+    'governorates_count' => 'Governorates',
+    'recovery_network' => 'NA Statistics in Egypt',
+    'recovery_network_desc' => 'Live numbers from the local fellowship database, updated directly from current records.',
     'test_page' => [
         'nav' => [
             'definition' => [
