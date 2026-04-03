@@ -69,6 +69,16 @@ class MeetingFilterService
             $query->where('type', $filters['type']); // Assuming 'type' is a column in the meetings table
         }
 
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->whereHas('group', function ($q) use ($search) {
+                $q->where('ar_name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('en_name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('ar_address', 'LIKE', '%' . $search . '%')
+                  ->orWhere('en_address', 'LIKE', '%' . $search . '%');
+            });
+        }
+
         return $query->get();
     }
 

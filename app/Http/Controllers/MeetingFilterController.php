@@ -69,7 +69,7 @@ class MeetingFilterController extends Controller
     
     public function exportMeetingsToPDF()
     {
-        $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']);
+        $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
 
         // Register custom fonts "Amiri" and "Cairo" from resources/fonts
@@ -105,10 +105,10 @@ class MeetingFilterController extends Controller
                ->header('Content-Type', 'application/pdf')
                ->header('Content-Disposition', 'attachment; filename="meetings.pdf"');
     }
-
     public function exportMeetingsToCSV()
     {
-        $meetings = Meeting::all();
+        $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
+        $meetings = $this->meetingFilterService->filterMeetings($filters);
 
         $headers = [
             'Content-Type' => 'text/csv',

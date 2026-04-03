@@ -452,21 +452,3 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     }
 
 </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById("search-input");
-        if (!searchInput) return;
-
-        searchInput.addEventListener("input", function () {
-            const keyword = this.value.trim().toLowerCase();
-            const meetingCards = document.querySelectorAll(".meeting-item, .meeting-item-suspended");
-
-            meetingCards.forEach(card => {
-                const content = card.textContent.toLowerCase();
-                const visible = content.includes(keyword);
-                card.style.display = visible ? "block" : "none";
-            });
-        });
-    });
-</script>
