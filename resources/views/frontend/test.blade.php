@@ -460,7 +460,7 @@
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: #ffffff;
             padding: 80px 20px;
             text-align: center;
@@ -498,10 +498,12 @@
         }
 
         .hero-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 15px;
             letter-spacing: -1px;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 1);
         }
 
         .hero-subtitle {
@@ -517,13 +519,16 @@
 
         /* Navigation Grid */
         .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 22px;
             padding: 40px 0;
         }
 
         .nav-card {
+            flex: 1 1 280px;
+            max-width: 380px;
             background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
             border-radius: 24px;
             padding: 26px 22px 22px;
@@ -867,14 +872,17 @@
         }
 
         .donut-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 22px;
             margin-top: 28px;
         }
 
         .donut-card,
         .chart-card {
+            flex: 1 1 450px;
+            max-width: 580px;
             background: linear-gradient(180deg, #f8fbff, #eef6ff);
             border-radius: 24px;
             border: 1px solid rgba(96, 165, 250, 0.16);
@@ -1224,7 +1232,7 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
 
             .hero-subtitle {
@@ -1246,11 +1254,12 @@
             }
 
             .nav-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 padding: 20px 0;
             }
 
             .nav-card {
+                max-width: 100%;
                 min-height: unset;
                 padding: 22px 18px 18px;
                 gap: 10px;
@@ -1280,9 +1289,19 @@
                 grid-template-columns: 1fr;
             }
 
-            .stats-highlights,
-            .donut-grid {
+            .stats-highlights {
                 grid-template-columns: 1fr;
+            }
+
+            .donut-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .donut-card,
+            .chart-card {
+                max-width: 100%;
+                width: 100%;
             }
 
             .donut-layout {
@@ -1296,7 +1315,7 @@
             }
 
             .hero-title {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
             }
 
             .content-section {
