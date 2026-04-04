@@ -23,19 +23,7 @@ class MeetingFilterService
                 $query->whereHas('day', fn($q) => $q->where($field, $filters['day']));
             }
         } else {
-            // Default: show current day's meetings only when NO filters are applied
-            $hasAnyFilter = collect($filters)
-                ->except('day')
-                ->filter()
-                ->isNotEmpty();
-
-            if (!$hasAnyFilter) {
-                $currentDay = Carbon::now()->englishDayOfWeek;
-                if ($locale === 'ar') {
-                    $currentDay = $this->convertDayToArabic($currentDay);
-                }
-                $query->whereHas('day', fn($q) => $q->where($field, $currentDay));
-            }
+            // No default day filter - show all meetings on initial load
         }
 
 

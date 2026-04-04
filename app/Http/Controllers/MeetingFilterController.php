@@ -23,48 +23,7 @@ class MeetingFilterController extends Controller
 
     public function filterMeetings(Request $request)
     {
-
-        // Fetch available filter options
-        $days = Day::all();
-        $serviceBodies = ServiceBody::all();
-        $groups = Group::all();
-        $cities = City::all();
-        
-        $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
-
-        if ($request->filled('city') || $request->filled('neighborhood')) {
-             $request->merge(['serviceBody' => null]);
-             
-             if ($request->filled('neighborhood')) {
-                 $groups = Group::whereHas('neighborhood', fn($q) => $q->where($field, $request->neighborhood))->get();
-             } elseif ($request->filled('city')) {
-                 $groups = Group::whereHas('neighborhood.city', fn($q) => $q->where($field, $request->city))->get();
-             }
-        }
-        
-        $neighborhoods = Neighborhood::all();
-        if ($request->filled('city')) {
-            $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
-            $city = City::where($field, $request->city)->first();
-            if ($city) {
-                $neighborhoods = $city->neighborhoods;
-            }
-        }
-
-        // Apply filters
-//        $filters = $request->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']);
-//        $meetings = $this->meetingFilterService->filterMeetings($filters);
-
-        $filters = $request->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city']);
-        // Add debug logging
-        logger('Received filters:', [
-            'raw' => $filters,
-            'group_length' => isset($filters['group']) ? strlen($filters['group']) : null,
-            'group_hex' => isset($filters['group']) ? bin2hex($filters['group']) : null
-        ]);
-        $meetings = $this->meetingFilterService->filterMeetings($filters);
-
-        return view('frontend.meetings', compact('meetings', 'days', 'serviceBodies', 'groups', 'neighborhoods', 'cities'));
+        return view('frontend.meetings');
     }
     
     public function exportMeetingsToPDF()

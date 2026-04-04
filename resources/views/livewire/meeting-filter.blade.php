@@ -10,16 +10,16 @@
                         </div>
                         <div class="card-body">
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-day">
                                     <x-filter.select :options="$days" name="day" wire:model.live="day" class="form-select form-control" label="{{ __('messages.Day') }}" />
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-group">
                                     <x-filter.select :options="$groups" name="group" wire:model.live="group" class="form-select form-control" label="{{__('messages.Group')}}" :disabled="!!$serviceBody || !!$city || !!$neighborhood" />
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-serviceBody">
                                     <x-filter.select :options="$serviceBodies" name="serviceBody" wire:model.live="serviceBody" class="form-select form-control" label="{{__('messages.Service Body')}}" :disabled="!!$group || !!$city || !!$neighborhood" />
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-type">
                                     <x-forms.label name="type" label="{{__('messages.Type')}}" />
                                     <select name="type" wire:model.live="type" class="form-select form-control" {{ $group ? 'disabled' : '' }}>
                                         <option value="">{{__('messages.Choose Type')}}</option>
@@ -27,10 +27,10 @@
                                         <option value="closed">{{ __('messages.closed') }}</option>
                                     </select>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-city">
                                     <x-filter.select :options="$cities" name="city" wire:model.live="city" class="form-select form-control" label="{{__('messages.City')}}" :disabled="!!$serviceBody || !!$group" />
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12" wire:key="filter-neighborhood">
                                     <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" :disabled="!!$serviceBody || !!$group" />
                                 </div>
                             </div>
