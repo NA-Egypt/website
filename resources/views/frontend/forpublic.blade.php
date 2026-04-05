@@ -437,6 +437,11 @@
             </div>
         </div>
 
+        {{-- Cooperation Button Component --}}
+        <div class="text-center py-4">
+            <livewire:cooperation-form />
+        </div>
+
         {{-- Back to Top Button --}}
         <div class="text-center py-5">
             <a href="#top" class="back-to-top-btn">
