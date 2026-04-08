@@ -3,6 +3,7 @@
         <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" class="footer-social-icon"><x-fab-facebook class="mx-1" style="width:24px; height:24px;" /></a>
         <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" class="footer-social-icon"><x-fab-instagram class="mx-1" style="width:24px; height:24px;" /></a>
         <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" class="footer-social-icon"><x-fab-tiktok class="mx-1" style="width:24px; height:24px;" /></a>
+        <a href="https://wa.me/201060933888" target="_blank" class="footer-social-icon"><x-fab-whatsapp class="mx-1" style="width:24px; height:24px;" /></a>
         <a href="mailto:pr@naegypt.org" class="footer-social-icon"><x-fas-envelope class="mx-1" style="width:24px; height:24px;" /></a>
     </div>
     <div class="small">
