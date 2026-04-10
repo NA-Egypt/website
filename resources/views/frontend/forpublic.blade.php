@@ -113,7 +113,7 @@
                 'title' => $chart['title'],
                 'desc' => $chart['desc'],
                 'gradient' => $buildDonut($chart['items']),
-                'center' => rtrim(rtrim(number_format($maxItem['percent'], 2), '0'), '.').'%',
+                'center' => rtrim(rtrim(number_format($maxItem['percent'], 2), '0'), '.') . '%',
                 'center_label' => $maxItem['label'],
                 'items' => $chart['items'],
             ];
@@ -126,7 +126,8 @@
         <div class="hero-section">
             <div class="container">
                 <h1 class="hero-title fade-in">{{__('messages.General information about Narcotics Anonymous')}}</h1>
-                <p class="hero-subtitle fade-in fade-in-delay-1">{{__('messages.Discover the journey of recovery and hope through our community')}}</p>
+                <p class="hero-subtitle fade-in fade-in-delay-1">
+                    {{__('messages.Discover the journey of recovery and hope through our community')}}</p>
             </div>
         </div>
 
@@ -199,7 +200,8 @@
                         <h5 class="definition-title">{{ __('messages.test_page.definition.box_title') }}</h5>
                         <div class="definition-items">
                             <div class="definition-item">
-                                <span class="term">{{ __('messages.test_page.definition.items.fellowship.term') }}</span>
+                                <span
+                                    class="term">{{ __('messages.test_page.definition.items.fellowship.term') }}</span>
                                 <p>{{ __('messages.test_page.definition.items.fellowship.text') }}</p>
                             </div>
                             <div class="definition-item">
@@ -337,34 +339,43 @@
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{__('messages.Who, what, how and why')}}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3101_2015-IP-1-Arabic.pdf"
+                                        class="brochure-link">{{__('messages.Who, what, how and why')}}</a></h5>
                             </div>
-                            <p>{{ app()->getLocale() === 'ar' ? 'هذه النشرة توضح أن المدمن هو شخص تسيطر المخدرات على حياته، وأن زمالة المدمنين المجهولين هي تجمّع للمدمنين المتعافين الذين يساعدون بعضهم البعض في البقاء ممتنعين' : 'This pamphlet explains that an addict is a person whose life is controlled by drugs, and that Narcotics Anonymous is a fellowship of recovering addicts who help one another stay abstinent.' }}</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'هذه النشرة توضح أن المدمن هو شخص تسيطر المخدرات على حياته، وأن زمالة المدمنين المجهولين هي تجمّع للمدمنين المتعافين الذين يساعدون بعضهم البعض في البقاء ممتنعين' : 'This pamphlet explains that an addict is a person whose life is controlled by drugs, and that Narcotics Anonymous is a fellowship of recovering addicts who help one another stay abstinent.' }}
+                            </p>
                         </div>
 
                         {{-- Welcome to Narcotics Anonymous --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{__('messages.Welcome to Narcotics Anonymous')}}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3122-IP-22-Arabic.pdf"
+                                        class="brochure-link">{{__('messages.Welcome to Narcotics Anonymous')}}</a></h5>
                             </div>
-                            <p>{{ app()->getLocale() === 'ar' ? 'هي نشرة ترحيبية توضح أساسيات زمالة المدمنين المجهولين وتبين أن الزمالة تتكون من مدمنين يتعافون من الإدمان من خلال دعم بعضهم البعض في اجتماعات منتظمة' : 'A welcoming pamphlet that explains the basics of Narcotics Anonymous and shows that the fellowship consists of addicts recovering from addiction by supporting one another in regular meetings.' }}</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'هي نشرة ترحيبية توضح أساسيات زمالة المدمنين المجهولين وتبين أن الزمالة تتكون من مدمنين يتعافون من الإدمان من خلال دعم بعضهم البعض في اجتماعات منتظمة' : 'A welcoming pamphlet that explains the basics of Narcotics Anonymous and shows that the fellowship consists of addicts recovering from addiction by supporting one another in regular meetings.' }}
+                            </p>
                         </div>
 
                         {{-- Introduction to Narcotics Anonymous Meetings --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{__('messages.Introduction to Narcotics Anonymous Meetings')}}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/11/AR3129_2024.pdf"
+                                        class="brochure-link">{{__('messages.Introduction to Narcotics Anonymous Meetings')}}</a>
+                                </h5>
                             </div>
-                            <p>{{ app()->getLocale() === 'ar' ? 'القصد من المعلومات المتوفرة في هذا المنشور هي إعطائك مفهوم عن ما نقوم به عندما نجتمع لمشاركة التعافي' : 'The purpose of the information in this pamphlet is to give you an idea of what we do when we gather to share recovery.' }}</p>
+                            <p>{{ app()->getLocale() === 'ar' ? 'القصد من المعلومات المتوفرة في هذا المنشور هي إعطائك مفهوم عن ما نقوم به عندما نجتمع لمشاركة التعافي' : 'The purpose of the information in this pamphlet is to give you an idea of what we do when we gather to share recovery.' }}
+                            </p>
                         </div>
 
                         {{-- Another Look --}}
                         <div class="brochure-item featured fade-in fade-in-delay-2">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.another_look.title') }}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3105-IP-5-Arabic.pdf"
+                                        class="brochure-link">{{ __('messages.test_page.brochures.another_look.title') }}</a>
+                                </h5>
                             </div>
                             <p>{{ __('messages.test_page.brochures.another_look.text') }}</p>
                         </div>
@@ -373,7 +384,9 @@
                         <div class="brochure-item featured fade-in fade-in-delay-2">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.young_addicts.title') }}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3113-IP-13-Arabic.pdf"
+                                        class="brochure-link">{{ __('messages.test_page.brochures.young_addicts.title') }}</a>
+                                </h5>
                             </div>
                             <p>{{ __('messages.test_page.brochures.young_addicts.text') }}</p>
                         </div>
@@ -382,7 +395,9 @@
                         <div class="brochure-item featured fade-in fade-in-delay-3">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.staying_clean.title') }}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3123-IP-23-Arabic.pdf"
+                                        class="brochure-link">{{ __('messages.test_page.brochures.staying_clean.title') }}</a>
+                                </h5>
                             </div>
                             <p>{{ __('messages.test_page.brochures.staying_clean.text') }}</p>
                         </div>
@@ -391,7 +406,9 @@
                         <div class="brochure-item featured fade-in fade-in-delay-3">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.parents.title') }}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3127-IP-27-Arabic.pdf"
+                                        class="brochure-link">{{ __('messages.test_page.brochures.parents.title') }}</a>
+                                </h5>
                             </div>
                             <p>{{ __('messages.test_page.brochures.parents.text') }}</p>
                         </div>
@@ -400,7 +417,9 @@
                         <div class="brochure-item featured fade-in fade-in-delay-4">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
-                                <h5><a href="#" class="brochure-link">{{ __('messages.test_page.brochures.accessibility.title') }}</a></h5>
+                                <h5><a href="https://na.org/wp-content/uploads/2024/05/AR3126-IP-26-Arabic.pdf"
+                                        class="brochure-link">{{ __('messages.test_page.brochures.accessibility.title') }}</a>
+                                </h5>
                             </div>
                             <p>{{ __('messages.test_page.brochures.accessibility.text') }}</p>
                         </div>
@@ -518,8 +537,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(30px) translateX(20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            50% {
+                transform: translateY(30px) translateX(20px);
+            }
         }
 
         /* Navigation Grid */
@@ -577,12 +603,29 @@
             border-color: currentColor;
         }
 
-        .nav-card.card-1 { color: #059669; }
-        .nav-card.card-2 { color: #2563eb; }
-        .nav-card.card-3 { color: #7c3aed; }
-        .nav-card.card-4 { color: #dc2626; }
-        .nav-card.card-5 { color: #4f46e5; }
-        .nav-card.card-6 { color: #0284c7; }
+        .nav-card.card-1 {
+            color: #059669;
+        }
+
+        .nav-card.card-2 {
+            color: #2563eb;
+        }
+
+        .nav-card.card-3 {
+            color: #7c3aed;
+        }
+
+        .nav-card.card-4 {
+            color: #dc2626;
+        }
+
+        .nav-card.card-5 {
+            color: #4f46e5;
+        }
+
+        .nav-card.card-6 {
+            color: #0284c7;
+        }
 
         .nav-card:hover h5,
         .nav-card:focus-visible h5 {
@@ -604,12 +647,35 @@
             z-index: 1;
         }
 
-        .nav-card.card-1 .card-icon { color: #059669; background: rgba(236, 253, 245, 0.95); }
-        .nav-card.card-2 .card-icon { color: #2563eb; background: rgba(239, 246, 255, 0.95); }
-        .nav-card.card-3 .card-icon { color: #7c3aed; background: rgba(245, 243, 255, 0.95); }
-        .nav-card.card-4 .card-icon { color: #dc2626; background: rgba(254, 242, 242, 0.95); }
-        .nav-card.card-5 .card-icon { color: #4f46e5; background: rgba(238, 242, 255, 0.95); }
-        .nav-card.card-6 .card-icon { color: #0284c7; background: rgba(240, 249, 255, 0.96); }
+        .nav-card.card-1 .card-icon {
+            color: #059669;
+            background: rgba(236, 253, 245, 0.95);
+        }
+
+        .nav-card.card-2 .card-icon {
+            color: #2563eb;
+            background: rgba(239, 246, 255, 0.95);
+        }
+
+        .nav-card.card-3 .card-icon {
+            color: #7c3aed;
+            background: rgba(245, 243, 255, 0.95);
+        }
+
+        .nav-card.card-4 .card-icon {
+            color: #dc2626;
+            background: rgba(254, 242, 242, 0.95);
+        }
+
+        .nav-card.card-5 .card-icon {
+            color: #4f46e5;
+            background: rgba(238, 242, 255, 0.95);
+        }
+
+        .nav-card.card-6 .card-icon {
+            color: #0284c7;
+            background: rgba(240, 249, 255, 0.96);
+        }
 
         .card-kicker {
             font-size: 0.78rem;
@@ -696,12 +762,29 @@
             flex-shrink: 0;
         }
 
-        .header-icon.icon-green { background: linear-gradient(135deg, #10b981, #059669); }
-        .header-icon.icon-blue { background: linear-gradient(135deg, #3b82f6, #1e40af); }
-        .header-icon.icon-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .header-icon.icon-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .header-icon.icon-indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-        .header-icon.icon-sky { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+        .header-icon.icon-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .header-icon.icon-blue {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+        }
+
+        .header-icon.icon-purple {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .header-icon.icon-red {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .header-icon.icon-indigo {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        .header-icon.icon-sky {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
 
         .section-header h2 {
             font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -839,10 +922,21 @@
             gap: 8px;
         }
 
-        .highlight-card.purple { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
-        .highlight-card.blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
-        .highlight-card.green { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
-        .highlight-card.amber { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+        .highlight-card.purple {
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+        }
+
+        .highlight-card.blue {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        }
+
+        .highlight-card.green {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+
+        .highlight-card.amber {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        }
 
         .highlight-label {
             font-size: 0.88rem;
@@ -1150,6 +1244,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1183,6 +1278,7 @@
                 transform: perspective(800px) rotateY(90deg);
                 opacity: 0;
             }
+
             100% {
                 transform: perspective(800px) rotateY(0);
                 opacity: 1;
@@ -1213,6 +1309,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -1224,11 +1321,25 @@
             opacity: 0;
         }
 
-        .fade-in-delay-1 { animation-delay: 0.3s; }
-        .fade-in-delay-2 { animation-delay: 0.5s; }
-        .fade-in-delay-3 { animation-delay: 0.7s; }
-        .fade-in-delay-4 { animation-delay: 0.9s; }
-        .fade-in-delay-5 { animation-delay: 1.1s; }
+        .fade-in-delay-1 {
+            animation-delay: 0.3s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.5s;
+        }
+
+        .fade-in-delay-3 {
+            animation-delay: 0.7s;
+        }
+
+        .fade-in-delay-4 {
+            animation-delay: 0.9s;
+        }
+
+        .fade-in-delay-5 {
+            animation-delay: 1.1s;
+        }
 
         html {
             scroll-behavior: smooth;
