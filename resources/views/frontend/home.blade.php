@@ -256,92 +256,94 @@
     </div>
 </div>
 
-  <div class="row justify-content-center mt-5">
-    <div class="col-md-4 helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
-        <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
-            <br />
-            <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
-            <br />
-              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.regionaltiming') }}
-            <br />
-        </p>
-    </div>
-    <div class="col-md-4 helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-        <div>{{ __('messages.alexandria') }}</div>
-        <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
-            <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
-            <br />
-              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.leactiming') }}
-            <br />
-        </p>
-    </div>
-    <div class="col-md-4 helpline-box">
-        <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4> 
-        <div>{{ __('messages.westgiza') }}</div>
-        <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
-            <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
-            <br />
-              <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.ahramtiming') }}
-            <br />
-        </p>
-    </div>
-</div>
 <div class="row justify-content-center">
-  <div class="col-md-4 helpline-box">
-    <div class="row px-4 py-1">
-      <a class="btn btn-outline-light" href="{{ route('frontend.meetings') }}">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
-    </div>
-    <div class="row px-4 py-1">
-      <a class="btn btn-outline-info" href="{{ route('frontend.comms') }}">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
-    </div>
-  </div>
-  <div class="col-md-4 helpline-box">
-    @if (session('subscribed'))
-      <div class="alert alert-success">
-        {{ __('messages.' .session('subscribed')) }}
+  <div class="col-md-8">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-4 helpline-box mb-3">
+          <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
+          <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a href="tel:+201060933888">+201060933888</a>
+              <br />
+              <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+              <br />
+                <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.regionaltiming') }}
+              <br />
+          </p>
       </div>
-    @endif
-    <form action="{{ route('subscribers.store') }}" method="post">
-      @csrf
-      <div class="form-group">
-        <input type="email" name="email" class="form-control" placeholder="{{ __('messages.Enter your email') }}">
-        <br />
-        <button class="btn btn-outline-success" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
+      <div class="col-md-4 helpline-box mb-3">
+          <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
+          <div>{{ __('messages.alexandria') }}</div>
+          <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
+              <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+              <br />
+                <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.leactiming') }}
+              <br />
+          </p>
       </div>
-      {{-- <a href="{{ route('subscribers.delete', ['email' => $subscriber->email]) }}">unsubscribe</a> --}}
-    </form>
-  </div>
-
-  <div class="col-md-4 calc-box">
-    <div class="form-group">
-      <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
-      <input type="date" class="form-control mb-3" onchange="setDate(this)">
+      <div class="col-md-4 helpline-box mb-3">
+          <h4><x-fas-headset style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.helpline') }}</h4> 
+          <div>{{ __('messages.westgiza') }}</div>
+          <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
+              <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp style="width:24px; height:24px;"/></a>
+              <br />
+                <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;{{ __('messages.ahramtiming') }}
+              <br />
+          </p>
+      </div>
     </div>
-    <form name="myForm">
-      <div class="form-group" dir="ltr">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
-          <div class="input-group-append">
-            <span class="input-group-text">{{ __('messages.years') }}</span>
-          </div>
+    <div class="row justify-content-center mt-3">
+      <div class="col-md-4 helpline-box mb-3">
+        <div class="row px-4 py-1">
+          <a class="btn btn-outline-light" href="{{ route('frontend.meetings') }}">{{ __('messages.Meetings') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
         </div>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
-          <div class="input-group-append">
-            <span class="input-group-text">{{ __('messages.months') }}</span>
-          </div>
-        </div>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
-          <div class="input-group-append">
-            <span class="input-group-text">{{ __('messages.days') }}</span>
-          </div>
+        <div class="row px-4 py-1 mt-2">
+          <a class="btn btn-outline-info" href="{{ route('frontend.comms') }}">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users style="width:16px; height:16px;"/></a>
         </div>
       </div>
-      <button type="button" onclick="findTime(document.myForm)" class="btn btn-info">{{ __('messages.calculate') }}</button>
-    </form>
+      <div class="col-md-4 helpline-box mb-3">
+        @if (session('subscribed'))
+          <div class="alert alert-success p-2">
+            {{ __('messages.' .session('subscribed')) }}
+          </div>
+        @endif
+        <form action="{{ route('subscribers.store') }}" method="post">
+          @csrf
+          <div class="form-group">
+            <input type="email" name="email" class="form-control" placeholder="{{ __('messages.Enter your email') }}">
+            <br />
+            <button class="btn btn-outline-success" type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;"/></button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-4 calc-box mb-3">
+        <div class="form-group">
+          <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
+          <input type="date" class="form-control mb-3" onchange="setDate(this)">
+        </div>
+        <form name="myForm">
+          <div class="form-group" dir="ltr">
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}" readonly>
+              <div class="input-group-append">
+                <span class="input-group-text">{{ __('messages.years') }}</span>
+              </div>
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}" readonly>
+              <div class="input-group-append">
+                <span class="input-group-text">{{ __('messages.months') }}</span>
+              </div>
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
+              <div class="input-group-append">
+                <span class="input-group-text">{{ __('messages.days') }}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="findTime(document.myForm)" class="btn btn-info w-100">{{ __('messages.calculate') }}</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
   <script>
