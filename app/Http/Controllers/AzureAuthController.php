@@ -11,6 +11,7 @@ class AzureAuthController extends Controller
     public function redirectToAzure()
     {
         return Socialite::driver('azure')
+            ->stateless()
             ->with(['tenant' => env('AZURE_TENANT_ID')])
             ->redirect()
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -18,7 +19,7 @@ class AzureAuthController extends Controller
 
     public function handleAzureCallback()
     {
-        $azureUser = Socialite::driver('azure')->user();
+        $azureUser = Socialite::driver('azure')->stateless()->user();
 //dd($azureUser);
         $email = $azureUser->getEmail();
         $domain = substr(strrchr($email, "@"), 1);
