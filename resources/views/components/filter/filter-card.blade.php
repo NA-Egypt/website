@@ -111,11 +111,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
     <!-- Type and Topic in a single row -->
     <div class="meeting-type-topic">
-        @if($meeting->topic)
-            <div class="meeting-type-badge">
-                <x-fas-book-open style="width:16px; height:16px;"/>
-                {{ $direction === 'rtl' ? $meeting->topic->ar_name : $meeting->topic->en_name }}
-            </div>
+        @if($meeting->topics && $meeting->topics->count() > 0)
+            @foreach($meeting->topics as $topic)
+                <div class="meeting-type-badge">
+                    <x-fas-book-open style="width:16px; height:16px;"/>
+                    {{ $direction === 'rtl' ? $topic->ar_name : $topic->en_name }}
+                </div>
+            @endforeach
         @endif
         @if($meeting->lang)
         <div class="meeting-topic-badge">

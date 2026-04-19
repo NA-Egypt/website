@@ -36,6 +36,10 @@ class Meeting extends Model
         return $this->belongsTo(Topic::class);
     }
 
+    public function topics() {
+        return $this->belongsToMany(Topic::class);
+    }
+
     public function options()
     {
         return $this->belongsToMany(Option::class, 'meeting_option');

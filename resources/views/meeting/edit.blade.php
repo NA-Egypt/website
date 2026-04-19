@@ -18,7 +18,7 @@
                         @endcan
                     @endauth
 
-                    <x-forms.select :$topics name="topic_id" label="{{ __('messages.Meeting Topic') }}" value="{{ $meeting->topic_id }}" />
+                    <x-forms.select multiple="multiple" :$topics name="topics[]" label="{{ __('messages.Meeting Topic') }}" :value="$meeting->topics" />
     
                     <div class="row align-items-end">
                         <div class="col-md-3">

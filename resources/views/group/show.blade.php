@@ -132,16 +132,20 @@ a
                                     </div>
                                 @endif
 
-                                @if($meeting->topic)
-                                    <div class="meeting-topic-badge">
-                                        <i class="fas fa-comment-dots"></i>
+                                @if($meeting->topics && $meeting->topics->count() > 0)
+                                    <div class="meeting-topics-container" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                        @foreach($meeting->topics as $topic)
+                                            <div class="meeting-topic-badge">
+                                                <i class="fas fa-comment-dots"></i>
 
-                                        @if(app()->getLocale() === 'ar')
-                                            {{$meeting->topic->ar_name }}
-                                        @else
-                                            {{ $meeting->topic->en_name }}
-                                        @endif
+                                                @if(app()->getLocale() === 'ar')
+                                                    {{ $topic->ar_name }}
+                                                @else
+                                                    {{ $topic->en_name }}
+                                                @endif
 
+                                            </div>
+                                        @endforeach
                                     </div>
                                 @endif
                             </div>

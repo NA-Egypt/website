@@ -104,19 +104,42 @@
     @endphp
     
     @if ($options)
-        <select {{ $attributes->merge($default) }} data-placeholder={{ $placeholder }}>
+        @php
+            $baseName = str_replace('[]', '', $name);
+            $oldValue = old($baseName);
+            $isArrayParam = str_ends_with($name, '[]');
+            $currentValue = $value;
+            
+            if ($value !== '' && $isArrayParam && !is_array($value)) {
+                if (is_object($value) && method_exists($value, 'toArray')) {
+                    $currentValue = $value->pluck('id')->toArray();
+                } else {
+                    $currentValue = (array) $value;
+                }
+            }
+        @endphp
+        <select {{ $attributes->merge($default) }} data-placeholder="{{ $placeholder }}">
             <option></option>
             @foreach ($options as $option)
-                @if ($value=='')
-                    <option value="{{ $option->id }}" {{ old($name) == $option->id ? 'selected' : '' }}>
-                        {{ $option->$field}}
-                    </option>
-                @else
-                    <option value="{{ $option->id }}" {{ $value == $option->id ? 'selected' : '' }}>
-                        {{ $option->$field }}
-                    </option>
-                @endif
-
+                @php
+                    $isSelected = false;
+                    if ($currentValue === '') {
+                        if (is_array($oldValue)) {
+                            $isSelected = in_array($option->id, $oldValue);
+                        } else {
+                            $isSelected = ($oldValue == $option->id);
+                        }
+                    } else {
+                        if (is_array($currentValue)) {
+                            $isSelected = in_array($option->id, $currentValue);
+                        } else {
+                            $isSelected = ($currentValue == $option->id);
+                        }
+                    }
+                @endphp
+                <option value="{{ $option->id }}" {{ $isSelected ? 'selected' : '' }}>
+                    {{ $option->$field }}
+                </option>
             @endforeach
         </select>
 

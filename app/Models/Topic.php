@@ -9,6 +9,6 @@ class Topic extends Model
 
     protected $fillable = ['ar_name', 'en_name', 'description'];
     public function meetings() {
-        return $this->hasMany(Meeting::class);
+        return $this->belongsToMany(Meeting::class);
     }
 }

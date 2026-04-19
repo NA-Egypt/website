@@ -82,7 +82,8 @@ class MeetingController extends Controller
 
         $fields = request()->validate([
             'group_id'      => 'required',
-            'topic_id'      => 'required',
+            'topics'        => 'required|array|min:1|max:3',
+            'topics.*'      => 'exists:topics,id',
             'day_id'        => 'required',
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
@@ -98,7 +99,6 @@ class MeetingController extends Controller
 
         $meeting = Meeting::create([
             'group_id'      => $fields['group_id'],
-            'topic_id'      => $fields['topic_id'],
             'day_id'        => $fields['day_id'],
             'start_time'    => $fields['start_time'],
             'end_time'      => $fields['end_time'],
@@ -113,6 +113,10 @@ class MeetingController extends Controller
             $meeting->options()->sync($fields['options']);
         } else {
             $meeting->options()->detach();
+        }
+
+        if (!empty($fields['topics'])) {
+            $meeting->topics()->sync($fields['topics']);
         }
 
         return redirect()->route('meeting.index');
@@ -148,7 +152,8 @@ class MeetingController extends Controller
     {
         $fields = $request->validate([
             'group_id'      => 'required|exists:groups,id',
-            'topic_id'      => 'required|exists:topics,id',
+            'topics'        => 'required|array|min:1|max:3',
+            'topics.*'      => 'exists:topics,id',
             'day_id'        => 'required|exists:days,id',
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
@@ -163,7 +168,6 @@ class MeetingController extends Controller
     
         $meeting->update([
             'group_id'    => $fields['group_id'],
-            'topic_id'    => $fields['topic_id'],
             'day_id'      => $fields['day_id'],
             'start_time'  => $fields['start_time'],
             'end_time'    => $fields['end_time'],
@@ -175,6 +179,7 @@ class MeetingController extends Controller
         ]);
     
         $meeting->options()->sync($fields['options'] ?? []);
+        $meeting->topics()->sync($fields['topics'] ?? []);
 
         return redirect()->route('meeting.index');
     }

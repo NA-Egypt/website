@@ -13,7 +13,7 @@
                 <input type="hidden" name="group_id" value="{{ $group_id }}">
             @endif
 
-            <x-forms.select :$topics name="topic_id" label="{{ __('messages.Meeting Topic')}}"/>
+            <x-forms.select multiple="multiple" :$topics name="topics[]" label="{{ __('messages.Meeting Topic')}}"/>
             <div class="row align-items-end">
                 <div class="col-md-3">
                     <x-forms.select :$days name="day_id" label="{{ __('messages.Day')}}"/>
