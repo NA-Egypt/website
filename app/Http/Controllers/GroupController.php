@@ -8,10 +8,19 @@ use App\Models\Neighborhood;
 use App\Models\ServiceBody;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-
-class GroupController extends Controller
+class GroupController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['index', 'create', 'store', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -59,6 +68,7 @@ class GroupController extends Controller
      */
     public function edit(Group $group)
     {
+        Gate::authorize('update', $group);
         $serviceBodies = ServiceBody::all();
 
         $neighborhoods = Neighborhood::all();
@@ -78,6 +88,7 @@ class GroupController extends Controller
      */
     public function update(GroupsRequest $request, Group $group)
     {
+        Gate::authorize('update', $group);
         $validatedData = $request->validated();
 
         $group->update($validatedData);
@@ -87,6 +98,7 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
+        Gate::authorize('view', $group);
 //        return view('group.show', ['group'=>$group]);
         // Eager load meetings with days relationship and ordering
         $group->load(['meetings' => function($query) {

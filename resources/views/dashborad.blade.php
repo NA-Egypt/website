@@ -4,13 +4,12 @@
 
     
     {{-- Cards --}}
-    {{-- Cards --}}
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
       
       {{-- total meetings --}}
       <div class="col">
         <a href="{{ route('meeting.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Meetings') }}" qty="{{ $meetings->count() }}" class="bg-primary text-white" icon="calendar-week" />
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Meetings') }}" qty="{{ $meetings->count() }}" color-theme="success" icon="calendar-week" />
         </a>
       </div>
       {{-- / total meetings --}}
@@ -18,7 +17,7 @@
       {{-- total Groups --}}
       <div class="col">
         <a href="{{ route('group.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Groups') }}" qty="{{ $groups->count() }}" class="bg-success text-white" icon="people-fill" />
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Groups') }}" qty="{{ $groups->count() }}" color-theme="primary" icon="people-fill" />
         </a>
       </div>
       {{-- / total Groups --}}
@@ -26,37 +25,41 @@
       {{-- Total cities --}}
       <div class="col">
         <a href="{{ route('city.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Cities') }}" qty="{{ $cities->count() }}" class="bg-warning text-dark" icon="geo-alt-fill" />
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Cities') }}" qty="{{ $cities->count() }}" color-theme="warning" icon="geo-alt-fill" />
         </a>
       </div>
       {{-- / Total cities --}}
 
       {{-- Total Users --}}
       <div class="col">
-          <x-dashboard.card-statics name="{{ __('messages.Total Users') }}" qty="5" class="bg-info text-dark" icon="person-badge" />
+          <x-dashboard.card-statics name="{{ __('messages.Total Users') }}" qty="5" color-theme="info" icon="person-badge" />
       </div>
       {{-- / Total Users --}}
 
       {{-- Committee Reports --}}
       <div class="col">
         <a href="{{ route('committee-reports.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Committee Reports') }}" qty="-" class="bg-danger text-white" icon="file-earmark-text" />
+          <x-dashboard.card-statics name="{{ __('messages.Committee Reports') }}" qty="-" color-theme="danger" icon="file-earmark-text" />
         </a>
       </div>
       {{-- / Committee Reports --}}
     </div>
+    {{-- / Cards --}}
     {{-- / Cards --}}
 
     <div class="row g-3 mb-4">
 
       {{-- Groups --}}
       <div class="col-12 col-lg-4 d-flex">
-        <div class="card radius-10 w-100 border-0 shadow-sm h-100">
+        <div class="glass-card w-100 h-100 p-0">
           <x-dashboard.card-header>{{ __('messages.Groups') }}</x-dashboard.card-header>
           <div class="px-3 pt-3">
-            <input type="search" id="search-input" class="form-control" placeholder="{{ __('messages.Search') }}...">
+            <div class="position-relative">
+               <input type="search" id="search-input" class="form-control rounded-pill bg-transparent border shadow-none" style="color: var(--text-primary); border-color: var(--glass-border) !important;" placeholder="{{ __('messages.Search') }}...">
+               <i class="bi bi-search position-absolute top-50 translate-middle-y end-0 me-3" style="color: var(--text-secondary);"></i>
+            </div>
           </div>
-          <div class="top-sellers-list p-3 mb-3" style="max-height: 400px; overflow-y: auto;">
+          <div class="top-sellers-list p-3 mb-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
             <x-dashboard.card-group :$groups />
           </div>
         </div>
@@ -65,9 +68,9 @@
 
       {{-- List Of Meetings in Spacific City --}}
       <div class="col-12 col-lg-4 d-flex">
-        <div class="card radius-10 w-100 border-0 shadow-sm h-100">
+        <div class="glass-card w-100 h-100 p-0">
           <x-dashboard.card-header>{{ __('messages.Meetings') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
-          <div class="card-body p-0">
+          <div class="card-body p-0 p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
             @foreach ($cities as $city)
               <x-dashboard.card-meetings :$city>
                 {{ $city->neighborhoods->sum(fn($neighborhood) => 
@@ -82,9 +85,9 @@
 
       {{-- List Of Groups in Spacific City --}}
       <div class="col-12 col-lg-4 d-flex">
-        <div class="card radius-10 w-100 border-0 shadow-sm h-100">
+        <div class="glass-card w-100 h-100 p-0">
           <x-dashboard.card-header>{{ __('messages.Groups') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
-          <div class="card-body p-0">
+          <div class="card-body p-0 p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
             @foreach ($cities as $city)
               <x-dashboard.card-cities :$city>
                 {{ $city->neighborhoods->sum(fn($neighborhood) => $neighborhood->groups->count()) }}
@@ -100,14 +103,14 @@
     {{-- Recent Transactions --}}
     <div class="row">
       <div class="col-12">
-        <div class="card radius-10 w-100 border-0 shadow-sm">
-          <div class="card-header bg-transparent border-0 border-bottom py-3">
-            <h5 class="mb-0 text-dark fw-bold">{{ __('messages.Recent Logs')}}</h5>
+        <div class="neo-table-wrapper w-100">
+          <div class="bg-transparent border-0 border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--glass-border) !important;">
+            <h5 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ __('messages.Recent Logs')}}</h5>
           </div>
-          <div class="card-body">
+          <div class="p-0">
             <div class="table-responsive w-100">
-              <table class="table align-middle mb-0 table-hover">
-                <thead class="table-light">
+              <table class="table neo-table align-middle">
+                <thead>
                   <tr>
                     {{-- <th>#{{ __('messages.ID')}}</th> --}}
                     <th>{{  __('messages.Operation') }}</th>
@@ -121,18 +124,23 @@
                 <tbody>
                   @foreach ($transactions as $trans)                    
                     <tr>
-                      {{-- <td>{{ $trans->id }}</td> --}}
-                      <td><span class="badge bg-light text-dark border">{{ ucfirst($trans->operation) }}</span></td>
-                      <td>{{ $trans->model }}</td>
-                      <td class="fw-bold text-primary">{{ $trans->user->name ?? 'System' }}</td>
-                      <td>{{ $trans->created_at->format('Y-m-d') }}</td>
-                      <td>{{ $trans->created_at->format('H:i:s') }}</td>
-                      <td>
+                      @php
+                        $badgeClass = 'neo-badge-primary';
+                        if (strtolower($trans->operation) === 'create') $badgeClass = 'neo-badge-success';
+                        elseif (strtolower($trans->operation) === 'delete') $badgeClass = 'neo-badge-danger';
+                        elseif (strtolower($trans->operation) === 'info') $badgeClass = 'neo-badge-info';
+                      @endphp
+                      <td><span class="neo-badge {{ $badgeClass }}">{{ ucfirst($trans->operation) }}</span></td>
+                      <td style="color: var(--text-secondary);">{{ $trans->model }}</td>
+                      <td class="fw-bold" style="color: #3b82f6;">{{ $trans->user->name ?? 'System' }}</td>
+                      <td style="color: var(--text-secondary);">{{ $trans->created_at->format('Y-m-d') }}</td>
+                      <td style="color: var(--text-secondary);">{{ $trans->created_at->format('H:i:s') }}</td>
+                      <td style="color: var(--text-secondary);">
                           @if ($trans->model === 'Meeting')
                               {{ $trans->user->email }}
 
                           @else
-                          {{  $trans->user->email ?? $trans->details['en_name'] }}
+                          {{  $trans->user->email ?? $trans->details['en_name'] ?? '' }}
                           @endif
                       </td>
                     </tr>

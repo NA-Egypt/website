@@ -42,6 +42,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('super admin');
         });
 
+        // Implicitly grant "Super Admin" role all permissions
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super admin') ? true : null;
+        });
+
         Paginator::useBootstrapFive();
 
         // Fix Livewire 404 with LaravelLocalization

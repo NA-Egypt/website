@@ -8,6 +8,7 @@ use App\Models\Meeting;
 use App\Models\Option;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class MeetingController extends Controller
 {
@@ -16,6 +17,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Meeting::class);
         $meetings = Meeting::all();
 
         return view('meeting.index', ['meetings' => $meetings]);
@@ -27,6 +29,7 @@ class MeetingController extends Controller
 
     public function create()
     {
+        Gate::authorize('create', Meeting::class);
         $topics = Topic::all();
         $groups = Group::all();
         $days = Day::all();
@@ -79,10 +82,11 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Meeting::class);
 
         $fields = request()->validate([
             'group_id'      => 'required',
-            'topics'        => 'required|array|min:1|max:3',
+            'topics'        => 'nullable|array|max:3',
             'topics.*'      => 'exists:topics,id',
             'day_id'        => 'required',
             'start_time'    => 'required',
@@ -96,17 +100,19 @@ class MeetingController extends Controller
             'options.*'     => 'exists:options,id',
         ]);
 
+        $topics = empty($fields['topics']) ? [6] : $fields['topics'];
 
         $meeting = Meeting::create([
             'group_id'      => $fields['group_id'],
+            'topic_id'      => $topics[0],
             'day_id'        => $fields['day_id'],
             'start_time'    => $fields['start_time'],
             'end_time'      => $fields['end_time'],
-            'notes'         => $fields['notes'],
+            'notes'         => $fields['notes'] ?? null,
             'type'          => $fields['type'],
-            'lang'          =>$fields['lang'],
-            'status'        =>$fields['status'],
-            'capacity'      =>$fields['capacity'],
+            'lang'          => $fields['lang'],
+            'status'        => $fields['status'],
+            'capacity'      => $fields['capacity'] ?? null,
         ]);
 
         if (!empty($fields['options'])) {
@@ -115,11 +121,12 @@ class MeetingController extends Controller
             $meeting->options()->detach();
         }
 
-        if (!empty($fields['topics'])) {
-            $meeting->topics()->sync($fields['topics']);
-        }
+        $meeting->topics()->sync($topics);
 
-        return redirect()->route('meeting.index');
+        if (auth()->user()->hasRole('super admin')) {
+            return redirect()->route('meeting.index')->with('success', 'Meeting created successfully');
+        }
+        return redirect()->route('dashboard')->with('success', 'Meeting created successfully');
     }
 
     /**
@@ -127,6 +134,7 @@ class MeetingController extends Controller
      */
     public function edit(Meeting $meeting)
     {
+        Gate::authorize('update', $meeting);
         $topics = Topic::all();
 
         $groups = Group::all();
@@ -150,9 +158,10 @@ class MeetingController extends Controller
      */
     public function update(Request $request, Meeting $meeting)
     {
+        Gate::authorize('update', $meeting);
         $fields = $request->validate([
             'group_id'      => 'required|exists:groups,id',
-            'topics'        => 'required|array|min:1|max:3',
+            'topics'        => 'nullable|array|max:3',
             'topics.*'      => 'exists:topics,id',
             'day_id'        => 'required|exists:days,id',
             'start_time'    => 'required',
@@ -166,22 +175,28 @@ class MeetingController extends Controller
             'options.*'     => 'exists:options,id',
         ]);
     
+        $topics = empty($fields['topics']) ? [6] : $fields['topics'];
+
         $meeting->update([
             'group_id'    => $fields['group_id'],
+            'topic_id'    => $topics[0],
             'day_id'      => $fields['day_id'],
             'start_time'  => $fields['start_time'],
             'end_time'    => $fields['end_time'],
-            'notes'       => $fields['notes'],
+            'notes'       => $fields['notes'] ?? null,
             'type'        => $fields['type'],
-            'lang'          =>$fields['lang'],
-            'status'        =>$fields['status'],
-            'capacity'      =>$fields['capacity'],
+            'lang'        => $fields['lang'],
+            'status'      => $fields['status'],
+            'capacity'    => $fields['capacity'] ?? null,
         ]);
     
         $meeting->options()->sync($fields['options'] ?? []);
-        $meeting->topics()->sync($fields['topics'] ?? []);
+        $meeting->topics()->sync($topics);
 
-        return redirect()->route('meeting.index');
+        if (auth()->user()->hasRole('super admin')) {
+            return redirect()->route('meeting.index')->with('success', 'Meeting updated successfully');
+        }
+        return redirect()->route('dashboard')->with('success', 'Meeting updated successfully');
     }
 
     /**
@@ -189,8 +204,12 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
+        Gate::authorize('delete', $meeting);
         $meeting->delete();
 
-        return redirect()->route('meeting.index');
+        if (auth()->user()->hasRole('super admin')) {
+            return redirect()->route('meeting.index')->with('success', 'Meeting deleted successfully');
+        }
+        return redirect()->route('dashboard')->with('success', 'Meeting deleted successfully');
     }
 }

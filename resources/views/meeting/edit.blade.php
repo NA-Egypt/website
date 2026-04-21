@@ -2,10 +2,8 @@
     
     <x-backhead>{{__('messages.Edit') . ' ' . __('messages.Meeting')}}</x-backhead>
 
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <form action="{{ route('meeting.update', $meeting->id) }}" method="post" class="meeting-form">
+    <div class="container-fluid glass-card p-4 p-md-5 mt-4 mb-5 mx-auto" style="max-width: 900px;">
+        <form action="{{ route('meeting.update', $meeting->id) }}" method="post" class="meeting-form">
                     @csrf
                     @method('PUT')
 
@@ -37,87 +35,84 @@
     
                     <x-forms.textarea name="notes" label="{{ __('messages.Notes') }}">{{ $meeting->notes }}</x-forms.textarea>
 
-                    <div class="switches-container">
-                        <div class="switch-item">
-                            <span class="switch-label">{{__("messages.Type")}}</span>
-                            <div class="form-check form-switch">
-                                <input type="hidden" name="type" value="open">
-                                <input
-                                    name="type"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="meeting-type"
-                                    value="closed"
-                                    {{ old('type', $meeting->type ?? 'closed') === 'closed' ? 'checked' : '' }}
-                                >
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-sliders me-2 text-primary"></i> Meeting Settings</h6>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+                        {{-- Type Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-door-closed"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">{{__("messages.Type")}}</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="type" value="open">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="meeting-type" name="type" value="closed" {{ old('type', $meeting->type ?? 'closed') === 'closed' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-type" style="background-color: rgba(139, 92, 246, 0.1); color: #7c3aed;">
+                                    {{ old('type', $meeting->type ?? 'closed') === 'closed' ? __('messages.closed') : __('messages.open') }}
+                                </span>
                             </div>
-                            <span class="switch-value" id="label-type">
-                                {{ old('type', $meeting->type ?? 'closed') === 'closed' ? __('messages.closed') : __('messages.open') }}
-                            </span>
                         </div>
-                        <div class="switch-item">
-                            <span class="switch-label">{{__("messages.Language")}}</span>
-                            <div class="form-check form-switch">
-                                <input type="hidden" name="lang" value="english">
-                                <input
-                                    name="lang"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="lang-switch"
-                                    value="arabic"
-                                    {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? 'checked' : '' }}
-                                >
+
+                        {{-- Language Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-globe"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">{{__("messages.Language")}}</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="lang" value="english">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="lang-switch" name="lang" value="arabic" {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-lang" style="background-color: rgba(14, 165, 233, 0.1); color: #0284c7;">
+                                    {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? __("messages.arabic") : __("messages.english") }}
+                                </span>
                             </div>
-                            <span class="switch-value" id="label-lang">
-                                {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? __("messages.arabic") : __("messages.english") }}
-                            </span>
                         </div>
-                        <div class="switch-item">
-                            <span class="switch-label">Status</span>
-                            <div class="form-check form-switch">
-                                <input type="hidden" name="status" value="suspended">
-                                <input
-                                    name="status"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="status-switch"
-                                    value="available"
-                                    {{ old('status', $meeting->status ?? 'available') === 'available' ? 'checked' : '' }}
-                                >
+
+                        {{-- Status Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">Status</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="status" value="suspended">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="status-switch" name="status" value="available" {{ old('status', $meeting->status ?? 'available') === 'available' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-status" style="background-color: rgba(16, 185, 129, 0.1); color: #059669;">
+                                    {{ old('status', $meeting->status ?? 'available') === 'available' ? __("messages.available") : __("messages.suspended") }}
+                                </span>
                             </div>
-                            <span class="switch-value" id="label-status">
-                                {{ old('status', $meeting->status ?? 'available') === 'available' ? __("messages.available") : __("messages.suspended") }}
-                            </span>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Options</label>
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-ui-checks-grid me-2 text-success"></i> Options</h6>
+                    <div class="row row-cols-2 row-cols-md-3 g-3 mb-5 options-section">
                         @foreach ($options as $option)
-                            <div class="form-check">
-                                <input
-                                    type="checkbox"
-                                    name="options[]"
-                                    value="{{ $option->id }}"
-                                    class="form-check-input"
-                                    id="option-{{ $option->id }}"
-                                    {{ in_array($option->id, old('options', $meeting->options->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
-                                >
-                                <label class="form-check-label" for="option-{{ $option->id }}">
-                                    @if(app()->getLocale() === 'ar')
-                                        {{$option->ar_name}}
-                                    @else
-                                        {{$option->en_name}}
-                                    @endif
+                            <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-{{ $option->id }}">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="{{ $option->id }}" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-{{ $option->id }}" {{ in_array($option->id, old('options', $meeting->options->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                            @if(app()->getLocale() === 'ar')
+                                                {{$option->ar_name}}
+                                            @else
+                                                {{$option->en_name}}
+                                            @endif
+                                        </span>
+                                    </div>
                                 </label>
                             </div>
                         @endforeach
                     </div>
 
-                    <x-forms.normal-button color='outline-dark' name="{{ __('messages.Update') }}" />
+                    <div class="d-flex justify-content-end">
+                        <x-forms.normal-button color='primary' name="{{ __('messages.Update') }}" class="rounded-pill px-5 py-2 shadow-sm" />
+                    </div>
                 </form>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -165,104 +160,22 @@
 </x-layout>
 
 <style>
-/* RTL Form Container */
-[dir="rtl"] .form-container {
-    width: 100%;
-    max-width: 800px;
+/* RTL and transition styles */
+.transition-hover {
+    transition: all 0.3s ease;
 }
-
-[dir="rtl"] .meeting-form {
-    direction: rtl;
-    text-align: right;
+.transition-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
 }
-
-/* RTL Form Controls */
-[dir="rtl"] .form-control,
-[dir="rtl"] .form-select {
-    text-align: right;
-    direction: rtl;
-}
-
-/* RTL Switches Section */
-.switches-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin: 2rem 0;
-    padding: 1rem;
-}
-
-.switch-item {
+.widgets-icons {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
+    justify-content: center;
 }
-
-[dir="rtl"] .switch-item {
-    text-align: center;
-}
-
-/* RTL Form Check Fixes */
-[dir="rtl"] .form-check {
-    text-align: center;
-    padding-right: 0;
-    padding-left: 0;
-    margin-bottom: 0.5rem;
-}
-
 [dir="rtl"] .form-check-input {
-    margin-right: 0;
+    float: right !important;
+    margin-right: -1.5em;
     margin-left: 0;
-    position: relative;
-}
-
-[dir="rtl"] .form-check-label {
-    padding-right: 0;
-    padding-left: 0;
-    margin-top: 0.5rem;
-    display: block;
-}
-
-/* RTL Row and Column Fixes */
-[dir="rtl"] .row {
-    direction: rtl;
-}
-
-[dir="rtl"] .col-md-3,
-[dir="rtl"] .col-md-4 {
-    text-align: right;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
-}
-
-/* RTL Options Section */
-[dir="rtl"] .options-section {
-    direction: rtl;
-    text-align: right;
-}
-
-[dir="rtl"] .options-section .form-check {
-    text-align: right;
-    justify-content: flex-end;
-}
-
-/* Debug styles - remove after fixing */
-[dir="rtl"] .switches-section {
-    border: 2px solid red !important;
-    background: rgba(255,0,0,0.1) !important;
-}
-
-[dir="rtl"] .switch-group {
-    border: 1px solid blue !important;
-    background: rgba(0,0,255,0.1) !important;
-    margin: 5px !important;
-}
-
-[dir="rtl"] .form-check {
-    border: 1px solid green !important;
 }
 </style>

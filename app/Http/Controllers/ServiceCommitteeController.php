@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\ServiceCommittee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ServiceCommitteeController extends Controller
+class ServiceCommitteeController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['index', 'create', 'store', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -53,6 +63,7 @@ class ServiceCommitteeController extends Controller
     public function show(string $id)
     {
         $serviceCommittee = ServiceCommittee::findOrFail($id);
+        Gate::authorize('view', $serviceCommittee);
 
         return view('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee]);
     }
@@ -62,6 +73,7 @@ class ServiceCommitteeController extends Controller
      */
     public function edit(ServiceCommittee $serviceCommittee)
     {
+        Gate::authorize('update', $serviceCommittee);
         $users = User::all();
         return view('serviceCommittee.edit', ['serviceCommittee' => $serviceCommittee, 'users' => $users]);
     }
@@ -71,6 +83,7 @@ class ServiceCommitteeController extends Controller
      */
     public function update(Request $request, ServiceCommittee $serviceCommittee)
     {
+        Gate::authorize('update', $serviceCommittee);
         $serviceCommittee->update($request->all());
 
         return redirect()->route('serviceCommittee.index');

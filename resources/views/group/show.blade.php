@@ -1,465 +1,293 @@
 <x-layout>
     <x-backhead>{{__("messages.Group information for") }}
-
         @if(app()->getLocale() === 'ar')
             {{$group->ar_name}}
         @else
             {{$group->en_name}}
         @endif
-
     </x-backhead>
 
-    <div class="group-info-container">
-
-        {{-- Group Section  --}}
-
-        {{-- Button of edit group details  --}}
-        <div class="mb-3">
-            <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-secondary' name="{{  __('messages.Edit Group') }}" />
-        </div>
-        <!-- Arabic Group Name -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Arabic Group Name') }}:</div>
-            <div class="info-value">{{$group->ar_name}}</div>
+    <div class="container-fluid mt-4 mb-5">
+        
+        {{-- Header Actions --}}
+        <div class="d-flex justify-content-end mb-4">
+            <x-button-a href="{{ route('group.edit', $group->id) }}" color='primary' name="{{  __('messages.Edit Group') }}" class="rounded-pill shadow-sm px-4" />
         </div>
 
-        <!-- English Group Name -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.English Group Name') }}:</div>
-            <div class="info-value">{{$group->en_name}}</div>
-        </div>
-
-        <!-- Arabic GSR Name -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Arabic GSR Name')}}:</div>
-            <div class="info-value">{{$group->ar_gsr_name}}</div>
-        </div>
-
-        <!-- English GSR Name -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.English GSR Name')}}:</div>
-            <div class="info-value">{{$group->en_gsr_name}}</div>
-        </div>
-
-        <!-- Email -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Email')}}:</div>
-            <div class="info-value">{{$group->user->email}}</div>
-        </div>
-
-        <!-- Phone -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Phone')}}:</div>
-            <div class="info-value">{{$group->phone}}</div>
-        </div>
-
-        <!-- Location -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Locations')}}:</div>
-            <div class="info-value">{{$group->location}}</div>
-        </div>
-
-        <!-- Arabic Address -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Arabic Address')}}:</div>
-            <div class="info-value">{{$group->ar_address}}</div>
-        </div>
-
-        <!-- English Address -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.English Address')}}:</div>
-            <div class="info-value">{{$group->en_address}}</div>
-        </div>
-
-        <!-- Service Body -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Service Body')}}:</div>
-            <div class="info-value">{{$group->serviceBody->ar_name}}</div>
-        </div>
-
-        <!-- Neighborhoods -->
-        <div class="info-block">
-            <div class="info-label">{{ __('messages.Neighborhood')}}:</div>
-            <div class="info-value">{{$group->neighborhood->ar_name}}</div>
-        </div>
-
-        {{-- / Group Section  --}}
-
-        {{--  Meetings Section  --}}
-        <div class="meetings-section mt-5">
-            <h4 class="section-title mb-3 text-center">{{ __('messages.Meetings') }}</h4>
-            <div class="mb-3">
-                <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" />
+        {{-- Group Information Grid (Dashboard UI/UX) --}}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-5">
+            
+            {{-- Arabic Group Name --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic Group Name') }}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->ar_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-translate"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-                @if($meetings->count() > 0)
-                <div class="meetings-list">
+
+            {{-- English Group Name --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English Group Name') }}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->en_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Email --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Email')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary); font-size: 1rem; word-break: break-all;">{{$group->user->email}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Phone --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Phone')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);" dir="ltr">{{$group->phone}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Locations --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Locations')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary); font-size: 0.95rem; word-break: break-word; overflow-wrap: anywhere;">
+                                @if(filter_var($group->location, FILTER_VALIDATE_URL))
+                                    <a href="{{ $group->location }}" target="_blank" class="text-primary text-decoration-underline">{{ $group->location }}</a>
+                                @else
+                                    {{$group->location}}
+                                @endif
+                            </h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-pin-map"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Service Body --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Service Body')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->serviceBody->ar_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Neighborhood --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Neighborhood')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->neighborhood->ar_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #64748b, #475569); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Arabic GSR Name --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic GSR Name')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->ar_gsr_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #14b8a6, #0d9488); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- English GSR Name --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English GSR Name')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->en_gsr_name}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #0f766e, #115e59); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- Meetings Section --}}
+        <div class="glass-card p-4 rounded-4 mt-5">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
+                <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-calendar-event me-2"></i> {{ __('messages.Meetings') }}</h4>
+                <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" class="rounded-pill" />
+            </div>
+            
+            @if($meetings->count() > 0)
+                <div class="row row-cols-1 row-cols-lg-2 g-4">
                     @foreach($meetings as $meeting)
-                        <div class="meeting-item">
-                            <!-- Day and Time Row -->
-                            <div class="meeting-time-row">
-                                <div class="meeting-day text-warning mb-2">
-                                    @if(app()->getLocale() === 'ar')
-                                        {{ $meeting->day->ar_name }}
-                                    @else
-                                        {{ $meeting->day->en_name }}
-                                    @endif
-
-                                </div>
-                                <div class="meeting-time">
-                                    {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} -
-                                    {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
-                                </div>
-                            </div>
-
-                            <!-- Title -->
-                            @if($meeting->title)
-                                <div class="meeting-title">
-                                    {{ $meeting->title }}
-a
-                                </div>
-                            @endif
-
-                            <!-- Type and Topic in a single row -->
-                            <div class="meeting-type-topic">
-                                @if($meeting->type)
-                                    <div class="meeting-type-badge">
-                                        <i class="fas fa-calendar-alt"></i>
+                        <div class="col">
+                            <div class="glass-card h-100 p-4 rounded-4 border position-relative transition-hover" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.01);">
+                                
+                                {{-- Meeting Header --}}
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="mb-1 fw-bold text-primary">
+                                            @if(app()->getLocale() === 'ar')
+                                                {{ $meeting->day->ar_name }}
+                                            @else
+                                                {{ $meeting->day->en_name }}
+                                            @endif
+                                        </h5>
+                                        <p class="text-secondary small fw-bold mb-0" dir="ltr">
+                                            <i class="bi bi-clock mx-1"></i>
+                                            {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
+                                        </p>
+                                    </div>
+                                    <div class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: rgba(59, 130, 246, 0.15) !important; color: #2563eb !important; border: 1px solid rgba(59, 130, 246, 0.4) !important;">
                                         @if(app()->getLocale() === 'ar')
                                             {{ __("messages." . $meeting->type) }}
                                         @else
                                             {{ $meeting->type }}
                                         @endif
                                     </div>
+                                </div>
+
+                                {{-- Title --}}
+                                @if($meeting->title)
+                                    <h6 class="fw-bold mb-3">{{ $meeting->title }}</h6>
                                 @endif
 
+                                {{-- Topics Tags --}}
                                 @if($meeting->topics && $meeting->topics->count() > 0)
-                                    <div class="meeting-topics-container" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
                                         @foreach($meeting->topics as $topic)
-                                            <div class="meeting-topic-badge">
-                                                <i class="fas fa-comment-dots"></i>
-
+                                            <span class="badge rounded-pill px-3 py-2 fw-medium" style="background-color: rgba(14, 165, 233, 0.15) !important; color: #0284c7 !important; border: 1px solid rgba(14, 165, 233, 0.4) !important;">
+                                                <i class="bi bi-tag me-1"></i>
                                                 @if(app()->getLocale() === 'ar')
                                                     {{ $topic->ar_name }}
                                                 @else
                                                     {{ $topic->en_name }}
                                                 @endif
-
-                                            </div>
+                                            </span>
                                         @endforeach
                                     </div>
                                 @endif
-                            </div>
 
-                            <!-- Description -->
-                            @if($meeting->description)
-                                <div class="meeting-description">
-                                    <i class="fas fa-align-left description-icon"></i>
-                                    {{ $meeting->description }}
-                                </div>
-                            @endif
-
-                            <!-- Meeting Options -->
-                            @if($meeting->options->count() > 0)
-                                <div class="meeting-options">
-                                    <div class="options-title">
-                                        <i class="fas fa-cog"></i> {{ __('messages.Options') }}
+                                {{-- Description --}}
+                                @if($meeting->description)
+                                    <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.03); border: 1px dashed var(--glass-border);">
+                                        <p class="mb-0 text-secondary small" style="line-height: 1.6;">{{ $meeting->description }}</p>
                                     </div>
-                                    <div class="options-list">
+                                @endif
+
+                                {{-- Meeting Options --}}
+                                @if($meeting->options->count() > 0)
+                                    <div class="d-flex flex-wrap gap-2 mb-4">
                                         @foreach($meeting->options as $option)
-                                            <div class="option-item">
-                                                <span class="option-name">
-                                                    @if(app()->getLocale() === 'ar')
-                                                        {{ $option->ar_name }}
-                                                    @else
-                                                        {{ $option->en_name }}
-                                                    @endif
-                                                </span>
-                                                <span class="option-value">
-                                                @if($option->pivot->value)
-                                                        {{ $option->pivot->value }}
-                                                    @else
-                                                        <i class="fas fa-check-circle"></i>
-                                                    @endif
+                                            <span class="badge rounded-pill px-2 py-1 fw-medium" style="background-color: rgba(0, 0, 0, 0.03) !important; color: var(--text-secondary) !important; border: 1px solid var(--glass-border) !important;">
+                                                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                                @if(app()->getLocale() === 'ar')
+                                                    {{ $option->ar_name }}
+                                                @else
+                                                    {{ $option->en_name }}
+                                                @endif
                                             </span>
-                                            </div>
                                         @endforeach
                                     </div>
+                                @endif
+
+                                {{-- Actions --}}
+                                <div class="d-flex gap-2 mt-auto pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                                    <x-button-a href="{{ route('meeting.edit', $meeting->id) }}"
+                                                color='outline-primary'
+                                                name="{{ __('messages.Edit Meeting') }}"
+                                                class="btn-sm rounded-pill flex-grow-1" />
+
+                                    <x-forms.delete-button
+                                            name="{{ __('messages.Delete') }}"
+                                            formName='delete-item'
+                                            id="{{$meeting->id}}"
+                                            routeName="meeting.destroy"
+                                            class="btn-sm rounded-pill flex-grow-1" />
                                 </div>
-                            @endif
 
-                            <!-- Action Buttons -->
-                            <div class="meeting-actions">
-                                <x-button-a href="{{ route('meeting.edit', $meeting->id) }}"
-                                            color='outline-primary'
-                                            name="{{ __('messages.Edit Meeting') }}"
-                                            class="action-btn" />
-
-                                <x-forms.delete-button
-                                        name="{{ __('messages.Delete') }}"
-                                        formName='delete-item'
-                                        id="{{$meeting->id}}"
-                                        routeName="meeting.destroy"
-                                        class="action-btn" />
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <div class="no-meetings">
-                    <i class="far fa-calendar-times"></i> {{ __('messages.No meetings scheduled') }}
+                <div class="text-center p-5 rounded-4" style="background: rgba(0,0,0,0.02); border: 1px dashed var(--glass-border);">
+                    <i class="bi bi-calendar-x text-secondary" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h5 class="text-secondary mt-3">{{ __('messages.No meetings scheduled') }}</h5>
                 </div>
             @endif
         </div>
-        {{--  / Meetings Section  --}}
     </div>
 </x-layout>
 
 <style>
-    .group-info-container {
-        background-color: #f8fafc;
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        max-width: 800px;
-        margin: 0 auto;
-        border: 1px solid #e2e8f0;
-    }
-
-    .info-block {
-        display: flex;
-        align-items: center;
-        padding: 14px 18px;
-        margin-bottom: 12px;
-        background-color: white;
-        border-radius: 8px;
-        border-left: 4px solid #4f46e5;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-        transition: all 0.2s ease;
-    }
-
-    .info-block:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    }
-
-    .info-label {
-        font-weight: 600;
-        color: #4b5563; /* Cool gray for labels */
-        min-width: 200px;
-        font-size: 0.95rem;
-        letter-spacing: 0.3px;
-    }
-
-    .info-value {
-        font-weight: 500;
-        color: #1e40af; /* Deep blue for values */
-        font-size: 1rem;
-        padding-left: 12px;
-        margin-left: 12px;
-        border-left: 1px solid #e2e8f0;
-    }
-
-    /* Alternative color scheme option */
-    /* .info-label {
-        color: #6b7280;
-    }
-    .info-value {
-        color: #065f46;
-    } */
-
-    @media (max-width: 768px) {
-        .group-info-container {
-            padding: 15px;
-        }
-
-        .info-block {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 12px 15px;
-        }
-
-        .info-value {
-            border-left: none;
-            margin-left: 0;
-            padding-left: 0;
-            padding-top: 6px;
-            color: #1e3a8a; /* Slightly darker blue on mobile */
-        }
-    }
-
-    [dir="rtl"] .info-block {
-        border-right: 4px solid #4f46e5;
-        border-left: 4px ;
-    }
-    [dir="rtl"] .meeting-item {
-        border-right: 4px solid #4f46e5;
-        border-left: 4px ;
-    }
-
-    .meeting-item {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-        border-left: 4px solid #4f46e5;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px; /* Added space between cards */
-        transition: all 0.3s ease;
-    }
-
-    .meeting-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-
-    .meeting-type-topic {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 8px 0;
-    }
-
-    .meeting-type-badge, .meeting-topic-badge {
-        background-color: #f0f7ff;
-        color: #1e40af;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .meeting-topic-badge {
-        background-color: #f0fff4;
-        color: #065f46;
-    }
-
-    .meeting-type-badge i, .meeting-topic-badge i {
-        font-size: 0.8rem;
-    }
-
-    .meeting-description {
-        color: #4b5563;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        padding: 12px;
-        background-color: #f8fafc;
-        border-radius: 8px;
-        position: relative;
-    }
-
-    .description-icon {
-        color: #6b7280;
-        margin-right: 8px;
-    }
-
-    .meeting-options {
-        margin-top: 10px;
-        padding: 12px;
-        background-color: #f9fafb;
-        border-radius: 8px;
-        border: 1px dashed #e2e8f0;
-    }
-
-    .options-title {
-        font-weight: 600;
-        color: #4b5563;
-        font-size: 0.95rem;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .options-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .option-item {
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
-        background-color: white;
-        padding: 8px 12px;
-        border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        border: 1px solid #e5e7eb;
-    }
-
-    .option-name {
-        color: #374151;
-        margin-right: 6px;
-        font-weight: 500;
-    }
-
-    .option-value {
-        color: #1e40af;
-        font-weight: 600;
-    }
-
-    .option-item i.fa-check-circle {
-        color: #10b981;
-        font-size: 0.9rem;
-    }
-
-    .meeting-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .action-btn {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-    }
-
-    .action-btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .no-meetings {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        color: #6b7280;
-        font-size: 1rem;
-    }
-
-    .no-meetings i {
-        font-size: 1.2rem;
-        margin-right: 8px;
-        color: #9ca3af;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .meeting-item {
-            padding: 15px;
-        }
-
-        .meeting-type-topic {
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .meeting-actions {
-            flex-direction: column;
-        }
-
-        .action-btn {
-            width: 100%;
-            text-align: center;
-        }
-    }
-
+.transition-hover {
+    transition: all 0.3s ease;
+}
+.transition-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+}
+.widgets-icons {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+/* RTL specific fixes */
+[dir="rtl"] .me-1 { margin-left: 0.25rem !important; margin-right: 0 !important; }
+[dir="rtl"] .me-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+[dir="rtl"] .ms-auto { margin-right: auto !important; margin-left: 0 !important; }
 </style>

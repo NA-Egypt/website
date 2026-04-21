@@ -75,7 +75,7 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
              // Injected from Blade for client-side check
-            const canManage = @json(auth()->check() && (auth()->user()->hasPermission('can_manage_calendar') || auth()->user()->hasRole('super admin')));
+            const canManage = @json(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees'])));
 
             var calendarEl = document.getElementById('calendar');
             var calendar = new window.FullCalendar.Calendar(calendarEl, {

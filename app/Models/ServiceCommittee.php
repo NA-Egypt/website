@@ -20,6 +20,6 @@ class ServiceCommittee extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'email', 'email');
+        return $this->belongsTo(User::class);
     }
 }

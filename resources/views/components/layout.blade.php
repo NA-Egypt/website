@@ -20,7 +20,113 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     font-family: 'Cairo', sans-serif !important;
   }
   
-  /* Custom font override */
+  /* Force Neo-Glassmorphism Light Theme globally */
+  body, html {
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --neon-glow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      --text-primary: #1a202c !important;
+      --text-secondary: #4a5568 !important;
+      
+      background-color: #f8fafc !important;
+      background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%) !important;
+      background-attachment: fixed !important;
+      color: var(--text-primary) !important;
+  }
+  
+  .wrapper { background: transparent !important; }
+
+  /* Generic Card Overrides */
+  .card, .glass-card {
+      background: var(--glass-bg) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid var(--glass-border) !important;
+      box-shadow: var(--neon-glow) !important;
+      border-radius: 16px !important;
+      color: var(--text-primary) !important;
+  }
+  .card:hover, .glass-card:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Generic Table Overrides to fix ALL pages */
+  .table, .table-bordered, .dataTable {
+      color: var(--text-primary) !important;
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      border: none !important;
+  }
+  .table-bordered td, .table-bordered th { border: none !important; border-bottom: 1px solid var(--glass-border) !important; }
+  table.dataTable tbody tr { background-color: transparent !important; }
+  .table thead th, table.dataTable thead th {
+      background: rgba(0,0,0,0.03) !important;
+      border-bottom: 2px solid var(--glass-border) !important;
+      color: var(--text-secondary) !important;
+      font-weight: 600 !important; border-top: none !important;
+  }
+  .table tbody tr, table.dataTable tbody tr { border-bottom: 1px solid var(--glass-border) !important; transition: background-color 0.2s ease; }
+  .table tbody tr:hover, table.dataTable tbody tr:hover { background-color: rgba(0, 0, 0, 0.02) !important; }
+
+  /* Form & Inputs Overrides */
+  .form-control, .form-select, input[type="search"] {
+      background: rgba(0, 0, 0, 0.02) !important;
+      border: 1px solid var(--glass-border) !important;
+      color: var(--text-primary) !important;
+      border-radius: 8px !important;
+  }
+  .form-control:focus, .form-select:focus {
+      background: rgba(0, 0, 0, 0.0) !important;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) !important;
+      border-color: #3b82f6 !important;
+  }
+
+  /* Utility Overrides */
+  .bg-light, .bg-white, .table-responsive { background: transparent !important; color: var(--text-primary) !important; }
+  .text-dark { color: var(--text-primary) !important; }
+  .text-muted, .text-secondary { color: var(--text-secondary) !important; }
+  h1, h2, h3, h4, h5, h6, .menu-title { color: var(--text-primary) !important; }
+  
+  /* Labels & Selects (DataTables) */
+  label, .dataTables_info, .dataTables_length { color: var(--text-secondary) !important; }
+  .dataTables_wrapper .dataTables_paginate .paginate_button { color: var(--text-primary) !important; }
+  
+  /* Badges & Scrolls */
+  .neo-badge { padding: 0.4rem 0.8rem; border-radius: 50rem; font-weight: 500; font-size: 0.85rem; box-shadow: 0 0 10px currentColor; }
+  .neo-badge-success { color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; }
+  .neo-badge-primary { color: #3b82f6; background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; }
+  .neo-badge-danger { color: #ef4444; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; }
+  .neo-badge-info { color: #0ea5e9; background: rgba(14, 165, 233, 0.1); border: 1px solid #0ea5e9; }
+
+  .neo-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .neo-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .neo-scrollbar::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+  
+  .neo-list-item { transition: all 0.2s; border-radius: 8px; padding: 8px 12px; }
+  .neo-list-item:hover { background: rgba(150, 150, 150, 0.1); transform: scale(1.01); }
+
+  
+  /* Mobile Overlay Fixes */
+  .overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+  
+  /* Sidebar Neo-Glassmorphism */
+  .sidebar-wrapper {
+      background: rgba(255, 255, 255, 0.75) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-inline-end: 1px solid var(--glass-border) !important;
+      z-index: 1030;
+  }
+  .sidebar-wrapper .navigation { background: transparent !important; }
+  .sidebar-wrapper .navigation li a { color: var(--text-primary) !important; transition: all 0.3s ease; }
+  .sidebar-wrapper .navigation li a:hover, 
+  .sidebar-wrapper .navigation li.mm-active > a { 
+      background: rgba(0, 0, 0, 0.05) !important; 
+      border-radius: 8px;
+  }
+  .sidebar-wrapper .navigation .menu-label { color: var(--text-secondary) !important; }
+  .sidebar-wrapper .navigation ul { background: transparent !important; }
+  .sidebar-wrapper .navigation ul li a:hover { background: rgba(0, 0, 0, 0.03) !important; }
   </style>
 
   <title>{{__('messages.NA')}}</title>

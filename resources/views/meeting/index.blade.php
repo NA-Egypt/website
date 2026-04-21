@@ -2,7 +2,7 @@
 
     <x-backhead>{{__('messages.Manage') . ' ' . __('messages.Meetings')}}</x-backhead>
 
-    <div class="container">
+    <div class="container glass-card p-4 mt-4 mb-5">
 
         <div class="mt-3 mb-3">
             <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" />

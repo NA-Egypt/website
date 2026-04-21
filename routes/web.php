@@ -43,40 +43,42 @@ Route::group(
 //            Route::get('/group/show/{group}', [GroupController::class, 'show'])
 //                ->name('group.show');
 
-            // Transactions:
-            Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+            Route::middleware(['role:super admin'])->group(function () {
+                // Transactions:
+                Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 
-            // ServiceBody Routes:
-            Route::get('/serviceBody',[ServiceBodyController::class,'index'])->name('serviceBody.index');
-            Route::get('/serviceBody/create',[ServiceBodyController::class,'create'])->name('serviceBody.create');
-            Route::post('/serviceBody',[ServiceBodyController::class,'store'])->name('serviceBody.store');
-            Route::get('/serviceBody/{serviceBody}',[ServiceBodyController::class,'edit'])->name('serviceBody.edit');
-            Route::put('/serviceBody/{serviceBody}',[ServiceBodyController::class,'update'])->name('serviceBody.update');
-            Route::delete('/serviceBody/{serviceBody}',[ServiceBodyController::class,'destroy'])->name('serviceBody.destroy');
+                // ServiceBody Routes:
+                Route::get('/serviceBody',[ServiceBodyController::class,'index'])->name('serviceBody.index');
+                Route::get('/serviceBody/create',[ServiceBodyController::class,'create'])->name('serviceBody.create');
+                Route::post('/serviceBody',[ServiceBodyController::class,'store'])->name('serviceBody.store');
+                Route::get('/serviceBody/{serviceBody}',[ServiceBodyController::class,'edit'])->name('serviceBody.edit');
+                Route::put('/serviceBody/{serviceBody}',[ServiceBodyController::class,'update'])->name('serviceBody.update');
+                Route::delete('/serviceBody/{serviceBody}',[ServiceBodyController::class,'destroy'])->name('serviceBody.destroy');
 
-            // City Routes:
-            Route::get('/city',[CityController::class,'index'])->name('city.index');
-            Route::get('/city/create',[CityController::class,'create'])->name('city.create');
-            Route::post('/city',[CityController::class,'store'])->name('city.store');
-            Route::get('/city/{city}',[CityController::class,'edit'])->name('city.edit');
-            Route::put('/city/{city}',[CityController::class,'update'])->name('city.update');
-            Route::delete('/city/{city}',[CityController::class,'destroy'])->name('city.destroy');
+                // City Routes:
+                Route::get('/city',[CityController::class,'index'])->name('city.index');
+                Route::get('/city/create',[CityController::class,'create'])->name('city.create');
+                Route::post('/city',[CityController::class,'store'])->name('city.store');
+                Route::get('/city/{city}',[CityController::class,'edit'])->name('city.edit');
+                Route::put('/city/{city}',[CityController::class,'update'])->name('city.update');
+                Route::delete('/city/{city}',[CityController::class,'destroy'])->name('city.destroy');
 
-            // Neighborhood Routes:
-            Route::get('/neighborhood',[NeighborhoodController::class,'index'])->name('neighborhood.index');
-            Route::get('/neighborhood/create',[NeighborhoodController::class,'create'])->name('neighborhood.create');
-            Route::post('/neighborhood',[NeighborhoodController::class,'store'])->name('neighborhood.store');
-            Route::get('/neighborhood/{neighborhood}',[NeighborhoodController::class,'edit'])->name('neighborhood.edit');
-            Route::put('/neighborhood/{neighborhood}',[NeighborhoodController::class,'update'])->name('neighborhood.update');
-            Route::delete('/neighborhood/{neighborhood}',[NeighborhoodController::class,'destroy'])->name('neighborhood.destroy');
+                // Neighborhood Routes:
+                Route::get('/neighborhood',[NeighborhoodController::class,'index'])->name('neighborhood.index');
+                Route::get('/neighborhood/create',[NeighborhoodController::class,'create'])->name('neighborhood.create');
+                Route::post('/neighborhood',[NeighborhoodController::class,'store'])->name('neighborhood.store');
+                Route::get('/neighborhood/{neighborhood}',[NeighborhoodController::class,'edit'])->name('neighborhood.edit');
+                Route::put('/neighborhood/{neighborhood}',[NeighborhoodController::class,'update'])->name('neighborhood.update');
+                Route::delete('/neighborhood/{neighborhood}',[NeighborhoodController::class,'destroy'])->name('neighborhood.destroy');
 
-            // Topic Routes:
-            Route::get('/topic',[TopicController::class,'index'])->name('topic.index');
-            Route::get('/topic/create',[TopicController::class,'create'])->name('topic.create');
-            Route::post('/topic',[TopicController::class,'store'])->name('topic.store');
-            Route::get('/topic/{topic}',[TopicController::class,'edit'])->name('topic.edit');
-            Route::put('/topic/{topic}',[TopicController::class,'update'])->name('topic.update');
-            Route::delete('/topic/{topic}',[TopicController::class,'destroy'])->name('topic.destroy');
+                // Topic Routes:
+                Route::get('/topic',[TopicController::class,'index'])->name('topic.index');
+                Route::get('/topic/create',[TopicController::class,'create'])->name('topic.create');
+                Route::post('/topic',[TopicController::class,'store'])->name('topic.store');
+                Route::get('/topic/{topic}',[TopicController::class,'edit'])->name('topic.edit');
+                Route::put('/topic/{topic}',[TopicController::class,'update'])->name('topic.update');
+                Route::delete('/topic/{topic}',[TopicController::class,'destroy'])->name('topic.destroy');
+            });
 
             // Group Routes:
             Route::get('/group',[GroupController::class,'index'])->name('group.index');
@@ -104,38 +106,40 @@ Route::group(
             Route::put('/meeting/{meeting}',[MeetingController::class,'update'])->name('meeting.update');
             Route::delete('/meeting/{meeting}',[MeetingController::class,'destroy'])->name('meeting.destroy');
 
-            // Permissions:
-            Route::get('/permissions', [PermissionController::class, 'index'])
-                ->name('permissions.index');
-            Route::get('/permissions/create', [PermissionController::class, 'create'])
-                ->name('permissions.create');
-            Route::post('/permissions', [PermissionController::class, 'store'])
-                ->name('permissions.store');
-            Route::get('/permissions/{permission}',
-                [PermissionController::class, 'edit'])
-                ->name('permissions.edit');
-            Route::put('/permissions/{permission}',
-                [PermissionController::class, 'update'])
-                ->name('permissions.update');
-            Route::delete('/permissions/{permission}',
-                [PermissionController::class, 'destroy'])
-                ->name('permissions.destroy');
+            Route::middleware(['role:super admin'])->group(function () {
+                // Permissions:
+                Route::get('/permissions', [PermissionController::class, 'index'])
+                    ->name('permissions.index');
+                Route::get('/permissions/create', [PermissionController::class, 'create'])
+                    ->name('permissions.create');
+                Route::post('/permissions', [PermissionController::class, 'store'])
+                    ->name('permissions.store');
+                Route::get('/permissions/{permission}',
+                    [PermissionController::class, 'edit'])
+                    ->name('permissions.edit');
+                Route::put('/permissions/{permission}',
+                    [PermissionController::class, 'update'])
+                    ->name('permissions.update');
+                Route::delete('/permissions/{permission}',
+                    [PermissionController::class, 'destroy'])
+                    ->name('permissions.destroy');
 
-            // Roles:
-            Route::resource('roles', RoleController::class)->only(['index', 'create', 'store']);
+                // Roles:
+                Route::resource('roles', RoleController::class)->only(['index', 'create', 'store']);
 
-            // users:
-            Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
-            Route::get('/roles/{role}/assign-permissions',
-                [RoleController::class, 'assignPermissions'])
-                ->name('roles.assign-permissions');
-            Route::post('/roles/{role}/update-permissions',
-                [RoleController::class, 'updatePermissions'])
-                ->name('roles.update-permissions');
-            Route::delete('/roles/{role}',
-                [RoleController::class, 'destroy'])->name('roles.destroy');
-            Route::delete('/users/{user}',
-                [UserController::class, 'destroy'])->name('users.destroy');
+                // users:
+                Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
+                Route::get('/roles/{role}/assign-permissions',
+                    [RoleController::class, 'assignPermissions'])
+                    ->name('roles.assign-permissions');
+                Route::post('/roles/{role}/update-permissions',
+                    [RoleController::class, 'updatePermissions'])
+                    ->name('roles.update-permissions');
+                Route::delete('/roles/{role}',
+                    [RoleController::class, 'destroy'])->name('roles.destroy');
+                Route::delete('/users/{user}',
+                    [UserController::class, 'destroy'])->name('users.destroy');
+            });
 
             // Committee Reports:
             Route::resource('committee-reports', \App\Http\Controllers\CommitteeReportController::class);

@@ -2,8 +2,8 @@
     
     <x-backhead>{{__('messages.Add') . ' ' . __('messages.Group')}}</x-backhead>
 
-    <div class="container d-flex justify-content-center align-items-center">
-        <form action="{{ route('group.store') }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">
+    <div class="container d-flex justify-content-center align-items-center mb-5 mt-4">
+        <form action="{{ route('group.store') }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1 glass-card p-4">
             @csrf
             <div class="row mx-0 px-0 g-3">
                 <div class="col-md-6 pe-1">

@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'setLanguageDirection'    => \App\Http\Middleware\SetLanguageDirection::class,
             'role.redirect'           => \App\Http\Middleware\RoleRedirect::class,
             'auth'                    => \App\Http\Middleware\Authenticate::class,
+            'role'                    => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission'              => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission'      => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
         
     })

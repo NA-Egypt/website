@@ -2,128 +2,117 @@
     
     <x-backhead>{{__('messages.Add') . ' ' . __('messages.Meeting')}}</x-backhead>
 
-    <div class="container d-flex justify-content-center align-items-center">
-        <form action="{{ route('meeting.store') }}" method="post" class="row g-2 col-md-12 col-lg-8 mt-1">
-            @csrf
+    <div class="container-fluid glass-card p-4 p-md-5 mt-4 mb-5 mx-auto" style="max-width: 900px;">
+        <form action="{{ route('meeting.store') }}" method="post" class="meeting-form">
+                    @csrf
 
-{{--            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>--}}
-            @if(Auth::user()->can('is-super-admin'))
-                <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
-            @else
-                <input type="hidden" name="group_id" value="{{ $group_id }}">
-            @endif
+                    @auth
+                        @can('is-super-admin')
+                            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
+                        @else
+                            <input type="hidden" name="group_id" value="{{ $group_id }}">
+                        @endcan
+                    @endauth
 
-            <x-forms.select multiple="multiple" :$topics name="topics[]" label="{{ __('messages.Meeting Topic')}}"/>
-            <div class="row align-items-end">
-                <div class="col-md-3">
-                    <x-forms.select :$days name="day_id" label="{{ __('messages.Day')}}"/>
-                </div>
-                <div class="col-md-3">
-                    <x-forms.input name="start_time" label="{{ __('messages.From')}}" type="time" />
-                </div>
-                <div class="col-md-3">
-                    <x-forms.input name="end_time" label="{{ __('messages.To')}}" type="time" />
-                </div>
-                <div class="col-md-3">
-                    <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number" />
-                </div>
-            </div>
-            <x-forms.textarea name="notes" label="{{ __('messages.Notes')}}"/>
-
-            {{-- Type - Lang - Status --}}
-            <div class="m-3 p-3">
-                <div class="row g-4 align-items-center">
-
-                    <!-- Type Switch -->
-                    <div class="col-md-4">
-                        <label for="meeting-type" class="form-label">{{__("messages.Type")}}</label>
-                        <div class="form-check form-switch">
-                            <input type="hidden" name="type" value="open">
-                            <input
-                                    name="type"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="meeting-type"
-                                    value="closed"
-                                    {{ old('type', $meeting->type ?? 'closed') === 'closed' ? 'checked' : '' }}
-                            >
+                    <x-forms.select multiple="multiple" :$topics name="topics[]" label="{{ __('messages.Meeting Topic')}}"/>
+    
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <x-forms.select :$days name="day_id" label="{{ __('messages.Day')}}"/>
                         </div>
-                        <label class="mb-0" id="label-type" for="meeting-type">
-                            {{ old('type', $meeting->type ?? 'closed') === 'closed' ? __('messages.closed') : __('messages.open') }}
-                        </label>
-                    </div>
-
-                    <!-- Language Switch -->
-                    <div class="col-md-4">
-                        <label for="lang-switch" class="form-label">{{__("messages.Language")}}</label>
-                        <div class="form-check form-switch">
-                            <input type="hidden" name="lang" value="english">
-                            <input
-                                    name="lang"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="lang-switch"
-                                    value="arabic"
-                                    {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? 'checked' : '' }}
-                            >
+                        <div class="col-md-3">
+                            <x-forms.input name="start_time" label="{{ __('messages.From')}}" type="time" value="{{ old('start_time') }}" />
                         </div>
-                        <label class="mb-0" id="label-lang" for="lang-switch">
-                            {{ old('lang', $meeting->lang ?? 'arabic') === 'arabic' ? __("messages.arabic") : __("messages.english") }}
-                        </label>
-                    </div>
-
-                    <!-- Status Switch -->
-                    <div class="col-md-4">
-                        <label for="status-switch" class="form-label">Status</label>
-                        <div class="form-check form-switch">
-                            <input type="hidden" name="status" value="suspended">
-                            <input
-                                    name="status"
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="status-switch"
-                                    value="available"
-                                    {{ old('status', $meeting->status ?? 'available') === 'available' ? 'checked' : '' }}
-                            >
+                        <div class="col-md-3">
+                            <x-forms.input name="end_time" label="{{ __('messages.To')}}" type="time" value="{{ old('end_time') }}" />
                         </div>
-                        <label class="mb-0" id="label-status" for="status-switch">
-                            {{ old('status', $meeting->status ?? 'available') === 'available' ? __("messages.available") : __("messages.suspended") }}
-                        </label>
+                        <div class="col-md-3">
+                            <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number" value="{{ old('capacity') }}" />
+                        </div>
+                    </div>
+    
+                    <x-forms.textarea name="notes" label="{{ __('messages.Notes')}}">{{ old('notes') }}</x-forms.textarea>
+
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-sliders me-2 text-primary"></i> Meeting Settings</h6>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+                        {{-- Type Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-door-closed"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">{{__("messages.Type")}}</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="type" value="open">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="meeting-type" name="type" value="closed" {{ old('type', 'closed') === 'closed' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-type" style="background-color: rgba(139, 92, 246, 0.1); color: #7c3aed;">
+                                    {{ old('type', 'closed') === 'closed' ? __('messages.closed') : __('messages.open') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Language Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-globe"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">{{__("messages.Language")}}</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="lang" value="english">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="lang-switch" name="lang" value="arabic" {{ old('lang', 'arabic') === 'arabic' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-lang" style="background-color: rgba(14, 165, 233, 0.1); color: #0284c7;">
+                                    {{ old('lang', 'arabic') === 'arabic' ? __("messages.arabic") : __("messages.english") }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Status Switch --}}
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">Status</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="status" value="suspended">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="status-switch" name="status" value="available" {{ old('status', 'available') === 'available' ? 'checked' : '' }}>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-status" style="background-color: rgba(16, 185, 129, 0.1); color: #059669;">
+                                    {{ old('status', 'available') === 'available' ? __("messages.available") : __("messages.suspended") }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
-
-            {{-- Options --}}
-            <div class="form-group">
-                 <div class="d-flex align-items-center mb-2">
-                     <span class="me-2" style="width: 0.5rem; height: 0.5rem; background-color: white; display: inline-block;"></span>
-                     <label class="text-primary" for="options" id = options>{{__('messages.Options')}}</label>
-                 </div>
-
-                @foreach ($options as $option)
-                    <div class="form-check">
-                        <input
-                            type="checkbox"
-                            name="options[]"
-                            value="{{ $option->id }}"
-                            class="form-check-input"
-                            id="option-{{ $option->id }}">
-                        <label class="form-check-label" for="option-{{ $option->id }}">
-                            @if(app()->getLocale() === 'ar')
-                                {{$option->ar_name}}
-                            @else
-                                {{$option->en_name}}
-                            @endif
-                        </label>
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-ui-checks-grid me-2 text-success"></i> Options</h6>
+                    <div class="row row-cols-2 row-cols-md-3 g-3 mb-5 options-section">
+                        @foreach ($options as $option)
+                            <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-{{ $option->id }}">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="{{ $option->id }}" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-{{ $option->id }}" {{ in_array($option->id, old('options', [])) ? 'checked' : '' }}>
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                            @if(app()->getLocale() === 'ar')
+                                                {{$option->ar_name}}
+                                            @else
+                                                {{$option->en_name}}
+                                            @endif
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
-            </div>
 
-            <x-forms.normal-button color='outline-dark' name="{{ __('messages.Save') }}" />
-
-        </form>
+                    <div class="d-flex justify-content-end">
+                        <x-forms.normal-button color='primary' name="{{ __('messages.Save') }}" class="rounded-pill px-5 py-2 shadow-sm" />
+                    </div>
+                </form>
     </div>
+
     <script>
         let translations = {
             open: @json(__('messages.open')),
@@ -168,3 +157,23 @@
     </script>
 </x-layout>
 
+<style>
+/* RTL and transition styles */
+.transition-hover {
+    transition: all 0.3s ease;
+}
+.transition-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+}
+.widgets-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+[dir="rtl"] .form-check-input {
+    float: right !important;
+    margin-right: -1.5em;
+    margin-left: 0;
+}
+</style>

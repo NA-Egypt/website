@@ -50,7 +50,7 @@ class YearlyCalendar extends Component
 
     public function saveEvent()
     {
-        if (!auth()->check() || !auth()->user()->hasPermission('can_manage_calendar')) {
+        if (!$this->checkAuth()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -58,7 +58,7 @@ class YearlyCalendar extends Component
 
         if ($this->eventId) {
             $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
-            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole('super admin')) {
+            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole(['super admin', 'Committees'])) {
                  abort(403, 'Unauthorized action.');
             }
             $event->update([
@@ -89,7 +89,7 @@ class YearlyCalendar extends Component
 
     public function editEvent($id)
     {
-        if (!auth()->check() || !auth()->user()->hasPermission('can_manage_calendar')) {
+        if (!$this->checkAuth()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -110,13 +110,13 @@ class YearlyCalendar extends Component
 
     public function deleteEvent()
     {
-        if (!auth()->check() || !auth()->user()->hasPermission('can_manage_calendar')) {
+        if (!$this->checkAuth()) {
             abort(403, 'Unauthorized action.');
         }
 
         if ($this->eventId) {
             $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
-            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole('super admin')) {
+            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole(['super admin', 'Committees'])) {
                  abort(403, 'Unauthorized action.');
             }
             $event->delete();
@@ -128,7 +128,7 @@ class YearlyCalendar extends Component
 
     public function checkAuth()
     {
-        return auth()->check() && auth()->user()->hasPermission('can_manage_calendar');
+        return auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees']));
     }
 
     public function render()
