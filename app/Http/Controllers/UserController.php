@@ -76,7 +76,11 @@ class UserController extends Controller
         }
 
         if ($action === 'delete') {
-            User::whereIn('id', $userIds)->delete();
+            $users = User::whereIn('id', $userIds)->get();
+            /** @var \App\Models\User $user */
+            foreach ($users as $user) {
+                $user->delete();
+            }
             return redirect()->route('users.index')->with('success', 'Selected users deleted successfully');
         }
 

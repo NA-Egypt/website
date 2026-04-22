@@ -2,11 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\CalendarEvent;
 use App\Models\City;
+use App\Models\CommitteeReport;
+use App\Models\Event;
 use App\Models\Group;
 use App\Models\Meeting;
 use App\Models\Neighborhood;
+use App\Models\ScMeeting;
 use App\Models\ServiceBody;
+use App\Models\ServiceCommittee;
+use App\Models\Topic;
 use App\Models\User;
 use App\Observers\GenericObserver;
 use Illuminate\Pagination\Paginator;
@@ -36,6 +42,13 @@ class AppServiceProvider extends ServiceProvider
         ServiceBody::observe(GenericObserver::class);
         Neighborhood::observe(GenericObserver::class);
         Meeting::observe(GenericObserver::class);
+        User::observe(GenericObserver::class);
+        Topic::observe(GenericObserver::class);
+        ServiceCommittee::observe(GenericObserver::class);
+        Event::observe(GenericObserver::class);
+        CommitteeReport::observe(GenericObserver::class);
+        ScMeeting::observe(GenericObserver::class);
+        CalendarEvent::observe(GenericObserver::class);
 
         // Define the 'is-super-admin' gate
         Gate::define('is-super-admin', function (User $user) {
