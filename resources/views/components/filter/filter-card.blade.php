@@ -202,7 +202,11 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <br />
             <x-fas-map-marker style="width:16px; height:16px;"/>
             <a href="{{ $meeting->group->location }}" target="_blank">
-            @if($meeting->group->group_type !== 'فعلي')
+            @if(\Illuminate\Support\Str::contains(strtolower($meeting->group->location), ['map', 'goo.gl']))
+                {{__('messages.Map')}}
+            @elseif(\Illuminate\Support\Str::contains(strtolower($meeting->group->location), ['zoom', 'meet', 'teams']))
+                {{__('messages.zoomlink')}}
+            @elseif($meeting->group->group_type !== 'فعلي')
                 {{__('messages.zoomlink')}}
             @else
                 {{__('messages.Map')}}
