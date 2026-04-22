@@ -65,4 +65,21 @@ class UserController extends Controller
         return redirect()->route('users.index')
             ->with('success', 'User Deleted!');
     }
+
+    public function bulkAction(Request $request)
+    {
+        $action = $request->input('action');
+        $userIds = $request->input('user_ids', []);
+
+        if (empty($userIds)) {
+            return redirect()->route('users.index')->with('error', 'No users selected');
+        }
+
+        if ($action === 'delete') {
+            User::whereIn('id', $userIds)->delete();
+            return redirect()->route('users.index')->with('success', 'Selected users deleted successfully');
+        }
+
+        return redirect()->route('users.index')->with('error', 'Invalid action');
+    }
 }

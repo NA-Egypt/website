@@ -129,6 +129,7 @@ Route::group(
                 Route::resource('roles', RoleController::class)->only(['index', 'create', 'store']);
 
                 // users:
+                Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk_action');
                 Route::resource('users', UserController::class)->only(['index', 'edit', 'update', 'create', 'store']);
                 Route::get('/roles/{role}/assign-permissions',
                     [RoleController::class, 'assignPermissions'])
