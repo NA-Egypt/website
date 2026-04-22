@@ -35,11 +35,11 @@ class MeetingFilter extends Component
 
     public function render(MeetingFilterService $filterService)
     {
-        $days = Day::all();
-        $serviceBodies = ServiceBody::all();
+        $days = Day::withCount('meetings')->get();
+        $serviceBodies = ServiceBody::withCount('meetings')->get();
         
         // Base Groups Query
-        $groupsQuery = Group::query();
+        $groupsQuery = Group::withCount('meetings');
         
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
 
@@ -54,13 +54,21 @@ class MeetingFilter extends Component
         }
         $groups = $groupsQuery->get();
         
-        $neighborhoodsQuery = Neighborhood::query();
+        $neighborhoodsQuery = Neighborhood::withCount('meetings');
         if ($this->city) {
             $neighborhoodsQuery->whereHas('city', fn($q) => $q->where($field, $this->city));
         }
         $neighborhoods = $neighborhoodsQuery->get();
 
-        $cities = City::all();
+        $cities = City::leftJoin('neighborhoods', 'cities.id', '=', 'neighborhoods.city_id')
+            ->leftJoin('groups', 'neighborhoods.id', '=', 'groups.neighborhood_id')
+            ->leftJoin('meetings', 'groups.id', '=', 'meetings.group_id')
+            ->select('cities.id', 'cities.ar_name', 'cities.en_name', \Illuminate\Support\Facades\DB::raw('COUNT(meetings.id) as meetings_count'))
+            ->groupBy('cities.id', 'cities.ar_name', 'cities.en_name')
+            ->get();
+            
+        $openCount = \App\Models\Meeting::where('type', 'open')->count();
+        $closedCount = \App\Models\Meeting::where('type', 'closed')->count();
 
         $filters = [
             'day' => $this->day,
@@ -81,6 +89,8 @@ class MeetingFilter extends Component
             'groups' => $groups,
             'cities' => $cities,
             'neighborhoods' => $neighborhoods,
+            'openCount' => $openCount,
+            'closedCount' => $closedCount,
         ]);
     }
 }

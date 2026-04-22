@@ -12,6 +12,26 @@
 @endphp
 
 <x-forms.label :$name :$label />
+
+@if(app()->getLocale() === 'ar')
+<style>
+    .select2-container[dir="rtl"] .select2-selection--single .select2-selection__rendered {
+        padding-right: 0.75rem !important;
+        padding-left: 2.25rem !important;
+    }
+    .select2-container[dir="rtl"] .select2-selection__arrow {
+        right: auto !important;
+        left: 0.5rem !important;
+    }
+    /* Fix the normal form-select for type if it has issues */
+    .form-select[dir="rtl"], [dir="rtl"] .form-select {
+        padding-right: 0.75rem;
+        padding-left: 2.25rem;
+        background-position: left 0.75rem center;
+    }
+</style>
+@endif
+
     <div
         x-data="{
             model: @entangle($attributes->wire('model')),
@@ -20,7 +40,8 @@
                     theme: 'bootstrap4',
                     width: '100%',
                     placeholder: '{{ $label }}',
-                    allowClear: {{ $attributes->has('data-allow-clear') ? 'true' : 'false' }}
+                    allowClear: {{ $attributes->has('data-allow-clear') ? 'true' : 'false' }},
+                    dir: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}'
                 });
 
                 select.on('change', (e) => {
@@ -47,14 +68,14 @@
                 @foreach($options as $option)
                     @if($name === 'type')
                         <option value="open">
-                            {{ __('messages.open') }}
+                            {{ __('messages.open') }} {{ isset($openCount) ? '('.$openCount.')' : '' }}
                         </option>
                         <option value="closed">
-                            {{ __('messages.closed') }}
+                            {{ __('messages.closed') }} {{ isset($closedCount) ? '('.$closedCount.')' : '' }}
                         </option>
                     @else
                         <option value="{{ $option->$field }}">
-                            {{ $option->$field }}
+                            {{ $option->$field }} {{ isset($option->meetings_count) ? '('.$option->meetings_count.')' : '' }}
                         </option>
                     @endif
                 @endforeach

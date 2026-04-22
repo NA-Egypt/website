@@ -4,11 +4,13 @@
         <div class="container px-4 py-3 justify-content-center">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">{{ __('messages.Filter Options') }}</h5>
+                    <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 text-center">
+                            <h5 class="mb-0 fw-bold text-primary">
+                                <i class="fas fa-filter me-2"></i>{{ __('messages.Filter Options') }}
+                            </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                                 <div class="col-12" wire:key="filter-day">
                                     <x-filter.select :options="$days" name="day" wire:model.live="day" class="form-select form-control" label="{{ __('messages.Day') }}" />
@@ -23,8 +25,8 @@
                                     <x-forms.label name="type" label="{{__('messages.Type')}}" />
                                     <select name="type" wire:model.live="type" class="form-select form-control" {{ $group ? 'disabled' : '' }}>
                                         <option value="">{{__('messages.Choose Type')}}</option>
-                                        <option value="open">{{ __('messages.open') }}</option>
-                                        <option value="closed">{{ __('messages.closed') }}</option>
+                                        <option value="open">{{ __('messages.open') }} ({{ $openCount }})</option>
+                                        <option value="closed">{{ __('messages.closed') }} ({{ $closedCount }})</option>
                                     </select>
                                 </div>
                                 <div class="col-12" wire:key="filter-city">
@@ -35,8 +37,10 @@
                                 </div>
                             </div>
                             
-                            <div class="d-flex justify-content-center align-items-center mt-4" >
-                                <a href="{{ route('frontend.meetings') }}" wire:navigate class="btn btn-outline-danger px-4 mx-3">{{__('messages.Clear Filters')}}</a>
+                            <div class="d-flex justify-content-center align-items-center mt-4 pt-3 border-top" >
+                                <a href="{{ route('frontend.meetings') }}" wire:navigate class="btn btn-light text-danger px-4 rounded-pill fw-medium transition-all hover-scale">
+                                    <i class="fas fa-times me-1"></i> {{__('messages.Clear Filters')}}
+                                </a>
                             </div>
                         </div>
                     </div>

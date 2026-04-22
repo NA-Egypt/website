@@ -15,4 +15,8 @@ class Neighborhood extends Model
     public function groups() {
         return $this->hasMany(Group::class);
     }
+
+    public function meetings() {
+        return $this->hasManyThrough(Meeting::class, Group::class);
+    }
 }

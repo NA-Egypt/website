@@ -25,6 +25,10 @@ class ServiceBody extends Model
         return $this->hasMany(Group::class);
     }
 
+    public function meetings() {
+        return $this->hasManyThrough(Meeting::class, Group::class);
+    }
+
     public function day() {
         return $this->belongsTo(Day::class);
     }
