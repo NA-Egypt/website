@@ -14,6 +14,34 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
+    public function create()
+    {
+        $roles = Role::all();
+        return view('users.create', compact('roles'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'display_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'roles' => 'array',
+        ]);
+
+        $user = User::create([
+            'name' => explode('@', $request->email)[0],
+            'display_name' => $request->display_name,
+            'email' => $request->email,
+            'type' => 'manual',
+        ]);
+
+        if ($request->has('roles')) {
+            $user->roles()->sync($request->roles);
+        }
+
+        return redirect()->route('users.index')->with('success', 'User created successfully');
+    }
+
     public function edit(User $user)
     {
         $roles = Role::all();

@@ -18,6 +18,7 @@ use App\Http\Controllers\MeetingFilterController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\ForPublicController;
 use Illuminate\Support\Facades\App;
 use App\Models\City;
 use App\Models\Group;
@@ -128,7 +129,7 @@ Route::group(
                 Route::resource('roles', RoleController::class)->only(['index', 'create', 'store']);
 
                 // users:
-                Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
+                Route::resource('users', UserController::class)->only(['index', 'edit', 'update', 'create', 'store']);
                 Route::get('/roles/{role}/assign-permissions',
                     [RoleController::class, 'assignPermissions'])
                     ->name('roles.assign-permissions');

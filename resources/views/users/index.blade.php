@@ -11,6 +11,9 @@
 {{--            </li>--}}
 {{--        @endforeach--}}
 {{--    </ul>--}}
+    <div class="mb-3 text-end">
+        <x-button-a href="{{ route('users.create') }}" color="primary" name="{{ __('messages.Add User') ?? 'Add User' }}" />
+    </div>
     <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
         <table class="main-tables text-center table table-bordered display" id="example">
             <thead>
