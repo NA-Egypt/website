@@ -32,7 +32,7 @@
 
       {{-- Total Users --}}
       <div class="col">
-          <x-dashboard.card-statics name="{{ __('messages.Total Users') }}" qty="5" color-theme="info" icon="person-badge" />
+          <x-dashboard.card-statics name="{{ __('messages.Total Users') }}" qty="{{ $usersCount }}" color-theme="info" icon="person-badge" />
       </div>
       {{-- / Total Users --}}
 

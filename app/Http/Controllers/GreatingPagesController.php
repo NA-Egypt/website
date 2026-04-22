@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Meeting;
 use App\Models\ServiceBody;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class GreatingPagesController extends Controller
@@ -22,11 +23,14 @@ class GreatingPagesController extends Controller
 
         $groups = Group::all();
 
+        $usersCount = User::count();
+
         // transactions:
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $transactions */
         $transactions = Transaction::with('user')->latest()->paginate(4);
 
         // Augment the paginated collection with `group_name`
-        $transactions->getCollection()->transform(function ($transaction) {
+        $transactions->through(function ($transaction) {
             if ($transaction->model === 'Meeting' && isset($transaction->details['group_id'])) {
                 $group = Group::find($transaction->details['group_id']);
                 $transaction->group_name = $group ? $group->name : 'N/A';
@@ -40,6 +44,7 @@ class GreatingPagesController extends Controller
             'serviceBodies' => $serviceBodies,
             'cities'        => $cities,
             'groups'        => $groups,
+            'usersCount'    => $usersCount,
             'transactions'  => $transactions,
         ]);
     }
