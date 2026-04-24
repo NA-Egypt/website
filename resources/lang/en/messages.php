@@ -252,6 +252,8 @@ return [
     'phonelinedoc' => 'Phone Line Guide (Arabic)',
     'Index' => 'Index',
     'Select Topic' => 'Select Topic',
+    'phonelinegsrguide' => 'Receiving Phone Calls - GSR Guide (Arabic)',
+    'membershipSurvey' => 'Membership Survey 2025 (Arabic)',
     'Definition of Narcotics Anonymous' => 'Definition of Narcotics Anonymous',
     'Information about the local fellowship' => 'Information about the local fellowship',
     'Local statistics (general characteristics of members)' => 'Local statistics (general characteristics of members)',

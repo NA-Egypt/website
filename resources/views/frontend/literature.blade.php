@@ -10,7 +10,7 @@
             'title' => __('messages.AudioAmIanAddict'),
             'file' => 'literature/_IP7_Am_I_an_addict_Arabic.aac'
         ],
-                [
+        [
             'type' => 'audio',
             'title' => __('messages.AudioForthenewcomer'),
             'file' => 'literature/_IP16_For_the_new_comer_Arabic.aac'
@@ -35,12 +35,12 @@
             'title' => __('messages.WhiteBooklet'),
             'file' => 'https://na.org/wp-content/uploads/2024/05/AR1500_LWB-White-Booklet-Arabic.pdf'
         ],
-                [
+        [
             'type' => 'pdf',
             'title' => __('messages.IP1'),
             'file' => 'https://na.org/wp-content/uploads/2024/05/AR3101_2015-IP-1-Arabic.pdf'
         ],
-                [
+        [
             'type' => 'pdf',
             'title' => __('messages.IP2'),
             'file' => 'https://na.org/wp-content/uploads/2024/05/AR3102-IP-2-Arabic.pdf'
@@ -160,16 +160,26 @@
             'title' => __('messages.EgyptPRCommitteeFacebookPage'),
             'file' => 'https://na.org/wp-content/uploads/2024/06/Egypt-PR-Committee-Facebook-page-SP.pdf'
         ],
-                [
+        [
             'type' => 'pdf',
             'title' => __('messages.phonelinedoc'),
             'file' => 'https://na.org/wp-content/uploads/2025/08/%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85-%D9%85%D8%AA%D8%B7%D9%88%D8%B9-%D8%A7%D9%84%D8%B1%D8%AF-%D8%B9%D9%84%D9%89-%D8%AE%D8%B7-%D8%A7%D9%84%D9%87%D8%A7%D8%AA%D9%81-.pdf'
         ],
-                [
+        [
             'type' => 'pdf',
             'title' => __('messages.replacementdubs'),
             'file' => 'https://na.org/wp-content/uploads/2025/08/%D9%86%D8%B4%D8%B1%D8%A9-%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D9%86%D8%A7%D8%B9-%D8%A8%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D9%82%D9%8A%D8%B1-%D8%A7%D9%84%D8%A8%D8%AF%D9%8A%D9%84%D8%A9-%D9%84%D9%84%D9%85%D8%AE%D8%AF%D8%B1%D8%A7%D8%AA-%D9%88-%D8%A7%D8%B3%D8%AA%D8%A8%D8%AF%D8%A7%D9%84-%D8%A7%D9%84%D9%85%D8%AE%D8%AF%D8%B1.pdf'
-        ],        
+        ],
+        [
+            'type' => 'pdf',
+            'title' => __('messages.membershipSurvey'),
+            'file' => 'literature/membership_survey.pdf'
+        ],
+        [
+            'type' => 'pdf',
+            'title' => __('messages.phonelinegsrguide'),
+            'file' => 'literature/receiving_phone_call_guide.pdf'
+        ],
         
         // Add more items here
     ];
@@ -269,7 +279,7 @@
                 @foreach($literatureItems as $item)
                     @if($item['type'] === 'pdf')
                         @php $pdfCount++; @endphp
-                        @if($pdfCount > $totalPdfs - 6)
+                        @if($pdfCount > $totalPdfs - 8)
                             <div class="literature-item">
                                 <div class="literature-pdf">
                                     <a href="{{ $item['file'] }}" target="_blank">

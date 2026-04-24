@@ -251,6 +251,8 @@ return [
     'Meeting Date' => 'تاريخ الاجتماع',
     'Meeting Day Description' => 'وصف يوم الاجتماع',
     'Select Topic' => 'اختر الموضوع',
+    'phonelinegsrguide' => 'ارشادات استقبال المكالمات لممثلى المجموعات',
+    'membershipSurvey' => 'استبيان العضوية 2025',
     'Positions Status' => 'حالة المناصب',
     'Add Position' => 'إضافة منصب',
     'Position Name' => 'اسم المنصب',
