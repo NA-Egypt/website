@@ -173,12 +173,12 @@
         [
             'type' => 'pdf',
             'title' => __('messages.membershipSurvey'),
-            'file' => 'literature/membership_survey.pdf'
+            'file' => '/literature/membership_survey.pdf'
         ],
         [
             'type' => 'pdf',
             'title' => __('messages.phonelinegsrguide'),
-            'file' => 'literature/receiving_phone_call_guide.pdf'
+            'file' => '/literature/receiving_phone_call_guide.pdf'
         ],
         
         // Add more items here
