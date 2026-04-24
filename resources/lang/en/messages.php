@@ -251,6 +251,7 @@ return [
     'replacementdubs' => 'Replacement Drugs (Arabic)',
     'phonelinedoc' => 'Phone Line Guide (Arabic)',
     'Index' => 'Index',
+    'Select Topic' => 'Select Topic',
     'Definition of Narcotics Anonymous' => 'Definition of Narcotics Anonymous',
     'Information about the local fellowship' => 'Information about the local fellowship',
     'Local statistics (general characteristics of members)' => 'Local statistics (general characteristics of members)',

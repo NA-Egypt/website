@@ -16,7 +16,38 @@
                         @endcan
                     @endauth
 
-                    <x-forms.select multiple="multiple" :$topics name="topics[]" label="{{ __('messages.Meeting Topic') }}" :value="$meeting->topics" />
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-chat-left-text me-2 text-info"></i> {{ __('messages.Meeting Topic') }}</h6>
+                        <div class="d-flex flex-wrap align-items-center gap-3 glass-card p-3 rounded-4" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                            <div style="flex: 1; min-width: 200px;">
+                                <select id="topic-selector" class="form-select rounded-pill shadow-sm" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.7);">
+                                    <option value="">{{ __('messages.Select Topic') ?? 'Select Topic' }}</option>
+                                    @foreach ($topics as $topic)
+                                        <option value="{{ $topic->id }}" data-name="{{ app()->getLocale() === 'ar' ? $topic->ar_name : $topic->en_name }}">
+                                            {{ app()->getLocale() === 'ar' ? $topic->ar_name : $topic->en_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="selected-topics-container" class="d-flex flex-wrap gap-2" style="flex: 2; min-width: 250px; min-height: 38px; align-items: center;">
+                                @php
+                                    $selectedTopics = old('topics', isset($meeting) ? $meeting->topics->pluck('id')->toArray() : []);
+                                @endphp
+                                @foreach($selectedTopics as $selectedId)
+                                    @php
+                                        $selectedTopic = $topics->firstWhere('id', $selectedId);
+                                    @endphp
+                                    @if($selectedTopic)
+                                        <div class="badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); font-size: 0.85rem;">
+                                            <span style="margin-inline-end: 0.5rem;">{{ app()->getLocale() === 'ar' ? $selectedTopic->ar_name : $selectedTopic->en_name }}</span>
+                                            <input type="hidden" name="topics[]" value="{{ $selectedTopic->id }}">
+                                            <button type="button" class="btn-close btn-close-white remove-topic" style="font-size: 0.5rem; margin-inline-start: 0.5rem;" aria-label="Close"></button>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
     
                     <div class="row align-items-end">
                         <div class="col-md-3">
@@ -125,6 +156,45 @@
             Suspended: @json(__('messages.suspended')),
         };
         document.addEventListener('DOMContentLoaded', function () {
+            // Topics Tag Manager
+            const topicSelector = document.getElementById('topic-selector');
+            const container = document.getElementById('selected-topics-container');
+
+            if(topicSelector && container) {
+                topicSelector.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (!selectedOption.value) return;
+
+                    const id = selectedOption.value;
+                    const name = selectedOption.getAttribute('data-name');
+
+                    // Check if already added
+                    if (!container.querySelector(`input[value="${id}"]`)) {
+                        // Create tag
+                        const tag = document.createElement('div');
+                        tag.className = 'badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag';
+                        tag.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                        tag.style.fontSize = '0.85rem';
+                        tag.innerHTML = `
+                            <span style="margin-inline-end: 0.5rem;">${name}</span>
+                            <input type="hidden" name="topics[]" value="${id}">
+                            <button type="button" class="btn-close btn-close-white remove-topic" style="font-size: 0.5rem; margin-inline-start: 0.5rem;" aria-label="Close"></button>
+                        `;
+                        container.appendChild(tag);
+                    }
+
+                    // Reset selector
+                    this.value = '';
+                });
+
+                // Event delegation for removing topics
+                container.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-topic')) {
+                        e.target.closest('.topic-tag').remove();
+                    }
+                });
+            }
+
             const switches = [
                 {
                     input: document.getElementById('meeting-type'),

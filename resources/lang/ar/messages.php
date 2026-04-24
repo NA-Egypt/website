@@ -250,6 +250,7 @@ return [
     'Add Report' => 'إضافة تقرير',
     'Meeting Date' => 'تاريخ الاجتماع',
     'Meeting Day Description' => 'وصف يوم الاجتماع',
+    'Select Topic' => 'اختر الموضوع',
     'Positions Status' => 'حالة المناصب',
     'Add Position' => 'إضافة منصب',
     'Position Name' => 'اسم المنصب',
