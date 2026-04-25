@@ -335,7 +335,7 @@
                 <div class="content-box">
                     <div class="brochure-list">
 
-                        {{-- membershipSurvey --}}
+                        {{-- MembershipSurvey --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
                                 <i class="bi bi-star-fill"></i>
