@@ -335,6 +335,17 @@
                 <div class="content-box">
                     <div class="brochure-list">
 
+                        {{-- membershipSurvey --}}
+                        <div class="brochure-item featured fade-in fade-in-delay-1">
+                            <div class="brochure-header">
+                                <i class="bi bi-star-fill"></i>
+                                <h5><a href="/literature/membership_survey.pdf"
+                                       class="brochure-link">{{__('messages.membershipSurvey')}}</a></h5>
+                            </div>
+                            <p>{{ app()->getLocale() === 'ar' ? 'تم جمع بيانات هذا الاستبيان ورقيا خلال فعاليات المؤتمر السنوي في مايو ٢٠٢٥ بهدف تقديم مؤشرات عمليه و مفيدة حول بعض ملامح واقع التعافي و العضويه في مصر' : 'The data for this survey was collected in paper form during the annual conference in May 2025 with the aim of providing practical and useful indicators on some aspects of the recovery and membership reality in Egypt.' }}
+                            </p>
+                        </div>
+
                         {{-- Who, what, how and why --}}
                         <div class="brochure-item featured fade-in fade-in-delay-1">
                             <div class="brochure-header">
