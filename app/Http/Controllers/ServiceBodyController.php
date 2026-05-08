@@ -55,4 +55,14 @@ class ServiceBodyController extends Controller
 
         return redirect()->route('serviceBody.index');
     }
+
+    public function agendas(ServiceBody $serviceBody) {
+        // Eager load groups and agendas to avoid N+1 problem
+        $serviceBody->load('agendas.group');
+        
+        return view('serviceBody.agendas', [
+            'serviceBody' => $serviceBody,
+            'agendas' => $serviceBody->agendas()->orderBy('agenda_date', 'desc')->get()
+        ]);
+    }
 }

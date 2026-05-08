@@ -42,6 +42,7 @@
                         <td>{{ $service->formatted_end_time}}</td>
                         <td>{{ $service->location }}</td>
                         <td>
+                            <x-button-a href="{{ route('serviceBody.agendas', $service->id) }}" color='outline-primary' name="{{ __('messages.agendas') ?? 'Agendas' }}" />
                             <x-button-a href="{{ route('serviceBody.edit', $service->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
                             <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$service->id}}" routeName="serviceBody.destroy" />
                         </td>

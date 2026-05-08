@@ -266,6 +266,31 @@
                     <h5 class="text-secondary mt-3">{{ __('messages.No meetings scheduled') }}</h5>
                 </div>
             @endif
+        {{-- Agendas Section --}}
+        <div class="glass-card p-4 rounded-4 mt-5">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
+                <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-journal-text me-2"></i> {{ __('messages.agendas') ?? 'Agendas' }}</h4>
+                <x-button-a href="{{ route('agenda.create', ['group_id' => $group->id]) }}" color='outline-primary' name="{{__('messages.create_agenda') ?? 'Create Agenda'}}" class="rounded-pill" />
+            </div>
+            
+            @if($group->agendas && $group->agendas->count() > 0)
+                <div class="list-group">
+                    @foreach($group->agendas->sortByDesc('agenda_date') as $agenda)
+                        <a href="{{ route('agenda.show', $agenda->id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 rounded" style="background: rgba(255,255,255,0.5);">
+                            <div>
+                                <h6 class="mb-0 text-primary fw-bold">{{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->format('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }}</h6>
+                                <small class="text-secondary">{{ \Carbon\Carbon::parse($agenda->agenda_date)->format('d M Y') }} - {{ $agenda->submitter_name }}</small>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill"><i class="bi bi-chevron-right"></i></span>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center p-5 rounded-4" style="background: rgba(0,0,0,0.02); border: 1px dashed var(--glass-border);">
+                    <i class="bi bi-journal-x text-secondary" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h5 class="text-secondary mt-3">No agendas submitted yet</h5>
+                </div>
+            @endif
         </div>
     </div>
 </x-layout>

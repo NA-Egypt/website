@@ -52,6 +52,7 @@ Route::group(
                 Route::get('/serviceBody',[ServiceBodyController::class,'index'])->name('serviceBody.index');
                 Route::get('/serviceBody/create',[ServiceBodyController::class,'create'])->name('serviceBody.create');
                 Route::post('/serviceBody',[ServiceBodyController::class,'store'])->name('serviceBody.store');
+                Route::get('/serviceBody/{serviceBody}/agendas',[ServiceBodyController::class,'agendas'])->name('serviceBody.agendas');
                 Route::get('/serviceBody/{serviceBody}',[ServiceBodyController::class,'edit'])->name('serviceBody.edit');
                 Route::put('/serviceBody/{serviceBody}',[ServiceBodyController::class,'update'])->name('serviceBody.update');
                 Route::delete('/serviceBody/{serviceBody}',[ServiceBodyController::class,'destroy'])->name('serviceBody.destroy');
@@ -106,6 +107,11 @@ Route::group(
             Route::get('/meeting/{meeting}',[MeetingController::class,'edit'])->name('meeting.edit');
             Route::put('/meeting/{meeting}',[MeetingController::class,'update'])->name('meeting.update');
             Route::delete('/meeting/{meeting}',[MeetingController::class,'destroy'])->name('meeting.destroy');
+
+            // Agenda Routes:
+            Route::get('/agenda/create', [\App\Http\Controllers\AgendaController::class, 'create'])->name('agenda.create');
+            Route::post('/agenda', [\App\Http\Controllers\AgendaController::class, 'store'])->name('agenda.store');
+            Route::get('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'show'])->name('agenda.show');
 
             Route::middleware(['role:super admin'])->group(function () {
                 // Permissions:

@@ -45,4 +45,9 @@ class Group extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function agendas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Agenda::class);
+    }
 }
