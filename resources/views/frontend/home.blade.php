@@ -252,46 +252,6 @@
     </button>
   </div>
 
-  <div class="home-stats-wrap">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="home-stats-shell">
-          <div class="stats-heading text-center">
-            <h3>{{ __('messages.recovery_network') }}</h3>
-            <p>{{ __('messages.recovery_network_desc') }}</p>
-          </div>
-
-          <div class="stats-grid-home">
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-calendar-week-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.weekly_meetings') }}</span>
-              </div>
-              <div class="stat-value-home">{{ number_format($homeStats['weekly_meetings']) }}</div>
-            </div>
-
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-people-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.groups_count') }}</span>
-              </div>
-              <div class="stat-value-home">{{ number_format($homeStats['groups']) }}</div>
-            </div>
-
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-map-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.governorates_count') }}</span>
-              </div>
-              <div class="stat-value-home">{{ number_format($homeStats['governorates']) }}</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="home-stats-shell">
@@ -398,6 +358,59 @@
       </div>
     </div>
   </div>
+  <div class="home-stats-wrap">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="home-stats-shell">
+          <div class="stats-heading text-center">
+            <h3>{{ __('messages.recovery_network') }}</h3>
+            <p>{{ __('messages.recovery_network_desc') }}</p>
+          </div>
+
+          <div class="stats-grid-home">
+            <div class="stat-card-home">
+              <div class="stat-top">
+                <span class="stat-icon-home"><i class="bi bi-calendar-week-fill"></i></span>
+                <span class="stat-label-home">{{ __('messages.weekly_meetings') }}</span>
+              </div>
+              <div class="stat-value-home">{{ number_format($homeStats['weekly_meetings']) }}</div>
+            </div>
+
+            <div class="stat-card-home">
+              <div class="stat-top">
+                <span class="stat-icon-home"><i class="bi bi-people-fill"></i></span>
+                <span class="stat-label-home">{{ __('messages.groups_count') }}</span>
+              </div>
+              <div class="stat-value-home">{{ number_format($homeStats['groups']) }}</div>
+            </div>
+
+            <div class="stat-card-home">
+              <div class="stat-top">
+                <span class="stat-icon-home"><i class="bi bi-map-fill"></i></span>
+                <span class="stat-label-home">{{ __('messages.governorates_count') }}</span>
+              </div>
+              <div class="stat-value-home">{{ number_format($homeStats['governorates']) }}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if(!empty($jftContent))
+  <div class="home-stats-wrap mb-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="home-stats-shell">
+          <div class="jft-content text-right" dir="rtl" style="position: relative; z-index: 1;">
+            {!! $jftContent !!}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
+
   <script>
     let selectedDate = null;
 

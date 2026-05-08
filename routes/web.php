@@ -182,7 +182,19 @@ Route::group(
                 'governorates' => City::count(),
             ];
 
-            return view('frontend.home', compact('homeStats'));
+            $jftFileName = date('j') . '_' . strtolower(date('M')) . '_.html';
+            $jftFilePath = public_path('literature/jft/' . $jftFileName);
+            $jftContent = '';
+            if (file_exists($jftFilePath)) {
+                $html = file_get_contents($jftFilePath);
+                if (preg_match('/<body>(.*?)<\/body>/is', $html, $matches)) {
+                    $jftContent = $matches[1];
+                } else {
+                    $jftContent = $html;
+                }
+            }
+
+            return view('frontend.home', compact('homeStats', 'jftContent'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){
