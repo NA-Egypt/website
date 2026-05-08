@@ -493,4 +493,13 @@ return [
         ],
         'back_to_top' => 'Back to Top',
     ],
+    'Weekly' => 'Weekly',
+    'MeetingSettings' => 'Meeting Settings',
+    'Status' => 'Status',
+    'last' => 'Last Week',
+    '1st' => '1st Week',
+    '2nd' => '2nd Week',
+    '3rd' => '3rd Week',
+    '4th' => '4th Week',
+    '5th' => '5th Week',
 ];

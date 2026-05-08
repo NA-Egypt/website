@@ -63,10 +63,36 @@
                             <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number" value="{{ $meeting->capacity }}"/>
                         </div>
                     </div>
+                    
+                    <div class="mb-4 mt-3">
+                        <h6 class="fw-bold mb-3" style="color: var(--text-primary);"><i class="bi bi-calendar-week me-2 text-warning"></i> {{ __('Recurrence') }}</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @php
+                                $recurrences = [
+                                    'weekly' => __('messages.Weekly'),
+                                    '1st' => __('messages.1st'),
+                                    '2nd' => __('messages.2nd'),
+                                    '3rd' => __('messages.3rd'),
+                                    '4th' => __('messages.4th'),
+                                    '5th' => __('messages.5th'),
+                                    'last' => __('messages.last'),
+                                ];
+                                $selectedRecurrence = old('recurrence', $meeting->recurrence ?? ['weekly']);
+                            @endphp
+                            @foreach($recurrences as $val => $label)
+                                <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-{{ $val }}" value="{{ $val }}" {{ is_array($selectedRecurrence) && in_array($val, $selectedRecurrence) ? 'checked' : '' }} style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-{{ $val }}" style="font-size: 0.9rem;">
+                                        {{ $label }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
     
                     <x-forms.textarea name="notes" label="{{ __('messages.Notes') }}">{{ $meeting->notes }}</x-forms.textarea>
 
-                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-sliders me-2 text-primary"></i> Meeting Settings</h6>
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-sliders me-2 text-primary"></i> {{ __('messages.MeetingSettings')}}</h6>
                     <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
                         {{-- Type Switch --}}
                         <div class="col">
@@ -108,7 +134,7 @@
                                 <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
                                     <i class="bi bi-activity"></i>
                                 </div>
-                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">Status</span>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">{{__("messages.Status")}}</span>
                                 <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
                                     <input type="hidden" name="status" value="suspended">
                                     <input class="form-check-input ms-0 mt-0" type="checkbox" id="status-switch" name="status" value="available" {{ old('status', $meeting->status ?? 'available') === 'available' ? 'checked' : '' }}>
@@ -120,7 +146,7 @@
                         </div>
                     </div>
 
-                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-ui-checks-grid me-2 text-success"></i> Options</h6>
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-ui-checks-grid me-2 text-success"></i> {{__("messages.Options")}}</h6>
                     <div class="row row-cols-2 row-cols-md-3 g-3 mb-5 options-section">
                         @foreach ($options as $option)
                             <div class="col">

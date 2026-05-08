@@ -98,6 +98,8 @@ class MeetingController extends Controller
             'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
+            'recurrence'    => 'required|array',
+            'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
 
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
@@ -113,6 +115,7 @@ class MeetingController extends Controller
             'lang'          => $fields['lang'],
             'status'        => $fields['status'],
             'capacity'      => $fields['capacity'] ?? null,
+            'recurrence'    => $fields['recurrence'],
         ]);
 
         if (!empty($fields['options'])) {
@@ -173,6 +176,8 @@ class MeetingController extends Controller
             'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
+            'recurrence'    => 'required|array',
+            'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
     
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
@@ -188,6 +193,7 @@ class MeetingController extends Controller
             'lang'        => $fields['lang'],
             'status'      => $fields['status'],
             'capacity'    => $fields['capacity'] ?? null,
+            'recurrence'  => $fields['recurrence'],
         ]);
     
         $meeting->options()->sync($fields['options'] ?? []);

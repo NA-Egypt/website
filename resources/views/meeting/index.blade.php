@@ -38,6 +38,7 @@
                                 @endif
                             </td>
                             <td>
+                                {{ $meeting->formatted_recurrence }} - 
                                 @if(app()->getLocale() === 'ar')
                                     {{$meeting->day->ar_name}}
                                 @else

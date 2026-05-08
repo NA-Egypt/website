@@ -22,7 +22,12 @@ class Meeting extends Model
         'options',
         'lang',
         'status',
-        'capacity'
+        'capacity',
+        'recurrence'
+    ];
+    
+    protected $casts = [
+        'recurrence' => 'array',
     ];
     public function group() {
         return $this->belongsTo(Group::class);
@@ -67,6 +72,20 @@ class Meeting extends Model
         public function getDurationAttribute()
     {
         return $this->calculateMeetingDuration($this->formatted_start_time, $this->formatted_end_time);
+    }
+
+    // Accessor for Formatted Recurrence:
+    public function getFormattedRecurrenceAttribute()
+    {
+        if (empty($this->recurrence) || in_array('weekly', $this->recurrence)) {
+            return __('Weekly');
+        }
+
+        $formatted = array_map(function($item) {
+            return ucfirst($item);
+        }, $this->recurrence);
+
+        return implode(', ', $formatted);
     }
 
 }
