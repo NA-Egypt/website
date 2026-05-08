@@ -8,6 +8,21 @@
 .transition-opacity {
     transition: opacity 0.3s ease, text-shadow 0.3s ease;
 }
+.logo-img {
+    width: 307px;
+    max-width: 100%;
+    height: auto;
+}
+@media (max-width: 768px) {
+    .logo-img {
+        max-width: 220px;
+    }
+}
+@media (max-width: 400px) {
+    .logo-img {
+        max-width: 180px;
+    }
+}
 </style>
 <nav class="main-nav" style="box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);">
     <section class="top-nav">
@@ -15,7 +30,7 @@
         <!-- Logo -->
         <div class="logo">
           <a href="{{ route('frontend.home') }}">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" width="307">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img">
           </a>
         </div>
   
