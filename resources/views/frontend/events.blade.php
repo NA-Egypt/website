@@ -51,6 +51,11 @@
                                                                 <x-fas-user style="width:14px; height:14px;" /> {{ $event->organizer }}
                                                             </h6>
                                                             @endif
+                                                            @if($event->formatted_recurrence && $event->formatted_recurrence !== 'Once' && $event->formatted_recurrence !== __('messages.Once'))
+                                                            <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
+                                                                <i class="bi bi-arrow-repeat" style="width:14px; height:14px;"></i> {{ $event->formatted_recurrence }}
+                                                            </h6>
+                                                            @endif
                                                             <p class="card-text">{{ $event->description }}</p>
                                                         </div>
                                                     </div>
@@ -105,6 +110,10 @@
                     <h6 class="card-subtitle mb-3 text-muted d-none" id="modalEventOrganizerContainer">
                         <x-fas-user style="width:14px; height:14px;" /> 
                         <span id="modalEventOrganizer"></span>
+                    </h6>
+                    <h6 class="card-subtitle mb-3 text-muted d-none" id="modalEventRecurrenceContainer">
+                        <i class="bi bi-arrow-repeat" style="width:14px; height:14px;"></i> 
+                        <span id="modalEventRecurrence"></span>
                     </h6>
                     <p id="modalEventDescription" class="card-text"></p>
                 </div>
@@ -193,6 +202,14 @@
                                     document.getElementById('modalEventOrganizerContainer').classList.remove('d-none');
                                 } else {
                                     document.getElementById('modalEventOrganizerContainer').classList.add('d-none');
+                                }
+
+                                var recurrence = event.extendedProps.recurrence;
+                                if (recurrence && recurrence !== 'Once' && recurrence !== '{{ __("messages.Once") }}') {
+                                    document.getElementById('modalEventRecurrence').textContent = recurrence;
+                                    document.getElementById('modalEventRecurrenceContainer').classList.remove('d-none');
+                                } else {
+                                    document.getElementById('modalEventRecurrenceContainer').classList.add('d-none');
                                 }
 
                                 var modal = new bootstrap.Modal(document.getElementById('calendarEventModal'));

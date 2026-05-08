@@ -3,9 +3,11 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Traits\EventRecurrenceTrait;
 
 class YearlyCalendar extends Component
 {
+    use EventRecurrenceTrait;
     public $eventId;
     public $title;
     public $start;
@@ -14,6 +16,7 @@ class YearlyCalendar extends Component
     public $color = '#3788d8'; // Default FullCalendar blue
     public $organizer;
     public $location;
+    public $recurrence = ['once'];
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -23,29 +26,38 @@ class YearlyCalendar extends Component
         'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
         'organizer' => 'nullable|string|max:255',
         'location' => 'nullable|string|max:255',
+        'recurrence' => 'nullable|array',
     ];
 
     public function fetchEvents($start, $end)
     {
-        return \App\Models\CalendarEvent::query()
-            ->where('start', '>=', $start)
-            ->where('end', '<=', $end)
-            ->get()
-            ->map(function ($event) {
-                return [
+        $baseEvents = \App\Models\CalendarEvent::query()
+            ->where('start', '<=', $end) // Allow recurring events that started in the past
+            ->get();
+            
+        $expandedEvents = collect();
+
+        foreach ($baseEvents as $event) {
+            $instances = $this->generateOccurrences($event, $start, $end);
+            foreach ($instances as $instance) {
+                $expandedEvents->push([
                     'id' => $event->id,
                     'title' => $event->title,
-                    'start' => $event->start->toIso8601String(),
-                    'end' => $event->end->toIso8601String(),
+                    'start' => $instance['start']->toIso8601String(),
+                    'end' => $instance['end']->toIso8601String(),
                     'color' => $event->color,
                     'extendedProps' => [
                         'description' => $event->description,
                         'user_id' => $event->user_id,
                         'organizer' => $event->organizer,
                         'location' => $event->location,
+                        'recurrence' => $event->recurrence,
                     ],
-                ];
-            });
+                ]);
+            }
+        }
+        
+        return $expandedEvents;
     }
 
     public function saveEvent()
@@ -69,6 +81,7 @@ class YearlyCalendar extends Component
                 'color' => $validatedData['color'],
                 'organizer' => $validatedData['organizer'] ?? null,
                 'location' => $validatedData['location'] ?? null,
+                'recurrence' => $validatedData['recurrence'] ?? ['once'],
             ]);
         } else {
             \App\Models\CalendarEvent::create([
@@ -80,10 +93,11 @@ class YearlyCalendar extends Component
                 'organizer' => $validatedData['organizer'] ?? null,
                 'location' => $validatedData['location'] ?? null,
                 'user_id' => auth()->id(),
+                'recurrence' => $validatedData['recurrence'] ?? ['once'],
             ]);
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
         $this->dispatch('event-saved');
     }
 
@@ -104,6 +118,7 @@ class YearlyCalendar extends Component
         $this->color = $event->color;
         $this->organizer = $event->organizer;
         $this->location = $event->location;
+        $this->recurrence = $event->recurrence ?? ['once'];
 
         $this->dispatch('open-modal');
     }
@@ -122,7 +137,7 @@ class YearlyCalendar extends Component
             $event->delete();
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
         $this->dispatch('event-saved');
     }
 
@@ -133,19 +148,11 @@ class YearlyCalendar extends Component
 
     public function render()
     {
-        // Fetch all events for initial load
-        $events = \App\Models\CalendarEvent::all()->map(function ($event) {
-            return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'start' => $event->start->toIso8601String(),
-                'end' => $event->end->toIso8601String(),
-                'color' => $event->color,
-                'description' => $event->description,
-                'organizer' => $event->organizer,
-                'location' => $event->location,
-            ];
-        });
+        // Initial load for current year (or roughly visible window)
+        $start = \Carbon\Carbon::now()->startOfYear()->toIso8601String();
+        $end = \Carbon\Carbon::now()->endOfYear()->toIso8601String();
+        
+        $events = $this->fetchEvents($start, $end);
 
         return view('livewire.yearly-calendar', ['events' => $events])
             ->layout('components.layout');
