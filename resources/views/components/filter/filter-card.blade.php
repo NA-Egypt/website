@@ -79,7 +79,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
 @foreach($meetings as $meeting)
-<div class="col" dir="{{ $direction }}">
+<div class="col mb-3" dir="{{ $direction }}">
     @if($meeting->status=="suspended")
         <div class="meeting-item-suspended">
             <div style="text-align: center;font-size: x-large;color: crimson;">
