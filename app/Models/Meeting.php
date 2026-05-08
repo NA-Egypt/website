@@ -78,7 +78,7 @@ class Meeting extends Model
     public function getFormattedRecurrenceAttribute()
     {
         if (empty($this->recurrence) || in_array('weekly', $this->recurrence)) {
-            return __('Weekly');
+            return __('messages.Weekly');
         }
 
         $formatted = array_map(function($item) {
