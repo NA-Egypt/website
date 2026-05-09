@@ -26,7 +26,7 @@
 </style>
 <nav class="main-nav" style="box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);">
     <section class="top-nav">
-      <div class="container-fluid px-3">
+      <div class="container-fluid px-3 d-flex align-items-center justify-content-between h-100">
         <!-- Logo -->
         <div class="logo">
           <a href="{{ route('frontend.home') }}">

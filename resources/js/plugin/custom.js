@@ -108,16 +108,12 @@ window.jQuery(function () {
 	// DataTables Initialization
 	var tableSelector = 'table.display, table.data-table, .main-tables';
 
-	console.log('Custom.js: Checking for tables with selector:', tableSelector);
 	var $foundTables = $(tableSelector);
-	console.log('Custom.js: Found ' + $foundTables.length + ' tables.');
 
 	if ($foundTables.length) {
 		$foundTables.each(function () {
 			var $table = $(this);
-			console.log('Custom.js: Initializing DataTable for table ID:', $table.attr('id'));
 			var isServerSide = $table.data('server-pagination') === true;
-			console.log('Custom.js: Server-side pagination?', isServerSide);
 
 			$table.DataTable({
 				paging: !isServerSide,  // Disable paging if server-side
@@ -125,7 +121,6 @@ window.jQuery(function () {
 				ordering: true,         // Explicitly enable sorting
 				destroy: true,          // Allow re-initialization if it happened elsewhere
 				initComplete: function () {
-					console.log('Custom.js: DataTable initialization complete for', $table.attr('id'));
 					this.api()
 						.columns()
 						.every(function () {

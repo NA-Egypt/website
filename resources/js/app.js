@@ -56,7 +56,7 @@ const loadPlugins = async () => {
         await import('./plugin/index');
         await import('./plugin/custom');
 
-        console.log("All plugins loaded sequentially.");
+
     } catch (err) {
         console.error("Failed to load plugins via async/await", err);
     }

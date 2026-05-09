@@ -11,8 +11,8 @@
    <script src="https://www.google.com/recaptcha/api.js"></script>
   <script src="{{ asset('assets/js/frontend.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}" />
-  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+  <script src="{{ asset('assets/js/driver.js.iife.js') }}"></script>
+  <link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}"/>
   <!-- Include RTL CSS dynamically -->
   @if($direction === 'rtl')
       <link rel="stylesheet" href="{{ asset('assets/css/rtl.css') }}" />
