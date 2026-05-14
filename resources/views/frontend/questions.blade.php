@@ -42,9 +42,6 @@
 
     <style>
         .questions-page {
-            background:
-                radial-gradient(circle at top right, rgba(59, 130, 246, 0.10), transparent 28%),
-                linear-gradient(180deg, #f8fbff 0%, #f1f7ff 100%);
             min-height: 100vh;
             padding-bottom: 60px;
         }

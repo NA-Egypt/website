@@ -16,7 +16,7 @@ class FrontendEventController extends Controller
         $windowStart = now();
         $windowEnd = now()->addYears(1);
 
-        $baseEvents = CalendarEvent::where('end', '>=', $windowStart)->get();
+        $baseEvents = CalendarEvent::where('start', '<=', $windowEnd)->get();
         
         $expandedEvents = collect();
 

@@ -13,6 +13,31 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
 
 
+  <script>
+    window.dataTablesLanguage = {
+        "sEmptyTable":     "{{ __('messages.datatables.sEmptyTable') }}",
+        "sInfo":           "{{ __('messages.datatables.sInfo') }}",
+        "sInfoEmpty":      "{{ __('messages.datatables.sInfoEmpty') }}",
+        "sInfoFiltered":   "{{ __('messages.datatables.sInfoFiltered') }}",
+        "sInfoPostFix":    "{{ __('messages.datatables.sInfoPostFix') }}",
+        "sInfoThousands":  "{{ __('messages.datatables.sInfoThousands') }}",
+        "sLengthMenu":     "{{ __('messages.datatables.sLengthMenu') }}",
+        "sLoadingRecords": "{{ __('messages.datatables.sLoadingRecords') }}",
+        "sProcessing":     "{{ __('messages.datatables.sProcessing') }}",
+        "sSearch":         "{{ __('messages.datatables.sSearch') }}",
+        "sZeroRecords":    "{{ __('messages.datatables.sZeroRecords') }}",
+        "oPaginate": {
+            "sFirst":    "{{ __('messages.datatables.sFirst') }}",
+            "sLast":     "{{ __('messages.datatables.sLast') }}",
+            "sNext":     "{{ __('messages.datatables.sNext') }}",
+            "sPrevious": "{{ __('messages.datatables.sPrevious') }}"
+        },
+        "oAria": {
+            "sSortAscending":  "{{ __('messages.datatables.sSortAscending') }}",
+            "sSortDescending": "{{ __('messages.datatables.sSortDescending') }}"
+        }
+    };
+  </script>
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
   
@@ -164,6 +189,61 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
     </div>
     <!-- / wrapper-->
+
+    <script type="module">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Wait slightly for custom.js to initialize first, since it is also waiting for DOMContentLoaded
+            setTimeout(function() {
+                if (window.jQuery && $.fn.dataTable) {
+                    // Set defaults for any future tables
+                    $.extend(true, $.fn.dataTable.defaults, { language: window.dataTablesLanguage });
+
+                    // Re-initialize already initialized tables to apply translations
+                    var $foundTables = $('table.display, table.data-table, .main-tables');
+                    if ($foundTables.length) {
+                        $foundTables.each(function() {
+                            var $table = $(this);
+                            if ($.fn.DataTable.isDataTable(this)) {
+                                var isServerSide = $table.data('server-pagination') === true;
+                                $table.DataTable({
+                                    paging: !isServerSide,
+                                    info: !isServerSide,
+                                    ordering: true,
+                                    destroy: true,
+                                    language: window.dataTablesLanguage,
+                                    initComplete: function () {
+                                        this.api().columns().every(function () {
+                                            var column = this;
+                                            var footer = column.footer();
+                                            if (footer) {
+                                                var input = footer.querySelector('input');
+                                                if (input) return; // already added
+
+                                                var title = footer.textContent;
+                                                var newInput = document.createElement('input');
+                                                newInput.placeholder = title;
+                                                newInput.className = 'form-control form-control-sm';
+                                                footer.replaceChildren(newInput);
+
+                                                newInput.addEventListener('keyup', () => {
+                                                    if (column.search() !== newInput.value) {
+                                                        column.search(newInput.value).draw();
+                                                    }
+                                                });
+                                                newInput.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }, 300);
+        });
+    </script>
 </body>
 
 </html>

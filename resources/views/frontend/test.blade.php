@@ -453,7 +453,6 @@
         }
 
         .modern-page {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             min-height: 100vh;
             padding-top: 0;
         }
@@ -665,11 +664,11 @@
         }
 
         .content-section:nth-child(odd) {
-            background: #f8fafc;
+            /* background: #f8fafc; */
         }
 
         .content-section:nth-child(even) {
-            background: #ffffff;
+            /* background: #ffffff; */
         }
 
         .section-header {

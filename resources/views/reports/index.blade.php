@@ -47,7 +47,7 @@
                             <td>{{ $report->meeting_day_description }}</td>
                             <td>
                                 <a href="{{ route('committee-reports.show', $report->id) }}" class="btn btn-sm btn-info text-white">{{ __('messages.Show') }}</a>
-                                <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-sm btn-secondary">{{ __('messages.PDF') }}</a>
+                                <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-sm btn-secondary">{{ __('messages.PDF Report') }}</a>
                                 @if(!$isRsc)
                                     <form action="{{ route('committee-reports.send', $report->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.Are you sure you want to send this report to RSC?') }}')">
                                         @csrf

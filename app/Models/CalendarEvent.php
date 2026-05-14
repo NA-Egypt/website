@@ -42,12 +42,15 @@ class CalendarEvent extends Model
         $weekday = $this->start ? \Carbon\Carbon::parse($this->start)->englishDayOfWeek : '';
 
         $formatted = array_map(function($item) use ($weekday) {
-            if ($item === 'every_two_months') return __('messages.Every Two Months') ?? 'Every Two Months';
-            if ($item === 'monthly') return 'Monthly (Same Date)';
+            if ($item === 'every_two_months') return __('messages.Every Two Months');
+            if ($item === 'monthly') return __('messages.Monthly (Same Date)');
             if (in_array($item, ['1st', '2nd', '3rd', '4th', '5th', 'last'])) {
-                return ucfirst($item) . ($weekday ? ' ' . $weekday : '');
+                $translatedItem = __('messages.' . $item);
+                $translatedWeekday = $weekday ? __('messages.' . strtolower($weekday)) : '';
+                return $translatedItem . ($translatedWeekday ? ' ' . $translatedWeekday : '');
             }
-            return ucfirst($item);
+            // For weekly or once:
+            return __('messages.' . ucfirst($item));
         }, $this->recurrence);
 
         return implode(', ', $formatted);

@@ -128,6 +128,16 @@
                 <h1 class="hero-title fade-in">{{__('messages.General information about Narcotics Anonymous')}}</h1>
                 <p class="hero-subtitle fade-in fade-in-delay-1">
                     {{__('messages.Discover the journey of recovery and hope through our community')}}</p>
+                <div class="hero-links fade-in fade-in-delay-2 mt-4 d-flex justify-content-center flex-wrap gap-2">
+                    <a href="#definition" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.definition.title') }}</a>
+                    <a href="#local-fellowship" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.local.title') }}</a>
+                    <a href="#local-statistics" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.stats.title') }}</a>
+                    <a href="#arabic-brochures" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.brochures.title') }}</a>
+                    <a href="#community-benefits" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.benefits.title') }}</a>
+                </div>
+                <div class="mt-4 text-center">
+                    <livewire:cooperation-form />
+                </div>
             </div>
         </div>
 
@@ -467,17 +477,10 @@
             </div>
         </div>
 
-        {{-- Cooperation Button Component --}}
-        <div class="text-center py-4">
-            <livewire:cooperation-form />
-        </div>
-
         {{-- Back to Top Button --}}
-        <div class="text-center py-5">
-            <a href="#top" class="back-to-top-btn">
-                <i class="bi bi-arrow-up"></i> {{ __('messages.test_page.back_to_top') }}
-            </a>
-        </div>
+        <a href="#top" class="back-to-top-btn">
+            <i class="bi bi-arrow-up"></i> {{ __('messages.test_page.back_to_top') }}
+        </a>
     </div>
 
     <style>
@@ -488,7 +491,6 @@
         }
 
         .modern-page {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             min-height: 100vh;
             padding-top: 0;
         }
@@ -747,11 +749,11 @@
         }
 
         .content-section:nth-child(odd) {
-            background: #f8fafc;
+            /* background: #f8fafc; */
         }
 
         .content-section:nth-child(even) {
-            background: #ffffff;
+            /* background: #ffffff; */
         }
 
         .section-header {
@@ -802,6 +804,8 @@
             color: #1e293b;
             font-weight: 700;
         }
+
+
 
         .content-box {
             background: #ffffff;
@@ -1264,7 +1268,11 @@
 
         /* Back to Top Button */
         .back-to-top-btn {
-            display: inline-flex;
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            inset-inline-end: 30px;
+            z-index: 999;
             align-items: center;
             gap: 10px;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -1274,7 +1282,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .back-to-top-btn:hover {
