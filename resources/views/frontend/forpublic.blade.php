@@ -1,5 +1,5 @@
 <x-frontend.layout>
-    <x-section-head>{{ __('messages.forpublic') }}</x-section-head>
+    <x-section-head>{{ __('messages.forpublicheader') }}</x-section-head>
 
     @php
         $isArabic = app()->getLocale() === 'ar';
@@ -36,19 +36,6 @@
                     ['label' => __('messages.test_page.stats.labels.age_47_53'), 'count' => 60, 'percent' => 8.84, 'color' => '#ef4444'],
                     ['label' => __('messages.test_page.stats.labels.age_54_60'), 'count' => 16, 'percent' => 2.36, 'color' => '#64748b'],
                     ['label' => __('messages.test_page.stats.labels.over_60'), 'count' => 4, 'percent' => 0.59, 'color' => '#334155'],
-                ],
-            ],
-            [
-                'title' => __('messages.test_page.stats.chart_titles.education'),
-                'desc' => __('messages.test_page.stats.chart_desc.education'),
-                'items' => [
-                    ['label' => __('messages.test_page.stats.labels.no_certificate'), 'count' => 17, 'percent' => 2.50, 'color' => '#94a3b8'],
-                    ['label' => __('messages.test_page.stats.labels.primary'), 'count' => 13, 'percent' => 1.91, 'color' => '#38bdf8'],
-                    ['label' => __('messages.test_page.stats.labels.preparatory'), 'count' => 26, 'percent' => 3.83, 'color' => '#22c55e'],
-                    ['label' => __('messages.test_page.stats.labels.secondary'), 'count' => 109, 'percent' => 16.05, 'color' => '#f59e0b'],
-                    ['label' => __('messages.test_page.stats.labels.technical'), 'count' => 63, 'percent' => 9.28, 'color' => '#f97316'],
-                    ['label' => __('messages.test_page.stats.labels.bachelor'), 'count' => 401, 'percent' => 59.06, 'color' => '#6366f1'],
-                    ['label' => __('messages.test_page.stats.labels.postgraduate'), 'count' => 50, 'percent' => 7.36, 'color' => '#a855f7'],
                 ],
             ],
             [
@@ -263,7 +250,7 @@
                             </div>
                             <div class="timeline-content">
                                 <h5>{{ __('messages.test_page.local.timeline.growth.title') }}</h5>
-                                <p>{{ __('messages.test_page.local.timeline.growth.text') }}</p>
+                                <p>{{ __('messages.test_page.local.timeline.growth.text', ['groups' => \App\Models\Group::count(), 'cities' => \App\Models\City::count(), 'meetings' => \App\Models\Meeting::count()]) }}</p>
                             </div>
                         </div>
                     </div>
@@ -284,14 +271,14 @@
                     <p class="fade-in fade-in-delay-1">{{ __('messages.test_page.stats.intro_1') }}</p>
                     <p class="fade-in fade-in-delay-2">{{ __('messages.test_page.stats.intro_2') }}</p>
 
-                    <div class="stats-highlights fade-in fade-in-delay-3">
+                    {{-- <div class="stats-highlights fade-in fade-in-delay-3">
                         @foreach ($statHighlights as $highlight)
                             <div class="highlight-card {{ $highlight['accent'] }}">
                                 <span class="highlight-label">{{ $highlight['label'] }}</span>
                                 <strong class="highlight-value">{{ number_format($highlight['value']) }}</strong>
                             </div>
                         @endforeach
-                    </div>
+                    </div>--}}
 
                     <div class="stats-legend fade-in fade-in-delay-3">
                         @foreach ($statsItems as $item)

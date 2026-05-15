@@ -334,9 +334,9 @@ return [
         ],
         'local' => [
             'timeline' => [
-                'first' => ['title' => 'The First Beginning', 'text' => 'The first meeting was held at a school in Heliopolis on November 26, 1989.'],
+                'first' => ['title' => 'The Beginning', 'text' => 'The first meeting was held at a school in Heliopolis on November 26, 1989.'],
                 'members' => ['title' => 'The First Members', 'text' => 'There were only 4 members at the beginning.'],
-                'growth' => ['title' => 'Steady Growth', 'text' => 'Growth was slow at first, then expanded gradually until there are now 65 groups in 26 governorates/cities holding more than 200 meetings each week.'],
+                'growth' => ['title' => 'Steady Growth', 'text' => 'Growth was slow at first, then expanded gradually until there are now :groups groups in :cities governorates/cities holding more than :meetings meetings each week.'],
             ],
         ],
         'stats' => [
@@ -433,7 +433,7 @@ return [
                     'q' => 'How can we find Narcotics Anonymous (NA) meetings?',
                     'a' => [
                         'To know the locations and times of Narcotics Anonymous recovery meetings in Egypt, you can contact us through the helpline numbers shown on the home page. Recovering addicts answer these lines to help you find the nearest meeting in your area and respond to questions about the fellowship.',
-                        'You can also find meetings through the local website at: https://naegypt.org/en/meetings',
+                        'You can also find meetings through the local website at: <a href="https://naegypt.org/en/meetings">Meetings Schedule</a>',
                     ],
                 ],
                 [
@@ -590,5 +590,6 @@ return [
         'sPrevious' => 'Previous',
         'sSortAscending' => ': activate to sort column ascending',
         'sSortDescending' => ': activate to sort column descending'
-    ]
+    ],
+    'forpublicheader' => 'Resources for the Public'
 ];

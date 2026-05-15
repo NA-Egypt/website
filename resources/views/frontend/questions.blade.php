@@ -30,7 +30,7 @@
                             </h2>
                             <div class="faq-answer">
                                 @foreach ($item['a'] as $paragraph)
-                                    <p>{{ $paragraph }}</p>
+                                    <p>{!! $paragraph !!}</p>
                                 @endforeach
                             </div>
                         </article>
