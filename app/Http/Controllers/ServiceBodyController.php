@@ -7,6 +7,9 @@ use App\Models\Day;
 use App\Models\ServiceBody;
 use Illuminate\Http\Request;
 
+use App\Models\Agenda;
+use Mpdf\Mpdf;
+
 class ServiceBodyController extends Controller
 {
 
@@ -64,5 +67,56 @@ class ServiceBodyController extends Controller
             'serviceBody' => $serviceBody,
             'agendas' => $serviceBody->agendas()->orderBy('agenda_date', 'desc')->get()
         ]);
+    }
+
+    public function exportAgendasPdf(Request $request, ServiceBody $serviceBody) {
+        $agendaIds = $request->input('agenda_ids', []);
+        
+        if (empty($agendaIds)) {
+            return back()->with('error', __('messages.no_agendas_selected') ?? 'No agendas selected for export.');
+        }
+
+        $agendas = Agenda::whereIn('id', $agendaIds)->whereHas('group', function ($query) use ($serviceBody) {
+            $query->where('service_body_id', $serviceBody->id);
+        })->with('group')->orderBy('agenda_date', 'desc')->get();
+
+        if ($agendas->isEmpty()) {
+            return back()->with('error', __('messages.no_agendas_selected') ?? 'No valid agendas found for export.');
+        }
+
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $html = view('pdf.agenda', compact('agendas'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'agendas_export_' . date('Y-m-d') . '.pdf';
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }

@@ -5,7 +5,10 @@
             <div class="card shadow-lg" style="border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
                     <h4 class="mb-0">{{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->format('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }} - {{ $agenda->group->{app()->getLocale() . '_name'} }}</h4>
-                    <a href="{{ route('group.show', $agenda->group_id) }}" class="btn btn-sm btn-light rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
+                    <div>
+                        <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-light rounded-pill me-2"><i class="bi bi-file-earmark-pdf text-danger"></i> {{ __('messages.download_pdf') ?? 'Download PDF' }}</a>
+                        <a href="{{ route('group.show', $agenda->group_id) }}" class="btn btn-sm btn-light rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
+                    </div>
                 </div>
 
                 <div class="card-body p-4">

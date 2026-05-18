@@ -111,7 +111,9 @@ Route::group(
             Route::get('/agenda/create', [\App\Http\Controllers\AgendaController::class, 'create'])->name('agenda.create');
             Route::post('/agenda', [\App\Http\Controllers\AgendaController::class, 'store'])->name('agenda.store');
             Route::get('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'show'])->name('agenda.show');
+            Route::get('/agenda/{agenda}/export', [\App\Http\Controllers\AgendaController::class, 'exportPdf'])->name('agenda.exportPdf');
             Route::get('/serviceBody/{serviceBody}/agendas',[ServiceBodyController::class,'agendas'])->name('serviceBody.agendas');
+            Route::post('/serviceBody/{serviceBody}/agendas/export',[ServiceBodyController::class,'exportAgendasPdf'])->name('serviceBody.agendas.exportPdf');
 
             Route::middleware(['role:super admin'])->group(function () {
                 // Permissions:
@@ -152,6 +154,7 @@ Route::group(
             // Committee Reports:
             Route::resource('committee-reports', \App\Http\Controllers\CommitteeReportController::class);
             Route::get('committee-reports/{id}/pdf', [\App\Http\Controllers\CommitteeReportController::class, 'pdf'])->name('committee-reports.pdf');
+            Route::post('committee-reports/export', [\App\Http\Controllers\CommitteeReportController::class, 'exportReportsPdf'])->name('committee-reports.exportPdf');
             Route::post('committee-reports/{id}/send', [\App\Http\Controllers\CommitteeReportController::class, 'send'])->name('committee-reports.send');
 
             // Calendar

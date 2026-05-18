@@ -1,55 +1,79 @@
+@php
+$direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
+@endphp
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html dir="{{ $direction }}" lang="{{ app()->getLocale() }}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Language" content="{{ app()->getLocale() }}" />
     <style>
-        body { font-family: 'dejavu sans', sans-serif; direction: rtl; }
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        body { 
+            font-family: 'xbriyaz', sans-serif; 
+            direction: {{ $direction }};
+            unicode-bidi: embed;
+            font-size: 14px;
+        }
+        .page-break { page-break-after: always; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .logo { width: 150px; height: auto; margin-bottom: 10px; }
         .title { font-size: 20px; font-weight: bold; }
         .meta { font-size: 14px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 12px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: {{ $direction === 'rtl' ? 'right' : 'left' }}; font-size: 12px; }
         th { background-color: #f0f0f0; }
-        .content { font-size: 14px; line-height: 1.6; }
-        .section-title { font-size: 16px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #eee; }
+        .content-box { border: 1px solid #000; padding: 10px; margin-bottom: 15px; min-height: 40px; }
+        .section-title { font-size: 16px; font-weight: bold; background-color: #f0f0f0; padding: 5px; margin-top: 15px; margin-bottom: 10px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">{{ $report->serviceCommittee->ar_name }}</div>
-        <div>{{ __('messages.Committee Report') }}</div>
-    </div>
-
-    <div class="meta">
-        <strong>{{ __('messages.Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} <br>
-        <strong>{{ __('messages.Day') }}:</strong> {{ $report->meeting_day_description }}
-    </div>
-
-    <div class="section-title">{{ __('messages.Positions Status') }}</div>
-    <table>
-        <thead>
-            <tr>
-                <th>{{ __('messages.Position') }}</th>
-                <th>{{ __('messages.Status') }}</th>
-                <th>{{ __('messages.Election') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if($report->positions_status)
-                @foreach($report->positions_status as $pos)
-                    <tr>
-                        <td>{{ $pos['name'] ?? '-' }}</td>
-                        <td>{{ $pos['status'] ?? '-' }}</td>
-                        <td>{{ !empty($pos['election']) ? __('messages.Open') : '-' }}</td>
-                    </tr>
-                @endforeach
+    @foreach($reports as $report)
+        <div class="header">
+            @if(file_exists(public_path('assets/images/na.png')))
+                <img src="{{ public_path('assets/images/na.png') }}" class="logo" alt="Logo">
             @endif
-        </tbody>
-    </table>
+            <div class="title">{{ $report->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->serviceCommittee->ar_name }}</div>
+            <div>{{ __('messages.Committee Reports') ?? 'Committee Report' }}</div>
+        </div>
 
-    <div class="section-title">{{ __('messages.Report Body') }}</div>
-    <div class="content">
-        {!! $report->body !!}
-    </div>
+        <div class="meta">
+            <strong>{{ __('messages.Date') ?? 'Date' }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} <br>
+            <strong>{{ __('messages.Day') ?? 'Day' }}:</strong> {{ $report->meeting_day_description }}
+        </div>
+
+        <div class="section-title">{{ __('messages.Positions Status') ?? 'Positions Status' }}</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ __('messages.Position') ?? 'Position' }}</th>
+                    <th>{{ __('messages.Status') ?? 'Status' }}</th>
+                    <th>{{ __('messages.Election') ?? 'Election' }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if($report->positions_status)
+                    @foreach($report->positions_status as $pos)
+                        <tr>
+                            <td>{{ $pos['name'] ?? '-' }}</td>
+                            <td>{{ $pos['status'] ?? '-' }}</td>
+                            <td>{{ !empty($pos['election']) ? (__('messages.Open') ?? 'Open') : '-' }}</td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="3">{{ __('messages.No positions data') ?? 'No positions data' }}</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+
+        <div class="section-title">{{ __('messages.Report Body') ?? 'Report Body' }}</div>
+        <div class="content-box">
+            {!! $report->body !!}
+        </div>
+        
+        @if(!$loop->last)
+            <div class="page-break"></div>
+        @endif
+    @endforeach
 </body>
 </html>

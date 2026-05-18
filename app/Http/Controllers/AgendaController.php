@@ -7,6 +7,8 @@ use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
+use Mpdf\Mpdf;
+
 class AgendaController extends Controller
 {
     /**
@@ -66,5 +68,49 @@ class AgendaController extends Controller
         Gate::authorize('view', $agenda->group);
 
         return view('agenda.show', compact('agenda'));
+    }
+    
+    /**
+     * Export the specified agenda to PDF.
+     */
+    public function exportPdf(Agenda $agenda)
+    {
+        Gate::authorize('view', $agenda->group);
+
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $agendas = collect([$agenda]);
+        $html = view('pdf.agenda', compact('agendas'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'agenda_' . $agenda->id . '.pdf';
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }

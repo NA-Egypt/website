@@ -134,9 +134,101 @@ class CommitteeReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Generate PDF
-        $pdf = Pdf::loadView('reports.pdf', compact('report'));
-        return $pdf->download('committee_report_' . $report->meeting_date->format('Y-m-d') . '.pdf');
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $reports = collect([$report]);
+        $html = view('reports.pdf', compact('reports'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'committee_report_' . $report->meeting_date->format('Y-m-d') . '.pdf';
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    public function exportReportsPdf(Request $request)
+    {
+        $reportIds = $request->input('report_ids', []);
+        
+        if (empty($reportIds)) {
+            return back()->with('error', __('messages.no_reports_selected') ?? 'No reports selected for export.');
+        }
+
+        $query = CommitteeReport::whereIn('id', $reportIds)->with('serviceCommittee');
+        
+        if (!$this->isRsc()) {
+            $committee = $this->getServiceCommittee();
+            if (!$committee) {
+                abort(403, 'Unauthorized');
+            }
+            $query->where('service_committee_id', $committee->id);
+        }
+
+        $reports = $query->orderBy('meeting_date', 'desc')->get();
+
+        if ($reports->isEmpty()) {
+            return back()->with('error', __('messages.no_reports_selected') ?? 'No valid reports found for export.');
+        }
+
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $html = view('reports.pdf', compact('reports'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'reports_export_' . date('Y-m-d') . '.pdf';
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function send($id)

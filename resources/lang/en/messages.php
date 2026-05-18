@@ -607,4 +607,8 @@ return [
     'servicebody' => 'ASC/GSF',
     'back' => 'Back',
     'Committee Reports' => 'Committee Reports',
+    'Open for Election' => 'Open for Nomination',
+    'Election' => 'Nomination',
+    'download_pdf' => 'Download PDF',
+    'export_selected_to_pdf' => 'Export Selected to PDF', 
 ];

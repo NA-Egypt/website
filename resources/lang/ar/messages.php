@@ -256,7 +256,7 @@ return [
     'Positions Status' => 'حالة المناصب',
     'Add Position' => 'إضافة منصب',
     'Position Name' => 'اسم المنصب',
-    'Open for Election' => 'مفتوح للانتخاب',
+    'Open for Election' => 'مفتوح للترشيح',
     'Report Body' => 'نص التقرير',
     'Submit Report' => 'تقديم التقرير',
     'Report Details' => 'تفاصيل التقرير',
@@ -643,5 +643,7 @@ return [
     'forpublicheader' => 'موارد للجمهور',
     'servicebody' => 'منطقة/منتدى',
     'back' => 'العودة',
-    
+    'Election' => 'ترشيحات',
+    'download_pdf' => 'تنزيل PDF',
+    'export_selected_to_pdf' => 'تصدير المحدد إلى PDF', 
 ];
