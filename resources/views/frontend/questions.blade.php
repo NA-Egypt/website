@@ -200,4 +200,25 @@
             }
         }
     </style>
+
+    @php
+        $faqSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => collect($qaItems)->map(function($item) {
+                return [
+                    '@type' => 'Question',
+                    'name' => $item['q'],
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => implode(' ', $item['a'])
+                    ]
+                ];
+            })->toArray(),
+        ];
+    @endphp
+
+    <script type="application/ld+json">
+        {!! json_encode($faqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    </script>
 </x-frontend.layout>

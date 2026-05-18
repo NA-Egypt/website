@@ -71,163 +71,167 @@
 
     <!-- Modal Background -->
     @if($showModal)
-    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5); z-index: 1055;">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content" dir="{{ $dir }}" style="text-align: {{ $align }}; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                <div class="modal-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border-radius: 12px 12px 0 0; padding: 1rem 1.5rem;">
-                    <h5 class="modal-title fw-bold m-0" style="color: white; font-size: 1.25rem;">{{ $btnTitle }}</h5>
-                    <button type="button" class="btn-close btn-close-white m-0 p-2" wire:click="closeModal" aria-label="Close" style="background-color: transparent; border: none; font-size: 1.5rem; color: white;">&times;</button>
-                </div>
-                
-                <div class="modal-body p-4 bg-light">
-                    @if($successMessage)
-                        <div class="alert alert-success text-center py-4 mb-0" style="border-radius: 8px;">
-                            <i class="bi bi-check-circle-fill d-block mb-3" style="font-size: 3rem; color: #10b981;"></i>
-                            <h4 class="alert-heading fw-bold mb-2">{{ $successTitle }}</h4>
-                            <p class="mb-0 fs-5">{{ $successDesc }}</p>
+    <template x-teleport="body">
+        <div>
+            <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5); z-index: 1055;">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+                    <div class="modal-content" dir="{{ $dir }}" style="text-align: {{ $align }}; border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                        <div class="modal-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border-radius: 12px 12px 0 0; padding: 1rem 1.5rem;">
+                            <h5 class="modal-title fw-bold m-0" style="color: white; font-size: 1.25rem;">{{ $btnTitle }}</h5>
+                            <button type="button" class="m-0 p-2" wire:click="closeModal" aria-label="Close" style="background-color: transparent; border: none; font-size: 1.5rem; color: white; line-height: 1;">&times;</button>
                         </div>
-                    @else
-                        <div class="mb-4 text-center">
-                            <p class="text-muted" style="line-height: 1.6;">{{ $introText }}</p>
-                            <div class="badge bg-info bg-opacity-10 text-primary p-3 rounded text-wrap" style="line-height: 1.5; font-size: 0.95rem;">
-                                {{ $badgeText }}
-                            </div>
-                        </div>
-
-                        <form wire:submit.prevent="submit">
-                            <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $basicInfoTitle }}</h5>
-                            
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $nameLbl }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model.defer="name">
-                                    @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
+                        
+                        <div class="modal-body p-4 bg-light">
+                            @if($successMessage)
+                                <div class="alert alert-success text-center py-4 mb-0" style="border-radius: 8px;">
+                                    <i class="bi bi-check-circle-fill d-block mb-3" style="font-size: 3rem; color: #10b981;"></i>
+                                    <h4 class="alert-heading fw-bold mb-2">{{ $successTitle }}</h4>
+                                    <p class="mb-0 fs-5">{{ $successDesc }}</p>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $professionLbl }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model.defer="profession">
-                                    @error('profession') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $organizationLbl }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model.defer="organization">
-                                    @error('organization') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $emailLbl }} <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" wire:model.defer="email" style="text-align: left; direction: ltr;">
-                                    @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $phoneLbl }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model.defer="phone" style="text-align: left; direction: ltr;">
-                                    @error('phone') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">{{ $cityLbl }} <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" wire:model.defer="city">
-                                    @error('city') <span class="text-danger small">{{ $message }}</span> @enderror
-                                </div>
-                            </div>
-
-                            <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $coopTitle }}</h5>
-                            <p class="text-muted small mb-2">{{ $coopSubtitle }}</p>
-                            <div class="mb-4 bg-white p-3 rounded border">
-                                @foreach($cooperationOptionsRaw as $index => $option)
-                                <label class="d-flex align-items-start gap-2 mb-2" style="cursor: pointer;">
-                                    <input class="form-check-input m-0 mt-1 flex-shrink-0" type="checkbox" value="{{ $option['ar'] }}" id="coop_{{ $index }}" wire:model.defer="cooperationType">
-                                    <span class="form-check-label" style="user-select: none;">{{ $option[$langKey] }}</span>
-                                </label>
-                                @endforeach
-                                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                                    <label class="d-flex align-items-center gap-2 mb-0" style="cursor: pointer;">
-                                        <input class="form-check-input m-0 flex-shrink-0" type="checkbox" value="أخرى" id="coop_other" wire:model.lazy="cooperationType">
-                                        <span class="form-check-label" style="user-select: none;">{{ $otherLbl }}</span>
-                                    </label>
-                                    @if(is_array($cooperationType) && in_array('أخرى', $cooperationType))
-                                    <div class="flex-grow-1">
-                                        <input type="text" class="form-control form-control-sm w-100" placeholder="{{ $specifyLbl }}" wire:model.defer="cooperationTypeOther">
+                            @else
+                                <div class="mb-4 text-center">
+                                    <p class="text-muted" style="line-height: 1.6;">{{ $introText }}</p>
+                                    <div class="badge bg-info bg-opacity-10 text-primary p-3 rounded text-wrap" style="line-height: 1.5; font-size: 0.95rem;">
+                                        {{ $badgeText }}
                                     </div>
-                                    @endif
                                 </div>
-                            </div>
 
-                            <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $questionsTitle }}</h5>
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold">{{ $questionsLbl }}</label>
-                                <textarea class="form-control" rows="3" placeholder="{{ $questionsPlaceholder }}" wire:model.defer="questions"></textarea>
-                            </div>
+                                <form wire:submit.prevent="submit">
+                                    <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $basicInfoTitle }}</h5>
+                                    
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $nameLbl }} <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" wire:model.defer="name">
+                                            @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $professionLbl }} <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" wire:model.defer="profession">
+                                            @error('profession') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $organizationLbl }} <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" wire:model.defer="organization">
+                                            @error('organization') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $emailLbl }} <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" wire:model.defer="email" style="text-align: left; direction: ltr;">
+                                            @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $phoneLbl }} <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" wire:model.defer="phone" style="text-align: left; direction: ltr;">
+                                            @error('phone') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">{{ $cityLbl }} <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" wire:model.defer="city">
+                                            @error('city') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
 
-                            <div class="row mb-4">
-                                <div class="col-md-6 mb-3 mb-md-0">
-                                    <h6 class="fw-bold mb-2">{{ $contactMethodTitle }} <span class="text-danger">*</span></h6>
-                                    <div class="bg-white p-3 rounded border h-100">
-                                        @foreach($contactMethodsRaw as $index => $method)
+                                    <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $coopTitle }}</h5>
+                                    <p class="text-muted small mb-2">{{ $coopSubtitle }}</p>
+                                    <div class="mb-4 bg-white p-3 rounded border">
+                                        @foreach($cooperationOptionsRaw as $index => $option)
                                         <label class="d-flex align-items-start gap-2 mb-2" style="cursor: pointer;">
-                                            <input class="form-check-input m-0 mt-1 flex-shrink-0" type="radio" name="contactMethod" value="{{ $method['ar'] }}" id="method_{{ $index }}" wire:model.lazy="contactMethod">
-                                            <span class="form-check-label" style="user-select: none;">{{ $method[$langKey] }}</span>
+                                            <input class="form-check-input m-0 mt-1 flex-shrink-0" type="checkbox" value="{{ $option['ar'] }}" id="coop_{{ $index }}" wire:model.defer="cooperationType">
+                                            <span class="form-check-label" style="user-select: none;">{{ $option[$langKey] }}</span>
                                         </label>
                                         @endforeach
-                                        <div class="d-flex align-items-center flex-wrap gap-2 mb-0">
+                                        <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                             <label class="d-flex align-items-center gap-2 mb-0" style="cursor: pointer;">
-                                                <input class="form-check-input m-0 flex-shrink-0" type="radio" name="contactMethod" value="أخرى" id="method_other" wire:model.lazy="contactMethod">
+                                                <input class="form-check-input m-0 flex-shrink-0" type="checkbox" value="أخرى" id="coop_other" wire:model.lazy="cooperationType">
                                                 <span class="form-check-label" style="user-select: none;">{{ $otherLbl }}</span>
                                             </label>
-                                            @if($contactMethod === 'أخرى')
+                                            @if(is_array($cooperationType) && in_array('أخرى', $cooperationType))
                                             <div class="flex-grow-1">
-                                                <input type="text" class="form-control form-control-sm w-100" placeholder="{{ $specifyLbl }}" wire:model.defer="contactMethodOther">
+                                                <input type="text" class="form-control form-control-sm w-100" placeholder="{{ $specifyLbl }}" wire:model.defer="cooperationTypeOther">
                                             </div>
                                             @endif
                                         </div>
-                                        @error('contactMethod') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="fw-bold mb-2">{{ $contactTimeTitle }} <span class="text-danger">*</span></h6>
-                                    <div class="bg-white p-3 rounded border h-100">
-                                        @foreach($contactTimesRaw as $index => $time)
-                                        <label class="d-flex align-items-start gap-2 mb-2" style="cursor: pointer;">
-                                            <input class="form-check-input m-0 mt-1 flex-shrink-0" type="radio" name="contactTime" value="{{ $time['ar'] }}" id="time_{{ $index }}" wire:model.defer="contactTime">
-                                            <span class="form-check-label" style="user-select: none;">{{ $time[$langKey] }}</span>
-                                        </label>
-                                        @endforeach
-                                        @error('contactTime') <span class="text-danger small">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="mb-4 bg-light p-3 rounded border border-warning" style="background-color: #fffbeb !important;">
-                                <label class="d-flex align-items-start gap-2 mb-0" style="cursor: pointer;">
-                                    <input class="form-check-input m-0 mt-1 flex-shrink-0" type="checkbox" id="agreement" wire:model.defer="agreement">
-                                    <span class="form-check-label" style="user-select: none;">
-                                        <strong>{{ $agreementBlk1 }}</strong>
-                                        <div class="text-muted small mt-1">{{ $agreementBlk2 }}</div>
+                                    <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">{{ $questionsTitle }}</h5>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold">{{ $questionsLbl }}</label>
+                                        <textarea class="form-control" rows="3" placeholder="{{ $questionsPlaceholder }}" wire:model.defer="questions"></textarea>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <h6 class="fw-bold mb-2">{{ $contactMethodTitle }} <span class="text-danger">*</span></h6>
+                                            <div class="bg-white p-3 rounded border h-100">
+                                                @foreach($contactMethodsRaw as $index => $method)
+                                                <label class="d-flex align-items-start gap-2 mb-2" style="cursor: pointer;">
+                                                    <input class="form-check-input m-0 mt-1 flex-shrink-0" type="radio" name="contactMethod" value="{{ $method['ar'] }}" id="method_{{ $index }}" wire:model.lazy="contactMethod">
+                                                    <span class="form-check-label" style="user-select: none;">{{ $method[$langKey] }}</span>
+                                                </label>
+                                                @endforeach
+                                                <div class="d-flex align-items-center flex-wrap gap-2 mb-0">
+                                                    <label class="d-flex align-items-center gap-2 mb-0" style="cursor: pointer;">
+                                                        <input class="form-check-input m-0 flex-shrink-0" type="radio" name="contactMethod" value="أخرى" id="method_other" wire:model.lazy="contactMethod">
+                                                        <span class="form-check-label" style="user-select: none;">{{ $otherLbl }}</span>
+                                                    </label>
+                                                    @if($contactMethod === 'أخرى')
+                                                    <div class="flex-grow-1">
+                                                        <input type="text" class="form-control form-control-sm w-100" placeholder="{{ $specifyLbl }}" wire:model.defer="contactMethodOther">
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                @error('contactMethod') <span class="text-danger small">{{ $message }}</span> @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold mb-2">{{ $contactTimeTitle }} <span class="text-danger">*</span></h6>
+                                            <div class="bg-white p-3 rounded border h-100">
+                                                @foreach($contactTimesRaw as $index => $time)
+                                                <label class="d-flex align-items-start gap-2 mb-2" style="cursor: pointer;">
+                                                    <input class="form-check-input m-0 mt-1 flex-shrink-0" type="radio" name="contactTime" value="{{ $time['ar'] }}" id="time_{{ $index }}" wire:model.defer="contactTime">
+                                                    <span class="form-check-label" style="user-select: none;">{{ $time[$langKey] }}</span>
+                                                </label>
+                                                @endforeach
+                                                @error('contactTime') <span class="text-danger small">{{ $message }}</span> @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4 bg-light p-3 rounded border border-warning" style="background-color: #fffbeb !important;">
+                                        <label class="d-flex align-items-start gap-2 mb-0" style="cursor: pointer;">
+                                            <input class="form-check-input m-0 mt-1 flex-shrink-0" type="checkbox" id="agreement" wire:model.defer="agreement">
+                                            <span class="form-check-label" style="user-select: none;">
+                                                <strong>{{ $agreementBlk1 }}</strong>
+                                                <div class="text-muted small mt-1">{{ $agreementBlk2 }}</div>
+                                            </span>
+                                        </label>
+                                        @error('agreement') <span class="text-danger small fw-bold mt-2 d-block">{{ $agreementError }}</span> @enderror
+                                    </div>
+                                @endif
+                        </div>
+                        
+                        <div class="modal-footer d-flex" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; gap: 10px;">
+                            @if(!$successMessage)
+                                <button type="button" class="btn btn-secondary px-4 me-auto" wire:click="closeModal">{{ $btnCancel }}</button>
+                                <button type="submit" class="btn btn-primary px-5 fw-bold" style="background-color: #1e3a8a; border: none;">
+                                    <span wire:loading.remove wire:target="submit">{{ $btnSubmit }}</span>
+                                    <span wire:loading wire:target="submit">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ $btnSending }}
                                     </span>
-                                </label>
-                                @error('agreement') <span class="text-danger small fw-bold mt-2 d-block">{{ $agreementError }}</span> @enderror
-                            </div>
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-primary px-5 fw-bold ms-auto mx-auto w-100" wire:click="closeModal" style="background-color: #1e3a8a; border: none;">{{ $btnClose }}</button>
+                            @endif
+                        </div>
+                        @if(!$successMessage)
+                            </form>
                         @endif
+                    </div>
                 </div>
-                
-                <div class="modal-footer d-flex" style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; gap: 10px;">
-                    @if(!$successMessage)
-                        <button type="button" class="btn btn-secondary px-4 me-auto" wire:click="closeModal">{{ $btnCancel }}</button>
-                        <button type="submit" class="btn btn-primary px-5 fw-bold" style="background-color: #1e3a8a; border: none;">
-                            <span wire:loading.remove wire:target="submit">{{ $btnSubmit }}</span>
-                            <span wire:loading wire:target="submit">
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ $btnSending }}
-                            </span>
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-primary px-5 fw-bold ms-auto mx-auto w-100" wire:click="closeModal" style="background-color: #1e3a8a; border: none;">{{ $btnClose }}</button>
-                    @endif
-                </div>
-                @if(!$successMessage)
-                    </form>
-                @endif
             </div>
+            <div class="modal-backdrop fade show" style="z-index: 1050;" wire:click="closeModal"></div>
         </div>
-    </div>
-    <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
+    </template>
     @endif
 </div>
