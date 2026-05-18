@@ -547,6 +547,10 @@ return [
     // Agenda Translations
     'agenda' => 'جدول الأعمال',
     'agendas' => 'جداول الأعمال',
+    'Agendas' => 'جداول الأعمال',
+    'View All' => 'عرض الكل',
+    'None' => 'لا يوجد',
+    'Cancel' => 'إلغاء',
     'create_agenda' => 'إنشاء جدول أعمال',
     'agenda_date' => 'تاريخ جدول الأعمال',
     'meetings_per_week' => 'عدد الاجتماعات في الأسبوع',
@@ -571,6 +575,13 @@ return [
     'next' => 'التالي',
     'agenda_created_successfully' => 'تم إنشاء جدول الأعمال بنجاح',
     'month_year_agenda' => 'جدول أعمال :month / :year',
+    'Month/Year' => 'الشهر/السنة',
+    'Date Submitted' => 'تاريخ التقديم',
+    'Submitter' => 'مقدم التقرير',
+    'Position' => 'المنصب',
+    'View' => 'عرض',
+    'Not provided' => 'غير متوفر',
+    'No agendas found' => 'لم يتم العثور على جداول أعمال',
     'group_data' => 'بيانات المجموعة',
     
     // Tour Strings
@@ -629,5 +640,8 @@ return [
     ],
     'Delete Selected' => 'حذف المحدد',
     'Are you sure to delete the selected records?' => 'هل أنت متأكد من حذف السجلات المحددة؟',
-    'forpublicheader' => 'موارد للجمهور'
+    'forpublicheader' => 'موارد للجمهور',
+    'servicebody' => 'منطقة/منتدى',
+    'back' => 'العودة',
+    
 ];

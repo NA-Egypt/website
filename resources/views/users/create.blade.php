@@ -35,6 +35,21 @@
                 </div>
             </div>
 
+            <div class="mb-3">
+                <label for="service_body_id" class="form-label">{{ __('messages.Service Body') ?? 'Service Body' }}</label>
+                <select name="service_body_id" id="service_body_id" class="form-control @error('service_body_id') is-invalid @enderror">
+                    <option value="">-- {{ __('messages.None') ?? 'None' }} --</option>
+                    @foreach ($serviceBodies as $sb)
+                        <option value="{{ $sb->id }}" {{ old('service_body_id') == $sb->id ? 'selected' : '' }}>
+                            {{ $sb->en_name }} ({{ $sb->ar_name }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('service_body_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
             <button type="submit" class="btn btn-primary">{{ __('messages.Save') ?? 'Save' }}</button>
             <a href="{{ route('users.index') }}" class="btn btn-secondary">{{ __('messages.Cancel') ?? 'Cancel' }}</a>
         </form>

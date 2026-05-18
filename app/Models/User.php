@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Group::class);
     }
+
+    public function serviceBody()
+    {
+        return $this->belongsTo(ServiceBody::class);
+    }
 }

@@ -1,8 +1,14 @@
 <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
     <nav class="navbar navbar-expand">
+      @can('is-super-admin')
       <div class="mobile-toggle-icon d-xl-none p-2 rounded-3" style="color: var(--text-primary); cursor: pointer; transition: background 0.2s;">
         <x-fas-bars style="width:22px; height:22px;"/>
       </div>
+      @else
+      <a href="{{ route('dashboard') }}" class="d-xl-none p-2 rounded-3 text-decoration-none d-flex align-items-center justify-content-center" style="color: var(--text-primary);">
+        <i class="bi bi-house-door-fill" style="font-size: 22px;"></i>
+      </a>
+      @endcan
       <div class="top-navbar d-none d-xl-block">
         <a href="{{ route('dashboard') }}">
 

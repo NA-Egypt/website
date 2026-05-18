@@ -1867,7 +1867,7 @@ body[dir="rtl"] {
 
     /* Mobile sidebar - hidden by default */
     .sidebar-wrapper {
-        left: 0px;
+        left: -340px;
         right: auto;
         width: 340px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -1903,7 +1903,7 @@ body[dir="rtl"] {
     /* RTL mobile sidebar */
     [dir="rtl"] .sidebar-wrapper {
         left: auto;
-        right: -300px;
+        right: -340px;
     }
 
     [dir="rtl"] .wrapper.toggled .sidebar-wrapper {

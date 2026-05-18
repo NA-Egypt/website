@@ -519,6 +519,10 @@ return [
     // Agenda Translations
     'agenda' => 'Agenda',
     'agendas' => 'Agendas',
+    'Agendas' => 'Agendas',
+    'View All' => 'View All',
+    'None' => 'None',
+    'Cancel' => 'Cancel',
     'create_agenda' => 'Create Agenda',
     'agenda_date' => 'Agenda Date',
     'meetings_per_week' => 'Count of meetings per week',
@@ -543,6 +547,14 @@ return [
     'next' => 'Next',
     'agenda_created_successfully' => 'Agenda created successfully',
     'month_year_agenda' => ':month / :year Agenda',
+    'Month/Year' => 'Month/Year',
+    'Date Submitted' => 'Date Submitted',
+    'Submitter' => 'Submitter',
+    'Position' => 'Position',
+    'View' => 'View',
+    'Not provided' => 'Not provided',
+    'No agendas found' => 'No agendas found',
+    'Actions' => 'Actions',
     'group_data' => 'Group Data',
     
     // Tour Strings
@@ -591,5 +603,8 @@ return [
         'sSortAscending' => ': activate to sort column ascending',
         'sSortDescending' => ': activate to sort column descending'
     ],
-    'forpublicheader' => 'Resources for the Public'
+    'forpublicheader' => 'Resources for the Public',
+    'servicebody' => 'ASC/GSF',
+    'back' => 'Back',
+    'Committee Reports' => 'Committee Reports',
 ];

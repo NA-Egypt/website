@@ -2,7 +2,11 @@
 <div class="container-fluid" style="background-color: var(--bs-body-bg); padding: 2rem;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold" style="color: var(--text-primary);">{{ $serviceBody->{app()->getLocale() . '_name'} }} - {{ __('messages.agendas') ?? 'Agendas' }}</h2>
-        <a href="{{ route('serviceBody.index') }}" class="btn btn-outline-secondary rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
+        @hasrole('super admin')
+            <a href="{{ route('serviceBody.index') }}" class="btn btn-outline-secondary rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
+        @else
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
+        @endhasrole
     </div>
 
     <div class="glass-card p-4 rounded-4 shadow-sm">
@@ -11,12 +15,12 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Group</th>
-                            <th>Month/Year</th>
-                            <th>Date Submitted</th>
-                            <th>Submitter</th>
-                            <th>Position</th>
-                            <th>Actions</th>
+                            <th>{{ __('messages.Group') ?? 'Group' }}</th>
+                            <th>{{ __('messages.Month/Year') ?? 'Month/Year' }}</th>
+                            <th>{{ __('messages.Date Submitted') ?? 'Date Submitted' }}</th>
+                            <th>{{ __('messages.Submitter') ?? 'Submitter' }}</th>
+                            <th>{{ __('messages.Position') ?? 'Position' }}</th>
+                            <th>{{ __('messages.Actions') ?? 'Actions' }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +43,7 @@
                                     @if($agenda->submitter_name)
                                         {{ $agenda->submitter_name }}
                                     @else
-                                        <span class="text-muted fst-italic">Not provided</span>
+                                        <span class="text-muted fst-italic">{{ __('messages.Not provided') ?? 'Not provided' }}</span>
                                     @endif
                                 </td>
                                 <td>
@@ -47,7 +51,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill">
-                                        <i class="bi bi-eye"></i> View
+                                        <i class="bi bi-eye"></i> {{ __('messages.View') ?? 'View' }}
                                     </a>
                                 </td>
                             </tr>
@@ -58,7 +62,7 @@
         @else
             <div class="text-center p-5">
                 <i class="bi bi-inbox text-secondary" style="font-size: 3rem; opacity: 0.5;"></i>
-                <h5 class="text-secondary mt-3">No agendas found for this Service Body</h5>
+                <h5 class="text-secondary mt-3">{{ __('messages.No agendas found') ?? 'No agendas found' }}</h5>
             </div>
         @endif
     </div>

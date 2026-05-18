@@ -8,6 +8,14 @@
     </div> --}}
      {{--/ Logo --}}
 
+    {{-- Mobile Back Button --}}
+    <div class="sidebar-header d-flex justify-content-center align-items-center d-xl-none p-3 border-bottom mb-2">
+        <div class="nav-toggle-icon btn btn-outline-secondary rounded-pill w-100 d-flex justify-content-center align-items-center gap-2" style="cursor: pointer;">
+            <i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }}"></i> 
+            {{ __('messages.back') ?? 'Back' }}
+        </div>
+    </div>
+
     <!--navigation-->
     <ul class="navigation" id="menu">
 
