@@ -4,8 +4,8 @@ namespace Tests\Feature\Livewire;
 
 use App\Livewire\YearlyCalendar;
 use App\Models\CalendarEvent;
-use App\Models\Permission;
-use App\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -63,8 +63,8 @@ class YearlyCalendarTest extends TestCase
         // $this->roles()->whereHas('permissions', ...
         
         // I need to create a user, role, and permission.
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'can_manage_calendar']);
-        $role = \App\Models\Role::firstOrCreate(['name' => 'Calendar Manager']);
+        $permission = Permission::firstOrCreate(['name' => 'can_manage_calendar']);
+        $role = Role::firstOrCreate(['name' => 'Calendar Manager']);
         
         // Manual pivot attach if relationships standard, checking User.php again...
         // User belongsToMany Role. Role belongsToMany Permission? I assume.
@@ -95,8 +95,8 @@ class YearlyCalendarTest extends TestCase
 
     public function test_validation_rules()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'can_manage_calendar']);
-        $role = \App\Models\Role::firstOrCreate(['name' => 'Calendar Manager']);
+        $permission = Permission::firstOrCreate(['name' => 'can_manage_calendar']);
+        $role = Role::firstOrCreate(['name' => 'Calendar Manager']);
         if (!$role->permissions()->where('name', 'can_manage_calendar')->exists()) {
              $role->permissions()->attach($permission);
         }
@@ -113,7 +113,7 @@ class YearlyCalendarTest extends TestCase
 
     public function test_super_admin_can_save_event()
     {
-        $role = \App\Models\Role::firstOrCreate(['name' => 'super admin']);
+        $role = Role::firstOrCreate(['name' => 'super admin']);
         $user = User::factory()->create();
         $user->roles()->attach($role);
 

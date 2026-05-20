@@ -216,7 +216,7 @@
     </div>
 
     <div class="literature-column">
-       <h2>{{ __('messages.PDF') }}</h2>
+       <h2>{{ __('messages.literaturePDF') }}</h2>
         <div class="collapsible-section">
             <button class="collapsible-header" onclick="toggleSection('first-pdfs')">
                 <span>📚 {{ __('messages.Essential PDFs') }}</span>

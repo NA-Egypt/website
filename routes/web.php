@@ -152,6 +152,9 @@ Route::group(
             });
 
             // Committee Reports:
+            Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
+            Route::get('committee-reports/attachments/{id}', [\App\Http\Controllers\CommitteeReportController::class, 'downloadAttachment'])->name('committee-reports.downloadAttachment');
+            Route::delete('committee-reports/attachments/{id}', [\App\Http\Controllers\CommitteeReportController::class, 'deleteAttachment'])->name('committee-reports.deleteAttachment');
             Route::resource('committee-reports', \App\Http\Controllers\CommitteeReportController::class);
             Route::get('committee-reports/{id}/pdf', [\App\Http\Controllers\CommitteeReportController::class, 'pdf'])->name('committee-reports.pdf');
             Route::post('committee-reports/export', [\App\Http\Controllers\CommitteeReportController::class, 'exportReportsPdf'])->name('committee-reports.exportPdf');

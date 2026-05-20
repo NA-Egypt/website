@@ -7,7 +7,12 @@
         @endif
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <x-button-a href="{{ route('committee-reports.create') }}" color="outline-primary" name="{{ __('messages.Add Report') }}" />
+            <div class="d-flex gap-2">
+                <x-button-a href="{{ route('committee-reports.create') }}" color="outline-primary" name="{{ __('messages.Add Report') }}" />
+                <a href="{{ route('committee-reports.archive') }}" class="btn btn-outline-info">
+                    <i class="bi bi-archive-fill"></i> {{ __('messages.Reports Archive') ?? 'Reports Archive' }}
+                </a>
+            </div>
             
             <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">
                 @if($isRsc)
@@ -33,7 +38,7 @@
                 </button>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>
@@ -46,6 +51,7 @@
                             @endif
                             <th>{{ __('messages.Meeting Date') }}</th>
                             <th>{{ __('messages.Day') }}</th>
+                            <th>{{ __('messages.Status') ?? 'Status' }}</th>
                             <th>{{ __('messages.Actions') }}</th>
                         </tr>
                     </thead>
@@ -63,19 +69,42 @@
                                 <td>{{ $report->meeting_date->format('Y-m-d') }}</td>
                                 <td>{{ $report->meeting_day_description }}</td>
                                 <td>
-                                    <a href="{{ route('committee-reports.show', $report->id) }}" class="btn btn-sm btn-info text-white">{{ __('messages.Show') }}</a>
-                                    <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-sm btn-secondary">{{ __('messages.PDF Report') }}</a>
-                                    @if(!$isRsc)
-                                        <form action="{{ route('committee-reports.send', $report->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.Are you sure you want to send this report to RSC?') }}')">
+                                    @if($report->status === 'draft')
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft') ?? 'Draft' }}</span>
+                                    @else
+                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> {{ __('messages.Submitted') ?? 'Submitted' }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('committee-reports.show', $report->id) }}" class="btn btn-sm btn-info text-white me-1">
+                                        <i class="bi bi-eye"></i> {{ __('messages.Show') }}
+                                    </a>
+                                    <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-sm btn-secondary me-1">
+                                        <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.PDF Report') }}
+                                    </a>
+                                    @if(!$isRsc && $report->status === 'draft')
+                                        <a href="{{ route('committee-reports.edit', $report->id) }}" class="btn btn-sm btn-primary me-1">
+                                            <i class="bi bi-pencil"></i> {{ __('messages.Edit') }}
+                                        </a>
+                                        <form action="{{ route('committee-reports.send', $report->id) }}" method="POST" class="d-inline me-1" onsubmit="return confirm('{{ __('messages.Are you sure you want to approve and send this report to RSC?') }}')">
                                             @csrf
-                                            <button class="btn btn-sm btn-success">{{ __('messages.Send to RSC') }}</button>
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="bi bi-check-circle"></i> {{ __('messages.Send to RSC') }}
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('committee-reports.destroy', $report->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.Are you sure you want to delete this report?') ?? 'Are you sure you want to delete this report?' }}')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i> {{ __('messages.Delete') }}
+                                            </button>
                                         </form>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $isRsc ? 5 : 4 }}">{{ __('messages.No reports found.') }}</td>
+                                <td colspan="{{ $isRsc ? 6 : 5 }}">{{ __('messages.No reports found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

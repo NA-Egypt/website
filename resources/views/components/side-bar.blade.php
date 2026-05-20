@@ -103,6 +103,13 @@
           <div class="menu-title">{{ __('messages.Committee Reports') }}</div>
         </a>
       </li>
+      <li>
+        <a href="{{ route('committee-reports.archive') }}">
+          <div class="parent-icon"><i class="bi bi-archive-fill"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</div>
+        </a>
+      </li>
       {{-- /Reports Area --}}
 
       {{-- Calendar Area --}}

@@ -1,5 +1,5 @@
 <x-layout>
-    <x-backhead>{{ __('messages.Create Committee Report') }}</x-backhead>
+    <x-backhead>{{ __('messages.Edit Committee Report') ?? 'Edit Committee Report' }}</x-backhead>
 
     <div class="container mt-4">
         @if ($errors->any())
@@ -12,9 +12,10 @@
             </div>
         @endif
 
-        <form action="{{ route('committee-reports.store') }}" method="POST" id="reportForm" enctype="multipart/form-data">
+        <form action="{{ route('committee-reports.update', $report->id) }}" method="POST" id="reportForm" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="status" id="statusInput" value="draft">
+            @method('PUT')
+            <input type="hidden" name="status" id="statusInput" value="{{ $report->status }}">
 
             <div class="card mb-4">
                 <div class="card-header bg-light">
@@ -23,22 +24,22 @@
                         <select name="service_committee_id" class="form-select" required>
                             <option value="">{{ __('messages.Choose a Committee...') }}</option>
                             @foreach($committees as $c)
-                                <option value="{{ $c->id }}">{{ $c->ar_name }}</option>
+                                <option value="{{ $c->id }}" {{ $report->service_committee_id == $c->id ? 'selected' : '' }}>{{ $c->ar_name }}</option>
                             @endforeach
                         </select>
                     @else
-                        <h5 class="mb-0">{{ $committee->ar_name }}</h5>
+                        <h5 class="mb-0">{{ $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name }}</h5>
                     @endif
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">{{ __('messages.Meeting Date') }}</label>
-                            <input type="date" name="meeting_date" class="form-control" required value="{{ old('meeting_date') }}">
+                            <input type="date" name="meeting_date" class="form-control" required value="{{ old('meeting_date', $report->meeting_date->format('Y-m-d')) }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">{{ __('messages.Meeting Day Description') }}</label>
-                            <input type="text" name="meeting_day_description" class="form-control" placeholder="e.g. Second Sunday" required value="{{ old('meeting_day_description') }}">
+                            <input type="text" name="meeting_day_description" class="form-control" placeholder="e.g. Second Sunday" required value="{{ old('meeting_day_description', $report->meeting_day_description) }}">
                         </div>
                     </div>
                 </div>
@@ -72,7 +73,7 @@
                 <div class="card-header">{{ __('messages.Report Body') }}</div>
                 <div class="card-body">
                     <div id="editor" style="height: 300px;"></div>
-                    <input type="hidden" name="body" id="bodyInput">
+                    <input type="hidden" name="body" id="bodyInput" value="{{ old('body', $report->body) }}">
                 </div>
             </div>
 
@@ -80,14 +81,45 @@
             <div class="card mb-4">
                 <div class="card-header">{{ __('messages.Attachments') ?? 'Attachments' }}</div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="attachments" class="form-label fw-bold">{{ __('messages.Upload Attachments') ?? 'Upload Attachments' }}</label>
-                        <input class="form-control" type="file" id="attachments" name="attachments[]" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
-                        <div class="form-text text-muted">
-                            {{ __('messages.Max 3 files, 5MB each') ?? 'Maximum 3 files, 5MB per file' }}. <br>
-                            {{ __('messages.Allowed types') ?? 'Allowed file types' }}: PDF, PNG, JPG, JPEG, DOCX, XLSX
+                    <!-- Existing Attachments -->
+                    @if($report->attachments->isNotEmpty())
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">{{ __('messages.Existing Attachments') ?? 'Existing Attachments' }}</label>
+                            <ul class="list-group">
+                                @foreach($report->attachments as $attachment)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-file-earmark-arrow-down text-primary me-2"></i>
+                                            <a href="{{ route('committee-reports.downloadAttachment', $attachment->id) }}" class="text-decoration-none" target="_blank">
+                                                {{ $attachment->original_name }}
+                                            </a>
+                                            <span class="text-muted ms-2 small">({{ number_format($attachment->file_size / 1024, 1) }} KB)</span>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteAttachment({{ $attachment->id }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
-                    </div>
+                    @endif
+
+                    <!-- Upload New Attachments -->
+                    @if($report->attachments->count() < 3)
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label fw-bold">{{ __('messages.Upload New Attachments') ?? 'Upload New Attachments' }}</label>
+                            <input class="form-control" type="file" id="attachments" name="attachments[]" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                            <div class="form-text text-muted">
+                                {{ __('messages.Max total 3 files') ?? 'Maximum total of 3 files' }} ({{ $report->attachments->count() }} {{ __('messages.currently uploaded') ?? 'currently uploaded' }}). <br>
+                                {{ __('messages.Max size') ?? 'Maximum 5MB per file' }}. <br>
+                                {{ __('messages.Allowed types') ?? 'Allowed file types' }}: PDF, PNG, JPG, JPEG, DOCX, XLSX
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning py-2 mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> {{ __('messages.Max attachments limit reached') ?? 'You have reached the maximum limit of 3 attachments. Delete one to upload a new file.' }}
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -102,12 +134,26 @@
         </form>
     </div>
 
+    <!-- Hidden form for deleting attachments -->
+    <form id="deleteAttachmentForm" method="POST" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
     <!-- Quill Styles -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     
     <!-- Scripts -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
+        function deleteAttachment(id) {
+            if (confirm("{{ __('messages.Are you sure you want to delete this attachment?') ?? 'Are you sure you want to delete this attachment?' }}")) {
+                const form = document.getElementById('deleteAttachmentForm');
+                form.action = `/committee-reports/attachments/${id}`;
+                form.submit();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Quill Init
             var quill = new Quill('#editor', {
@@ -121,6 +167,12 @@
                     ]
                 }
             });
+
+            // Set Initial Quill Content
+            const initialBody = {!! json_encode(old('body', $report->body)) !!};
+            if (initialBody) {
+                quill.root.innerHTML = initialBody;
+            }
 
             // Form Submit
             var form = document.querySelector('#reportForm');
@@ -177,9 +229,16 @@
 
             addPositionBtn.addEventListener('click', () => addPositionRow());
 
-            // Add default positions
-            const defaultPositions = ['Chairman', 'Vice Chairman', 'Secretary', 'Treasurer', 'RCM', 'RCM Alternate', 'Literature', 'Activities'];
-            defaultPositions.forEach(pos => addPositionRow(pos));
+            // Populate existing positions if they exist, otherwise defaults
+            const existingPositions = {!! json_encode($report->positions_status) !!};
+            if (existingPositions && existingPositions.length > 0) {
+                existingPositions.forEach(pos => {
+                    addPositionRow(pos.name, pos.status, pos.election);
+                });
+            } else {
+                const defaultPositions = ['Chairman', 'Vice Chairman', 'Secretary', 'Treasurer', 'RCM', 'RCM Alternate', 'Literature', 'Activities'];
+                defaultPositions.forEach(pos => addPositionRow(pos));
+            }
         });
     </script>
 </x-layout>

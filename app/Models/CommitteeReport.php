@@ -15,6 +15,7 @@ class CommitteeReport extends Model
         'meeting_day_description',
         'body',
         'positions_status',
+        'status',
     ];
 
     protected $casts = [
@@ -25,5 +26,10 @@ class CommitteeReport extends Model
     public function serviceCommittee()
     {
         return $this->belongsTo(ServiceCommittee::class);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(CommitteeReportAttachment::class);
     }
 }

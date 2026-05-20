@@ -14,7 +14,7 @@ class CommitteeReportController extends Controller
      */
     public function index()
     {
-        return CommitteeReportResource::collection(CommitteeReport::all());
+        return CommitteeReportResource::collection(CommitteeReport::where('status', 'submitted')->get());
     }
 
     /**
@@ -31,6 +31,9 @@ class CommitteeReportController extends Controller
      */
     public function show(CommitteeReport $committeeReport)
     {
+        if ($committeeReport->status !== 'submitted') {
+            abort(403, 'Unauthorized');
+        }
         return new CommitteeReportResource($committeeReport);
     }
 
