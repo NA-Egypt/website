@@ -36,8 +36,12 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         </div>
 
         <div class="meta">
-            <strong>{{ __('messages.Date') ?? 'Date' }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} <br>
+            <strong>{{ __('messages.Report Date') ?? 'Report Date' }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }} <br>
+            <strong>{{ __('messages.Meeting Date') ?? 'Meeting Date' }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} <br>
             <strong>{{ __('messages.Day') ?? 'Day' }}:</strong> {{ $report->meeting_day_description }}
+            @if($report->is_exceptional)
+                <br><strong>{{ __('messages.Exceptional Meeting') ?? 'Exceptional Meeting' }}:</strong> <span style="color: red; font-weight: bold;">{{ __('messages.yes') ?? 'Yes' }}</span>
+            @endif
         </div>
 
         <div class="section-title">{{ __('messages.Positions Status') ?? 'Positions Status' }}</div>

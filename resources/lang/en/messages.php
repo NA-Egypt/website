@@ -637,5 +637,7 @@ return [
     'Max size' => 'Maximum 5MB per file',
     'Max attachments limit reached' => 'Maximum attachments limit reached',
     'Are you sure you want to delete this attachment?' => 'Are you sure you want to delete this attachment?',
-    'PDF'=>'Download PDF'
+    'PDF'=>'Download PDF',
+    'Exceptional Meeting' => 'Exceptional Meeting',
+    'Report Date' => 'Report Date',
 ];

@@ -49,6 +49,7 @@
                             @if($isRsc)
                                 <th>{{ __('messages.Committee') }}</th>
                             @endif
+                            <th>{{ __('messages.Report Date') }}</th>
                             <th>{{ __('messages.Meeting Date') }}</th>
                             <th>{{ __('messages.Day') }}</th>
                             <th>{{ __('messages.Status') ?? 'Status' }}</th>
@@ -66,7 +67,13 @@
                                 @if($isRsc)
                                     <td>{{ $report->serviceCommittee->ar_name ?? '-' }}</td>
                                 @endif
-                                <td>{{ $report->meeting_date->format('Y-m-d') }}</td>
+                                <td>{{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</td>
+                                <td>
+                                    {{ $report->meeting_date->format('Y-m-d') }}
+                                    @if($report->is_exceptional)
+                                        <span class="badge bg-danger ms-1" style="font-size: 0.75rem;">{{ __('messages.Exceptional Meeting') }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ $report->meeting_day_description }}</td>
                                 <td>
                                     @if($report->status === 'draft')
@@ -104,7 +111,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $isRsc ? 6 : 5 }}">{{ __('messages.No reports found.') }}</td>
+                                <td colspan="{{ $isRsc ? 7 : 6 }}">{{ __('messages.No reports found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

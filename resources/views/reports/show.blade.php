@@ -3,9 +3,15 @@
 
     <div class="container mt-4">
         <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">{{ $report->serviceCommittee->ar_name }}</h5>
-                <span class="text-muted">{{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})</span>
+                <div class="text-end">
+                    <span class="text-muted me-3"><strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</span>
+                    <span class="text-muted me-3"><strong>{{ __('messages.Meeting Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})</span>
+                    @if($report->is_exceptional)
+                        <span class="badge bg-danger text-white">{{ __('messages.Exceptional Meeting') }}</span>
+                    @endif
+                </div>
             </div>
             <div class="card-body">
                 

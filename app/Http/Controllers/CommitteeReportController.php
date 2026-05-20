@@ -104,6 +104,7 @@ class CommitteeReportController extends Controller
             'status' => 'required|in:draft,submitted',
             'attachments' => 'nullable|array|max:3',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
+            'is_exceptional' => 'nullable|boolean',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $committee->id;
@@ -116,6 +117,8 @@ class CommitteeReportController extends Controller
             'body' => $request->body,
             'positions_status' => $positionsStatus,
             'status' => $request->status,
+            'report_date' => now()->toDateString(),
+            'is_exceptional' => $request->boolean('is_exceptional'),
         ]);
 
         if ($request->hasFile('attachments')) {
@@ -210,11 +213,12 @@ class CommitteeReportController extends Controller
             'status' => 'required|in:draft,submitted',
             'attachments' => 'nullable|array|max:3',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
+            'is_exceptional' => 'nullable|boolean',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $report->service_committee_id;
         $positionsStatus = $request->positions;
-
+        
         // Check if adding new attachments exceeds the limit
         if ($request->hasFile('attachments')) {
             $currentCount = $report->attachments()->count();
@@ -244,6 +248,7 @@ class CommitteeReportController extends Controller
             'body' => $request->body,
             'positions_status' => $positionsStatus,
             'status' => $request->status,
+            'is_exceptional' => $request->boolean('is_exceptional'),
         ]);
 
         if ($wasDraft && $report->status === 'submitted') {

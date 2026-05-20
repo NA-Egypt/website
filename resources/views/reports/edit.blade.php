@@ -32,14 +32,28 @@
                     @endif
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">{{ __('messages.Meeting Date') }}</label>
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">{{ __('messages.Report Date') }}</label>
+                            <input type="text" class="form-control bg-light" readonly value="{{ optional($report->report_date)->format('Y-m-d') ?? $report->created_at->format('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">{{ __('messages.Meeting Date') }}</label>
                             <input type="date" name="meeting_date" class="form-control" required value="{{ old('meeting_date', $report->meeting_date->format('Y-m-d')) }}">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">{{ __('messages.Meeting Day Description') }}</label>
-                            <input type="text" name="meeting_day_description" class="form-control" placeholder="e.g. Second Sunday" required value="{{ old('meeting_day_description', $report->meeting_day_description) }}">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">{{ __('messages.Meeting Day Description') }}</label>
+                            <input type="text" name="meeting_day_description" class="form-control" placeholder="e.g. first sunday" required value="{{ old('meeting_day_description', $report->meeting_day_description) }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_exceptional" id="is_exceptional" value="1" {{ old('is_exceptional', $report->is_exceptional) ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold text-danger" for="is_exceptional">
+                                    {{ __('messages.Exceptional Meeting') }}
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

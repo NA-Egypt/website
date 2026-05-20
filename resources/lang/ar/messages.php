@@ -673,4 +673,6 @@ return [
     'Max attachments limit reached' => 'تم الوصول إلى الحد الأقصى للمرفقات (3 ملفات). احذف أحد المرفقات لتتمكن من رفع ملف جديد.',
     'Are you sure you want to delete this attachment?' => 'هل أنت متأكد من حذف هذا المرفق؟',
     'PDF' => 'تحميل PDF',
+    'Exceptional Meeting' => 'اجتماع استثنائي',
+    'Report Date' => 'تاريخ كتابة التقرير',
 ];

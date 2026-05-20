@@ -34,9 +34,17 @@
                                                         <h6 class="mb-1 text-dark fw-bold fs-5">
                                                             {{ $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name }}
                                                         </h6>
-                                                        <span class="text-muted small fw-bold">
-                                                            <i class="bi bi-calendar3 me-1"></i>{{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})
-                                                        </span>
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                            @if($report->is_exceptional)
+                                                                <span class="badge bg-danger text-white me-2">{{ __('messages.Exceptional Meeting') }}</span>
+                                                            @endif
+                                                            <span class="text-muted small fw-bold me-3">
+                                                                <strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}
+                                                            </span>
+                                                            <span class="text-muted small fw-bold">
+                                                                <strong>{{ __('messages.Meeting Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                     
                                                     <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">

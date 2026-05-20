@@ -16,10 +16,14 @@ class CommitteeReport extends Model
         'body',
         'positions_status',
         'status',
+        'report_date',
+        'is_exceptional',
     ];
 
     protected $casts = [
         'meeting_date' => 'date',
+        'report_date' => 'date',
+        'is_exceptional' => 'boolean',
         'positions_status' => 'array', // automatically serialize/unserialize JSON
     ];
 
