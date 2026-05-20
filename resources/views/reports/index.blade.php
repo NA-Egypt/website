@@ -78,8 +78,10 @@
                                 <td>
                                     @if($report->status === 'draft')
                                         <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft') ?? 'Draft' }}</span>
+                                    @elseif($report->status === 'approved')
+                                        <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> {{ __('messages.Approved') ?? 'Approved & Published' }}</span>
                                     @else
-                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> {{ __('messages.Submitted') ?? 'Submitted' }}</span>
+                                        <span class="badge bg-primary"><i class="bi bi-check-circle"></i> {{ __('messages.Submitted') ?? 'Submitted' }}</span>
                                     @endif
                                 </td>
                                 <td>
@@ -89,6 +91,14 @@
                                     <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-sm btn-secondary me-1">
                                         <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.PDF Report') }}
                                     </a>
+                                    @if($isRsc && $report->status === 'submitted')
+                                        <form action="{{ route('committee-reports.approveAndSend', $report->id) }}" method="POST" class="d-inline me-1" onsubmit="return confirm('{{ __('messages.Are you sure you want to approve and publish this report?') ?? 'Are you sure you want to approve and publish this report?' }}')">
+                                            @csrf
+                                            <button class="btn btn-sm btn-success">
+                                                <i class="bi bi-patch-check-fill"></i> {{ __('messages.Approve & Publish') ?? 'Approve & Publish' }}
+                                            </button>
+                                        </form>
+                                    @endif
                                     @if(!$isRsc && $report->status === 'draft')
                                         <a href="{{ route('committee-reports.edit', $report->id) }}" class="btn btn-sm btn-primary me-1">
                                             <i class="bi bi-pencil"></i> {{ __('messages.Edit') }}

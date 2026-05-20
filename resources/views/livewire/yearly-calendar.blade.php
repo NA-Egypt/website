@@ -1,18 +1,10 @@
 <div>
-    <div
-        x-data="{
-            calendar: null,
-            initCalendar() {
-                // This initCalendar function is now empty or removed as the calendar initialization moves to the script block.
-                // The calendar will be initialized in the livewire:initialized event listener.
-            }
-        }"
-        x-init="initCalendar()"
-        wire:ignore
-    >
+    <x-backhead>{{ __('messages.Yearly Calendar') }}</x-backhead>
+
+    <div class="glass-card p-4 my-4" wire:ignore>
         <div id="calendar-component" x-data="{ open: false }">
-        <div id="calendar"></div>
-    </div>
+            <div id="calendar" class="w-100" style="min-height: 700px;"></div>
+        </div>
     </div>
 
     <!-- Modal -->
@@ -103,11 +95,21 @@
     </div>
 
     <script>
-        document.addEventListener('livewire:initialized', () => {
-             // Injected from Blade for client-side check
-            const canManage = @json(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees'])));
+        function tryInitCalendar() {
+            if (!window.FullCalendar || !window.Livewire) {
+                setTimeout(tryInitCalendar, 50);
+                return;
+            }
 
             var calendarEl = document.getElementById('calendar');
+            if (!calendarEl || calendarEl.dataset.initialized) {
+                return;
+            }
+            calendarEl.dataset.initialized = 'true';
+
+            // Injected from Blade for client-side check
+            const canManage = @json(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees'])));
+
             var calendar = new window.FullCalendar.Calendar(calendarEl, {
                 plugins: [
                     window.FullCalendar.dayGridPlugin,
@@ -122,7 +124,7 @@
                     right: 'multiMonthYear,dayGridMonth,timeGridWeek'
                 },
                 locale: '{{ app()->getLocale() }}',
-                direction: '{{ $direction ?? "ltr" }}',
+                direction: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}',
                 selectable: true,
                 editable: false, // Start false, simpler
                 events: @json($events), // Initial load
@@ -135,12 +137,6 @@
                         let endInput = document.getElementById('end');
                         
                         if(startInput && endInput) {
-                            startInput.value = info.startStr + "T09:00"; // formatting might be needed depending on input type datetime-local
-                            // FullCalendar returns YYYY-MM-DD for all day, but input is datetime-local. 
-                            // If it's just date, we might need to append time.
-                            // Let's check input type. It is datetime-local.
-                            // info.startStr is ISO. If view is month, it's just date.
-                            
                             let startVal = info.startStr;
                             if(startVal.indexOf('T') === -1) startVal += 'T09:00';
                             
@@ -157,9 +153,6 @@
                         var modal = new bootstrap.Modal(document.getElementById('eventModal'));
                         modal.show();
                         updateDynamicWeekdays(); // Update the labels when modal opens
-                    } else {
-                        // Optional: silent or alert
-                        // alert('You are not authorized to add events.');
                     }
                 },
 
@@ -217,6 +210,16 @@
                 var modal = new bootstrap.Modal(document.getElementById('eventModal'));
                 modal.show();
             });
-        });
+        }
+
+        // Initialize safely and resiliently
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryInitCalendar);
+        } else {
+            tryInitCalendar();
+        }
+        document.addEventListener('livewire:initialized', tryInitCalendar);
+        document.addEventListener('livewire:navigated', tryInitCalendar);
     </script>
 </div>
+

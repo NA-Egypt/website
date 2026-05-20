@@ -157,18 +157,25 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   <title>{{__('messages.NA')}}</title>
 
 </head>
-<body class="hanken-grotesk @can('is-super-admin') has-sidebar @endcan">
+@php
+$hasSidebar = auth()->check() && (
+    auth()->user()->hasRole('super admin') ||
+    auth()->user()->hasRole('Committees') ||
+    in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])
+);
+@endphp
+<body class="hanken-grotesk {{ $hasSidebar ? 'has-sidebar' : '' }}">
 {{--     wrapper--}}
     <div class="wrapper">
 
         <!-- Nav Bar-->
         <x-nav-bar />
         <!-- / Nav Bar-->
-         @can('is-super-admin')
+         @if($hasSidebar)
         <!-- sidebar -->
         <x-side-bar />
         <!-- / sidebar -->
-    @endcan
+         @endif
         <main class="page-content hanken-grotesk">
           <div class="container-fluid">
             {{ $slot }}

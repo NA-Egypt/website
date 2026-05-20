@@ -16,6 +16,7 @@ class CommitteeReport extends Model
         'body',
         'positions_status',
         'status',
+        'review_notes',
         'report_date',
         'is_exceptional',
     ];

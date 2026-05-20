@@ -22,6 +22,7 @@ window.Swal = Swal;
 window.jQuery = window.$ = $;
 import select2 from 'select2'; // Import Select2 JS
 select2(); // Register with jQuery (some versions need this, others just import)
+import './form-select2.js';
 
 // Stub Axios to prevent crash (User requested features don't strictly need it right now)
 window.axios = {

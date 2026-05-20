@@ -18,7 +18,7 @@
             
                 @auth
                 @can('is-super-admin')
-                    <x-forms.select :$users name="email" label="{{ __('messages.Email')}}" :value="$serviceCommittee->email"/>
+                    <x-forms.select :$users name="email" label="{{ __('messages.Email')}}" :value="$serviceCommittee->user_id"/>
                 @else
                     <input type="hidden" name="user_id"  value="{{ $serviceCommittee->user_id }}"/>
                 @endcan

@@ -22,7 +22,21 @@ class ServiceCommitteeController extends Controller
      */
     public function store(Request $request)
     {
-        $item = ServiceCommittee::create($request->all());
+        $fields = $request->all();
+        if (isset($fields['email']) && is_numeric($fields['email'])) {
+            $user = \App\Models\User::find((int)$fields['email']);
+            if ($user) {
+                $fields['user_id'] = $user->id;
+                $fields['email'] = $user->email;
+            }
+        } elseif (isset($fields['email'])) {
+            $user = \App\Models\User::where('email', $fields['email'])->first();
+            if ($user) {
+                $fields['user_id'] = $user->id;
+            }
+        }
+
+        $item = ServiceCommittee::create($fields);
         return new ServiceCommitteeResource($item);
     }
 
@@ -39,7 +53,21 @@ class ServiceCommitteeController extends Controller
      */
     public function update(Request $request, ServiceCommittee $serviceCommittee)
     {
-        $serviceCommittee->update($request->all());
+        $fields = $request->all();
+        if (isset($fields['email']) && is_numeric($fields['email'])) {
+            $user = \App\Models\User::find((int)$fields['email']);
+            if ($user) {
+                $fields['user_id'] = $user->id;
+                $fields['email'] = $user->email;
+            }
+        } elseif (isset($fields['email'])) {
+            $user = \App\Models\User::where('email', $fields['email'])->first();
+            if ($user) {
+                $fields['user_id'] = $user->id;
+            }
+        }
+
+        $serviceCommittee->update($fields);
         return new ServiceCommitteeResource($serviceCommittee);
     }
 

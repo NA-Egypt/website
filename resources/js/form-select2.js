@@ -1,28 +1,39 @@
+import $ from 'jquery';
+
 $(function() {
 	"use strict";
 
-    $('.single-select').select2({
-        theme: 'bootstrap4',
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        allowClear: Boolean($(this).data('allow-clear')),
-    });
-    $('.multiple-select').select2({
-        theme: 'bootstrap4',
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        allowClear: Boolean($(this).data('allow-clear')),
+    $('.single-select').each(function() {
+        $(this).select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
     });
 
+    $('.multiple-select').each(function() {
+        $(this).select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+    });
 
+    $('.select2').each(function() {
+        $(this).select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+    });
 });
 
-        // Initialize Select2 on existing select elements
-        $(function() {
-            $('.select2').select2();
-        });
-
-        document.getElementById('add-item').addEventListener('click', function() {
+    const addItemBtn = document.getElementById('add-item');
+    if (addItemBtn) {
+        addItemBtn.addEventListener('click', function() {
             // Clone the first item row
             const itemRow = document.querySelector('.item-row').cloneNode(true);
             
@@ -38,8 +49,12 @@ $(function() {
             });
 
             // Append the cloned row to the items container
-            document.getElementById('items-container').appendChild(itemRow);
+            const itemsContainer = document.getElementById('items-container');
+            if (itemsContainer) {
+                itemsContainer.appendChild(itemRow);
+            }
 
             // Initialize Select2 on the new select element
             $(itemRow).find('.select2').select2();
         });
+    }

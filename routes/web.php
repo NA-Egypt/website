@@ -159,6 +159,8 @@ Route::group(
             Route::get('committee-reports/{id}/pdf', [\App\Http\Controllers\CommitteeReportController::class, 'pdf'])->name('committee-reports.pdf');
             Route::post('committee-reports/export', [\App\Http\Controllers\CommitteeReportController::class, 'exportReportsPdf'])->name('committee-reports.exportPdf');
             Route::post('committee-reports/{id}/send', [\App\Http\Controllers\CommitteeReportController::class, 'send'])->name('committee-reports.send');
+            Route::post('committee-reports/{id}/approve-and-send', [\App\Http\Controllers\CommitteeReportController::class, 'approveAndSend'])->name('committee-reports.approveAndSend');
+            Route::post('committee-reports/{id}/return-to-draft', [\App\Http\Controllers\CommitteeReportController::class, 'returnToDraft'])->name('committee-reports.returnToDraft');
 
             // Calendar
             Route::get('/calendar', \App\Livewire\YearlyCalendar::class)->name('calendar.index');

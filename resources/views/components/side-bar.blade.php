@@ -21,6 +21,7 @@
 
 
       {{-- Admin Area --}}
+      @can('is-super-admin')
       <li class="menu-label">{{ __('messages.Admin')}}</li>
       <li>
         <a href="#menuAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuAdmin">
@@ -39,9 +40,11 @@
           </ul>
         </div>
       </li>
+      @endcan
       {{-- / Admin Area --}}
 
       {{-- Sections Area --}}
+      @can('is-super-admin')
       <li class="menu-label">{{ __('messages.Sections')}}</li>
       <li>
         <a href="#menuSections" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuSections">
@@ -75,9 +78,11 @@
           </ul>
         </div>
       </li>
+      @endcan
       {{-- /Sections Area --}}
 
       {{-- Transactions Area --}}
+      @can('is-super-admin')
       <li class="menu-label">{{ __('messages.Logs')}}</li>
       <li>
         <a href="#menuLogs" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuLogs">
@@ -92,7 +97,25 @@
           </ul>
         </div>
       </li>
+      @endcan
       {{-- /Transactions Area --}}
+
+      {{-- My Committee Details for Committees Role --}}
+      @if(auth()->check() && auth()->user()->hasRole('Committees'))
+        @php
+          $myCommittee = \App\Models\ServiceCommittee::where('user_id', auth()->id())->first();
+        @endphp
+        @if($myCommittee)
+          <li class="menu-label">{{ __('messages.My Committee') ?? 'My Committee' }}</li>
+          <li>
+            <a href="{{ route('serviceCommittee.show', $myCommittee->id) }}">
+              <div class="parent-icon"><i class="bi bi-info-circle-fill"></i>
+              </div>
+              <div class="menu-title">{{ __('messages.My Committee Details') ?? 'My Committee Details' }}</div>
+            </a>
+          </li>
+        @endif
+      @endif
 
       {{-- Reports Area --}}
       <li class="menu-label">{{ __('messages.Committee Reports') }}</li>

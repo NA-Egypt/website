@@ -50,7 +50,20 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $fields = request()->all();
+        $fields = $request->all();
+
+        if (isset($fields['email']) && is_numeric($fields['email'])) {
+            $user = User::find((int)$fields['email']);
+            if ($user) {
+                $fields['user_id'] = $user->id;
+                $fields['email'] = $user->email;
+            }
+        } elseif (isset($fields['email'])) {
+            $user = User::where('email', $fields['email'])->first();
+            if ($user) {
+                $fields['user_id'] = $user->id;
+            }
+        }
 
         ServiceCommittee::create($fields);
 
@@ -84,7 +97,22 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     public function update(Request $request, ServiceCommittee $serviceCommittee)
     {
         Gate::authorize('update', $serviceCommittee);
-        $serviceCommittee->update($request->all());
+        
+        $fields = $request->all();
+        if (isset($fields['email']) && is_numeric($fields['email'])) {
+            $user = User::find((int)$fields['email']);
+            if ($user) {
+                $fields['user_id'] = $user->id;
+                $fields['email'] = $user->email;
+            }
+        } elseif (isset($fields['email'])) {
+            $user = User::where('email', $fields['email'])->first();
+            if ($user) {
+                $fields['user_id'] = $user->id;
+            }
+        }
+
+        $serviceCommittee->update($fields);
 
         return redirect()->route('serviceCommittee.index');
     }

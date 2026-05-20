@@ -179,7 +179,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'status' => 'submitted',
         ]);
 
-        $rscUser = User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
         $this->actingAs($rscUser);
 
         $response = $this->get(route('committee-reports.index'));
@@ -245,5 +245,84 @@ class CommitteeReportWorkflowTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('2026');
         $response->assertSee('Wednesday Submitted');
+    }
+
+    public function test_rsc_can_approve_report()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $report = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Submitted',
+            'body' => 'Submitted body',
+            'status' => 'submitted',
+        ]);
+
+        $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $this->actingAs($rscUser);
+
+        $response = $this->post(route('committee-reports.approveAndSend', $report->id));
+
+        $response->assertRedirect(route('committee-reports.index'));
+        $this->assertDatabaseHas('committee_reports', [
+            'id' => $report->id,
+            'status' => 'approved',
+            'review_notes' => null,
+        ]);
+    }
+
+    public function test_rsc_can_return_to_draft_with_notes()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $report = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Submitted',
+            'body' => 'Submitted body',
+            'status' => 'submitted',
+        ]);
+
+        $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $this->actingAs($rscUser);
+
+        $response = $this->post(route('committee-reports.returnToDraft', $report->id), [
+            'review_notes' => 'Please correct section 3 details.',
+        ]);
+
+        $response->assertRedirect(route('committee-reports.index'));
+        $this->assertDatabaseHas('committee_reports', [
+            'id' => $report->id,
+            'status' => 'draft',
+            'review_notes' => 'Please correct section 3 details.',
+        ]);
+    }
+
+    public function test_non_rsc_cannot_approve_or_return_report()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $report = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Submitted',
+            'body' => 'Submitted body',
+            'status' => 'submitted',
+        ]);
+
+        $this->actingAs($user);
+
+        // Try to approve
+        $this->post(route('committee-reports.approveAndSend', $report->id))
+             ->assertStatus(403);
+
+        // Try to return to draft
+        $this->post(route('committee-reports.returnToDraft', $report->id), [
+            'review_notes' => 'Hack notes',
+        ])->assertStatus(403);
     }
 }

@@ -12,6 +12,13 @@
             </div>
         @endif
 
+        @if($report->review_notes)
+            <div class="alert alert-warning border-start border-warning border-4 mb-4 shadow-sm">
+                <h5 class="alert-heading fw-bold text-dark"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>{{ __('messages.Review Notes') ?? 'RSC Review Notes / Comments' }}</h5>
+                <p class="mb-0 text-dark">{{ $report->review_notes }}</p>
+            </div>
+        @endif
+
         <form action="{{ route('committee-reports.update', $report->id) }}" method="POST" id="reportForm" enctype="multipart/form-data">
             @csrf
             @method('PUT')
