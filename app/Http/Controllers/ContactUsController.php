@@ -46,7 +46,8 @@ class ContactUsController extends Controller
         Mail::raw(
             "Name: {$validated['name']}\nEmail: {$validated['email']}\nMessage: {$validated['message']}",
             function ($message) {
-                $message->to('web@naegypt.org') // <-- Replace with your email
+                $message->to('info@naegypt.org') // <-- Replace with your email
+                        ->cc('web@naegypt.org')
                         ->subject('New Contact Us Message');
             }
         );
