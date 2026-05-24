@@ -110,6 +110,7 @@ class CommitteeReportController extends Controller
             'attachments' => 'nullable|array|max:3',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
             'is_exceptional' => 'nullable|boolean',
+            'attended_members' => 'nullable|string',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $committee->id;
@@ -124,6 +125,7 @@ class CommitteeReportController extends Controller
             'status' => $request->status,
             'report_date' => now()->toDateString(),
             'is_exceptional' => $request->boolean('is_exceptional'),
+            'attended_members' => $request->attended_members,
         ]);
 
         if ($request->hasFile('attachments')) {
@@ -223,6 +225,7 @@ class CommitteeReportController extends Controller
             'attachments' => 'nullable|array|max:3',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
             'is_exceptional' => 'nullable|boolean',
+            'attended_members' => 'nullable|string',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $report->service_committee_id;
@@ -258,6 +261,7 @@ class CommitteeReportController extends Controller
             'positions_status' => $positionsStatus,
             'status' => $request->status,
             'is_exceptional' => $request->boolean('is_exceptional'),
+            'attended_members' => $request->attended_members,
         ]);
 
         if ($wasDraft && $report->status === 'submitted') {

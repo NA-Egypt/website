@@ -70,6 +70,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             </tbody>
         </table>
 
+        @if($report->attended_members)
+            <div class="section-title">{{ __('messages.Attended Members') ?? 'Attended Members' }}</div>
+            <div class="content-box">
+                {!! nl2br(e($report->attended_members)) !!}
+            </div>
+        @endif
+
         <div class="section-title">{{ __('messages.Report Body') ?? 'Report Body' }}</div>
         <div class="content-box">
             {!! $report->body !!}

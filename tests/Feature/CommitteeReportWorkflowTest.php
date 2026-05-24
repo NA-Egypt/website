@@ -62,6 +62,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'body' => 'Draft body',
             'status' => 'draft',
             'is_exceptional' => '1',
+            'attended_members' => 'John Doe, Jane Smith',
         ]);
 
         $response->assertRedirect(route('committee-reports.index'));
@@ -71,6 +72,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'status' => 'draft',
             'is_exceptional' => true,
             'report_date' => now()->toDateString(),
+            'attended_members' => 'John Doe, Jane Smith',
         ]);
 
         $report = CommitteeReport::where('service_committee_id', $committee->id)->first();
@@ -85,6 +87,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'body' => 'Draft body updated',
             'status' => 'draft',
             'is_exceptional' => '0',
+            'attended_members' => 'John Doe, Jane Smith Updated',
         ]);
 
         $response->assertRedirect(route('committee-reports.index'));
@@ -93,6 +96,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'meeting_day_description' => 'Wednesday Updated',
             'status' => 'draft',
             'is_exceptional' => false,
+            'attended_members' => 'John Doe, Jane Smith Updated',
         ]);
     }
 

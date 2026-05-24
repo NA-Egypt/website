@@ -19,6 +19,7 @@ class CommitteeReport extends Model
         'review_notes',
         'report_date',
         'is_exceptional',
+        'attended_members',
     ];
 
     protected $casts = [

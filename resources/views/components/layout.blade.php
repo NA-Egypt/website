@@ -152,6 +152,31 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   .sidebar-wrapper .navigation .menu-label { color: var(--text-secondary) !important; }
   .sidebar-wrapper .navigation ul { background: transparent !important; }
   .sidebar-wrapper .navigation ul li a:hover { background: rgba(0, 0, 0, 0.03) !important; }
+
+  /* RTL Form Check adjustments */
+  [dir="rtl"] .form-check {
+      padding-right: 1.5em !important;
+      padding-left: 0 !important;
+      text-align: right;
+  }
+  [dir="rtl"] .form-check .form-check-input {
+      float: right !important;
+      margin-right: -1.5em !important;
+      margin-left: 0 !important;
+  }
+  [dir="rtl"] .form-check-inline {
+      margin-right: 0 !important;
+      margin-left: 1rem !important;
+  }
+  [dir="rtl"] .form-switch {
+      padding-right: 2.5em !important;
+      padding-left: 0 !important;
+  }
+  [dir="rtl"] .form-switch .form-check-input {
+      margin-right: -2.5em !important;
+      margin-left: 0 !important;
+      background-position: right center !important;
+  }
   </style>
 
   <title>{{__('messages.NA')}}</title>

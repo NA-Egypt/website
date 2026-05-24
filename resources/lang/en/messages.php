@@ -640,4 +640,17 @@ return [
     'PDF'=>'Download PDF',
     'Exceptional Meeting' => 'Exceptional Meeting',
     'Report Date' => 'Report Date',
+    'Approve & Send to RSC'=> 'Approve & Send to ASC',
+    'Are you sure you want to approve and send this report to ASC?'=> 'Are you sure you want to approve and send this report to ASC?',
+    'approve_report_desc' => 'This action will make the report visible to all members in the Reports Archive.',
+    'Committee Review Notes' => 'Committee Review Notes',
+    'Review Notes' => 'Review Notes',
+    'Enter your review notes here...' => 'Enter your review notes here...',
+    'Return to Committee as Draft' => 'Return to Committee as Draft',
+    'return_report_desc'=> 'This action will return the report to the committee for revision and resubmission.',
+    'Return to Draft with Notes' => 'Return to Draft with Notes',
+    'meeting_day_desc' => 'e.g. first sunday',
+    'Attended Members' => 'Attended Members',
+    'Enter names of members who attended...' => 'Enter names of members who attended...',
+
 ];

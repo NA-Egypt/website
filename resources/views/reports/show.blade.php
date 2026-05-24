@@ -73,6 +73,13 @@
                     </tbody>
                 </table>
 
+                @if($report->attended_members)
+                    <h6 class="mt-4 mb-3 fw-bold">{{ __('messages.Attended Members') }}</h6>
+                    <div class="border p-3 rounded bg-light mb-4 text-start">
+                        {!! nl2br(e($report->attended_members)) !!}
+                    </div>
+                @endif
+
                 <h6 class="mt-4 mb-3 fw-bold">{{ __('messages.Report Body') }}</h6>
                 <div class="border p-4 rounded bg-light mb-4">
                     {!! $report->body !!}

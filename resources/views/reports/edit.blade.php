@@ -89,6 +89,14 @@
                 </div>
             </div>
 
+            <!-- Attended Members Section -->
+            <div class="card mb-4">
+                <div class="card-header fw-bold">{{ __('messages.Attended Members') }}</div>
+                <div class="card-body">
+                    <textarea name="attended_members" class="form-control" rows="4" placeholder="{{ __('messages.Enter names of members who attended...') }}">{{ old('attended_members', $report->attended_members) }}</textarea>
+                </div>
+            </div>
+
             <!-- Report Body Section -->
             <div class="card mb-4">
                 <div class="card-header">{{ __('messages.Report Body') }}</div>

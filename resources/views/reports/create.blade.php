@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">{{ __('messages.Meeting Day Description') }}</label>
-                            <input type="text" name="meeting_day_description" class="form-control" placeholder="e.g. first sunday" required value="{{ old('meeting_day_description') }}">
+                            <input type="text" name="meeting_day_description" class="form-control" placeholder="{{__('messages.meeting_day_desc')}}" required value="{{ old('meeting_day_description') }}">
                         </div>
                     </div>
                     <div class="row">
@@ -78,6 +78,14 @@
                             <!-- Rows will be added here -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Attended Members Section -->
+            <div class="card mb-4">
+                <div class="card-header fw-bold">{{ __('messages.Attended Members') }}</div>
+                <div class="card-body">
+                    <textarea name="attended_members" class="form-control" rows="4" placeholder="{{ __('messages.Enter names of members who attended...') }}">{{ old('attended_members') }}</textarea>
                 </div>
             </div>
 
