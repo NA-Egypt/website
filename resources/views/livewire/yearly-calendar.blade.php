@@ -108,7 +108,7 @@
             calendarEl.dataset.initialized = 'true';
 
             // Injected from Blade for client-side check
-            const canManage = @json(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees'])));
+            const canManage = <?php echo json_encode(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || in_array(strtolower(auth()->user()->email ?? ''), ['rsc@naegypt.org', 'arsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']))); ?>;
 
             var calendar = new window.FullCalendar.Calendar(calendarEl, {
                 plugins: [
@@ -130,29 +130,12 @@
                 events: @json($events), // Initial load
                 
                 select: function(info) {
+                    if (info.jsEvent && info.jsEvent.target.closest('.fc-event')) {
+                        return;
+                    }
                     if (canManage) {
-                        @this.set('eventId', null);
-                        // Set values directly to inputs to avoid network roundtrip of @this.set
-                        let startInput = document.getElementById('start');
-                        let endInput = document.getElementById('end');
-                        
-                        if(startInput && endInput) {
-                            let startVal = info.startStr;
-                            if(startVal.indexOf('T') === -1) startVal += 'T09:00';
-                            
-                            let endVal = info.endStr;
-                            if(endVal.indexOf('T') === -1) endVal += 'T10:00';
-                            
-                            startInput.value = startVal;
-                            startInput.dispatchEvent(new Event('input'));
-                            
-                            endInput.value = endVal;
-                            endInput.dispatchEvent(new Event('input'));
-                        }
-                        
-                        var modal = new bootstrap.Modal(document.getElementById('eventModal'));
-                        modal.show();
-                        updateDynamicWeekdays(); // Update the labels when modal opens
+                        @this.call('selectDateRange', info.startStr, info.endStr);
+                        setTimeout(updateDynamicWeekdays, 500);
                     }
                 },
 
@@ -197,19 +180,31 @@
                 startInputEl.addEventListener('change', updateDynamicWeekdays);
             }
 
-            @this.on('event-saved', (event) => {
-                var modalEl = document.getElementById('eventModal');
-                var modal = bootstrap.Modal.getInstance(modalEl);
-                if(modal) {
-                    modal.hide();
-                }
-                location.reload(); 
-            });
+            if (!window.yearlyCalendarListenersAttached) {
+                window.yearlyCalendarListenersAttached = true;
 
-            @this.on('open-modal', () => {
-                var modal = new bootstrap.Modal(document.getElementById('eventModal'));
-                modal.show();
-            });
+                window.addEventListener('event-saved', () => {
+                    var modalEl = document.getElementById('eventModal');
+                    var modal = bootstrap.Modal.getInstance(modalEl);
+                    if(modal) {
+                        modal.hide();
+                    }
+                    location.reload(); 
+                });
+
+                window.addEventListener('open-modal', () => {
+                    var modalEl = document.getElementById('eventModal');
+                    var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    modal.show();
+                });
+            }
+
+            var modalEl = document.getElementById('eventModal');
+            if (modalEl) {
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    @this.call('resetModal');
+                });
+            }
         }
 
         // Initialize safely and resiliently

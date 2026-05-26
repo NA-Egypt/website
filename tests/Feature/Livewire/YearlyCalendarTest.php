@@ -132,4 +132,178 @@ class YearlyCalendarTest extends TestCase
             'user_id' => $user->id,
         ]);
     }
+
+    public function test_user_cannot_edit_another_users_event()
+    {
+        $role = Role::firstOrCreate(['name' => 'Committees']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+        
+        $otherUser = User::factory()->create();
+
+        $event = CalendarEvent::create([
+            'title' => 'Other User Event',
+            'start' => '2026-06-01 10:00:00',
+            'end' => '2026-06-01 12:00:00',
+            'color' => '#3788d8',
+            'user_id' => $otherUser->id,
+        ]);
+
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->call('editEvent', $event->id)
+            ->assertForbidden();
+    }
+
+    public function test_user_can_edit_own_event()
+    {
+        $role = Role::firstOrCreate(['name' => 'Committees']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+
+        $event = CalendarEvent::create([
+            'title' => 'My Event',
+            'start' => '2026-06-01 10:00:00',
+            'end' => '2026-06-01 12:00:00',
+            'color' => '#3788d8',
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->call('editEvent', $event->id)
+            ->assertSet('title', 'My Event')
+            ->set('title', 'My Updated Event')
+            ->call('saveEvent')
+            ->assertDispatched('event-saved');
+
+        $this->assertDatabaseHas('calendar_events', [
+            'id' => $event->id,
+            'title' => 'My Updated Event',
+        ]);
+        
+        // Assert no duplicate event created
+        $this->assertEquals(1, CalendarEvent::where('user_id', $user->id)->count());
+    }
+
+    public function test_rsc_can_edit_any_event()
+    {
+        $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $otherUser = User::factory()->create();
+
+        $event = CalendarEvent::create([
+            'title' => 'Other User Event',
+            'start' => '2026-06-01 10:00:00',
+            'end' => '2026-06-01 12:00:00',
+            'color' => '#3788d8',
+            'user_id' => $otherUser->id,
+        ]);
+
+        $this->actingAs($rscUser);
+
+        Livewire::test(YearlyCalendar::class)
+            ->call('editEvent', $event->id)
+            ->assertSet('title', 'Other User Event')
+            ->set('title', 'RSC Updated Event')
+            ->call('saveEvent')
+            ->assertDispatched('event-saved');
+
+        $this->assertDatabaseHas('calendar_events', [
+            'id' => $event->id,
+            'title' => 'RSC Updated Event',
+        ]);
+    }
+
+    public function test_service_body_role_can_manage_calendar_and_save_event()
+    {
+        $role = Role::firstOrCreate(['name' => 'ServiceBody']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->set('title', 'ServiceBody Event')
+            ->set('start', '2026-06-01 10:00:00')
+            ->set('end', '2026-06-01 12:00:00')
+            ->set('color', '#3788d8')
+            ->call('saveEvent')
+            ->assertDispatched('event-saved');
+
+        $this->assertDatabaseHas('calendar_events', [
+            'title' => 'ServiceBody Event',
+            'user_id' => $user->id,
+        ]);
+    }
+
+    public function test_reset_modal_resets_fields()
+    {
+        $role = Role::firstOrCreate(['name' => 'Committees']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->set('eventId', 1)
+            ->set('title', 'Test Title')
+            ->call('resetModal')
+            ->assertSet('eventId', null)
+            ->assertSet('title', null);
+    }
+
+    public function test_select_date_range_sets_fields()
+    {
+        $role = Role::firstOrCreate(['name' => 'Committees']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->set('eventId', 5)
+            ->call('selectDateRange', '2026-05-26', '2026-05-27') // Single day selection
+            ->assertSet('eventId', null)
+            ->assertSet('start', '2026-05-26T09:00')
+            ->assertSet('end', '2026-05-26T10:00') // Same-day single-day selection adjustment
+            ->assertDispatched('open-modal');
+
+        Livewire::test(YearlyCalendar::class)
+            ->call('selectDateRange', '2026-05-26', '2026-05-29') // Multi-day selection
+            ->assertSet('eventId', null)
+            ->assertSet('start', '2026-05-26T09:00')
+            ->assertSet('end', '2026-05-29T10:00')
+            ->assertDispatched('open-modal');
+    }
+
+    public function test_super_admin_can_edit_any_event()
+    {
+        $role = Role::firstOrCreate(['name' => 'super admin']);
+        $user = User::factory()->create();
+        $user->roles()->attach($role);
+        
+        $otherUser = User::factory()->create();
+
+        $event = CalendarEvent::create([
+            'title' => 'Other User Event',
+            'start' => '2026-06-01 10:00:00',
+            'end' => '2026-06-01 12:00:00',
+            'color' => '#3788d8',
+            'user_id' => $otherUser->id,
+        ]);
+
+        $this->actingAs($user);
+
+        Livewire::test(YearlyCalendar::class)
+            ->call('editEvent', $event->id)
+            ->assertSet('title', 'Other User Event')
+            ->set('title', 'Super Admin Updated Event')
+            ->call('saveEvent')
+            ->assertDispatched('event-saved');
+
+        $this->assertDatabaseHas('calendar_events', [
+            'id' => $event->id,
+            'title' => 'Super Admin Updated Event',
+        ]);
+    }
 }

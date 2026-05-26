@@ -70,7 +70,7 @@ class YearlyCalendar extends Component
 
         if ($this->eventId) {
             $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
-            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole(['super admin', 'Committees'])) {
+            if (!$this->isRsc() && $event->user_id !== auth()->id()) {
                  abort(403, 'Unauthorized action.');
             }
             $event->update([
@@ -109,6 +109,10 @@ class YearlyCalendar extends Component
 
         $event = \App\Models\CalendarEvent::findOrFail($id);
         
+        if (!$this->isRsc() && $event->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->eventId = $event->id;
         $this->title = $event->title;
         // Format to YYYY-MM-DDTHH:MM which datetime-local expects
@@ -131,7 +135,7 @@ class YearlyCalendar extends Component
 
         if ($this->eventId) {
             $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
-            if ($event->user_id !== auth()->id() && !auth()->user()->hasRole(['super admin', 'Committees'])) {
+            if (!$this->isRsc() && $event->user_id !== auth()->id()) {
                  abort(403, 'Unauthorized action.');
             }
             $event->delete();
@@ -141,9 +145,64 @@ class YearlyCalendar extends Component
         $this->dispatch('event-saved');
     }
 
+    public function resetModal()
+    {
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
+    }
+
+    public function selectDateRange($start, $end)
+    {
+        if (!$this->checkAuth()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $this->resetModal();
+
+        $startStr = $start;
+        if (!str_contains($startStr, 'T')) {
+            $startStr .= 'T09:00';
+        }
+
+        $endStr = $end;
+        if (!str_contains($endStr, 'T')) {
+            // FullCalendar date-only selection ends are exclusive. If they selected a single day,
+            // the difference is 1 day. In this case we set the end time on the same day.
+            $startDate = \Carbon\Carbon::parse($start);
+            $endDate = \Carbon\Carbon::parse($end);
+            if ((int) $endDate->diffInDays($startDate, true) === 1) {
+                $endStr = $startDate->format('Y-m-d') . 'T10:00';
+            } else {
+                $endStr .= 'T10:00';
+            }
+        }
+
+        $this->start = \Carbon\Carbon::parse($startStr)->format('Y-m-d\TH:i');
+        $this->end = \Carbon\Carbon::parse($endStr)->format('Y-m-d\TH:i');
+
+        $this->dispatch('open-modal');
+    }
+
+    public function isRsc()
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+        $user = auth()->user();
+        return $user->hasRole('super admin') || 
+               in_array(strtolower($user->email), ['rsc@naegypt.org', 'arsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
+    }
+
     public function checkAuth()
     {
-        return auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole(['super admin', 'Committees']));
+        if (!auth()->check()) {
+            return false;
+        }
+        $user = auth()->user();
+        return $user->hasPermissionTo('can_manage_calendar') || 
+               $user->hasRole('super admin') ||
+               $user->hasRole('Committees') ||
+               $user->hasRole('ServiceBody') ||
+               $this->isRsc();
     }
 
     public function render()
