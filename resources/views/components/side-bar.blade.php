@@ -146,6 +146,18 @@
       </li>
       {{-- /Calendar Area --}}
 
+      {{-- IT Change Requests Area --}}
+      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin')))
+      <li class="menu-label">{{ __('messages.IT Change Requests') }}</li>
+      <li>
+        <a href="{{ route('change-requests.index') }}">
+          <div class="parent-icon"><i class="bi bi-cpu-fill"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.IT Change Requests') }}</div>
+        </a>
+      </li>
+      @endif
+
     </ul>
     <!--end navigation-->
 

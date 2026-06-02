@@ -164,6 +164,14 @@ Route::group(
 
             // Calendar
             Route::get('/calendar', \App\Livewire\YearlyCalendar::class)->name('calendar.index');
+
+            // Change Requests:
+            Route::get('change-requests', [\App\Http\Controllers\ChangeRequestController::class, 'index'])->name('change-requests.index');
+            Route::get('change-requests/create', [\App\Http\Controllers\ChangeRequestController::class, 'create'])->name('change-requests.create');
+            Route::post('change-requests', [\App\Http\Controllers\ChangeRequestController::class, 'store'])->name('change-requests.store');
+            Route::get('change-requests/{id}', [\App\Http\Controllers\ChangeRequestController::class, 'show'])->name('change-requests.show');
+            Route::patch('change-requests/{id}/status', [\App\Http\Controllers\ChangeRequestController::class, 'updateStatus'])->name('change-requests.update-status');
+            Route::get('change-requests/{id}/download', [\App\Http\Controllers\ChangeRequestController::class, 'downloadAttachment'])->name('change-requests.download-attachment');
         });
 
         // Auth:
