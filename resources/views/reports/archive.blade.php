@@ -2,6 +2,67 @@
     <x-backhead>{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</x-backhead>
 
     <div class="container mt-4">
+        <!-- Advanced Filter & Search Card -->
+        <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-primary">
+                        <i class="bi bi-funnel-fill me-2"></i>{{ __('messages.Filter Options') ?? 'Filter Options' }}
+                    </h5>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="{{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'true' : 'false' }}" aria-controls="filterCollapse">
+                        <i class="bi bi-filter"></i> {{ __('messages.Toggle Filters') ?? 'Toggle Filters' }}
+                    </button>
+                </div>
+            </div>
+            <div class="collapse {{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'show' : '' }}" id="filterCollapse">
+                <div class="card-body p-4 border-top">
+                    <form action="{{ route('committee-reports.archive') }}" method="GET" id="searchFilterForm">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label for="search" class="form-label fw-semibold text-muted">{{ __('messages.Search') ?? 'Search' }}</label>
+                                <input type="text" name="search" id="search" class="form-control rounded-3" value="{{ request('search') }}" placeholder="{{ __('messages.Search by day or body') ?? 'Search by day or body...' }}">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <label for="committee_id" class="form-label fw-semibold text-muted">{{ __('messages.Committee') ?? 'Committee' }}</label>
+                                <select name="committee_id" id="committee_id" class="form-select rounded-3">
+                                    <option value="">{{ __('messages.All Committees') ?? 'All Committees' }}</option>
+                                    @foreach($committees as $committee)
+                                        <option value="{{ $committee->id }}" {{ request('committee_id') == $committee->id ? 'selected' : '' }}>
+                                            {{ $committee->ar_name ?? $committee->en_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label for="start_date" class="form-label fw-semibold text-muted">{{ __('messages.Start Date') ?? 'Start Date' }}</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control rounded-3" value="{{ request('start_date') }}">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label for="end_date" class="form-label fw-semibold text-muted">{{ __('messages.End Date') ?? 'End Date' }}</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control rounded-3" value="{{ request('end_date') }}">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="exceptional" id="exceptional" value="1" {{ request('exceptional') == '1' ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-semibold text-muted" for="exceptional">
+                                        {{ __('messages.Exceptional') ?? 'Exceptional' }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="{{ route('committee-reports.archive') }}" class="btn btn-light px-4 rounded-pill">
+                                <i class="bi bi-x-circle me-1"></i> {{ __('messages.Reset') ?? 'Reset' }}
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 rounded-pill">
+                                <i class="bi bi-search me-1"></i> {{ __('messages.Search') ?? 'Search' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         @if($archive->isEmpty())
             <div class="alert alert-info text-center py-4">
                 <i class="bi bi-info-circle-fill fs-3 d-block mb-2 text-primary"></i>
@@ -12,11 +73,11 @@
                 @foreach($archive as $year => $months)
                     <div class="accordion-item shadow-sm mb-3 border rounded">
                         <h2 class="accordion-header" id="heading-{{ $year }}">
-                            <button class="accordion-button collapsed fw-bold fs-5 text-dark bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $year }}" aria-expanded="false" aria-controls="collapse-{{ $year }}">
+                            <button class="accordion-button {{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? '' : 'collapsed' }} fw-bold fs-5 text-dark bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $year }}" aria-expanded="{{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'true' : 'false' }}" aria-controls="collapse-{{ $year }}">
                                 <i class="bi bi-calendar-event text-primary me-2"></i> {{ $year }}
                             </button>
                         </h2>
-                        <div id="collapse-{{ $year }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ $year }}" data-bs-parent="#archiveAccordion">
+                        <div id="collapse-{{ $year }}" class="accordion-collapse collapse {{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'show' : '' }}" aria-labelledby="heading-{{ $year }}" data-bs-parent="#archiveAccordion">
                             <div class="accordion-body bg-white p-4">
                                 @foreach($months as $monthNum => $reports)
                                     @php

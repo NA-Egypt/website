@@ -652,5 +652,10 @@ return [
     'meeting_day_desc' => 'e.g. first sunday',
     'Attended Members' => 'Attended Members',
     'Enter names of members who attended...' => 'Enter names of members who attended...',
+    'Search by day or body' => 'Search by day or body',
+    'Exceptional' => 'Exceptional',
+    'Toggle Filters' => 'Toggle Filters',
+    'Reset' => 'Reset',
+    'Refresh' => 'Refresh',
 
 ];

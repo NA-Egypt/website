@@ -687,5 +687,9 @@ return [
     'meeting_day_desc' => 'مثال: أول أحد',
     'Attended Members' => 'الأعضاء الحاضرون',
     'Enter names of members who attended...' => 'أدخل أسماء الأعضاء الذين حضروا الاجتماع...',
-
+    'Search by day or body' => 'بحث باليوم أو اللجنة',
+    'Exceptional' => 'استثنائي',
+    'Toggle Filters' => 'خيارات التصفية',
+    'Reset' => 'إعادة تعيين',
+    'Refresh' => 'تحديث',
 ];

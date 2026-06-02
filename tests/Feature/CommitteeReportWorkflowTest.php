@@ -194,6 +194,152 @@ class CommitteeReportWorkflowTest extends TestCase
         $this->get(route('committee-reports.show', $submitted->id))->assertStatus(200);
     }
 
+    public function test_super_admin_can_see_and_access_draft_reports()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $draft = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Draft',
+            'body' => 'Draft body',
+            'status' => 'draft',
+        ]);
+
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
+        $response = $this->get(route('committee-reports.index'));
+        $response->assertSee('Wednesday Draft');
+
+        $this->get(route('committee-reports.show', $draft->id))->assertStatus(200);
+        $this->get(route('committee-reports.pdf', $draft->id))->assertStatus(200);
+
+        // Verify export includes draft
+        $response = $this->post(route('committee-reports.exportPdf'), [
+            'report_ids' => [$draft->id],
+        ]);
+        $response->assertStatus(200);
+    }
+
+    public function test_committee_user_cannot_access_other_committee_drafts_but_can_access_submitted_and_approved()
+    {
+        $user1 = User::factory()->create(['email' => 'comm1@naegypt.org']);
+        $committee1 = $this->createCommittee($user1, [
+            'ar_name' => 'لجنة 1',
+            'en_name' => 'Committee 1',
+        ]);
+
+        $user2 = User::factory()->create(['email' => 'comm2@naegypt.org']);
+        $committee2 = $this->createCommittee($user2, [
+            'ar_name' => 'لجنة 2',
+            'en_name' => 'Committee 2',
+        ]);
+
+        $draft = CommitteeReport::create([
+            'service_committee_id' => $committee1->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Draft',
+            'body' => 'Draft body',
+            'status' => 'draft',
+        ]);
+
+        $submitted = CommitteeReport::create([
+            'service_committee_id' => $committee1->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Submitted',
+            'body' => 'Submitted body',
+            'status' => 'submitted',
+        ]);
+
+        // Log in as user2 (different committee)
+        $this->actingAs($user2);
+
+        // 1. Should not see other committee's draft in index
+        $response = $this->get(route('committee-reports.index'));
+        $response->assertDontSee('Wednesday Draft');
+
+        // 2. Should get 403 on other committee's draft details/pdf/export
+        $this->get(route('committee-reports.show', $draft->id))->assertStatus(403);
+        $this->get(route('committee-reports.pdf', $draft->id))->assertStatus(403);
+
+        // 3. Should be able to view and pdf other committee's submitted/approved reports (from the archive)
+        $this->get(route('committee-reports.show', $submitted->id))->assertStatus(200);
+        $this->get(route('committee-reports.pdf', $submitted->id))->assertStatus(200);
+
+        // 4. Should be able to export other committee's submitted/approved reports
+        $response = $this->post(route('committee-reports.exportPdf'), [
+            'report_ids' => [$submitted->id],
+        ]);
+        $response->assertStatus(200);
+    }
+
+    public function test_archive_advanced_search_and_filtering()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee1 = $this->createCommittee($user, [
+            'ar_name' => 'لجنة 1',
+            'en_name' => 'Committee 1',
+        ]);
+
+        $user2 = User::factory()->create(['email' => 'comm2@naegypt.org']);
+        $committee2 = $this->createCommittee($user2, [
+            'ar_name' => 'لجنة 2',
+            'en_name' => 'Committee 2',
+        ]);
+
+        // Report 1: Committee 1, Meeting Date 2026-05-20, Exceptional, Body: "Regular meeting details"
+        $report1 = CommitteeReport::create([
+            'service_committee_id' => $committee1->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Regular',
+            'body' => 'Regular meeting details',
+            'status' => 'approved',
+            'is_exceptional' => true,
+        ]);
+
+        // Report 2: Committee 2, Meeting Date 2026-06-10, Normal, Body: "Special topic review"
+        $report2 = CommitteeReport::create([
+            'service_committee_id' => $committee2->id,
+            'meeting_date' => '2026-06-10',
+            'meeting_day_description' => 'Wednesday Special',
+            'body' => 'Special topic review',
+            'status' => 'approved',
+            'is_exceptional' => false,
+        ]);
+
+        $this->actingAs($user);
+
+        // Test 1: Search by text ("Special")
+        $response = $this->get(route('committee-reports.archive', ['search' => 'Special']));
+        $response->assertStatus(200);
+        $response->assertSee('Wednesday Special');
+        $response->assertDontSee('Wednesday Regular');
+
+        // Test 2: Filter by Committee 1
+        $response = $this->get(route('committee-reports.archive', ['committee_id' => $committee1->id]));
+        $response->assertStatus(200);
+        $response->assertSee('Wednesday Regular');
+        $response->assertDontSee('Wednesday Special');
+
+        // Test 3: Filter by Date Range (2026-06-01 to 2026-06-30)
+        $response = $this->get(route('committee-reports.archive', [
+            'start_date' => '2026-06-01',
+            'end_date' => '2026-06-30'
+        ]));
+        $response->assertStatus(200);
+        $response->assertSee('Wednesday Special');
+        $response->assertDontSee('Wednesday Regular');
+
+        // Test 4: Filter by Exceptional Status
+        $response = $this->get(route('committee-reports.archive', ['exceptional' => '1']));
+        $response->assertStatus(200);
+        $response->assertSee('Wednesday Regular');
+        $response->assertDontSee('Wednesday Special');
+    }
+
     public function test_file_attachments_upload_and_download()
     {
         $user = User::factory()->create(['email' => 'comm@naegypt.org']);

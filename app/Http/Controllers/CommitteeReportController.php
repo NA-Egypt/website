@@ -49,8 +49,13 @@ class CommitteeReportController extends Controller
             }
             $query->where('service_committee_id', $committee->id);
         } else {
-            // RSC can see both submitted and approved reports in their management dashboard
-            $query->whereIn('status', ['submitted', 'approved']);
+            // RSC can see both submitted and approved reports in their management dashboard.
+            // Super admins can also see draft reports.
+            if (Auth::user()->hasRole('super admin')) {
+                $query->whereIn('status', ['draft', 'submitted', 'approved']);
+            } else {
+                $query->whereIn('status', ['submitted', 'approved']);
+            }
             
             // RSC Filters
             if ($request->has('committee_id') && $request->committee_id) {
@@ -154,12 +159,12 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
         
         if ($this->isRsc()) {
-            if (!in_array($report->status, ['submitted', 'approved'])) {
+            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if ($report->status === 'approved') {
-                // All authenticated users can view approved reports
+            if (in_array($report->status, ['submitted', 'approved'])) {
+                // All authenticated users can view submitted and approved reports
             } else {
                 $committee = $this->getServiceCommittee();
                 if (!$committee || $committee->id !== $report->service_committee_id) {
@@ -303,12 +308,12 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::with('serviceCommittee')->findOrFail($id);
 
         if ($this->isRsc()) {
-            if (!in_array($report->status, ['submitted', 'approved'])) {
+            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if ($report->status === 'approved') {
-                // All authenticated users can download approved report pdfs
+            if (in_array($report->status, ['submitted', 'approved'])) {
+                // All authenticated users can download approved and submitted report pdfs
             } else {
                 if ($this->getServiceCommittee()?->id !== $report->service_committee_id) {
                     abort(403, 'Unauthorized');
@@ -368,10 +373,14 @@ class CommitteeReportController extends Controller
             $committeeId = $committee ? $committee->id : 0;
             $query->where(function($q) use ($committeeId) {
                 $q->where('service_committee_id', $committeeId)
-                  ->orWhere('status', 'approved');
+                  ->orWhereIn('status', ['submitted', 'approved']);
             });
         } else {
-            $query->whereIn('status', ['submitted', 'approved']);
+            if (Auth::user()->hasRole('super admin')) {
+                $query->whereIn('status', ['draft', 'submitted', 'approved']);
+            } else {
+                $query->whereIn('status', ['submitted', 'approved']);
+            }
         }
 
         $reports = $query->orderBy('meeting_date', 'desc')->get();
@@ -442,12 +451,12 @@ class CommitteeReportController extends Controller
 
         // Enforce same view permission checks as for the report
         if ($this->isRsc()) {
-            if (!in_array($report->status, ['submitted', 'approved'])) {
+            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if ($report->status === 'approved') {
-                // All authenticated users can download approved attachments
+            if (in_array($report->status, ['submitted', 'approved'])) {
+                // All authenticated users can download approved and submitted attachments
             } else {
                 $committee = $this->getServiceCommittee();
                 if (!$committee || $committee->id !== $report->service_committee_id) {
@@ -490,12 +499,36 @@ class CommitteeReportController extends Controller
         return redirect()->back()->with('success', 'Attachment deleted successfully.');
     }
 
-    public function archive()
+    public function archive(Request $request)
     {
-        $reports = CommitteeReport::with(['serviceCommittee', 'attachments'])
-            ->whereIn('status', ['submitted', 'approved'])
-            ->orderBy('meeting_date', 'desc')
-            ->get();
+        $query = CommitteeReport::with(['serviceCommittee', 'attachments'])
+            ->whereIn('status', ['submitted', 'approved']);
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('meeting_day_description', 'like', "%$search%")
+                  ->orWhere('body', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('committee_id') && $request->committee_id != '') {
+            $query->where('service_committee_id', $request->committee_id);
+        }
+
+        if ($request->has('start_date') && $request->start_date != '') {
+            $query->where('meeting_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date != '') {
+            $query->where('meeting_date', '<=', $request->end_date);
+        }
+
+        if ($request->has('exceptional') && $request->exceptional == '1') {
+            $query->where('is_exceptional', true);
+        }
+
+        $reports = $query->orderBy('meeting_date', 'desc')->get();
 
         // Group by Year, then by Month
         $archive = $reports->groupBy(function ($report) {
@@ -506,7 +539,9 @@ class CommitteeReportController extends Controller
             });
         });
 
-        return view('reports.archive', compact('archive'));
+        $committees = ServiceCommittee::all();
+
+        return view('reports.archive', compact('archive', 'committees'));
     }
 
     public function approveAndSend($id)
