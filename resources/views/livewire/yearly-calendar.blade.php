@@ -76,6 +76,12 @@
                                 @endforeach
                             </div>
                         </div>
+                        <div class="mb-3 form-check">
+                            <input class="form-check-input" type="checkbox" id="is_featured" wire:model="is_featured">
+                            <label class="form-check-label" for="is_featured">
+                                {{ __('messages.Featured') }}
+                            </label>
+                        </div>
                         <div class="mb-3">
                             <label for="color" class="form-label">{{ __('messages.Color') }}</label>
                             <input type="color" class="form-control form-control-color" id="color" wire:model="color" title="Choose your color">

@@ -33,8 +33,13 @@
                                                 <div class="col-12 px-2">
                                                     <div class="card shadow-sm border-0 info-card hov-scale w-100">
                                                         <div class="card-body p-3 p-md-4">
-                                                            <h4 class="card-title fw-bold" style="color: {{ $event->color ? $event->color : '#00698f' }};">
-                                                                {{ $event->title }}
+                                                            <h4 class="card-title fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" style="color: {{ $event->color ? $event->color : '#00698f' }};">
+                                                                <span>{{ $event->title }}</span>
+                                                                @if($event->is_featured)
+                                                                    <span class="badge rounded-pill bg-warning text-dark fs-6 px-3 py-1 shadow-sm" style="font-size: 0.8rem !important; font-weight: 600;">
+                                                                        ⭐ {{ __('messages.Featured') }}
+                                                                    </span>
+                                                                @endif
                                                             </h4>
                                                             <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
                                                                 <x-fas-calendar-alt style="width:14px; height:14px;" /> 
@@ -69,12 +74,12 @@
 
                         @if($events->count() > 1)
                             <!-- Carousel Controls -->
-                            <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev" style="width: 8%; opacity: 1;">
-                                <span class="carousel-control-prev-icon shadow-sm" aria-hidden="true" style="background-color: #00698f; border-radius: 50%; padding: 12px; width: 35px; height: 35px;"></span>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon shadow-sm" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next" style="width: 8%; opacity: 1;">
-                                <span class="carousel-control-next-icon shadow-sm" aria-hidden="true" style="background-color: #00698f; border-radius: 50%; padding: 12px; width: 35px; height: 35px;"></span>
+                            <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon shadow-sm" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
                         @endif
@@ -136,6 +141,61 @@
         #eventsViewTab .nav-link.active {
             color: #fff;
             background-color: #00698f;
+        }
+        #eventsCarousel .carousel-control-prev,
+        #eventsCarousel .carousel-control-next {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            z-index: 1040;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 105, 143, 0.2);
+            transition: all 0.3s ease;
+            opacity: 0.85;
+        }
+        #eventsCarousel .carousel-control-prev:hover,
+        #eventsCarousel .carousel-control-next:hover {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+            background: #00698f;
+            color: #fff;
+        }
+        #eventsCarousel .carousel-control-prev {
+            left: 20px;
+        }
+        #eventsCarousel .carousel-control-next {
+            right: 20px;
+        }
+        #eventsCarousel .carousel-control-prev-icon,
+        #eventsCarousel .carousel-control-next-icon {
+            filter: invert(33%) sepia(85%) saturate(1412%) hue-rotate(167deg) brightness(85%) contrast(101%);
+            width: 20px;
+            height: 20px;
+            transition: filter 0.3s ease;
+        }
+        #eventsCarousel .carousel-control-prev:hover .carousel-control-prev-icon,
+        #eventsCarousel .carousel-control-next:hover .carousel-control-next-icon {
+            filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(349deg) brightness(102%) contrast(104%);
+        }
+        @media (max-width: 768px) {
+            #eventsCarousel .carousel-control-prev {
+                left: 10px;
+            }
+            #eventsCarousel .carousel-control-next {
+                right: 10px;
+            }
+            #eventsCarousel .carousel-control-prev,
+            #eventsCarousel .carousel-control-next {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 

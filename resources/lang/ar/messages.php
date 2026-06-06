@@ -715,4 +715,5 @@ return [
     'Requester' => 'مقدم الطلب',
     'Back to Requests' => 'العودة للطلبات',
     'Download Attachment' => 'تحميل المرفق',
+    'Featured' => 'مميز',
 ];

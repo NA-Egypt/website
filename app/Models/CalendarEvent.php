@@ -19,12 +19,14 @@ class CalendarEvent extends Model
         'organizer',
         'location',
         'recurrence',
+        'is_featured',
     ];
 
     protected $casts = [
         'start' => 'datetime',
         'end' => 'datetime',
         'recurrence' => 'array',
+        'is_featured' => 'boolean',
     ];
 
     public function user()

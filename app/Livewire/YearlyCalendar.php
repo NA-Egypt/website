@@ -17,6 +17,7 @@ class YearlyCalendar extends Component
     public $organizer;
     public $location;
     public $recurrence = ['once'];
+    public $is_featured = false;
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -27,6 +28,7 @@ class YearlyCalendar extends Component
         'organizer' => 'nullable|string|max:255',
         'location' => 'nullable|string|max:255',
         'recurrence' => 'nullable|array',
+        'is_featured' => 'nullable|boolean',
     ];
 
     public function fetchEvents($start, $end)
@@ -82,6 +84,7 @@ class YearlyCalendar extends Component
                 'organizer' => $validatedData['organizer'] ?? null,
                 'location' => $validatedData['location'] ?? null,
                 'recurrence' => $validatedData['recurrence'] ?? ['once'],
+                'is_featured' => $validatedData['is_featured'] ?? false,
             ]);
         } else {
             \App\Models\CalendarEvent::create([
@@ -94,10 +97,11 @@ class YearlyCalendar extends Component
                 'location' => $validatedData['location'] ?? null,
                 'user_id' => auth()->id(),
                 'recurrence' => $validatedData['recurrence'] ?? ['once'],
+                'is_featured' => $validatedData['is_featured'] ?? false,
             ]);
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
         $this->dispatch('event-saved');
     }
 
@@ -123,6 +127,7 @@ class YearlyCalendar extends Component
         $this->organizer = $event->organizer;
         $this->location = $event->location;
         $this->recurrence = $event->recurrence ?? ['once'];
+        $this->is_featured = (bool) $event->is_featured;
 
         $this->dispatch('open-modal');
     }
@@ -141,13 +146,13 @@ class YearlyCalendar extends Component
             $event->delete();
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
         $this->dispatch('event-saved');
     }
 
     public function resetModal()
     {
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
     }
 
     public function selectDateRange($start, $end)

@@ -31,8 +31,15 @@ class FrontendEventController extends Controller
             }
         }
 
-        // Sort by start date
-        $expandedEvents = $expandedEvents->sortBy('start')->values();
+        // Sort by featured status first (featured events on top), then by start date
+        $expandedEvents = $expandedEvents->sort(function($a, $b) {
+            $aFeatured = $a->is_featured ? 1 : 0;
+            $bFeatured = $b->is_featured ? 1 : 0;
+            if ($aFeatured !== $bFeatured) {
+                return $bFeatured <=> $aFeatured;
+            }
+            return $a->start <=> $b->start;
+        })->values();
 
         $events = $expandedEvents->groupBy(function($event) {
                 return \Carbon\Carbon::parse($event->start)->translatedFormat('F Y');

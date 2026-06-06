@@ -680,4 +680,5 @@ return [
     'Requester' => 'Requester',
     'Back to Requests' => 'Back to Requests',
     'Download Attachment' => 'Download Attachment',
+    'Featured' => 'Featured',
 ];
