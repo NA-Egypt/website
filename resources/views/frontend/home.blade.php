@@ -240,6 +240,41 @@
           </div>
         </div>
       </div>
+      <!-- Slide 3 -->
+      <div class="carousel-item" data-bs-interval="15000">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block">
+              <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center d-flex flex-column align-items-center">
+                  <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين" class="img-fluid rounded mb-4 shadow-sm"
+                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                  
+                  <h3 class="card-title font-weight-bold mb-3 gradient-text" dir="rtl">
+                    المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026
+                    <span class="fs-4 d-block mt-2 font-weight-bold gradient-text text-center">مسار يجمعنا</span>
+                  </h3>
+                  <div class="card-text text-muted text-end w-100" dir="rtl" style="font-size: 0.95rem; line-height: 1.8;">
+                    <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-2 bg-light rounded text-center">
+                      <span class="mx-3">
+                        📅 <strong>التاريخ:</strong> 8 - 9 أكتوبر 2026
+                      </span>
+                      <span class="mx-3">
+                        📍 <strong>المكان:</strong> الجامعة الأمريكية بالقاهرة
+                      </span>
+                      <span class="mx-3">
+                      يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.
+                      تستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة،
+                      نتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <button class="carousel-control-prev" type="button" data-bs-target="#infoCarousel" data-bs-slide="prev">
