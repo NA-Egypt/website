@@ -11,6 +11,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         border: 4px solid #3b82f6 !important; /* Blue 500 */
     }
 
+    .meeting-item.online-border {
+        border: 4px solid #10b981 !important; /* Emerald 500 */
+    }
+
     .meeting-item-suspended, .meeting-item {
         padding: 15px !important; /* Further reduced inside margins */
         border-radius: 20px !important;
@@ -80,11 +84,16 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
 @foreach($meetings as $meeting)
 <div class="col mb-3" dir="{{ $direction }}">
+    @php
+        $isOnline = $meeting->group && in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']);
+    @endphp
     @if($meeting->status=="suspended")
         <div class="meeting-item-suspended">
             <div style="text-align: center;font-size: x-large;color: crimson;">
                 {{ __('messages.suspended') }}
             </div>
+    @elseif($isOnline)
+        <div class="meeting-item online-border">
     @elseif($meeting->type=="open")
         <div class="meeting-item open-border">
     @else

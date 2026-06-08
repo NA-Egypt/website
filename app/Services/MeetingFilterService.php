@@ -67,6 +67,19 @@ class MeetingFilterService
             });
         }
 
+        if (!empty($filters['virtualOnly'])) {
+            $query->whereHas('group', function ($q) {
+                $q->whereIn('group_type', ['اونلاين', 'اون لاين', 'online'])
+                  ->where(function ($sub) {
+                      $sub->whereNull('location')
+                          ->orWhere(function ($sub2) {
+                              $sub2->where('location', 'not like', '%map%')
+                                   ->where('location', 'not like', '%goo.gl%');
+                          });
+                  });
+            });
+        }
+
         return $query->get();
     }
 

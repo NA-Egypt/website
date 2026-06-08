@@ -38,6 +38,15 @@
                                 <div class="col-12" wire:key="filter-neighborhood" id="tour-neighborhood">
                                     <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" :disabled="!!$serviceBody || !!$group" />
                                 </div>
+                                <div class="col-12 d-flex align-items-end" wire:key="filter-virtual-only" id="tour-virtual-only">
+                                    <button type="button" 
+                                            wire:click="$set('virtualOnly', {{ $virtualOnly ? 'false' : 'true' }})" 
+                                            class="btn w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 {{ $virtualOnly ? 'btn-success text-white' : 'btn-outline-success' }}"
+                                            style="height: 38px;">
+                                        <x-fas-video style="width:16px; height:16px;"/>
+                                        {{ __('messages.Virtual Meetings Only') ?? 'Virtual Meetings Only' }}
+                                    </button>
+                                </div>
                             </div>
                             
                             <div class="d-flex justify-content-center align-items-center mt-4 pt-3 border-top" id="tour-clear">

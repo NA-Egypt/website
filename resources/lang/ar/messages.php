@@ -720,4 +720,5 @@ return [
     'download_qr' => 'تحميل رمز الـ QR',
     'close' => 'إغلاق',
     'meetings_qr' => 'رمز الاستجابة السريعة للصفحة',
+    'Virtual Meetings Only' => 'اجتماعات أونلاين فقط',
 ];

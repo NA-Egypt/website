@@ -2,7 +2,12 @@
 
 <div class="meetings-container">
     @foreach ($meetings as $meeting)
-        <div class="flex gap-3 p-4 bg-white rounded  border border-primary meeting-item mb-3">           
+        @php
+            $isOnline = $meeting->group && 
+                        in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']) &&
+                        !(\Illuminate\Support\Str::contains(strtolower($meeting->group->location), ['map', 'goo.gl']));
+        @endphp
+        <div class="flex gap-3 p-4 bg-white rounded border meeting-item mb-3 {{ $isOnline ? '' : 'border-primary' }}" style="{{ $isOnline ? 'border: 4px solid #10b981 !important;' : '' }}">           
             <div class="flex-1 flex flex-col">
                 <div class="d-flex justify-content-between align-items-center" >
                     <p class="font-bold text-xl mt-3 text-primary meeting-day">{{ $meeting->formatted_recurrence }} - {{ app()->getLocale() === 'ar' ? $meeting->day->ar_name : $meeting->day->en_name }}</p>

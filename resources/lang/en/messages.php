@@ -685,4 +685,5 @@ return [
     'download_qr' => 'Download QR Code',
     'close' => 'Close',
     'meetings_qr' => 'Page QR Code',
+    'Virtual Meetings Only' => 'Virtual Meetings Only',
 ];

@@ -20,6 +20,7 @@ class MeetingFilter extends Component
     #[Url] public $neighborhood = '';
     #[Url] public $type = '';
     #[Url(except: '')] public $search = '';
+    #[Url] public $virtualOnly = false;
 
     public function updatedCity()
     {
@@ -78,6 +79,7 @@ class MeetingFilter extends Component
             'city' => $this->city,
             'type' => $this->type,
             'search' => $this->search,
+            'virtualOnly' => $this->virtualOnly,
         ];
 
         $meetings = $filterService->filterMeetings($filters);
