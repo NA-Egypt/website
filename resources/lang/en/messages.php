@@ -681,4 +681,8 @@ return [
     'Back to Requests' => 'Back to Requests',
     'Download Attachment' => 'Download Attachment',
     'Featured' => 'Featured',
+    'scan_qr' => 'Scan QR Code',
+    'download_qr' => 'Download QR Code',
+    'close' => 'Close',
+    'meetings_qr' => 'Page QR Code',
 ];

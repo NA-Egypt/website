@@ -716,4 +716,8 @@ return [
     'Back to Requests' => 'العودة للطلبات',
     'Download Attachment' => 'تحميل المرفق',
     'Featured' => 'مميز',
+    'scan_qr' => 'امسح رمز الاستجابة السريعة (QR)',
+    'download_qr' => 'تحميل رمز الـ QR',
+    'close' => 'إغلاق',
+    'meetings_qr' => 'رمز الاستجابة السريعة للصفحة',
 ];
