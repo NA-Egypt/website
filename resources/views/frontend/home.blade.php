@@ -446,6 +446,51 @@
   </div>
   @endif
 
+  <!-- Convention Popup Modal -->
+  <div class="modal fade" id="conventionModal" tabindex="-1" aria-labelledby="conventionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; background: linear-gradient(145deg, #ffffff 0%, #f7fbff 100%);">
+        <div class="modal-header border-0 bg-transparent pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="modal-title" id="conventionModalLabel"></h5>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="background-color: rgba(50, 85, 127, 0.08); padding: 0.75rem; border-radius: 50%;"></button>
+        </div>
+        <div class="modal-body px-4 pb-4 pt-2 text-center d-flex flex-column align-items-center">
+          <a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-dark w-100">
+            <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين" class="img-fluid rounded mb-4 shadow-sm"
+              style="max-height: 320px; object-fit: contain; width: auto; max-width: 100%; transition: transform 0.3s ease;">
+            
+            <h3 class="card-title font-weight-bold mb-3 gradient-text text-center" dir="rtl" style="font-weight: 800; font-size: 1.3rem; text-align: center;">
+              المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026
+              <span class="fs-6 d-block mt-2 font-weight-bold gradient-text text-center">مسار يجمعنا</span>
+            </h3>
+            
+            <div class="card-text text-muted text-center w-100" dir="rtl" style="font-size: 0.95rem; line-height: 1.8;">
+              <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-3 bg-light rounded text-center border" style="border-color: rgba(50, 85, 127, 0.08) !important;">
+                <span class="mx-3">
+                  📅 <strong>التاريخ:</strong> 8 - 9 أكتوبر 2026
+                </span>
+                <span class="mx-3 border-start ps-3 border-secondary-subtle">
+                  📍 <strong>المكان:</strong> الجامعة الأمريكية بالقاهرة
+                </span>
+              </div>
+              <p class="px-2 text-center" style="color: #475569; max-width: 650px; margin: 0 auto 1.5rem;">
+                يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.
+              </p>
+            </div>
+          </a>
+          <div class="d-flex gap-2 justify-content-center w-100 mt-2">
+            <a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-4 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #00698f 0%, #32557f 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(50, 85, 127, 0.2);">
+              التفاصيل والتسجيل
+            </a>
+            <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 12px; font-weight: 600;">
+              إغلاق
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let selectedDate = null;
 
@@ -483,5 +528,15 @@
       console.log(`Difference: ${totalYears} years / ${totalMonths} months / ${totalDays} days`);
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!sessionStorage.getItem('convention_popup_shown')) {
+        const conventionModalEl = document.getElementById('conventionModal');
+        if (conventionModalEl && window.bootstrap) {
+          const myModal = new window.bootstrap.Modal(conventionModalEl);
+          myModal.show();
+          sessionStorage.setItem('convention_popup_shown', 'true');
+        }
+      }
+    });
   </script>
 </x-frontend.layout>
