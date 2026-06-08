@@ -37,6 +37,7 @@
                 <th>{{  __('messages.Email') }}</th>
                 {{-- <th>{{  __('messages.Type') }}</th> --}}
                 <th>{{  __('messages.Roles') }}</th>
+                <th>{{  __('messages.Service Body') }}</th>
                 <th>{{  __('messages.Control') }}</th>
             </tr>
 
@@ -53,6 +54,7 @@
                     <td>{{ $user->email }}</td>
                     {{-- <td>{{ $user->type }}</td> --}}
                     <td>{{ $user->roles->pluck('name')->implode(', ') }}</td>
+                    <td>{{ $user->serviceBody ? $user->serviceBody->{app()->getLocale() . '_name'} : '-' }}</td>
                     <td>
                         <x-button-a href="{{ route('users.edit', $user) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
                         <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-user' id="{{$user->id}}" routeName="users.destroy" />

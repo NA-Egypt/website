@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'type',
+        'service_body_id',
     ];
 
     /**
@@ -53,11 +54,30 @@ class User extends Authenticatable
 
     public function group()
     {
-        return $this->belongsTo(Group::class);
+        return $this->hasOne(Group::class);
     }
 
     public function serviceBody()
     {
         return $this->belongsTo(ServiceBody::class);
+    }
+
+    public function getServiceBodyAttribute()
+    {
+        if ($this->hasRole('gsr')) {
+            $group = Group::where('user_id', $this->id)->first();
+            return $group ? $group->serviceBody : null;
+        }
+
+        return $this->getRelationValue('serviceBody');
+    }
+
+    public function getServiceBodyIdAttribute($value)
+    {
+        if ($this->hasRole('gsr')) {
+            $group = Group::where('user_id', $this->id)->first();
+            return $group ? $group->service_body_id : $value;
+        }
+        return $value;
     }
 }
