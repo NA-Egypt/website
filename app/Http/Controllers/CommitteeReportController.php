@@ -41,8 +41,21 @@ class CommitteeReportController extends Controller
     {
         $isRsc = $this->isRsc();
         $query = CommitteeReport::with('serviceCommittee');
+        $user = Auth::user();
 
-        if (!$isRsc) {
+        if ($this->isRestrictedConsumer($user)) {
+            $query->where('status', 'approved');
+            $now = now();
+            if ($now->day < 10) {
+                $query->where(function($dateQ) use ($now) {
+                    $dateQ->whereYear('meeting_date', '<', $now->year)
+                          ->orWhere(function($inner) use ($now) {
+                              $inner->whereYear('meeting_date', $now->year)
+                                    ->whereMonth('meeting_date', '<', $now->month);
+                          });
+                });
+            }
+        } elseif (!$isRsc) {
             $committee = $this->getServiceCommittee();
             if (!$committee) {
                 abort(403, 'You are not assigned to any Service Committee.');

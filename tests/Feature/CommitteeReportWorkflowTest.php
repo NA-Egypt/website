@@ -506,17 +506,23 @@ class CommitteeReportWorkflowTest extends TestCase
         $serviceBodyUser->assignRole('ServiceBody');
         $this->actingAs($serviceBodyUser);
 
-        // Previous month report is always visible in archive & detail view
-        $response = $this->get(route('committee-reports.archive'));
+        // Previous month report is always visible in index, archive & detail view
+        $response = $this->get(route('committee-reports.index'));
+        $response->assertStatus(200);
         $response->assertSee('Previous Month Report');
+
+        $responseArchive = $this->get(route('committee-reports.archive'));
+        $responseArchive->assertSee('Previous Month Report');
         $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(200);
 
         // Current month report availability depends on current day of month
         if (now()->day < 10) {
             $response->assertDontSee('Current Month Report');
+            $responseArchive->assertDontSee('Current Month Report');
             $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(403);
         } else {
             $response->assertSee('Current Month Report');
+            $responseArchive->assertSee('Current Month Report');
             $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(200);
         }
     }
