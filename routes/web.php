@@ -110,6 +110,8 @@ Route::group(
             // Agenda Routes:
             Route::get('/agenda/create', [\App\Http\Controllers\AgendaController::class, 'create'])->name('agenda.create');
             Route::post('/agenda', [\App\Http\Controllers\AgendaController::class, 'store'])->name('agenda.store');
+            Route::get('/groups-agendas/archive', [\App\Http\Controllers\AgendaController::class, 'archive'])->name('groups-agendas.archive');
+            Route::post('/groups-agendas/export', [\App\Http\Controllers\AgendaController::class, 'exportMultipleAgendasPdf'])->name('groups-agendas.exportPdf');
             Route::get('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'show'])->name('agenda.show');
             Route::get('/agenda/{agenda}/export', [\App\Http\Controllers\AgendaController::class, 'exportPdf'])->name('agenda.exportPdf');
             Route::get('/serviceBody/{serviceBody}/agendas',[ServiceBodyController::class,'agendas'])->name('serviceBody.agendas');

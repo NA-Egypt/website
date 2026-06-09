@@ -24,7 +24,14 @@
 
 {{--            <x-forms.input name="email" label="{{ __('messages.Email')}}"/>--}}
             <x-forms.select :$users name="user_id" label="{{ __('messages.Email')}}"/>
-            <x-forms.input name="phone" label="{{ __('messages.Phone')}}"/>
+            <div class="row mx-0 px-0 g-3">
+                <div class="col-md-6 pe-1">
+                    <x-forms.input name="phone" label="{{ __('messages.Phone')}}"/>
+                </div>
+                <div class="col-md-6 ps-1">
+                    <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number"/>
+                </div>
+            </div>
             <div class="row align-items-end mx-1">
                 <div class="form-check form-switch col-md-2">
                     <input type="hidden" name="group_type" value="فعلي"> <!-- Sends "فعلي" when unchecked -->

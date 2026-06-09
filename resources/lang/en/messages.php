@@ -584,6 +584,8 @@ return [
     'tour_next' => 'Next',
     'tour_prev' => 'Previous',
     'tour_done' => 'Done',
+    'tour_virtual_only' => 'Virtual Meetings Only',
+    'tour_virtual_only_desc' => 'Filter the list to show only virtual/online meetings.',
     'datatables' => [
         'sEmptyTable' => 'No data available in table',
         'sInfo' => 'Showing _START_ to _END_ of _TOTAL_ entries',
@@ -686,4 +688,14 @@ return [
     'close' => 'Close',
     'meetings_qr' => 'Page QR Code',
     'Virtual Meetings Only' => 'Virtual Meetings Only',
+    'Basic Information' => 'Basic Information',
+    'Contact & Capacity' => 'Contact & Capacity',
+    'Location Details' => 'Location Details',
+    'Agendas Archive' => 'Groups\' Agendas Archive',
+    'All Groups' => 'All Groups',
+    'search_by_submitter_or_content' => 'Search by submitter or agenda content...',
+    'No agendas archived yet.' => 'No agendas archived yet.',
+    'no_agendas_selected' => 'No agendas selected',
+    'Select All' => 'Select All',
+    
 ];

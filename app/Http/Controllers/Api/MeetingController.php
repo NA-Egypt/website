@@ -33,7 +33,6 @@ class MeetingController extends Controller
             'type'          => 'required',
             'lang'          => 'required|in:arabic,english',
             'status'        => 'required|in:suspended,available',
-            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);
@@ -76,7 +75,6 @@ class MeetingController extends Controller
             'type'          => 'sometimes|required',
             'lang'          => 'sometimes|required|in:arabic,english',
             'status'        => 'sometimes|required|in:suspended,available',
-            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
         ]);

@@ -48,17 +48,14 @@
                     </div>
     
                     <div class="row align-items-end">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <x-forms.select :$days name="day_id" label="{{ __('messages.Day')}}"/>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <x-forms.input name="start_time" label="{{ __('messages.From')}}" type="time" value="{{ old('start_time') }}" />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <x-forms.input name="end_time" label="{{ __('messages.To')}}" type="time" value="{{ old('end_time') }}" />
-                        </div>
-                        <div class="col-md-3">
-                            <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number" value="{{ old('capacity') }}" />
                         </div>
                     </div>
                     

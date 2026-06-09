@@ -22,7 +22,6 @@ class Meeting extends Model
         'options',
         'lang',
         'status',
-        'capacity',
         'recurrence'
     ];
     

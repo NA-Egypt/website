@@ -60,12 +60,23 @@ class AgendaController extends Controller
         return redirect()->route('group.show', $group->id)->with('success', __('messages.agenda_created_successfully'));
     }
 
+    protected function isAuthorized($user)
+    {
+        if (!$user) {
+            return false;
+        }
+        return $user->hasRole('super admin') || 
+               in_array(strtolower($user->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(Agenda $agenda)
     {
-        Gate::authorize('view', $agenda->group);
+        if (!$this->isAuthorized(auth()->user())) {
+            Gate::authorize('view', $agenda->group);
+        }
 
         return view('agenda.show', compact('agenda'));
     }
@@ -75,7 +86,9 @@ class AgendaController extends Controller
      */
     public function exportPdf(Agenda $agenda)
     {
-        Gate::authorize('view', $agenda->group);
+        if (!$this->isAuthorized(auth()->user())) {
+            Gate::authorize('view', $agenda->group);
+        }
 
         $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
         $fontDirs = $defaultConfig['fontDir'];
@@ -108,6 +121,115 @@ class AgendaController extends Controller
         $mpdf->WriteHTML($html);
 
         $filename = 'agenda_' . $agenda->id . '.pdf';
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Display the archive of groups' agendas.
+     */
+    public function archive(Request $request)
+    {
+        if (!$this->isAuthorized(auth()->user())) {
+            abort(403, 'Unauthorized');
+        }
+
+        $query = Agenda::with('group');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('submitter_name', 'like', "%$search%")
+                  ->orWhere('recovery_atmosphere', 'like', "%$search%")
+                  ->orWhere('other_topics', 'like', "%$search%")
+                  ->orWhereHas('group', function ($gQ) use ($search) {
+                      $gQ->where('ar_name', 'like', "%$search%")
+                         ->orWhere('en_name', 'like', "%$search%");
+                  });
+            });
+        }
+
+        if ($request->has('group_id') && $request->group_id != '') {
+            $query->where('group_id', $request->group_id);
+        }
+
+        if ($request->has('start_date') && $request->start_date != '') {
+            $query->where('agenda_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date != '') {
+            $query->where('agenda_date', '<=', $request->end_date);
+        }
+
+        $agendas = $query->orderBy('agenda_date', 'desc')->get();
+
+        // Group by Year, then by Month
+        $archive = $agendas->groupBy(function ($agenda) {
+            return \Carbon\Carbon::parse($agenda->agenda_date)->format('Y');
+        })->map(function ($yearGroup) {
+            return $yearGroup->groupBy(function ($agenda) {
+                return \Carbon\Carbon::parse($agenda->agenda_date)->format('m');
+            });
+        });
+
+        $groups = Group::all();
+
+        return view('agenda.archive', compact('archive', 'groups'));
+    }
+
+    /**
+     * Export multiple agendas to PDF.
+     */
+    public function exportMultipleAgendasPdf(Request $request)
+    {
+        if (!$this->isAuthorized(auth()->user())) {
+            abort(403, 'Unauthorized');
+        }
+
+        $agendaIds = $request->input('agenda_ids', []);
+        
+        if (empty($agendaIds)) {
+            return back()->with('error', __('messages.no_agendas_selected') ?? 'No agendas selected for export.');
+        }
+
+        $agendas = Agenda::whereIn('id', $agendaIds)->with('group')->orderBy('agenda_date', 'desc')->get();
+
+        if ($agendas->isEmpty()) {
+            return back()->with('error', __('messages.no_agendas_selected') ?? 'No valid agendas found for export.');
+        }
+
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $html = view('pdf.agenda', compact('agendas'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'agendas_export_' . date('Y-m-d') . '.pdf';
         
         return response($mpdf->Output($filename, 'S'), 200)
                ->header('Content-Type', 'application/pdf')

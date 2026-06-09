@@ -95,7 +95,6 @@ class MeetingController extends Controller
             'type'          => 'required',
             'lang'          => 'required|in:arabic,english',
             'status'        => 'required|in:suspended,available',
-            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
             'recurrence'    => 'required|array',
@@ -114,7 +113,6 @@ class MeetingController extends Controller
             'type'          => $fields['type'],
             'lang'          => $fields['lang'],
             'status'        => $fields['status'],
-            'capacity'      => $fields['capacity'] ?? null,
             'recurrence'    => $fields['recurrence'],
         ]);
 
@@ -173,7 +171,6 @@ class MeetingController extends Controller
             'type'          => 'required',
             'lang'          => 'required|in:arabic,english',
             'status'        => 'required|in:suspended,available',
-            'capacity'      => 'nullable|integer',
             'options'       => 'nullable|array',
             'options.*'     => 'exists:options,id',
             'recurrence'    => 'required|array',
@@ -192,7 +189,6 @@ class MeetingController extends Controller
             'type'        => $fields['type'],
             'lang'        => $fields['lang'],
             'status'      => $fields['status'],
-            'capacity'    => $fields['capacity'] ?? null,
             'recurrence'  => $fields['recurrence'],
         ]);
     

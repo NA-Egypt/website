@@ -38,11 +38,15 @@
                                 <div class="col-12" wire:key="filter-neighborhood" id="tour-neighborhood">
                                     <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" :disabled="!!$serviceBody || !!$group" />
                                 </div>
-                                <div class="col-12 d-flex align-items-end" wire:key="filter-virtual-only" id="tour-virtual-only">
+                                <div class="col-12" wire:key="filter-virtual-only" id="tour-virtual-only">
+                                    <div class="d-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden;">
+                                        <span style="width: 0.5rem; height: 0.5rem; display: inline-block;"></span>
+                                        <label class="m-0 p-0">&nbsp;</label>
+                                    </div>
                                     <button type="button" 
                                             wire:click="$set('virtualOnly', {{ $virtualOnly ? 'false' : 'true' }})" 
                                             class="btn w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 {{ $virtualOnly ? 'btn-success text-white' : 'btn-outline-success' }}"
-                                            style="height: 38px;">
+                                            style="height: 38px; max-width: 278px;">
                                         <x-fas-video style="width:16px; height:16px;"/>
                                         {{ __('messages.Virtual Meetings Only') ?? 'Virtual Meetings Only' }}
                                     </button>
@@ -137,6 +141,7 @@
                     { element: '#tour-type', popover: { title: '{{ __("messages.tour_type") }}', description: '{{ __("messages.tour_type_desc") }}' } },
                     { element: '#tour-city', popover: { title: '{{ __("messages.tour_city") }}', description: '{{ __("messages.tour_city_desc") }}' } },
                     { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}' } },
+                    { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}' } },
                     { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}' } },
                     { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}' } },
                     { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}' } },

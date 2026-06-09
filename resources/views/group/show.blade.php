@@ -77,6 +77,22 @@
                 </div>
             </div>
 
+            {{-- Capacity --}}
+            <div class="col">
+                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Capacity')}}</p>
+                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->capacity ?? 'N/A'}}</h5>
+                        </div>
+                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 12px; opacity: 0.9;">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             {{-- Locations --}}
             <div class="col">
                 <div class="glass-card h-100 p-4 rounded-4 transition-hover">

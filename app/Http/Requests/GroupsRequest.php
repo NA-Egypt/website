@@ -37,6 +37,7 @@ class GroupsRequest extends FormRequest
             'group_type'        => 'required',
             'service_body_id'   => 'required',
             'neighborhood_id'   => 'required',
+            'capacity'          => 'nullable|integer',
         ];
     }
 

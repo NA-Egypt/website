@@ -19,7 +19,8 @@ class Group extends Model
         'en_address',
         'group_type',
         'service_body_id',
-        'neighborhood_id'
+        'neighborhood_id',
+        'capacity'
     ];
     public function serviceBody(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

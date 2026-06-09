@@ -145,10 +145,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 {{ __("messages." . $meeting->type) }}
             </div>
         @endif
-        @if($meeting->capacity)
+        @if($meeting->group && $meeting->group->capacity)
             <div class="meeting-topic-badge">
                 <x-fas-users style="width:16px; height:16px;"/>
-                {{$meeting->capacity }}
+                {{$meeting->group->capacity }}
             </div>
         @endif
     </div>
