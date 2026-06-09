@@ -83,7 +83,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
 @foreach($meetings as $meeting)
-<div class="col mb-3" dir="{{ $direction }}">
+<div class="col mb-3" dir="{{ $direction }}" @if($loop->first) id="tour-meeting-card" @endif>
     @php
         $isOnline = $meeting->group && in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']);
     @endphp

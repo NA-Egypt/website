@@ -6,12 +6,31 @@
                 <div class="col-12 col-md-12 col-lg-12">
                     <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
                         <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 text-center">
-                            <h5 class="mb-0 fw-bold text-primary d-flex align-items-center justify-content-center">
+                            <h5 class="mb-2 fw-bold text-primary d-flex align-items-center justify-content-center">
                                 <i class="fas fa-filter mx-2"></i>{{ __('messages.Filter Options') }}
                                 <button type="button" class="btn btn-link text-info p-0 mx-2 text-decoration-none rounded-circle border border-info d-flex align-items-center justify-content-center" id="start-tour-btn" title="{{ __('messages.tour_start') }}" style="width: 24px; height: 24px; border-width: 2px !important;">
                                     <span style="font-size: 14px; font-weight: bold; line-height: 1;">?</span>
                                 </button>
                             </h5>
+                            <!-- Legend -->
+                            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2" style="font-size: 0.85rem; font-weight: 500;">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #f43f5e; display: inline-block;"></span>
+                                    <span class="text-muted">{{ __('messages.legend_open') }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #3b82f6; display: inline-block;"></span>
+                                    <span class="text-muted">{{ __('messages.legend_closed') }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #10b981; display: inline-block;"></span>
+                                    <span class="text-muted">{{ __('messages.legend_online') }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; border: 2px dashed #cbd5e1; display: inline-block;"></span>
+                                    <span class="text-muted">{{ __('messages.legend_suspended') }}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body p-4">
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -44,11 +63,24 @@
                                         <label class="m-0 p-0">&nbsp;</label>
                                     </div>
                                     <button type="button" 
-                                            wire:click="$set('virtualOnly', {{ $virtualOnly ? 'false' : 'true' }})" 
+                                            wire:click="toggleVirtualOnly" 
                                             class="btn w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 {{ $virtualOnly ? 'btn-success text-white' : 'btn-outline-success' }}"
                                             style="height: 38px; max-width: 278px;">
                                         <x-fas-video style="width:16px; height:16px;"/>
                                         {{ __('messages.Virtual Meetings Only') ?? 'Virtual Meetings Only' }}
+                                    </button>
+                                </div>
+                                <div class="col-12" wire:key="filter-english-only" id="tour-english-only">
+                                    <div class="d-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden;">
+                                        <span style="width: 0.5rem; height: 0.5rem; display: inline-block;"></span>
+                                        <label class="m-0 p-0">&nbsp;</label>
+                                    </div>
+                                    <button type="button" 
+                                            wire:click="toggleEnglishOnly" 
+                                            class="btn w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 {{ $englishOnly ? 'btn-primary text-white' : 'btn-outline-primary' }}"
+                                            style="height: 38px; max-width: 278px;">
+                                        <x-fas-language style="width:16px; height:16px;"/>
+                                        {{ __('messages.English Meetings Only') ?? 'English Meetings Only' }}
                                     </button>
                                 </div>
                             </div>
@@ -127,26 +159,40 @@
             
             startBtn.dataset.tourInitialized = 'true';
             
+            const tourSteps = [
+                { popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}' } },
+                { element: '#tour-day', popover: { title: '{{ __("messages.tour_day") }}', description: '{{ __("messages.tour_day_desc") }}' } },
+                { element: '#tour-group', popover: { title: '{{ __("messages.tour_group") }}', description: '{{ __("messages.tour_group_desc") }}' } },
+                { element: '#tour-service-body', popover: { title: '{{ __("messages.tour_service_body") }}', description: '{{ __("messages.tour_service_body_desc") }}' } },
+                { element: '#tour-type', popover: { title: '{{ __("messages.tour_type") }}', description: '{{ __("messages.tour_type_desc") }}' } },
+                { element: '#tour-city', popover: { title: '{{ __("messages.tour_city") }}', description: '{{ __("messages.tour_city_desc") }}' } },
+                { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}' } },
+                { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}' } },
+                { element: '#tour-english-only', popover: { title: '{{ __("messages.tour_english_only") }}', description: '{{ __("messages.tour_english_only_desc") }}' } },
+                { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}' } },
+                { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}' } },
+                { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}' } },
+                { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}' } }
+            ];
+
+            if (document.getElementById('tour-meeting-card')) {
+                tourSteps.push({
+                    element: '#tour-meeting-card',
+                    popover: {
+                        title: '{{ __("messages.tour_meeting_card") }}',
+                        description: '{{ __("messages.tour_meeting_card_desc") }}'
+                    }
+                });
+            }
+
             const driverObj = window.driver.js.driver({
                 showProgress: true,
                 animate: true,
+                progressText: '{!! __("messages.tour_progress_text") !!}',
                 nextBtnText: '{{ __("messages.tour_next") }}',
                 prevBtnText: '{{ __("messages.tour_prev") }}',
                 doneBtnText: '{{ __("messages.tour_done") }}',
-                steps: [
-                    { popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}' } },
-                    { element: '#tour-day', popover: { title: '{{ __("messages.tour_day") }}', description: '{{ __("messages.tour_day_desc") }}' } },
-                    { element: '#tour-group', popover: { title: '{{ __("messages.tour_group") }}', description: '{{ __("messages.tour_group_desc") }}' } },
-                    { element: '#tour-service-body', popover: { title: '{{ __("messages.tour_service_body") }}', description: '{{ __("messages.tour_service_body_desc") }}' } },
-                    { element: '#tour-type', popover: { title: '{{ __("messages.tour_type") }}', description: '{{ __("messages.tour_type_desc") }}' } },
-                    { element: '#tour-city', popover: { title: '{{ __("messages.tour_city") }}', description: '{{ __("messages.tour_city_desc") }}' } },
-                    { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}' } },
-                    { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}' } },
-                    { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}' } },
-                    { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}' } },
-                    { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}' } },
-                    { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}' } }
-                ]
+                steps: tourSteps
             });
 
             startBtn.addEventListener('click', function() {

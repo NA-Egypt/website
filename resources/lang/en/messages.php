@@ -586,6 +586,15 @@ return [
     'tour_done' => 'Done',
     'tour_virtual_only' => 'Virtual Meetings Only',
     'tour_virtual_only_desc' => 'Filter the list to show only virtual/online meetings.',
+    'tour_english_only' => 'English Meetings Only',
+    'tour_english_only_desc' => 'Filter the list to show only meetings conducted in English.',
+    'tour_progress_text' => '{{current}} of {{total}}',
+    'tour_meeting_card' => 'Meeting Card Details',
+    'tour_meeting_card_desc' => 'This card shows the meeting details including the day, start and end times, group name, type, topic, languages, GSR contact info, meeting options, address and map location.',
+    'legend_open' => 'Open',
+    'legend_closed' => 'Closed',
+    'legend_online' => 'Online',
+    'legend_suspended' => 'Suspended',
     'datatables' => [
         'sEmptyTable' => 'No data available in table',
         'sInfo' => 'Showing _START_ to _END_ of _TOTAL_ entries',
@@ -697,5 +706,6 @@ return [
     'No agendas archived yet.' => 'No agendas archived yet.',
     'no_agendas_selected' => 'No agendas selected',
     'Select All' => 'Select All',
+    'English Meetings Only' => 'English Meetings Only',
     
 ];

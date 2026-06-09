@@ -80,6 +80,10 @@ class MeetingFilterService
             });
         }
 
+        if (!empty($filters['englishOnly'])) {
+            $query->where('lang', 'english');
+        }
+
         return $query->get();
     }
 

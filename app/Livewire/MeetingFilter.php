@@ -21,6 +21,37 @@ class MeetingFilter extends Component
     #[Url] public $type = '';
     #[Url(except: '')] public $search = '';
     #[Url] public $virtualOnly = false;
+    #[Url] public $englishOnly = false;
+
+    public function updatedVirtualOnly($value)
+    {
+        if ($value) {
+            $this->englishOnly = false;
+        }
+    }
+
+    public function updatedEnglishOnly($value)
+    {
+        if ($value) {
+            $this->virtualOnly = false;
+        }
+    }
+
+    public function toggleVirtualOnly()
+    {
+        $this->virtualOnly = !$this->virtualOnly;
+        if ($this->virtualOnly) {
+            $this->englishOnly = false;
+        }
+    }
+
+    public function toggleEnglishOnly()
+    {
+        $this->englishOnly = !$this->englishOnly;
+        if ($this->englishOnly) {
+            $this->virtualOnly = false;
+        }
+    }
 
     public function updatedCity()
     {
@@ -80,6 +111,7 @@ class MeetingFilter extends Component
             'type' => $this->type,
             'search' => $this->search,
             'virtualOnly' => $this->virtualOnly,
+            'englishOnly' => $this->englishOnly,
         ];
 
         $meetings = $filterService->filterMeetings($filters);
