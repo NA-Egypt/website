@@ -69,6 +69,14 @@ class AgendaController extends Controller
                in_array(strtolower($user->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
     }
 
+    protected function canAccessArchive($user)
+    {
+        if (!$user) {
+            return false;
+        }
+        return $this->isAuthorized($user) || $user->hasRole('ServiceBody');
+    }
+
     /**
      * Display the specified resource.
      */
@@ -125,18 +133,25 @@ class AgendaController extends Controller
         return response($mpdf->Output($filename, 'S'), 200)
                ->header('Content-Type', 'application/pdf')
                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-    }
+     }
 
     /**
      * Display the archive of groups' agendas.
      */
     public function archive(Request $request)
     {
-        if (!$this->isAuthorized(auth()->user())) {
+        $user = auth()->user();
+        if (!$this->canAccessArchive($user)) {
             abort(403, 'Unauthorized');
         }
 
         $query = Agenda::with('group');
+
+        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+            $query->whereHas('group', function ($q) use ($user) {
+                $q->where('service_body_id', $user->service_body_id);
+            });
+        }
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -174,7 +189,11 @@ class AgendaController extends Controller
             });
         });
 
-        $groups = Group::all();
+        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+            $groups = Group::where('service_body_id', $user->service_body_id)->get();
+        } else {
+            $groups = Group::all();
+        }
 
         return view('agenda.archive', compact('archive', 'groups'));
     }
@@ -184,7 +203,8 @@ class AgendaController extends Controller
      */
     public function exportMultipleAgendasPdf(Request $request)
     {
-        if (!$this->isAuthorized(auth()->user())) {
+        $user = auth()->user();
+        if (!$this->canAccessArchive($user)) {
             abort(403, 'Unauthorized');
         }
 
@@ -194,7 +214,14 @@ class AgendaController extends Controller
             return back()->with('error', __('messages.no_agendas_selected') ?? 'No agendas selected for export.');
         }
 
-        $agendas = Agenda::whereIn('id', $agendaIds)->with('group')->orderBy('agenda_date', 'desc')->get();
+        $query = Agenda::whereIn('id', $agendaIds);
+        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+            $query->whereHas('group', function ($q) use ($user) {
+                $q->where('service_body_id', $user->service_body_id);
+            });
+        }
+
+        $agendas = $query->with('group')->orderBy('agenda_date', 'desc')->get();
 
         if ($agendas->isEmpty()) {
             return back()->with('error', __('messages.no_agendas_selected') ?? 'No valid agendas found for export.');

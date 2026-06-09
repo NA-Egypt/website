@@ -154,6 +154,45 @@ class CommitteeReportController extends Controller
         return redirect()->route('committee-reports.index')->with('success', 'Report created successfully.');
     }
 
+    protected function isRestrictedConsumer($user)
+    {
+        if (!$user) {
+            return true;
+        }
+        return $user->hasRole('ServiceBody') || $user->hasRole('gsr');
+    }
+
+    protected function isReportVisibleToUser($report)
+    {
+        $user = auth()->user();
+
+        $committee = $this->getServiceCommittee();
+        if ($committee && $committee->id === $report->service_committee_id) {
+            return true;
+        }
+
+        // If they are a ServiceBody user or GSR/group user:
+        if ($this->isRestrictedConsumer($user)) {
+            // Only approved reports are visible
+            if ($report->status !== 'approved') {
+                return false;
+            }
+
+            // Available on the 10th of every month
+            $meetingDate = $report->meeting_date;
+            $now = now();
+            if ($meetingDate->year === $now->year && $meetingDate->month === $now->month) {
+                if ($now->day < 10) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // For other users (e.g. other committees): they can see submitted and approved reports at any time
+        return in_array($report->status, ['submitted', 'approved']);
+    }
+
     public function show($id)
     {
         $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
@@ -163,13 +202,8 @@ class CommitteeReportController extends Controller
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (in_array($report->status, ['submitted', 'approved'])) {
-                // All authenticated users can view submitted and approved reports
-            } else {
-                $committee = $this->getServiceCommittee();
-                if (!$committee || $committee->id !== $report->service_committee_id) {
-                    abort(403, 'Unauthorized');
-                }
+            if (!$this->isReportVisibleToUser($report)) {
+                abort(403, 'Unauthorized');
             }
         }
 
@@ -312,12 +346,8 @@ class CommitteeReportController extends Controller
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (in_array($report->status, ['submitted', 'approved'])) {
-                // All authenticated users can download approved and submitted report pdfs
-            } else {
-                if ($this->getServiceCommittee()?->id !== $report->service_committee_id) {
-                    abort(403, 'Unauthorized');
-                }
+            if (!$this->isReportVisibleToUser($report)) {
+                abort(403, 'Unauthorized');
             }
         }
 
@@ -371,9 +401,28 @@ class CommitteeReportController extends Controller
         if (!$this->isRsc()) {
             $committee = $this->getServiceCommittee();
             $committeeId = $committee ? $committee->id : 0;
-            $query->where(function($q) use ($committeeId) {
-                $q->where('service_committee_id', $committeeId)
-                  ->orWhereIn('status', ['submitted', 'approved']);
+            $now = now();
+            $user = auth()->user();
+            $query->where(function($q) use ($committeeId, $now, $user) {
+                if ($committeeId) {
+                    $q->where('service_committee_id', $committeeId);
+                }
+                if ($this->isRestrictedConsumer($user)) {
+                    $q->orWhere(function($sub) use ($now) {
+                        $sub->where('status', 'approved');
+                        if ($now->day < 10) {
+                            $sub->where(function($dateQ) use ($now) {
+                                $dateQ->whereYear('meeting_date', '<', $now->year)
+                                      ->orWhere(function($inner) use ($now) {
+                                          $inner->whereYear('meeting_date', $now->year)
+                                                ->whereMonth('meeting_date', '<', $now->month);
+                                      });
+                            });
+                        }
+                    });
+                } else {
+                    $q->orWhereIn('status', ['submitted', 'approved']);
+                }
             });
         } else {
             if (Auth::user()->hasRole('super admin')) {
@@ -455,13 +504,8 @@ class CommitteeReportController extends Controller
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (in_array($report->status, ['submitted', 'approved'])) {
-                // All authenticated users can download approved and submitted attachments
-            } else {
-                $committee = $this->getServiceCommittee();
-                if (!$committee || $committee->id !== $report->service_committee_id) {
-                    abort(403, 'Unauthorized');
-                }
+            if (!$this->isReportVisibleToUser($report)) {
+                abort(403, 'Unauthorized');
             }
         }
 
@@ -501,8 +545,37 @@ class CommitteeReportController extends Controller
 
     public function archive(Request $request)
     {
-        $query = CommitteeReport::with(['serviceCommittee', 'attachments'])
-            ->whereIn('status', ['submitted', 'approved']);
+        $query = CommitteeReport::with(['serviceCommittee', 'attachments']);
+        $now = now();
+        $user = auth()->user();
+
+        if (!$this->isRsc()) {
+            $committee = $this->getServiceCommittee();
+            $committeeId = $committee ? $committee->id : null;
+            $query->where(function($q) use ($committeeId, $now, $user) {
+                if ($committeeId) {
+                    $q->where('service_committee_id', $committeeId);
+                }
+                if ($this->isRestrictedConsumer($user)) {
+                    $q->orWhere(function($sub) use ($now) {
+                        $sub->where('status', 'approved');
+                        if ($now->day < 10) {
+                            $sub->where(function($dateQ) use ($now) {
+                                $dateQ->whereYear('meeting_date', '<', $now->year)
+                                      ->orWhere(function($inner) use ($now) {
+                                          $inner->whereYear('meeting_date', $now->year)
+                                                ->whereMonth('meeting_date', '<', $now->month);
+                                      });
+                            });
+                        }
+                    });
+                } else {
+                    $q->orWhereIn('status', ['submitted', 'approved']);
+                }
+            });
+        } else {
+            $query->whereIn('status', ['submitted', 'approved']);
+        }
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;

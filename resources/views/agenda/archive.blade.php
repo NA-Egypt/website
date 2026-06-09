@@ -95,45 +95,60 @@
                                                 <i class="bi bi-calendar-month me-1 text-info"></i> {{ $monthName }}
                                             </h5>
                                             
-                                            <div class="list-group">
+                                            <div class="row row-cols-1 g-3">
                                                 @foreach($agendas as $agenda)
-                                                    <div class="list-group-item list-group-item-action flex-column align-items-start p-3 mb-2 border rounded shadow-sm">
-                                                        <div class="d-flex w-100 justify-content-between align-items-center flex-wrap gap-2">
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                <input type="checkbox" name="agenda_ids[]" value="{{ $agenda->id }}" class="form-check-input agenda-checkbox">
-                                                                <h6 class="mb-1 text-dark fw-bold fs-5">
-                                                                    {{ $agenda->group->ar_name ?? $agenda->group->en_name }}
-                                                                </h6>
+                                                    <div class="col">
+                                                        <div class="glass-card p-4 border rounded-4 shadow-sm transition-hover d-flex flex-column justify-content-between" style="border-color: var(--glass-border) !important; background: rgba(255,255,255,0.4);">
+                                                            <div class="d-flex w-100 justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                                                                <div class="d-flex align-items-center gap-3">
+                                                                    <input type="checkbox" name="agenda_ids[]" value="{{ $agenda->id }}" class="form-check-input agenda-checkbox">
+                                                                    <h5 class="mb-0 text-primary fw-bold">
+                                                                        {{ $agenda->group->ar_name ?? $agenda->group->en_name }}
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="d-flex align-items-center gap-2 flex-wrap text-muted small">
+                                                                    <span class="badge px-3 py-2 rounded-pill fw-medium bg-light text-secondary border">
+                                                                        <i class="bi bi-person me-1"></i>
+                                                                        <strong>{{ __('messages.submitter_name') }}:</strong> {{ $agenda->submitter_name ?: __('messages.Not provided') }}
+                                                                    </span>
+                                                                    <span class="badge px-3 py-2 rounded-pill fw-medium bg-light text-secondary border">
+                                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                                        <strong>{{ __('messages.agenda_date') }}:</strong> {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('Y-m-d') }}
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                                <span class="text-muted small fw-bold me-3">
-                                                                    <strong>{{ __('messages.submitter_name') ?? 'Submitter Name' }}:</strong> {{ $agenda->submitter_name ?: __('messages.Not provided') }}
-                                                                </span>
-                                                                <span class="text-muted small fw-bold">
-                                                                    <strong>{{ __('messages.agenda_date') ?? 'Agenda Date' }}:</strong> {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('Y-m-d') }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
 
-                                                        <div class="mt-2 text-muted small">
-                                                            <strong>{{ __('messages.recovery_atmosphere') ?? 'Recovery Atmosphere' }}:</strong>
-                                                            <span class="text-dark">{{ Str::limit($agenda->recovery_atmosphere, 150, '...') ?: '-' }}</span>
-                                                        </div>
-                                                        
-                                                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-3">
-                                                            <div class="text-muted small">
-                                                                <strong>{{ __('messages.meetings_per_week') ?? 'Meetings per week' }}:</strong> {{ $agenda->meetings_per_week }} | 
-                                                                <strong>{{ __('messages.new_comers') ?? 'Newcomers' }}:</strong> {{ $agenda->new_comers }}
+                                                            <div class="mb-3 text-secondary small p-3 rounded-3" style="background: rgba(0,0,0,0.02); border: 1px dashed var(--glass-border);">
+                                                                <strong>{{ __('messages.recovery_atmosphere') }}:</strong>
+                                                                <span class="text-dark">{{ Str::limit($agenda->recovery_atmosphere, 200, '...') ?: '-' }}</span>
                                                             </div>
                                                             
-                                                            <!-- Actions -->
-                                                            <div class="d-flex gap-2 align-self-end">
-                                                                <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary">
-                                                                    <i class="bi bi-eye"></i> {{ __('messages.Show') }}
-                                                                </a>
-                                                                <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-secondary">
-                                                                    <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.PDF') ?? 'PDF' }}
-                                                                </a>
+                                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                                                                <div class="d-flex flex-wrap gap-2">
+                                                                    <span class="badge rounded-pill px-3 py-2 fw-medium bg-light text-primary border">
+                                                                        <i class="bi bi-calendar-check me-1"></i>
+                                                                        {{ $agenda->meetings_per_week }} {{ __('messages.meetings_per_week') }}
+                                                                    </span>
+                                                                    @if($agenda->new_comers > 0)
+                                                                        <span class="badge rounded-pill px-3 py-2 fw-medium bg-light text-success border">
+                                                                            <i class="bi bi-person-plus me-1"></i>
+                                                                            {{ $agenda->new_comers }} {{ __('messages.new_comers') }}
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                                
+                                                                <!-- Actions -->
+                                                                <div class="d-flex gap-2">
+                                                                    <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#quickViewModal{{ $agenda->id }}">
+                                                                        <i class="bi bi-eye-fill"></i> {{ __('messages.Details') }}
+                                                                    </button>
+                                                                    <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                                        <i class="bi bi-arrow-right-short"></i> {{ __('messages.Show') }}
+                                                                    </a>
+                                                                    <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-secondary rounded-pill px-3">
+                                                                        <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.PDF') }}
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -147,6 +162,160 @@
                     @endforeach
                 </div>
             </form>
+
+            {{-- Render all modals at root context to prevent styling overlay issues --}}
+            @foreach($archive as $year => $months)
+                @foreach($months as $monthNum => $agendas)
+                    @foreach($agendas as $agenda)
+                        <div class="modal fade" id="quickViewModal{{ $agenda->id }}" tabindex="-1" aria-labelledby="quickViewModalLabel{{ $agenda->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(25px); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;">
+                                    {{-- HSL Gradient Header Accent --}}
+                                    <div class="modal-header border-bottom-0 pb-3 pt-4 px-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(14, 165, 233, 0.05)); border-bottom: 1px solid var(--glass-border) !important;">
+                                        <h5 class="modal-title fw-bold text-primary mb-0" id="quickViewModalLabel{{ $agenda->id }}">
+                                            <i class="bi bi-journal-richtext text-primary me-2"></i>{{ $agenda->group->ar_name ?? $agenda->group->en_name }} - {{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }}
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body px-4 pt-3 pb-4">
+                                        {{-- Custom styled tab navs --}}
+                                        <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-3 bg-light" id="agendaTab{{ $agenda->id }}" role="tablist" style="border: 1px solid var(--glass-border);">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active py-2 rounded-2 fw-bold" id="general-tab{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#general{{ $agenda->id }}" type="button" role="tab" aria-controls="general{{ $agenda->id }}" aria-selected="true" style="font-size: 0.9rem;">
+                                                    <i class="bi bi-info-circle-fill me-1"></i> {{ __('messages.group_data') }}
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link py-2 rounded-2 fw-bold" id="news-tab{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#news{{ $agenda->id }}" type="button" role="tab" aria-controls="news{{ $agenda->id }}" aria-selected="false" style="font-size: 0.9rem;">
+                                                    <i class="bi bi-megaphone-fill me-1"></i> {{ __('messages.group_news') }}
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link py-2 rounded-2 fw-bold" id="agenda-content-tab{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#agenda-content{{ $agenda->id }}" type="button" role="tab" aria-controls="agenda-content{{ $agenda->id }}" aria-selected="false" style="font-size: 0.9rem;">
+                                                    <i class="bi bi-file-text-fill me-1"></i> {{ __('messages.the_agenda') }}
+                                                </button>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content text-start" id="agendaTabContent{{ $agenda->id }}">
+                                            {{-- Tab 1: General Info --}}
+                                            <div class="tab-pane fade show active" id="general{{ $agenda->id }}" role="tabpanel" aria-labelledby="general-tab{{ $agenda->id }}">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(59, 130, 246, 0.02); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.submitter_name') ?? 'Submitter Name' }}</span>
+                                                            <h6 class="fw-bold mb-0 text-dark">{{ $agenda->submitter_name ?: __('messages.Not provided') }}</h6>
+                                                            @if($agenda->service_position)
+                                                                <span class="badge bg-primary mt-2 rounded-pill px-3">{{ $agenda->service_position }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.agenda_date') }}</span>
+                                                            <h6 class="fw-bold mb-0 text-dark">{{ \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('d M Y') }}</h6>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    @if($agenda->alt_gsr_name)
+                                                    <div class="col-md-6">
+                                                        <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.alt_gsr_name') ?? 'Alt. GSR Name' }}</span>
+                                                            <h6 class="fw-bold mb-0 text-dark">{{ $agenda->alt_gsr_name }}</h6>
+                                                            @if($agenda->alt_gsr_position)
+                                                                <span class="badge bg-secondary mt-2 rounded-pill px-3">{{ $agenda->alt_gsr_position }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    @endif
+
+                                                    <div class="col-md-6">
+                                                        <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.Group') }}</span>
+                                                            <h6 class="fw-bold mb-0 text-primary">{{ $agenda->group->ar_name ?? $agenda->group->en_name }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Tab 2: Group News --}}
+                                            <div class="tab-pane fade" id="news{{ $agenda->id }}" role="tabpanel" aria-labelledby="news-tab{{ $agenda->id }}">
+                                                <div class="row g-3">
+                                                    <div class="col-md-4 col-6">
+                                                        <div class="p-3 text-center rounded-4 h-100 transition-hover" style="background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.1);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.meetings_per_week') }}</span>
+                                                            <span class="fw-bold text-primary fs-4">{{ $agenda->meetings_per_week }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-6">
+                                                        <div class="p-3 text-center rounded-4 h-100 transition-hover" style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.new_comers') }}</span>
+                                                            <span class="fw-bold text-success fs-4">{{ $agenda->new_comers }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 col-12">
+                                                        <div class="p-3 text-center rounded-4 h-100 transition-hover" style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.1);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.next_business_meeting') }}</span>
+                                                            <span class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $agenda->next_business_meeting ? \Carbon\Carbon::parse($agenda->next_business_meeting)->translatedFormat('d M Y') : '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-12">
+                                                        <div class="p-3 rounded-4" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-1">{{ __('messages.recovery_meetings_changes') ?? 'Recovery Meetings Changes' }}</span>
+                                                            <span class="badge {{ $agenda->recovery_meetings_changes ? 'bg-danger' : 'bg-success' }} px-3 py-2 rounded-pill fw-bold">
+                                                                {{ $agenda->recovery_meetings_changes ? (__('messages.yes') ?? 'Yes') : (__('messages.no') ?? 'No') }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="p-3 rounded-4" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
+                                                            <span class="text-secondary small d-block mb-2">{{ __('messages.open_positions') ?? 'Open Positions' }}</span>
+                                                            <div class="text-dark small fw-medium">{{ $agenda->open_positions ?: 'N/A' }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Tab 3: The Agenda Content --}}
+                                            <div class="tab-pane fade" id="agenda-content{{ $agenda->id }}" role="tabpanel" aria-labelledby="agenda-content-tab{{ $agenda->id }}">
+                                                <div class="d-flex flex-column gap-3">
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-chat-left-text text-primary me-2"></i> {{ __('messages.recovery_atmosphere') }}</h6>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->recovery_atmosphere ?: '-' }}</div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-people text-info me-2"></i> {{ __('messages.trusted_servants') }}</h6>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->trusted_servants ?: '-' }}</div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i> {{ __('messages.financial_issues') }}</h6>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->financial_issues ?: '-' }}</div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-three-dots text-secondary me-2"></i> {{ __('messages.other_topics') }}</h6>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->other_topics ?: '-' }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                                        <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-outline-success rounded-pill px-4 btn-sm">
+                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> {{ __('messages.PDF') }}
+                                        </a>
+                                        <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-primary rounded-pill px-4 btn-sm">
+                                            <i class="bi bi-eye-fill me-1"></i> {{ __('messages.Show') }}
+                                        </a>
+                                        <button type="button" class="btn btn-secondary rounded-pill px-4 btn-sm" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endforeach
+            @endforeach
         @endif
     </div>
 

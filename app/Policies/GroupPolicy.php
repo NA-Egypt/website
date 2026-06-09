@@ -9,6 +9,10 @@ class GroupPolicy
 {
     public function view(User $user, Group $group): bool
     {
+        if ($user->hasRole('ServiceBody') && $user->service_body_id === $group->service_body_id) {
+            return true;
+        }
+
         return $user->hasRole('gsr') && $group->user_id === $user->id;
     }
 

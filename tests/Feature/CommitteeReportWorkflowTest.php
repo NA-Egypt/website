@@ -475,4 +475,49 @@ class CommitteeReportWorkflowTest extends TestCase
             'review_notes' => 'Hack notes',
         ])->assertStatus(403);
     }
+
+    public function test_servicebody_report_availability_after_tenth_of_month()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        // Current month report
+        $currentMonthDate = now()->format('Y-m-d');
+        $approvedReportCurrentMonth = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => $currentMonthDate,
+            'meeting_day_description' => 'Current Month Report',
+            'body' => 'Details',
+            'status' => 'approved',
+        ]);
+
+        // Previous month report
+        $previousMonthDate = now()->subMonth()->format('Y-m-d');
+        $approvedReportPreviousMonth = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => $previousMonthDate,
+            'meeting_day_description' => 'Previous Month Report',
+            'body' => 'Details',
+            'status' => 'approved',
+        ]);
+
+        // Login as ServiceBody user
+        $serviceBodyUser = User::factory()->create();
+        $serviceBodyUser->assignRole('ServiceBody');
+        $this->actingAs($serviceBodyUser);
+
+        // Previous month report is always visible in archive & detail view
+        $response = $this->get(route('committee-reports.archive'));
+        $response->assertSee('Previous Month Report');
+        $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(200);
+
+        // Current month report availability depends on current day of month
+        if (now()->day < 10) {
+            $response->assertDontSee('Current Month Report');
+            $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(403);
+        } else {
+            $response->assertSee('Current Month Report');
+            $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(200);
+        }
+    }
 }

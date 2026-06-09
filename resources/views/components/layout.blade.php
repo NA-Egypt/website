@@ -186,6 +186,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 $hasSidebar = auth()->check() && (
     auth()->user()->hasRole('super admin') ||
     auth()->user()->hasRole('Committees') ||
+    auth()->user()->hasRole('ServiceBody') ||
     in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])
 );
 @endphp
