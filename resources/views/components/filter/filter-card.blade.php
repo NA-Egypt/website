@@ -16,7 +16,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     }
 
     .meeting-item-suspended, .meeting-item {
-        padding: 15px !important; /* Further reduced inside margins */
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: 100% !important;
+        width: 100% !important;
+        min-height: 360px !important;
+        padding: 20px !important; /* Premium inside margins */
         border-radius: 20px !important;
         background: #ffffff;
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
@@ -33,6 +39,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     
     .meeting-time-row {
         margin-bottom: 15px;
+        width: 100%;
     }
     
     .meeting-day {
@@ -83,7 +90,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
 @foreach($meetings as $meeting)
-<div class="col mb-3" dir="{{ $direction }}" @if($loop->first) id="tour-meeting-card" @endif>
+<div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($loop->first) id="tour-meeting-card" @endif>
     @php
         $isOnline = $meeting->group && in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']);
     @endphp
@@ -102,17 +109,16 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
 
     <!-- Day and Time Row -->
-    <div class="meeting-time-row">
-        <div class="meeting-day text-danger mb-2 {{ $direction === 'rtl' ? 'text-start' : 'text-end' }}">
+    <div class="meeting-time-row d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="meeting-day text-danger mb-0">
             <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
             {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
-            
-            <span class="meeting-start-time" dir="ltr" style="float: left;">
-                <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;
-                {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} -
-                {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
-            </span>
         </div>
+        <span class="meeting-start-time d-flex align-items-center gap-1" dir="ltr">
+            <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;
+            {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} -
+            {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
+        </span>
     </div>
     <div class="meeting-group-name">
         {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}

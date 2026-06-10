@@ -53,16 +53,66 @@ class MeetingFilter extends Component
         }
     }
 
-    public function updatedCity()
+    public function updatedCity($value)
     {
-        // When City changes, clear the neighborhood since the available list changes
-        $this->neighborhood = '';
-        $this->group = '';
+        if ($value !== '') {
+            $this->day = '';
+            $this->serviceBody = '';
+            $this->neighborhood = '';
+            $this->group = '';
+            $this->type = '';
+            $this->search = '';
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
+        } else {
+            // When City changes, clear the neighborhood since the available list changes
+            $this->neighborhood = '';
+            $this->group = '';
+        }
     }
 
-    public function updatedNeighborhood()
+    public function updatedNeighborhood($value)
     {
-        $this->group = '';
+        if ($value !== '') {
+            $this->day = '';
+            $this->serviceBody = '';
+            $this->city = '';
+            $this->group = '';
+            $this->type = '';
+            $this->search = '';
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
+        } else {
+            $this->group = '';
+        }
+    }
+
+    public function updatedGroup($value)
+    {
+        if ($value !== '') {
+            $this->day = '';
+            $this->serviceBody = '';
+            $this->city = '';
+            $this->neighborhood = '';
+            $this->type = '';
+            $this->search = '';
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
+        }
+    }
+
+    public function updatedServiceBody($value)
+    {
+        if ($value !== '') {
+            $this->day = '';
+            $this->group = '';
+            $this->city = '';
+            $this->neighborhood = '';
+            $this->type = '';
+            $this->search = '';
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
+        }
     }
 
     public function render(MeetingFilterService $filterService)
