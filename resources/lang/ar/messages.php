@@ -766,4 +766,5 @@ return [
     'Default Report Footer Helper' => 'سيتم إرفاق هذا النص تلقائيًا في أسفل جميع التقارير وملفات PDF التي يتم إنشاؤها لهذه اللجنة.',
     'Characters Remaining' => 'حرفاً متبقياً',
     'Committee Meetings' => 'اجتماعات اللجنة',
+    'Schedule & Recurrence' => 'الجدول والتكرار',
 ];

@@ -729,4 +729,5 @@ return [
     'Current Logo' => 'Current Logo',
     'Default Report Footer Helper' => 'This text will be appended automatically at the bottom of all generated reports and PDF files for this committee.',
     'Characters Remaining' => 'characters remaining',
+    'Schedule & Recurrence' => 'Schedule & Recurrence',
 ];
