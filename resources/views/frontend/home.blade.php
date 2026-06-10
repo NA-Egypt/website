@@ -479,9 +479,9 @@
             </div>
           </a>
           <div class="d-flex gap-2 justify-content-center w-100 mt-2">
-            <a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-4 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #00698f 0%, #32557f 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(50, 85, 127, 0.2);">
+            <!--<a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-4 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #00698f 0%, #32557f 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(50, 85, 127, 0.2);">
               التفاصيل والتسجيل
-            </a>
+            </a>-->
             <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 12px; font-weight: 600;">
               إغلاق
             </button>
