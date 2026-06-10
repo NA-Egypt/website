@@ -9,7 +9,7 @@ class MeetingFilterService
 {
     public function filterMeetings($filters)
     {
-        $query = Meeting::query();
+        $query = Meeting::with(['day', 'group.neighborhood.city', 'options', 'topics']);
         $locale = app()->getLocale();
         // Determine the field based on locale
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';

@@ -86,7 +86,7 @@
                             </div>
                             
                             <div class="d-flex justify-content-center align-items-center mt-4 pt-3 border-top" id="tour-clear">
-                                <a href="{{ route('frontend.meetings') }}" wire:navigate class="btn btn-light text-danger px-4 rounded-pill fw-medium transition-all hover-scale">
+                                <a href="{{ route('frontend.meetings') }}" wire:navigate class="btn btn-danger text-white px-5 rounded-pill fw-bold transition-all hover-scale shadow-sm">
                                     <i class="fas fa-times me-1"></i> {{__('messages.Clear Filters')}}
                                 </a>
                             </div>
