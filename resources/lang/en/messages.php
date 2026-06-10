@@ -707,5 +707,10 @@ return [
     'no_agendas_selected' => 'No agendas selected',
     'Select All' => 'Select All',
     'English Meetings Only' => 'English Meetings Only',
-    
+    'Committee Logo' => 'Committee Logo',
+    'Default Report Footer' => 'Default Report Footer',
+    'Allowed types: PNG, JPG, JPEG. Max size 2MB.' => 'Allowed types: PNG, JPG, JPEG. Max size 2MB.',
+    'Report Footer' => 'Report Footer',
+    'Enter report-specific footer text (overrides default committee footer)...' => 'Enter report-specific footer text (overrides default committee footer)...',
+    'Default Committee Footer' => 'Default Committee Footer',
 ];

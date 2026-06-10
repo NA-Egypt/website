@@ -743,5 +743,10 @@ return [
     'Select All' => 'اختر الكل',
     'Deselect All' => 'الغاء اختيار الكل',
     'English Meetings Only' => 'اجتماعات باللغة الإنجليزية فقط',
-
+    'Committee Logo' => 'شعار اللجنة',
+    'Default Report Footer' => 'تذييل التقرير الافتراضي',
+    'Allowed types: PNG, JPG, JPEG. Max size 2MB.' => 'الأنواع المسموح بها: PNG, JPG, JPEG. الحد الأقصى للحجم 2 ميجابايت.',
+    'Report Footer' => 'تذييل التقرير',
+    'Enter report-specific footer text (overrides default committee footer)...' => 'أدخل نص تذييل خاص بهذا التقرير (يحل محل التذييل الافتراضي للجنة)...',
+    'Default Committee Footer' => 'تذييل اللجنة الافتراضي',
 ];
