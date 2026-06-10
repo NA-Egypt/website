@@ -30,6 +30,8 @@ class ServiceBodyRequest extends FormRequest
             'start_time'    => 'required',
             'end_time'      => 'required|after:start_time',
             'location'      => 'required',
+            'recurrence'    => 'nullable|array',
+            'recurrence.*'  => 'in:1st,monthly',
         ];
     }
 

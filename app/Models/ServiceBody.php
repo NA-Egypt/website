@@ -18,7 +18,12 @@ class ServiceBody extends Model
         'date',
         'start_time',
         'end_time',
-        'location'
+        'location',
+        'recurrence',
+    ];
+
+    protected $casts = [
+        'recurrence' => 'array',
     ];
 
     public function groups() {

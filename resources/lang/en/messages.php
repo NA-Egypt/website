@@ -720,4 +720,13 @@ return [
     'Add Section' => 'Add Section',
     'A report must have at least one section.' => 'A report must have at least one section.',
     'Enter optional headline...' => 'Enter optional headline...',
+    'monthly' => 'Monthly',
+    'General Information' => 'General Information',
+    'Leadership Contact' => 'Leadership Contact',
+    'Location Details' => 'Location Details',
+    'Settings & Details' => 'Settings & Details',
+    'Logo Preview' => 'Logo Preview',
+    'Current Logo' => 'Current Logo',
+    'Default Report Footer Helper' => 'This text will be appended automatically at the bottom of all generated reports and PDF files for this committee.',
+    'Characters Remaining' => 'characters remaining',
 ];
