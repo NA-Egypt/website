@@ -526,4 +526,62 @@ class CommitteeReportWorkflowTest extends TestCase
             $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(200);
         }
     }
+    public function test_service_committee_logo_and_footers()
+    {
+        Storage::fake('public');
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        // Assign super admin to update committee details (logo & default footer)
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
+        $logoFile = UploadedFile::fake()->image('custom_logo.png');
+
+        $response = $this->put(route('serviceCommittee.update', $committee->id), [
+            'ar_name' => 'لجنة معدلة',
+            'en_name' => 'Modified Committee',
+            'email' => $user->email,
+            'chairman_name' => 'Chairman Name',
+            'logo' => $logoFile,
+            'default_footer' => 'This is the default committee footer text.',
+        ]);
+
+        $response->assertRedirect(route('serviceCommittee.index'));
+        
+        $committee->refresh();
+        $this->assertNotNull($committee->logo);
+        Storage::disk('public')->assertExists($committee->logo);
+        $this->assertEquals('This is the default committee footer text.', $committee->default_footer);
+
+        // Now test report footer override
+        $this->actingAs($user);
+
+        // 1. Report without custom footer - should fallback to default_footer in show view and PDF
+        $report1 = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday',
+            'body' => 'Report body 1',
+            'status' => 'approved',
+        ]);
+
+        $response1 = $this->get(route('committee-reports.show', $report1->id));
+        $response1->assertSee('This is the default committee footer text.');
+
+        // 2. Report with custom footer - should override default_footer
+        $report2 = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-21',
+            'meeting_day_description' => 'Thursday',
+            'body' => 'Report body 2',
+            'status' => 'approved',
+            'footer' => 'Overridden custom report footer.',
+        ]);
+
+        $response2 = $this->get(route('committee-reports.show', $report2->id));
+        $response2->assertSee('Overridden custom report footer.');
+        $response2->assertDontSee('This is the default committee footer text.');
+    }
 }

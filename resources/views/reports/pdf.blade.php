@@ -27,13 +27,37 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 </head>
 <body>
     @foreach($reports as $report)
-        <div class="header">
-            @if(file_exists(public_path('assets/images/na.png')))
-                <img src="{{ public_path('assets/images/na.png') }}" class="logo" alt="Logo">
-            @endif
-            <div class="title">{{ $report->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->serviceCommittee->ar_name }}</div>
-            <div>{{ __('messages.Committee Reports') ?? 'Committee Report' }}</div>
-        </div>
+        <table style="width: 100%; border: none; margin-bottom: 10px;">
+            <tr>
+                <td style="width: 30%; border: none; text-align: left; vertical-align: middle;">
+                    @if($direction === 'ltr')
+                        @if(file_exists(public_path('assets/images/na.png')))
+                            <img src="{{ public_path('assets/images/na.png') }}" style="max-height: 60px; width: auto;" alt="NA Logo">
+                        @endif
+                    @else
+                        @if($report->serviceCommittee->logo && file_exists(public_path('storage/' . $report->serviceCommittee->logo)))
+                            <img src="{{ public_path('storage/' . $report->serviceCommittee->logo) }}" style="max-height: 60px; width: auto;" alt="Committee Logo">
+                        @endif
+                    @endif
+                </td>
+                <td style="width: 40%; border: none; text-align: center; vertical-align: middle;">
+                    <div style="font-size: 18px; font-weight: bold;">{{ $report->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->serviceCommittee->ar_name }}</div>
+                    <div style="font-size: 14px; color: #555; margin-top: 5px;">{{ __('messages.Committee Reports') ?? 'Committee Report' }}</div>
+                </td>
+                <td style="width: 30%; border: none; text-align: right; vertical-align: middle;">
+                    @if($direction === 'ltr')
+                        @if($report->serviceCommittee->logo && file_exists(public_path('storage/' . $report->serviceCommittee->logo)))
+                            <img src="{{ public_path('storage/' . $report->serviceCommittee->logo) }}" style="max-height: 60px; width: auto;" alt="Committee Logo">
+                        @endif
+                    @else
+                        @if(file_exists(public_path('assets/images/na.png')))
+                            <img src="{{ public_path('assets/images/na.png') }}" style="max-height: 60px; width: auto;" alt="NA Logo">
+                        @endif
+                    @endif
+                </td>
+            </tr>
+        </table>
+        <div style="border-bottom: 2px solid #000; margin-bottom: 15px; margin-top: 5px;"></div>
 
         <div class="meta">
             <strong>{{ __('messages.Report Date') ?? 'Report Date' }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }} <br>
@@ -81,6 +105,12 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div class="content-box">
             {!! $report->body !!}
         </div>
+
+        @if($report->footer || ($report->serviceCommittee && $report->serviceCommittee->default_footer))
+            <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-style: italic; font-size: 12px; color: #555;">
+                {{ $report->footer ?: $report->serviceCommittee->default_footer }}
+            </div>
+        @endif
         
         @if(!$loop->last)
             <div class="page-break"></div>

@@ -6,6 +6,7 @@ use App\Models\ServiceCommittee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -50,7 +51,21 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $fields = $request->all();
+        $request->validate([
+            'ar_name' => 'required|string|max:255',
+            'en_name' => 'required|string|max:255',
+            'chairman_name' => 'nullable|string|max:255',
+            'chairman_phone' => 'nullable|string|max:255',
+            'email' => 'required',
+            'location' => 'nullable|string|max:255',
+            'ar_address' => 'nullable|string|max:255',
+            'en_address' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'default_footer' => 'nullable|string|max:1000',
+        ]);
+
+        $fields = $request->except('logo');
 
         if (isset($fields['email']) && is_numeric($fields['email'])) {
             $user = User::find((int)$fields['email']);
@@ -63,6 +78,11 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
             if ($user) {
                 $fields['user_id'] = $user->id;
             }
+        }
+
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('logos', 'public');
+            $fields['logo'] = $path;
         }
 
         ServiceCommittee::create($fields);
@@ -98,7 +118,21 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     {
         Gate::authorize('update', $serviceCommittee);
         
-        $fields = $request->all();
+        $request->validate([
+            'ar_name' => 'required|string|max:255',
+            'en_name' => 'required|string|max:255',
+            'chairman_name' => 'nullable|string|max:255',
+            'chairman_phone' => 'nullable|string|max:255',
+            'email' => 'required',
+            'location' => 'nullable|string|max:255',
+            'ar_address' => 'nullable|string|max:255',
+            'en_address' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'default_footer' => 'nullable|string|max:1000',
+        ]);
+
+        $fields = $request->except('logo');
         if (isset($fields['email']) && is_numeric($fields['email'])) {
             $user = User::find((int)$fields['email']);
             if ($user) {
@@ -110,6 +144,14 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
             if ($user) {
                 $fields['user_id'] = $user->id;
             }
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($serviceCommittee->logo) {
+                Storage::disk('public')->delete($serviceCommittee->logo);
+            }
+            $path = $request->file('logo')->store('logos', 'public');
+            $fields['logo'] = $path;
         }
 
         $serviceCommittee->update($fields);

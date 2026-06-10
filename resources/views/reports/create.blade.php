@@ -113,6 +113,19 @@
                 </div>
             </div>
 
+            <!-- Footer Section -->
+            <div class="card mb-4">
+                <div class="card-header">{{ __('messages.Report Footer') ?? 'Report Footer' }}</div>
+                <div class="card-body">
+                    <textarea name="footer" class="form-control" rows="3" placeholder="{{ __('messages.Enter report-specific footer text (overrides default committee footer)...') ?? 'Enter report-specific footer text (overrides default committee footer)...' }}">{{ old('footer') }}</textarea>
+                    @if(isset($committee) && $committee && $committee->default_footer)
+                        <div class="form-text text-muted mt-2">
+                            <strong>{{ __('messages.Default Committee Footer') ?? 'Default Committee Footer' }}:</strong> {{ $committee->default_footer }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             <div class="d-flex gap-3 mb-5">
                 <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill">
                     <i class="bi bi-file-earmark"></i> {{ __('messages.Save Draft') ?? 'Save Draft' }}

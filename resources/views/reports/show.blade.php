@@ -23,11 +23,29 @@
         @endif
 
         <div class="card mb-4 shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center bg-light py-3">
-                <h5 class="mb-0 fw-bold">{{ $report->serviceCommittee->ar_name }}</h5>
-                <div class="text-end">
-                    <span class="text-muted me-3"><strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</span>
-                    <span class="text-muted me-3"><strong>{{ __('messages.Meeting Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})</span>
+            <div class="card-header bg-light py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-start">
+                        @if(file_exists(public_path('assets/images/na.png')))
+                            <img src="{{ asset('assets/images/na.png') }}" alt="NA Logo" style="max-height: 60px;">
+                        @endif
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <h4 class="mb-0 fw-bold text-primary">{{ $report->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->serviceCommittee->ar_name }}</h4>
+                        <span class="text-muted fw-bold">{{ __('messages.Committee Reports') ?? 'Committee Report' }}</span>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        @if($report->serviceCommittee->logo)
+                            <img src="{{ asset('storage/' . $report->serviceCommittee->logo) }}" alt="Committee Logo" style="max-height: 60px;">
+                        @endif
+                    </div>
+                </div>
+                <hr class="my-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted me-3"><strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</span>
+                        <span class="text-muted me-3"><strong>{{ __('messages.Meeting Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})</span>
+                    </div>
                     @if($report->is_exceptional)
                         <span class="badge bg-danger text-white">{{ __('messages.Exceptional Meeting') }}</span>
                     @endif
@@ -100,6 +118,12 @@
                             </li>
                         @endforeach
                     </ul>
+                @endif
+
+                @if($report->footer || ($report->serviceCommittee && $report->serviceCommittee->default_footer))
+                    <div class="border-top pt-3 mt-4 text-center text-muted fst-italic">
+                        <p class="mb-0">{{ $report->footer ?: $report->serviceCommittee->default_footer }}</p>
+                    </div>
                 @endif
 
                 <div class="mt-4 text-end">

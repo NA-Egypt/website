@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceCommittee extends Model
 {
-    protected $fillable = ['ar_name', 'en_name', 'chairman_name', 'chairman_phone', 'email', 'location', 'ar_address', 'en_address', 'notes', 'user_id'];
+    protected $fillable = ['ar_name', 'en_name', 'chairman_name', 'chairman_phone', 'email', 'location', 'ar_address', 'en_address', 'notes', 'user_id', 'logo', 'default_footer'];
 
     public function meetings()
     {
