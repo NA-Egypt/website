@@ -39,4 +39,25 @@ class CommitteeReport extends Model
     {
         return $this->hasMany(CommitteeReportAttachment::class);
     }
+
+    public function getBodySectionsAttribute()
+    {
+        $body = $this->body;
+        if (empty($body)) {
+            return [];
+        }
+
+        $decoded = json_decode($body, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+
+        // Fallback for legacy HTML string body
+        return [
+            [
+                'headline' => null,
+                'content' => $body
+            ]
+        ];
+    }
 }

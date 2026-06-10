@@ -99,9 +99,14 @@
                 @endif
 
                 <h6 class="mt-4 mb-3 fw-bold">{{ __('messages.Report Body') }}</h6>
-                <div class="border p-4 rounded bg-light mb-4">
-                    {!! $report->body !!}
-                </div>
+                @foreach($report->body_sections as $section)
+                    <div class="border p-4 rounded bg-light mb-4 text-start">
+                        @if(!empty($section['headline']))
+                            <h5 class="fw-bold mb-3 text-primary border-bottom pb-2">{{ $section['headline'] }}</h5>
+                        @endif
+                        <div class="section-html-content">{!! $section['content'] !!}</div>
+                    </div>
+                @endforeach
 
                 @if($report->attachments->isNotEmpty())
                     <h6 class="mt-4 mb-3 fw-bold">{{ __('messages.Attachments') ?? 'Attachments' }}</h6>

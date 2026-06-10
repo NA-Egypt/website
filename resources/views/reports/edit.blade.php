@@ -97,13 +97,12 @@
                 </div>
             </div>
 
-            <!-- Report Body Section -->
-            <div class="card mb-4">
-                <div class="card-header">{{ __('messages.Report Body') }}</div>
-                <div class="card-body">
-                    <div id="editor" style="height: 300px;"></div>
-                    <input type="hidden" name="body" id="bodyInput" value="{{ old('body', $report->body) }}">
+            <!-- Report Body Sections (Repeatable) -->
+            <div class="mb-4">
+                <div id="reportSectionsContainer">
+                    <!-- Dynamic sections will be added here -->
                 </div>
+                <button type="button" class="btn btn-outline-primary" id="addSectionBtn">+ {{ __('messages.Add Section') ?? 'Add Section' }}</button>
             </div>
 
             <!-- Attachments Section -->
@@ -197,24 +196,80 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Quill Init
-            var quill = new Quill('#editor', {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, false] }],
-                        ['bold', 'italic', 'underline'],
-                        ['image', 'code-block'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }]
-                    ]
-                }
-            });
+            const reportSectionsContainer = document.getElementById('reportSectionsContainer');
+            const addSectionBtn = document.getElementById('addSectionBtn');
+            let sectionIndex = 0;
+            const quillEditors = {};
 
-            // Set Initial Quill Content
-            const initialBody = {!! json_encode(old('body', $report->body)) !!};
-            if (initialBody) {
-                quill.root.innerHTML = initialBody;
+            function addSectionRow(headline = '', content = '') {
+                const card = document.createElement('div');
+                card.className = 'card mb-3 section-row';
+                card.dataset.index = sectionIndex;
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <span class="fw-bold text-secondary">{{ __('messages.Section') ?? 'Section' }} #${sectionIndex + 1}</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-section-btn">{{ __('messages.Remove Section') ?? 'Remove' }}</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ __('messages.Section Headline (Optional)') ?? 'Section Headline (Optional)' }}</label>
+                            <input type="text" name="sections[${sectionIndex}][headline]" class="form-control" placeholder="{{ __('messages.Enter optional headline...') ?? 'Enter optional headline...' }}" value="${headline}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ __('messages.Section Content') ?? 'Section Content' }}</label>
+                            <div class="quill-editor" id="quill-editor-${sectionIndex}" style="height: 200px;"></div>
+                            <input type="hidden" name="sections[${sectionIndex}][content]" class="section-content-input" id="section-content-${sectionIndex}">
+                        </div>
+                    </div>
+                `;
+                reportSectionsContainer.appendChild(card);
+                
+                const editorId = `#quill-editor-${sectionIndex}`;
+                const quill = new Quill(editorId, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, false] }],
+                            ['bold', 'italic', 'underline'],
+                            ['image', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                        ]
+                    }
+                });
+                
+                if (content) {
+                    quill.root.innerHTML = content;
+                }
+                
+                quillEditors[sectionIndex] = quill;
+                
+                const currentIndex = sectionIndex;
+                card.querySelector('.remove-section-btn').addEventListener('click', function() {
+                    if (document.querySelectorAll('.section-row').length > 1) {
+                        card.remove();
+                        delete quillEditors[currentIndex];
+                        document.querySelectorAll('.section-row').forEach((row, idx) => {
+                            row.querySelector('.card-header span').textContent = `{{ __('messages.Section') ?? 'Section' }} #${idx + 1}`;
+                        });
+                    } else {
+                        alert("{{ __('messages.A report must have at least one section.') ?? 'A report must have at least one section.' }}");
+                    }
+                });
+                
+                sectionIndex++;
             }
+
+            // Populate existing sections
+            const existingSections = {!! json_encode(old('sections', $report->body_sections)) !!};
+            if (existingSections && existingSections.length > 0) {
+                existingSections.forEach(section => {
+                    addSectionRow(section.headline || '', section.content || '');
+                });
+            } else {
+                addSectionRow();
+            }
+
+            addSectionBtn.addEventListener('click', () => addSectionRow());
 
             // Form Submit
             var form = document.querySelector('#reportForm');
@@ -231,8 +286,13 @@
             });
 
             form.onsubmit = function() {
-                var body = document.querySelector('#bodyInput');
-                body.value = quill.root.innerHTML;
+                document.querySelectorAll('.section-row').forEach(row => {
+                    const idx = row.dataset.index;
+                    const contentInput = document.getElementById(`section-content-${idx}`);
+                    if (quillEditors[idx] && contentInput) {
+                        contentInput.value = quillEditors[idx].root.innerHTML;
+                    }
+                });
             };
 
             // Dynamic Positions

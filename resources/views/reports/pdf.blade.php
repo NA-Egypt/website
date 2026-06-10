@@ -102,9 +102,18 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         @endif
 
         <div class="section-title">{{ __('messages.Report Body') ?? 'Report Body' }}</div>
-        <div class="content-box">
-            {!! $report->body !!}
-        </div>
+        @foreach($report->body_sections as $section)
+            <div class="content-box" style="margin-bottom: 15px;">
+                @if(!empty($section['headline']))
+                    <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 2px; color: #333;">
+                        {{ $section['headline'] }}
+                    </div>
+                @endif
+                <div>
+                    {!! $section['content'] !!}
+                </div>
+            </div>
+        @endforeach
 
         @if($report->footer || ($report->serviceCommittee && $report->serviceCommittee->default_footer))
             <div style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-style: italic; font-size: 12px; color: #555;">

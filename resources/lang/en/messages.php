@@ -713,4 +713,11 @@ return [
     'Report Footer' => 'Report Footer',
     'Enter report-specific footer text (overrides default committee footer)...' => 'Enter report-specific footer text (overrides default committee footer)...',
     'Default Committee Footer' => 'Default Committee Footer',
+    'Section' => 'Section',
+    'Section Headline (Optional)' => 'Section Headline (Optional)',
+    'Section Content' => 'Section Content',
+    'Remove Section' => 'Remove Section',
+    'Add Section' => 'Add Section',
+    'A report must have at least one section.' => 'A report must have at least one section.',
+    'Enter optional headline...' => 'Enter optional headline...',
 ];

@@ -59,7 +59,9 @@ class CommitteeReportWorkflowTest extends TestCase
         $response = $this->post(route('committee-reports.store'), [
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
-            'body' => 'Draft body',
+            'sections' => [
+                ['headline' => 'Test Headline', 'content' => 'Draft body']
+            ],
             'status' => 'draft',
             'is_exceptional' => '1',
             'attended_members' => 'John Doe, Jane Smith',
@@ -73,6 +75,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'is_exceptional' => true,
             'report_date' => now()->toDateString(),
             'attended_members' => 'John Doe, Jane Smith',
+            'body' => json_encode([['headline' => 'Test Headline', 'content' => 'Draft body']]),
         ]);
 
         $report = CommitteeReport::where('service_committee_id', $committee->id)->first();
@@ -84,7 +87,9 @@ class CommitteeReportWorkflowTest extends TestCase
         $response = $this->put(route('committee-reports.update', $report->id), [
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday Updated',
-            'body' => 'Draft body updated',
+            'sections' => [
+                ['headline' => 'Test Headline Updated', 'content' => 'Draft body updated']
+            ],
             'status' => 'draft',
             'is_exceptional' => '0',
             'attended_members' => 'John Doe, Jane Smith Updated',
@@ -97,6 +102,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'status' => 'draft',
             'is_exceptional' => false,
             'attended_members' => 'John Doe, Jane Smith Updated',
+            'body' => json_encode([['headline' => 'Test Headline Updated', 'content' => 'Draft body updated']]),
         ]);
     }
 
@@ -353,7 +359,9 @@ class CommitteeReportWorkflowTest extends TestCase
         $this->post(route('committee-reports.store'), [
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
-            'body' => 'Report with attachments',
+            'sections' => [
+                ['headline' => null, 'content' => 'Report with attachments']
+            ],
             'status' => 'draft',
             'attachments' => [$file1, $file2],
         ]);

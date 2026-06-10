@@ -749,4 +749,11 @@ return [
     'Report Footer' => 'تذييل التقرير',
     'Enter report-specific footer text (overrides default committee footer)...' => 'أدخل نص تذييل خاص بهذا التقرير (يحل محل التذييل الافتراضي للجنة)...',
     'Default Committee Footer' => 'تذييل اللجنة الافتراضي',
+    'Section' => 'قسم',
+    'Section Headline (Optional)' => 'عنوان القسم (اختياري)',
+    'Section Content' => 'محتوى القسم',
+    'Remove Section' => 'حذف القسم',
+    'Add Section' => 'إضافة قسم',
+    'A report must have at least one section.' => 'يجب أن يحتوي التقرير على قسم واحد على الأقل.',
+    'Enter optional headline...' => 'أدخل عنوانًا اختياريًا...',
 ];
