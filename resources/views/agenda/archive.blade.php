@@ -2,6 +2,43 @@
     <x-backhead>{{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}</x-backhead>
 
     <div class="container mt-4">
+        <!-- Statistics Summary Section -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 border rounded-4 shadow-sm transition-hover d-flex align-items-center justify-content-between" style="border-color: var(--glass-border) !important; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.05)); backdrop-filter: blur(10px);">
+                    <div>
+                        <span class="text-secondary small fw-bold text-uppercase d-block mb-1">{{ __('messages.Total Agendas') }}</span>
+                        <h3 class="mb-0 fw-bold text-primary">{{ $totalAgendas }}</h3>
+                    </div>
+                    <div class="rounded-pill p-3 bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
+                        <i class="bi bi-journals fs-4 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 border rounded-4 shadow-sm transition-hover d-flex align-items-center justify-content-between" style="border-color: var(--glass-border) !important; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); backdrop-filter: blur(10px);">
+                    <div>
+                        <span class="text-secondary small fw-bold text-uppercase d-block mb-1">{{ __('messages.Current Month Agendas') }}</span>
+                        <h3 class="mb-0 fw-bold text-success">{{ $monthlyAgendas }}</h3>
+                    </div>
+                    <div class="rounded-pill p-3 bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
+                        <i class="bi bi-calendar3 fs-4 text-success"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 border rounded-4 shadow-sm transition-hover d-flex align-items-center justify-content-between" style="border-color: var(--glass-border) !important; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); backdrop-filter: blur(10px);">
+                    <div>
+                        <span class="text-secondary small fw-bold text-uppercase d-block mb-1">{{ __('messages.Active Groups with Agendas') }}</span>
+                        <h3 class="mb-0 fw-bold text-warning">{{ $activeGroupsCount }}</h3>
+                    </div>
+                    <div class="rounded-pill p-3 bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
+                        <i class="bi bi-people-fill fs-4 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Advanced Filter & Search Card -->
         <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2">
@@ -98,40 +135,40 @@
                                             <div class="row row-cols-1 g-3">
                                                 @foreach($agendas as $agenda)
                                                     <div class="col">
-                                                        <div class="glass-card p-4 border rounded-4 shadow-sm transition-hover d-flex flex-column justify-content-between" style="border-color: var(--glass-border) !important; background: rgba(255,255,255,0.4);">
+                                                        <div class="glass-card p-4 border rounded-4 transition-hover d-flex flex-column justify-content-between mb-2" style="border: 1px solid rgba(255, 255, 255, 0.4) !important; background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.35)); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02); transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;">
                                                             <div class="d-flex w-100 justify-content-between align-items-center flex-wrap gap-2 mb-3">
                                                                 <div class="d-flex align-items-center gap-3">
-                                                                    <input type="checkbox" name="agenda_ids[]" value="{{ $agenda->id }}" class="form-check-input agenda-checkbox">
+                                                                    <input type="checkbox" name="agenda_ids[]" value="{{ $agenda->id }}" class="form-check-input agenda-checkbox shadow-sm">
                                                                     <h5 class="mb-0 text-primary fw-bold">
                                                                         {{ $agenda->group->ar_name ?? $agenda->group->en_name }}
                                                                     </h5>
                                                                 </div>
-                                                                <div class="d-flex align-items-center gap-2 flex-wrap text-muted small">
-                                                                    <span class="badge px-3 py-2 rounded-pill fw-medium bg-light text-secondary border">
-                                                                        <i class="bi bi-person me-1"></i>
+                                                                <div class="d-flex align-items-center gap-2 flex-wrap small">
+                                                                    <span class="neo-badge neo-badge-info px-3 py-2 d-flex align-items-center gap-1">
+                                                                        <i class="bi bi-person"></i>
                                                                         <strong>{{ __('messages.submitter_name') }}:</strong> {{ $agenda->submitter_name ?: __('messages.Not provided') }}
                                                                     </span>
-                                                                    <span class="badge px-3 py-2 rounded-pill fw-medium bg-light text-secondary border">
-                                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                                    <span class="neo-badge neo-badge-primary px-3 py-2 d-flex align-items-center gap-1">
+                                                                        <i class="bi bi-calendar3"></i>
                                                                         <strong>{{ __('messages.agenda_date') }}:</strong> {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('Y-m-d') }}
                                                                     </span>
                                                                 </div>
                                                             </div>
 
-                                                            <div class="mb-3 text-secondary small p-3 rounded-3" style="background: rgba(0,0,0,0.02); border: 1px dashed var(--glass-border);">
+                                                            <div class="mb-3 text-secondary small p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px dashed var(--glass-border); line-height: 1.6;">
                                                                 <strong>{{ __('messages.recovery_atmosphere') }}:</strong>
                                                                 <span class="text-dark">{{ Str::limit($agenda->recovery_atmosphere, 200, '...') ?: '-' }}</span>
                                                             </div>
                                                             
-                                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top" style="border-color: rgba(0, 0, 0, 0.05) !important;">
                                                                 <div class="d-flex flex-wrap gap-2">
-                                                                    <span class="badge rounded-pill px-3 py-2 fw-medium bg-light text-primary border">
-                                                                        <i class="bi bi-calendar-check me-1"></i>
+                                                                    <span class="neo-badge neo-badge-primary px-3 py-2 d-flex align-items-center gap-1">
+                                                                        <i class="bi bi-calendar-check"></i>
                                                                         {{ $agenda->meetings_per_week }} {{ __('messages.meetings_per_week') }}
                                                                     </span>
                                                                     @if($agenda->new_comers > 0)
-                                                                        <span class="badge rounded-pill px-3 py-2 fw-medium bg-light text-success border">
-                                                                            <i class="bi bi-person-plus me-1"></i>
+                                                                        <span class="neo-badge neo-badge-success px-3 py-2 d-flex align-items-center gap-1">
+                                                                            <i class="bi bi-person-plus"></i>
                                                                             {{ $agenda->new_comers }} {{ __('messages.new_comers') }}
                                                                         </span>
                                                                     @endif

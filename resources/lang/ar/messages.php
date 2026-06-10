@@ -767,4 +767,7 @@ return [
     'Characters Remaining' => 'حرفاً متبقياً',
     'Committee Meetings' => 'اجتماعات اللجنة',
     'Schedule & Recurrence' => 'الجدول والتكرار',
+    'Total Agendas' => 'إجمالي الأجندات',
+    'Current Month Agendas' => 'أجندات الشهر الحالي',
+    'Active Groups with Agendas' => 'المجموعات النشطة بالأجندات',
 ];

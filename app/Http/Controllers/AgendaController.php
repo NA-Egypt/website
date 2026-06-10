@@ -178,6 +178,15 @@ class AgendaController extends Controller
             $query->where('agenda_date', '<=', $request->end_date);
         }
 
+        // Calculate summary statistics based on user's authorized scope
+        $statsQuery = clone $query;
+        $allAgendasInScope = $statsQuery->get();
+        $totalAgendas = $allAgendasInScope->count();
+        $monthlyAgendas = $allAgendasInScope->filter(function ($agenda) {
+            return $agenda->agenda_date && $agenda->agenda_date->isCurrentMonth();
+        })->count();
+        $activeGroupsCount = $allAgendasInScope->pluck('group_id')->unique()->count();
+
         $agendas = $query->orderBy('agenda_date', 'desc')->get();
 
         // Group by Year, then by Month
@@ -195,7 +204,7 @@ class AgendaController extends Controller
             $groups = Group::all();
         }
 
-        return view('agenda.archive', compact('archive', 'groups'));
+        return view('agenda.archive', compact('archive', 'groups', 'totalAgendas', 'monthlyAgendas', 'activeGroupsCount'));
     }
 
     /**

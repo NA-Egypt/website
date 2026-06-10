@@ -133,7 +133,11 @@
           <div class="menu-title">{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</div>
         </a>
       </li>
+      {{-- /Reports Area --}}
+
+      {{-- Agendas Area --}}
       @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])))
+      <li class="menu-label">{{ __('messages.Agendas') }}</li>
       <li>
         <a href="{{ route('groups-agendas.archive') }}">
           <div class="parent-icon"><i class="bi bi-journals"></i>
@@ -142,7 +146,6 @@
         </a>
       </li>
       @endif
-      {{-- /Reports Area --}}
 
       {{-- Calendar Area --}}
       <li class="menu-label">{{ __('messages.Calendar') }}</li>
