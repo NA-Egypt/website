@@ -41,10 +41,16 @@ class GroupsAgendasArchiveTest extends TestCase
         $superAdmin->assignRole('super admin');
         $this->actingAs($superAdmin);
 
+        $day = \App\Models\Day::first() ?? \App\Models\Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
         $serviceBody = \App\Models\ServiceBody::first() ?? \App\Models\ServiceBody::create([
             'ar_name' => 'كيان خدمي',
             'en_name' => 'Service Body',
             'description' => 'Desc',
+            'day_id' => $day->id,
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Test Location',
         ]);
 
         $city = \App\Models\City::first() ?? \App\Models\City::create([
