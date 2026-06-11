@@ -25,6 +25,11 @@ class CommitteeReportWorkflowTest extends TestCase
             \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
             \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
         ]);
+
+        // Ensure roles exist in the database for the test
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'ServiceBody', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'gsr', 'guard_name' => 'web']);
     }
 
     protected function createCommittee($user, $attributes = [])
@@ -219,6 +224,10 @@ class CommitteeReportWorkflowTest extends TestCase
 
         $response = $this->get(route('committee-reports.index'));
         $response->assertSee('Wednesday Draft');
+
+        // Verify archive includes draft for super admin
+        $responseArchive = $this->get(route('committee-reports.archive'));
+        $responseArchive->assertSee('Wednesday Draft');
 
         $this->get(route('committee-reports.show', $draft->id))->assertStatus(200);
         $this->get(route('committee-reports.pdf', $draft->id))->assertStatus(200);

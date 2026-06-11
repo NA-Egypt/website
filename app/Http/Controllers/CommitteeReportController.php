@@ -595,7 +595,11 @@ class CommitteeReportController extends Controller
                 }
             });
         } else {
-            $query->whereIn('status', ['submitted', 'approved']);
+            if ($user && $user->hasRole('super admin')) {
+                $query->whereIn('status', ['draft', 'submitted', 'approved']);
+            } else {
+                $query->whereIn('status', ['submitted', 'approved']);
+            }
         }
 
         if ($request->has('search') && $request->search != '') {
