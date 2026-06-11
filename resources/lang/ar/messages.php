@@ -770,4 +770,19 @@ return [
     'Total Agendas' => 'إجمالي الأجندات',
     'Current Month Agendas' => 'أجندات الشهر الحالي',
     'Active Groups with Agendas' => 'المجموعات النشطة بالأجندات',
+
+    // Reconciled translations
+    'Approved' => 'تمت الموافقة',
+    'Are you sure you want to approve and send this report to ASC?' => 'هل أنت متأكد من الموافقة وإرسال هذا التقرير إلى لجنة الخدمة المحلية (ASC)؟',
+    'Committee Review Notes' => 'ملاحظات مراجعة اللجنة',
+    'Edit Permission' => 'تعديل الإذن',
+    'My Committee' => 'لجنتي الخدمية',
+    'My Committee Details' => 'تفاصيل لجنتي الخدمية',
+    'No agendas submitted yet' => 'لم يتم تقديم أجندات بعد',
+    'No positions data' => 'لا توجد بيانات مناصب',
+    'Review Notes' => 'ملاحظات المراجعة',
+    'The Address name must contain only Arabic letters.' => 'العنوان بالعربي يجب ان يحتوي على حروف بالعربية فقط',
+    'delegate' => 'مندوب',
+    'invalid_duration' => 'مدة غير صالحة',
+    'save' => 'حفظ',
 ];
