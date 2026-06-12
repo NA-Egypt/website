@@ -1,66 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NA-Egypt Website & Administration Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to the NA-Egypt (Narcotics Anonymous Egypt) website and administration portal. This platform hosts the bilingual public website (meeting finder, informational pages, calendar) and the secure management dashboard for service committees, groups, agendas, change requests, and reports, along with a RESTful API.
 
-## About Laravel
+For a detailed view of the application capabilities, please check the [APPLICATION_FEATURES.md](file:///var/www/html/new/APPLICATION_FEATURES.md).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend Framework:** Laravel ^11.9 (PHP ^8.2)
+- **Frontend Layer:** Livewire ^3.7, Tailwind CSS ^3.4, Bootstrap ^5.3, jQuery ^3.7
+- **Database:** MySQL
+- **Key Dependencies:**
+  - `spatie/laravel-permission`: Role-based access controls
+  - `laravel/socialite` & `socialiteproviders/microsoft-azure`: Secure Azure AD authentication
+  - `laravel/sanctum`: API token validation
+  - `mcamara/laravel-localization`: Bilingual route routing and locales (AR/EN)
+  - `mpdf/mpdf` & `barryvdh/laravel-dompdf`: PDF generation with Arabic font rendering (Amiri, Cairo)
+  - `google/recaptcha`: Form protection against spam
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🔑 Core Environment Settings (`.env`)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+To configure the application, duplicate your environment settings and ensure the following keys are populated:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Database Connection
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
 
-## Laravel Sponsors
+### 2. Microsoft Azure AD Authentication
+Used for secure administration logins.
+```env
+AZURE_CLIENT_ID=your_azure_client_id
+AZURE_CLIENT_SECRET=your_azure_client_secret
+AZURE_REDIRECT_URI=https://your-domain.com/login/microsoft/callback
+AZURE_TENANT_ID=your_azure_tenant_id
+ALLOWED_DOMAIN=naegypt.org
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Google reCAPTCHA
+Required for protecting contact/submission forms. Refer to [RECAPTCHA_SETUP.md](file:///var/www/html/new/RECAPTCHA_SETUP.md) for full instructions.
+```env
+RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+```
 
-### Premium Partners
+### 4. Mail Settings (SMTP)
+Configured for automated report and change request notifications.
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.office365.com
+MAIL_PORT=587
+MAIL_USERNAME=hello@naegypt.org
+MAIL_PASSWORD=your_email_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=hello@naegypt.org
+MAIL_FROM_NAME="[Website Contact Form]"
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 🚀 Installation & Local Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Follow these steps to set up the project locally:
 
-## Code of Conduct
+### 1. Clone & Setup Configuration
+Ensure your PHP CLI worker settings and directory permissions are set up, and configure your `.env` file as described above.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Install Dependencies
+Install PHP dependencies via Composer and Javascript dependencies via npm:
+```bash
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+### 3. Generate Encryption Key
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Database Migrations & Seeders
+Run the database migrations and seed system defaults (e.g., base roles, permissions, cities):
+```bash
+php artisan migrate --seed
+```
 
-## License
+### 5. Compile Assets
+Build frontend styles and assets:
+```bash
+npm run build
+```
+Or run Vite in development mode:
+```bash
+npm run dev
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 6. Run the Application
+You can run the built-in development server:
+```bash
+php artisan serve
+```
+Alternatively, use the configured Composer dev script which spins up the server, queue listener, logs, and Vite concurrently:
+```bash
+composer dev
+```
+
+---
+
+## 🧪 Testing
+
+The project is backed by a PHPUnit test suite validating critical flows like change requests, committee report approvals, and reCAPTCHA integrations.
+
+To execute the test suite, run:
+```bash
+php artisan test
+```
+To run specific feature tests:
+```bash
+php artisan test tests/Feature/ChangeRequestTest.php
+```
+
+---
+
+## 📄 License
+This application is open-sourced software licensed under the [MIT license](file:///var/www/html/new/LICENSE).
