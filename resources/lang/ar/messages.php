@@ -785,4 +785,11 @@ return [
     'delegate' => 'مندوب',
     'invalid_duration' => 'مدة غير صالحة',
     'save' => 'حفظ',
+    'All Models' => 'كل النماذج',
+    'All Operations' => 'كل العمليات',
+    'Date Range' => 'نطاق التاريخ',
+    'Apply Filters' => 'تطبيق الفلترة',
+    'Context' => 'السياق',
+    'Hide' => 'إخفاء',
+    'Action' => 'الإجراء',
 ];

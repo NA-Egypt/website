@@ -785,4 +785,11 @@ return [
     'delegate' => 'Delegate',
     'invalid_duration' => 'Invalid duration',
     'save' => 'Save',
+    'All Models' => 'All Models',
+    'All Operations' => 'All Operations',
+    'Date Range' => 'Date Range',
+    'Apply Filters' => 'Apply Filters',
+    'Context' => 'Context',
+    'Hide' => 'Hide',
+    'Action' => 'Action',
 ];

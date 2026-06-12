@@ -13,16 +13,16 @@ use Tests\TestCase;
 
 class YearlyCalendarTest extends TestCase
 {
-    // use RefreshDatabase; // Commented out to avoid wiping existing DB, will cleanup manually or use transaction if possible, but standard is RefreshDatabase. Given user constraints, let's try to be safe. 
-    // Actually, testing usually requires a separate DB or RefreshDatabase. I'll rely on User factory and mocking or meaningful cleanup. 
-    // Since I cannot easily set up a separate test DB here, I will use valid data and cleanup.
-    
-    // Changing strategy: I will assume standard Laravel testing environment which uses RefreshDatabase trait usually. 
-    // But to be safe in this environment, I'll avoid RefreshDatabase if I'm not sure about the DB config.
-    // However, without RefreshDatabase, tests might affect production data. 
-    // I check .env? No. 
-    // I will use `Illuminate\Foundation\Testing\DatabaseTransactions` to wrap tests in transactions.
-    use \Illuminate\Foundation\Testing\DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Permission::firstOrCreate(['name' => 'can_manage_calendar']);
+        Role::firstOrCreate(['name' => 'super admin']);
+        Role::firstOrCreate(['name' => 'Committees']);
+        Role::firstOrCreate(['name' => 'ServiceBody']);
+    }
 
     public function test_component_renders_correctly()
     {

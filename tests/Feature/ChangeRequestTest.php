@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\ChangeRequest;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class ChangeRequestTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -26,6 +26,9 @@ class ChangeRequestTest extends TestCase
         
         Storage::fake('local');
         Mail::fake();
+
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Committees', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
     }
 
     public function test_guest_cannot_access_change_requests()

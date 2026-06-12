@@ -8,9 +8,35 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with('user')->latest()->paginate(10);
+        $query = Transaction::with('user');
+
+        if ($request->filled('filter_model')) {
+            $query->where('model', $request->input('filter_model'));
+        }
+
+        if ($request->filled('filter_operation')) {
+            $query->where('operation', $request->input('filter_operation'));
+        }
+
+        if ($request->filled('search_user')) {
+            $search = $request->input('search_user');
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->input('date_to'));
+        }
+
+        $transactions = $query->latest()->paginate(15)->withQueryString();
 
         // Augment the paginated collection with `group_name`
         $transactions->getCollection()->transform(function ($transaction) {
@@ -20,8 +46,11 @@ class TransactionController extends Controller
             }
             return $transaction;
         });
+
+        $availableModels = Transaction::distinct()->pluck('model')->toArray();
+        $availableOperations = Transaction::distinct()->pluck('operation')->toArray();
         
-        return view('transactions.index', compact('transactions'));
+        return view('transactions.index', compact('transactions', 'availableModels', 'availableOperations'));
     }
 
 }

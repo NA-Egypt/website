@@ -6,14 +6,14 @@ use App\Models\User;
 use App\Models\ServiceCommittee;
 use App\Models\CommitteeReport;
 use App\Models\CommitteeReportAttachment;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CommitteeReportWorkflowTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -75,15 +75,15 @@ class CommitteeReportWorkflowTest extends TestCase
         $response->assertRedirect(route('committee-reports.index'));
         $this->assertDatabaseHas('committee_reports', [
             'service_committee_id' => $committee->id,
-            'meeting_date' => '2026-05-20',
             'status' => 'draft',
             'is_exceptional' => true,
-            'report_date' => now()->toDateString(),
             'attended_members' => 'John Doe, Jane Smith',
             'body' => json_encode([['headline' => 'Test Headline', 'content' => 'Draft body']]),
         ]);
 
         $report = CommitteeReport::where('service_committee_id', $committee->id)->first();
+        $this->assertEquals('2026-05-20', \Carbon\Carbon::parse($report->meeting_date)->toDateString());
+        $this->assertEquals(now()->toDateString(), \Carbon\Carbon::parse($report->report_date)->toDateString());
 
         // 2. View Draft
         $this->get(route('committee-reports.show', $report->id))->assertStatus(200);
@@ -109,6 +109,9 @@ class CommitteeReportWorkflowTest extends TestCase
             'attended_members' => 'John Doe, Jane Smith Updated',
             'body' => json_encode([['headline' => 'Test Headline Updated', 'content' => 'Draft body updated']]),
         ]);
+
+        $report->refresh();
+        $this->assertEquals('2026-05-20', \Carbon\Carbon::parse($report->meeting_date)->toDateString());
     }
 
     public function test_unauthorized_user_cannot_view_or_edit_draft()
