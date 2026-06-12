@@ -52,7 +52,7 @@
         </div>
 
         <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
+            <table class="main-tables manage-member text-center table table-bordered display" id="example" data-server-pagination="true">
                <thead>
                 <tr>
                     <th>{{  __('messages.Operation') }}</th>

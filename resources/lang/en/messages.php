@@ -792,4 +792,8 @@ return [
     'Context' => 'Context',
     'Hide' => 'Hide',
     'Action' => 'Action',
+    'Filters' => 'Filters',
+    'Search by user name or email...' => 'Search by user name or email...',
+    'Log Details' => 'Log Details',
+    'No logs found matching your filters.' => 'No logs found matching your filters.',
 ];

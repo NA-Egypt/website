@@ -792,4 +792,8 @@ return [
     'Context' => 'السياق',
     'Hide' => 'إخفاء',
     'Action' => 'الإجراء',
+    'Filters' => 'خيارات البحث',
+    'Search by user name or email...' => 'البحث عن طريق اسم المستخدم أو بريده الإلكتروني...',
+    'Log Details' => 'تفاصيل السجل',
+    'No logs found matching your filters.' => 'لم يتم العثور على سجلات تطابق خيارات البحث الخاصة بك.',
 ];
