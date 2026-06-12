@@ -1,9 +1,4 @@
 /*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19  Distrib 10.11.14-MariaDB, for debian-linux-gnu (aarch64)
---
--- Host: localhost    Database: restorat
--- ------------------------------------------------------
--- Server version	10.11.14-MariaDB-0ubuntu0.24.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -15,11 +10,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `agendas`
---
-
 DROP TABLE IF EXISTS `agendas`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -48,10 +38,6 @@ CREATE TABLE `agendas` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `agendas`
---
-
 LOCK TABLES `agendas` WRITE;
 /*!40000 ALTER TABLE `agendas` DISABLE KEYS */;
 INSERT INTO `agendas` VALUES
@@ -61,11 +47,6 @@ INSERT INTO `agendas` VALUES
 (4,234,1,'2026-05-31','GSR',NULL,NULL,NULL,NULL,NULL,'2026-06-20 18:00:00',0,NULL,NULL,NULL,NULL,'2026-05-31 18:12:29','2026-05-31 18:12:29');
 /*!40000 ALTER TABLE `agendas` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `cache`
---
-
 DROP TABLE IF EXISTS `cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -77,21 +58,12 @@ CREATE TABLE `cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `cache`
---
-
 LOCK TABLES `cache` WRITE;
 /*!40000 ALTER TABLE `cache` DISABLE KEYS */;
 INSERT INTO `cache` VALUES
 ('spatie.permission.cache','a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:5:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:11:\"super admin\";s:1:\"c\";s:3:\"web\";}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:3:\"gsr\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:2;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:10:\"Committees\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:3;}}i:3;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:5:\"store\";s:1:\"c\";s:3:\"web\";}i:4;a:3:{s:1:\"a\";i:13;s:1:\"b\";s:19:\"can_manage_calendar\";s:1:\"c\";s:3:\"web\";}}s:5:\"roles\";a:2:{i:0;a:3:{s:1:\"a\";i:2;s:1:\"b\";s:3:\"gsr\";s:1:\"c\";s:3:\"web\";}i:1;a:3:{s:1:\"a\";i:3;s:1:\"b\";s:10:\"Committees\";s:1:\"c\";s:3:\"web\";}}}',1781299465);
 /*!40000 ALTER TABLE `cache` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `cache_locks`
---
-
 DROP TABLE IF EXISTS `cache_locks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -103,19 +75,10 @@ CREATE TABLE `cache_locks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `cache_locks`
---
-
 LOCK TABLES `cache_locks` WRITE;
 /*!40000 ALTER TABLE `cache_locks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cache_locks` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `calendar_events`
---
-
 DROP TABLE IF EXISTS `calendar_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -141,10 +104,6 @@ CREATE TABLE `calendar_events` (
 ) ENGINE=InnoDB AUTO_INCREMENT=169 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `calendar_events`
---
-
 LOCK TABLES `calendar_events` WRITE;
 /*!40000 ALTER TABLE `calendar_events` DISABLE KEYS */;
 INSERT INTO `calendar_events` VALUES
@@ -167,11 +126,6 @@ INSERT INTO `calendar_events` VALUES
 (154,'مسار يجمعنا – المؤتمر السنوي الثلاثون – مصر 2026','2026-10-08 10:00:00','2026-10-09 23:00:00','يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.\n\nتستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة،\n\nنتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.',184,'#0061c2','2026-06-06 05:13:30','2026-06-06 06:25:53','إقليم مصر','الجامعة الأمريكية بميدان التحرير','[\"once\"]',1);
 /*!40000 ALTER TABLE `calendar_events` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `change_requests`
---
-
 DROP TABLE IF EXISTS `change_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -191,10 +145,6 @@ CREATE TABLE `change_requests` (
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `change_requests`
---
-
 LOCK TABLES `change_requests` WRITE;
 /*!40000 ALTER TABLE `change_requests` DISABLE KEYS */;
 INSERT INTO `change_requests` VALUES
@@ -202,11 +152,6 @@ INSERT INTO `change_requests` VALUES
 (14,182,'general','test Ahmed.s','trying new feature\r\nالله ينور يا اكس',NULL,'in_progress','2026-06-06 10:18:06','2026-06-08 06:34:48');
 /*!40000 ALTER TABLE `change_requests` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `cities`
---
-
 DROP TABLE IF EXISTS `cities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -219,10 +164,6 @@ CREATE TABLE `cities` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cities`
---
 
 LOCK TABLES `cities` WRITE;
 /*!40000 ALTER TABLE `cities` DISABLE KEYS */;
@@ -254,11 +195,6 @@ INSERT INTO `cities` VALUES
 (25,'السويس','Suez','2025-09-07 14:33:29','2025-09-07 14:33:29');
 /*!40000 ALTER TABLE `cities` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `committee_report_attachments`
---
-
 DROP TABLE IF EXISTS `committee_report_attachments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -277,19 +213,10 @@ CREATE TABLE `committee_report_attachments` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `committee_report_attachments`
---
-
 LOCK TABLES `committee_report_attachments` WRITE;
 /*!40000 ALTER TABLE `committee_report_attachments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `committee_report_attachments` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `committee_reports`
---
-
 DROP TABLE IF EXISTS `committee_reports`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -315,10 +242,6 @@ CREATE TABLE `committee_reports` (
 ) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `committee_reports`
---
-
 LOCK TABLES `committee_reports` WRITE;
 /*!40000 ALTER TABLE `committee_reports` DISABLE KEYS */;
 INSERT INTO `committee_reports` VALUES
@@ -326,11 +249,6 @@ INSERT INTO `committee_reports` VALUES
 (3,8,'2026-06-10','اجتماع طاريء','[{\"headline\":\"\\u0627\\u0644\\u0645\\u0648\\u0636\\u0648\\u0639\\u0627\\u062a\",\"content\":\"<p>\\u0645\\u0646\\u0627\\u0642\\u0634\\u0629 \\u0644\\u0627\\u062e\\u062a\\u064a\\u0627\\u0631 \\u0627\\u0633\\u0645 \\u0644\\u0644\\u0641\\u0642\\u0631\\u0629<\\/p><p>\\u0627\\u0644\\u0645\\u0634\\u0627\\u0631\\u0643\\u0629 \\u0645\\u0639 \\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u0639\\u0645\\u0644 \\u0627\\u0644\\u0645\\u0624\\u062a\\u0645\\u0631 \\u0627\\u0644\\u062b\\u0644\\u0627\\u062b\\u0648\\u0646<\\/p>\"},{\"headline\":\"\\u0627\\u0644\\u062a\\u0646\\u0648\\u064a\\u0647\\u0627\\u062a\",\"content\":\"<p>\\u0631\\u062c\\u0627\\u0621 \\u0639\\u062f\\u0645<\\/p>\"}]','[{\"name\":\"\\u0627\\u0644\\u0631\\u0626\\u064a\\u0633 - \\u062c\\u0645\\u0627\\u0644\",\"status\":\"Present\"},{\"name\":\"\\u0627\\u0644\\u0646\\u0627\\u0626\\u0628 - \\u0647\\u0627\\u0646\\u064a \\u062c\",\"status\":\"Present\"},{\"name\":\"\\u0645\\u0633\\u0624\\u0648\\u0644 \\u062a\\u0637\\u0648\\u064a\\u0631 - \\u0623\\u062d\\u0645\\u062f \\u0635\",\"status\":\"Present\"}]','لم يحضر أعضاء',NULL,'draft',NULL,'2026-06-11 22:29:18','2026-06-11 22:29:18','2026-06-12',1);
 /*!40000 ALTER TABLE `committee_reports` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `contact_us`
---
-
 DROP TABLE IF EXISTS `contact_us`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -344,10 +262,6 @@ CREATE TABLE `contact_us` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=382 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `contact_us`
---
 
 LOCK TABLES `contact_us` WRITE;
 /*!40000 ALTER TABLE `contact_us` DISABLE KEYS */;
@@ -735,11 +649,6 @@ INSERT INTO `contact_us` VALUES
 (381,'Helendrire','pe.a.ches.sv.an.e.ssa@gmail.com','<b>Beautiful hot bodies!</b> \r\n<b>Complete freedom of action!</b> \r\n<a href=https://is.gd/6KHCaG><b>Feel like a big boss right now!</b></a>','2026-06-12 07:03:54','2026-06-12 07:03:54');
 /*!40000 ALTER TABLE `contact_us` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `days`
---
-
 DROP TABLE IF EXISTS `days`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -753,10 +662,6 @@ CREATE TABLE `days` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `days`
---
-
 LOCK TABLES `days` WRITE;
 /*!40000 ALTER TABLE `days` DISABLE KEYS */;
 INSERT INTO `days` VALUES
@@ -769,11 +674,6 @@ INSERT INTO `days` VALUES
 (7,'Friday','الجمعة','2025-07-07 01:43:48','2025-07-07 01:43:48');
 /*!40000 ALTER TABLE `days` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `events`
---
-
 DROP TABLE IF EXISTS `events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -794,19 +694,10 @@ CREATE TABLE `events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `events`
---
-
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `failed_jobs`
---
-
 DROP TABLE IF EXISTS `failed_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -823,19 +714,10 @@ CREATE TABLE `failed_jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `failed_jobs`
---
-
 LOCK TABLES `failed_jobs` WRITE;
 /*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `groups`
---
-
 DROP TABLE IF EXISTS `groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -865,10 +747,6 @@ CREATE TABLE `groups` (
   CONSTRAINT `groups_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=562 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `groups`
---
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
@@ -948,11 +826,6 @@ INSERT INTO `groups` VALUES
 (558,'المنصورة ٢','Mansoura 2','محمد','MooO','01111111111',NULL,'كورنيش','Courniche','فعلي',NULL,6,63,'2026-06-11 22:50:59','2026-06-11 22:50:59',98);
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `job_batches`
---
-
 DROP TABLE IF EXISTS `job_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -971,19 +844,10 @@ CREATE TABLE `job_batches` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `job_batches`
---
-
 LOCK TABLES `job_batches` WRITE;
 /*!40000 ALTER TABLE `job_batches` DISABLE KEYS */;
 /*!40000 ALTER TABLE `job_batches` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `jobs`
---
-
 DROP TABLE IF EXISTS `jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -999,10 +863,6 @@ CREATE TABLE `jobs` (
   KEY `jobs_queue_index` (`queue`)
 ) ENGINE=InnoDB AUTO_INCREMENT=989 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `jobs`
---
 
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
@@ -1998,11 +1858,6 @@ INSERT INTO `jobs` VALUES
 (988,'default','{\"uuid\":\"49e0ffb2-1fd0-4c63-bb21-e64bb68ff51e\",\"displayName\":\"Mydnic\\\\Subscribers\\\\Events\\\\SubscriberCreated\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Broadcasting\\\\BroadcastEvent\",\"command\":\"O:38:\\\"Illuminate\\\\Broadcasting\\\\BroadcastEvent\\\":14:{s:5:\\\"event\\\";O:43:\\\"Mydnic\\\\Subscribers\\\\Events\\\\SubscriberCreated\\\":1:{s:10:\\\"subscriber\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:29:\\\"Mydnic\\\\Subscribers\\\\Subscriber\\\";s:2:\\\"id\\\";i:988;s:9:\\\"relations\\\";a:0:{}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}}s:5:\\\"tries\\\";N;s:7:\\\"timeout\\\";N;s:7:\\\"backoff\\\";N;s:13:\\\"maxExceptions\\\";N;s:10:\\\"connection\\\";N;s:5:\\\"queue\\\";N;s:5:\\\"delay\\\";N;s:11:\\\"afterCommit\\\";N;s:10:\\\"middleware\\\";a:0:{}s:7:\\\"chained\\\";a:0:{}s:15:\\\"chainConnection\\\";N;s:10:\\\"chainQueue\\\";N;s:19:\\\"chainCatchCallbacks\\\";N;}\"}}',0,NULL,1781227172,1781227172);
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `legacy_permission_role`
---
-
 DROP TABLE IF EXISTS `legacy_permission_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2020,10 +1875,6 @@ CREATE TABLE `legacy_permission_role` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `legacy_permission_role`
---
-
 LOCK TABLES `legacy_permission_role` WRITE;
 /*!40000 ALTER TABLE `legacy_permission_role` DISABLE KEYS */;
 INSERT INTO `legacy_permission_role` VALUES
@@ -2031,11 +1882,6 @@ INSERT INTO `legacy_permission_role` VALUES
 (2,3,3,NULL,NULL);
 /*!40000 ALTER TABLE `legacy_permission_role` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `legacy_permissions`
---
-
 DROP TABLE IF EXISTS `legacy_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2050,10 +1896,6 @@ CREATE TABLE `legacy_permissions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `legacy_permissions`
---
-
 LOCK TABLES `legacy_permissions` WRITE;
 /*!40000 ALTER TABLE `legacy_permissions` DISABLE KEYS */;
 INSERT INTO `legacy_permissions` VALUES
@@ -2064,11 +1906,6 @@ INSERT INTO `legacy_permissions` VALUES
 (12,'PR','Dashboard Show','2026-01-18 11:00:52','2026-01-18 11:00:52');
 /*!40000 ALTER TABLE `legacy_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `legacy_role_user`
---
-
 DROP TABLE IF EXISTS `legacy_role_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2085,10 +1922,6 @@ CREATE TABLE `legacy_role_user` (
   CONSTRAINT `role_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `legacy_role_user`
---
 
 LOCK TABLES `legacy_role_user` WRITE;
 /*!40000 ALTER TABLE `legacy_role_user` DISABLE KEYS */;
@@ -2176,11 +2009,6 @@ INSERT INTO `legacy_role_user` VALUES
 (96,199,2,NULL,NULL);
 /*!40000 ALTER TABLE `legacy_role_user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `legacy_roles`
---
-
 DROP TABLE IF EXISTS `legacy_roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2195,10 +2023,6 @@ CREATE TABLE `legacy_roles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `legacy_roles`
---
-
 LOCK TABLES `legacy_roles` WRITE;
 /*!40000 ALTER TABLE `legacy_roles` DISABLE KEYS */;
 INSERT INTO `legacy_roles` VALUES
@@ -2208,11 +2032,6 @@ INSERT INTO `legacy_roles` VALUES
 (4,'store',NULL,'2025-12-17 01:02:12','2025-12-17 01:02:12');
 /*!40000 ALTER TABLE `legacy_roles` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `meeting_option`
---
-
 DROP TABLE IF EXISTS `meeting_option`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2229,10 +2048,6 @@ CREATE TABLE `meeting_option` (
   CONSTRAINT `meeting_option_option_id_foreign` FOREIGN KEY (`option_id`) REFERENCES `options` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=409 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `meeting_option`
---
 
 LOCK TABLES `meeting_option` WRITE;
 /*!40000 ALTER TABLE `meeting_option` DISABLE KEYS */;
@@ -2358,11 +2173,6 @@ INSERT INTO `meeting_option` VALUES
 (408,279,13,NULL,NULL);
 /*!40000 ALTER TABLE `meeting_option` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `meeting_topic`
---
-
 DROP TABLE IF EXISTS `meeting_topic`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2379,10 +2189,6 @@ CREATE TABLE `meeting_topic` (
   CONSTRAINT `meeting_topic_topic_id_foreign` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=262 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `meeting_topic`
---
 
 LOCK TABLES `meeting_topic` WRITE;
 /*!40000 ALTER TABLE `meeting_topic` DISABLE KEYS */;
@@ -2616,11 +2422,6 @@ INSERT INTO `meeting_topic` VALUES
 (261,216,6,NULL,NULL);
 /*!40000 ALTER TABLE `meeting_topic` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `meetings`
---
-
 DROP TABLE IF EXISTS `meetings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2647,10 +2448,6 @@ CREATE TABLE `meetings` (
   CONSTRAINT `meetings_topic_id_foreign` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=311 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `meetings`
---
 
 LOCK TABLES `meetings` WRITE;
 /*!40000 ALTER TABLE `meetings` DISABLE KEYS */;
@@ -2870,11 +2667,6 @@ INSERT INTO `meetings` VALUES
 (296,NULL,'20:00:00','21:00:00','closed',547,6,6,'2026-05-18 23:12:43','2026-03-25 19:58:50','arabic','available','[\"weekly\"]');
 /*!40000 ALTER TABLE `meetings` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `migrations`
---
-
 DROP TABLE IF EXISTS `migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2885,10 +2677,6 @@ CREATE TABLE `migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `migrations`
---
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
@@ -2965,11 +2753,6 @@ INSERT INTO `migrations` VALUES
 (70,'2026_06_10_152100_add_recurrence_to_service_bodies_table',9);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `model_has_permissions`
---
-
 DROP TABLE IF EXISTS `model_has_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2983,19 +2766,10 @@ CREATE TABLE `model_has_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `model_has_permissions`
---
-
 LOCK TABLES `model_has_permissions` WRITE;
 /*!40000 ALTER TABLE `model_has_permissions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `model_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `model_has_roles`
---
-
 DROP TABLE IF EXISTS `model_has_roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3008,10 +2782,6 @@ CREATE TABLE `model_has_roles` (
   CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `model_has_roles`
---
 
 LOCK TABLES `model_has_roles` WRITE;
 /*!40000 ALTER TABLE `model_has_roles` DISABLE KEYS */;
@@ -3106,11 +2876,6 @@ INSERT INTO `model_has_roles` VALUES
 (3,'App\\Models\\User',340);
 /*!40000 ALTER TABLE `model_has_roles` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `neighborhoods`
---
-
 DROP TABLE IF EXISTS `neighborhoods`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3126,10 +2891,6 @@ CREATE TABLE `neighborhoods` (
   CONSTRAINT `neighborhoods_city_id_foreign` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `neighborhoods`
---
 
 LOCK TABLES `neighborhoods` WRITE;
 /*!40000 ALTER TABLE `neighborhoods` DISABLE KEYS */;
@@ -3225,11 +2986,6 @@ INSERT INTO `neighborhoods` VALUES
 (89,'Abu Hammad','أبو حماد',4,'2026-05-18 23:05:56','2026-05-18 23:05:56');
 /*!40000 ALTER TABLE `neighborhoods` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `newsletter_members`
---
-
 DROP TABLE IF EXISTS `newsletter_members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3243,19 +2999,10 @@ CREATE TABLE `newsletter_members` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `newsletter_members`
---
-
 LOCK TABLES `newsletter_members` WRITE;
 /*!40000 ALTER TABLE `newsletter_members` DISABLE KEYS */;
 /*!40000 ALTER TABLE `newsletter_members` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `options`
---
-
 DROP TABLE IF EXISTS `options`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3269,10 +3016,6 @@ CREATE TABLE `options` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `options`
---
-
 LOCK TABLES `options` WRITE;
 /*!40000 ALTER TABLE `options` DISABLE KEYS */;
 INSERT INTO `options` VALUES
@@ -3282,11 +3025,6 @@ INSERT INTO `options` VALUES
 (16,'Candle','شموع','2025-07-07 01:32:41','2025-07-07 01:32:41');
 /*!40000 ALTER TABLE `options` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `password_reset_tokens`
---
-
 DROP TABLE IF EXISTS `password_reset_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3298,19 +3036,10 @@ CREATE TABLE `password_reset_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `password_reset_tokens`
---
-
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `permissions`
---
-
 DROP TABLE IF EXISTS `permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3325,10 +3054,6 @@ CREATE TABLE `permissions` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `permissions`
---
-
 LOCK TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
 INSERT INTO `permissions` VALUES
@@ -3339,11 +3064,6 @@ INSERT INTO `permissions` VALUES
 (13,'can_manage_calendar','web','2026-06-11 12:15:11','2026-06-11 12:15:11');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `personal_access_tokens`
---
-
 DROP TABLE IF EXISTS `personal_access_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3365,19 +3085,10 @@ CREATE TABLE `personal_access_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `personal_access_tokens`
---
-
 LOCK TABLES `personal_access_tokens` WRITE;
 /*!40000 ALTER TABLE `personal_access_tokens` DISABLE KEYS */;
 /*!40000 ALTER TABLE `personal_access_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `role_has_permissions`
---
-
 DROP TABLE IF EXISTS `role_has_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3391,10 +3102,6 @@ CREATE TABLE `role_has_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `role_has_permissions`
---
-
 LOCK TABLES `role_has_permissions` WRITE;
 /*!40000 ALTER TABLE `role_has_permissions` DISABLE KEYS */;
 INSERT INTO `role_has_permissions` VALUES
@@ -3402,11 +3109,6 @@ INSERT INTO `role_has_permissions` VALUES
 (3,3);
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `roles`
---
-
 DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3421,10 +3123,6 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `roles`
---
-
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT INTO `roles` VALUES
@@ -3434,11 +3132,6 @@ INSERT INTO `roles` VALUES
 (4,'store','web','2025-12-17 01:02:12','2025-12-17 01:02:12');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `sc_meetings`
---
-
 DROP TABLE IF EXISTS `sc_meetings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3459,19 +3152,10 @@ CREATE TABLE `sc_meetings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `sc_meetings`
---
-
 LOCK TABLES `sc_meetings` WRITE;
 /*!40000 ALTER TABLE `sc_meetings` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sc_meetings` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `service_bodies`
---
-
 DROP TABLE IF EXISTS `service_bodies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3494,10 +3178,6 @@ CREATE TABLE `service_bodies` (
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `service_bodies`
---
-
 LOCK TABLES `service_bodies` WRITE;
 /*!40000 ALTER TABLE `service_bodies` DISABLE KEYS */;
 INSERT INTO `service_bodies` VALUES
@@ -3512,11 +3192,6 @@ INSERT INTO `service_bodies` VALUES
 (11,'Canal ASC','منطقة القناة',NULL,7,NULL,NULL,NULL,NULL,NULL,NULL,'[\"1st\",\"monthly\"]');
 /*!40000 ALTER TABLE `service_bodies` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `service_committees`
---
-
 DROP TABLE IF EXISTS `service_committees`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3543,10 +3218,6 @@ CREATE TABLE `service_committees` (
 ) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `service_committees`
---
-
 LOCK TABLES `service_committees` WRITE;
 /*!40000 ALTER TABLE `service_committees` DISABLE KEYS */;
 INSERT INTO `service_committees` VALUES
@@ -3559,11 +3230,6 @@ INSERT INTO `service_committees` VALUES
 (8,'مجموعة تقنية المعلومات','Information Technology Workgroup','أونلاين','Online','جمال ص','01287144442','web@naegypt.org','Online','أونلاين','logos/rUmPz8VB85kMXnG1pGVwjYeBBJYlrJTTjJ1dfBl9.png','اللهم امنحنا المعرفة لنكتب بما تمليه علينا أحكامك الإلهية واغرس فينا بصيرة بأهدافك واجعلنا خدمًا لإرادتك وهب لنا من لدنك إنكاراً للذات ليصبح ما نقوم به من صنعك لا من صنعنا كي لا يموت مدمن من أهوال الإدمان في أي مكان... آمين',NULL,'2026-06-11 22:24:59','2026-06-11 22:24:59',225);
 /*!40000 ALTER TABLE `service_committees` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `sessions`
---
-
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3579,10 +3245,6 @@ CREATE TABLE `sessions` (
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sessions`
---
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
@@ -3731,11 +3393,6 @@ INSERT INTO `sessions` VALUES
 ('ZJ90D61ETHE0Mhm5mhmMVPOlINOSwtGCuiCowT9f',NULL,'66.249.93.68','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaXlzeTlLMDd1VUN6UTBLRG55NENaNHBwWTFBYlAxcDBmWW1sSjRaeCI7czo2OiJsb2NhbGUiO3M6MjoiYXIiO3M6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjcyOiJodHRwczovL25hZWd5cHQub3JnL2FyL21lZXRpbmdzP2RheT0lRDglQTclRDklODQlRDglQUMlRDklODUlRDglQjklRDglQTkiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19',1781248659);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `subscribers`
---
-
 DROP TABLE IF EXISTS `subscribers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3750,10 +3407,6 @@ CREATE TABLE `subscribers` (
   UNIQUE KEY `subscribers_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=989 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `subscribers`
---
 
 LOCK TABLES `subscribers` WRITE;
 /*!40000 ALTER TABLE `subscribers` DISABLE KEYS */;
@@ -4748,11 +4401,6 @@ INSERT INTO `subscribers` VALUES
 (988,'aya20bakry@gmail.com','2026-06-12 01:19:32','2026-06-12 01:19:32',NULL,NULL);
 /*!40000 ALTER TABLE `subscribers` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `topics`
---
-
 DROP TABLE IF EXISTS `topics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -4766,10 +4414,6 @@ CREATE TABLE `topics` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `topics`
---
 
 LOCK TABLES `topics` WRITE;
 /*!40000 ALTER TABLE `topics` DISABLE KEYS */;
@@ -4800,11 +4444,6 @@ INSERT INTO `topics` VALUES
 (27,'اجتماع عمل المجموعة','Group Business Meeting',NULL,'2026-06-11 21:31:30','2026-06-11 21:31:30');
 /*!40000 ALTER TABLE `topics` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `transactions`
---
-
 DROP TABLE IF EXISTS `transactions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -4822,10 +4461,6 @@ CREATE TABLE `transactions` (
   CONSTRAINT `transactions_chk_1` CHECK (json_valid(`details`))
 ) ENGINE=InnoDB AUTO_INCREMENT=1322 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `transactions`
---
 
 LOCK TABLES `transactions` WRITE;
 /*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
@@ -5773,11 +5408,6 @@ INSERT INTO `transactions` VALUES
 (1205,'Meeting','update','{\"id\":216,\"notes\":\"\\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0639\\u0645\\u0644 \\u0627\\u0644\\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u062b\\u0627\\u0646\\u064a \\u062c\\u0645\\u0639\\u0629 \\u0641\\u064a \\u0627\\u0644\\u0634\\u0647\\u0631 \\u0628\\u0639\\u062f \\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0627\\u0644\\u062a\\u0639\\u0627\\u0641\\u064a\",\"start_time\":\"14:00\",\"end_time\":\"15:00\",\"type\":\"open\",\"group_id\":\"238\",\"topic_id\":\"6\",\"day_id\":\"7\",\"created_at\":\"2025-07-07T06:42:27.000000Z\",\"updated_at\":\"2026-06-12T08:50:51.000000Z\",\"lang\":\"arabic\",\"status\":\"available\",\"recurrence\":[\"weekly\"]}',184,'2026-06-12 08:50:51','2026-06-12 08:50:51');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
-
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -5799,10 +5429,6 @@ CREATE TABLE `users` (
   CONSTRAINT `users_service_body_id_foreign` FOREIGN KEY (`service_body_id`) REFERENCES `service_bodies` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
@@ -5908,4 +5534,3 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-12 12:14:13
