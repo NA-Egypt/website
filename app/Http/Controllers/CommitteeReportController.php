@@ -168,6 +168,10 @@ class CommitteeReportController extends Controller
             $this->sendNotificationEmail($report);
         }
 
+        if ($report->status === 'approved') {
+            app(\App\Services\ReportArchiver::class)->archive($report);
+        }
+
         return redirect()->route('committee-reports.index')->with('success', 'Report created successfully.');
     }
 
@@ -326,6 +330,10 @@ class CommitteeReportController extends Controller
 
         if ($wasDraft && $report->status === 'submitted') {
             $this->sendNotificationEmail($report);
+        }
+
+        if ($report->status === 'approved') {
+            app(\App\Services\ReportArchiver::class)->archive($report->fresh());
         }
 
         return redirect()->route('committee-reports.index')->with('success', 'Report updated successfully.');
@@ -658,6 +666,8 @@ class CommitteeReportController extends Controller
             'status' => 'approved',
             'review_notes' => null, // clear notes upon approval
         ]);
+
+        app(\App\Services\ReportArchiver::class)->archive($report);
 
         return redirect()->route('committee-reports.index')->with('success', 'Report approved and published successfully.');
     }

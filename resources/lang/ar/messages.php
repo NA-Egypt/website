@@ -570,7 +570,7 @@ return [
     'the_agenda' => 'جدول الأعمال',
     'recovery_atmosphere' => 'حول جو التعافي',
     'trusted_servants' => 'حول الخدام الموثوق بهم',
-    'financial_issues' => 'قضايا مالية',
+    'financial_issues' => 'التقرير المالي',
     'other_topics' => 'مواضيع أخرى',
     'next' => 'التالي',
     'agenda_created_successfully' => 'تم إنشاء جدول الأعمال بنجاح',
