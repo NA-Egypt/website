@@ -39,7 +39,7 @@ export MYSQL_PWD="$DB_PASSWORD"
 echo "Starting database backup for database: $DB_DATABASE..."
 
 # Perform mysqldump.
-mysqldump -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" "$DB_DATABASE" > "$BACKUP_FILE"
+mysqldump --skip-comments -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" "$DB_DATABASE" > "$BACKUP_FILE"
 MYSQLED_STATUS=$?
 
 if [ $MYSQLED_STATUS -ne 0 ]; then
