@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\GreatingPagesController;
+use App\Http\Controllers\CustomFormController;
+use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\NeighborhoodController;
@@ -153,6 +155,16 @@ Route::group(
                     [UserController::class, 'destroy'])->name('users.destroy');
             });
 
+            // Custom Form Builder:
+            Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus');
+            Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate');
+            Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset');
+            Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report');
+            Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf');
+            Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf');
+            Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv');
+            Route::resource('forms', CustomFormController::class);
+
             // Committee Reports:
             Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
             Route::get('committee-reports/storagebox/download', [\App\Http\Controllers\CommitteeReportController::class, 'downloadStorageboxFile'])->name('committee-reports.downloadStorageboxFile');
@@ -251,6 +263,10 @@ Route::group(
 
         Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
         Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');
+
+        // Public Custom Forms
+        Route::get('/f/{slug}', [PublicFormController::class, 'show'])->name('forms.show.public');
+        Route::post('/f/{slug}', [PublicFormController::class, 'submit'])->name('forms.submit.public');
 
     }
 );

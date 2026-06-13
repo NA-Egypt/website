@@ -168,6 +168,18 @@
           <div class="menu-title">{{ __('messages.IT Change Requests') }}</div>
         </a>
       </li>
+      {{-- Forms Builder Area --}}
+      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin')))
+      <li class="menu-label">{{ __('messages.Form Builder') ?? 'Forms Builder' }}</li>
+      <li>
+        <a href="{{ route('forms.index') }}">
+          <div class="parent-icon"><i class="bi bi-input-cursor-text"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Manage Forms') ?? 'Manage Forms' }}</div>
+        </a>
+      </li>
+      @endif
+
       @endif
 
     </ul>
