@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /export-meetings-pdf
+Disallow: /export-meetings-csv
+Disallow: /*/export-meetings-pdf
+Disallow: /*/export-meetings-csv

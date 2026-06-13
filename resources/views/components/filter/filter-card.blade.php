@@ -160,8 +160,25 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         @endif
     </div>
     <!-- GSR DATA -->
-    @if($meeting->group->phone)
-    <div>
+    @php
+        $userAgent = request()->header('User-Agent');
+        $isBot = false;
+        if ($userAgent) {
+            $bots = [
+                'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
+                'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
+                'crawler', 'spider', 'bot'
+            ];
+            foreach ($bots as $bot) {
+                if (stripos($userAgent, $bot) !== false) {
+                    $isBot = true;
+                    break;
+                }
+            }
+        }
+    @endphp
+    @if($meeting->group->phone && !$isBot)
+    <div data-nosnippet>
         <x-fas-user-circle style="width:16px; height:16px;"/>
         {{ $direction === 'rtl' ? $meeting->group->ar_gsr_name : $meeting->group->en_gsr_name }}
         <br />

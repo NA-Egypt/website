@@ -28,6 +28,20 @@ class MeetingFilterController extends Controller
     
     public function exportMeetingsToPDF()
     {
+        $userAgent = request()->header('User-Agent');
+        if ($userAgent) {
+            $bots = [
+                'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
+                'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
+                'crawler', 'spider', 'bot'
+            ];
+            foreach ($bots as $bot) {
+                if (stripos($userAgent, $bot) !== false) {
+                    abort(403, 'Bots are not allowed to export data.');
+                }
+            }
+        }
+
         $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
 
@@ -66,6 +80,20 @@ class MeetingFilterController extends Controller
     }
     public function exportMeetingsToCSV()
     {
+        $userAgent = request()->header('User-Agent');
+        if ($userAgent) {
+            $bots = [
+                'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
+                'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
+                'crawler', 'spider', 'bot'
+            ];
+            foreach ($bots as $bot) {
+                if (stripos($userAgent, $bot) !== false) {
+                    abort(403, 'Bots are not allowed to export data.');
+                }
+            }
+        }
+
         $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
 
