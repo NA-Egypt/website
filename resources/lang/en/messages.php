@@ -796,4 +796,7 @@ return [
     'Search by user name or email...' => 'Search by user name or email...',
     'Log Details' => 'Log Details',
     'No logs found matching your filters.' => 'No logs found matching your filters.',
+    'Storage Box Archive' => 'Storage Box Archive',
+    'Size' => 'Size',
+    'Download' => 'Download',
 ];

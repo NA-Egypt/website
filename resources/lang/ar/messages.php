@@ -795,5 +795,8 @@ return [
     'Filters' => 'خيارات البحث',
     'Search by user name or email...' => 'البحث عن طريق اسم المستخدم أو بريده الإلكتروني...',
     'Log Details' => 'تفاصيل السجل',
-    'No logs found matching your filters.' => 'لم يتم العثور على سجلات تطابق خيارات البحث الخاصة بك.',
+    'No logs found matching your filters.' => 'لم يتم العور على سجلات تطابق خيارات البحث الخاصة بك.',
+    'Storage Box Archive' => 'أرشيف صندوق التخزين',
+    'Size' => 'الحجم',
+    'Download' => 'تنزيل',
 ];

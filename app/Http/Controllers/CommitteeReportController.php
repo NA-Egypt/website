@@ -636,18 +636,173 @@ class CommitteeReportController extends Controller
 
         $reports = $query->orderBy('meeting_date', 'desc')->get();
 
-        // Group by Year, then by Month
-        $archive = $reports->groupBy(function ($report) {
-            return $report->meeting_date->format('Y');
-        })->map(function ($yearGroup) {
-            return $yearGroup->groupBy(function ($report) {
-                return $report->meeting_date->format('m'); // group by month number for chronological ordering
-            });
+        $legacyFiles = [];
+        try {
+            if (\Illuminate\Support\Facades\Storage::disk('storagebox')->exists('')) {
+                $files = \Illuminate\Support\Facades\Storage::disk('storagebox')->allFiles();
+                
+                $arabicMonthsMap = [
+                    'يناير' => '01', 'فبراير' => '02', 'مارس' => '03', 'أبريل' => '04', 'ابريل' => '04',
+                    'مايو' => '05', 'يونيو' => '06', 'يوليو' => '07', 'أغسطس' => '08', 'اغسطس' => '08',
+                    'سبتمبر' => '09', 'أكتوبر' => '10', 'اكتوبر' => '10', 'نوفمبر' => '11', 'ديسمبر' => '12'
+                ];
+
+                $englishMonthsMap = [
+                    'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+                    'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+                    'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+                ];
+
+                foreach ($files as $filePath) {
+                    // Skip hidden files
+                    if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
+                        continue;
+                    }
+
+                    $year = null;
+                    $month = null;
+
+                    // 1. Try to extract 4-digit Year from the file path
+                    if (preg_match('/([12]\d{3})/', $filePath, $yearMatches)) {
+                        $year = $yearMatches[1];
+                    }
+
+                    // 2. Try to extract Month from the path (Arabic or English)
+                    $lowerPath = strtolower($filePath);
+                    foreach ($arabicMonthsMap as $monthName => $monthNum) {
+                        if (str_contains($filePath, $monthName)) {
+                            $month = $monthNum;
+                            break;
+                        }
+                    }
+
+                    if (!$month) {
+                        foreach ($englishMonthsMap as $monthName => $monthNum) {
+                            if (str_contains($lowerPath, $monthName)) {
+                                $month = $monthNum;
+                                break;
+                            }
+                        }
+                    }
+
+                    // 3. Fallback: use file modification time
+                    if (!$year || !$month) {
+                        try {
+                            $mtime = \Illuminate\Support\Facades\Storage::disk('storagebox')->lastModified($filePath);
+                            if (!$year) $year = date('Y', $mtime);
+                            if (!$month) $month = date('m', $mtime);
+                        } catch (\Exception $e) {
+                            if (!$year) $year = date('Y');
+                            if (!$month) $month = date('m');
+                        }
+                    }
+
+                    // Search filter matching
+                    if ($request->has('search') && $request->search != '') {
+                        $search = strtolower($request->search);
+                        if (!str_contains(strtolower($filePath), $search)) {
+                            continue;
+                        }
+                    }
+
+                    // Year filter
+                    if ($request->has('start_date') && $request->start_date != '') {
+                        $startDateYear = date('Y', strtotime($request->start_date));
+                        if ($year < $startDateYear) {
+                            continue;
+                        }
+                    }
+                    if ($request->has('end_date') && $request->end_date != '') {
+                        $endDateYear = date('Y', strtotime($request->end_date));
+                        if ($year > $endDateYear) {
+                            continue;
+                        }
+                    }
+
+                    // Build standard representation
+                    $legacyFiles[] = (object) [
+                        'is_legacy' => true,
+                        'title' => basename($filePath),
+                        'relative_path' => $filePath,
+                        'encrypted_path' => \Illuminate\Support\Facades\Crypt::encryptString($filePath),
+                        'subtitle' => dirname($filePath),
+                        'file_size' => \Illuminate\Support\Facades\Storage::disk('storagebox')->size($filePath),
+                        'year' => $year,
+                        'month' => $month,
+                        'meeting_date' => \Carbon\Carbon::createFromDate($year, $month, 1),
+                        'report_date' => \Carbon\Carbon::createFromDate($year, $month, 1),
+                        'is_exceptional' => false,
+                        'attachments' => collect(),
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to list files from storagebox: " . $e->getMessage());
+        }
+
+        $unifiedArchive = collect();
+
+        foreach ($reports as $report) {
+            $unifiedArchive->push((object) [
+                'is_legacy' => false,
+                'id' => $report->id,
+                'title' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'Committee Report',
+                'meeting_date' => $report->meeting_date,
+                'report_date' => $report->report_date ?? $report->created_at,
+                'is_exceptional' => $report->is_exceptional,
+                'meeting_day_description' => $report->meeting_day_description,
+                'attachments' => $report->attachments,
+                'year' => $report->meeting_date->format('Y'),
+                'month' => $report->meeting_date->format('m'),
+            ]);
+        }
+
+        foreach ($legacyFiles as $file) {
+            $unifiedArchive->push($file);
+        }
+
+        // Group by Year, then by Month, and sort keys/groups descending by meeting date
+        $archive = $unifiedArchive->sortByDesc(function ($item) {
+            return $item->meeting_date->timestamp;
+        })->groupBy('year')->map(function ($yearGroup) {
+            return $yearGroup->groupBy('month');
         });
 
         $committees = ServiceCommittee::all();
 
         return view('reports.archive', compact('archive', 'committees'));
+    }
+
+    public function downloadStorageboxFile(Request $request)
+    {
+        $encryptedPath = $request->query('file');
+        if (!$encryptedPath) {
+            abort(400, 'Missing file parameter.');
+        }
+
+        try {
+            $filePath = \Illuminate\Support\Facades\Crypt::decryptString($encryptedPath);
+            
+            // Check if file exists on storagebox disk
+            if (!\Illuminate\Support\Facades\Storage::disk('storagebox')->exists($filePath)) {
+                abort(404, 'File not found on storage box.');
+            }
+
+            // Path & File System Security check: ensure path is safe
+            $safePath = basename($filePath);
+            
+            return \Illuminate\Support\Facades\Storage::disk('storagebox')->download(
+                $filePath,
+                $safePath,
+                [
+                    'Content-Type' => \Illuminate\Support\Facades\Storage::disk('storagebox')->mimeType($filePath) ?? 'application/octet-stream',
+                    'X-Content-Type-Options' => 'nosniff',
+                ]
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to decrypt or download file from storagebox: " . $e->getMessage());
+            abort(403, 'Invalid download request.');
+        }
     }
 
     public function approveAndSend($id)
