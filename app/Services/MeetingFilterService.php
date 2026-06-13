@@ -84,6 +84,16 @@ class MeetingFilterService
             $query->where('lang', 'english');
         }
 
+        if (!empty($filters['businessMeetingsOnly'])) {
+            $query->whereHas('topics', function($q) {
+                $q->where('en_name', 'Group Business Meeting');
+            });
+        } else {
+            $query->whereDoesntHave('topics', function($q) {
+                $q->where('en_name', 'Group Business Meeting');
+            });
+        }
+
         return $query->get();
     }
 

@@ -710,6 +710,7 @@ return [
     'Current Month Agendas' => 'Current Month Agendas',
     'Active Groups with Agendas' => 'Active Groups with Agendas',
     'English Meetings Only' => 'English Meetings Only',
+    'Group Business Meetings Only' => 'Group Business Meetings Only',
     'Committee Logo' => 'Committee Logo',
     'Default Report Footer' => 'Default Report Footer',
     'Allowed types: PNG, JPG, JPEG. Max size 2MB.' => 'Allowed types: PNG, JPG, JPEG. Max size 2MB.',

@@ -38,11 +38,19 @@
                                 @endif
                             </td>
                             <td>
-                                {{ $meeting->formatted_recurrence }} - 
-                                @if(app()->getLocale() === 'ar')
-                                    {{$meeting->day->ar_name}}
+                                @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
+                                    @if(app()->getLocale() === 'ar')
+                                        {{$meeting->day->ar_name}}
+                                    @else
+                                        {{$meeting->day->en_name}}
+                                    @endif
                                 @else
-                                    {{$meeting->day->en_name}}
+                                    {{ $meeting->formatted_recurrence }} - 
+                                    @if(app()->getLocale() === 'ar')
+                                        {{$meeting->day->ar_name}}
+                                    @else
+                                        {{$meeting->day->en_name}}
+                                    @endif
                                 @endif
                             </td>
                             <td>{{ $meeting->formatted_start_time }}</td>

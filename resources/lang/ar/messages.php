@@ -743,6 +743,7 @@ return [
     'Select All' => 'اختر الكل',
     'Deselect All' => 'الغاء اختيار الكل',
     'English Meetings Only' => 'اجتماعات باللغة الإنجليزية فقط',
+    'Group Business Meetings Only' => 'اجتماعات عمل المجموعات فقط',
     'Committee Logo' => 'شعار اللجنة',
     'Default Report Footer' => 'تذييل التقرير الافتراضي',
     'Allowed types: PNG, JPG, JPEG. Max size 2MB.' => 'الأنواع المسموح بها: PNG, JPG, JPEG. الحد الأقصى للحجم 2 ميجابايت.',

@@ -66,7 +66,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <tbody class="each-meeting">
                 <tr>
                     <td>{{ $meeting->group->ar_name }}</td>
-                    <td>{{ $meeting->day->ar_name }}</td>
+                    <td>
+                        @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
+                            {{ $meeting->day->ar_name }}
+                        @else
+                            {{ $meeting->formatted_recurrence }} - {{ $meeting->day->ar_name }}
+                        @endif
+                    </td>
                     <td>{{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }}</td>
                     <td>{{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}</td>
                     <td>{{ $meeting->group->ar_gsr_name }}</td>

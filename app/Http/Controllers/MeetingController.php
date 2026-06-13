@@ -101,6 +101,10 @@ class MeetingController extends Controller
             'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
 
+        if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
+            return back()->withErrors(['recurrence' => 'Weekly recurrence cannot be selected with specific weeks.'])->withInput();
+        }
+
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
 
         $meeting = Meeting::create([
@@ -177,6 +181,10 @@ class MeetingController extends Controller
             'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
     
+        if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
+            return back()->withErrors(['recurrence' => 'Weekly recurrence cannot be selected with specific weeks.'])->withInput();
+        }
+
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
 
         $meeting->update([

@@ -113,7 +113,11 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     <div class="meeting-time-row d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="meeting-day text-danger mb-0">
             <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
-            {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
+            @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
+                {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
+            @else
+                {{ $meeting->formatted_recurrence }} - {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
+            @endif
         </div>
         <span class="meeting-start-time d-flex align-items-center gap-1" dir="ltr">
             <x-fas-clock style="width:16px; height:16px;"/>&NonBreakingSpace;

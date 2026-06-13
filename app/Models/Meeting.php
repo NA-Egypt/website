@@ -81,10 +81,26 @@ class Meeting extends Model
         }
 
         $formatted = array_map(function($item) {
-            return ucfirst($item);
+            $translated = __('messages.' . $item);
+            return $translated !== 'messages.' . $item ? $translated : ucfirst($item);
         }, $this->recurrence);
 
         return implode(', ', $formatted);
     }
 
+    public function scopeNotMonthlyRecurrent($query)
+    {
+        return $query->where(function($q) {
+            $q->whereNull('recurrence')
+              ->orWhere(function($sub) {
+                  foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                      $sub->where('recurrence', 'not like', '%"' . $item . '"%');
+                  }
+              });
+        })->whereDoesntHave('topics', function($q) {
+            $q->where('en_name', 'Group Business Meeting');
+        });
+    }
+
 }
+

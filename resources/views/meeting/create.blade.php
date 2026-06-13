@@ -246,6 +246,70 @@
                     label.textContent = input.checked ? on : off;
                 });
             });
+
+            // Recurrence checkbox exclusivity logic
+            const weeklyCheckbox = document.getElementById('recurrence-weekly');
+            const monthlyCheckboxes = [
+                document.getElementById('recurrence-1st'),
+                document.getElementById('recurrence-2nd'),
+                document.getElementById('recurrence-3rd'),
+                document.getElementById('recurrence-4th'),
+                document.getElementById('recurrence-5th'),
+                document.getElementById('recurrence-last')
+            ];
+
+            function updateRecurrenceState(e) {
+                const trigger = e ? e.target : null;
+                const anyMonthlyChecked = monthlyCheckboxes.some(cb => cb && cb.checked);
+                
+                if (trigger === weeklyCheckbox && weeklyCheckbox.checked) {
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) {
+                            cb.checked = false;
+                            cb.disabled = true;
+                        }
+                    });
+                } else if (anyMonthlyChecked) {
+                    if (weeklyCheckbox) {
+                        weeklyCheckbox.checked = false;
+                        weeklyCheckbox.disabled = true;
+                    }
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) cb.disabled = false;
+                    });
+                } else {
+                    if (weeklyCheckbox) {
+                        weeklyCheckbox.disabled = false;
+                    }
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) cb.disabled = false;
+                    });
+                }
+            }
+
+            if (weeklyCheckbox) {
+                weeklyCheckbox.addEventListener('change', updateRecurrenceState);
+            }
+            monthlyCheckboxes.forEach(cb => {
+                if (cb) {
+                    cb.addEventListener('change', updateRecurrenceState);
+                }
+            });
+
+            // Initialize state on load
+            if (weeklyCheckbox && weeklyCheckbox.checked) {
+                monthlyCheckboxes.forEach(cb => {
+                    if (cb) {
+                        cb.checked = false;
+                        cb.disabled = true;
+                    }
+                });
+            } else if (monthlyCheckboxes.some(cb => cb && cb.checked)) {
+                if (weeklyCheckbox) {
+                    weeklyCheckbox.checked = false;
+                    weeklyCheckbox.disabled = true;
+                }
+            }
         });
     </script>
 </x-layout>

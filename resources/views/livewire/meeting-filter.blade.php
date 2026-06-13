@@ -83,6 +83,19 @@
                                         {{ __('messages.English Meetings Only') ?? 'English Meetings Only' }}
                                     </button>
                                 </div>
+                                <div class="col-12" wire:key="filter-business-meetings-only" id="tour-business-meetings-only">
+                                    <div class="d-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden;">
+                                        <span style="width: 0.5rem; height: 0.5rem; display: inline-block;"></span>
+                                        <label class="m-0 p-0">&nbsp;</label>
+                                    </div>
+                                    <button type="button" 
+                                            wire:click="toggleBusinessMeetingsOnly" 
+                                            class="btn w-100 rounded-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 {{ $businessMeetingsOnly ? 'btn-warning text-dark' : 'btn-outline-warning' }}"
+                                            style="height: 38px; max-width: 278px;">
+                                        <x-fas-briefcase style="width:16px; height:16px;"/>
+                                        {{ __('messages.Group Business Meetings Only') ?? 'Group Business Meetings Only' }}
+                                    </button>
+                                </div>
                             </div>
                             
                             <div class="d-flex justify-content-center align-items-center mt-4 pt-3 border-top" id="tour-clear">
@@ -104,15 +117,16 @@
             @else
             <div class="row justify-content-center">
                 @php
-                   $exportParams = array_filter([
-                       'day' => $day, 
-                       'city' => $city, 
-                       'neighborhood' => $neighborhood, 
-                       'group' => $group, 
-                       'serviceBody' => $serviceBody, 
-                       'type' => $type, 
-                       'search' => $search
-                   ]);
+                    $exportParams = array_filter([
+                        'day' => $day, 
+                        'city' => $city, 
+                        'neighborhood' => $neighborhood, 
+                        'group' => $group, 
+                        'serviceBody' => $serviceBody, 
+                        'type' => $type, 
+                        'search' => $search,
+                        'businessMeetingsOnly' => $businessMeetingsOnly
+                    ]);
                 @endphp
                 <div class="d-flex justify-content-center mb-3" id="tour-pdf">
                     <a href="{{ route('exportMeetingsToPDF', $exportParams) }}" target="_blank" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">

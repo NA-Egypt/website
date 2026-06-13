@@ -22,11 +22,13 @@ class MeetingFilter extends Component
     #[Url(except: '')] public $search = '';
     #[Url] public $virtualOnly = false;
     #[Url] public $englishOnly = false;
+    #[Url] public $businessMeetingsOnly = false;
 
     public function updatedVirtualOnly($value)
     {
         if ($value) {
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         }
     }
 
@@ -34,6 +36,16 @@ class MeetingFilter extends Component
     {
         if ($value) {
             $this->virtualOnly = false;
+            $this->businessMeetingsOnly = false;
+        }
+    }
+
+    public function updatedBusinessMeetingsOnly($value)
+    {
+        if ($value) {
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
+            // Clear other search criteria if necessary or let them filter
         }
     }
 
@@ -42,6 +54,7 @@ class MeetingFilter extends Component
         $this->virtualOnly = !$this->virtualOnly;
         if ($this->virtualOnly) {
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         }
     }
 
@@ -50,6 +63,16 @@ class MeetingFilter extends Component
         $this->englishOnly = !$this->englishOnly;
         if ($this->englishOnly) {
             $this->virtualOnly = false;
+            $this->businessMeetingsOnly = false;
+        }
+    }
+
+    public function toggleBusinessMeetingsOnly()
+    {
+        $this->businessMeetingsOnly = !$this->businessMeetingsOnly;
+        if ($this->businessMeetingsOnly) {
+            $this->virtualOnly = false;
+            $this->englishOnly = false;
         }
     }
 
@@ -64,6 +87,7 @@ class MeetingFilter extends Component
             $this->search = '';
             $this->virtualOnly = false;
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         } else {
             // When City changes, clear the neighborhood since the available list changes
             $this->neighborhood = '';
@@ -82,6 +106,7 @@ class MeetingFilter extends Component
             $this->search = '';
             $this->virtualOnly = false;
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         } else {
             $this->group = '';
         }
@@ -98,6 +123,7 @@ class MeetingFilter extends Component
             $this->search = '';
             $this->virtualOnly = false;
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         }
     }
 
@@ -112,16 +138,17 @@ class MeetingFilter extends Component
             $this->search = '';
             $this->virtualOnly = false;
             $this->englishOnly = false;
+            $this->businessMeetingsOnly = false;
         }
     }
 
     public function render(MeetingFilterService $filterService)
     {
-        $days = Day::withCount('meetings')->get();
-        $serviceBodies = ServiceBody::withCount('meetings')->get();
+        $days = Day::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
+        $serviceBodies = ServiceBody::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
         
         // Base Groups Query
-        $groupsQuery = Group::withCount('meetings');
+        $groupsQuery = Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
         
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
 
@@ -136,7 +163,7 @@ class MeetingFilter extends Component
         }
         $groups = $groupsQuery->get();
         
-        $neighborhoodsQuery = Neighborhood::withCount('meetings');
+        $neighborhoodsQuery = Neighborhood::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
         if ($this->city) {
             $neighborhoodsQuery->whereHas('city', fn($q) => $q->where($field, $this->city));
         }
@@ -144,13 +171,30 @@ class MeetingFilter extends Component
 
         $cities = City::leftJoin('neighborhoods', 'cities.id', '=', 'neighborhoods.city_id')
             ->leftJoin('groups', 'neighborhoods.id', '=', 'groups.neighborhood_id')
-            ->leftJoin('meetings', 'groups.id', '=', 'meetings.group_id')
+            ->leftJoin('meetings', function($join) {
+                $join->on('groups.id', '=', 'meetings.group_id')
+                     ->where(function($q) {
+                         $q->whereNull('meetings.recurrence')
+                           ->orWhere(function($sub) {
+                               foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                                   $sub->where('meetings.recurrence', 'not like', '%"' . $item . '"%');
+                               }
+                           });
+                     })
+                     ->whereNotExists(function($sub) {
+                         $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                             ->from('meeting_topic')
+                             ->join('topics', 'meeting_topic.topic_id', '=', 'topics.id')
+                             ->whereRaw('meeting_topic.meeting_id = meetings.id')
+                             ->where('topics.en_name', 'Group Business Meeting');
+                     });
+            })
             ->select('cities.id', 'cities.ar_name', 'cities.en_name', \Illuminate\Support\Facades\DB::raw('COUNT(meetings.id) as meetings_count'))
             ->groupBy('cities.id', 'cities.ar_name', 'cities.en_name')
             ->get();
             
-        $openCount = \App\Models\Meeting::where('type', 'open')->count();
-        $closedCount = \App\Models\Meeting::where('type', 'closed')->count();
+        $openCount = \App\Models\Meeting::where('type', 'open')->notMonthlyRecurrent()->count();
+        $closedCount = \App\Models\Meeting::where('type', 'closed')->notMonthlyRecurrent()->count();
 
         $filters = [
             'day' => $this->day,
@@ -162,6 +206,7 @@ class MeetingFilter extends Component
             'search' => $this->search,
             'virtualOnly' => $this->virtualOnly,
             'englishOnly' => $this->englishOnly,
+            'businessMeetingsOnly' => $this->businessMeetingsOnly,
         ];
 
         $meetings = $filterService->filterMeetings($filters);
@@ -175,6 +220,7 @@ class MeetingFilter extends Component
             'neighborhoods' => $neighborhoods,
             'openCount' => $openCount,
             'closedCount' => $closedCount,
+            'businessMeetingsOnly' => $this->businessMeetingsOnly,
         ]);
     }
 }

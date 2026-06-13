@@ -17,7 +17,7 @@ class ForPublicController extends Controller
             // إحصائيات حية من الداتابيز فقط
             'groupsCount' => Group::count(),
             'citiesCount' => City::count(),
-            'meetingsCount' => Meeting::count(),
+            'meetingsCount' => Meeting::notMonthlyRecurrent()->count(),
 
             // معلومات أول اجتماع (ثابتة من ملف الوورد)
             'firstMeeting' => [

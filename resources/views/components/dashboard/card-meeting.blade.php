@@ -10,7 +10,13 @@
         <div class="flex gap-3 p-4 bg-white rounded border meeting-item mb-3 {{ $isOnline ? '' : 'border-primary' }}" style="{{ $isOnline ? 'border: 4px solid #10b981 !important;' : '' }}">           
             <div class="flex-1 flex flex-col">
                 <div class="d-flex justify-content-between align-items-center" >
-                    <p class="font-bold text-xl mt-3 text-primary meeting-day">{{ $meeting->formatted_recurrence }} - {{ app()->getLocale() === 'ar' ? $meeting->day->ar_name : $meeting->day->en_name }}</p>
+                    <p class="font-bold text-xl mt-3 text-primary meeting-day">
+                        @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
+                            {{ app()->getLocale() === 'ar' ? $meeting->day->ar_name : $meeting->day->en_name }}
+                        @else
+                            {{ $meeting->formatted_recurrence }} - {{ app()->getLocale() === 'ar' ? $meeting->day->ar_name : $meeting->day->en_name }}
+                        @endif
+                    </p>
                     <p class="text-sm text-gray-400 mt-auto meeting-topic">{{ app()->getLocale() === 'ar' ? $meeting->topic->ar_name : $meeting->topic->en_name }}</p>
                 </div>
                 <div class="d-flex justify-content-center align-items-center gap-3" >
