@@ -8,6 +8,7 @@ use App\Models\CustomFormSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Mpdf\Mpdf;
 
 class CustomFormController extends Controller
 {
@@ -50,6 +51,8 @@ class CustomFormController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|in:survey,event_registration',
             'status' => 'required|in:draft,published,unpublished',
+            'settings' => 'nullable|array',
+            'settings.icon' => 'nullable|string|max:50',
             'fields' => 'nullable|array',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.type' => 'required|string',
@@ -63,6 +66,7 @@ class CustomFormController extends Controller
             'status' => $request->status,
             'user_id' => auth()->id(),
             'slug' => Str::random(12),
+            'settings' => $request->input('settings', []),
         ]);
 
         if ($request->has('fields')) {
@@ -100,6 +104,8 @@ class CustomFormController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|in:survey,event_registration',
             'status' => 'required|in:draft,published,unpublished',
+            'settings' => 'nullable|array',
+            'settings.icon' => 'nullable|string|max:50',
             'fields' => 'nullable|array',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.type' => 'required|string',
@@ -111,6 +117,7 @@ class CustomFormController extends Controller
             'title' => $request->title,
             'type' => $request->type,
             'status' => $request->status,
+            'settings' => $request->input('settings', []),
         ]);
 
         // Re-build fields
@@ -189,8 +196,9 @@ class CustomFormController extends Controller
     public function showReport(CustomForm $form)
     {
         $this->checkAccess($form);
-        $form->load(['fields', 'submissions.user']);
-        return view('forms.report', compact('form'));
+        $form->load('fields');
+        $submissions = $form->submissions()->with('user')->latest()->get();
+        return view('forms.report', compact('form', 'submissions'));
     }
 
     public function exportPdf(CustomForm $form)
@@ -198,8 +206,40 @@ class CustomFormController extends Controller
         $this->checkAccess($form);
         $form->load(['fields', 'submissions.user']);
 
-        $pdf = Pdf::loadView('forms.report_pdf', compact('form'));
-        return $pdf->download("form_{$form->id}_report.pdf");
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
+            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
+            'fontdata' => $fontData + [
+                'amiri' => [
+                    'R' => 'Amiri-Regular.ttf',
+                ],
+                'cairo' => [
+                    'R' => 'Cairo-Regular.ttf',
+                ],
+            ],
+            'default_font' => 'xbriyaz',
+        ]);
+        
+        $mpdf->autoArabic = true;
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+
+        $html = view('forms.report_pdf', compact('form'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = "form_{$form->id}_report.pdf";
+        
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function exportSubmissionPdf(CustomForm $form, CustomFormSubmission $submission)

@@ -10,9 +10,11 @@
     <div class="container-fluid mt-4 mb-5">
         
         {{-- Header Actions --}}
+        @unless(auth()->user()->hasRole('ServiceBody'))
         <div class="d-flex justify-content-end mb-4">
             <x-button-a href="{{ route('group.edit', $group->id) }}" color='primary' name="{{  __('messages.Edit Group') }}" class="rounded-pill shadow-sm px-4" />
         </div>
+        @endunless
 
         {{-- Group Information Grid (Dashboard UI/UX) --}}
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-5">
@@ -180,7 +182,9 @@
         <div class="glass-card p-4 rounded-4 mt-5">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-calendar-event me-2"></i> {{ __('messages.Meetings') }}</h4>
+                @unless(auth()->user()->hasRole('ServiceBody'))
                 <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" class="rounded-pill" />
+                @endunless
             </div>
             
             @if($meetings->count() > 0)
@@ -258,25 +262,28 @@
                                 @endif
 
                                 {{-- Actions --}}
+                                @unless(auth()->user()->hasRole('ServiceBody'))
                                 <div class="d-flex gap-2 mt-auto pt-3 border-top" style="border-color: var(--glass-border) !important;">
                                     <x-button-a href="{{ route('meeting.edit', $meeting->id) }}"
-                                                color='outline-primary'
-                                                name="{{ __('messages.Edit Meeting') }}"
-                                                class="btn-sm rounded-pill flex-grow-1" />
+                                                 color='outline-primary'
+                                                 name="{{ __('messages.Edit Meeting') }}"
+                                                 class="btn-sm rounded-pill flex-grow-1" />
 
                                     <x-forms.delete-button
-                                            name="{{ __('messages.Delete') }}"
-                                            formName='delete-item'
-                                            id="{{$meeting->id}}"
-                                            routeName="meeting.destroy"
-                                            class="btn-sm rounded-pill flex-grow-1" />
+                                             name="{{ __('messages.Delete') }}"
+                                             formName='delete-item'
+                                             id="{{$meeting->id}}"
+                                             routeName="meeting.destroy"
+                                             class="btn-sm rounded-pill flex-grow-1" />
                                 </div>
+                                @endunless
 
                             </div>
                         </div>
                     @endforeach
                 </div>
             @endif
+        </div>
 
         {{-- Agendas Section --}}
         <div class="glass-card p-4 rounded-4 mt-5">

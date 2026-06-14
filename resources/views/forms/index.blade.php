@@ -19,8 +19,8 @@
         </div>
 
         <div class="glass-card p-4">
-            <div class="table-responsive">
-                <table class="table neo-table align-middle text-center display" id="forms-table">
+            <div class="table-responsive" style="overflow: visible !important;">
+                <table class="table neo-table align-middle text-center display" id="forms-table" style="width:100%;">
                     <thead>
                         <tr>
                             <th>{{ __('messages.Title') ?? 'Title' }}</th>
@@ -48,9 +48,17 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $statusBadge }} rounded-pill px-3 py-1">
-                                        {{ ucfirst($form->status) }}
-                                    </span>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <form action="{{ route('forms.toggleStatus', $form->id) }}" method="POST" id="status-toggle-{{ $form->id }}" class="m-0">
+                                            @csrf
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="switch-{{ $form->id }}" onchange="document.getElementById('status-toggle-{{ $form->id }}').submit()" {{ $form->status === 'published' ? 'checked' : '' }} style="cursor: pointer;">
+                                            </div>
+                                        </form>
+                                        <span class="badge {{ $statusBadge }} rounded-pill px-2.5 py-1 small">
+                                            {{ ucfirst($form->status) }}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="text-secondary">
                                     {{ $lastSubmission ? $lastSubmission->created_at->format('Y-m-d H:i') : '-' }}
@@ -80,7 +88,7 @@
                                         
                                         <!-- Gear Dropdown for Admin Features -->
                                         <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px;">
+                                            <button class="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false" style="width: 32px; height: 32px;">
                                                 <i class="bi bi-gear-fill"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3">

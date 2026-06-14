@@ -2,9 +2,9 @@
 
     <x-backhead>{{ __('messages.Create Form') ?? 'Create Form' }}</x-backhead>
 
-    <div class="container-fluid px-4">
+    <div class="container-fluid px-4 pb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ __('messages.New Form Builder') ?? 'Build a New Form' }}</h4>
+            <h4 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ __('messages.Forms Creator') ?? 'Forms Creator' }}</h4>
             <a href="{{ route('forms.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
                 <i class="bi bi-arrow-left"></i> {{ __('messages.Back to Forms') ?? 'Back' }}
             </a>
@@ -12,60 +12,116 @@
 
         <form action="{{ route('forms.store') }}" method="POST" id="form-builder-form">
             @csrf
-            <div class="row">
-                <!-- Form Settings -->
-                <div class="col-lg-4">
+            <div class="row g-4">
+                <!-- Left Column: Settings and Field Builder Configuration -->
+                <div class="col-lg-6">
+                    <!-- Form Metadata Settings -->
                     <div class="glass-card p-4 mb-4">
-                        <h5 class="fw-bold mb-3" style="color: var(--text-primary);">{{ __('messages.Form Settings') ?? 'Form Settings' }}</h5>
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2" style="color: var(--text-primary);">
+                            <i class="bi bi-sliders text-primary"></i> {{ __('messages.Form Settings') ?? 'Form Settings' }}
+                        </h5>
                         
                         <div class="mb-3">
-                            <label for="title" class="form-label fw-semibold">{{ __('messages.Form Title') ?? 'Form Title' }}</label>
-                            <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Annual Member Survey" required value="{{ old('title') }}">
+                            <label for="title" class="form-label fw-semibold small">{{ __('messages.Form Title') ?? 'Form Title' }}</label>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="{{ __('messages.e.g. Annual Member Survey') ?? 'e.g. Annual Member Survey' }}" required value="{{ old('title') }}" oninput="updatePreview()">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="type" class="form-label fw-semibold">{{ __('messages.Form Type') ?? 'Form Type' }}</label>
-                            <select name="type" id="type" class="form-select" required>
-                                <option value="survey">{{ __('messages.Survey') ?? 'Survey' }}</option>
-                                <option value="event_registration">{{ __('messages.Event Registration') ?? 'Event Entry Registration' }}</option>
-                            </select>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="type" class="form-label fw-semibold small">{{ __('messages.Form Type') ?? 'Form Type' }}</label>
+                                <select name="type" id="type" class="form-select" required onchange="updatePreview()">
+                                    <option value="survey">{{ __('messages.Survey') ?? 'Survey' }}</option>
+                                    <option value="event_registration">{{ __('messages.Event Registration') ?? 'Event Entry Registration' }}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="status" class="form-label fw-semibold small">{{ __('messages.Form Status') ?? 'Form Status' }}</label>
+                                <select name="status" id="status" class="form-select" required>
+                                    <option value="draft" selected>{{ __('messages.Draft') ?? 'Draft' }}</option>
+                                    <option value="published">{{ __('messages.Published') ?? 'Published' }}</option>
+                                    <option value="unpublished">{{ __('messages.Unpublished') ?? 'Unpublished (Deactivated)' }}</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="status" class="form-label fw-semibold">{{ __('messages.Form Status') ?? 'Form Status' }}</label>
-                            <select name="status" id="status" class="form-select" required>
-                                <option value="draft" selected>{{ __('messages.Draft') ?? 'Draft' }}</option>
-                                <option value="published">{{ __('messages.Published') ?? 'Published' }}</option>
-                                <option value="unpublished">{{ __('messages.Unpublished') ?? 'Unpublished (Deactivated)' }}</option>
+                        <div class="mb-3 mt-3" id="icon-selector-group">
+                            <label for="settings_icon" class="form-label fw-semibold small">{{ __('messages.Form Header Icon') ?? 'Form Header Icon' }}</label>
+                            <select name="settings[icon]" id="settings_icon" class="form-select" onchange="updatePreview()">
+                                <option value="bi-clipboard2-data">📋 Clipboard Data</option>
+                                <option value="bi-chat-left-text">💬 Chat Left Text</option>
+                                <option value="bi-card-checklist">☑️ Card Checklist</option>
+                                <option value="bi-emoji-smile">😊 Emoji Smile</option>
+                                <option value="bi-star">⭐ Star</option>
+                                <option value="bi-envelope">✉️ Envelope</option>
+                                <option value="bi-hand-thumbs-up">👍 Hand Thumbs Up</option>
+                                <option value="bi-heart">❤️ Heart</option>
+                                <option value="bi-book">📖 Book</option>
+                                <option value="bi-person">👤 Person</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Fields Configurator -->
+                    <div class="glass-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: var(--text-primary);">
+                                <i class="bi bi-list-task text-primary"></i> {{ __('messages.Configure Fields') ?? 'Configure Fields' }}
+                            </h5>
+                            <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-flex align-items-center gap-1" onclick="addField()">
+                                <i class="bi bi-plus-circle-fill"></i> {{ __('messages.Add Field') ?? 'Add Field' }}
+                            </button>
+                        </div>
+
+                        <div id="fields-container" class="d-flex flex-column gap-3 mb-4">
+                            <!-- Dynamically added fields config cards -->
+                        </div>
+
+                        <div id="empty-state" class="text-center py-5 text-secondary border rounded-3 border-dashed" style="border-style: dashed !important; border-width: 2px !important; border-color: var(--glass-border) !important;">
+                            <i class="bi bi-menu-app display-4 opacity-50"></i>
+                            <p class="mt-2 mb-0">{{ __('messages.No fields added yet. Click "Add Field" to begin.') ?? 'No fields added yet. Click "Add Field" to begin.' }}</p>
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary rounded-pill py-2.5 fw-bold">
-                                <i class="bi bi-cloud-arrow-up-fill me-1"></i> Save and Create Form
+                            <button type="submit" class="btn btn-primary rounded-pill py-2.5 fw-bold shadow-sm" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none;">
+                                <i class="bi bi-cloud-arrow-up-fill me-1"></i> {{ __('messages.Save and Create Form') ?? 'Save and Create Form' }}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Form Fields Configuration -->
-                <div class="col-lg-8">
-                    <div class="glass-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold mb-0" style="color: var(--text-primary);">{{ __('messages.Configure Fields') ?? 'Configure Fields' }}</h5>
-                            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="addField()">
-                                <i class="bi bi-plus-circle-fill"></i> {{ __('messages.Add Field') ?? 'Add Field' }}
-                            </button>
-                        </div>
+                <!-- Right Column: Real-Time Live Preview -->
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="position-sticky" style="top: 90px; z-index: 10;">
+                        <div class="glass-card p-4 mb-2 bg-light border-0">
+                            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3" style="border-color: var(--glass-border) !important;">
+                                <h6 class="fw-bold mb-0 text-secondary d-flex align-items-center gap-2">
+                                    <i class="bi bi-eye-fill text-success"></i> {{ __('messages.Real-time Live Preview') ?? 'Real-time Live Preview' }}
+                                </h6>
+                                <span class="badge bg-success rounded-pill px-2">Live</span>
+                            </div>
 
-                        <div id="fields-container" class="d-flex flex-column gap-3">
-                            <!-- Fields will be added here dynamically -->
-                        </div>
+                            <!-- Mockup Container mimicking the public form wrapper -->
+                            <div class="card shadow border-0 rounded-4 overflow-hidden" style="background: white; border: 1px solid rgba(0,0,0,0.05) !important;">
+                                <div id="preview-header" class="text-center py-5 px-4 border-bottom" style="background: rgba(255, 255, 255, 0.3); border-color: rgba(0, 0, 0, 0.05) !important;">
+                                    <div id="preview-icon-wrapper" class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary shadow-sm animate__animated animate__zoomIn" style="width: 72px; height: 72px; background-color: rgba(37, 99, 235, 0.1) !important;">
+                                        <i id="preview-icon" class="bi bi-clipboard2-data" style="font-size: 2.25rem;"></i>
+                                    </div>
+                                    <h4 id="preview-title" class="fw-bold mb-3" style="color: #0f172a !important; font-size: 1.5rem; letter-spacing: -0.5px;">Form Title</h4>
+                                    <span id="preview-type-badge" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(37, 99, 235, 0.1) !important; border-color: rgba(37, 99, 235, 0.2) !important;">Survey</span>
+                                </div>
 
-                        <!-- Empty state -->
-                        <div id="empty-state" class="text-center py-5 text-secondary border rounded-3 border-dashed" style="border-style: dashed !important; border-width: 2px !important; border-color: var(--glass-border) !important;">
-                            <i class="bi bi-menu-app display-4 opacity-50"></i>
-                            <p class="mt-2 mb-0">No fields added yet. Click "Add Field" to start building your form.</p>
+                                <div class="card-body p-4">
+                                    <div id="preview-fields-container" class="d-flex flex-column gap-3">
+                                        <!-- Real-time mockup elements rendered here -->
+                                    </div>
+                                    <div class="d-grid mt-4">
+                                        <button type="button" class="btn btn-primary rounded-pill py-2 fw-bold disabled" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; opacity: 0.8;">
+                                            {{ __('messages.Submit Form') ?? 'Submit Form' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,11 +129,11 @@
         </form>
     </div>
 
-    <!-- Template for adding fields dynamically -->
+    <!-- Template for fields configuration card -->
     <template id="field-template">
-        <div class="field-item card p-3 border shadow-sm position-relative" style="background: rgba(255, 255, 255, 0.4) !important;">
+        <div class="field-item card p-3 border shadow-sm position-relative" style="background: rgba(255, 255, 255, 0.4) !important; border-color: var(--glass-border) !important; transition: all 0.2s;">
             <div class="row g-3">
-                <!-- Drag/Order controls -->
+                <!-- Order controls -->
                 <div class="col-1 d-flex flex-column justify-content-center align-items-center gap-1">
                     <button type="button" class="btn btn-sm btn-light border p-1 move-up-btn" onclick="moveFieldUp(this)" title="Move Up">
                         <i class="bi bi-arrow-up"></i>
@@ -89,29 +145,29 @@
 
                 <!-- Label -->
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold small text-secondary">Field Label / Name</label>
-                    <input type="text" class="form-control label-input" placeholder="e.g. Your Name" required>
+                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Label / Name') ?? 'Field Label / Name' }}</label>
+                    <input type="text" class="form-control label-input" placeholder="{{ __('messages.e.g. Your Name') ?? 'e.g. Your Name' }}" required oninput="updatePreview()">
                 </div>
 
                 <!-- Type selector -->
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold small text-secondary">Field Input Type</label>
+                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Input Type') ?? 'Field Input Type' }}</label>
                     <select class="form-select type-select" onchange="handleTypeChange(this)" required>
-                        <optgroup label="Standard Fields">
-                            <option value="text">Single Line Text</option>
-                            <option value="textarea">Paragraph/Textarea</option>
-                            <option value="number">Number</option>
-                            <option value="email">Email Address</option>
-                            <option value="date">Date Selector</option>
-                            <option value="select">Dropdown Choice (Select)</option>
-                            <option value="checkbox">Checkbox Check</option>
+                        <optgroup label="{{ __('messages.Standard Fields') ?? 'Standard Fields' }}">
+                            <option value="text">{{ __('messages.Single Line Text') ?? 'Single Line Text' }}</option>
+                            <option value="textarea">{{ __('messages.Paragraph/Textarea') ?? 'Paragraph/Textarea' }}</option>
+                            <option value="number">{{ __('messages.Number') ?? 'Number' }}</option>
+                            <option value="email">{{ __('messages.Email Address') ?? 'Email Address' }}</option>
+                            <option value="date">{{ __('messages.Date Selector') ?? 'Date Selector' }}</option>
+                            <option value="select">{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
+                            <option value="checkbox">{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
                         </optgroup>
-                        <optgroup label="Dynamic Database Controls">
-                            <option value="groups">Groups Select</option>
-                            <option value="cities">Cities Select</option>
-                            <option value="neighborhoods">Neighborhoods Select</option>
-                            <option value="committees">Service Committees Select</option>
-                            <option value="servicebodies">Service Bodies Select</option>
+                        <optgroup label="{{ __('messages.Dynamic Database Controls') ?? 'Dynamic Database Controls' }}">
+                            <option value="groups">{{ __('messages.Groups Select') ?? 'Groups Select' }}</option>
+                            <option value="cities">{{ __('messages.Cities Select') ?? 'Cities Select' }}</option>
+                            <option value="neighborhoods">{{ __('messages.Neighborhoods Select') ?? 'Neighborhoods Select' }}</option>
+                            <option value="committees">{{ __('messages.Service Committees Select') ?? 'Service Committees Select' }}</option>
+                            <option value="servicebodies">{{ __('messages.Service Bodies Select') ?? 'Service Bodies Select' }}</option>
                         </optgroup>
                     </select>
                 </div>
@@ -119,19 +175,19 @@
                 <!-- Required check & Delete -->
                 <div class="col-md-4 d-flex align-items-center justify-content-between pt-4">
                     <div class="form-check form-switch">
-                        <input class="form-check-input required-checkbox" type="checkbox" role="switch">
-                        <label class="form-check-label fw-semibold small text-secondary">Required Field</label>
+                        <input class="form-check-input required-checkbox" type="checkbox" role="switch" onchange="updatePreview()">
+                        <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                     </div>
 
                     <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" onclick="removeField(this)">
-                        <i class="bi bi-trash"></i> Delete
+                        <i class="bi bi-trash"></i> {{ __('messages.Delete') ?? 'Delete' }}
                     </button>
                 </div>
 
                 <!-- Options settings (conditionally shown for Dropdown/Checkbox) -->
                 <div class="col-12 options-container d-none">
-                    <label class="form-label fw-semibold small text-secondary">Options (comma separated list)</label>
-                    <input type="text" class="form-control options-input" placeholder="Option 1, Option 2, Option 3">
+                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
+                    <input type="text" class="form-control options-input" placeholder="{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}" oninput="updatePreview()">
                 </div>
             </div>
         </div>
@@ -179,6 +235,7 @@
             fieldIndex++;
             checkEmptyState();
             updateButtonStates();
+            updatePreview();
         }
 
         function removeField(btn) {
@@ -186,6 +243,7 @@
             item.remove();
             checkEmptyState();
             updateButtonStates();
+            updatePreview();
         }
 
         function handleTypeChange(select) {
@@ -196,6 +254,7 @@
             } else {
                 optionsContainer.classList.add('d-none');
             }
+            updatePreview();
         }
 
         function moveFieldUp(btn) {
@@ -226,6 +285,7 @@
                 item.querySelector('.options-input').name = `fields[${index}][options]`;
             });
             updateButtonStates();
+            updatePreview();
         }
 
         function updateButtonStates() {
@@ -237,6 +297,147 @@
                 
                 upBtn.disabled = (index === 0);
                 downBtn.disabled = (index === items.length - 1);
+            });
+        }
+
+        // Live Preview Renderer
+        function updatePreview() {
+            // Update Title
+            const titleInput = document.getElementById('title');
+            const previewTitle = document.getElementById('preview-title');
+            previewTitle.textContent = titleInput.value.trim() || 'Untitled Form';
+
+            // Update Type Badge and Icon visibility
+            const typeSelect = document.getElementById('type');
+            const previewTypeBadge = document.getElementById('preview-type-badge');
+            const iconSelectorGroup = document.getElementById('icon-selector-group');
+            const previewIconWrapper = document.getElementById('preview-icon-wrapper');
+            const previewIcon = document.getElementById('preview-icon');
+            const settingsIcon = document.getElementById('settings_icon');
+
+            previewTypeBadge.textContent = typeSelect.options[typeSelect.selectedIndex].text;
+
+            if (typeSelect.value === 'survey') {
+                iconSelectorGroup.style.setProperty('display', 'block', 'important');
+                previewIconWrapper.style.setProperty('display', 'flex', 'important');
+                
+                // Update icon class
+                previewIcon.className = 'bi ' + (settingsIcon.value || 'bi-clipboard2-data');
+
+                // Set Primary (blue) style for badge
+                previewTypeBadge.className = 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase';
+                previewTypeBadge.style.setProperty('background-color', 'rgba(37, 99, 235, 0.1)', 'important');
+                previewTypeBadge.style.setProperty('border-color', 'rgba(37, 99, 235, 0.2)', 'important');
+            } else {
+                iconSelectorGroup.style.setProperty('display', 'none', 'important');
+                previewIconWrapper.style.setProperty('display', 'none', 'important');
+
+                // Set Success (green) style for badge
+                previewTypeBadge.className = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase';
+                previewTypeBadge.style.setProperty('background-color', 'rgba(16, 185, 129, 0.1)', 'important');
+                previewTypeBadge.style.setProperty('border-color', 'rgba(16, 185, 129, 0.2)', 'important');
+            }
+
+            // Render Fields Mockup
+            const fieldsContainer = document.getElementById('fields-container');
+            const previewFieldsContainer = document.getElementById('preview-fields-container');
+            previewFieldsContainer.innerHTML = ''; // Reset
+
+            const items = fieldsContainer.querySelectorAll('.field-item');
+            if (items.length === 0) {
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = 'text-center text-muted fst-italic my-4';
+                emptyMsg.textContent = 'Add fields to see live preview';
+                previewFieldsContainer.appendChild(emptyMsg);
+                return;
+            }
+
+            items.forEach(item => {
+                const label = item.querySelector('.label-input').value.trim() || 'Untitled Field';
+                const type = item.querySelector('.type-select').value;
+                const required = item.querySelector('.required-checkbox').checked;
+                const optionsVal = item.querySelector('.options-input').value.trim();
+
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'mb-2';
+
+                const fieldLabel = document.createElement('label');
+                fieldLabel.className = 'form-label fw-semibold small mb-1';
+                fieldLabel.innerHTML = label + (required ? ' <span class="text-danger">*</span>' : '');
+                fieldGroup.appendChild(fieldLabel);
+
+                let inputControl;
+                if (type === 'textarea') {
+                    inputControl = document.createElement('textarea');
+                    inputControl.rows = 2;
+                    inputControl.className = 'form-control bg-light border-0 small';
+                    inputControl.placeholder = 'Textarea response...';
+                    inputControl.disabled = true;
+                } else if (type === 'select') {
+                    inputControl = document.createElement('select');
+                    inputControl.className = 'form-select bg-light border-0 small';
+                    inputControl.disabled = true;
+                    const defaultOption = document.createElement('option');
+                    defaultOption.text = 'Choose an option...';
+                    inputControl.appendChild(defaultOption);
+                    if (optionsVal) {
+                        const options = optionsVal.split(',');
+                        options.forEach(opt => {
+                            const option = document.createElement('option');
+                            option.text = opt.trim();
+                            inputControl.appendChild(option);
+                        });
+                    }
+                } else if (type === 'checkbox') {
+                    inputControl = document.createElement('div');
+                    inputControl.className = 'd-flex flex-column gap-1';
+                    if (optionsVal) {
+                        const options = optionsVal.split(',');
+                        options.forEach((opt, idx) => {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'form-check';
+                            const check = document.createElement('input');
+                            check.type = 'checkbox';
+                            check.className = 'form-check-input';
+                            check.disabled = true;
+                            const checkLbl = document.createElement('label');
+                            checkLbl.className = 'form-check-label small';
+                            checkLbl.textContent = opt.trim();
+                            wrap.appendChild(check);
+                            wrap.appendChild(checkLbl);
+                            inputControl.appendChild(wrap);
+                        });
+                    } else {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'form-check';
+                        const check = document.createElement('input');
+                        check.type = 'checkbox';
+                        check.className = 'form-check-input';
+                        check.disabled = true;
+                        const checkLbl = document.createElement('label');
+                        checkLbl.className = 'form-check-label small';
+                        checkLbl.textContent = 'Check item';
+                        wrap.appendChild(check);
+                        wrap.appendChild(checkLbl);
+                        inputControl.appendChild(wrap);
+                    }
+                } else if (['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'].includes(type)) {
+                    inputControl = document.createElement('select');
+                    inputControl.className = 'form-select bg-light border-0 small';
+                    inputControl.disabled = true;
+                    const opt = document.createElement('option');
+                    opt.text = `[Dynamic List: ${type.charAt(0).toUpperCase() + type.slice(1)}]`;
+                    inputControl.appendChild(opt);
+                } else {
+                    inputControl = document.createElement('input');
+                    inputControl.type = type;
+                    inputControl.className = 'form-control bg-light border-0 small';
+                    inputControl.placeholder = `Enter ${type}...`;
+                    inputControl.disabled = true;
+                }
+
+                fieldGroup.appendChild(inputControl);
+                previewFieldsContainer.appendChild(fieldGroup);
             });
         }
 
