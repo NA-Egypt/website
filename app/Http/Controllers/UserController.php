@@ -56,11 +56,16 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
+            'display_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'roles' => 'array',
             'service_body_id' => 'nullable|exists:service_bodies,id',
         ]);
 
         $user->update([
+            'name' => explode('@', $request->email)[0],
+            'display_name' => $request->display_name,
+            'email' => $request->email,
             'service_body_id' => $request->service_body_id,
         ]);
 
