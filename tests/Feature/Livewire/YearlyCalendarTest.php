@@ -22,6 +22,7 @@ class YearlyCalendarTest extends TestCase
         Role::firstOrCreate(['name' => 'super admin']);
         Role::firstOrCreate(['name' => 'Committees']);
         Role::firstOrCreate(['name' => 'ServiceBody']);
+        Role::firstOrCreate(['name' => 'rsc']);
     }
 
     public function test_component_renders_correctly()
@@ -191,6 +192,7 @@ class YearlyCalendarTest extends TestCase
     public function test_rsc_can_edit_any_event()
     {
         $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $rscUser->assignRole('rsc');
         $otherUser = User::factory()->create();
 
         $event = CalendarEvent::create([

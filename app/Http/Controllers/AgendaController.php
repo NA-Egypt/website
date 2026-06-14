@@ -65,8 +65,7 @@ class AgendaController extends Controller
         if (!$user) {
             return false;
         }
-        return $user->hasRole('super admin') || 
-               in_array(strtolower($user->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
+        return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
     protected function canAccessArchive($user)

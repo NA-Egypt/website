@@ -193,8 +193,7 @@ class YearlyCalendar extends Component
             return false;
         }
         $user = auth()->user();
-        return $user->hasRole('super admin') || 
-               in_array(strtolower($user->email), ['rsc@naegypt.org', 'arsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
+        return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
     public function checkAuth()

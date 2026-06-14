@@ -114,7 +114,7 @@
             calendarEl.dataset.initialized = 'true';
 
             // Injected from Blade for client-side check
-            const canManage = <?php echo json_encode(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || in_array(strtolower(auth()->user()->email ?? ''), ['rsc@naegypt.org', 'arsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']))); ?>;
+            const canManage = <?php echo json_encode(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc'))); ?>;
 
             var calendar = new window.FullCalendar.Calendar(calendarEl, {
                 plugins: [

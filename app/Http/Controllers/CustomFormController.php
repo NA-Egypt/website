@@ -17,7 +17,7 @@ class CustomFormController extends Controller
     private function checkAccess(CustomForm $form)
     {
         $user = auth()->user();
-        if ($user->hasRole('super admin')) {
+        if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
             return;
         }
         if ($form->user_id !== $user->id) {
@@ -28,7 +28,7 @@ class CustomFormController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if ($user->hasRole('super admin')) {
+        if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
             $forms = CustomForm::with('submissions')->orderBy('created_at', 'desc')->get();
         } else {
             $forms = CustomForm::with('submissions')

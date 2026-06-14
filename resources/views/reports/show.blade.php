@@ -145,7 +145,7 @@
         @php
         $isRsc = auth()->check() && (
             auth()->user()->hasRole('super admin') ||
-            in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])
+            auth()->user()->hasRole('rsc')
         );
         @endphp
 

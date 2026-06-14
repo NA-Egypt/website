@@ -33,8 +33,7 @@ class CommitteeReportController extends Controller
             return false;
         }
         $user = Auth::user();
-        return $user->hasRole('super admin') || 
-               in_array(strtolower($user->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org']);
+        return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
     public function index(Request $request)

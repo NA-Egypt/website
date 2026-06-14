@@ -187,7 +187,7 @@ $hasSidebar = auth()->check() && (
     auth()->user()->hasRole('super admin') ||
     auth()->user()->hasRole('Committees') ||
     auth()->user()->hasRole('ServiceBody') ||
-    in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])
+    auth()->user()->hasRole('rsc')
 );
 @endphp
 <body class="hanken-grotesk {{ $hasSidebar ? 'has-sidebar' : '' }}">

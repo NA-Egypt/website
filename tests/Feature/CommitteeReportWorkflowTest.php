@@ -26,10 +26,10 @@ class CommitteeReportWorkflowTest extends TestCase
             \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
         ]);
 
-        // Ensure roles exist in the database for the test
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'ServiceBody', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'gsr', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
     }
 
     protected function createCommittee($user, $attributes = [])
@@ -198,6 +198,7 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $rscUser->assignRole('rsc');
         $this->actingAs($rscUser);
 
         $response = $this->get(route('committee-reports.index'));
@@ -431,6 +432,7 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $rscUser->assignRole('rsc');
         $this->actingAs($rscUser);
 
         $response = $this->post(route('committee-reports.approveAndSend', $report->id));
@@ -457,6 +459,7 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $rscUser = User::where('email', 'rsc@naegypt.org')->first() ?: User::factory()->create(['email' => 'rsc@naegypt.org']);
+        $rscUser->assignRole('rsc');
         $this->actingAs($rscUser);
 
         $response = $this->post(route('committee-reports.returnToDraft', $report->id), [

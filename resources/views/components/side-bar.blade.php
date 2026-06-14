@@ -136,7 +136,7 @@
       {{-- /Reports Area --}}
 
       {{-- Agendas Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || in_array(strtolower(auth()->user()->email), ['rsc@naegypt.org', 'rcp@naegypt.org', 'rvcp@naegypt.org'])))
+      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc')))
       <li class="menu-label">{{ __('messages.Agendas') }}</li>
       <li>
         <a href="{{ route('groups-agendas.archive') }}">
@@ -168,8 +168,10 @@
           <div class="menu-title">{{ __('messages.IT Change Requests') }}</div>
         </a>
       </li>
+      @endif
+
       {{-- Forms Builder Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin')))
+      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc')))
       <li class="menu-label">{{ __('messages.Form Builder') ?? 'Forms Builder' }}</li>
       <li>
         <a href="{{ route('forms.index') }}">
@@ -178,8 +180,6 @@
           <div class="menu-title">{{ __('messages.Manage Forms') ?? 'Manage Forms' }}</div>
         </a>
       </li>
-      @endif
-
       @endif
 
     </ul>
