@@ -87,3 +87,35 @@ html.minimal-theme,
 html.minimal-theme body {
   overflow-x: hidden;
 }
+
+/* Force pagination to be always LTR */
+.pagination,
+.dataTables_paginate,
+.pagination-wrapper,
+nav[role="navigation"],
+.dataTables_wrapper .dataTables_paginate {
+  direction: ltr !important;
+  unicode-bidi: embed !important;
+  text-align: left !important;
+}
+
+[dir="rtl"] .pagination,
+[dir="rtl"] .dataTables_paginate,
+[dir="rtl"] .pagination-wrapper,
+[dir="rtl"] nav[role="navigation"],
+[dir="rtl"] .dataTables_wrapper .dataTables_paginate {
+  direction: ltr !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+}
+
+.pagination .page-item,
+.dataTables_paginate .paginate_button {
+  direction: ltr !important;
+}
+
+/* Arrow symbols / icons ordering within LTR pagination */
+.page-link, .paginate_button {
+  unicode-bidi: isolate !important;
+}

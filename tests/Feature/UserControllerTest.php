@@ -87,4 +87,15 @@ class UserControllerTest extends TestCase
         $this->assertEquals($serviceBody->id, $user->service_body_id);
         $this->assertTrue($user->hasRole('Committees'));
     }
+
+    public function test_user_with_no_roles_is_redirected_from_dashboard_to_homepage()
+    {
+        $user = User::factory()->create();
+        // Ensure user has no roles
+
+        $response = $this->actingAs($user)
+            ->get(route('dashboard'));
+
+        $response->assertRedirect(route('frontend.home'));
+    }
 }

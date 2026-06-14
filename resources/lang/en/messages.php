@@ -917,4 +917,5 @@ return [
     'Select Neighborhood...' => 'Select Neighborhood...',
     'Select Committee...' => 'Select Committee...',
     'Select Service Body...' => 'Select Service Body...',
+    'Edit User' => 'Edit User',
 ];

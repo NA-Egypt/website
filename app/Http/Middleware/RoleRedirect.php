@@ -15,6 +15,10 @@ class RoleRedirect
         $user = Auth::user();
 
         if ($user && $request->route()->getName() === 'dashboard') {
+            if ($user->roles->isEmpty()) {
+                return redirect()->route('frontend.home');
+            }
+
             if ($user->hasRole('super admin')) {
                 return $next($request);
             }

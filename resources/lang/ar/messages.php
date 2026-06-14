@@ -926,4 +926,5 @@ return [
     'Select Committee...' => 'اختر اللجنة...',
     'Select Service Body...' => 'اختر المنتدى أو المنطقة...',
     'Total Views' => 'إجمالي المشاهدات',
+    'Edit User'=>'تعديل المستخدم',
 ];
