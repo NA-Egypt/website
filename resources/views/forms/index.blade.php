@@ -24,7 +24,6 @@
                     <thead>
                         <tr>
                             <th>{{ __('messages.Title') ?? 'Title' }}</th>
-                            <th>{{ __('messages.Type') ?? 'Type' }}</th>
                             <th>{{ __('messages.Status') ?? 'Status' }}</th>
                             <th>{{ __('messages.Last Submission') ?? 'Last Submission' }}</th>
                             <th>{{ __('messages.Views') ?? 'Views' }}</th>
@@ -43,11 +42,6 @@
                             <tr>
                                 <td class="fw-bold" style="color: var(--text-primary);" title="{{ $form->title }}">
                                     {{ \Illuminate\Support\Str::limit($form->title, 30) }}
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border rounded-pill px-3">
-                                        {{ $form->type === 'survey' ? __('messages.Survey') ?? 'Survey' : __('messages.Event Registration') ?? 'Event Entry' }}
-                                    </span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center gap-2">

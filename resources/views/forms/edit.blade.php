@@ -152,8 +152,8 @@
                                                 <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                                             </div>
 
-                                            <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" onclick="removeField(this)">
-                                                <i class="bi bi-trash"></i> {{ __('messages.Delete') ?? 'Delete' }}
+                                            <button type="button" class="btn btn-danger btn-sm px-2" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
 
@@ -307,8 +307,8 @@
                         <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                     </div>
 
-                    <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" onclick="removeField(this)">
-                        <i class="bi bi-trash"></i> {{ __('messages.Delete') ?? 'Delete' }}
+                    <button type="button" class="btn btn-danger btn-sm px-2" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </div>
 
