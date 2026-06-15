@@ -187,7 +187,8 @@ $hasSidebar = auth()->check() && (
     auth()->user()->hasRole('super admin') ||
     auth()->user()->hasRole('Committees') ||
     auth()->user()->hasRole('ServiceBody') ||
-    auth()->user()->hasRole('rsc')
+    auth()->user()->hasRole('rsc') ||
+    auth()->user()->can('manage own forms')
 );
 @endphp
 <body class="hanken-grotesk {{ $hasSidebar ? 'has-sidebar' : '' }}">

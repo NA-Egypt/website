@@ -171,7 +171,7 @@
       @endif
 
       {{-- Forms Builder Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc')))
+      @if(auth()->check() && auth()->user()->can('manage own forms'))
       <li class="menu-label">{{ __('messages.Form Builder') ?? 'Forms Builder' }}</li>
       <li>
         <a href="{{ route('forms.index') }}">

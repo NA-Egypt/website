@@ -156,14 +156,16 @@ Route::group(
             });
 
             // Custom Form Builder:
-            Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus');
-            Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate');
-            Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset');
-            Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report');
-            Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf');
-            Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf');
-            Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv');
-            Route::resource('forms', CustomFormController::class);
+            Route::middleware(['permission:manage own forms'])->group(function () {
+                Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus');
+                Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate');
+                Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset');
+                Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report');
+                Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf');
+                Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf');
+                Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv');
+                Route::resource('forms', CustomFormController::class);
+            });
 
             // Committee Reports:
             Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
