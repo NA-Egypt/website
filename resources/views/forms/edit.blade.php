@@ -595,6 +595,7 @@
                     } else if (type === 'phone') {
                         inputControl = document.createElement('div');
                         inputControl.className = 'input-group input-group-sm';
+                        inputControl.style.direction = 'ltr';
                         const span = document.createElement('span');
                         span.className = 'input-group-text bg-light border';
                         span.textContent = '🇪🇬 +20';

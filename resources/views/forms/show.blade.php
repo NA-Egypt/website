@@ -156,6 +156,12 @@
         .iti {
             width: 100% !important;
             display: block !important;
+            direction: ltr !important;
+            text-align: left !important;
+        }
+        .phone-input {
+            direction: ltr !important;
+            text-align: left !important;
         }
         .iti__country-list {
             z-index: 1050 !important;
