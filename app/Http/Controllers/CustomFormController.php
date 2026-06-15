@@ -53,12 +53,32 @@ class CustomFormController extends Controller
             'status' => 'required|in:draft,published,unpublished',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',
+            'settings.emails' => 'nullable|string|max:1000',
             'fields' => 'nullable|array',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.type' => 'required|string',
             'fields.*.required' => 'nullable|boolean',
             'fields.*.options' => 'nullable|string', // comma separated options
+            'fields.*.placeholder' => 'nullable|string|max:255',
+            'fields.*.description' => 'nullable|string|max:1000',
+            'fields.*.bold' => 'nullable|boolean',
+            'fields.*.italic' => 'nullable|boolean',
+            'fields.*.align' => 'nullable|string|in:left,center,right',
         ]);
+
+        $settings = $request->input('settings', []);
+        if (isset($settings['emails']) && is_string($settings['emails'])) {
+            $emails = array_filter(array_map('trim', explode(',', $settings['emails'])));
+            $validatedEmails = [];
+            foreach ($emails as $email) {
+                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $validatedEmails[] = $email;
+                }
+            }
+            $settings['emails'] = array_slice($validatedEmails, 0, 3);
+        } else {
+            $settings['emails'] = [];
+        }
 
         $form = CustomForm::create([
             'title' => $request->title,
@@ -66,21 +86,29 @@ class CustomFormController extends Controller
             'status' => $request->status,
             'user_id' => auth()->id(),
             'slug' => Str::random(12),
-            'settings' => $request->input('settings', []),
+            'settings' => $settings,
         ]);
 
         if ($request->has('fields')) {
             foreach ($request->fields as $index => $fieldData) {
-                $optionsArray = [];
+                $choices = [];
                 if (!empty($fieldData['options'])) {
-                    $optionsArray = array_map('trim', explode(',', $fieldData['options']));
+                    $choices = array_map('trim', explode(',', $fieldData['options']));
                 }
+                $optionsJSON = [
+                    'choices' => $choices,
+                    'placeholder' => $fieldData['placeholder'] ?? null,
+                    'description' => $fieldData['description'] ?? null,
+                    'bold' => !empty($fieldData['bold']),
+                    'italic' => !empty($fieldData['italic']),
+                    'align' => $fieldData['align'] ?? 'left',
+                ];
                 CustomFormField::create([
                     'custom_form_id' => $form->id,
                     'label' => $fieldData['label'],
                     'type' => $fieldData['type'],
                     'required' => !empty($fieldData['required']),
-                    'options' => $optionsArray,
+                    'options' => $optionsJSON,
                     'sort_order' => $index,
                 ]);
             }
@@ -106,18 +134,38 @@ class CustomFormController extends Controller
             'status' => 'required|in:draft,published,unpublished',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',
+            'settings.emails' => 'nullable|string|max:1000',
             'fields' => 'nullable|array',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.type' => 'required|string',
             'fields.*.required' => 'nullable|boolean',
             'fields.*.options' => 'nullable|string',
+            'fields.*.placeholder' => 'nullable|string|max:255',
+            'fields.*.description' => 'nullable|string|max:1000',
+            'fields.*.bold' => 'nullable|boolean',
+            'fields.*.italic' => 'nullable|boolean',
+            'fields.*.align' => 'nullable|string|in:left,center,right',
         ]);
+
+        $settings = $request->input('settings', []);
+        if (isset($settings['emails']) && is_string($settings['emails'])) {
+            $emails = array_filter(array_map('trim', explode(',', $settings['emails'])));
+            $validatedEmails = [];
+            foreach ($emails as $email) {
+                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $validatedEmails[] = $email;
+                }
+            }
+            $settings['emails'] = array_slice($validatedEmails, 0, 3);
+        } else {
+            $settings['emails'] = [];
+        }
 
         $form->update([
             'title' => $request->title,
             'type' => $request->type,
             'status' => $request->status,
-            'settings' => $request->input('settings', []),
+            'settings' => $settings,
         ]);
 
         // Re-build fields
@@ -125,16 +173,24 @@ class CustomFormController extends Controller
 
         if ($request->has('fields')) {
             foreach ($request->fields as $index => $fieldData) {
-                $optionsArray = [];
+                $choices = [];
                 if (!empty($fieldData['options'])) {
-                    $optionsArray = array_map('trim', explode(',', $fieldData['options']));
+                    $choices = array_map('trim', explode(',', $fieldData['options']));
                 }
+                $optionsJSON = [
+                    'choices' => $choices,
+                    'placeholder' => $fieldData['placeholder'] ?? null,
+                    'description' => $fieldData['description'] ?? null,
+                    'bold' => !empty($fieldData['bold']),
+                    'italic' => !empty($fieldData['italic']),
+                    'align' => $fieldData['align'] ?? 'left',
+                ];
                 CustomFormField::create([
                     'custom_form_id' => $form->id,
                     'label' => $fieldData['label'],
                     'type' => $fieldData['type'],
                     'required' => !empty($fieldData['required']),
-                    'options' => $optionsArray,
+                    'options' => $optionsJSON,
                     'sort_order' => $index,
                 ]);
             }

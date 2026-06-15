@@ -41,7 +41,9 @@
                                 $statusBadge = $form->status === 'published' ? 'bg-success' : ($form->status === 'draft' ? 'bg-warning text-dark' : 'bg-secondary');
                             @endphp
                             <tr>
-                                <td class="fw-bold" style="color: var(--text-primary);">{{ $form->title }}</td>
+                                <td class="fw-bold" style="color: var(--text-primary);" title="{{ $form->title }}">
+                                    {{ \Illuminate\Support\Str::limit($form->title, 30) }}
+                                </td>
                                 <td>
                                     <span class="badge bg-light text-dark border rounded-pill px-3">
                                         {{ $form->type === 'survey' ? __('messages.Survey') ?? 'Survey' : __('messages.Event Registration') ?? 'Event Entry' }}

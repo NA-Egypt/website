@@ -1,4 +1,5 @@
 <x-frontend.layout>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/css/intlTelInput.css">
 
     <style>
         body {
@@ -151,6 +152,19 @@
             padding-left: 2.5rem !important;
             padding-right: 1rem !important;
         }
+
+        .iti {
+            width: 100% !important;
+            display: block !important;
+        }
+        .iti__country-list {
+            z-index: 1050 !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        }
     </style>
 
     <div class="container py-5">
@@ -196,52 +210,71 @@
                                     @php
                                         // All fields span full width (col-12) to match clean mobile vertical stacking
                                         $colClass = 'col-12';
+                                        $isStatic = $field->type === 'static_text';
                                     @endphp
                                     <div class="{{ $colClass }}">
-                                        <label class="form-label fw-bold small mb-2 d-block" style="color: #0f172a !important;">
-                                            {{ $field->label }}
-                                            @if ($field->required)
-                                                <span class="text-danger">*</span>
+                                        @if (!$isStatic)
+                                            <label class="form-label fw-bold small mb-1 d-block" style="color: #0f172a !important;">
+                                                {{ $field->label }}
+                                                @if ($field->required)
+                                                    <span class="text-danger">*</span>
+                                                @endif
+                                            </label>
+                                            @if (!empty($field->options['description']))
+                                                <div class="text-muted small mb-2" style="font-size: 0.8rem; line-height: 1.4;">
+                                                    {{ $field->options['description'] }}
+                                                </div>
                                             @endif
-                                        </label>
+                                        @endif
 
                                         @if ($field->type === 'text')
                                             <div class="input-group-custom">
                                                 <span class="input-icon"><i class="bi bi-pencil-square"></i></span>
-                                                <input type="text" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" {{ $field->required ? 'required' : '' }}>
+                                                <input type="text" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
                                             </div>
 
                                         @elseif ($field->type === 'textarea')
                                             <div class="input-group-custom align-items-start">
                                                 <span class="input-icon mt-2.5"><i class="bi bi-chat-left-text"></i></span>
-                                                <textarea name="field_{{ $field->id }}" rows="4" class="form-control form-control-custom" {{ $field->required ? 'required' : '' }}>{{ old('field_' . $field->id) }}</textarea>
+                                                <textarea name="field_{{ $field->id }}" rows="4" class="form-control form-control-custom" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>{{ old('field_' . $field->id) }}</textarea>
+                                            </div>
+
+                                        @elseif ($field->type === 'phone')
+                                            <div>
+                                                <input type="tel" id="phone_{{ $field->id }}" name="field_{{ $field->id }}" class="form-control form-control-custom phone-input" placeholder="{{ $field->options['placeholder'] ?? '123 456 7890' }}" {{ $field->required ? 'required' : '' }} value="{{ old('field_' . $field->id) }}" style="width: 100%;">
                                             </div>
 
                                         @elseif ($field->type === 'number')
                                             <div class="input-group-custom">
                                                 <span class="input-icon"><i class="bi bi-hash"></i></span>
-                                                <input type="number" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" {{ $field->required ? 'required' : '' }}>
+                                                <input type="number" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
                                             </div>
 
                                         @elseif ($field->type === 'email')
                                             <div class="input-group-custom">
                                                 <span class="input-icon"><i class="bi bi-envelope"></i></span>
-                                                <input type="email" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" {{ $field->required ? 'required' : '' }}>
+                                                <input type="email" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
                                             </div>
 
                                         @elseif ($field->type === 'date')
                                             <div class="input-group-custom">
                                                 <span class="input-icon"><i class="bi bi-calendar3"></i></span>
-                                                <input type="date" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" {{ $field->required ? 'required' : '' }}>
+                                                <input type="date" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
                                             </div>
 
                                         @elseif ($field->type === 'select')
                                             <div class="input-group-custom">
                                                 <span class="input-icon"><i class="bi bi-list-ul"></i></span>
                                                 <select name="field_{{ $field->id }}" class="form-select form-select-custom" {{ $field->required ? 'required' : '' }}>
-                                                    <option value="">{{ __('messages.Choose') ?? 'Choose an option...' }}</option>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Choose') ?? 'Choose an option...' }}</option>
                                                     @if (is_array($field->options))
-                                                        @foreach ($field->options as $option)
+                                                        @php
+                                                            $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
+                                                            $choices = array_filter($choices, function($val, $key) {
+                                                                return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
+                                                            }, ARRAY_FILTER_USE_BOTH);
+                                                        @endphp
+                                                        @foreach ($choices as $option)
                                                             <option value="{{ $option }}" {{ old('field_' . $field->id) === $option ? 'selected' : '' }}>{{ $option }}</option>
                                                         @endforeach
                                                     @endif
@@ -251,7 +284,13 @@
                                         @elseif ($field->type === 'checkbox')
                                             <div class="d-flex flex-column gap-2">
                                                 @if (is_array($field->options))
-                                                    @foreach ($field->options as $option)
+                                                    @php
+                                                        $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
+                                                        $choices = array_filter($choices, function($val, $key) {
+                                                            return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
+                                                        }, ARRAY_FILTER_USE_BOTH);
+                                                    @endphp
+                                                    @foreach ($choices as $option)
                                                         <label class="form-check-tile gap-3">
                                                             <input type="checkbox" name="field_{{ $field->id }}[]" value="{{ $option }}" class="form-check-input flex-shrink-0" style="width: 1.25rem; height: 1.25rem;" id="check_{{ $field->id }}_{{ $loop->index }}" {{ is_array(old('field_' . $field->id)) && in_array($option, old('field_' . $field->id)) ? 'checked' : '' }}>
                                                             <span class="small fw-semibold text-secondary">{{ $option }}</span>
@@ -260,9 +299,19 @@
                                                 @endif
                                             </div>
 
+                                        @elseif ($field->type === 'static_text')
+                                            @php
+                                                $bold = !empty($field->options['bold']);
+                                                $italic = !empty($field->options['italic']);
+                                                $align = $field->options['align'] ?? 'left';
+                                            @endphp
+                                            <div style="font-weight: {{ $bold ? 'bold' : 'normal' }}; font-style: {{ $italic ? 'italic' : 'normal' }}; text-align: {{ $align }}; color: #334155; line-height: 1.6; margin-bottom: 0.5rem;">
+                                                {!! nl2br(e($field->label)) !!}
+                                            </div>
+
                                         @elseif ($field->type === 'groups')
                                             <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ __('messages.Select Group...') ?? 'Select Group...' }}</option>
+                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Group...') ?? 'Select Group...' }}</option>
                                                 @foreach ($entities['groups'] ?? [] as $entity)
                                                     @php
                                                         $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
@@ -273,7 +322,7 @@
 
                                         @elseif ($field->type === 'cities')
                                             <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ __('messages.Select City...') ?? 'Select City...' }}</option>
+                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select City...') ?? 'Select City...' }}</option>
                                                 @foreach ($entities['cities'] ?? [] as $entity)
                                                     @php
                                                         $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
@@ -284,7 +333,7 @@
 
                                         @elseif ($field->type === 'neighborhoods')
                                             <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ __('messages.Select Neighborhood...') ?? 'Select Neighborhood...' }}</option>
+                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Neighborhood...') ?? 'Select Neighborhood...' }}</option>
                                                 @foreach ($entities['neighborhoods'] ?? [] as $entity)
                                                     @php
                                                         $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
@@ -295,7 +344,7 @@
 
                                         @elseif ($field->type === 'committees')
                                             <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ __('messages.Select Committee...') ?? 'Select Committee...' }}</option>
+                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Committee...') ?? 'Select Committee...' }}</option>
                                                 @foreach ($entities['committees'] ?? [] as $entity)
                                                     @php
                                                         $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
@@ -306,7 +355,7 @@
 
                                         @elseif ($field->type === 'servicebodies')
                                             <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ __('messages.Select Service Body...') ?? 'Select Service Body...' }}</option>
+                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Service Body...') ?? 'Select Service Body...' }}</option>
                                                 @foreach ($entities['servicebodies'] ?? [] as $entity)
                                                     @php
                                                         $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
@@ -332,6 +381,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/js/intlTelInput.min.js"></script>
     <script>
         function showLoadingState() {
             const btn = document.getElementById('submit-btn');
@@ -344,6 +394,29 @@
                 spinner.classList.remove('d-none');
             }
         }
-    </script>
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInputs = document.querySelectorAll('.phone-input');
+            const itiInstances = [];
+
+            phoneInputs.forEach(input => {
+                const iti = window.intlTelInput(input, {
+                    initialCountry: "eg",
+                    preferredCountries: ["eg", "ae", "sa", "qa", "kw"],
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/js/utils.js",
+                });
+                itiInstances.push({ input, iti });
+            });
+
+            const form = document.getElementById('public-submission-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    itiInstances.forEach(item => {
+                        // Put the E.164 number back into the phone input on submit so Laravel validates and stores the full international number
+                        item.input.value = item.iti.getNumber();
+                    });
+                });
+            }
+        });
+    </script>
 </x-frontend.layout>

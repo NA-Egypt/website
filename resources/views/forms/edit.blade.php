@@ -64,6 +64,11 @@
                                 <option value="bi-person" {{ $selectedIcon === 'bi-person' ? 'selected' : '' }}>👤 Person</option>
                             </select>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="settings_emails" class="form-label fw-semibold small">{{ __('messages.Notification Emails') ?? 'Notification Emails (comma separated, max 3)' }}</label>
+                            <input type="text" name="settings[emails]" id="settings_emails" class="form-control" placeholder="e.g. admin1@example.com, admin2@example.com" value="{{ old('settings.emails', is_array($form->settings['emails'] ?? null) ? implode(', ', $form->settings['emails']) : ($form->settings['emails'] ?? '')) }}">
+                        </div>
                     </div>
 
                     <!-- Fields Configurator -->
@@ -81,8 +86,15 @@
                             <!-- Pre-populate existing fields -->
                             @foreach ($form->fields as $index => $field)
                                 @php
-                                    $optionsString = is_array($field->options) ? implode(', ', $field->options) : '';
+                                    $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
+                                    $optionsString = implode(', ', $choices);
                                     $showOptions = in_array($field->type, ['select', 'checkbox']);
+                                    $placeholder = $field->options['placeholder'] ?? '';
+                                    $description = $field->options['description'] ?? '';
+                                    $bold = !empty($field->options['bold']);
+                                    $italic = !empty($field->options['italic']);
+                                    $align = $field->options['align'] ?? 'left';
+                                    $isStatic = $field->type === 'static_text';
                                 @endphp
                                 <div class="field-item card p-3 border shadow-sm position-relative" style="background: rgba(255, 255, 255, 0.4) !important; border-color: var(--glass-border) !important; transition: all 0.2s;">
                                     <div class="row g-3">
@@ -109,11 +121,13 @@
                                                 <optgroup label="{{ __('messages.Standard Fields') ?? 'Standard Fields' }}">
                                                     <option value="text" {{ $field->type === 'text' ? 'selected' : '' }}>{{ __('messages.Single Line Text') ?? 'Single Line Text' }}</option>
                                                     <option value="textarea" {{ $field->type === 'textarea' ? 'selected' : '' }}>{{ __('messages.Paragraph/Textarea') ?? 'Paragraph/Textarea' }}</option>
+                                                    <option value="phone" {{ $field->type === 'phone' ? 'selected' : '' }}>{{ __('messages.Phone Number') ?? 'Phone Number' }}</option>
                                                     <option value="number" {{ $field->type === 'number' ? 'selected' : '' }}>{{ __('messages.Number') ?? 'Number' }}</option>
                                                     <option value="email" {{ $field->type === 'email' ? 'selected' : '' }}>{{ __('messages.Email Address') ?? 'Email Address' }}</option>
                                                     <option value="date" {{ $field->type === 'date' ? 'selected' : '' }}>{{ __('messages.Date Selector') ?? 'Date Selector' }}</option>
                                                     <option value="select" {{ $field->type === 'select' ? 'selected' : '' }}>{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
                                                     <option value="checkbox" {{ $field->type === 'checkbox' ? 'selected' : '' }}>{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
+                                                    <option value="static_text" {{ $field->type === 'static_text' ? 'selected' : '' }}>{{ __('messages.Static Text Block') ?? 'Static Text Block' }}</option>
                                                 </optgroup>
                                                 <optgroup label="{{ __('messages.Dynamic Database Controls') ?? 'Dynamic Database Controls' }}">
                                                     <option value="groups" {{ $field->type === 'groups' ? 'selected' : '' }}>{{ __('messages.Groups Select') ?? 'Groups Select' }}</option>
@@ -127,7 +141,7 @@
 
                                         <!-- Required check & Delete -->
                                         <div class="col-md-4 d-flex align-items-center justify-content-between pt-4">
-                                            <div class="form-check form-switch">
+                                            <div class="form-check form-switch" style="{{ $isStatic ? 'display: none;' : '' }}">
                                                 <input class="form-check-input required-checkbox" type="checkbox" role="switch" name="fields[{{ $index }}][required]" value="1" {{ $field->required ? 'checked' : '' }} onchange="updatePreview()">
                                                 <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                                             </div>
@@ -141,6 +155,40 @@
                                         <div class="col-12 options-container {{ $showOptions ? '' : 'd-none' }}">
                                             <label class="form-label fw-semibold small text-secondary">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
                                             <input type="text" name="fields[{{ $index }}][options]" class="form-control options-input" placeholder="{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}" value="{{ $optionsString }}" oninput="updatePreview()">
+                                        </div>
+
+                                        <!-- Placeholder setting -->
+                                        <div class="col-md-6 placeholder-settings-container {{ $isStatic ? 'd-none' : '' }}">
+                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}</label>
+                                            <input type="text" name="fields[{{ $index }}][placeholder]" class="form-control placeholder-input" placeholder="e.g. Enter your value..." value="{{ $placeholder }}" oninput="updatePreview()">
+                                        </div>
+
+                                        <!-- Description setting -->
+                                        <div class="col-md-6 description-settings-container">
+                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Description / Help Text') ?? 'Field Description' }}</label>
+                                            <input type="text" name="fields[{{ $index }}][description]" class="form-control description-input" placeholder="e.g. Help text displayed below label" value="{{ $description }}" oninput="updatePreview()">
+                                        </div>
+
+                                        <!-- Static Text Formatting settings (conditionally shown for static_text) -->
+                                        <div class="col-12 formatting-settings-container {{ $isStatic ? '' : 'd-none' }}">
+                                            <div class="d-flex flex-wrap gap-4 align-items-center bg-light p-2.5 rounded-3 border">
+                                                <div class="form-check">
+                                                    <input class="form-check-input bold-checkbox" type="checkbox" name="fields[{{ $index }}][bold]" value="1" {{ $bold ? 'checked' : '' }} onchange="updatePreview()">
+                                                    <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Bold') ?? 'Bold' }}</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input italic-checkbox" type="checkbox" name="fields[{{ $index }}][italic]" value="1" {{ $italic ? 'checked' : '' }} onchange="updatePreview()">
+                                                    <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Italic') ?? 'Italic' }}</label>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <label class="fw-semibold small text-secondary mb-0">{{ __('messages.Alignment') ?? 'Alignment' }}</label>
+                                                    <select name="fields[{{ $index }}][align]" class="form-select form-select-sm align-select" style="width: auto;" onchange="updatePreview()">
+                                                        <option value="left" {{ $align === 'left' ? 'selected' : '' }}>{{ __('messages.Left') ?? 'Left' }}</option>
+                                                        <option value="center" {{ $align === 'center' ? 'selected' : '' }}>{{ __('messages.Center') ?? 'Center' }}</option>
+                                                        <option value="right" {{ $align === 'right' ? 'selected' : '' }}>{{ __('messages.Right') ?? 'Right' }}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -226,11 +274,13 @@
                         <optgroup label="{{ __('messages.Standard Fields') ?? 'Standard Fields' }}">
                             <option value="text">{{ __('messages.Single Line Text') ?? 'Single Line Text' }}</option>
                             <option value="textarea">{{ __('messages.Paragraph/Textarea') ?? 'Paragraph/Textarea' }}</option>
+                            <option value="phone">{{ __('messages.Phone Number') ?? 'Phone Number' }}</option>
                             <option value="number">{{ __('messages.Number') ?? 'Number' }}</option>
                             <option value="email">{{ __('messages.Email Address') ?? 'Email Address' }}</option>
                             <option value="date">{{ __('messages.Date Selector') ?? 'Date Selector' }}</option>
                             <option value="select">{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
                             <option value="checkbox">{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
+                            <option value="static_text">{{ __('messages.Static Text Block') ?? 'Static Text Block' }}</option>
                         </optgroup>
                         <optgroup label="{{ __('messages.Dynamic Database Controls') ?? 'Dynamic Database Controls' }}">
                             <option value="groups">{{ __('messages.Groups Select') ?? 'Groups Select' }}</option>
@@ -258,6 +308,40 @@
                 <div class="col-12 options-container d-none">
                     <label class="form-label fw-semibold small text-secondary">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
                     <input type="text" class="form-control options-input" placeholder="{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}" oninput="updatePreview()">
+                </div>
+
+                <!-- Placeholder setting -->
+                <div class="col-md-6 placeholder-settings-container">
+                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}</label>
+                    <input type="text" class="form-control placeholder-input" placeholder="e.g. Enter your value..." oninput="updatePreview()">
+                </div>
+
+                <!-- Description setting -->
+                <div class="col-md-6 description-settings-container">
+                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Description / Help Text') ?? 'Field Description' }}</label>
+                    <input type="text" class="form-control description-input" placeholder="e.g. Help text displayed below label" oninput="updatePreview()">
+                </div>
+
+                <!-- Static Text Formatting settings (conditionally shown for static_text) -->
+                <div class="col-12 formatting-settings-container d-none">
+                    <div class="d-flex flex-wrap gap-4 align-items-center bg-light p-2.5 rounded-3 border">
+                        <div class="form-check">
+                            <input class="form-check-input bold-checkbox" type="checkbox" onchange="updatePreview()">
+                            <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Bold') ?? 'Bold' }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input italic-checkbox" type="checkbox" onchange="updatePreview()">
+                            <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Italic') ?? 'Italic' }}</label>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="fw-semibold small text-secondary mb-0">{{ __('messages.Alignment') ?? 'Alignment' }}</label>
+                            <select class="form-select form-select-sm align-select" style="width: auto;" onchange="updatePreview()">
+                                <option value="left">{{ __('messages.Left') ?? 'Left' }}</option>
+                                <option value="center">{{ __('messages.Center') ?? 'Center' }}</option>
+                                <option value="right">{{ __('messages.Right') ?? 'Right' }}</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -301,6 +385,26 @@
             const optionsInput = clone.querySelector('.options-input');
             optionsInput.name = `fields[${fieldIndex}][options]`;
 
+            // Placeholder input
+            const placeholderInput = clone.querySelector('.placeholder-input');
+            placeholderInput.name = `fields[${fieldIndex}][placeholder]`;
+
+            // Description input
+            const descriptionInput = clone.querySelector('.description-input');
+            descriptionInput.name = `fields[${fieldIndex}][description]`;
+
+            // Formatting checkboxes & select
+            const boldCheckbox = clone.querySelector('.bold-checkbox');
+            boldCheckbox.name = `fields[${fieldIndex}][bold]`;
+            boldCheckbox.value = "1";
+
+            const italicCheckbox = clone.querySelector('.italic-checkbox');
+            italicCheckbox.name = `fields[${fieldIndex}][italic]`;
+            italicCheckbox.value = "1";
+
+            const alignSelect = clone.querySelector('.align-select');
+            alignSelect.name = `fields[${fieldIndex}][align]`;
+
             container.appendChild(clone);
             fieldIndex++;
             checkEmptyState();
@@ -319,11 +423,26 @@
         function handleTypeChange(select) {
             const row = select.closest('.row');
             const optionsContainer = row.querySelector('.options-container');
+            const placeholderContainer = row.querySelector('.placeholder-settings-container');
+            const formattingContainer = row.querySelector('.formatting-settings-container');
+            const requiredSwitch = row.querySelector('.required-checkbox')?.closest('.form-switch');
+
             if (select.value === 'select' || select.value === 'checkbox') {
                 optionsContainer.classList.remove('d-none');
             } else {
                 optionsContainer.classList.add('d-none');
             }
+
+            if (select.value === 'static_text') {
+                formattingContainer.classList.remove('d-none');
+                placeholderContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'none';
+            } else {
+                formattingContainer.classList.add('d-none');
+                placeholderContainer.classList.remove('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'block';
+            }
+
             updatePreview();
         }
 
@@ -353,6 +472,11 @@
                 item.querySelector('.type-select').name = `fields[${index}][type]`;
                 item.querySelector('.required-checkbox').name = `fields[${index}][required]`;
                 item.querySelector('.options-input').name = `fields[${index}][options]`;
+                item.querySelector('.placeholder-input').name = `fields[${index}][placeholder]`;
+                item.querySelector('.description-input').name = `fields[${index}][description]`;
+                item.querySelector('.bold-checkbox').name = `fields[${index}][bold]`;
+                item.querySelector('.italic-checkbox').name = `fields[${index}][italic]`;
+                item.querySelector('.align-select').name = `fields[${index}][align]`;
             });
             updateButtonStates();
             updatePreview();
@@ -429,43 +553,93 @@
                 const type = item.querySelector('.type-select').value;
                 const required = item.querySelector('.required-checkbox').checked;
                 const optionsVal = item.querySelector('.options-input').value.trim();
+                const placeholder = item.querySelector('.placeholder-input').value.trim();
+                const description = item.querySelector('.description-input').value.trim();
+                const bold = item.querySelector('.bold-checkbox')?.checked;
+                const italic = item.querySelector('.italic-checkbox')?.checked;
+                const align = item.querySelector('.align-select')?.value || 'left';
 
                 const fieldGroup = document.createElement('div');
-                fieldGroup.className = 'mb-2';
+                fieldGroup.className = 'mb-3';
 
-                const fieldLabel = document.createElement('label');
-                fieldLabel.className = 'form-label fw-semibold small mb-1';
-                fieldLabel.innerHTML = label + (required ? ' <span class="text-danger">*</span>' : '');
-                fieldGroup.appendChild(fieldLabel);
+                if (type === 'static_text') {
+                    const staticText = document.createElement('div');
+                    staticText.textContent = label;
+                    staticText.style.fontWeight = bold ? 'bold' : 'normal';
+                    staticText.style.fontStyle = italic ? 'italic' : 'normal';
+                    staticText.style.textAlign = align;
+                    staticText.className = 'text-dark p-2 border border-dashed rounded-3';
+                    staticText.style.background = 'rgba(0,0,0,0.01)';
+                    fieldGroup.appendChild(staticText);
+                } else {
+                    const fieldLabel = document.createElement('label');
+                    fieldLabel.className = 'form-label fw-semibold small mb-1';
+                    fieldLabel.innerHTML = label + (required ? ' <span class="text-danger">*</span>' : '');
+                    fieldGroup.appendChild(fieldLabel);
 
-                let inputControl;
-                if (type === 'textarea') {
-                    inputControl = document.createElement('textarea');
-                    inputControl.rows = 2;
-                    inputControl.className = 'form-control bg-light border-0 small';
-                    inputControl.placeholder = 'Textarea response...';
-                    inputControl.disabled = true;
-                } else if (type === 'select') {
-                    inputControl = document.createElement('select');
-                    inputControl.className = 'form-select bg-light border-0 small';
-                    inputControl.disabled = true;
-                    const defaultOption = document.createElement('option');
-                    defaultOption.text = 'Choose an option...';
-                    inputControl.appendChild(defaultOption);
-                    if (optionsVal) {
-                        const options = optionsVal.split(',');
-                        options.forEach(opt => {
-                            const option = document.createElement('option');
-                            option.text = opt.trim();
-                            inputControl.appendChild(option);
-                        });
+                    if (description) {
+                        const desc = document.createElement('div');
+                        desc.className = 'text-muted small mb-2';
+                        desc.style.fontSize = '0.8rem';
+                        desc.textContent = description;
+                        fieldGroup.appendChild(desc);
                     }
-                } else if (type === 'checkbox') {
-                    inputControl = document.createElement('div');
-                    inputControl.className = 'd-flex flex-column gap-1';
-                    if (optionsVal) {
-                        const options = optionsVal.split(',');
-                        options.forEach((opt, idx) => {
+
+                    let inputControl;
+                    if (type === 'textarea') {
+                        inputControl = document.createElement('textarea');
+                        inputControl.rows = 2;
+                        inputControl.className = 'form-control bg-light border-0 small';
+                        inputControl.placeholder = placeholder || 'Textarea response...';
+                        inputControl.disabled = true;
+                    } else if (type === 'phone') {
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'input-group input-group-sm';
+                        const span = document.createElement('span');
+                        span.className = 'input-group-text bg-light border';
+                        span.textContent = '🇪🇬 +20';
+                        const phoneInp = document.createElement('input');
+                        phoneInp.type = 'tel';
+                        phoneInp.className = 'form-control bg-light border-start-0';
+                        phoneInp.placeholder = placeholder || '123 456 7890';
+                        phoneInp.disabled = true;
+                        inputControl.appendChild(span);
+                        inputControl.appendChild(phoneInp);
+                    } else if (type === 'select') {
+                        inputControl = document.createElement('select');
+                        inputControl.className = 'form-select bg-light border-0 small';
+                        inputControl.disabled = true;
+                        const defaultOption = document.createElement('option');
+                        defaultOption.text = placeholder || 'Choose an option...';
+                        inputControl.appendChild(defaultOption);
+                        if (optionsVal) {
+                            const options = optionsVal.split(',');
+                            options.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.text = opt.trim();
+                                inputControl.appendChild(option);
+                            });
+                        }
+                    } else if (type === 'checkbox') {
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'd-flex flex-column gap-1';
+                        if (optionsVal) {
+                            const options = optionsVal.split(',');
+                            options.forEach((opt, idx) => {
+                                const wrap = document.createElement('div');
+                                wrap.className = 'form-check';
+                                const check = document.createElement('input');
+                                check.type = 'checkbox';
+                                check.className = 'form-check-input';
+                                check.disabled = true;
+                                const checkLbl = document.createElement('label');
+                                checkLbl.className = 'form-check-label small';
+                                checkLbl.textContent = opt.trim();
+                                wrap.appendChild(check);
+                                wrap.appendChild(checkLbl);
+                                inputControl.appendChild(wrap);
+                            });
+                        } else {
                             const wrap = document.createElement('div');
                             wrap.className = 'form-check';
                             const check = document.createElement('input');
@@ -474,41 +648,29 @@
                             check.disabled = true;
                             const checkLbl = document.createElement('label');
                             checkLbl.className = 'form-check-label small';
-                            checkLbl.textContent = opt.trim();
+                            checkLbl.textContent = 'Check item';
                             wrap.appendChild(check);
                             wrap.appendChild(checkLbl);
                             inputControl.appendChild(wrap);
-                        });
+                        }
+                    } else if (['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'].includes(type)) {
+                        inputControl = document.createElement('select');
+                        inputControl.className = 'form-select bg-light border-0 small';
+                        inputControl.disabled = true;
+                        const opt = document.createElement('option');
+                        opt.text = placeholder || `[Dynamic List: ${type.charAt(0).toUpperCase() + type.slice(1)}]`;
+                        inputControl.appendChild(opt);
                     } else {
-                        const wrap = document.createElement('div');
-                        wrap.className = 'form-check';
-                        const check = document.createElement('input');
-                        check.type = 'checkbox';
-                        check.className = 'form-check-input';
-                        check.disabled = true;
-                        const checkLbl = document.createElement('label');
-                        checkLbl.className = 'form-check-label small';
-                        checkLbl.textContent = 'Check item';
-                        wrap.appendChild(check);
-                        wrap.appendChild(checkLbl);
-                        inputControl.appendChild(wrap);
+                        inputControl = document.createElement('input');
+                        inputControl.type = type;
+                        inputControl.className = 'form-control bg-light border-0 small';
+                        inputControl.placeholder = placeholder || `Enter ${type}...`;
+                        inputControl.disabled = true;
                     }
-                } else if (['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'].includes(type)) {
-                    inputControl = document.createElement('select');
-                    inputControl.className = 'form-select bg-light border-0 small';
-                    inputControl.disabled = true;
-                    const opt = document.createElement('option');
-                    opt.text = `[Dynamic List: ${type.charAt(0).toUpperCase() + type.slice(1)}]`;
-                    inputControl.appendChild(opt);
-                } else {
-                    inputControl = document.createElement('input');
-                    inputControl.type = type;
-                    inputControl.className = 'form-control bg-light border-0 small';
-                    inputControl.placeholder = `Enter ${type}...`;
-                    inputControl.disabled = true;
+
+                    fieldGroup.appendChild(inputControl);
                 }
 
-                fieldGroup.appendChild(inputControl);
                 previewFieldsContainer.appendChild(fieldGroup);
             });
         }

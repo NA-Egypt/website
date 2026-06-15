@@ -102,11 +102,24 @@ class PublicFormController extends Controller
             $submissionData[$field->id] = $request->input($fieldName);
         }
 
-        CustomFormSubmission::create([
+        $submission = CustomFormSubmission::create([
             'custom_form_id' => $form->id,
             'user_id' => auth()->id(),
             'data' => $submissionData,
         ]);
+
+        // Send submission notifications if configured
+        $emails = $form->settings['emails'] ?? [];
+        if (!empty($emails) && is_array($emails)) {
+            try {
+                \Illuminate\Support\Facades\Mail::send('emails.form_submitted', ['form' => $form, 'submission' => $submission], function ($message) use ($emails, $form) {
+                    $message->to($emails)
+                            ->subject('New Submission for Form: ' . $form->title);
+                });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send form submission email: ' . $e->getMessage());
+            }
+        }
 
         return view('forms.thankyou', compact('form'));
     }
