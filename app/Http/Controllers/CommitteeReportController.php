@@ -409,11 +409,14 @@ class CommitteeReportController extends Controller
         $html = view('reports.pdf', compact('reports'))->render();
         $mpdf->WriteHTML($html);
 
-        $filename = 'committee_report_' . $report->meeting_date->format('Y-m-d') . '.pdf';
-        
+        $disposition = request()->query('disposition', 'attachment');
+        if (!in_array($disposition, ['attachment', 'inline'])) {
+            $disposition = 'attachment';
+        }
+
         return response($mpdf->Output($filename, 'S'), 200)
                ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+               ->header('Content-Disposition', $disposition . '; filename="' . $filename . '"');
     }
 
     public function exportReportsPdf(Request $request)
@@ -541,6 +544,19 @@ class CommitteeReportController extends Controller
             abort(404, 'File not found');
         }
 
+        $disposition = request()->query('disposition', 'attachment');
+        if (!in_array($disposition, ['attachment', 'inline'])) {
+            $disposition = 'attachment';
+        }
+
+        if ($disposition === 'inline') {
+            return response()->file(Storage::path($attachment->file_path), [
+                'Content-Type' => $attachment->mime_type,
+                'Content-Disposition' => 'inline; filename="' . $attachment->original_name . '"',
+                'X-Content-Type-Options' => 'nosniff',
+            ]);
+        }
+
         return Storage::download($attachment->file_path, $attachment->original_name, [
             'Content-Type' => $attachment->mime_type,
             'X-Content-Type-Options' => 'nosniff',
@@ -573,6 +589,7 @@ class CommitteeReportController extends Controller
 
     public function archive(Request $request)
     {
+        // 1. Get database reports
         $query = CommitteeReport::with(['serviceCommittee', 'attachments']);
         $now = now();
         $user = auth()->user();
@@ -633,143 +650,192 @@ class CommitteeReportController extends Controller
             $query->where('is_exceptional', true);
         }
 
-        $reports = $query->orderBy('meeting_date', 'desc')->get();
+        $dbReports = $query->orderBy('meeting_date', 'desc')->get();
 
-        $legacyFiles = [];
-        try {
-            if (\Illuminate\Support\Facades\Storage::disk('storagebox')->exists('')) {
-                $files = \Illuminate\Support\Facades\Storage::disk('storagebox')->allFiles();
-                
-                $arabicMonthsMap = [
-                    'يناير' => '01', 'فبراير' => '02', 'مارس' => '03', 'أبريل' => '04', 'ابريل' => '04',
-                    'مايو' => '05', 'يونيو' => '06', 'يوليو' => '07', 'أغسطس' => '08', 'اغسطس' => '08',
-                    'سبتمبر' => '09', 'أكتوبر' => '10', 'اكتوبر' => '10', 'نوفمبر' => '11', 'ديسمبر' => '12'
-                ];
+        // 2. Build directories and files from storagebox disk under "Archives"
+        $cacheKey = 'storagebox_archive_files_list';
+        if ($request->query('refresh') == '1') {
+            \Illuminate\Support\Facades\Cache::forget($cacheKey);
+        }
 
-                $englishMonthsMap = [
-                    'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
-                    'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
-                    'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
-                ];
-
-                foreach ($files as $filePath) {
-                    // Skip hidden files
-                    if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
-                        continue;
-                    }
-
-                    $year = null;
-                    $month = null;
-
-                    // 1. Try to extract 4-digit Year from the file path
-                    if (preg_match('/([12]\d{3})/', $filePath, $yearMatches)) {
-                        $year = $yearMatches[1];
-                    }
-
-                    // 2. Try to extract Month from the path (Arabic or English)
-                    $lowerPath = strtolower($filePath);
-                    foreach ($arabicMonthsMap as $monthName => $monthNum) {
-                        if (str_contains($filePath, $monthName)) {
-                            $month = $monthNum;
-                            break;
+        $allStorageboxFiles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 43200, function () {
+            $list = [];
+            try {
+                if (\Illuminate\Support\Facades\Storage::disk('storagebox')->exists('')) {
+                    $allFiles = \Illuminate\Support\Facades\Storage::disk('storagebox')->allFiles('');
+                    foreach ($allFiles as $filePath) {
+                        if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
+                            continue;
                         }
-                    }
-
-                    if (!$month) {
-                        foreach ($englishMonthsMap as $monthName => $monthNum) {
-                            if (str_contains($lowerPath, $monthName)) {
-                                $month = $monthNum;
-                                break;
-                            }
-                        }
-                    }
-
-                    // 3. Fallback: use file modification time
-                    if (!$year || !$month) {
                         try {
-                            $mtime = \Illuminate\Support\Facades\Storage::disk('storagebox')->lastModified($filePath);
-                            if (!$year) $year = date('Y', $mtime);
-                            if (!$month) $month = date('m', $mtime);
+                            $size = \Illuminate\Support\Facades\Storage::disk('storagebox')->size($filePath);
                         } catch (\Exception $e) {
-                            if (!$year) $year = date('Y');
-                            if (!$month) $month = date('m');
+                            $size = 0;
                         }
-                    }
 
-                    // Search filter matching
-                    if ($request->has('search') && $request->search != '') {
-                        $search = strtolower($request->search);
-                        if (!str_contains(strtolower($filePath), $search)) {
-                            continue;
-                        }
+                        $list[] = [
+                            'name' => basename($filePath),
+                            'path' => $filePath,
+                            'size' => $size,
+                        ];
                     }
-
-                    // Year filter
-                    if ($request->has('start_date') && $request->start_date != '') {
-                        $startDateYear = date('Y', strtotime($request->start_date));
-                        if ($year < $startDateYear) {
-                            continue;
-                        }
-                    }
-                    if ($request->has('end_date') && $request->end_date != '') {
-                        $endDateYear = date('Y', strtotime($request->end_date));
-                        if ($year > $endDateYear) {
-                            continue;
-                        }
-                    }
-
-                    // Build standard representation
-                    $legacyFiles[] = (object) [
-                        'is_legacy' => true,
-                        'title' => basename($filePath),
-                        'relative_path' => $filePath,
-                        'encrypted_path' => \Illuminate\Support\Facades\Crypt::encryptString($filePath),
-                        'subtitle' => dirname($filePath),
-                        'file_size' => \Illuminate\Support\Facades\Storage::disk('storagebox')->size($filePath),
-                        'year' => $year,
-                        'month' => $month,
-                        'meeting_date' => \Carbon\Carbon::createFromDate($year, $month, 1),
-                        'report_date' => \Carbon\Carbon::createFromDate($year, $month, 1),
-                        'is_exceptional' => false,
-                        'attachments' => collect(),
-                    ];
                 }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to list files from storagebox Archives: " . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to list files from storagebox: " . $e->getMessage());
-        }
-
-        $unifiedArchive = collect();
-
-        foreach ($reports as $report) {
-            $unifiedArchive->push((object) [
-                'is_legacy' => false,
-                'id' => $report->id,
-                'title' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'Committee Report',
-                'meeting_date' => $report->meeting_date,
-                'report_date' => $report->report_date ?? $report->created_at,
-                'is_exceptional' => $report->is_exceptional,
-                'meeting_day_description' => $report->meeting_day_description,
-                'attachments' => $report->attachments,
-                'year' => $report->meeting_date->format('Y'),
-                'month' => $report->meeting_date->format('m'),
-            ]);
-        }
-
-        foreach ($legacyFiles as $file) {
-            $unifiedArchive->push($file);
-        }
-
-        // Group by Year, then by Month, and sort keys/groups descending by meeting date
-        $archive = $unifiedArchive->sortByDesc(function ($item) {
-            return $item->meeting_date->timestamp;
-        })->groupBy('year')->map(function ($yearGroup) {
-            return $yearGroup->groupBy('month');
+            return $list;
         });
 
+        $filesAndDirs = [];
+        foreach ($allStorageboxFiles as $fileInfo) {
+            $filePath = $fileInfo['path'];
+
+            // Search filter
+            if ($request->has('search') && $request->search != '') {
+                $search = strtolower($request->search);
+                if (!str_contains(strtolower($filePath), $search)) {
+                    continue;
+                }
+            }
+
+            // Extract year for filtering
+            $fileYear = null;
+            if (preg_match('/([12]\d{3})/', $filePath, $yearMatches)) {
+                $fileYear = (int)$yearMatches[1];
+            }
+
+            if ($request->has('start_date') && $request->start_date != '') {
+                $startDateYear = date('Y', strtotime($request->start_date));
+                if ($fileYear && $fileYear < $startDateYear) {
+                    continue;
+                }
+            }
+            if ($request->has('end_date') && $request->end_date != '') {
+                $endDateYear = date('Y', strtotime($request->end_date));
+                if ($fileYear && $fileYear > $endDateYear) {
+                    continue;
+                }
+            }
+
+            $prefixedPath = str_starts_with($filePath, 'Archives/') ? $filePath : 'Archives/' . $filePath;
+
+            $filesAndDirs[] = [
+                'is_dir' => false,
+                'name' => $fileInfo['name'],
+                'path' => $prefixedPath,
+                'encrypted_path' => \Illuminate\Support\Facades\Crypt::encryptString($filePath),
+                'size' => $fileInfo['size'],
+            ];
+        }
+
+        // Add database reports virtual files if they match filters
+        foreach ($dbReports as $report) {
+            // Virtual path under: Archives/reports/{year}/{month}/report_{id}_{date}.pdf
+            $year = $report->meeting_date->format('Y');
+            $month = $report->meeting_date->format('m');
+            $dateStr = $report->meeting_date->format('Y-m-d');
+            $filename = sprintf('report_%d_%s.pdf', $report->id, $dateStr);
+            $virtualPath = "Archives/reports/{$year}/{$month}/{$filename}";
+
+            // Filter virtual reports by search/date matches if requested
+            if ($request->has('search') && $request->search != '') {
+                $search = strtolower($request->search);
+                $title = strtolower($report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? '');
+                if (!str_contains($title, $search) && !str_contains(strtolower($report->meeting_day_description), $search)) {
+                    continue;
+                }
+            }
+
+            $filesAndDirs[] = [
+                'is_dir' => false,
+                'name' => ($report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'Committee Report') . ' - ' . $dateStr . ' (' . $report->meeting_day_description . ').pdf',
+                'path' => $virtualPath,
+                'db_report_id' => $report->id,
+                'size' => 0, // dynamic
+            ];
+
+            // Add attachments
+            foreach ($report->attachments as $attachment) {
+                $originalName = basename($attachment->original_name);
+                $attFilename = sprintf('attachment_%d_%s', $attachment->id, $originalName);
+                $attVirtualPath = "Archives/attachments/{$year}/{$month}/{$attFilename}";
+
+                $filesAndDirs[] = [
+                    'is_dir' => false,
+                    'name' => $originalName,
+                    'path' => $attVirtualPath,
+                    'db_attachment_id' => $attachment->id,
+                    'size' => $attachment->file_size,
+                ];
+            }
+        }
+
+        // 3. Build a structured tree directory matching Archives structure
+        $tree = [];
+
+        foreach ($filesAndDirs as $file) {
+            $parts = explode('/', $file['path']);
+            // Remove 'Archives' root folder from path parts to display children of 'Archives' at root level
+            if (isset($parts[0]) && $parts[0] === 'Archives') {
+                array_shift($parts);
+            }
+
+            if (empty($parts)) {
+                continue;
+            }
+
+            $currentLevel = &$tree;
+            $accumulatedPath = 'Archives';
+
+            for ($i = 0; $i < count($parts) - 1; $i++) {
+                $dirName = $parts[$i];
+                $accumulatedPath .= '/' . $dirName;
+                if (!isset($currentLevel[$dirName])) {
+                    $currentLevel[$dirName] = [
+                        'is_dir' => true,
+                        'name' => $dirName,
+                        'path' => $accumulatedPath,
+                        'children' => [],
+                    ];
+                }
+                $currentLevel = &$currentLevel[$dirName]['children'];
+            }
+
+            $fileName = end($parts);
+            $currentLevel[$fileName] = [
+                'is_dir' => false,
+                'name' => $file['name'],
+                'path' => $file['path'],
+                'encrypted_path' => $file['encrypted_path'] ?? null,
+                'db_report_id' => $file['db_report_id'] ?? null,
+                'db_attachment_id' => $file['db_attachment_id'] ?? null,
+                'size' => $file['size'],
+            ];
+        }
+
+        // Helper function to recursively convert associative children arrays to indexed lists, sorted by folders first, then alphabetically
+        $sanitizeTree = function ($tree) use (&$sanitizeTree) {
+            $result = [];
+            foreach ($tree as $key => $node) {
+                if ($node['is_dir']) {
+                    $node['children'] = $sanitizeTree($node['children']);
+                }
+                $result[] = $node;
+            }
+
+            usort($result, function ($a, $b) {
+                if ($a['is_dir'] && !$b['is_dir']) return -1;
+                if (!$a['is_dir'] && $b['is_dir']) return 1;
+                return strcasecmp($a['name'], $b['name']);
+            });
+
+            return $result;
+        };
+
+        $archiveTree = $sanitizeTree($tree);
         $committees = ServiceCommittee::all();
 
-        return view('reports.archive', compact('archive', 'committees'));
+        return view('reports.archive', compact('archiveTree', 'committees'));
     }
 
     public function downloadStorageboxFile(Request $request)
@@ -790,6 +856,19 @@ class CommitteeReportController extends Controller
             // Path & File System Security check: ensure path is safe
             $safePath = basename($filePath);
             
+            $disposition = request()->query('disposition', 'attachment');
+            if (!in_array($disposition, ['attachment', 'inline'])) {
+                $disposition = 'attachment';
+            }
+
+            if ($disposition === 'inline') {
+                return response()->file(\Illuminate\Support\Facades\Storage::disk('storagebox')->path($filePath), [
+                    'Content-Type' => \Illuminate\Support\Facades\Storage::disk('storagebox')->mimeType($filePath) ?? 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="' . $safePath . '"',
+                    'X-Content-Type-Options' => 'nosniff',
+                ]);
+            }
+
             return \Illuminate\Support\Facades\Storage::disk('storagebox')->download(
                 $filePath,
                 $safePath,
