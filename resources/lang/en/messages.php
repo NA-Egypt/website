@@ -933,4 +933,7 @@ return [
     'Thank You!' => 'Thank You!',
     'Your response for :title has been successfully submitted.' => 'Your response for :title has been successfully submitted.',
     'Back to Homepage' => 'Back to Homepage',
+    'Section Header' => 'Section Header',
+    'Form Subtitle' => 'Form Subtitle',
+    'e.g. Please take 5 minutes to fill out this form' => 'e.g. Please take 5 minutes to fill out this form',
 ];

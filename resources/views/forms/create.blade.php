@@ -26,6 +26,11 @@
                             <input type="text" name="title" id="title" class="form-control" placeholder="{{ __('messages.e.g. Annual Member Survey') ?? 'e.g. Annual Member Survey' }}" required value="{{ old('title') }}" oninput="updatePreview()">
                         </div>
 
+                        <div class="mb-3">
+                            <label for="settings_subtitle" class="form-label fw-semibold small">{{ __('messages.Form Subtitle') ?? 'Form Subtitle' }}</label>
+                            <input type="text" name="settings[subtitle]" id="settings_subtitle" class="form-control" placeholder="{{ __('messages.e.g. Please take 5 minutes to fill out this form') ?? 'e.g. Please take 5 minutes to fill out this form' }}" value="{{ old('settings.subtitle') }}" oninput="updatePreview()">
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="type" class="form-label fw-semibold small">{{ __('messages.Form Type') ?? 'Form Type' }}</label>
@@ -110,7 +115,8 @@
                                     <div id="preview-icon-wrapper" class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary shadow-sm animate__animated animate__zoomIn" style="width: 72px; height: 72px; background-color: rgba(37, 99, 235, 0.1) !important;">
                                         <i id="preview-icon" class="bi bi-clipboard2-data" style="font-size: 2.25rem;"></i>
                                     </div>
-                                    <h4 id="preview-title" class="fw-bold mb-3" style="color: #0f172a !important; font-size: 1.5rem; letter-spacing: -0.5px;">Form Title</h4>
+                                    <h4 id="preview-title" class="fw-bold mb-2" style="color: #0f172a !important; font-size: 1.5rem; letter-spacing: -0.5px;">Form Title</h4>
+                                    <p id="preview-subtitle" class="text-secondary small mb-3" style="display: none;"></p>
                                     <span id="preview-type-badge" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(37, 99, 235, 0.1) !important; border-color: rgba(37, 99, 235, 0.2) !important;">Survey</span>
                                 </div>
 
@@ -166,6 +172,7 @@
                             <option value="select">{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
                             <option value="checkbox">{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
                             <option value="static_text">{{ __('messages.Static Text Block') ?? 'Static Text Block' }}</option>
+                            <option value="section_header">{{ __('messages.Section Header') ?? 'Section Header' }}</option>
                         </optgroup>
                         <optgroup label="{{ __('messages.Dynamic Database Controls') ?? 'Dynamic Database Controls' }}">
                             <option value="groups">{{ __('messages.Groups Select') ?? 'Groups Select' }}</option>
@@ -322,6 +329,10 @@
                 formattingContainer.classList.remove('d-none');
                 placeholderContainer.classList.add('d-none');
                 if (requiredSwitch) requiredSwitch.style.display = 'none';
+            } else if (select.value === 'section_header') {
+                formattingContainer.classList.add('d-none');
+                placeholderContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'none';
             } else {
                 formattingContainer.classList.add('d-none');
                 placeholderContainer.classList.remove('d-none');
@@ -385,6 +396,14 @@
             const titleInput = document.getElementById('title');
             const previewTitle = document.getElementById('preview-title');
             previewTitle.textContent = titleInput.value.trim() || 'Untitled Form';
+
+            // Update Subtitle
+            const subtitleInput = document.getElementById('settings_subtitle');
+            const previewSubtitle = document.getElementById('preview-subtitle');
+            if (previewSubtitle && subtitleInput) {
+                previewSubtitle.textContent = subtitleInput.value.trim();
+                previewSubtitle.style.display = subtitleInput.value.trim() ? 'block' : 'none';
+            }
 
             // Update Type Badge and Icon visibility
             const typeSelect = document.getElementById('type');
@@ -456,6 +475,20 @@
                     staticText.className = 'text-dark p-2 border border-dashed rounded-3';
                     staticText.style.background = 'rgba(0,0,0,0.01)';
                     fieldGroup.appendChild(staticText);
+                } else if (type === 'section_header') {
+                    const sectionHeader = document.createElement('div');
+                    sectionHeader.className = 'mt-4 mb-2 pb-2 border-bottom';
+                    const title = document.createElement('h6');
+                    title.className = 'fw-bold text-primary mb-1 d-flex align-items-center gap-1';
+                    title.innerHTML = '<i class="bi bi-folder2-open"></i> ' + label;
+                    sectionHeader.appendChild(title);
+                    if (description) {
+                        const desc = document.createElement('p');
+                        desc.className = 'text-muted small mb-0';
+                        desc.textContent = description;
+                        sectionHeader.appendChild(desc);
+                    }
+                    fieldGroup.appendChild(sectionHeader);
                 } else {
                     const fieldLabel = document.createElement('label');
                     fieldLabel.className = 'form-label fw-semibold small mb-1';

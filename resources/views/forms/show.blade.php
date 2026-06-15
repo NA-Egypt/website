@@ -195,11 +195,17 @@
                                 <i class="bi {{ $form->settings['icon'] ?? 'bi-clipboard2-data' }}" style="font-size: 2.25rem;"></i>
                             </div>
                             <h2 class="fw-bold mb-3" style="color: #0f172a !important; font-size: 1.85rem; letter-spacing: -0.5px;">{{ $form->title }}</h2>
+                            @if (!empty($form->settings['subtitle']))
+                                <p class="text-secondary mb-3">{{ $form->settings['subtitle'] }}</p>
+                            @endif
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(37, 99, 235, 0.1) !important; border-color: rgba(37, 99, 235, 0.2) !important;">
                                 {{ __('messages.Survey') ?? 'Survey' }}
                             </span>
                         @else
                             <h2 class="fw-bold mb-3" style="color: #0f172a !important; font-size: 1.85rem; letter-spacing: -0.5px;">{{ $form->title }}</h2>
+                            @if (!empty($form->settings['subtitle']))
+                                <p class="text-secondary mb-3">{{ $form->settings['subtitle'] }}</p>
+                            @endif
                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.2) !important;">
                                 {{ __('messages.Event Registration') ?? 'Event Registration' }}
                             </span>
@@ -212,67 +218,107 @@
                             @csrf
 
                             <div class="row g-4">
+                                @php
+                                    $sectionOpen = false;
+                                @endphp
                                 @foreach ($form->fields as $field)
                                     @php
                                         // All fields span full width (col-12) to match clean mobile vertical stacking
                                         $colClass = 'col-12';
                                         $isStatic = $field->type === 'static_text';
                                     @endphp
-                                    <div class="{{ $colClass }}">
-                                        @if (!$isStatic)
-                                            <label class="form-label fw-bold small mb-1 d-block" style="color: #0f172a !important;">
-                                                {{ $field->label }}
-                                                @if ($field->required)
-                                                    <span class="text-danger">*</span>
-                                                @endif
-                                            </label>
-                                            @if (!empty($field->options['description']))
-                                                <div class="text-muted small mb-2" style="font-size: 0.8rem; line-height: 1.4;">
-                                                    {{ $field->options['description'] }}
-                                                </div>
-                                            @endif
+
+                                    @if ($field->type === 'section_header')
+                                        @if ($sectionOpen)
+                                            </div></div></div></div> <!-- Close previous card body, row, card, and col-12 wrapper -->
                                         @endif
+                                        <div class="col-12 mt-4 mb-2">
+                                            <div class="card border-0 rounded-4 shadow-sm" style="background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(0,0,0,0.03) !important;">
+                                                <div class="card-header border-0 bg-transparent pt-4 px-4 pb-0">
+                                                    <h5 class="fw-bold mb-1 text-primary d-flex align-items-center gap-2">
+                                                        <i class="bi bi-folder2-open"></i> {{ $field->label }}
+                                                    </h5>
+                                                    @if (!empty($field->options['description']))
+                                                        <p class="text-muted small mb-0">{{ $field->options['description'] }}</p>
+                                                    @endif
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <div class="row g-3">
+                                        @php
+                                            $sectionOpen = true;
+                                        @endphp
+                                    @else
+                                        <div class="{{ $colClass }}">
+                                            @if (!$isStatic)
+                                                <label class="form-label fw-bold small mb-1 d-block" style="color: #0f172a !important;">
+                                                    {{ $field->label }}
+                                                    @if ($field->required)
+                                                        <span class="text-danger">*</span>
+                                                    @endif
+                                                </label>
+                                                @if (!empty($field->options['description']))
+                                                    <div class="text-muted small mb-2" style="font-size: 0.8rem; line-height: 1.4;">
+                                                        {{ $field->options['description'] }}
+                                                    </div>
+                                                @endif
+                                            @endif
 
-                                        @if ($field->type === 'text')
-                                            <div class="input-group-custom">
-                                                <span class="input-icon"><i class="bi bi-pencil-square"></i></span>
-                                                <input type="text" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
-                                            </div>
+                                            @if ($field->type === 'text')
+                                                <div class="input-group-custom">
+                                                    <span class="input-icon"><i class="bi bi-pencil-square"></i></span>
+                                                    <input type="text" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
+                                                </div>
 
-                                        @elseif ($field->type === 'textarea')
-                                            <div class="input-group-custom align-items-start">
-                                                <span class="input-icon mt-2.5"><i class="bi bi-chat-left-text"></i></span>
-                                                <textarea name="field_{{ $field->id }}" rows="4" class="form-control form-control-custom" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>{{ old('field_' . $field->id) }}</textarea>
-                                            </div>
+                                            @elseif ($field->type === 'textarea')
+                                                <div class="input-group-custom align-items-start">
+                                                    <span class="input-icon mt-2.5"><i class="bi bi-chat-left-text"></i></span>
+                                                    <textarea name="field_{{ $field->id }}" rows="4" class="form-control form-control-custom" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>{{ old('field_' . $field->id) }}</textarea>
+                                                </div>
 
-                                        @elseif ($field->type === 'phone')
-                                            <div>
-                                                <input type="tel" id="phone_{{ $field->id }}" name="field_{{ $field->id }}" class="form-control form-control-custom phone-input" placeholder="{{ $field->options['placeholder'] ?? '123 456 7890' }}" {{ $field->required ? 'required' : '' }} value="{{ old('field_' . $field->id) }}" style="width: 100%;">
-                                            </div>
+                                            @elseif ($field->type === 'phone')
+                                                <div>
+                                                    <input type="tel" id="phone_{{ $field->id }}" name="field_{{ $field->id }}" class="form-control form-control-custom phone-input" placeholder="{{ $field->options['placeholder'] ?? '123 456 7890' }}" {{ $field->required ? 'required' : '' }} value="{{ old('field_' . $field->id) }}" style="width: 100%;">
+                                                </div>
 
-                                        @elseif ($field->type === 'number')
-                                            <div class="input-group-custom">
-                                                <span class="input-icon"><i class="bi bi-hash"></i></span>
-                                                <input type="number" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
-                                            </div>
+                                            @elseif ($field->type === 'number')
+                                                <div class="input-group-custom">
+                                                    <span class="input-icon"><i class="bi bi-hash"></i></span>
+                                                    <input type="number" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
+                                                </div>
 
-                                        @elseif ($field->type === 'email')
-                                            <div class="input-group-custom">
-                                                <span class="input-icon"><i class="bi bi-envelope"></i></span>
-                                                <input type="email" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
-                                            </div>
+                                            @elseif ($field->type === 'email')
+                                                <div class="input-group-custom">
+                                                    <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                                                    <input type="email" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
+                                                </div>
 
-                                        @elseif ($field->type === 'date')
-                                            <div class="input-group-custom">
-                                                <span class="input-icon"><i class="bi bi-calendar3"></i></span>
-                                                <input type="date" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
-                                            </div>
+                                            @elseif ($field->type === 'date')
+                                                <div class="input-group-custom">
+                                                    <span class="input-icon"><i class="bi bi-calendar3"></i></span>
+                                                    <input type="date" name="field_{{ $field->id }}" class="form-control form-control-custom" value="{{ old('field_' . $field->id) }}" placeholder="{{ $field->options['placeholder'] ?? '' }}" {{ $field->required ? 'required' : '' }}>
+                                                </div>
 
-                                        @elseif ($field->type === 'select')
-                                            <div class="input-group-custom">
-                                                <span class="input-icon"><i class="bi bi-list-ul"></i></span>
-                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom" {{ $field->required ? 'required' : '' }}>
-                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Choose') ?? 'Choose an option...' }}</option>
+                                            @elseif ($field->type === 'select')
+                                                <div class="input-group-custom">
+                                                    <span class="input-icon"><i class="bi bi-list-ul"></i></span>
+                                                    <select name="field_{{ $field->id }}" class="form-select form-select-custom" {{ $field->required ? 'required' : '' }}>
+                                                        <option value="">{{ $field->options['placeholder'] ?? __('messages.Choose') ?? 'Choose an option...' }}</option>
+                                                        @if (is_array($field->options))
+                                                            @php
+                                                                $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
+                                                                $choices = array_filter($choices, function($val, $key) {
+                                                                    return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
+                                                                }, ARRAY_FILTER_USE_BOTH);
+                                                            @endphp
+                                                            @foreach ($choices as $option)
+                                                                <option value="{{ $option }}" {{ old('field_' . $field->id) === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+
+                                            @elseif ($field->type === 'checkbox')
+                                                <div class="d-flex flex-column gap-2">
                                                     @if (is_array($field->options))
                                                         @php
                                                             $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
@@ -281,97 +327,85 @@
                                                             }, ARRAY_FILTER_USE_BOTH);
                                                         @endphp
                                                         @foreach ($choices as $option)
-                                                            <option value="{{ $option }}" {{ old('field_' . $field->id) === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                            <label class="form-check-tile gap-3">
+                                                                <input type="checkbox" name="field_{{ $field->id }}[]" value="{{ $option }}" class="form-check-input flex-shrink-0" style="width: 1.25rem; height: 1.25rem;" id="check_{{ $field->id }}_{{ $loop->index }}" {{ is_array(old('field_' . $field->id)) && in_array($option, old('field_' . $field->id)) ? 'checked' : '' }}>
+                                                                <span class="small fw-semibold text-secondary">{{ $option }}</span>
+                                                            </label>
                                                         @endforeach
                                                     @endif
-                                                </select>
-                                            </div>
+                                                </div>
 
-                                        @elseif ($field->type === 'checkbox')
-                                            <div class="d-flex flex-column gap-2">
-                                                @if (is_array($field->options))
-                                                    @php
-                                                        $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
-                                                        $choices = array_filter($choices, function($val, $key) {
-                                                            return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
-                                                        }, ARRAY_FILTER_USE_BOTH);
-                                                    @endphp
-                                                    @foreach ($choices as $option)
-                                                        <label class="form-check-tile gap-3">
-                                                            <input type="checkbox" name="field_{{ $field->id }}[]" value="{{ $option }}" class="form-check-input flex-shrink-0" style="width: 1.25rem; height: 1.25rem;" id="check_{{ $field->id }}_{{ $loop->index }}" {{ is_array(old('field_' . $field->id)) && in_array($option, old('field_' . $field->id)) ? 'checked' : '' }}>
-                                                            <span class="small fw-semibold text-secondary">{{ $option }}</span>
-                                                        </label>
+                                            @elseif ($field->type === 'static_text')
+                                                @php
+                                                    $bold = !empty($field->options['bold']);
+                                                    $italic = !empty($field->options['italic']);
+                                                    $align = $field->options['align'] ?? 'left';
+                                                @endphp
+                                                <div style="font-weight: {{ $bold ? 'bold' : 'normal' }}; font-style: {{ $italic ? 'italic' : 'normal' }}; text-align: {{ $align }}; color: #334155; line-height: 1.6; margin-bottom: 0.5rem;">
+                                                    {!! nl2br(e($field->label)) !!}
+                                                </div>
+
+                                            @elseif ($field->type === 'groups')
+                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Group...') ?? 'Select Group...' }}</option>
+                                                    @foreach ($entities['groups'] ?? [] as $entity)
+                                                        @php
+                                                            $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
+                                                        @endphp
+                                                        <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
                                                     @endforeach
-                                                @endif
-                                            </div>
+                                                </select>
 
-                                        @elseif ($field->type === 'static_text')
-                                            @php
-                                                $bold = !empty($field->options['bold']);
-                                                $italic = !empty($field->options['italic']);
-                                                $align = $field->options['align'] ?? 'left';
-                                            @endphp
-                                            <div style="font-weight: {{ $bold ? 'bold' : 'normal' }}; font-style: {{ $italic ? 'italic' : 'normal' }}; text-align: {{ $align }}; color: #334155; line-height: 1.6; margin-bottom: 0.5rem;">
-                                                {!! nl2br(e($field->label)) !!}
-                                            </div>
+                                            @elseif ($field->type === 'cities')
+                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Select City...') ?? 'Select City...' }}</option>
+                                                    @foreach ($entities['cities'] ?? [] as $entity)
+                                                        @php
+                                                            $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
+                                                        @endphp
+                                                        <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
+                                                    @endforeach
+                                                </select>
 
-                                        @elseif ($field->type === 'groups')
-                                            <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Group...') ?? 'Select Group...' }}</option>
-                                                @foreach ($entities['groups'] ?? [] as $entity)
-                                                    @php
-                                                        $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
-                                                    @endphp
-                                                    <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
+                                            @elseif ($field->type === 'neighborhoods')
+                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Neighborhood...') ?? 'Select Neighborhood...' }}</option>
+                                                    @foreach ($entities['neighborhoods'] ?? [] as $entity)
+                                                        @php
+                                                            $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
+                                                        @endphp
+                                                        <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
+                                                    @endforeach
+                                                </select>
 
-                                        @elseif ($field->type === 'cities')
-                                            <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select City...') ?? 'Select City...' }}</option>
-                                                @foreach ($entities['cities'] ?? [] as $entity)
-                                                    @php
-                                                        $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
-                                                    @endphp
-                                                    <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
+                                            @elseif ($field->type === 'committees')
+                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Committee...') ?? 'Select Committee...' }}</option>
+                                                    @foreach ($entities['committees'] ?? [] as $entity)
+                                                        @php
+                                                            $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
+                                                        @endphp
+                                                        <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
+                                                    @endforeach
+                                                </select>
 
-                                        @elseif ($field->type === 'neighborhoods')
-                                            <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Neighborhood...') ?? 'Select Neighborhood...' }}</option>
-                                                @foreach ($entities['neighborhoods'] ?? [] as $entity)
-                                                    @php
-                                                        $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
-                                                    @endphp
-                                                    <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
-
-                                        @elseif ($field->type === 'committees')
-                                            <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Committee...') ?? 'Select Committee...' }}</option>
-                                                @foreach ($entities['committees'] ?? [] as $entity)
-                                                    @php
-                                                        $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
-                                                    @endphp
-                                                    <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
-
-                                        @elseif ($field->type === 'servicebodies')
-                                            <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
-                                                <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Service Body...') ?? 'Select Service Body...' }}</option>
-                                                @foreach ($entities['servicebodies'] ?? [] as $entity)
-                                                    @php
-                                                        $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
-                                                    @endphp
-                                                    <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-                                    </div>
+                                            @elseif ($field->type === 'servicebodies')
+                                                <select name="field_{{ $field->id }}" class="form-select form-select-custom select2" {{ $field->required ? 'required' : '' }}>
+                                                    <option value="">{{ $field->options['placeholder'] ?? __('messages.Select Service Body...') ?? 'Select Service Body...' }}</option>
+                                                    @foreach ($entities['servicebodies'] ?? [] as $entity)
+                                                        @php
+                                                            $name = app()->getLocale() === 'ar' ? ($entity->ar_name ?? $entity->en_name) : ($entity->en_name ?? $entity->ar_name);
+                                                        @endphp
+                                                        <option value="{{ $name }}" {{ old('field_' . $field->id) === $name ? 'selected' : '' }}>{{ $name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        </div>
+                                    @endif
                                 @endforeach
+                                @if ($sectionOpen)
+                                    </div></div></div></div> <!-- Close final card body, row, card, and col-12 wrapper -->
+                                @endif
                             </div>
 
                             <div class="d-grid mt-5">

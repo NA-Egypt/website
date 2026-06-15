@@ -73,6 +73,9 @@ class PublicFormController extends Controller
         $rules = [];
         $messages = [];
         foreach ($form->fields as $field) {
+            if (in_array($field->type, ['section_header', 'static_text'])) {
+                continue;
+            }
             $fieldName = 'field_' . $field->id;
             $rule = [];
             if ($field->required) {
@@ -98,6 +101,9 @@ class PublicFormController extends Controller
         // Map request inputs back to field IDs
         $submissionData = [];
         foreach ($form->fields as $field) {
+            if (in_array($field->type, ['section_header', 'static_text'])) {
+                continue;
+            }
             $fieldName = 'field_' . $field->id;
             $submissionData[$field->id] = $request->input($fieldName);
         }

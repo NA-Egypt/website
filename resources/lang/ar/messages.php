@@ -938,4 +938,7 @@ return [
     'Left' => 'يسار',
     'Center' => 'وسط',
     'Right' => 'يمين',
+    'Section Header' => 'عنوان القسم',
+    'Form Subtitle' => 'عنوان فرعي للنموذج',
+    'e.g. Please take 5 minutes to fill out this form' => 'مثال: يرجى تخصيص 5 دقائق لملء هذا النموذج',
 ];
