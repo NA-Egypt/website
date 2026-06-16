@@ -109,6 +109,11 @@ Route::group(
             Route::put('/meeting/{meeting}',[MeetingController::class,'update'])->name('meeting.update');
             Route::delete('/meeting/{meeting}',[MeetingController::class,'destroy'])->name('meeting.destroy');
 
+            // Meeting Export Routes:
+            Route::get('/meetings/export-print', [\App\Http\Controllers\MeetingExportController::class, 'wizard'])->name('meetings.export.wizard');
+            Route::get('/meetings/export-print/download', [\App\Http\Controllers\MeetingExportController::class, 'download'])->name('meetings.export.download');
+
+
             // Agenda Routes:
             Route::get('/agenda/create', [\App\Http\Controllers\AgendaController::class, 'create'])->name('agenda.create');
             Route::post('/agenda', [\App\Http\Controllers\AgendaController::class, 'store'])->name('agenda.store');

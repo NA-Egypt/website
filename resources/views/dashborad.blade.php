@@ -45,6 +45,14 @@
         </a>
       </div>
       {{-- / Committee Reports --}}
+
+      {{-- Export Meetings for Print --}}
+      <div class="col">
+        <a href="{{ route('meetings.export.wizard') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ app()->getLocale() === 'ar' ? 'تصدير للطباعة' : 'Export for Print' }}" qty="PDF" color-theme="primary" icon="printer" />
+        </a>
+      </div>
+      {{-- / Export Meetings for Print --}}
     </div>
     {{-- / Cards --}}
     {{-- / Cards --}}
