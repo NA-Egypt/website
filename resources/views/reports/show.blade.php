@@ -1,6 +1,32 @@
 <x-layout>
     <x-backhead>{{ __('messages.Report Details') }}</x-backhead>
 
+    <style>
+        .section-html-content {
+            overflow-x: auto;
+        }
+        .section-html-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .section-html-content table td, .section-html-content table th {
+            border: 1px solid var(--glass-border, #dee2e6);
+            padding: 10px 12px;
+            text-align: inherit;
+            vertical-align: top;
+        }
+        .section-html-content table th {
+            background-color: rgba(0, 0, 0, 0.03);
+            font-weight: bold;
+        }
+        .section-html-content table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.01);
+        }
+    </style>
+
     <div class="container mt-4">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -58,6 +84,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>{{ __('messages.Position') }}</th>
+                            <th>{{ __('messages.Member Name') }}</th>
                             <th>{{ __('messages.Status') }}</th>
                             <th>{{ __('messages.Election') }}</th>
                         </tr>
@@ -67,6 +94,7 @@
                             @foreach($report->positions_status as $pos)
                                 <tr>
                                     <td>{{ $pos['name'] ?? '-' }}</td>
+                                    <td>{{ $pos['member_name'] ?? '-' }}</td>
                                     <td>
                                         <span class="badge 
                                             @if(($pos['status']??'') == 'Present') bg-success 

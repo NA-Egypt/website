@@ -73,6 +73,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <thead>
                 <tr>
                     <th>{{ __('messages.Position') ?? 'Position' }}</th>
+                    <th>{{ __('messages.Member Name') ?? 'Member Name' }}</th>
                     <th>{{ __('messages.Status') ?? 'Status' }}</th>
                     <th>{{ __('messages.Election') ?? 'Election' }}</th>
                 </tr>
@@ -82,13 +83,14 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                     @foreach($report->positions_status as $pos)
                         <tr>
                             <td>{{ $pos['name'] ?? '-' }}</td>
+                            <td>{{ $pos['member_name'] ?? '-' }}</td>
                             <td>{{ $pos['status'] ?? '-' }}</td>
                             <td>{{ !empty($pos['election']) ? (__('messages.Open') ?? 'Open') : '-' }}</td>
                         </tr>
                     @endforeach
                 @else
                     <tr>
-                        <td colspan="3">{{ __('messages.No positions data') ?? 'No positions data' }}</td>
+                        <td colspan="4">{{ __('messages.No positions data') ?? 'No positions data' }}</td>
                     </tr>
                 @endif
             </tbody>

@@ -409,6 +409,8 @@ class CommitteeReportController extends Controller
         $html = view('reports.pdf', compact('reports'))->render();
         $mpdf->WriteHTML($html);
 
+        $filename = 'report_' . $report->id . '_' . ($report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d')) . '.pdf';
+
         $disposition = request()->query('disposition', 'attachment');
         if (!in_array($disposition, ['attachment', 'inline'])) {
             $disposition = 'attachment';
@@ -686,14 +688,39 @@ class CommitteeReportController extends Controller
             return $list;
         });
 
+        $committees = ServiceCommittee::all();
         $filesAndDirs = [];
         foreach ($allStorageboxFiles as $fileInfo) {
             $filePath = $fileInfo['path'];
 
+            // Committee filter for storagebox files
+            if ($request->has('committee_id') && $request->committee_id != '') {
+                $selectedCommittee = $committees->firstWhere('id', $request->committee_id);
+                if ($selectedCommittee) {
+                    $arName = $selectedCommittee->ar_name ? mb_strtolower($selectedCommittee->ar_name, 'UTF-8') : null;
+                    $enName = $selectedCommittee->en_name ? mb_strtolower($selectedCommittee->en_name, 'UTF-8') : null;
+                    $filePathLower = mb_strtolower($filePath, 'UTF-8');
+                    $fileNameLower = mb_strtolower($fileInfo['name'], 'UTF-8');
+                    
+                    $match = false;
+                    if ($arName && (str_contains($filePathLower, $arName) || str_contains($fileNameLower, $arName))) {
+                        $match = true;
+                    }
+                    if ($enName && (str_contains($filePathLower, $enName) || str_contains($fileNameLower, $enName))) {
+                        $match = true;
+                    }
+                    if (!$match) {
+                        continue;
+                    }
+                }
+            }
+
             // Search filter
             if ($request->has('search') && $request->search != '') {
-                $search = strtolower($request->search);
-                if (!str_contains(strtolower($filePath), $search)) {
+                $search = mb_strtolower($request->search, 'UTF-8');
+                $filename = mb_strtolower($fileInfo['name'], 'UTF-8');
+                $pathLower = mb_strtolower($filePath, 'UTF-8');
+                if (!str_contains($filename, $search) && !str_contains($pathLower, $search)) {
                     continue;
                 }
             }
@@ -739,9 +766,10 @@ class CommitteeReportController extends Controller
 
             // Filter virtual reports by search/date matches if requested
             if ($request->has('search') && $request->search != '') {
-                $search = strtolower($request->search);
-                $title = strtolower($report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? '');
-                if (!str_contains($title, $search) && !str_contains(strtolower($report->meeting_day_description), $search)) {
+                $search = mb_strtolower($request->search, 'UTF-8');
+                $title = mb_strtolower($report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? '', 'UTF-8');
+                $desc = mb_strtolower($report->meeting_day_description ?? '', 'UTF-8');
+                if (!str_contains($title, $search) && !str_contains($desc, $search)) {
                     continue;
                 }
             }
@@ -833,7 +861,6 @@ class CommitteeReportController extends Controller
         };
 
         $archiveTree = $sanitizeTree($tree);
-        $committees = ServiceCommittee::all();
 
         return view('reports.archive', compact('archiveTree', 'committees'));
     }

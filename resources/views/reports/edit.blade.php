@@ -77,6 +77,7 @@
                         <thead>
                             <tr>
                                 <th>{{ __('messages.Position Name') }}</th>
+                                <th>{{ __('messages.Member Name') }}</th>
                                 <th>{{ __('messages.Status') }}</th>
                                 <th>{{ __('messages.Open for Election') }}</th>
                                 <th></th>
@@ -182,10 +183,10 @@
     </form>
 
     <!-- Quill Styles -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     
     <!-- Scripts -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
         function deleteAttachment(id) {
             if (confirm("{{ __('messages.Are you sure you want to delete this attachment?') ?? 'Are you sure you want to delete this attachment?' }}")) {
@@ -217,8 +218,20 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">{{ __('messages.Section Content') ?? 'Section Content' }}</label>
-                            <div class="quill-editor" id="quill-editor-${sectionIndex}" style="height: 200px;"></div>
+                            <div class="quill-editor mb-2" id="quill-editor-${sectionIndex}" style="height: 250px;"></div>
                             <input type="hidden" name="sections[${sectionIndex}][content]" class="section-content-input" id="section-content-${sectionIndex}">
+                            
+                            <!-- Dynamic Table Action Controls -->
+                            <div class="table-controls p-2 border rounded bg-light d-none align-items-center gap-2 flex-wrap" id="table-controls-${sectionIndex}">
+                                <span class="badge bg-secondary py-2"><i class="bi bi-table"></i> {{ __('messages.Table Actions') ?? 'Table Actions' }}</span>
+                                <button type="button" class="btn btn-sm btn-outline-primary insert-row-above-btn"><i class="bi bi-arrow-bar-up"></i> Row Above</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary insert-row-below-btn"><i class="bi bi-arrow-bar-down"></i> Row Below</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary insert-column-left-btn"><i class="bi bi-arrow-bar-left"></i> Column Left</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary insert-column-right-btn"><i class="bi bi-arrow-bar-right"></i> Column Right</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-row-btn ms-md-auto"><i class="bi bi-trash"></i> Delete Row</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-column-btn"><i class="bi bi-trash"></i> Delete Col</button>
+                                <button type="button" class="btn btn-danger btn-sm delete-table-btn"><i class="bi bi-x-circle"></i> Delete Table</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -232,8 +245,10 @@
                             [{ 'header': [1, 2, false] }],
                             ['bold', 'italic', 'underline'],
                             ['image', 'code-block'],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }]
-                        ]
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['table']
+                        ],
+                        table: true
                     }
                 });
                 
@@ -244,6 +259,52 @@
                 quillEditors[sectionIndex] = quill;
                 
                 const currentIndex = sectionIndex;
+                const tableControls = card.querySelector('.table-controls');
+                const tableModule = quill.getModule('table');
+
+                card.querySelector('.insert-row-above-btn').addEventListener('click', () => tableModule.insertRowAbove());
+                card.querySelector('.insert-row-below-btn').addEventListener('click', () => tableModule.insertRowBelow());
+                card.querySelector('.insert-column-left-btn').addEventListener('click', () => tableModule.insertColumnLeft());
+                card.querySelector('.insert-column-right-btn').addEventListener('click', () => tableModule.insertColumnRight());
+                card.querySelector('.delete-row-btn').addEventListener('click', () => tableModule.deleteRow());
+                card.querySelector('.delete-column-btn').addEventListener('click', () => tableModule.deleteColumn());
+                card.querySelector('.delete-table-btn').addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete the entire table?')) {
+                        tableModule.deleteTable();
+                    }
+                });
+
+                function checkTableFocus(range) {
+                    if (range) {
+                        const formats = quill.getFormat(range);
+                        if (formats.table || formats['table-cell']) {
+                            tableControls.classList.remove('d-none');
+                            tableControls.classList.add('d-flex');
+                        } else {
+                            const [leaf] = quill.getLeaf(range.index);
+                            if (leaf && leaf.domNode && leaf.domNode.parentElement && leaf.domNode.parentElement.closest('table')) {
+                                tableControls.classList.remove('d-none');
+                                tableControls.classList.add('d-flex');
+                            } else {
+                                tableControls.classList.add('d-none');
+                                tableControls.classList.remove('d-flex');
+                            }
+                        }
+                    } else {
+                        tableControls.classList.add('d-none');
+                        tableControls.classList.remove('d-flex');
+                    }
+                }
+
+                quill.on('selection-change', function(range) {
+                    checkTableFocus(range);
+                });
+
+                quill.on('text-change', function() {
+                    const range = quill.getSelection();
+                    checkTableFocus(range);
+                });
+
                 card.querySelector('.remove-section-btn').addEventListener('click', function() {
                     if (document.querySelectorAll('.section-row').length > 1) {
                         card.remove();
@@ -300,11 +361,14 @@
             const addPositionBtn = document.getElementById('addPositionBtn');
             let positionIndex = 0;
 
-            function addPositionRow(name = '', status = '', election = false) {
+            function addPositionRow(name = '', status = '', election = false, memberName = '') {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
-                        <input type="text" name="positions[${positionIndex}][name]" class="form-control" placeholder="Position Name" value="${name}" required>
+                        <input type="text" name="positions[${positionIndex}][name]" class="form-control" value="${name}" required>
+                    </td>
+                    <td>
+                        <input type="text" name="positions[${positionIndex}][member_name]" class="form-control" value="${memberName}">
                     </td>
                     <td>
                         <select name="positions[${positionIndex}][status]" class="form-select" required>
@@ -335,10 +399,15 @@
             const existingPositions = {!! json_encode($report->positions_status) !!};
             if (existingPositions && existingPositions.length > 0) {
                 existingPositions.forEach(pos => {
-                    addPositionRow(pos.name, pos.status, pos.election);
+                    addPositionRow(pos.name, pos.status, pos.election, pos.member_name || '');
                 });
             } else {
-                const defaultPositions = ['Chairman', 'Vice Chairman', 'Secretary', 'Treasurer', 'RCM', 'RCM Alternate', 'Literature', 'Activities'];
+                const defaultPositions = [
+                    "{{ __('messages.Chairman') }}",
+                    "{{ __('messages.Vice Chairman') }}",
+                    "{{ __('messages.Secretary') }}",
+                    "{{ __('messages.Treasurer') }}"
+                ];
                 defaultPositions.forEach(pos => addPositionRow(pos));
             }
         });

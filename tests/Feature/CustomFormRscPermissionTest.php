@@ -22,7 +22,9 @@ class CustomFormRscPermissionTest extends TestCase
         ]);
 
         Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
-        Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
+        $rsc = Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
+        $permission = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'manage own forms', 'guard_name' => 'web']);
+        $rsc->givePermissionTo($permission);
     }
 
     public function test_rsc_role_can_view_all_forms_on_index()

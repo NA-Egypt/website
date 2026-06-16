@@ -5,17 +5,11 @@
         <!-- Advanced Filter & Search Card -->
         <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-primary">
-                        <i class="bi bi-funnel-fill me-2"></i>{{ __('messages.Filter Options') ?? 'Filter Options' }}
-                    </h5>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="{{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'true' : 'false' }}" aria-controls="filterCollapse">
-                        <i class="bi bi-filter"></i> {{ __('messages.Toggle Filters') ?? 'Toggle Filters' }}
-                    </button>
-                </div>
+                <h5 class="mb-0 fw-bold text-primary">
+                    <i class="bi bi-funnel-fill me-2"></i>{{ __('messages.Filter Options') ?? 'Filter Options' }}
+                </h5>
             </div>
-            <div class="collapse {{ request()->anyFilled(['search', 'committee_id', 'start_date', 'end_date', 'exceptional']) ? 'show' : '' }}" id="filterCollapse">
-                <div class="card-body p-4 border-top">
+            <div class="card-body p-4 border-top">
                     <form action="{{ route('committee-reports.archive') }}" method="GET" id="searchFilterForm">
                         <div class="row g-3">
                             <div class="col-12 col-md-6 col-lg-3">
@@ -60,7 +54,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
         </div>
 
         <!-- Folder Explorer Interface -->
@@ -159,98 +152,134 @@
             }
         }
 
-        function renderExplorer() {
-            const node = getNestedNodeByPath(currentPath);
-            const container = document.getElementById('folder-contents-list');
-            const breadcrumbs = document.getElementById('archive-breadcrumbs');
-            const countBadge = document.getElementById('items-count-badge');
-            
-            if (!node || !node.is_dir) {
-                container.innerHTML = `<div class="p-4 text-center text-muted"><i class="bi bi-exclamation-circle fs-3 d-block mb-2 text-warning"></i>Folder not found.</div>`;
-                return;
-            }
+          const isSearchActive = @json(request('search') != '' || request('committee_id') != '');
 
-            // Render Breadcrumbs
-            let breadcrumbsHtml = `<li class="breadcrumb-item"><a href="#" onclick="navigateToPath('Archives'); return false;" class="text-primary fw-semibold"><i class="bi bi-folder-fill me-1"></i></a></li>`;
-            let relativePathParts = currentPath.replace(/^Archives\/?/, '').split('/').filter(p => p !== '');
-            let runningPath = 'Archives';
-            
-            relativePathParts.forEach((part, index) => {
-                runningPath += '/' + part;
-                if (index === relativePathParts.length - 1) {
-                    breadcrumbsHtml += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
-                } else {
-                    breadcrumbsHtml += `<li class="breadcrumb-item"><a href="#" onclick="navigateToPath('${runningPath.replace(/'/g, "\\'") }'); return false;" class="text-primary fw-semibold">${part}</a></li>`;
-                }
-            });
-            breadcrumbs.innerHTML = breadcrumbsHtml;
+         function getFlattenedMatches(nodes) {
+             let matches = [];
+             nodes.forEach(node => {
+                 if (node.is_dir) {
+                     matches = matches.concat(getFlattenedMatches(node.children));
+                 } else {
+                     matches.push(node);
+                 }
+             });
+             return matches;
+         }
 
-            // Render List Items
-            let itemsHtml = '';
-            if (node.children && node.children.length > 0) {
-                countBadge.textContent = `${node.children.length} items`;
-                node.children.forEach(item => {
-                    if (item.is_dir) {
-                        itemsHtml += `
-                            <a href="#" onclick="navigateToPath('${item.path.replace(/'/g, "\\'") }'); return false;" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-3 border-bottom border-light">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi bi-folder-fill text-warning fs-4"></i>
-                                    <div>
-                                        <span class="fw-semibold text-dark d-block">${item.name}</span>
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right text-muted"></i>
-                            </a>
-                        `;
-                    } else {
-                        let downloadUrl = '';
-                        if (item.db_report_id) {
-                            downloadUrl = `{{ url('committee-reports') }}/${item.db_report_id}/pdf`;
-                        } else if (item.db_attachment_id) {
-                            downloadUrl = `{{ url('committee-reports/attachments') }}/${item.db_attachment_id}`;
-                        } else if (item.encrypted_path) {
-                            downloadUrl = `{{ route('committee-reports.downloadStorageboxFile') }}?file=${encodeURIComponent(item.encrypted_path)}`;
-                        }
+         function renderExplorer() {
+             let node = getNestedNodeByPath(currentPath);
+             const container = document.getElementById('folder-contents-list');
+             const breadcrumbs = document.getElementById('archive-breadcrumbs');
+             const countBadge = document.getElementById('items-count-badge');
+             
+             if (!node || !node.is_dir) {
+                 container.innerHTML = `<div class="p-4 text-center text-muted"><i class="bi bi-exclamation-circle fs-3 d-block mb-2 text-warning"></i>Folder not found.</div>`;
+                 return;
+             }
 
-                        let lowercaseName = item.name.toLowerCase();
-                        let isPdf = lowercaseName.endsWith('.pdf');
-                        let isOffice = lowercaseName.endsWith('.xlsx') || lowercaseName.endsWith('.xls') || lowercaseName.endsWith('.docx') || lowercaseName.endsWith('.doc');
+             // Render Breadcrumbs
+             let breadcrumbsHtml = `<li class="breadcrumb-item"><a href="#" onclick="navigateToPath('Archives'); return false;" class="text-primary fw-semibold"><i class="bi bi-folder-fill me-1"></i></a></li>`;
+             let relativePathParts = currentPath.replace(/^Archives\/?/, '').split('/').filter(p => p !== '');
+             let runningPath = 'Archives';
+             
+             relativePathParts.forEach((part, index) => {
+                 runningPath += '/' + part;
+                 if (index === relativePathParts.length - 1) {
+                     breadcrumbsHtml += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
+                 } else {
+                     breadcrumbsHtml += `<li class="breadcrumb-item"><a href="#" onclick="navigateToPath('${runningPath.replace(/'/g, "\\'") }'); return false;" class="text-primary fw-semibold">${part}</a></li>`;
+                 }
+             });
+             breadcrumbs.innerHTML = breadcrumbsHtml;
 
-                        itemsHtml += `
-                            <div class="list-group-item d-flex align-items-center justify-content-between p-3 border-bottom border-light">
-                                <div class="d-flex align-items-center gap-3 overflow-hidden me-2">
-                                    ${getFileIcon(item.name)}
-                                    <div class="text-truncate">
-                                        <span class="fw-medium text-dark d-block text-truncate" title="${item.name}">${item.name}</span>
-                                        ${item.size ? `<span class="text-muted small">${formatBytes(item.size)}</span>` : ''}
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-2 flex-shrink-0">
-                                    ${(isPdf || isOffice) ? `
-                                        <button type="button" onclick="previewDocument('${downloadUrl}', '${item.name.replace(/'/g, "\\'")}')" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                                            <i class="bi bi-eye-fill me-1"></i> Preview
-                                        </button>
-                                    ` : ''}
-                                    <a href="${downloadUrl}" class="btn btn-sm btn-outline-primary rounded-pill px-3" target="_blank">
-                                        <i class="bi bi-download me-1"></i> {{ __('messages.Download') ?? 'Download' }}
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-            } else {
-                    countBadge.textContent = '0 items';
-                    itemsHtml = `
-                        <div class="p-5 text-center text-muted">
-                            <i class="bi bi-folder-open fs-2 d-block mb-2 text-secondary"></i>
-                            {{ __('messages.No reports archived yet.') ?? 'This folder is empty.' }}
-                        </div>
-                    `;
-                }
+             // Render List Items
+             let itemsHtml = '';
+             let displayItems = node.children || [];
 
-                container.innerHTML = itemsHtml;
-            }
+             // If search is active, show flattened matching files directly at the current view
+             if (isSearchActive && currentPath === 'Archives') {
+                 displayItems = getFlattenedMatches(archiveTree);
+             }
+
+             if (displayItems && displayItems.length > 0) {
+                 countBadge.textContent = `${displayItems.length} items`;
+                 displayItems.forEach(item => {
+                     if (item.is_dir) {
+                         itemsHtml += `
+                             <a href="#" onclick="navigateToPath('${item.path.replace(/'/g, "\\'") }'); return false;" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-3 border-bottom border-light">
+                                 <div class="d-flex align-items-center gap-3">
+                                     <i class="bi bi-folder-fill text-warning fs-4"></i>
+                                     <div>
+                                         <span class="fw-semibold text-dark d-block">${item.name}</span>
+                                     </div>
+                                 </div>
+                                 <i class="bi bi-chevron-right text-muted"></i>
+                             </a>
+                         `;
+                     } else {
+                         let downloadUrl = '';
+                         if (item.db_report_id) {
+                             downloadUrl = `{{ url('committee-reports') }}/${item.db_report_id}/pdf`;
+                         } else if (item.db_attachment_id) {
+                             downloadUrl = `{{ url('committee-reports/attachments') }}/${item.db_attachment_id}`;
+                         } else if (item.encrypted_path) {
+                             downloadUrl = `{{ route('committee-reports.downloadStorageboxFile') }}?file=${encodeURIComponent(item.encrypted_path)}`;
+                         }
+
+                         let lowercaseName = item.name.toLowerCase();
+                         let isPdf = lowercaseName.endsWith('.pdf');
+                         let isOffice = lowercaseName.endsWith('.xlsx') || lowercaseName.endsWith('.xls') || lowercaseName.endsWith('.docx') || lowercaseName.endsWith('.doc');
+                         let isImage = lowercaseName.endsWith('.png') || lowercaseName.endsWith('.jpg') || lowercaseName.endsWith('.jpeg') || lowercaseName.endsWith('.gif');
+
+                         // Extract folder path for display in search results
+                         let itemFolderPath = '';
+                         if (isSearchActive) {
+                             let pathParts = item.path.split('/');
+                             pathParts.pop(); // remove filename
+                             if (pathParts[0] === 'Archives') pathParts.shift();
+                             if (pathParts.length > 0) {
+                                 itemFolderPath = `<span class="badge bg-light text-secondary border me-2">${pathParts.join(' &raquo; ')}</span>`;
+                             }
+                         }
+
+                         itemsHtml += `
+                             <div class="list-group-item d-flex align-items-center justify-content-between p-3 border-bottom border-light">
+                                 <div class="d-flex align-items-center gap-3 overflow-hidden me-2">
+                                     ${getFileIcon(item.name)}
+                                     <div class="text-truncate">
+                                         <span class="fw-medium text-dark d-block text-truncate mb-1" title="${item.name}">${item.name}</span>
+                                         <div class="d-flex align-items-center flex-wrap gap-1">
+                                             ${itemFolderPath}
+                                             ${item.size ? `<span class="text-muted small">${formatBytes(item.size)}</span>` : ''}
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="d-flex gap-2 flex-shrink-0">
+                                     ${(isPdf || isOffice || isImage) ? `
+                                         <button type="button" onclick="previewDocument('${downloadUrl}', '${item.name.replace(/'/g, "\\'")}')" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                             <i class="bi bi-eye-fill me-1"></i> Preview
+                                         </button>
+                                     ` : ''}
+                                     <a href="${downloadUrl}" class="btn btn-sm btn-outline-primary rounded-pill px-3" target="_blank">
+                                         <i class="bi bi-download me-1"></i> {{ __('messages.Download') ?? 'Download' }}
+                                     </a>
+                                 </div>
+                             </div>
+                         `;
+                     }
+                 });
+             } else {
+                     countBadge.textContent = '0 items';
+                     itemsHtml = `
+                         <div class="p-5 text-center text-muted">
+                             <i class="bi bi-folder-open fs-2 d-block mb-2 text-secondary"></i>
+                             {{ __('messages.No reports archived yet.') ?? 'This folder is empty.' }}
+                         </div>
+                     `;
+                 }
+
+                 container.innerHTML = itemsHtml;
+             }
 
             window.navigateToPath = function(path) {
                 currentPath = path;
@@ -262,14 +291,18 @@
                 const iframeContainer = document.getElementById('documentPreviewIframeContainer');
                 const docxContainer = document.getElementById('docxPreviewContainer');
                 const excelContainer = document.getElementById('excelPreviewContainer');
+                const imageContainer = document.getElementById('imagePreviewContainer');
                 const iframe = document.getElementById('documentPreviewIframe');
+                const img = document.getElementById('documentPreviewImg');
 
                 // Hide all containers initially
                 iframeContainer.classList.add('d-none');
                 docxContainer.classList.add('d-none');
                 excelContainer.classList.add('d-none');
+                imageContainer.classList.add('d-none');
                 docxContainer.innerHTML = '';
                 excelContainer.innerHTML = '';
+                img.src = '';
 
                 document.getElementById('documentPreviewModalLabel').textContent = filename;
                 const myModal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
@@ -279,6 +312,9 @@
                 if (lowercaseName.endsWith('.pdf')) {
                     iframeContainer.classList.remove('d-none');
                     iframe.src = url + (url.includes('?') ? '&' : '?') + 'disposition=inline';
+                } else if (lowercaseName.endsWith('.png') || lowercaseName.endsWith('.jpg') || lowercaseName.endsWith('.jpeg') || lowercaseName.endsWith('.gif')) {
+                    imageContainer.classList.remove('d-none');
+                    img.src = url + (url.includes('?') ? '&' : '?') + 'disposition=inline';
                 } else if (lowercaseName.endsWith('.docx') || lowercaseName.endsWith('.doc')) {
                     docxContainer.classList.remove('d-none');
                     docxContainer.innerHTML = '<div class="p-4 text-center text-muted"><div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>Parsing document...</div>';
@@ -356,6 +392,7 @@
                 if (modalEl) {
                     modalEl.addEventListener('hidden.bs.modal', function () {
                         document.getElementById('documentPreviewIframe').src = '';
+                        document.getElementById('documentPreviewImg').src = '';
                         document.getElementById('docxPreviewContainer').innerHTML = '';
                         document.getElementById('excelPreviewContainer').innerHTML = '';
                     });
@@ -367,14 +404,18 @@
     <div class="modal fade" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content rounded-4 overflow-hidden shadow-lg border-0">
-                <div class="modal-header bg-light border-bottom py-3">
+                <div class="modal-header bg-light border-bottom py-3 d-flex justify-content-between align-items-center">
                     <h5 class="modal-title fw-bold text-dark text-truncate" id="documentPreviewModalLabel">Document Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0 d-flex flex-column" style="height: 80vh;">
                     <!-- Dynamic IFrame container for PDF -->
                     <div id="documentPreviewIframeContainer" class="w-100 h-100 d-none">
                         <iframe id="documentPreviewIframe" src="" class="w-100 h-100 border-0"></iframe>
+                    </div>
+                    <!-- Dynamic Image container -->
+                    <div id="imagePreviewContainer" class="w-100 h-100 overflow-auto bg-white p-3 text-center d-none">
+                        <img id="documentPreviewImg" src="" alt="Image preview" class="img-fluid rounded shadow-sm border border-light" style="max-height: 100%;">
                     </div>
                     <!-- Dynamic Word parser div container -->
                     <div id="docxPreviewContainer" class="w-100 h-100 overflow-auto bg-white p-4 d-none"></div>

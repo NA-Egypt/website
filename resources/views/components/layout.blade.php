@@ -278,6 +278,36 @@ $hasSidebar = auth()->check() && (
             }, 300);
         });
     </script>
+    <!-- Archive Loading Overlay -->
+    <div id="page-loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="text-center p-4 rounded-4 shadow-lg border bg-white" style="max-width: 280px; width: 90%;">
+            <div class="spinner-border text-primary" role="status" style="width: 3.5rem; height: 3.5rem; border-width: 0.25em;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="mt-4 fw-bold text-dark mb-1">
+                {{ app()->getLocale() === 'ar' ? 'جاري التحميل...' : 'Loading Archive...' }}
+            </h5>
+            <p class="text-muted small mb-0">
+                {{ app()->getLocale() === 'ar' ? 'يرجى الانتظار قليلاً' : 'Please wait a moment' }}
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var archiveLinks = document.querySelectorAll('a[href*="committee-reports/archive"], a[href*="groups-agendas/archive"]');
+            archiveLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (e.button === 0 && !e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                        var overlay = document.getElementById('page-loading-overlay');
+                        if (overlay) {
+                            overlay.style.display = 'flex';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
