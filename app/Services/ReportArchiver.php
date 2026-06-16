@@ -35,9 +35,37 @@ class ReportArchiver
             // 1. Archive the PDF version of the report
             $pdfContent = $this->generatePdfContent($report);
             
-            // Sanitize filename to prevent directory traversal or injection
-            $pdfFilename = sprintf('report_%d_%s.pdf', $report->id, $dateStr);
-            $pdfPath = "reports/{$year}/{$month}/" . basename($pdfFilename);
+            // Get all approved reports for the same committee in the same month and year
+            $reportsInMonth = CommitteeReport::where('service_committee_id', $report->service_committee_id)
+                ->where('status', 'approved')
+                ->whereYear('meeting_date', $year)
+                ->whereMonth('meeting_date', $month)
+                ->orderBy('meeting_date', 'asc')
+                ->orderBy('id', 'asc')
+                ->pluck('id')
+                ->toArray();
+
+            // Ensure the current report is in the array if it is approved but not found (e.g. in transaction)
+            if (!in_array($report->id, $reportsInMonth) && $report->status === 'approved') {
+                $reportsInMonth[] = $report->id;
+            }
+
+            $totalReports = count($reportsInMonth);
+            $suffix = '';
+            if ($totalReports > 1) {
+                $index = array_search($report->id, $reportsInMonth);
+                $indexNumber = $index !== false ? $index + 1 : $totalReports;
+                $suffix = '_' . $indexNumber;
+            }
+
+            $committeeName = $report->serviceCommittee ? $report->serviceCommittee->ar_name : '';
+            // Remove path traversal characters
+            $committeeName = str_replace(['/', '\\', "\0"], '', $committeeName);
+            // Replace spaces with underscores
+            $cleanedCommitteeName = str_replace(' ', '_', $committeeName);
+
+            $pdfFilename = sprintf('تقريرـ%s_%s_%s%s.pdf', $cleanedCommitteeName, $month, $year, $suffix);
+            $pdfPath = "{$year}/{$month}/" . $pdfFilename;
 
             Storage::disk('storagebox')->put($pdfPath, $pdfContent);
             Log::info("ReportArchiver: Archived report PDF to {$pdfPath}");

@@ -607,4 +607,49 @@ class CommitteeReportWorkflowTest extends TestCase
         $response2->assertSee('Overridden custom report footer.');
         $response2->assertDontSee('This is the default committee footer text.');
     }
+
+    public function test_committee_report_archived_with_arabic_name_and_suffix()
+    {
+        Storage::fake('storagebox');
+
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user, [
+            'ar_name' => 'اللجنة الفنية المشتركة',
+        ]);
+
+        $report1 = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-06-15',
+            'meeting_day_description' => 'Monday',
+            'body' => 'Report body 1',
+            'status' => 'approved',
+        ]);
+
+        $archiver = new \App\Services\ReportArchiver();
+        $this->assertTrue($archiver->archive($report1));
+
+        // Since there is only one report for this committee in June 2026, it should not have a suffix
+        $expectedPath1 = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
+        Storage::disk('storagebox')->assertExists($expectedPath1);
+
+        // Add a second approved report in the same month
+        $report2 = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-06-20',
+            'meeting_day_description' => 'Saturday',
+            'body' => 'Report body 2',
+            'status' => 'approved',
+        ]);
+
+        // Archive both again (simulate sync / re-archiving when multiple exist)
+        $this->assertTrue($archiver->archive($report1));
+        $this->assertTrue($archiver->archive($report2));
+
+        // Now they should have _1 and _2 suffixes
+        $expectedPath1Suffix = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026_1.pdf';
+        $expectedPath2Suffix = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026_2.pdf';
+
+        Storage::disk('storagebox')->assertExists($expectedPath1Suffix);
+        Storage::disk('storagebox')->assertExists($expectedPath2Suffix);
+    }
 }
