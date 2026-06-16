@@ -12,3 +12,4 @@ globs:
 - **File Upload Safety:** Only allow specific safe file extensions (e.g. `pdf`, `png`, `jpg`, `docx`, `xlsx`). Verify the actual MIME type of uploaded files. Store uploaded assets outside the public web root unless explicitly intended.
 - **Secrets & Credentials:** Never commit API keys, client secrets, passwords, or credentials to version control. Reference environment variables via `env()` or `config()`.
 - **Azure AD Session Handling:** Ensure session states match and validate claims upon return from Azure AD callback.
+- **Database Safety Guardrail:** The agent must never run commands that perform destructive operations (e.g., `migrate:fresh`, `migrate:rollback`, `db:wipe`) on non-sqlite databases. The agent must never execute code, scripts, or migrations that truncate or drop database tables.
