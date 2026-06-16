@@ -1,0 +1,1 @@
+../../.antigravity/rules/frontend.md
