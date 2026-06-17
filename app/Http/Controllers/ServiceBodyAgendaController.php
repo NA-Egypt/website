@@ -54,8 +54,19 @@ class ServiceBodyAgendaController extends Controller
         if (!$user) {
             return true;
         }
-        // General users, GSRs, or other roles without RSC or own ServiceBody permissions
-        return $user->hasRole('gsr') || !$user->hasRole('super admin') && !$user->hasRole('rsc') && !$user->hasRole('ServiceBody');
+        
+        // Super Admin and RSC are never restricted
+        if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
+            return false;
+        }
+
+        // ServiceBody role (RCM) is not restricted
+        if ($user->hasRole('ServiceBody')) {
+            return false;
+        }
+
+        // Everyone else is restricted
+        return true;
     }
 
     protected function isAgendaVisibleToUser(ServiceBodyAgenda $agenda)
@@ -132,7 +143,7 @@ class ServiceBodyAgendaController extends Controller
                                                         });
                                                  });
                                           });
-                                });
+                                  });
                       })->orWhere(function($inner) use ($now) {
                           $inner->whereRaw("DAY(meeting_date) > 10")
                                 ->where(function($dateQ) use ($now) {
@@ -146,7 +157,7 @@ class ServiceBodyAgendaController extends Controller
                                                      $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
                                                  });
                                           });
-                                });
+                                  });
                       });
                   });
             });
@@ -157,12 +168,8 @@ class ServiceBodyAgendaController extends Controller
             }
             $query->where('service_body_id', $sb->id);
         } else {
-            // RSC sees submitted and approved
-            if ($user->hasRole('super admin')) {
-                $query->whereIn('status', ['draft', 'submitted', 'approved']);
-            } else {
-                $query->whereIn('status', ['submitted', 'approved']);
-            }
+            // RSC and Super Admin see all states (draft, submitted, approved)
+            $query->whereIn('status', ['draft', 'submitted', 'approved']);
             
             if ($request->has('service_body_id') && $request->service_body_id) {
                 $query->where('service_body_id', $request->service_body_id);
@@ -395,9 +402,14 @@ class ServiceBodyAgendaController extends Controller
         $suffix = $agenda->is_exceptional ? '_EX' : '';
         $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
 
+        $disposition = request()->query('disposition', 'attachment');
+        if (!in_array($disposition, ['attachment', 'inline'])) {
+            $disposition = 'attachment';
+        }
+
         return response($mpdf->Output($filename, 'S'), 200)
                ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+               ->header('Content-Disposition', $disposition . '; filename="' . $filename . '"');
     }
 
     public function approve($id)

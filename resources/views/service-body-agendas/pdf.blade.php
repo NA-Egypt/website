@@ -40,11 +40,20 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                     @endif
                 </td>
                 <td style="width: 40%; text-align: center;">
-                    <div style="font-size: 18px; font-weight: bold;">
-                        {{ $agenda->serviceBody->ar_name }}
+                    <div style="font-size: 18px; font-weight: bold;">        
+                        @php
+                            $arabicMonths = [
+                                1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
+                                7 => 'يوليو', 8 => 'أغسطس', 9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر'
+                            ];
+                            $year = $agenda->meeting_date->format('Y');
+                            $monthNum = (int)$agenda->meeting_date->format('m');
+                            $monthName = $arabicMonths[$monthNum] ?? $agenda->meeting_date->format('m');
+                        @endphp
+                        {{ $agenda->serviceBody->ar_name }} {{ $monthName }} {{ $year }}
                     </div>
                     <div style="font-size: 14px; color: #555; margin-top: 5px;">
-                        {{ __('messages.Service Body Agenda') ?? 'Service Body Agenda' }}
+                        <!-- {{ __('messages.Service Body Agenda') ?? 'Service Body Agenda' }} -->
                     </div>
                 </td>
                 <td style="width: 30%; text-align: right;">
@@ -57,16 +66,6 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div style="border-bottom: 2px solid #000; margin-bottom: 15px; margin-top: 5px;"></div>
 
         <div class="meta">
-            @php
-                $arabicMonths = [
-                    1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
-                    7 => 'يوليو', 8 => 'أغسطس', 9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر'
-                ];
-                $year = $agenda->meeting_date->format('Y');
-                $monthNum = (int)$agenda->meeting_date->format('m');
-                $monthName = $arabicMonths[$monthNum] ?? $agenda->meeting_date->format('m');
-            @endphp
-            <strong>{{ __('messages.Header') ?? 'Header' }}:</strong> {{ $agenda->serviceBody->ar_name }} {{ $monthName }} {{ $year }} <br>
             <strong>{{ __('messages.Agenda Writing Date') ?? 'Agenda Writing Date' }}:</strong> {{ $agenda->agenda_date->format('Y-m-d') }} <br>
             <strong>{{ __('messages.Meeting Date') ?? 'Meeting Date' }}:</strong> {{ $agenda->meeting_date->format('Y-m-d') }}
             @if($agenda->is_exceptional)
