@@ -26,7 +26,7 @@
                         <div class="text-center position-relative" style="flex: 1;">
                             <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 {{ $step >= 1 ? 'bg-primary text-white' : 'bg-light text-muted border' }}" style="width: 36px; height: 36px; font-weight: bold; border-width: 2px !important;">1</div>
                             <span class="small fw-semibold {{ $step >= 1 ? 'text-primary' : 'text-muted' }}">
-                                {{ app()->getLocale() === 'ar' ? 'الهيئات الخدمية' : 'Service Bodies' }}
+                                {{ app()->getLocale() === 'ar' ? 'المناطق والمنتديات' : 'Service Bodies' }}
                             </span>
                         </div>
                         <div class="flex-grow-1 border-top" style="border-width: 2px !important; border-color: {{ $step >= 2 ? '#3b82f6' : '#dee2e6' }} !important; margin-bottom: 20px;"></div>
@@ -43,7 +43,7 @@
                 @if($step == 1)
                     <div class="step-content">
                         <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
-                            {{ app()->getLocale() === 'ar' ? 'اختر الهيئات الخدمية لتضمينها في التقرير' : 'Select Service Bodies to include' }}
+                            {{ app()->getLocale() === 'ar' ? 'اختر المناطق والمنتديات لتضمينها في التقرير' : 'Select Service Bodies to include' }}
                         </h5>
                         
                         @error('selectedServiceBodies')
