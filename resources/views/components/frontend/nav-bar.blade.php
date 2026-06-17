@@ -27,13 +27,6 @@
 <nav class="main-nav" style="box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);">
     <section class="top-nav">
       <div class="container-fluid px-3 d-flex align-items-center justify-content-between h-100">
-        <!-- Logo -->
-        <div class="logo">
-          <a href="{{ route('frontend.home') }}">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img">
-          </a>
-        </div>
-  
         <!-- Calculate variables for both dropdowns -->
         @php
           $currentLocale = LaravelLocalization::getCurrentLocale();
@@ -79,7 +72,7 @@
             </a>
           </li>
           @if (Route::currentRouteName() !== 'contactus.create')
-          <li><a href="{{ route('contactus.create') }}" class="btn btn-outline-light"><x-fas-message style="width:16px; height:16px;"/>&nbsp;{{ __('messages.contactus') }}</a></li>
+          <li><a href="{{ route('contactus.create') }}" class="btn btn-outline-info"><x-fas-message style="width:16px; height:16px;"/>&nbsp;{{ __('messages.contactus') }}</a></li>
           @endif
           <!-- Language Switcher -->
           @if ($localeCode && $properties)
@@ -173,18 +166,6 @@
 
           <!-- Desktop Actions -->
           <div class="d-flex align-items-center gap-3">
-             <a href="{{ route('contactus.create') }}" class="btn btn-sm btn-outline-light rounded-pill px-3">
-               <x-fas-message style="width:14px; height:14px;"/>&nbsp;{{ __('messages.contactus') }}
-             </a>
-
-              <!-- Language Switcher Desktop -->
-              @if ($localeCode && $properties)
-                <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-outline-warning rounded-pill px-3">
-                  <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="16" height="12">
-                  <span>{{ $properties['native'] }}</span>
-                </a>
-              @endif
-
               <!-- Account Desktop -->
               <div class="dropdown">
                 <button class="btn btn-sm btn-outline-light rounded-pill px-3 dropdown-toggle" type="button" id="desktopUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -221,9 +202,30 @@
                   @endauth
                 </ul>
               </div>
+
+              <!-- Language Switcher Desktop -->
+              @if ($localeCode && $properties)
+                <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                   <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="16" height="12">
+                   <span>{{ $properties['native'] }}</span>
+                </a>
+              @endif
+
+              <a href="{{ route('contactus.create') }}" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                <x-fas-message style="width:14px; height:14px;"/>&nbsp;{{ __('messages.contactus') }}
+              </a>
           </div>
+        </div>
+
+        <!-- Logo -->
+        <div class="logo">
+          <a href="{{ route('frontend.home') }}">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img">
+          </a>
         </div>
 
       </div>
     </section>
   </nav>
+
+
