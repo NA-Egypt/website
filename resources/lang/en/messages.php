@@ -984,4 +984,5 @@ return [
     'Return to Draft' => 'Return to Draft',
     'Edit Draft' => 'Edit Draft',
     'No agendas found.' => 'No agendas found.',
+    'Login to your email' => 'Login to your email',
 ];

@@ -118,6 +118,12 @@
               @else
                 <li><a class="dropdown-item" href="{{ url('/login/microsoft') }}">{{ __('messages.Login') }} <x-fas-sign-in-alt style="width:16px; height:16px;"/></a></li>
               @endauth
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="https://outlook.com/naegypt.org" target="_blank" rel="noopener noreferrer">
+                  {{ __('messages.Login to your email') }} <x-fas-envelope style="width:16px; height:16px;"/>
+                </a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -171,7 +177,7 @@
                 <button class="btn btn-sm btn-outline-light rounded-pill px-3 dropdown-toggle" type="button" id="desktopUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                   <x-fas-user style="width:14px; height:14px;"/>&nbsp;{{ __('messages.Account') }}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="desktopUserDropdown">
+                 <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="desktopUserDropdown">
                   <li class="py-2">
                     <img src="{{ asset('assets/images/icons/na-logo.png') }}" alt="" class="rounded-circle" width="40" height="40">
                   </li>
@@ -200,6 +206,12 @@
                   @else
                     <li><a class="dropdown-item" href="{{ url('/login/microsoft') }}">{{ __('messages.Login') }} <x-fas-sign-in-alt style="width:16px; height:16px;"/></a></li>
                   @endauth
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="https://outlook.com/naegypt.org" target="_blank" rel="noopener noreferrer">
+                      {{ __('messages.Login to your email') }} <x-fas-envelope style="width:16px; height:16px;"/>
+                    </a>
+                  </li>
                 </ul>
               </div>
 
