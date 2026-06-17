@@ -32,6 +32,7 @@ class ServiceBodyRequest extends FormRequest
             'location'      => 'required',
             'recurrence'    => 'nullable|array',
             'recurrence.*'  => 'in:1st,monthly',
+            'logo'          => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ];
     }
 

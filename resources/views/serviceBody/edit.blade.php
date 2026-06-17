@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-8">
                 <div class="glass-card p-4 p-md-5">
-                    <form action="{{ route('serviceBody.update', $serviceBody->id) }}" method="post">
+                    <form action="{{ route('serviceBody.update', $serviceBody->id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -80,6 +80,28 @@
                                 <div class="col-12">
                                     <x-forms.input name="location" label="{{ __('messages.Location')}}" :value="$serviceBody->location"/>
                                 </div>
+                                <div class="col-12">
+                                    <div class="mb-3 p-3 rounded-3" style="border: 1px dashed var(--glass-border); background: rgba(0,0,0,0.01);">
+                                        <label for="logo" class="form-label fw-bold d-flex align-items-center">
+                                            <i class="bi bi-image me-2 text-info"></i>
+                                            {{ __('messages.Service Body Logo') ?? 'Service Body Logo' }}
+                                        </label>
+                                        <input type="file" name="logo" id="logo" class="form-control mb-3" accept="image/png, image/jpeg, image/jpg">
+                                        <div class="form-text text-muted mb-3">{{ __('messages.Allowed types: PNG, JPG, JPEG. Max size 2MB.') ?? 'Allowed types: PNG, JPG, JPEG. Max size 2MB.' }}</div>
+                                        
+                                        <!-- Current / Preview Logo Area -->
+                                        <div id="logo-preview-container" class="mt-2 {{ $serviceBody->logo ? '' : 'd-none' }}">
+                                            <p class="text-secondary small mb-1" id="logo-preview-label">
+                                                {{ $serviceBody->logo ? (__('messages.Current Logo') ?? 'Current Logo') : (__('messages.Logo Preview') ?? 'Logo Preview') }}:
+                                            </p>
+                                            <img id="logo-preview" 
+                                                 src="{{ $serviceBody->logo ? asset('storage/' . $serviceBody->logo) : '#' }}" 
+                                                 alt="Logo Preview" 
+                                                 class="img-thumbnail" 
+                                                 style="max-height: 150px; border-radius: 8px;">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -92,4 +114,28 @@
         </div>
     </div>
 
+    <!-- Client-side image preview script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoInput = document.getElementById('logo');
+            const previewContainer = document.getElementById('logo-preview-container');
+            const previewImage = document.getElementById('logo-preview');
+            const previewLabel = document.getElementById('logo-preview-label');
+
+            if (logoInput) {
+                logoInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImage.setAttribute('src', e.target.result);
+                            previewLabel.textContent = "{{ __('messages.Logo Preview') ?? 'Logo Preview' }}:";
+                            previewContainer.classList.remove('d-none');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+    </script>
 </x-layout>

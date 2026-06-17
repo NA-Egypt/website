@@ -28,9 +28,14 @@ class ServiceBodyController extends Controller
 
     public function store(ServiceBodyRequest $request) {
 
-        $validatedData = $request->validated();
+        $fields = $request->except('logo');
 
-        ServiceBody::create($validatedData);
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('logos', 'public');
+            $fields['logo'] = $path;
+        }
+
+        ServiceBody::create($fields);
 
         return redirect()->route('serviceBody.index');
 
@@ -44,7 +49,15 @@ class ServiceBodyController extends Controller
 
     public function update(ServiceBodyRequest $request, ServiceBody $serviceBody) {
 
-        $fields = $request->validated();
+        $fields = $request->except('logo');
+
+        if ($request->hasFile('logo')) {
+            if ($serviceBody->logo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($serviceBody->logo);
+            }
+            $path = $request->file('logo')->store('logos', 'public');
+            $fields['logo'] = $path;
+        }
 
         $serviceBody->update($fields);
 

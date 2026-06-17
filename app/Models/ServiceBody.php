@@ -20,11 +20,16 @@ class ServiceBody extends Model
         'end_time',
         'location',
         'recurrence',
+        'logo',
     ];
 
     protected $casts = [
         'recurrence' => 'array',
     ];
+
+    public function serviceBodyAgendas() {
+        return $this->hasMany(ServiceBodyAgenda::class);
+    }
 
     public function groups() {
         return $this->hasMany(Group::class);

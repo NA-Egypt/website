@@ -184,6 +184,13 @@ Route::group(
             Route::post('committee-reports/{id}/approve-and-send', [\App\Http\Controllers\CommitteeReportController::class, 'approveAndSend'])->name('committee-reports.approveAndSend');
             Route::post('committee-reports/{id}/return-to-draft', [\App\Http\Controllers\CommitteeReportController::class, 'returnToDraft'])->name('committee-reports.returnToDraft');
 
+            // Service Body Agendas:
+            Route::get('service-body-agendas/archive', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'archive'])->name('service-body-agendas.archive');
+            Route::resource('service-body-agendas', \App\Http\Controllers\ServiceBodyAgendaController::class);
+            Route::get('service-body-agendas/{id}/pdf', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'pdf'])->name('service-body-agendas.pdf');
+            Route::post('service-body-agendas/{id}/approve', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'approve'])->name('service-body-agendas.approve');
+            Route::post('service-body-agendas/{id}/return-to-draft', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'returnToDraft'])->name('service-body-agendas.returnToDraft');
+
             // Calendar
             Route::get('/calendar', \App\Livewire\YearlyCalendar::class)->name('calendar.index');
 

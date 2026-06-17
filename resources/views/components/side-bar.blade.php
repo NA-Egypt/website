@@ -277,6 +277,25 @@
       </li>
       @endif
 
+      {{-- Service Body Agendas Area --}}
+      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc')))
+      <li class="menu-label">{{ __('messages.Service Body Agendas') ?? 'Service Body Agendas' }}</li>
+      <li>
+        <a href="{{ route('service-body-agendas.index') }}">
+          <div class="parent-icon"><i class="bi bi-file-earmark-medical"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Service Body Agendas') ?? 'Service Body Agendas' }}</div>
+        </a>
+      </li>
+      <li>
+        <a href="{{ route('service-body-agendas.archive') }}">
+          <div class="parent-icon"><i class="bi bi-archive-fill"></i>
+          </div>
+          <div class="menu-title">{{ __('messages.Service Body Agendas Archive') ?? 'Service Body Agendas Archive' }}</div>
+        </a>
+      </li>
+      @endif
+
       {{-- Calendar Area --}}
       <li class="menu-label">{{ __('messages.Calendar') }}</li>
       <li>
