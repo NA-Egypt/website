@@ -28,16 +28,16 @@
             @if($pageSize === 'A5')
                 font-size: 8px;
                 padding: 3px 6px;
-                border-right: 2px solid #00698f;
+                /* border-right: 2px solid #00698f; */
             @else
                 font-size: 10px;
                 padding: 4px 8px;
-                border-right: 3px solid #00698f;
+                /* border-right: 3px solid #00698f; */
             @endif
             font-weight: bold;
             background-color: #f2f7fa;
             color: #00698f;
-            text-align: right;
+            text-align: center;
         }
         table {
             width: 100%;
@@ -55,7 +55,7 @@
             @else
                 padding: 4px 6px;
             @endif
-            text-align: right;
+            text-align: center;
             vertical-align: middle;
         }
         th {
@@ -66,7 +66,11 @@
         tr:nth-child(even) {
             background-color: #fafafa;
         }
+        tr {
+            page-break-inside: avoid;
+        }
         .group-table-section {
+            page-break-inside: avoid;
             @if($pageSize === 'A5')
                 margin-top: 15px;
             @else
@@ -128,7 +132,7 @@
     <table style="width: 100%; border: none; margin: 0; padding: 0; table-layout: fixed;" cellpadding="0" cellspacing="0">
         <tr>
             <!-- Column 1 (Right): Sat, Sun, Mon, Tue Part 1 -->
-            <td width="49%" style="vertical-align: top; border: none; padding: 0 0 0 5px;">
+            <td width="49%" style="vertical-align: top; border: none; padding: 0 0 0 5px; text-align: center;">
                 @if($satMeetings->isNotEmpty())
                     @include('exports.meetings-day-table-partial', ['dayName' => 'السبت', 'meetings' => $satMeetings])
                 @endif
@@ -145,7 +149,7 @@
             <!-- Column spacing gap -->
             <td width="2%" style="border: none;"></td>
             <!-- Column 2 (Left): Tue Part 2, Wed, Thu, Fri -->
-            <td width="49%" style="vertical-align: top; border: none; padding: 0 5px 0 0;">
+            <td width="49%" style="vertical-align: top; border: none; padding: 0 5px 0 0; text-align: center">
                 @if($tuePart2->isNotEmpty())
                     @include('exports.meetings-day-table-partial', ['dayName' => $k > 0 ? 'الثلاثاء (تابع)' : 'الثلاثاء', 'meetings' => $tuePart2])
                 @endif
@@ -168,10 +172,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="30%">اسم المجموعة</th>
-                        <th width="20%">ممثل المجموعة (GSR)</th>
-                        <th width="20%">رقم الهاتف</th>
-                        <th width="30%">العنوان</th>
+                        <th width="10%">المجموعة</th>
+                        <th width="10%">ممثل المجموعة</th>
+                        <th width="10%">رقم الهاتف</th>
+                        <th width="70%">العنوان</th>
                     </tr>
                 </thead>
                 <tbody>

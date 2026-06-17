@@ -69,6 +69,7 @@ return [
     'No meetings found' => 'No meetings found',
     'Clear Filters' => 'Clear Filters',
     'Choose Type' => 'Choose Type',
+    'all' => 'All',
     'Search meetings' => 'Search in displayed meetings',
     'Admin Panel' => 'Admin Panel',
     'Home' => 'Home',

@@ -19,23 +19,41 @@ class MeetingExportController extends Controller
     public function download(Request $request)
     {
         $request->validate([
-            'service_bodies' => 'required|array',
+            'export_type' => 'required|string|in:cities,service_bodies',
+            'service_bodies' => 'required_if:export_type,service_bodies|array|max:2',
             'service_bodies.*' => 'exists:service_bodies,id',
+            'cities' => 'required_if:export_type,cities|array|max:3',
+            'cities.*' => 'exists:cities,id',
             'fields' => 'required|array',
+            'page_size' => 'nullable|string|in:A4,A5',
         ]);
 
-        $serviceBodyIds = $request->input('service_bodies');
+        $exportType = $request->input('export_type');
         $fields = $request->input('fields');
 
-        // Fetch meetings belonging to selected service bodies, excluding online ones
-        $meetings = Meeting::whereHas('group', function($q) use ($serviceBodyIds) {
-            $q->whereIn('service_body_id', $serviceBodyIds)
-              ->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
-        })
-        ->where('status', 'available')
-        ->notMonthlyRecurrent()
-        ->with(['group', 'day', 'topic', 'topics'])
-        ->get();
+        if ($exportType === 'cities') {
+            $cityIds = $request->input('cities');
+            $meetings = Meeting::whereHas('group.neighborhood', function($q) use ($cityIds) {
+                $q->whereIn('city_id', $cityIds);
+            })
+            ->whereHas('group', function($q) {
+                $q->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+            })
+            ->where('status', 'available')
+            ->notMonthlyRecurrent()
+            ->with(['group', 'day', 'topic', 'topics'])
+            ->get();
+        } else {
+            $serviceBodyIds = $request->input('service_bodies');
+            $meetings = Meeting::whereHas('group', function($q) use ($serviceBodyIds) {
+                $q->whereIn('service_body_id', $serviceBodyIds)
+                  ->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+            })
+            ->where('status', 'available')
+            ->notMonthlyRecurrent()
+            ->with(['group', 'day', 'topic', 'topics'])
+            ->get();
+        }
 
         // Group meetings by day name in Arabic
         $meetingsByDay = [];

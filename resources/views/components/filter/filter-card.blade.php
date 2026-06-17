@@ -22,7 +22,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         height: 100% !important;
         width: 100% !important;
         min-height: 360px !important;
-        padding: 20px !important; /* Premium inside margins */
+        padding: 14px !important; /* Sane default padding for mobile */
         border-radius: 20px !important;
         background: #ffffff;
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
@@ -30,6 +30,12 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         overflow-wrap: break-word !important; /* Prevent text overflow */
         word-wrap: break-word !important;
         hyphens: auto;
+    }
+
+    @media (min-width: 576px) {
+        .meeting-item-suspended, .meeting-item {
+            padding: 24px !important; /* Premium larger padding on desktop */
+        }
     }
     
     .meeting-item:hover {
@@ -85,7 +91,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         opacity: 0.8;
     }
 </style>
-<div class="container px-4 justify-content-center" style="max-width: 1140px;">
+<div class="px-1 px-sm-3 justify-content-center" style="max-width: 1140px; width: 100%;">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4 {{ $meetings->count() === 1 ? 'justify-content-center' : '' }}">

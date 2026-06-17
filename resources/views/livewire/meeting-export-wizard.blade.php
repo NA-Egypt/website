@@ -1,7 +1,12 @@
-<div class="container-fluid py-4" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
-            <div class="glass-card shadow-lg p-4">
+<div class="w-100" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+    @if($isModal)
+        <div class="p-4">
+    @else
+        <div class="container-fluid py-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="glass-card shadow-lg p-4">
+    @endif
                 
                 {{-- Wizard Header --}}
                 <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center">
@@ -13,10 +18,11 @@
                             {{ app()->getLocale() === 'ar' ? 'قم بإعداد وتصدير قائمة الاجتماعات في ملف PDF منسق للطباعة.' : 'Prepare and export meetings list in a print-ready A4 PDF format.' }}
                         </p>
                     </div>
-                    <div>
+                    <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-primary px-3 py-2 rounded-pill fs-6">
                             {{ app()->getLocale() === 'ar' ? 'الخطوة' : 'Step' }} {{ $step }} / 2
                         </span>
+                        <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
 
@@ -39,35 +45,77 @@
                     </div>
                 </div>
 
-                {{-- Step 1: Choose Service Bodies --}}
+                {{-- Step 1: Choose Criteria --}}
                 @if($step == 1)
                     <div class="step-content">
-                        <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
-                            {{ app()->getLocale() === 'ar' ? 'اختر المناطق والمنتديات لتضمينها في التقرير' : 'Select Service Bodies to include' }}
-                        </h5>
                         
-                        @error('selectedServiceBodies')
-                            <div class="alert alert-danger p-2 small mb-3">{{ $message }}</div>
-                        @enderror
-
-                        <div class="card p-3 mb-4 neo-scrollbar" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.01) !important;">
-                            <div class="row g-2">
-                                @forelse($serviceBodies as $sb)
-                                    <div class="col-md-6">
-                                        <div class="form-check neo-list-item border p-2 d-flex align-items-center gap-2" style="cursor: pointer; border-radius: 8px; border-color: var(--glass-border) !important;">
-                                            <input class="form-check-input ms-0 me-2" type="checkbox" value="{{ $sb['id'] }}" id="sb-{{ $sb['id'] }}" wire:model="selectedServiceBodies">
-                                            <label class="form-check-label w-100 text-start" for="sb-{{ $sb['id'] }}" style="cursor: pointer; color: var(--text-primary);">
-                                                {{ app()->getLocale() === 'ar' ? ($sb['ar_name'] ?: $sb['en_name']) : ($sb['en_name'] ?: $sb['ar_name']) }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="col-12 text-center text-muted py-3">
-                                        {{ app()->getLocale() === 'ar' ? 'لا يوجد هيئات خدمية متاحة.' : 'No service bodies available.' }}
-                                    </div>
-                                @endforelse
-                            </div>
+                        {{-- Selection Mode Toggle --}}
+                        <div class="mb-4 d-flex justify-content-center gap-3">
+                            <button type="button" wire:click="$set('exportType', 'service_bodies')" 
+                                class="btn {{ $exportType === 'service_bodies' ? 'btn-primary' : 'btn-outline-secondary' }} px-4 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-diagram-3 me-1"></i>{{ app()->getLocale() === 'ar' ? 'تصفية حسب المناطق والمنتديات' : 'Filter by Service Bodies' }}
+                            </button>
+                            <button type="button" wire:click="$set('exportType', 'cities')" 
+                                class="btn {{ $exportType === 'cities' ? 'btn-primary' : 'btn-outline-secondary' }} px-4 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-geo-alt me-1"></i>{{ app()->getLocale() === 'ar' ? 'تصفية حسب المدن' : 'Filter by Cities' }}
+                            </button>
                         </div>
+
+                        @if($exportType === 'service_bodies')
+                            <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
+                                {{ app()->getLocale() === 'ar' ? 'اخترالمناطق والمنتديات لتضمينها في التقرير (حد أقصى: ٢)' : 'Select Service Bodies to include (Max: 2)' }}
+                            </h5>
+                            
+                            @error('selectedServiceBodies')
+                                <div class="alert alert-danger p-2 small mb-3">{{ $message }}</div>
+                            @enderror
+
+                            <div class="card p-3 mb-4 neo-scrollbar" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.01) !important;">
+                                <div class="row g-2">
+                                    @forelse($serviceBodies as $sb)
+                                        <div class="col-md-6">
+                                            <div class="form-check neo-list-item border p-2 d-flex align-items-center gap-2" style="cursor: pointer; border-radius: 8px; border-color: var(--glass-border) !important;">
+                                                <input class="form-check-input ms-0 me-2" type="checkbox" value="{{ $sb['id'] }}" id="sb-{{ $sb['id'] }}" wire:model.live="selectedServiceBodies">
+                                                <label class="form-check-label w-100 text-start" for="sb-{{ $sb['id'] }}" style="cursor: pointer; color: var(--text-primary);">
+                                                    {{ app()->getLocale() === 'ar' ? ($sb['ar_name'] ?: $sb['en_name']) : ($sb['en_name'] ?: $sb['ar_name']) }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center text-muted py-3">
+                                            {{ app()->getLocale() === 'ar' ? 'لا يوجد هيئات خدمية متاحة.' : 'No service bodies available.' }}
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        @else
+                            <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
+                                {{ app()->getLocale() === 'ar' ? 'اختر المدن لتضمينها في التقرير (حد أقصى: 3 مدن)' : 'Select Cities to include (Max: 3)' }}
+                            </h5>
+                            
+                            @error('selectedCities')
+                                <div class="alert alert-danger p-2 small mb-3">{{ $message }}</div>
+                            @enderror
+
+                            <div class="card p-3 mb-4 neo-scrollbar" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.01) !important;">
+                                <div class="row g-2">
+                                    @forelse($cities as $city)
+                                        <div class="col-md-6">
+                                            <div class="form-check neo-list-item border p-2 d-flex align-items-center gap-2" style="cursor: pointer; border-radius: 8px; border-color: var(--glass-border) !important;">
+                                                <input class="form-check-input ms-0 me-2" type="checkbox" value="{{ $city['id'] }}" id="city-{{ $city['id'] }}" wire:model.live="selectedCities">
+                                                <label class="form-check-label w-100 text-start" for="city-{{ $city['id'] }}" style="cursor: pointer; color: var(--text-primary);">
+                                                    {{ app()->getLocale() === 'ar' ? ($city['ar_name'] ?: $city['en_name']) : ($city['en_name'] ?: $city['ar_name']) }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="col-12 text-center text-muted py-3">
+                                            {{ app()->getLocale() === 'ar' ? 'لا يوجد مدن متاحة.' : 'No cities available.' }}
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="d-flex justify-content-end">
                             <button type="button" wire:click="goToStepTwo" class="btn btn-primary px-4 py-2 rounded-pill">
@@ -162,7 +210,12 @@
                     </div>
                 @endif
 
+    @if($isModal)
+        </div>
+    @else
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>

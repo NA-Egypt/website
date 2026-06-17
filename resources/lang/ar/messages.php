@@ -69,6 +69,7 @@ return [
     'No meetings found' => 'لايوجد اجتماعات',
     'Clear Filters' => 'مسح النتائج',
     'Choose Type' => 'اختار النوع',
+    'all' => 'الكل',
     'Search meetings' => 'البحث في الاجتماعات المعروضة',
     'Admin Panel' => 'إدارة النظام',
     'Home' => 'الرئيسية',

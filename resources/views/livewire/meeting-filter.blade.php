@@ -1,7 +1,7 @@
 <div>
     <div class="container min-vh-100 d-flex flex-column justify-content-topcenter align-items-center">
         <div class="w-100" style="max-width: 1140px;">
-        <div class="container px-4 py-3 justify-content-center">
+        <div class="px-2 px-sm-3 py-3 justify-content-center">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
                     <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body p-4">
+                        <div class="card-body p-3 p-sm-4">
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                                 <div class="col-12" wire:key="filter-day" id="tour-day">
                                     <x-filter.select :options="$days" name="day" wire:model.live="day" class="form-select form-control" label="{{ __('messages.Day') }}" />
@@ -45,11 +45,22 @@
                                 </div>
                                 <div class="col-12" wire:key="filter-type" id="tour-type">
                                     <x-forms.label name="type" label="{{__('messages.Type')}}" />
-                                    <select name="type" wire:model.live="type" class="form-select form-control" {{ $group ? 'disabled' : '' }}>
-                                        <option value="">{{__('messages.Choose Type')}}</option>
-                                        <option value="open">{{ __('messages.open') }} ({{ $openCount }})</option>
-                                        <option value="closed">{{ __('messages.closed') }} ({{ $closedCount }})</option>
-                                    </select>
+                                    <div class="d-flex bg-light p-1 rounded-3 border align-items-center w-100" style="height: 38px;">
+                                        <input type="radio" class="btn-check" name="type" id="type-all" value="" wire:model.live="type" {{ $group ? 'disabled' : '' }}>
+                                        <label class="btn btn-sm btn-outline-primary border-0 rounded-2 flex-fill h-100 d-flex align-items-center justify-content-center fw-bold text-nowrap" for="type-all" style="font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;">
+                                            {{ __('messages.all') }}
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="type" id="type-open" value="open" wire:model.live="type" {{ $group ? 'disabled' : '' }}>
+                                        <label class="btn btn-sm btn-outline-primary border-0 rounded-2 flex-fill h-100 d-flex align-items-center justify-content-center fw-bold text-nowrap" for="type-open" style="font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;">
+                                            {{ __('messages.open') }} ({{ $openCount }})
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="type" id="type-closed" value="closed" wire:model.live="type" {{ $group ? 'disabled' : '' }}>
+                                        <label class="btn btn-sm btn-outline-primary border-0 rounded-2 flex-fill h-100 d-flex align-items-center justify-content-center fw-bold text-nowrap" for="type-closed" style="font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;">
+                                            {{ __('messages.closed') }} ({{ $closedCount }})
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="col-12" wire:key="filter-city" id="tour-city">
                                     <x-filter.select :options="$cities" name="city" wire:model.live="city" class="form-select form-control" label="{{__('messages.City')}}" :disabled="!!$serviceBody || !!$group" />
@@ -129,10 +140,10 @@
                     ]);
                 @endphp
                 <div class="d-flex justify-content-center mb-3" id="tour-pdf">
-                    <a href="{{ route('exportMeetingsToPDF', $exportParams) }}" target="_blank" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exportWizardModal" style="max-width: 340px; width: 100%; text-align: center;">
                     {{__('messages.downloadmeetingspdf')}}
                     <x-fas-file-pdf style="width:16px; height:16px;"/>
-                    </a>
+                    </button>
                 </div>
                 <div class="d-flex justify-content-center mb-3" id="tour-csv">
                     <a href="{{ route('exportMeetingsToCSV', $exportParams) }}" target="_blank" class="btn btn-primary" style="max-width: 340px; width: 100%; text-align: center;">
@@ -163,6 +174,17 @@
                 <x-filter.filter-card :$meetings />
             </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Export Wizard Modal -->
+    <div class="modal fade" id="exportWizardModal" tabindex="-1" aria-labelledby="exportWizardModalLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(25px); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;">
+                <div class="modal-body p-0">
+                    <livewire:meeting-export-wizard :isModal="true" />
+                </div>
+            </div>
         </div>
     </div>
 
