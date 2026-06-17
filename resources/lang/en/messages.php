@@ -978,4 +978,10 @@ return [
     'Please select a service body first' => 'Please select a service body first',
     'Table Actions' => 'Table Actions',
     'Submit & Send to RSC' => 'Submit & Send to RSC',
+    'Service Body Agenda Details' => 'Service Body Agenda Details',
+    'No registered groups.' => 'No registered groups.',
+    'No content sections available.' => 'No content sections available.',
+    'Return to Draft' => 'Return to Draft',
+    'Edit Draft' => 'Edit Draft',
+    'No agendas found.' => 'No agendas found.',
 ];

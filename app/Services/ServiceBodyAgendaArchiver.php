@@ -56,8 +56,8 @@ class ServiceBodyAgendaArchiver
             $suffix = $agenda->is_exceptional ? '_EX' : '';
             $pdfFilename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
             
-            // Put it under a folder structure in storagebox
-            $pdfPath = "service_body_agendas/{$year}/{$monthStr}/" . $pdfFilename;
+            // Put it under a folder structure in storagebox (prefixed with Archives/ so it merges into the main archive)
+            $pdfPath = "Archives/service_body_agendas/{$year}/{$monthStr}/" . $pdfFilename;
 
             $pdfContent = $this->generatePdfContent($agenda);
 

@@ -432,7 +432,6 @@ class ServiceBodyAgendaController extends Controller
         }
 
         $agenda->update(['status' => 'draft']);
-
         return redirect()->route('service-body-agendas.index')->with('success', 'Agenda returned to draft.');
     }
 
@@ -461,7 +460,7 @@ class ServiceBodyAgendaController extends Controller
                                                         });
                                                  });
                                           });
-                                });
+                                  });
                       })->orWhere(function($inner) use ($now) {
                           $inner->whereRaw("DAY(meeting_date) > 10")
                                 ->where(function($dateQ) use ($now) {
@@ -472,18 +471,23 @@ class ServiceBodyAgendaController extends Controller
                                                      $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
                                                  });
                                           });
-                                });
+                                  });
                       });
                   });
             });
         } else {
-            // RSC or RCM can see approved ones in Archive page
-            $query->where('status', 'approved');
+            // RSC / Super Admin / RCM
             if (!$this->isRsc()) {
                 $sb = $this->getServiceBody();
                 if ($sb) {
                     $query->where('service_body_id', $sb->id);
+                    // RCM sees draft, submitted, and approved of their own Service Body
+                } else {
+                    $query->whereRaw('1 = 0'); // Show nothing if no SB assigned
                 }
+            } else {
+                // Super Admin & RSC see all agendas (draft, submitted, approved)
+                // No status restriction
             }
         }
 
@@ -512,7 +516,14 @@ class ServiceBodyAgendaController extends Controller
 
         $dbAgendas = $query->orderBy('meeting_date', 'desc')->get();
 
-        // Build storage box files list under service_body_agendas/
+        // Build list of allowed filenames for physical files based on user access
+        $allowedFilenames = [];
+        $userSb = null;
+        if (!$this->isRsc() && !$this->isRestrictedConsumer($user)) {
+            $userSb = $this->getServiceBody();
+        }
+
+        // Build storage box files list under Archives/service_body_agendas/
         $cacheKey = 'storagebox_agendas_files_list';
         if ($request->query('refresh') == '1') {
             Cache::forget($cacheKey);
@@ -521,8 +532,8 @@ class ServiceBodyAgendaController extends Controller
         $allStorageboxFiles = Cache::remember($cacheKey, 43200, function () {
             $list = [];
             try {
-                if (Storage::disk('storagebox')->exists('service_body_agendas')) {
-                    $allFiles = Storage::disk('storagebox')->allFiles('service_body_agendas');
+                if (Storage::disk('storagebox')->exists('Archives/service_body_agendas')) {
+                    $allFiles = Storage::disk('storagebox')->allFiles('Archives/service_body_agendas');
                     foreach ($allFiles as $filePath) {
                         if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
                             continue;
@@ -541,13 +552,29 @@ class ServiceBodyAgendaController extends Controller
                     }
                 }
             } catch (Exception $e) {
-                Log::error("Failed to list files from storagebox service_body_agendas: " . $e->getMessage());
+                Log::error("Failed to list files from storagebox Archives/service_body_agendas: " . $e->getMessage());
             }
             return $list;
         });
 
         $serviceBodies = ServiceBody::all();
         $filesAndDirs = [];
+
+        // Build mapping of allowed filenames for restricted consumers from the dbAgendas (which only has approved, released agendas)
+        if ($this->isRestrictedConsumer($user)) {
+            foreach ($dbAgendas as $agenda) {
+                $year = $agenda->meeting_date->format('Y');
+                $monthNum = (int)$agenda->meeting_date->format('m');
+                $monthStr = $agenda->meeting_date->format('m');
+                $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
+                $sbName = $agenda->serviceBody ? $agenda->serviceBody->ar_name : 'خدمة';
+                $sbName = str_replace(['/', '\\', "\0"], '', $sbName);
+                $cleanedSbName = str_replace(' ', '_', $sbName);
+                $suffix = $agenda->is_exceptional ? '_EX' : '';
+                $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
+                $allowedFilenames[] = strtolower($filename);
+            }
+        }
 
         foreach ($allStorageboxFiles as $fileInfo) {
             $filePath = $fileInfo['path'];
@@ -570,6 +597,31 @@ class ServiceBodyAgendaController extends Controller
                     if (!$match) {
                         continue;
                     }
+                }
+            }
+
+            // If user is RCM (not RSC/SuperAdmin), enforce own service body filter on physical files
+            if (!$this->isRsc() && !$this->isRestrictedConsumer($user) && $userSb) {
+                $arName = $userSb->ar_name ? mb_strtolower($userSb->ar_name, 'UTF-8') : null;
+                $enName = $userSb->en_name ? mb_strtolower($userSb->en_name, 'UTF-8') : null;
+                $filePathLower = mb_strtolower($filePath, 'UTF-8');
+                
+                $match = false;
+                if ($arName && str_contains($filePathLower, str_replace(' ', '_', $arName))) {
+                    $match = true;
+                }
+                if ($enName && str_contains($filePathLower, str_replace(' ', '_', $enName))) {
+                    $match = true;
+                }
+                if (!$match) {
+                    continue;
+                }
+            }
+
+            // If user is restricted consumer, only show files that match released database agendas
+            if ($this->isRestrictedConsumer($user)) {
+                if (!in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
+                    continue;
                 }
             }
 
