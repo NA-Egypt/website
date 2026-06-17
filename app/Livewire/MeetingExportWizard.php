@@ -11,6 +11,7 @@ class MeetingExportWizard extends Component
     public $serviceBodies = [];
     public $selectedServiceBodies = [];
     public $selectedFields = ['topic', 'time', 'type', 'lang']; // default fields
+    public $pageSize = 'A4'; // default paper size
 
     public function mount()
     {
@@ -44,6 +45,7 @@ class MeetingExportWizard extends Component
         $params = [
             'service_bodies' => $this->selectedServiceBodies,
             'fields' => $this->selectedFields,
+            'page_size' => $this->pageSize,
         ];
 
         return redirect()->route('meetings.export.download', $params);

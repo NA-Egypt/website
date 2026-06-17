@@ -130,6 +130,27 @@
                             </div>
                         </div>
 
+                        {{-- Paper Size Selection --}}
+                        <div class="border-top pt-3 mt-4 mb-4">
+                            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">
+                                {{ app()->getLocale() === 'ar' ? 'اختر حجم ورق الطباعة' : 'Select Paper Size' }}
+                            </h6>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input ms-0 me-2" type="radio" name="pageSize" id="size-a4" value="A4" wire:model="pageSize">
+                                    <label class="form-check-label" for="size-a4" style="color: var(--text-primary); cursor: pointer; font-weight: 600;">
+                                        A4 {{ app()->getLocale() === 'ar' ? '(حجم قياسي)' : '(Standard)' }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input ms-0 me-2" type="radio" name="pageSize" id="size-a5" value="A5" wire:model="pageSize">
+                                    <label class="form-check-label" for="size-a5" style="color: var(--text-primary); cursor: pointer; font-weight: 600;">
+                                        A5 {{ app()->getLocale() === 'ar' ? '(حجم صغير مدمج)' : '(Compact)' }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-between">
                             <button type="button" wire:click="backToStepOne" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                                 <i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }} me-1"></i> {{ app()->getLocale() === 'ar' ? 'السابق' : 'Back' }}
