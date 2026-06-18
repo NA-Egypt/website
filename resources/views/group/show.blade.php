@@ -300,11 +300,11 @@
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <h5 class="mb-0 text-primary fw-bold">
-                                            {{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }}
+                                            {{ __('messages.month_year_agenda', ['month' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F'), 'year' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y')]) }}
                                         </h5>
                                         <span class="badge px-3 py-2 rounded-pill fw-medium bg-light text-secondary border">
                                             <i class="bi bi-calendar3 me-1"></i>
-                                            {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('Y-m-d') }}
+                                            {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y-m-d') }}
                                         </span>
                                     </div>
                                     
@@ -363,7 +363,7 @@
                         {{-- HSL Gradient Header Accent --}}
                         <div class="modal-header border-bottom-0 pb-3 pt-4 px-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(14, 165, 233, 0.05)); border-bottom: 1px solid var(--glass-border) !important;">
                             <h5 class="modal-title fw-bold text-primary mb-0" id="quickViewModalGroupLabel{{ $agenda->id }}">
-                                <i class="bi bi-journal-richtext text-primary me-2"></i>{{ $agenda->group->ar_name ?? $agenda->group->en_name }} - {{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }}
+                                <i class="bi bi-journal-richtext text-primary me-2"></i>{{ $agenda->group->ar_name ?? $agenda->group->en_name }} - {{ __('messages.month_year_agenda', ['month' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F'), 'year' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y')]) }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
@@ -396,14 +396,14 @@
                                                 <span class="text-secondary small d-block mb-1">{{ __('messages.submitter_name') ?? 'Submitter Name' }}</span>
                                                 <h6 class="fw-bold mb-0 text-dark">{{ $agenda->submitter_name ?: __('messages.Not provided') }}</h6>
                                                 @if($agenda->service_position)
-                                                    <span class="badge bg-primary mt-2 rounded-pill px-3">{{ $agenda->service_position }}</span>
+                                                    <span class="badge bg-primary mt-2 rounded-pill px-3">{{ $agenda->translated_service_position }}</span>
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
                                                 <span class="text-secondary small d-block mb-1">{{ __('messages.agenda_date') }}</span>
-                                                <h6 class="fw-bold mb-0 text-dark">{{ \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('d M Y') }}</h6>
+                                                <h6 class="fw-bold mb-0 text-dark">{{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'd M Y') }}</h6>
                                             </div>
                                         </div>
                                         
@@ -413,7 +413,7 @@
                                                 <span class="text-secondary small d-block mb-1">{{ __('messages.alt_gsr_name') ?? 'Alt. GSR Name' }}</span>
                                                 <h6 class="fw-bold mb-0 text-dark">{{ $agenda->alt_gsr_name }}</h6>
                                                 @if($agenda->alt_gsr_position)
-                                                    <span class="badge bg-secondary mt-2 rounded-pill px-3">{{ $agenda->alt_gsr_position }}</span>
+                                                    <span class="badge bg-secondary mt-2 rounded-pill px-3">{{ $agenda->translated_alt_gsr_position }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -446,7 +446,7 @@
                                         <div class="col-md-4 col-12">
                                             <div class="p-3 text-center rounded-4 h-100 transition-hover" style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.1);">
                                                 <span class="text-secondary small d-block mb-1">{{ __('messages.next_business_meeting') }}</span>
-                                                <span class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $agenda->next_business_meeting ? \Carbon\Carbon::parse($agenda->next_business_meeting)->translatedFormat('d M Y') : '-' }}</span>
+                                                <span class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $agenda->next_business_meeting ? \App\Services\DateNumberHelper::translatedFormat($agenda->next_business_meeting, 'd M Y') : '-' }}</span>
                                             </div>
                                         </div>
                                         

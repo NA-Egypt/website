@@ -990,5 +990,7 @@ return [
     'Return to Draft' => 'إرجاع للمسودة',
     'Edit Draft' => 'تعديل المسودة',
     'No agendas found.' => 'لم يتم العثور على أجندات.',
-    'Login to your email'=>'الدخول إلى بريدك الإلكتروني'
+    'Login to your email'=>'الدخول إلى بريدك الإلكتروني',
+    'open_position'=>'ترشيحات',
+    'alt_gsr_position'=>'ترشيحات',
 ];

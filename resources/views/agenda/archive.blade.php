@@ -125,7 +125,7 @@
                                 <div class="accordion-body bg-white p-4">
                                     @foreach($months as $monthNum => $agendas)
                                         @php
-                                            $monthName = \Carbon\Carbon::create(null, (int) $monthNum, 1)->translatedFormat('F');
+                                            $monthName = \App\Services\DateNumberHelper::translatedFormat(\Carbon\Carbon::create(null, (int) $monthNum, 1), 'F');
                                         @endphp
                                         <div class="mb-4">
                                             <h5 class="text-secondary border-bottom pb-2 mb-3 fw-bold">
@@ -150,7 +150,7 @@
                                                                     </span>
                                                                     <span class="neo-badge neo-badge-primary px-3 py-2 d-flex align-items-center gap-1">
                                                                         <i class="bi bi-calendar3"></i>
-                                                                        <strong>{{ __('messages.agenda_date') }}:</strong> {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('Y-m-d') }}
+                                                                        <strong>{{ __('messages.agenda_date') }}:</strong> {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y-m-d') }}
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -205,12 +205,12 @@
                 @foreach($months as $monthNum => $agendas)
                     @foreach($agendas as $agenda)
                         <div class="modal fade" id="quickViewModal{{ $agenda->id }}" tabindex="-1" aria-labelledby="quickViewModalLabel{{ $agenda->id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
                                 <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(25px); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;">
                                     {{-- HSL Gradient Header Accent --}}
                                     <div class="modal-header border-bottom-0 pb-3 pt-4 px-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(14, 165, 233, 0.05)); border-bottom: 1px solid var(--glass-border) !important;">
                                         <h5 class="modal-title fw-bold text-primary mb-0" id="quickViewModalLabel{{ $agenda->id }}">
-                                            <i class="bi bi-journal-richtext text-primary me-2"></i>{{ $agenda->group->ar_name ?? $agenda->group->en_name }} - {{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }}
+                                            <i class="bi bi-journal-richtext text-primary me-2"></i>{{ $agenda->group->ar_name ?? $agenda->group->en_name }} - {{ __('messages.month_year_agenda', ['month' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F'), 'year' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y')]) }}
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
@@ -243,14 +243,14 @@
                                                             <span class="text-secondary small d-block mb-1">{{ __('messages.submitter_name') ?? 'Submitter Name' }}</span>
                                                             <h6 class="fw-bold mb-0 text-dark">{{ $agenda->submitter_name ?: __('messages.Not provided') }}</h6>
                                                             @if($agenda->service_position)
-                                                                <span class="badge bg-primary mt-2 rounded-pill px-3">{{ $agenda->service_position }}</span>
+                                                                <span class="badge bg-primary mt-2 rounded-pill px-3">{{ $agenda->translated_service_position }}</span>
                                                             @endif
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="p-3 rounded-4 h-100 transition-hover" style="background: rgba(0, 0, 0, 0.01); border: 1px solid var(--glass-border);">
                                                             <span class="text-secondary small d-block mb-1">{{ __('messages.agenda_date') }}</span>
-                                                            <h6 class="fw-bold mb-0 text-dark">{{ \Carbon\Carbon::parse($agenda->agenda_date)->translatedFormat('d M Y') }}</h6>
+                                                            <h6 class="fw-bold mb-0 text-dark">{{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'd M Y') }}</h6>
                                                         </div>
                                                     </div>
                                                     
@@ -260,7 +260,7 @@
                                                             <span class="text-secondary small d-block mb-1">{{ __('messages.alt_gsr_name') ?? 'Alt. GSR Name' }}</span>
                                                             <h6 class="fw-bold mb-0 text-dark">{{ $agenda->alt_gsr_name }}</h6>
                                                             @if($agenda->alt_gsr_position)
-                                                                <span class="badge bg-secondary mt-2 rounded-pill px-3">{{ $agenda->alt_gsr_position }}</span>
+                                                                <span class="badge bg-secondary mt-2 rounded-pill px-3">{{ $agenda->translated_alt_gsr_position }}</span>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -293,7 +293,7 @@
                                                     <div class="col-md-4 col-12">
                                                         <div class="p-3 text-center rounded-4 h-100 transition-hover" style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.1);">
                                                             <span class="text-secondary small d-block mb-1">{{ __('messages.next_business_meeting') }}</span>
-                                                            <span class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $agenda->next_business_meeting ? \Carbon\Carbon::parse($agenda->next_business_meeting)->translatedFormat('d M Y') : '-' }}</span>
+                                                            <span class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $agenda->next_business_meeting ? \App\Services\DateNumberHelper::translatedFormat($agenda->next_business_meeting, 'd M Y') : '-' }}</span>
                                                         </div>
                                                     </div>
                                                     

@@ -60,8 +60,8 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div style="border-bottom: 2px solid #000; margin-bottom: 15px; margin-top: 5px;"></div>
 
         <div class="meta">
-            <strong>{{ __('messages.Report Date') ?? 'Report Date' }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }} <br>
-            <strong>{{ __('messages.Meeting Date') ?? 'Meeting Date' }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} <br>
+            <strong>{{ __('messages.Report Date') ?? 'Report Date' }}:</strong> {{ $report->report_date ? \App\Services\DateNumberHelper::translatedFormat($report->report_date, 'Y-m-d') : \App\Services\DateNumberHelper::translatedFormat($report->created_at, 'Y-m-d') }} <br>
+            <strong>{{ __('messages.Meeting Date') ?? 'Meeting Date' }}:</strong> {{ \App\Services\DateNumberHelper::translatedFormat($report->meeting_date, 'Y-m-d') }} <br>
             <strong>{{ __('messages.Day') ?? 'Day' }}:</strong> {{ $report->meeting_day_description }}
             @if($report->is_exceptional)
                 <br><strong>{{ __('messages.Exceptional Meeting') ?? 'Exceptional Meeting' }}:</strong> <span style="color: red; font-weight: bold;">{{ __('messages.yes') ?? 'Yes' }}</span>

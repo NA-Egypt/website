@@ -67,9 +67,9 @@
                                 @if($isRsc)
                                     <td>{{ $report->serviceCommittee->ar_name ?? '-' }}</td>
                                 @endif
-                                <td>{{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</td>
+                                <td>{{ $report->report_date ? \App\Services\DateNumberHelper::translatedFormat($report->report_date, 'Y-m-d') : \App\Services\DateNumberHelper::translatedFormat($report->created_at, 'Y-m-d') }}</td>
                                 <td>
-                                    {{ $report->meeting_date->format('Y-m-d') }}
+                                    {{ \App\Services\DateNumberHelper::translatedFormat($report->meeting_date, 'Y-m-d') }}
                                     @if($report->is_exceptional)
                                         <span class="badge bg-danger ms-1" style="font-size: 0.75rem;">{{ __('messages.Exceptional Meeting') }}</span>
                                     @endif

@@ -2,11 +2,18 @@
 
 <div class="groups-container">
     @foreach ($groups as $group)
-    <div class="neo-list-item d-flex justify-content-between align-items-center mb-2" style="border-bottom: 1px solid var(--glass-border);">
+    <div class="neo-list-item group-item d-flex justify-content-between align-items-center mb-2 px-3 py-2" 
+         style="background: rgba(255, 255, 255, 0.03); 
+                border: 1px solid var(--glass-border); 
+                border-radius: 12px; 
+                width: 100%;
+                box-sizing: border-box;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);">
         <div class="d-flex align-items-center">
             <div class="ms-3">
                 <h6 class="mb-1 fw-bold">
-                    <a href="{{ route('searches.meeting', ['id' => $group->id]) }}" class="text-decoration-none" style="color: var(--text-primary);">
+                    <a href="{{ route('searches.meeting', ['id' => $group->id]) }}" class="text-decoration-none group-name" style="color: var(--text-primary); transition: color 0.2s;">
                         @if(app()->getLocale() === 'ar')
                             {{ $group->ar_name }}
                         @else
@@ -15,15 +22,15 @@
                     </a>
                 </h6>
                 <div class="d-flex align-items-center gap-2 mt-1">
-                     <span class="neo-badge neo-badge-info px-2 py-1" style="font-size: 0.7rem;">
-                         <i class="bi bi-geo-alt me-1"></i>
+                     <span class="neo-badge neo-badge-info group-neighborhood px-2 py-1" style="font-size: 0.7rem;">
+                          <i class="bi bi-geo-alt me-1"></i>
                         @if(app()->getLocale() === 'ar')
                             {{ $group->neighborhood->ar_name }}
                         @else
                             {{ $group->neighborhood->en_name }}
                         @endif
                      </span>
-                     <span class="neo-badge neo-badge-primary px-2 py-1" style="font-size: 0.7rem;">
+                     <span class="neo-badge neo-badge-primary group-service-body px-2 py-1" style="font-size: 0.7rem;">
                         @if(app()->getLocale() === 'ar')
                             {{ $group->serviceBody->ar_name }}
                         @else
@@ -45,3 +52,15 @@
     </div>
     @endforeach
 </div>
+
+<style>
+    .group-item:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(59, 130, 246, 0.4) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.1) !important;
+    }
+    .group-item:hover .group-name {
+        color: #3b82f6 !important;
+    }
+</style>

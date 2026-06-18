@@ -14,7 +14,7 @@ window.jQuery(function () {
 	}
 
 	if (topSellersListElement) {
-		new PerfectScrollbar(topSellersListElement);
+		new PerfectScrollbar(topSellersListElement, { suppressScrollX: true });
 	}
 
 

@@ -4,7 +4,7 @@
         <div class="col-md-8">
             <div class="card shadow-lg" style="border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                    <h4 class="mb-0">{{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->format('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }} - {{ $agenda->group->{app()->getLocale() . '_name'} }}</h4>
+                    <h4 class="mb-0">{{ __('messages.month_year_agenda', ['month' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F'), 'year' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y')]) }} - {{ $agenda->group->{app()->getLocale() . '_name'} }}</h4>
                     <div>
                         <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-light rounded-pill me-2"><i class="bi bi-file-earmark-pdf text-danger"></i> {{ __('messages.download_pdf') ?? 'Download PDF' }}</a>
                         <a href="{{ route('group.show', $agenda->group_id) }}" class="btn btn-sm btn-light rounded-pill"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</a>
@@ -19,10 +19,10 @@
                             <strong>{{ __('messages.meetings_per_week') }}:</strong> {{ $agenda->meetings_per_week }}
                         </div>
                         <div class="col-md-6 mb-2">
-                            <strong>{{ __('messages.agenda_date') }}:</strong> {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('d M Y') }}
+                            <strong>{{ __('messages.agenda_date') }}:</strong> {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'd M Y') }}
                         </div>
                         <div class="col-md-6 mb-2">
-                            <strong>{{ __('messages.service_position') }}:</strong> {{ $agenda->service_position }}
+                            <strong>{{ __('messages.service_position') }}:</strong> {{ $agenda->translated_service_position }}
                         </div>
                         @if($agenda->submitter_name)
                         <div class="col-md-6 mb-2">
@@ -31,7 +31,7 @@
                         @endif
                         @if($agenda->alt_gsr_position)
                         <div class="col-md-6 mb-2">
-                            <strong>Group Alt. GSR:</strong> {{ $agenda->alt_gsr_position }}
+                            <strong>Group Alt. GSR:</strong> {{ $agenda->translated_alt_gsr_position }}
                         </div>
                         @endif
                         @if($agenda->alt_gsr_name)
@@ -48,7 +48,7 @@
                             <strong>{{ __('messages.new_comers') }}:</strong> {{ $agenda->new_comers }}
                         </div>
                         <div class="col-md-6 mb-2">
-                            <strong>{{ __('messages.next_business_meeting') }}:</strong> {{ $agenda->next_business_meeting ? \Carbon\Carbon::parse($agenda->next_business_meeting)->format('d M Y h:i A') : '' }}
+                            <strong>{{ __('messages.next_business_meeting') }}:</strong> {{ $agenda->next_business_meeting ? \App\Services\DateNumberHelper::translatedFormat($agenda->next_business_meeting, 'd M Y h:i A') : '' }}
                         </div>
                         <div class="col-12 mb-2">
                             <strong>{{ __('messages.recovery_meetings_changes') }}:</strong> {{ $agenda->recovery_meetings_changes ? __('messages.yes') : __('messages.no') }}

@@ -41,10 +41,18 @@
       {{-- Committee Reports --}}
       <div class="col">
         <a href="{{ route('committee-reports.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Committee Reports') }}" qty="-" color-theme="danger" icon="file-earmark-text" />
+          <x-dashboard.card-statics name="{{ __('messages.Committee Reports') }}" qty="{{ $reportsCount }}" color-theme="danger" icon="file-earmark-text" />
         </a>
       </div>
       {{-- / Committee Reports --}}
+
+      {{-- Custom Forms --}}
+      <div class="col">
+        <a href="{{ route('forms.index') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ app()->getLocale() === 'ar' ? 'النماذج المخصصة' : 'Custom Forms' }}" qty="{{ $customFormsCount }}" color-theme="info" icon="file-earmark-spreadsheet" />
+        </a>
+      </div>
+      {{-- / Custom Forms --}}
 
       {{-- Export Meetings for Print --}}
       <div class="col">
@@ -60,53 +68,62 @@
     <div class="row g-3 mb-4">
 
       {{-- Groups --}}
-      <div class="col-12 col-lg-4 d-flex">
-        <div class="glass-card w-100 h-100 p-0">
+      <div class="col-12 col-lg-6 d-flex">
+        <div class="glass-card w-100 h-100 p-0" style="display: flex; flex-direction: column;">
           <x-dashboard.card-header>{{ __('messages.Groups') }}</x-dashboard.card-header>
           <div class="px-3 pt-3">
             <div class="position-relative">
-               <input type="search" id="search-input" class="form-control rounded-pill bg-transparent border shadow-none" style="color: var(--text-primary); border-color: var(--glass-border) !important;" placeholder="{{ __('messages.Search') }}...">
-               <i class="bi bi-search position-absolute top-50 translate-middle-y end-0 me-3" style="color: var(--text-secondary);"></i>
+               <input type="search" id="search-input" class="form-control rounded-pill bg-transparent border shadow-none glass-search-input" placeholder="{{ __('messages.Search') }}...">
+               <i class="bi bi-search position-absolute top-50 translate-middle-y end-0 me-3" style="color: var(--text-secondary); pointer-events: none;"></i>
             </div>
           </div>
-          <div class="top-sellers-list p-3 mb-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
+          <div class="top-sellers-list p-3 mb-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto; overflow-x: hidden; flex-grow: 1;">
             <x-dashboard.card-group :$groups />
           </div>
         </div>
       </div>
       {{-- Groups --}}
 
-      {{-- List Of Meetings in Spacific City --}}
-      <div class="col-12 col-lg-4 d-flex">
-        <div class="glass-card w-100 h-100 p-0">
-          <x-dashboard.card-header>{{ __('messages.Meetings') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
-          <div class="card-body p-0 p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
+      <style>
+          .glass-search-input {
+              color: var(--text-primary);
+              border-color: var(--glass-border) !important;
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+              padding-inline-end: 2.5rem !important;
+          }
+          .glass-search-input:focus {
+              background: rgba(255, 255, 255, 0.05) !important;
+              border-color: rgba(59, 130, 246, 0.6) !important;
+              box-shadow: 0 0 15px rgba(59, 130, 246, 0.2) !important;
+          }
+          /* Custom scrollbar adjustments for matching glass aesthetic */
+          .neo-scrollbar::-webkit-scrollbar-thumb {
+              background: rgba(59, 130, 246, 0.2) !important;
+              border-radius: 10px;
+              transition: background 0.3s;
+          }
+          .neo-scrollbar::-webkit-scrollbar-thumb:hover {
+              background: rgba(59, 130, 246, 0.4) !important;
+          }
+      </style>
+
+      {{-- List Of Meetings & Groups in Specific City --}}
+      <div class="col-12 col-lg-6 d-flex">
+        <div class="glass-card w-100 h-100 p-0" style="display: flex; flex-direction: column;">
+          <x-dashboard.card-header>{{ app()->getLocale() === 'ar' ? 'الاجتماعات والمجموعات في المدينة' : 'Meetings & Groups in City' }}</x-dashboard.card-header>
+          <div class="card-body p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto; overflow-x: hidden; flex-grow: 1;">
             @foreach ($cities as $city)
-              <x-dashboard.card-meetings :$city>
-                {{ $city->neighborhoods->sum(fn($neighborhood) => 
-                $neighborhood->groups->sum(fn($group) => $group->meetings->count())) }} 
-              </x-dashboard.card-meetings>
+              @php
+                $meetingsCount = $city->neighborhoods->sum(fn($neighborhood) => 
+                    $neighborhood->groups->sum(fn($group) => $group->meetings->count()));
+                $groupsCount = $city->neighborhoods->sum(fn($neighborhood) => $neighborhood->groups->count());
+              @endphp
+              <x-dashboard.card-city-stats :$city :$groupsCount :$meetingsCount />
             @endforeach
           </div>
         </div>
       </div>
-      {{-- List Of Meetings in Spacific City --}}
-
-
-      {{-- List Of Groups in Spacific City --}}
-      <div class="col-12 col-lg-4 d-flex">
-        <div class="glass-card w-100 h-100 p-0">
-          <x-dashboard.card-header>{{ __('messages.Groups') . ' ' . __('messages.in') . ' ' . __('messages.City') }}</x-dashboard.card-header>
-          <div class="card-body p-0 p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto;">
-            @foreach ($cities as $city)
-              <x-dashboard.card-cities :$city>
-                {{ $city->neighborhoods->sum(fn($neighborhood) => $neighborhood->groups->count()) }}
-              </x-dashboard.card-cities>
-            @endforeach
-          </div>
-        </div>
-      </div>
-      {{-- List Of Groups in Spacific City--}}
+      {{-- List Of Meetings & Groups in Specific City --}}
 
     </div>
 
@@ -142,11 +159,11 @@
                       </td>
                       <td>
                         <span class="badge bg-primary rounded-pill px-3 py-2">
-                            {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('F Y') }}
+                            {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F Y') }}
                         </span>
                       </td>
                       <td class="text-secondary">
-                        {{ \Carbon\Carbon::parse($agenda->created_at)->format('d M Y, h:i A') }}
+                        {{ \App\Services\DateNumberHelper::translatedFormat($agenda->created_at, 'd M Y, h:i A') }}
                       </td>
                       <td>
                         @if($agenda->submitter_name)
@@ -156,7 +173,7 @@
                         @endif
                       </td>
                       <td>
-                        <span class="badge bg-info text-dark rounded-pill">{{ $agenda->service_position }}</span>
+                        <span class="badge bg-info text-dark rounded-pill">{{ $agenda->translated_service_position }}</span>
                       </td>
                       <td>
                         <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill">

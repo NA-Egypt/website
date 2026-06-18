@@ -50,11 +50,11 @@
                                     </td>
                                     <td>
                                         <span class="badge bg-primary rounded-pill px-3 py-2">
-                                            {{ \Carbon\Carbon::parse($agenda->agenda_date)->format('F Y') }}
+                                            {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F Y') }}
                                         </span>
                                     </td>
                                     <td class="text-secondary">
-                                        {{ \Carbon\Carbon::parse($agenda->created_at)->format('d M Y, h:i A') }}
+                                        {{ \App\Services\DateNumberHelper::translatedFormat($agenda->created_at, 'd M Y, h:i A') }}
                                     </td>
                                     <td>
                                         @if($agenda->submitter_name)
@@ -64,7 +64,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-info text-dark rounded-pill">{{ $agenda->service_position }}</span>
+                                        <span class="badge bg-info text-dark rounded-pill">{{ $agenda->translated_service_position }}</span>
                                     </td>
                                     <td>
                                         <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill">

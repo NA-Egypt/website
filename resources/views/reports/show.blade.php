@@ -69,8 +69,8 @@
                 <hr class="my-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <span class="text-muted me-3"><strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d') }}</span>
-                        <span class="text-muted me-3"><strong>{{ __('messages.Meeting Date') }}:</strong> {{ $report->meeting_date->format('Y-m-d') }} ({{ $report->meeting_day_description }})</span>
+                        <span class="text-muted me-3"><strong>{{ __('messages.Report Date') }}:</strong> {{ $report->report_date ? \App\Services\DateNumberHelper::translatedFormat($report->report_date, 'Y-m-d') : \App\Services\DateNumberHelper::translatedFormat($report->created_at, 'Y-m-d') }}</span>
+                        <span class="text-muted me-3"><strong>{{ __('messages.Meeting Date') }}:</strong> {{ \App\Services\DateNumberHelper::translatedFormat($report->meeting_date, 'Y-m-d') }} ({{ $report->meeting_day_description }})</span>
                     </div>
                     @if($report->is_exceptional)
                         <span class="badge bg-danger text-white">{{ __('messages.Exceptional Meeting') }}</span>

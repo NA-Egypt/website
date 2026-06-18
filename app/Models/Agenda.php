@@ -34,4 +34,44 @@ class Agenda extends Model
     {
         return $this->belongsTo(Group::class);
     }
+
+    /**
+     * Get translated service position name.
+     */
+    public function getTranslatedServicePositionAttribute()
+    {
+        $position = $this->service_position;
+        if (empty($position)) {
+            return '-';
+        }
+        switch ($position) {
+            case 'Open Position':
+                return __('messages.open_position') ?? 'ترشيحات';
+            case 'Alt. GSR':
+                return __('messages.alt_gsr') ?? 'نائب ممثل المجموعة';
+            case 'GSR':
+                return __('messages.gsr') ?? 'ممثل المجموعة';
+            default:
+                return $position;
+        }
+    }
+
+    /**
+     * Get translated alt GSR position name.
+     */
+    public function getTranslatedAltGsrPositionAttribute()
+    {
+        $position = $this->alt_gsr_position;
+        if (empty($position)) {
+            return null;
+        }
+        switch ($position) {
+            case 'Open Position':
+                return __('messages.open_position') ?? 'ترشيحات';
+            case 'Alt. GSR':
+                return __('messages.alt_gsr') ?? 'نائب ممثل المجموعة';
+            default:
+                return $position;
+        }
+    }
 }

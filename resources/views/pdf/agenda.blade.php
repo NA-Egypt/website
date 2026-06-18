@@ -85,7 +85,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             <img src="{{ public_path('assets/images/na.png') }}" class="logo" alt="Logo">
         @endif
         <div class="agenda-title">
-            {{ __('messages.month_year_agenda', ['month' => \Carbon\Carbon::parse($agenda->agenda_date)->format('F'), 'year' => \Carbon\Carbon::parse($agenda->agenda_date)->format('Y')]) }} - {{ $agenda->group->{app()->getLocale() . '_name'} }}
+            {{ __('messages.month_year_agenda', ['month' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'F'), 'year' => \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'Y')]) }} - {{ $agenda->group->{app()->getLocale() . '_name'} }}
         </div>
     </div>
 
@@ -96,11 +96,11 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <th>{{ __('messages.meetings_per_week') ?? 'Meetings per week' }}</th>
                 <td>{{ $agenda->meetings_per_week }}</td>
                 <th>{{ __('messages.agenda_date') ?? 'Agenda Date' }}</th>
-                <td>{{ \Carbon\Carbon::parse($agenda->agenda_date)->format('d M Y') }}</td>
+                <td>{{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'd M Y') }}</td>
             </tr>
             <tr>
                 <th>{{ __('messages.service_position') ?? 'Service Position' }}</th>
-                <td>{{ $agenda->service_position }}</td>
+                <td>{{ $agenda->translated_service_position }}</td>
                 <th>{{ __('messages.submitter_name') ?? 'Submitter Name' }}</th>
                 <td>{{ $agenda->submitter_name ?: '-' }}</td>
             </tr>
@@ -108,7 +108,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <th>{{ __('messages.alt_gsr_name') ?? 'Alt. GSR Name' }}</th>
                 <td colspan="3">
                     @if($agenda->alt_gsr_position)
-                        ({{ $agenda->alt_gsr_position }}) 
+                        ({{ $agenda->translated_alt_gsr_position }}) 
                     @endif
                     {{ $agenda->alt_gsr_name ?: '-' }}
                 </td>
@@ -123,7 +123,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <th>{{ __('messages.new_comers') ?? 'Newcomers' }}</th>
                 <td>{{ $agenda->new_comers }}</td>
                 <th>{{ __('messages.next_business_meeting') ?? 'Next Business Meeting' }}</th>
-                <td>{{ $agenda->next_business_meeting ? \Carbon\Carbon::parse($agenda->next_business_meeting)->format('d M Y h:i A') : '-' }}</td>
+                <td>{{ $agenda->next_business_meeting ? \App\Services\DateNumberHelper::translatedFormat($agenda->next_business_meeting, 'd M Y h:i A') : '-' }}</td>
             </tr>
             <tr>
                 <th>{{ __('messages.recovery_meetings_changes') ?? 'Recovery Meetings Changes' }}</th>
