@@ -78,6 +78,37 @@ class MeetingFilterService
                           });
                   });
             });
+        } else {
+            $query->where(function ($q) {
+                $q->whereDoesntHave('group')
+                  ->orWhereHas('group', function ($sub) {
+                      $sub->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+                  });
+            });
+        }
+
+        if (!empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
+            if ($filters['recurrence'] === 'weekly') {
+                $query->where(function($q) {
+                    $q->whereNull('recurrence')
+                      ->orWhere(function($sub) {
+                          foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                              $sub->where('recurrence', 'not like', '%"' . $item . '"%');
+                          }
+                      });
+                });
+            } elseif ($filters['recurrence'] === 'monthly') {
+                $query->where(function($q) {
+                    $q->whereNotNull('recurrence')
+                      ->where(function($sub) {
+                          foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                              $sub->orWhere('recurrence', 'like', '%"' . $item . '"%');
+                          }
+                      });
+                });
+            } else {
+                $query->where('recurrence', 'like', '%"' . $filters['recurrence'] . '"%');
+            }
         }
 
         if (!empty($filters['englishOnly'])) {

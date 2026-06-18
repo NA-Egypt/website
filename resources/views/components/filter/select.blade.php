@@ -39,7 +39,7 @@
                 let select = $(this.$refs.select).select2({
                     theme: 'bootstrap4',
                     width: '100%',
-                    placeholder: '{{ $label }}',
+                    placeholder: '{{ __('messages.Choose') }} {{ $label }}...',
                     allowClear: {{ $attributes->has('data-allow-clear') ? 'true' : 'false' }},
                     dir: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}'
                 });
@@ -60,7 +60,7 @@
             x-ref="select"
             {{ $attributes->whereDoesntStartWith('wire:model')->merge($default) }}
         >
-            <option value="">{{ __('messages.Select a') }} {{ $label }}</option>
+            <option value="">{{ __('messages.Choose') }} {{ $label }}...</option>
             @if($name === 'day')
                 <option value="all">{{ __('messages.All Days') }}</option>
             @endif
@@ -74,7 +74,7 @@
                             {{ __('messages.closed') }} {{ isset($closedCount) ? '('.$closedCount.')' : '' }}
                         </option>
                     @else
-                        <option value="{{ $option->$field }}">
+                        <option value="{{ $option->id ?? ($option->value ?? $option->$field) }}">
                             {{ $option->$field }} {{ isset($option->meetings_count) ? '('.$option->meetings_count.')' : '' }}
                         </option>
                     @endif

@@ -15,6 +15,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         border: 4px solid #10b981 !important; /* Emerald 500 */
     }
 
+    .meeting-item.business-border {
+        border: 4px solid #ffc107 !important; /* Yellow / Warning */
+    }
+
     .meeting-item-suspended, .meeting-item {
         display: flex !important;
         flex-direction: column !important;
@@ -91,7 +95,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         opacity: 0.8;
     }
 </style>
-<div class="px-1 px-sm-3 justify-content-center" style="max-width: 1140px; width: 100%;">
+<div class="container-fluid px-1 px-sm-3 justify-content-center" style="max-width: 1140px; width: 100%;">
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4 {{ $meetings->count() === 1 ? 'justify-content-center' : '' }}">
@@ -100,12 +104,15 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($loop->first) id="tour-meeting-card" @endif>
     @php
         $isOnline = $meeting->group && in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']);
+        $isBusiness = $meeting->topics && $meeting->topics->contains('en_name', 'Group Business Meeting');
     @endphp
     @if($meeting->status=="suspended")
         <div class="meeting-item-suspended">
             <div style="text-align: center;font-size: x-large;color: crimson;">
                 {{ __('messages.suspended') }}
             </div>
+    @elseif($isBusiness)
+        <div class="meeting-item business-border">
     @elseif($isOnline)
         <div class="meeting-item online-border">
     @elseif($meeting->type=="open")

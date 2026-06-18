@@ -23,6 +23,28 @@ class MeetingFilter extends Component
     #[Url] public $virtualOnly = false;
     #[Url] public $englishOnly = false;
     #[Url] public $businessMeetingsOnly = false;
+    #[Url] public $recurrence = 'weekly';
+
+    public function mount()
+    {
+        if (empty($this->day)) {
+            $englishDay = now()->format('l');
+            if (app()->getLocale() === 'ar') {
+                $days = [
+                    'Saturday' => 'السبت',
+                    'Sunday' => 'الأحد',
+                    'Monday' => 'الإثنين',
+                    'Tuesday' => 'الثلاثاء',
+                    'Wednesday' => 'الأربعاء',
+                    'Thursday' => 'الخميس',
+                    'Friday' => 'الجمعة',
+                ];
+                $this->day = $days[$englishDay] ?? '';
+            } else {
+                $this->day = $englishDay;
+            }
+        }
+    }
 
     public function updatedVirtualOnly($value)
     {
@@ -45,7 +67,7 @@ class MeetingFilter extends Component
         if ($value) {
             $this->virtualOnly = false;
             $this->englishOnly = false;
-            // Clear other search criteria if necessary or let them filter
+            $this->day = '';
         }
     }
 
@@ -73,6 +95,7 @@ class MeetingFilter extends Component
         if ($this->businessMeetingsOnly) {
             $this->virtualOnly = false;
             $this->englishOnly = false;
+            $this->day = '';
         }
     }
 
@@ -88,6 +111,7 @@ class MeetingFilter extends Component
             $this->virtualOnly = false;
             $this->englishOnly = false;
             $this->businessMeetingsOnly = false;
+            $this->recurrence = 'weekly';
         } else {
             // When City changes, clear the neighborhood since the available list changes
             $this->neighborhood = '';
@@ -107,6 +131,7 @@ class MeetingFilter extends Component
             $this->virtualOnly = false;
             $this->englishOnly = false;
             $this->businessMeetingsOnly = false;
+            $this->recurrence = 'weekly';
         } else {
             $this->group = '';
         }
@@ -124,6 +149,7 @@ class MeetingFilter extends Component
             $this->virtualOnly = false;
             $this->englishOnly = false;
             $this->businessMeetingsOnly = false;
+            $this->recurrence = 'weekly';
         }
     }
 
@@ -139,6 +165,7 @@ class MeetingFilter extends Component
             $this->virtualOnly = false;
             $this->englishOnly = false;
             $this->businessMeetingsOnly = false;
+            $this->recurrence = 'weekly';
         }
     }
 
@@ -207,9 +234,21 @@ class MeetingFilter extends Component
             'virtualOnly' => $this->virtualOnly,
             'englishOnly' => $this->englishOnly,
             'businessMeetingsOnly' => $this->businessMeetingsOnly,
+            'recurrence' => $this->recurrence,
         ];
 
         $meetings = $filterService->filterMeetings($filters);
+
+        $recurrences = collect([
+            (object) ['id' => 'weekly', 'en_name' => 'Weekly Meetings', 'ar_name' => 'اجتماعات أسبوعية'],
+            (object) ['id' => 'monthly', 'en_name' => 'Monthly Meetings', 'ar_name' => 'اجتماعات شهرية'],
+            (object) ['id' => '1st', 'en_name' => '1st Week', 'ar_name' => 'الأسبوع الأول'],
+            (object) ['id' => '2nd', 'en_name' => '2nd Week', 'ar_name' => 'الأسبوع الثاني'],
+            (object) ['id' => '3rd', 'en_name' => '3rd Week', 'ar_name' => 'الأسبوع الثالث'],
+            (object) ['id' => '4th', 'en_name' => '4th Week', 'ar_name' => 'الأسبوع الرابع'],
+            (object) ['id' => '5th', 'en_name' => '5th Week', 'ar_name' => 'الأسبوع الخامس'],
+            (object) ['id' => 'last', 'en_name' => 'Last Week', 'ar_name' => 'الأسبوع الأخير'],
+        ]);
 
         return view('livewire.meeting-filter', [
             'meetings' => $meetings,
@@ -221,6 +260,7 @@ class MeetingFilter extends Component
             'openCount' => $openCount,
             'closedCount' => $closedCount,
             'businessMeetingsOnly' => $this->businessMeetingsOnly,
+            'recurrences' => $recurrences,
         ]);
     }
 }

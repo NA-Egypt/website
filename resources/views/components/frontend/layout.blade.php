@@ -45,8 +45,8 @@
 </head>
   <body class="hanken-grotesk {{$direction}}">
     <x-frontend.nav-bar />
-      <div class="container">
-        <main class="mt-12 max-w-[986px] px-2 min-w-[100%]: min-h-[100vh]">
+      <div class="container-fluid px-3 px-md-5" style="max-width: 1280px; display: block !important; flex-direction: unset !important; margin: 0 auto;">
+        <main class="mt-4 w-100" style="min-height: 100vh;">
           {{$slot}}
         </main>
       </div>
