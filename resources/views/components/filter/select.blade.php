@@ -74,7 +74,7 @@
                             {{ __('messages.closed') }} {{ isset($closedCount) ? '('.$closedCount.')' : '' }}
                         </option>
                     @else
-                        <option value="{{ $option->id ?? ($option->value ?? $option->$field) }}">
+                        <option value="{{ $name === 'recurrence' ? ($option->id ?? $option->$field) : $option->$field }}">
                             {{ $option->$field }} {{ isset($option->meetings_count) ? '('.$option->meetings_count.')' : '' }}
                         </option>
                     @endif
