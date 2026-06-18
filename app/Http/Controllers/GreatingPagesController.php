@@ -11,10 +11,14 @@ use App\Models\User;
 use App\Models\CommitteeReport;
 use App\Models\CustomForm;
 use App\Models\ServiceCommittee;
+use App\Models\CalendarEvent;
+use App\Traits\EventRecurrenceTrait;
 use Illuminate\Http\Request;
 
 class GreatingPagesController extends Controller
 {
+    use EventRecurrenceTrait;
+
     public function dashboard() {
         
         $user = auth()->user();
@@ -95,6 +99,14 @@ class GreatingPagesController extends Controller
             return $transaction;
         });
 
+        $windowStart = now()->startOfDay();
+        $windowEnd = now()->endOfYear();
+        $baseEvents = CalendarEvent::where('start', '<=', $windowEnd)->get();
+        $eventsCount = 0;
+        foreach ($baseEvents as $event) {
+            $eventsCount += count($this->generateOccurrences($event, $windowStart, $windowEnd));
+        }
+
         return view('dashborad', [
 
             'meetings'          => $meetings,
@@ -106,6 +118,7 @@ class GreatingPagesController extends Controller
             'agendas'           => $agendas,
             'reportsCount'      => $reportsCount,
             'customFormsCount'  => $customFormsCount,
+            'eventsCount'       => $eventsCount,
         ]);
     }
 }

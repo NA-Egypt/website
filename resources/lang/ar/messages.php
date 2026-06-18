@@ -1005,5 +1005,7 @@ return [
     '5th Week' => 'الأسبوع الخامس',
     'Last Week' => 'الأسبوع الأخير',
     'group_business_meeting_exclusive' => 'لا يمكن اختيار اجتماع عمل المجموعة مع مواضيع أخرى.',
+    'Events' => 'الفعاليات',
+    'From Today to End of this year' => 'من اليوم إلى نهاية هذا العام',
 ];
 

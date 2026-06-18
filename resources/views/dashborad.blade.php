@@ -61,6 +61,14 @@
         </a>
       </div>
       {{-- / Export Meetings for Print --}}
+
+      {{-- Events --}}
+      <div class="col">
+        <a href="{{ route('frontend.events') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.Events') }}" qty="{{ $eventsCount }}" color-theme="info" icon="calendar3" description="{{ __('messages.From Today to End of this year') }}" />
+        </a>
+      </div>
+      {{-- / Events --}}
     </div>
     {{-- / Cards --}}
     {{-- / Cards --}}
