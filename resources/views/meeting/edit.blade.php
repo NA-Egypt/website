@@ -23,7 +23,7 @@
                                 <select id="topic-selector" class="form-select rounded-pill shadow-sm" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.7);">
                                     <option value="">{{ __('messages.Select Topic') ?? 'Select Topic' }}</option>
                                     @foreach ($topics as $topic)
-                                        <option value="{{ $topic->id }}" data-name="{{ app()->getLocale() === 'ar' ? $topic->ar_name : $topic->en_name }}">
+                                        <option value="{{ $topic->id }}" data-name="{{ app()->getLocale() === 'ar' ? $topic->ar_name : $topic->en_name }}" data-is-business="{{ $topic->en_name === 'Group Business Meeting' ? 'true' : 'false' }}">
                                             {{ app()->getLocale() === 'ar' ? $topic->ar_name : $topic->en_name }}
                                         </option>
                                     @endforeach
@@ -38,7 +38,7 @@
                                         $selectedTopic = $topics->firstWhere('id', $selectedId);
                                     @endphp
                                     @if($selectedTopic)
-                                        <div class="badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); font-size: 0.85rem;">
+                                        <div class="badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag" data-is-business="{{ $selectedTopic->en_name === 'Group Business Meeting' ? 'true' : 'false' }}" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); font-size: 0.85rem;">
                                             <span style="margin-inline-end: 0.5rem;">{{ app()->getLocale() === 'ar' ? $selectedTopic->ar_name : $selectedTopic->en_name }}</span>
                                             <input type="hidden" name="topics[]" value="{{ $selectedTopic->id }}">
                                             <button type="button" class="btn-close btn-close-white remove-topic" style="font-size: 0.5rem; margin-inline-start: 0.5rem;" aria-label="Close"></button>
@@ -177,6 +177,7 @@
             english: @json(__('messages.english')),
             Available: @json(__('messages.available')),
             Suspended: @json(__('messages.suspended')),
+            group_business_meeting_exclusive: @json(__('messages.group_business_meeting_exclusive')),
         };
         document.addEventListener('DOMContentLoaded', function () {
             // Topics Tag Manager
@@ -190,6 +191,18 @@
 
                     const id = selectedOption.value;
                     const name = selectedOption.getAttribute('data-name');
+                    const isBusiness = selectedOption.getAttribute('data-is-business') === 'true';
+
+                    // Check if there are already other topics selected
+                    const existingTags = container.querySelectorAll('.topic-tag');
+                    if (existingTags.length > 0) {
+                        const hasBusinessSelected = Array.from(existingTags).some(tag => tag.getAttribute('data-is-business') === 'true');
+                        if (isBusiness || hasBusinessSelected) {
+                            alert(translations.group_business_meeting_exclusive);
+                            this.value = '';
+                            return;
+                        }
+                    }
 
                     // Check if already added
                     if (!container.querySelector(`input[value="${id}"]`)) {
@@ -198,6 +211,7 @@
                         tag.className = 'badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag';
                         tag.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
                         tag.style.fontSize = '0.85rem';
+                        tag.setAttribute('data-is-business', isBusiness ? 'true' : 'false');
                         tag.innerHTML = `
                             <span style="margin-inline-end: 0.5rem;">${name}</span>
                             <input type="hidden" name="topics[]" value="${id}">

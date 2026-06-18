@@ -997,4 +997,6 @@ return [
     '4th Week' => '4th Week',
     '5th Week' => '5th Week',
     'Last Week' => 'Last Week',
+    'group_business_meeting_exclusive' => 'Group Business Meeting cannot be selected with other topics.',
 ];
+
