@@ -26,11 +26,11 @@
         }
         .day-title-cell {
             @if($pageSize === 'A5')
-                font-size: 8px;
+                font-size: 11px;
                 padding: 3px 6px;
                 /* border-right: 2px solid #00698f; */
             @else
-                font-size: 10px;
+                font-size: 13px;
                 padding: 4px 8px;
                 /* border-right: 3px solid #00698f; */
             @endif

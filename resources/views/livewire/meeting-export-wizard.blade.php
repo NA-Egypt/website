@@ -83,7 +83,7 @@
                                         </div>
                                     @empty
                                         <div class="col-12 text-center text-muted py-3">
-                                            {{ app()->getLocale() === 'ar' ? 'لا يوجد هيئات خدمية متاحة.' : 'No service bodies available.' }}
+                                            {{ app()->getLocale() === 'ar' ? 'لا يوجد مناطق ومنتديات متاحة.' : 'No service bodies available.' }}
                                         </div>
                                     @endforelse
                                 </div>

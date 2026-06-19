@@ -51,7 +51,6 @@ class MeetingExportTest extends TestCase
         ]);
 
         $user = User::factory()->create();
-        $this->actingAs($user);
 
         $group = Group::create([
             'ar_name' => 'المجموعة',
@@ -116,7 +115,6 @@ class MeetingExportTest extends TestCase
         ]);
 
         $user = User::factory()->create();
-        $this->actingAs($user);
 
         $group = Group::create([
             'ar_name' => 'المجموعة',
@@ -196,9 +194,6 @@ class MeetingExportTest extends TestCase
 
         // City C: Has no meetings at all
         $cityC = City::create(['ar_name' => 'مدينة ج', 'en_name' => 'City C']);
-
-        $user = User::factory()->create();
-        $this->actingAs($user);
 
         // Test Livewire component properties
         Livewire::test(MeetingExportWizard::class)
