@@ -658,7 +658,12 @@ class ServiceBodyAgendaController extends Controller
         }
 
         // Add database virtual files
+        $archiver = app(\App\Services\ServiceBodyAgendaArchiver::class);
         foreach ($dbAgendas as $agenda) {
+            $period = $archiver->getTargetMeetingPeriod($agenda->meeting_date);
+            $targetYear = $period['year'];
+            $arabicMonth = $period['arabic_month'];
+
             $year = $agenda->meeting_date->format('Y');
             $monthNum = (int)$agenda->meeting_date->format('m');
             $monthStr = $agenda->meeting_date->format('m');
@@ -670,7 +675,7 @@ class ServiceBodyAgendaController extends Controller
 
             $suffix = $agenda->is_exceptional ? '_EX' : '';
             $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
-            $virtualPath = "Archives/service_body_agendas/{$year}/{$monthStr}/{$filename}";
+            $virtualPath = "Archives/أجندة إجتماع لجنة خدمة الاقليم/{$targetYear}/أجندة {$arabicMonth} {$targetYear}/التقارير الشهرية حتى 10 {$arabicMonth} {$targetYear}/أجندات المناطق و المنتديات/{$sbName}/{$filename}";
 
             $filesAndDirs[] = [
                 'is_dir' => false,
