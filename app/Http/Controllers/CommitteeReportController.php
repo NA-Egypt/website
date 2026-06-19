@@ -756,13 +756,18 @@ class CommitteeReportController extends Controller
         }
 
         // Add database reports virtual files if they match filters
+        $archiver = app(\App\Services\ReportArchiver::class);
         foreach ($dbReports as $report) {
-            // Virtual path under: Archives/reports/{year}/{month}/report_{id}_{date}.pdf
-            $year = $report->meeting_date->format('Y');
-            $month = $report->meeting_date->format('m');
+            $period = $archiver->getTargetMeetingPeriod($report->meeting_date);
+            $targetYear = $period['year'];
+            $arabicMonth = $period['arabic_month'];
+            $committeeName = $report->serviceCommittee ? $report->serviceCommittee->ar_name : '';
+            $committeeName = str_replace(['/', '\\', "\0"], '', $committeeName);
+
             $dateStr = $report->meeting_date->format('Y-m-d');
             $filename = sprintf('report_%d_%s.pdf', $report->id, $dateStr);
-            $virtualPath = "Archives/reports/{$year}/{$month}/{$filename}";
+            $baseFolder = "Archives/أجندة إجتماع لجنة خدمة الاقليم/{$targetYear}/أجندة {$arabicMonth} {$targetYear}/التقارير الشهرية حتى 10 {$arabicMonth} {$targetYear}/{$committeeName}";
+            $virtualPath = "{$baseFolder}/{$filename}";
 
             // Filter virtual reports by search/date matches if requested
             if ($request->has('search') && $request->search != '') {
@@ -786,7 +791,7 @@ class CommitteeReportController extends Controller
             foreach ($report->attachments as $attachment) {
                 $originalName = basename($attachment->original_name);
                 $attFilename = sprintf('attachment_%d_%s', $attachment->id, $originalName);
-                $attVirtualPath = "Archives/attachments/{$year}/{$month}/{$attFilename}";
+                $attVirtualPath = "{$baseFolder}/المرفقات/{$attFilename}";
 
                 $filesAndDirs[] = [
                     'is_dir' => false,

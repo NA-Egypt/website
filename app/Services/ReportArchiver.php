@@ -13,6 +13,67 @@ use Exception;
 
 class ReportArchiver
 {
+    protected $arabicMonths = [
+        1 => 'يناير',
+        2 => 'فبراير',
+        3 => 'مارس',
+        4 => 'أبريل',
+        5 => 'مايو',
+        6 => 'يونيو',
+        7 => 'يوليو',
+        8 => 'أغسطس',
+        9 => 'سبتمبر',
+        10 => 'أكتوبر',
+        11 => 'نوفمبر',
+        12 => 'ديسمبر'
+    ];
+
+    /**
+     * Get the target meeting period info (month, year, arabic_month) based on the cutoff rules:
+     * - February meeting: Dec 11 – Feb 10
+     * - April meeting: Feb 11 – Apr 10
+     * - June meeting: Apr 11 – Jun 10
+     * - August meeting: Jun 11 – Aug 10
+     * - October meeting is September (9) (exception): Aug 11 – Oct 10
+     * - December meeting: Oct 11 – Dec 10
+     *
+     * @param mixed $date
+     * @return array
+     */
+    public function getTargetMeetingPeriod($date): array
+    {
+        $carbonDate = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+        $m = (int)$carbonDate->format('n');
+        $d = (int)$carbonDate->format('j');
+        $y = (int)$carbonDate->format('Y');
+
+        if (($m == 12 && $d >= 11) || $m == 1 || ($m == 2 && $d <= 10)) {
+            $targetMonth = 2;
+            $targetYear = ($m == 12) ? $y + 1 : $y;
+        } elseif (($m == 2 && $d >= 11) || $m == 3 || ($m == 4 && $d <= 10)) {
+            $targetMonth = 4;
+            $targetYear = $y;
+        } elseif (($m == 4 && $d >= 11) || $m == 5 || ($m == 6 && $d <= 10)) {
+            $targetMonth = 6;
+            $targetYear = $y;
+        } elseif (($m == 6 && $d >= 11) || $m == 7 || ($m == 8 && $d <= 10)) {
+            $targetMonth = 8;
+            $targetYear = $y;
+        } elseif (($m == 8 && $d >= 11) || $m == 9 || ($m == 10 && $d <= 10)) {
+            $targetMonth = 9; // September is exception instead of October
+            $targetYear = $y;
+        } else {
+            $targetMonth = 12;
+            $targetYear = $y;
+        }
+
+        return [
+            'month' => $targetMonth,
+            'year' => $targetYear,
+            'arabic_month' => $this->arabicMonths[$targetMonth] ?? ''
+        ];
+    }
+
     /**
      * Archive the given committee report (PDF and attachments).
      *
@@ -28,9 +89,15 @@ class ReportArchiver
         }
 
         try {
-            $year = $report->meeting_date->format('Y');
+            $date = $report->meeting_date;
+            $period = $this->getTargetMeetingPeriod($date);
+            $targetMonth = $period['month'];
+            $targetYear = $period['year'];
+            $arabicMonth = $period['arabic_month'];
+
+            // Get month and year of meeting_date for the filename
             $month = $report->meeting_date->format('m');
-            $dateStr = $report->meeting_date->format('Y-m-d');
+            $year = $report->meeting_date->format('Y');
 
             // 1. Archive the PDF version of the report
             $pdfContent = $this->generatePdfContent($report);
@@ -65,14 +132,16 @@ class ReportArchiver
             $cleanedCommitteeName = str_replace(' ', '_', $committeeName);
 
             $pdfFilename = sprintf('تقريرـ%s_%s_%s%s.pdf', $cleanedCommitteeName, $month, $year, $suffix);
-            $pdfPath = "{$year}/{$month}/" . $pdfFilename;
+            
+            $baseFolder = "Archives/أجندة إجتماع لجنة خدمة الاقليم/{$targetYear}/أجندة {$arabicMonth} {$targetYear}/التقارير الشهرية حتى 10 {$arabicMonth} {$targetYear}/{$committeeName}";
+            $pdfPath = "{$baseFolder}/{$pdfFilename}";
 
             Storage::disk('storagebox')->put($pdfPath, $pdfContent);
             Log::info("ReportArchiver: Archived report PDF to {$pdfPath}");
 
             // 2. Archive all attachments
             foreach ($report->attachments as $attachment) {
-                $this->archiveAttachment($attachment, $year, $month);
+                $this->archiveAttachment($attachment, $baseFolder);
             }
 
             return true;
@@ -125,14 +194,13 @@ class ReportArchiver
     }
 
     /**
-     * Archive a single attachment to the storagebox disk.
+     * Archive a single attachment to the storagebox disk under the given base folder.
      *
      * @param CommitteeReportAttachment $attachment
-     * @param string $year
-     * @param string $month
+     * @param string $baseFolder
      * @return void
      */
-    protected function archiveAttachment(CommitteeReportAttachment $attachment, string $year, string $month): void
+    protected function archiveAttachment(CommitteeReportAttachment $attachment, string $baseFolder): void
     {
         if (!Storage::exists($attachment->file_path)) {
             Log::warning("ReportArchiver: Attachment file {$attachment->file_path} for attachment {$attachment->id} does not exist locally.");
@@ -142,7 +210,7 @@ class ReportArchiver
         // Sanitize the original filename to prevent path traversal
         $originalName = basename($attachment->original_name);
         $archiveFilename = sprintf('attachment_%d_%s', $attachment->id, $originalName);
-        $archivePath = "attachments/{$year}/{$month}/" . $archiveFilename;
+        $archivePath = "{$baseFolder}/المرفقات/{$archiveFilename}";
 
         try {
             // Read from default disk and write to storagebox disk
