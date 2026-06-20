@@ -90,6 +90,21 @@
                 </div>
             </div>
 
+            <!-- Attachments -->
+            @if($agenda->attachments->count() > 0)
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3 text-secondary"><i class="bi bi-paperclip me-2"></i>{{ __('messages.Attachments') ?? 'Attachments' }}</h5>
+                    <div class="list-group">
+                        @foreach($agenda->attachments as $attachment)
+                            <a href="{{ route('service-body-agendas.downloadAttachment', $attachment->id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" target="_blank">
+                                <span><i class="bi bi-file-earmark-arrow-down me-2 text-primary"></i>{{ $attachment->original_name }}</span>
+                                <span class="badge bg-secondary rounded-pill">{{ number_format($attachment->file_size / 1024, 1) }} KB</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <!-- Action Controls -->
             <div class="d-flex flex-wrap gap-2 justify-content-end mt-4 pt-3 border-top">
                 <a href="{{ route('service-body-agendas.pdf', $agenda->id) }}" class="btn btn-outline-danger">

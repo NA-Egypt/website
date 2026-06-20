@@ -182,6 +182,8 @@ Route::group(
 
             // Service Body Agendas:
             Route::get('service-body-agendas/archive', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'archive'])->name('service-body-agendas.archive');
+            Route::get('service-body-agendas/attachments/{id}', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'downloadAttachment'])->name('service-body-agendas.downloadAttachment');
+            Route::delete('service-body-agendas/attachments/{id}', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'deleteAttachment'])->name('service-body-agendas.deleteAttachment');
             Route::resource('service-body-agendas', \App\Http\Controllers\ServiceBodyAgendaController::class);
             Route::get('service-body-agendas/{id}/pdf', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'pdf'])->name('service-body-agendas.pdf');
             Route::post('service-body-agendas/{id}/approve', [\App\Http\Controllers\ServiceBodyAgendaController::class, 'approve'])->name('service-body-agendas.approve');

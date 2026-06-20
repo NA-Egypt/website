@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServiceBodyAgenda;
 use App\Models\ServiceBody;
+use App\Models\ServiceBodyAgendaAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -226,6 +227,8 @@ class ServiceBodyAgendaController extends Controller
             'groups_joined.*' => 'nullable|string|max:255',
             'status' => 'required|in:draft,submitted,approved',
             'is_exceptional' => 'nullable|boolean',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
         ]);
 
         $sbId = $isRsc ? $request->service_body_id : $sb->id;
@@ -240,6 +243,19 @@ class ServiceBodyAgendaController extends Controller
             'is_exceptional' => $request->boolean('is_exceptional'),
         ]);
 
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('agenda_attachments', 'storagebox');
+                ServiceBodyAgendaAttachment::create([
+                    'service_body_agenda_id' => $agenda->id,
+                    'file_path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                ]);
+            }
+        }
+
         if ($agenda->status === 'submitted') {
             $this->sendNotificationEmail($agenda);
         }
@@ -253,7 +269,7 @@ class ServiceBodyAgendaController extends Controller
 
     public function show($id)
     {
-        $agenda = ServiceBodyAgenda::with('serviceBody')->findOrFail($id);
+        $agenda = ServiceBodyAgenda::with(['serviceBody', 'attachments'])->findOrFail($id);
         
         if (!$this->isAgendaVisibleToUser($agenda)) {
             abort(403, 'Unauthorized');
@@ -264,9 +280,10 @@ class ServiceBodyAgendaController extends Controller
 
     public function edit($id)
     {
-        $agenda = ServiceBodyAgenda::with('serviceBody')->findOrFail($id);
+        $isRsc = $this->isRsc();
+        $agenda = ServiceBodyAgenda::with(['serviceBody', 'attachments'])->findOrFail($id);
 
-        if (!$this->isRsc()) {
+        if (!$isRsc) {
             $sb = $this->getServiceBody();
             if (!$sb || $sb->id !== $agenda->service_body_id) {
                 abort(403, 'Unauthorized');
@@ -277,8 +294,8 @@ class ServiceBodyAgendaController extends Controller
             }
         }
 
-        $serviceBodies = $this->isRsc() ? ServiceBody::with('groups')->get() : [];
-        $sb = !$this->isRsc() ? $this->getServiceBody()->load('groups') : null;
+        $serviceBodies = $isRsc ? ServiceBody::with('groups')->get() : [];
+        $sb = !$isRsc ? $this->getServiceBody()->load('groups') : null;
 
         return view('service-body-agendas.edit', compact('agenda', 'sb', 'serviceBodies', 'isRsc'));
     }
@@ -308,7 +325,28 @@ class ServiceBodyAgendaController extends Controller
             'groups_joined.*' => 'nullable|string|max:255',
             'status' => 'required|in:draft,submitted,approved',
             'is_exceptional' => 'nullable|boolean',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
         ]);
+
+        if ($request->hasFile('attachments')) {
+            $currentCount = $agenda->attachments()->count();
+            $newCount = count($request->file('attachments'));
+            if ($currentCount + $newCount > 5) {
+                return redirect()->back()->withErrors(['attachments' => 'An agenda can have a maximum of 5 attachments.'])->withInput();
+            }
+
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('agenda_attachments', 'storagebox');
+                ServiceBodyAgendaAttachment::create([
+                    'service_body_agenda_id' => $agenda->id,
+                    'file_path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                ]);
+            }
+        }
 
         $sbId = $this->isRsc() ? $request->service_body_id : $agenda->service_body_id;
         $wasDraft = $agenda->status === 'draft';
@@ -345,6 +383,14 @@ class ServiceBodyAgendaController extends Controller
             if ($agenda->status !== 'draft') {
                 abort(403, 'Only drafts can be deleted.');
             }
+        }
+
+        // Delete physical files
+        foreach ($agenda->attachments as $attachment) {
+            if (Storage::disk('storagebox')->exists($attachment->file_path)) {
+                Storage::disk('storagebox')->delete($attachment->file_path);
+            }
+            $attachment->delete();
         }
 
         $agenda->delete();
@@ -768,5 +814,63 @@ class ServiceBodyAgendaController extends Controller
         } catch (Exception $e) {
             Log::error("Failed to send service body agenda email alert: " . $e->getMessage());
         }
+    }
+
+    public function downloadAttachment($id)
+    {
+        $attachment = ServiceBodyAgendaAttachment::findOrFail($id);
+        $agenda = $attachment->serviceBodyAgenda;
+
+        if (!$this->isAgendaVisibleToUser($agenda)) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (!Storage::disk('storagebox')->exists($attachment->file_path)) {
+            abort(404, 'File not found');
+        }
+
+        $disposition = request()->query('disposition', 'attachment');
+        if (!in_array($disposition, ['attachment', 'inline'])) {
+            $disposition = 'attachment';
+        }
+
+        if ($disposition === 'inline') {
+            return response()->file(Storage::disk('storagebox')->path($attachment->file_path), [
+                'Content-Type' => $attachment->mime_type,
+                'Content-Disposition' => 'inline; filename="' . $attachment->original_name . '"',
+                'X-Content-Type-Options' => 'nosniff',
+            ]);
+        }
+
+        return Storage::disk('storagebox')->download($attachment->file_path, $attachment->original_name, [
+            'Content-Type' => $attachment->mime_type,
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
+    public function deleteAttachment($id)
+    {
+        $attachment = ServiceBodyAgendaAttachment::findOrFail($id);
+        $agenda = $attachment->serviceBodyAgenda;
+
+        // Only owner or admin can delete draft attachments
+        if (!$this->isRsc()) {
+            $sb = $this->getServiceBody();
+            if (!$sb || $sb->id !== $agenda->service_body_id) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
+        if ($agenda->status !== 'draft') {
+            abort(403, 'Cannot delete attachments from a submitted agenda.');
+        }
+
+        if (Storage::disk('storagebox')->exists($attachment->file_path)) {
+            Storage::disk('storagebox')->delete($attachment->file_path);
+        }
+
+        $attachment->delete();
+
+        return redirect()->back()->with('success', 'Attachment deleted successfully.');
     }
 }

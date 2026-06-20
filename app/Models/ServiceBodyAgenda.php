@@ -31,4 +31,9 @@ class ServiceBodyAgenda extends Model
     {
         return $this->belongsTo(ServiceBody::class);
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(ServiceBodyAgendaAttachment::class);
+    }
 }

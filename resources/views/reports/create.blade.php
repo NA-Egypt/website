@@ -103,10 +103,18 @@
                 <div class="card-header">{{ __('messages.Attachments') ?? 'Attachments' }}</div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="attachments" class="form-label fw-bold">{{ __('messages.Upload Attachments') ?? 'Upload Attachments' }}</label>
-                        <input class="form-control" type="file" id="attachments" name="attachments[]" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
-                        <div class="form-text text-muted">
-                            {{ __('messages.Max 3 files, 5MB each') ?? 'Maximum 3 files, 5MB per file' }}. <br>
+                        <label class="form-label fw-bold">{{ __('messages.Upload Attachments') ?? 'Upload Attachments' }}</label>
+                        <div id="attachmentsContainer">
+                            <div class="attachment-row mb-2">
+                                <div class="input-group">
+                                    <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                    <button type="button" class="btn btn-outline-danger remove-attachment-btn d-none">X</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addAttachmentBtn">+ {{ __('messages.Add Attachment') ?? 'Add Attachment' }}</button>
+                        <div class="form-text text-muted mt-2">
+                            {{ __('messages.Max 5 files, 5MB each') ?? 'Maximum 5 files, 5MB per file' }}. <br>
                             {{ __('messages.Allowed types') ?? 'Allowed file types' }}: PDF, PNG, JPG, JPEG, DOCX, XLSX
                         </div>
                     </div>
@@ -343,6 +351,69 @@
                 "{{ __('messages.Treasurer') }}"
             ];
             defaultPositions.forEach(pos => addPositionRow(pos));
+
+            // Dynamic Attachments
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const maxAttachments = 5;
+
+            function updateRemoveButtons() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                rows.forEach((row, index) => {
+                    const removeBtn = row.querySelector('.remove-attachment-btn');
+                    if (rows.length > 1) {
+                        removeBtn.classList.remove('d-none');
+                    } else {
+                        removeBtn.classList.add('d-none');
+                    }
+                });
+                
+                if (rows.length >= maxAttachments) {
+                    addAttachmentBtn.style.display = 'none';
+                } else {
+                    addAttachmentBtn.style.display = 'inline-block';
+                }
+            }
+
+            addAttachmentBtn.addEventListener('click', function() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length < maxAttachments) {
+                    const newRow = document.createElement('div');
+                    newRow.className = 'attachment-row mb-2';
+                    newRow.innerHTML = `
+                        <div class="input-group">
+                            <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                            <button type="button" class="btn btn-outline-danger remove-attachment-btn">X</button>
+                        </div>
+                    `;
+                    attachmentsContainer.appendChild(newRow);
+                    
+                    newRow.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                        newRow.remove();
+                        updateRemoveButtons();
+                    });
+                    
+                    updateRemoveButtons();
+                }
+            });
+
+            // Handle remove for initial row
+            attachmentsContainer.querySelector('.remove-attachment-btn').addEventListener('click', function(e) {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length > 1) {
+                    e.currentTarget.closest('.attachment-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            // Disable empty file inputs before submitting
+            form.addEventListener('submit', function() {
+                attachmentsContainer.querySelectorAll('input[type="file"]').forEach(input => {
+                    if (!input.value) {
+                        input.disabled = true;
+                    }
+                });
+            });
         });
     </script>
 </x-layout>

@@ -103,6 +103,20 @@
                 <button type="button" class="btn btn-outline-primary" id="addSectionBtn">+ {{ __('messages.Add Section') ?? 'Add Section' }}</button>
             </div>
 
+            <!-- Attachments Section (Repeatable, Max 5) -->
+            <div class="card mb-4 shadow-sm border-0" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 15px;">
+                <div class="card-header bg-light fw-bold" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                    <i class="bi bi-paperclip me-2"></i>{{ __('messages.Attachments') ?? 'Attachments' }}
+                </div>
+                <div class="card-body p-4">
+                    <div id="attachmentsContainer" class="d-flex flex-column gap-2 mb-2">
+                        <!-- Repeatable file inputs will be added here -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="addAttachmentBtn">+ {{ __('messages.Add Attachment') ?? 'Add Attachment' }}</button>
+                    <small class="text-muted d-block mt-2">{{ __('messages.Max 5 attachments. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.') ?? 'Max 5 attachments. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.' }}</small>
+                </div>
+            </div>
+
             <div class="d-flex gap-3 mb-5">
                 <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill">
                     <i class="bi bi-file-earmark"></i> {{ __('messages.Save Draft') ?? 'Save Draft' }}
@@ -344,6 +358,45 @@
 
             addSectionBtn.addEventListener('click', () => addSectionRow('', ''));
 
+            // Repeatable Attachments (Max 5)
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const maxAttachments = 5;
+
+            function updateAttachmentBtn() {
+                const currentCount = attachmentsContainer.querySelectorAll('.attachment-row').length;
+                if (currentCount >= maxAttachments) {
+                    addAttachmentBtn.disabled = true;
+                } else {
+                    addAttachmentBtn.disabled = false;
+                }
+            }
+
+            function addAttachmentRow() {
+                const currentCount = attachmentsContainer.querySelectorAll('.attachment-row').length;
+                if (currentCount >= maxAttachments) {
+                    alert("{{ __('messages.Maximum 5 attachments allowed.') ?? 'Maximum 5 attachments allowed.' }}");
+                    return;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'd-flex align-items-center gap-2 attachment-row';
+                div.innerHTML = `
+                    <input type="file" name="attachments[]" class="form-control" required>
+                    <button type="button" class="btn btn-outline-danger remove-attachment-btn">X</button>
+                `;
+                attachmentsContainer.appendChild(div);
+
+                div.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                    div.remove();
+                    updateAttachmentBtn();
+                });
+
+                updateAttachmentBtn();
+            }
+
+            addAttachmentBtn.addEventListener('click', addAttachmentRow);
+
             // Form Submit
             const form = document.querySelector('#agendaForm');
             const statusInput = document.getElementById('statusInput');
@@ -359,6 +412,7 @@
             });
 
             form.onsubmit = function() {
+                // Remove required attribute from empty rows if any (or they are already required, but we should make sure we don't send empty files)
                 document.querySelectorAll('.section-row').forEach(row => {
                     const idx = row.dataset.index;
                     const contentInput = document.getElementById(`section-content-${idx}`);

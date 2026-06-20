@@ -134,19 +134,27 @@
                     @endif
 
                     <!-- Upload New Attachments -->
-                    @if($report->attachments->count() < 3)
+                    @if($report->attachments->count() < 5)
                         <div class="mb-3">
-                            <label for="attachments" class="form-label fw-bold">{{ __('messages.Upload New Attachments') ?? 'Upload New Attachments' }}</label>
-                            <input class="form-control" type="file" id="attachments" name="attachments[]" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
-                            <div class="form-text text-muted">
-                                {{ __('messages.Max total 3 files') ?? 'Maximum total of 3 files' }} ({{ $report->attachments->count() }} {{ __('messages.currently uploaded') ?? 'currently uploaded' }}). <br>
+                            <label class="form-label fw-bold">{{ __('messages.Upload New Attachments') ?? 'Upload New Attachments' }}</label>
+                            <div id="attachmentsContainer">
+                                <div class="attachment-row mb-2">
+                                    <div class="input-group">
+                                        <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                        <button type="button" class="btn btn-outline-danger remove-attachment-btn d-none">X</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addAttachmentBtn">+ {{ __('messages.Add Attachment') ?? 'Add Attachment' }}</button>
+                            <div class="form-text text-muted mt-2">
+                                {{ __('messages.Max total 5 files') ?? 'Maximum total of 5 files' }} ({{ $report->attachments->count() }} {{ __('messages.currently uploaded') ?? 'currently uploaded' }}). <br>
                                 {{ __('messages.Max size') ?? 'Maximum 5MB per file' }}. <br>
                                 {{ __('messages.Allowed types') ?? 'Allowed file types' }}: PDF, PNG, JPG, JPEG, DOCX, XLSX
                             </div>
                         </div>
                     @else
                         <div class="alert alert-warning py-2 mb-0">
-                            <i class="bi bi-exclamation-triangle"></i> {{ __('messages.Max attachments limit reached') ?? 'You have reached the maximum limit of 3 attachments. Delete one to upload a new file.' }}
+                            <i class="bi bi-exclamation-triangle"></i> {{ __('messages.Max attachments limit reached') ?? 'You have reached the maximum limit of 5 attachments. Delete one to upload a new file.' }}
                         </div>
                     @endif
                 </div>
@@ -410,6 +418,77 @@
                 ];
                 defaultPositions.forEach(pos => addPositionRow(pos));
             }
+
+            // Dynamic Attachments
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const existingCount = {{ $report->attachments->count() }};
+            const maxAttachments = 5;
+
+            function updateRemoveButtons() {
+                if (!attachmentsContainer) return;
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                rows.forEach((row, index) => {
+                    const removeBtn = row.querySelector('.remove-attachment-btn');
+                    removeBtn.classList.remove('d-none');
+                });
+                
+                if (existingCount + rows.length >= maxAttachments) {
+                    addAttachmentBtn.style.display = 'none';
+                } else {
+                    addAttachmentBtn.style.display = 'inline-block';
+                }
+            }
+
+            if (addAttachmentBtn) {
+                addAttachmentBtn.addEventListener('click', function() {
+                    const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                    if (existingCount + rows.length < maxAttachments) {
+                        const newRow = document.createElement('div');
+                        newRow.className = 'attachment-row mb-2';
+                        newRow.innerHTML = `
+                            <div class="input-group">
+                                <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                <button type="button" class="btn btn-outline-danger remove-attachment-btn">X</button>
+                            </div>
+                        `;
+                        attachmentsContainer.appendChild(newRow);
+                        
+                        newRow.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                            newRow.remove();
+                            updateRemoveButtons();
+                        });
+                        
+                        updateRemoveButtons();
+                    }
+                });
+
+                // Handle remove for initial row
+                const initialRemoveBtn = attachmentsContainer.querySelector('.remove-attachment-btn');
+                if (initialRemoveBtn) {
+                    initialRemoveBtn.addEventListener('click', function(e) {
+                        const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                        if (rows.length > 1) {
+                            e.currentTarget.closest('.attachment-row').remove();
+                            updateRemoveButtons();
+                        } else {
+                            const fileInput = e.currentTarget.closest('.attachment-row').querySelector('input[type="file"]');
+                            if (fileInput) fileInput.value = '';
+                        }
+                    });
+                }
+            }
+
+            // Disable empty file inputs before submitting
+            form.addEventListener('submit', function() {
+                if (attachmentsContainer) {
+                    attachmentsContainer.querySelectorAll('input[type="file"]').forEach(input => {
+                        if (!input.value) {
+                            input.disabled = true;
+                        }
+                    });
+                }
+            });
         });
     </script>
 </x-layout>

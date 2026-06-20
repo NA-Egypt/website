@@ -397,6 +397,50 @@ class CommitteeReportWorkflowTest extends TestCase
         Storage::disk('local')->assertMissing($attachment->file_path);
     }
 
+    public function test_file_attachments_limit_is_five()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $this->actingAs($user);
+
+        $files = [];
+        for ($i = 0; $i < 5; $i++) {
+            $files[] = UploadedFile::fake()->create("doc_{$i}.pdf", 100, 'application/pdf');
+        }
+
+        // 1. Uploading exactly 5 attachments should pass
+        $response = $this->post(route('committee-reports.store'), [
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday',
+            'sections' => [
+                ['headline' => null, 'content' => 'Report with 5 attachments']
+            ],
+            'status' => 'draft',
+            'attachments' => $files,
+        ]);
+
+        $response->assertRedirect(route('committee-reports.index'));
+        $report = CommitteeReport::where('service_committee_id', $committee->id)->first();
+        $this->assertEquals(5, $report->attachments()->count());
+
+        // 2. Uploading a 6th attachment should fail validation
+        $extraFile = UploadedFile::fake()->create("doc_6.pdf", 100, 'application/pdf');
+        $files[] = $extraFile;
+
+        $response = $this->post(route('committee-reports.store'), [
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday',
+            'sections' => [
+                ['headline' => null, 'content' => 'Report with 6 attachments']
+            ],
+            'status' => 'draft',
+            'attachments' => $files,
+        ]);
+
+        $response->assertSessionHasErrors('attachments');
+    }
+
     public function test_authenticated_user_can_access_archive()
     {
         $user = User::factory()->create(['email' => 'comm@naegypt.org']);
@@ -628,8 +672,10 @@ class CommitteeReportWorkflowTest extends TestCase
         $archiver = new \App\Services\ReportArchiver();
         $this->assertTrue($archiver->archive($report1));
 
+        $baseFolder = 'Archives/أجندة إجتماع لجنة خدمة الاقليم/2026/أجندة أغسطس 2026/التقارير الشهرية حتى 10 أغسطس 2026/اللجنة الفنية المشتركة';
+
         // Since there is only one report for this committee in June 2026, it should not have a suffix
-        $expectedPath1 = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
+        $expectedPath1 = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
         Storage::disk('storagebox')->assertExists($expectedPath1);
 
         // Add a second approved report in the same month
@@ -646,8 +692,8 @@ class CommitteeReportWorkflowTest extends TestCase
         $this->assertTrue($archiver->archive($report2));
 
         // Now they should have _1 and _2 suffixes
-        $expectedPath1Suffix = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026_1.pdf';
-        $expectedPath2Suffix = '2026/06/تقريرـاللجنة_الفنية_المشتركة_06_2026_2.pdf';
+        $expectedPath1Suffix = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026_1.pdf';
+        $expectedPath2Suffix = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026_2.pdf';
 
         Storage::disk('storagebox')->assertExists($expectedPath1Suffix);
         Storage::disk('storagebox')->assertExists($expectedPath2Suffix);

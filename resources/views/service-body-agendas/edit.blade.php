@@ -97,6 +97,47 @@
                 <button type="button" class="btn btn-outline-primary" id="addSectionBtn">+ {{ __('messages.Add Section') ?? 'Add Section' }}</button>
             </div>
 
+            <!-- Attachments Section (Repeatable, Max 5) -->
+            <div class="card mb-4 shadow-sm border-0" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 15px;">
+                <div class="card-header bg-light fw-bold" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                    <i class="bi bi-paperclip me-2"></i>{{ __('messages.Attachments') ?? 'Attachments' }}
+                </div>
+                <div class="card-body p-4">
+                    @if($agenda->attachments->count() > 0)
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary">{{ __('messages.Current Attachments') ?? 'Current Attachments' }}</label>
+                            <div class="list-group">
+                                @foreach($agenda->attachments as $attachment)
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{{ route('service-body-agendas.downloadAttachment', $attachment->id) }}" target="_blank">
+                                            <i class="bi bi-file-earmark-arrow-down me-2"></i>{{ $attachment->original_name }}
+                                        </a>
+                                        @if($agenda->status === 'draft')
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="if(confirm('Are you sure?')) { document.getElementById('delete-attachment-form-{{ $attachment->id }}').submit(); }">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <form id="delete-attachment-form-{{ $attachment->id }}" action="{{ route('service-body-agendas.deleteAttachment', $attachment->id) }}" method="POST" class="d-none">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">{{ __('messages.Add New Attachments') ?? 'Add New Attachments' }}</label>
+                        <div id="attachmentsContainer" class="d-flex flex-column gap-2 mb-2">
+                            <!-- Repeatable file inputs will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="addAttachmentBtn">+ {{ __('messages.Add Attachment') ?? 'Add Attachment' }}</button>
+                        <small class="text-muted d-block mt-2">{{ __('messages.Max 5 attachments total. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.') ?? 'Max 5 attachments total. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.' }}</small>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex gap-3 mb-5">
                 <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill">
                     <i class="bi bi-file-earmark"></i> {{ __('messages.Save Draft') ?? 'Save Draft' }}
@@ -336,6 +377,47 @@
             }
 
             addSectionBtn.addEventListener('click', () => addSectionRow('', ''));
+
+            // Repeatable Attachments (Max 5 total)
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const existingCount = @json($agenda->attachments->count());
+            const maxAttachments = 5 - existingCount;
+
+            function updateAttachmentBtn() {
+                const currentCount = attachmentsContainer.querySelectorAll('.attachment-row').length;
+                if (currentCount >= maxAttachments) {
+                    addAttachmentBtn.disabled = true;
+                } else {
+                    addAttachmentBtn.disabled = false;
+                }
+            }
+
+            function addAttachmentRow() {
+                const currentCount = attachmentsContainer.querySelectorAll('.attachment-row').length;
+                if (currentCount >= maxAttachments) {
+                    alert("{{ __('messages.Maximum 5 attachments allowed.') ?? 'Maximum 5 attachments allowed.' }}");
+                    return;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'd-flex align-items-center gap-2 attachment-row';
+                div.innerHTML = `
+                    <input type="file" name="attachments[]" class="form-control" required>
+                    <button type="button" class="btn btn-outline-danger remove-attachment-btn">X</button>
+                `;
+                attachmentsContainer.appendChild(div);
+
+                div.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                    div.remove();
+                    updateAttachmentBtn();
+                });
+
+                updateAttachmentBtn();
+            }
+
+            addAttachmentBtn.addEventListener('click', addAttachmentRow);
+            updateAttachmentBtn();
 
             // Form Submit
             const form = document.querySelector('#agendaForm');

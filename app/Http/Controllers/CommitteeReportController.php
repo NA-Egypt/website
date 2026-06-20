@@ -126,7 +126,7 @@ class CommitteeReportController extends Controller
             'positions.*.status' => 'required|string',
             'positions.*.election' => 'nullable',
             'status' => 'required|in:draft,submitted,approved',
-            'attachments' => 'nullable|array|max:3',
+            'attachments' => 'nullable|array|max:5',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
             'is_exceptional' => 'nullable|boolean',
             'attended_members' => 'nullable|string',
@@ -151,15 +151,17 @@ class CommitteeReportController extends Controller
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                // Store in a private directory inside storage (not public)
-                $path = $file->store('report_attachments');
-                CommitteeReportAttachment::create([
-                    'committee_report_id' => $report->id,
-                    'file_path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
-                    'mime_type' => $file->getClientMimeType(),
-                    'file_size' => $file->getSize(),
-                ]);
+                if ($file && $file->isValid()) {
+                    // Store in a private directory inside storage (not public)
+                    $path = $file->store('report_attachments');
+                    CommitteeReportAttachment::create([
+                        'committee_report_id' => $report->id,
+                        'file_path' => $path,
+                        'original_name' => $file->getClientOriginalName(),
+                        'mime_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                    ]);
+                }
             }
         }
 
@@ -283,7 +285,7 @@ class CommitteeReportController extends Controller
             'positions.*.status' => 'required|string',
             'positions.*.election' => 'nullable',
             'status' => 'required|in:draft,submitted,approved',
-            'attachments' => 'nullable|array|max:3',
+            'attachments' => 'nullable|array|max:5',
             'attachments.*' => 'file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
             'is_exceptional' => 'nullable|boolean',
             'attended_members' => 'nullable|string',
@@ -295,13 +297,16 @@ class CommitteeReportController extends Controller
         
         // Check if adding new attachments exceeds the limit
         if ($request->hasFile('attachments')) {
+            $validFiles = array_filter($request->file('attachments'), function($file) {
+                return $file && $file->isValid();
+            });
             $currentCount = $report->attachments()->count();
-            $newCount = count($request->file('attachments'));
-            if ($currentCount + $newCount > 3) {
-                return redirect()->back()->withErrors(['attachments' => 'A report can have a maximum of 3 attachments.'])->withInput();
+            $newCount = count($validFiles);
+            if ($currentCount + $newCount > 5) {
+                return redirect()->back()->withErrors(['attachments' => 'A report can have a maximum of 5 attachments.'])->withInput();
             }
 
-            foreach ($request->file('attachments') as $file) {
+            foreach ($validFiles as $file) {
                 $path = $file->store('report_attachments');
                 CommitteeReportAttachment::create([
                     'committee_report_id' => $report->id,
