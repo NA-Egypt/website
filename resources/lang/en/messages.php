@@ -1006,5 +1006,10 @@ return [
     'Max 5 attachments total. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.' => 'Max 5 attachments total. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.',
     'Max 5 attachments. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.' => 'Max 5 attachments. Allowed types: pdf, png, jpg, jpeg, docx, xlsx. Max size: 5MB per file.',
     'Maximum 5 attachments allowed.' => 'Maximum 5 attachments allowed.',
+    'Are you sure you want to approve and publish this report?' => 'Are you sure you want to approve and publish this report?',
+    'Yes' => 'Yes',
+    'Approve' => 'Approve',
+    'Service Body Logo' => 'Service Body Logo',
+    'Are you sure?' => 'Are you sure?',
 ];
 
