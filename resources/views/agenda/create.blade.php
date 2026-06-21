@@ -1,9 +1,9 @@
 <x-layout>
-<div class="container-fluid" style="background-color: var(--bs-body-bg); padding: 2rem;">
+<div class="container-fluid px-0 px-sm-3 mt-4 mb-5 mx-auto" style="max-width: 900px; width: 100%;">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-12 col-md-10 col-lg-8 px-0 px-sm-2">
             <div class="card shadow-lg" style="border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
-                <div class="card-header bg-primary text-white" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-top-left-radius: 15px; border-top-right-radius: 15px;">
                     <h4 class="mb-0">{{ __('messages.create_agenda') }} - {{ $group->{app()->getLocale() . '_name'} }}</h4>
                 </div>
 
@@ -63,7 +63,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="button" class="btn btn-primary" onclick="nextSection(1)">{{ __('messages.next') }} <i class="bi bi-arrow-right"></i></button>
+                                <button type="button" class="btn btn-primary" onclick="nextSection(1)">{{ __('messages.next') }} <i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'left' : 'right' }}"></i></button>
                             </div>
                         </div>
 
@@ -99,8 +99,8 @@
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-secondary" onclick="prevSection(2)"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</button>
-                                <button type="button" class="btn btn-primary" onclick="nextSection(2)">{{ __('messages.next') }} <i class="bi bi-arrow-right"></i></button>
+                                <button type="button" class="btn btn-secondary" onclick="prevSection(2)"><i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }}"></i> {{ __('messages.back') ?? 'Back' }}</button>
+                                <button type="button" class="btn btn-primary" onclick="nextSection(2)">{{ __('messages.next') }} <i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'left' : 'right' }}"></i></button>
                             </div>
                         </div>
 
@@ -112,6 +112,12 @@
                             <div class="mb-4">
                                 <label class="form-label fw-bold">{{ __('messages.recovery_atmosphere') }} *</label>
                                 <textarea name="recovery_atmosphere" class="form-control" rows="3" required placeholder="{{ __('messages.recovery_atmosphere') }}"></textarea>
+                            </div>
+
+                            <!-- Trusted Servants -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">{{ __('messages.trusted_servants') }} *</label>
+                                <textarea name="trusted_servants" class="form-control" rows="3" required placeholder="{{ __('messages.trusted_servants') }}"></textarea>
                             </div>
 
                             <!-- Financial Issues -->
@@ -130,7 +136,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-secondary" onclick="prevSection(3)"><i class="bi bi-arrow-left"></i> {{ __('messages.back') ?? 'Back' }}</button>
+                                <button type="button" class="btn btn-secondary" onclick="prevSection(3)"><i class="bi bi-arrow-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }}"></i> {{ __('messages.back') ?? 'Back' }}</button>
                                 <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> {{ __('messages.save') ?? 'Submit' }}</button>
                             </div>
                         </div>
@@ -142,7 +148,14 @@
     </div>
 </div>
 
+<!-- Quill Styles -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
 <script>
+    const quillEditors = {};
+
     function handlePositionChange() {
         const val = document.querySelector('input[name="service_position"]:checked').value;
         const nameWrapper = document.getElementById('submitterNameWrapper');
@@ -202,8 +215,18 @@
         @if($hasExistingAgenda)
             if (!confirm("{{ __('messages.agenda_exists_warning') }}")) {
                 e.preventDefault();
+                return;
             }
         @endif
+
+        // Populate Quill editors to hidden inputs
+        document.querySelectorAll('.other-topic-row').forEach(row => {
+            const idx = row.dataset.index;
+            const contentInput = document.getElementById(`other-topic-content-${idx}`);
+            if (quillEditors[idx] && contentInput) {
+                contentInput.value = quillEditors[idx].root.innerHTML;
+            }
+        });
     });
 
     let otherTopicIndex = 0;
@@ -212,21 +235,109 @@
         const newRow = document.createElement('div');
         newRow.className = 'card p-3 mb-3 other-topic-row position-relative border shadow-sm';
         newRow.style.background = 'rgba(0, 0, 0, 0.01)';
+        newRow.dataset.index = otherTopicIndex;
         
         newRow.innerHTML = `
-            <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" onclick="this.closest('.other-topic-row').remove()"><i class="bi bi-trash"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" onclick="deleteOtherTopicItem(this, ${otherTopicIndex})"><i class="bi bi-trash"></i></button>
             <div class="mb-2 pe-4">
                 <label class="form-label fw-bold small">${"{{ __('messages.Topic Title') }}"}</label>
                 <input type="text" name="other_topics[${otherTopicIndex}][title]" class="form-control form-control-sm" required value="${title}" placeholder="${"{{ __('messages.Topic Title') }}"}">
             </div>
             <div>
                 <label class="form-label fw-bold small">${"{{ __('messages.Topic') }}"}</label>
-                <textarea name="other_topics[${otherTopicIndex}][content]" class="form-control form-control-sm" rows="2" required placeholder="${"{{ __('messages.Topic') }}"}">${content}</textarea>
+                <div class="quill-editor mb-2" id="quill-editor-${otherTopicIndex}" style="height: 200px;"></div>
+                <input type="hidden" name="other_topics[${otherTopicIndex}][content]" class="other-topic-content-input" id="other-topic-content-${otherTopicIndex}">
+                
+                <!-- Dynamic Table Action Controls -->
+                <div class="table-controls p-2 border rounded bg-light d-none align-items-center gap-2 flex-wrap mb-2" id="table-controls-${otherTopicIndex}">
+                    <span class="badge bg-secondary py-2"><i class="bi bi-table"></i> {{ __('messages.Table Actions') ?? 'Table Actions' }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-row-above-btn"><i class="bi bi-arrow-bar-up"></i> Row Above</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-row-below-btn"><i class="bi bi-arrow-bar-down"></i> Row Below</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-column-left-btn"><i class="bi bi-arrow-bar-left"></i> Column Left</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-column-right-btn"><i class="bi bi-arrow-bar-right"></i> Column Right</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-row-btn ms-md-auto"><i class="bi bi-trash"></i> Delete Row</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-column-btn"><i class="bi bi-trash"></i> Delete Col</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-table-btn"><i class="bi bi-x-circle"></i> Delete Table</button>
+                </div>
             </div>
         `;
         
         container.appendChild(newRow);
+        
+        const editorId = `#quill-editor-${otherTopicIndex}`;
+        const quill = new Quill(editorId, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['table']
+                ],
+                table: true
+            }
+        });
+        
+        if (content) {
+            quill.root.innerHTML = content;
+        }
+        
+        quillEditors[otherTopicIndex] = quill;
+        
+        const currentIndex = otherTopicIndex;
+        const tableControls = newRow.querySelector('.table-controls');
+        const tableModule = quill.getModule('table');
+
+        newRow.querySelector('.insert-row-above-btn').addEventListener('click', () => tableModule.insertRowAbove());
+        newRow.querySelector('.insert-row-below-btn').addEventListener('click', () => tableModule.insertRowBelow());
+        newRow.querySelector('.insert-column-left-btn').addEventListener('click', () => tableModule.insertColumnLeft());
+        newRow.querySelector('.insert-column-right-btn').addEventListener('click', () => tableModule.insertColumnRight());
+        newRow.querySelector('.delete-row-btn').addEventListener('click', () => tableModule.deleteRow());
+        newRow.querySelector('.delete-column-btn').addEventListener('click', () => tableModule.deleteColumn());
+        newRow.querySelector('.delete-table-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete the entire table?')) {
+                tableModule.deleteTable();
+            }
+        });
+
+        function checkTableFocus(range) {
+            if (range) {
+                const formats = quill.getFormat(range);
+                if (formats.table || formats['table-cell']) {
+                    tableControls.classList.remove('d-none');
+                    tableControls.classList.add('d-flex');
+                } else {
+                    const [leaf] = quill.getLeaf(range.index);
+                    if (leaf && leaf.domNode && leaf.domNode.parentElement && leaf.domNode.parentElement.closest('table')) {
+                        tableControls.classList.remove('d-none');
+                        tableControls.classList.add('d-flex');
+                    } else {
+                        tableControls.classList.add('d-none');
+                        tableControls.classList.remove('d-flex');
+                    }
+                }
+            } else {
+                tableControls.classList.add('d-none');
+                tableControls.classList.remove('d-flex');
+            }
+        }
+
+        quill.on('selection-change', function(range) {
+            checkTableFocus(range);
+        });
+
+        quill.on('text-change', function() {
+            const range = quill.getSelection();
+            checkTableFocus(range);
+        });
+
         otherTopicIndex++;
+    }
+
+    function deleteOtherTopicItem(btn, index) {
+        btn.closest('.other-topic-row').remove();
+        delete quillEditors[index];
     }
 
     // Add one initial empty item on load

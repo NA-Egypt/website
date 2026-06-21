@@ -1,186 +1,111 @@
 <x-layout>
-    <x-backhead>{{__("messages.Group information for") }}
-        @if(app()->getLocale() === 'ar')
-            {{$group->ar_name}}
-        @else
-            {{$group->en_name}}
-        @endif
-    </x-backhead>
+    <div class="container-fluid px-2 px-sm-3 mt-4 mb-5 mx-auto" style="max-width: 1200px; width: 100%;">
+        <x-backhead>{{__("messages.Group information for") }}
+            @if(app()->getLocale() === 'ar')
+                {{$group->ar_name}}
+            @else
+                {{$group->en_name}}
+            @endif
+        </x-backhead>
 
-    <div class="container-fluid mt-4 mb-5">
-        
-        {{-- Header Actions --}}
-        @unless(auth()->user()->hasRole('ServiceBody'))
-        <div class="d-flex justify-content-end mb-4">
-            <x-button-a href="{{ route('group.edit', $group->id) }}" color='primary' name="{{  __('messages.Edit Group') }}" class="rounded-pill shadow-sm px-4" />
-        </div>
-        @endunless
-
-        {{-- Group Information Grid (Dashboard UI/UX) --}}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-5">
-            
-            {{-- Arabic Group Name --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic Group Name') }}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->ar_name}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-translate"></i>
-                        </div>
-                    </div>
+        {{-- Consolidated Group Profile Card --}}
+        <div class="glass-card p-3 p-md-4 rounded-4 mb-5 shadow-sm mt-4">
+            {{-- Header Details --}}
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
+                <h4 class="mb-0 fw-bold d-flex align-items-center" style="color: var(--text-primary);">
+                    <i class="bi bi-shield-check me-2"></i> 
+                    {{ __('messages.Group Details') ?? 'Group Details' }}
+                    <button class="btn btn-link btn-sm d-md-none p-0 text-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#groupDetailsCollapse" aria-expanded="false" aria-controls="groupDetailsCollapse">
+                        <i class="bi bi-chevron-down" id="collapseIcon" style="transition: transform 0.2s ease;"></i>
+                    </button>
+                </h4>
+                
+                {{-- Actions --}}
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    @unless(auth()->user()->hasRole('ServiceBody'))
+                        <x-button-a href="{{ route('group.edit', $group->id) }}" color='primary' name="{{ __('messages.Edit Group') }}" class="btn-sm rounded-pill px-3 py-2 shadow-sm" />
+                    @endunless
                 </div>
             </div>
 
-            {{-- English Group Name --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English Group Name') }}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->en_name}}</h5>
+            {{-- Grid details (Collapsible on mobile) --}}
+            <div class="collapse d-md-block" id="groupDetailsCollapse">
+                <div class="row g-4">
+                    {{-- Left/Right Columns depending on direction --}}
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-translate me-1 text-primary"></i> {{ __('messages.Arabic Group Name') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->ar_name }}</span>
+                            </div>
+
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-globe me-1 text-primary"></i> {{ __('messages.English Group Name') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->en_name }}</span>
+                            </div>
+
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-diagram-3 me-1 text-primary"></i> {{ __('messages.Service Body') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->serviceBody->ar_name }}</span>
+                            </div>
+                            
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-geo-alt me-1 text-primary"></i> {{ __('messages.Neighborhood') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->neighborhood->ar_name }}</span>
+                            </div>
                         </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-globe"></i>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column gap-3">
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-people me-1 text-primary"></i> {{ __('messages.Capacity') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->capacity ?? 'N/A' }}</span>
+                            </div>
+
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-person-badge me-1 text-primary"></i> {{ __('messages.Arabic GSR Name') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->ar_gsr_name ?: 'N/A' }}</span>
+                            </div>
+
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-person-badge-fill me-1 text-primary"></i> {{ __('messages.English GSR Name') }}</span>
+                                <span class="fw-bold text-dark">{{ $group->en_gsr_name ?: 'N/A' }}</span>
+                            </div>
+
+                            <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--glass-border);">
+                                <span class="text-secondary small d-block mb-1"><i class="bi bi-pin-map me-1 text-primary"></i> {{ __('messages.Locations') }}</span>
+                                <span class="fw-bold text-dark text-break">
+                                    @if(filter_var($group->location, FILTER_VALIDATE_URL))
+                                        <a href="{{ $group->location }}" target="_blank" class="text-primary text-decoration-underline">{{ $group->location }}</a>
+                                    @else
+                                        {{ $group->location }}
+                                    @endif
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Email --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Email')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary); font-size: 1rem; word-break: break-all;">{{$group->user->email}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #ec4899, #db2777); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-envelope"></i>
-                        </div>
-                    </div>
+                {{-- Quick Contacts --}}
+                <div class="d-flex flex-wrap gap-2 align-items-center mt-4 pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                    <span class="text-secondary small me-2"><i class="bi bi-person-lines-fill"></i> {{ __('messages.Contacts') ?? 'Contacts' }}:</span>
+                    <a href="mailto:{{ $group->user->email }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center overflow-hidden" style="max-width: 100%;">
+                        <i class="bi bi-envelope me-2 flex-shrink-0"></i>
+                        <span class="text-truncate" style="max-width: 180px; display: inline-block; vertical-align: middle;">{{ $group->user->email }}</span>
+                    </a>
+                    @if($group->phone)
+                        <a href="tel:{{ $group->phone }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center" dir="ltr">
+                            <i class="bi bi-telephone me-2 flex-shrink-0"></i> {{ $group->phone }}
+                        </a>
+                    @endif
                 </div>
             </div>
-
-            {{-- Phone --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Phone')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);" dir="ltr">{{$group->phone}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-telephone"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Capacity --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Capacity')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->capacity ?? 'N/A'}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-people"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            {{-- Locations --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Locations')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary); font-size: 0.95rem; word-break: break-word; overflow-wrap: anywhere;">
-                                @if(filter_var($group->location, FILTER_VALIDATE_URL))
-                                    <a href="{{ $group->location }}" target="_blank" class="text-primary text-decoration-underline">{{ $group->location }}</a>
-                                @else
-                                    {{$group->location}}
-                                @endif
-                            </h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-pin-map"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Service Body --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Service Body')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->serviceBody->ar_name}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-diagram-3"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Neighborhood --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Neighborhood')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->neighborhood->ar_name}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #64748b, #475569); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-geo-alt"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Arabic GSR Name --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic GSR Name')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->ar_gsr_name}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #14b8a6, #0d9488); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-person-badge"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- English GSR Name --}}
-            <div class="col">
-                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English GSR Name')}}</p>
-                            <h5 class="my-2 fw-bold" style="color: var(--text-primary);">{{$group->en_gsr_name}}</h5>
-                        </div>
-                        <div class="widgets-icons text-white ms-auto shadow-sm" style="background: linear-gradient(135deg, #0f766e, #115e59); border-radius: 12px; opacity: 0.9;">
-                            <i class="bi bi-person-badge"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         {{-- Meetings Section --}}
         <div class="glass-card p-3 p-md-4 rounded-4 mt-4 mt-md-5">
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-calendar-event me-2"></i> {{ __('messages.Meetings') }}</h4>
                 @unless(auth()->user()->hasRole('ServiceBody'))
                 <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" class="rounded-pill" />
@@ -287,7 +212,7 @@
 
         {{-- Agendas Section --}}
         <div class="glass-card p-3 p-md-4 rounded-4 mt-4 mt-md-5">
-            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-journal-text me-2"></i> {{ __('messages.agendas') ?? 'Agendas' }}</h4>
                 <x-button-a href="{{ route('agenda.create', ['group_id' => $group->id]) }}" color='outline-primary' name="{{__('messages.create_agenda') ?? 'Create Agenda'}}" class="rounded-pill" />
             </div>
@@ -508,21 +433,22 @@
                                         </div>
                                         <div>
                                             <h6 class="fw-bold text-dark mb-1"><i class="bi bi-three-dots text-secondary me-2"></i> {{ __('messages.other_topics') }}</h6>
-                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="border: 1px solid var(--glass-border);">
                                                 @if(is_array($agenda->other_topics))
-                                                    @php
-                                                        $lines = [];
-                                                        foreach($agenda->other_topics as $item) {
-                                                            if (is_array($item) && isset($item['title'])) {
-                                                                $lines[] = $item['title'] . ": " . $item['content'];
-                                                            } else {
-                                                                $lines[] = $item;
-                                                            }
-                                                        }
-                                                    @endphp
-                                                    {{ implode("\n", $lines) ?: '-' }}
+                                                    @forelse($agenda->other_topics as $item)
+                                                        @if(is_array($item) && isset($item['title']))
+                                                            <div class="mb-2">
+                                                                <strong>{{ $item['title'] }}:</strong>
+                                                                <div>{!! $item['content'] !!}</div>
+                                                            </div>
+                                                        @else
+                                                            <div class="mb-2">{!! $item !!}</div>
+                                                        @endif
+                                                    @empty
+                                                        -
+                                                    @endforelse
                                                 @else
-                                                    {{ $agenda->other_topics ?: '-' }}
+                                                    {!! $agenda->other_topics ?: '-' !!}
                                                 @endif
                                             </div>
                                         </div>
@@ -548,6 +474,11 @@
 
 
 <style>
+/* Collapse chevron animation */
+.btn[aria-expanded="true"] #collapseIcon {
+    transform: rotate(180deg);
+}
+
 .transition-hover {
     transition: all 0.3s ease;
 }

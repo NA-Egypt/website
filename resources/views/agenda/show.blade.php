@@ -105,7 +105,7 @@
                                     @if(is_array($item) && isset($item['title']))
                                         <div class="p-3 bg-light rounded mb-2">
                                             <strong>{{ $item['title'] }}:</strong>
-                                            <div>{{ $item['content'] }}</div>
+                                            <div>{!! $item['content'] !!}</div>
                                         </div>
                                     @else
                                         <div class="p-3 bg-light rounded mb-2">{{ $item }}</div>

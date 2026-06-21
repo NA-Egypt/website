@@ -140,6 +140,7 @@ return [
     'Locations' => 'الموقع',
     'Create New Permission' => 'انشاء اذن جديد',
     'Group Details' => 'تفاصيل المجموعة',
+    'Contacts' => 'بيانات الاتصال',
     'Logout' => 'تسجيل الخروج',
     'Dashboard' => 'مدير النظام',
     'Web Site' => 'الموقع الالكتروني',

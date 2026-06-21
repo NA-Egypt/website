@@ -139,6 +139,7 @@ return [
     'Locations' => 'Locations',
     'Create New Permission' => 'Create New Permission',
     'Group Details' => 'Group Details',
+    'Contacts' => 'Contacts',
     'Logout' => 'Logout',
     'Dashboard' => 'Dashboard',
     'Web Site' => 'Web Site',

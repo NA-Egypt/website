@@ -172,15 +172,15 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 $pdfLines = [];
                 foreach($agenda->other_topics as $item) {
                     if (is_array($item) && isset($item['title'])) {
-                        $pdfLines[] = '<strong>' . e($item['title']) . ':</strong><br/>' . nl2br(e($item['content']));
+                        $pdfLines[] = '<strong>' . e($item['title']) . ':</strong><br/>' . $item['content'];
                     } else {
-                        $pdfLines[] = nl2br(e($item));
+                        $pdfLines[] = $item;
                     }
                 }
             @endphp
             {!! implode('<br/><br/>', $pdfLines) ?: '-' !!}
         @else
-            {!! nl2br(e($agenda->other_topics)) ?: '-' !!}
+            {!! $agenda->other_topics ?: '-' !!}
         @endif
     </div>
 

@@ -44,6 +44,29 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   body, .hanken-grotesk {
     font-family: 'Cairo', sans-serif !important;
   }
+
+  .text-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      color: transparent !important;
+      display: inline-block;
+  }
+
+  /* Contrast fallback for dark/colored backgrounds */
+  .bg-dark .text-gradient,
+  .bg-primary .text-gradient,
+  .card-header .text-gradient,
+  .bg-gradient .text-gradient,
+  .text-contrast .text-gradient,
+  .text-contrast {
+      background: none !important;
+      -webkit-background-clip: unset !important;
+      -webkit-text-fill-color: initial !important;
+      background-clip: unset !important;
+      color: #ffffff !important;
+  }
   
   /* Force Neo-Glassmorphism Light Theme globally */
   body, html {

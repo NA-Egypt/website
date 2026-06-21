@@ -59,6 +59,7 @@ class AgendaController extends Controller
             'next_business_meeting' => 'nullable|date',
             'recovery_meetings_changes' => 'nullable|boolean',
             'recovery_atmosphere' => 'required|string|min:1',
+            'trusted_servants' => 'required|string|min:1',
             'financial_issues' => 'required|string|min:1',
             'other_topics' => 'nullable|array',
             'other_topics.*.title' => 'required|string|max:255',
@@ -81,7 +82,6 @@ class AgendaController extends Controller
             }
         }
         $validatedData['other_topics'] = $otherTopics;
-        $validatedData['trusted_servants'] = null;
 
         $agendaDate = \Carbon\Carbon::parse($validatedData['agenda_date']);
         $group->agendas()

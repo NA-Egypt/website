@@ -1,1 +1,1 @@
-<h2 class="text-center" style="line-height: normal;">{{ $slot }}</h2>
+<h2 {{ $attributes->merge(['class' => 'text-center text-gradient', 'style' => 'line-height: normal; font-weight: 700;']) }}>{{ $slot }}</h2>
