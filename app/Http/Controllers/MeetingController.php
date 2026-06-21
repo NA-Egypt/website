@@ -108,8 +108,11 @@ class MeetingController extends Controller
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
 
         $businessTopic = \App\Models\Topic::where('en_name', 'Group Business Meeting')->first();
-        if ($businessTopic && in_array($businessTopic->id, $topics) && count($topics) > 1) {
-            return back()->withErrors(['topics' => __('messages.group_business_meeting_exclusive')])->withInput();
+        if ($businessTopic && in_array($businessTopic->id, $topics)) {
+            if (count($topics) > 1) {
+                return back()->withErrors(['topics' => __('messages.group_business_meeting_exclusive')])->withInput();
+            }
+            $fields['type'] = 'closed';
         }
 
         $meeting = Meeting::create([
@@ -193,8 +196,11 @@ class MeetingController extends Controller
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
 
         $businessTopic = \App\Models\Topic::where('en_name', 'Group Business Meeting')->first();
-        if ($businessTopic && in_array($businessTopic->id, $topics) && count($topics) > 1) {
-            return back()->withErrors(['topics' => __('messages.group_business_meeting_exclusive')])->withInput();
+        if ($businessTopic && in_array($businessTopic->id, $topics)) {
+            if (count($topics) > 1) {
+                return back()->withErrors(['topics' => __('messages.group_business_meeting_exclusive')])->withInput();
+            }
+            $fields['type'] = 'closed';
         }
 
         $meeting->update([

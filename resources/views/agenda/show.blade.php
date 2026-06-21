@@ -31,7 +31,7 @@
                         @endif
                         @if($agenda->alt_gsr_position)
                         <div class="col-md-6 mb-2">
-                            <strong>Group Alt. GSR:</strong> {{ $agenda->translated_alt_gsr_position }}
+                            <strong>{{ __('messages.alt_gsr_position') }}:</strong> {{ $agenda->translated_alt_gsr_position }}
                         </div>
                         @endif
                         @if($agenda->alt_gsr_name)
@@ -64,19 +64,58 @@
                     <div class="row mb-4">
                         <div class="col-12 mb-3">
                             <strong>{{ __('messages.recovery_atmosphere') }}:</strong>
-                            <div class="p-3 bg-light rounded">{{ $agenda->recovery_atmosphere ?: 'N/A' }}</div>
+                            @if(is_array($agenda->recovery_atmosphere))
+                                @forelse($agenda->recovery_atmosphere as $item)
+                                    <div class="p-3 bg-light rounded mb-2">{{ $item }}</div>
+                                @empty
+                                    <div class="p-3 bg-light rounded">N/A</div>
+                                @endforelse
+                            @else
+                                <div class="p-3 bg-light rounded">{{ $agenda->recovery_atmosphere ?: 'N/A' }}</div>
+                            @endif
                         </div>
                         <div class="col-12 mb-3">
                             <strong>{{ __('messages.trusted_servants') }}:</strong>
-                            <div class="p-3 bg-light rounded">{{ $agenda->trusted_servants ?: 'N/A' }}</div>
+                            @if(is_array($agenda->trusted_servants))
+                                @forelse($agenda->trusted_servants as $item)
+                                    <div class="p-3 bg-light rounded mb-2">{{ $item }}</div>
+                                @empty
+                                    <div class="p-3 bg-light rounded">N/A</div>
+                                @endforelse
+                            @else
+                                <div class="p-3 bg-light rounded">{{ $agenda->trusted_servants ?: 'N/A' }}</div>
+                            @endif
                         </div>
                         <div class="col-12 mb-3">
                             <strong>{{ __('messages.financial_issues') }}:</strong>
-                            <div class="p-3 bg-light rounded">{{ $agenda->financial_issues ?: 'N/A' }}</div>
+                            @if(is_array($agenda->financial_issues))
+                                @forelse($agenda->financial_issues as $item)
+                                    <div class="p-3 bg-light rounded mb-2">{{ $item }}</div>
+                                @empty
+                                    <div class="p-3 bg-light rounded">N/A</div>
+                                @endforelse
+                            @else
+                                <div class="p-3 bg-light rounded">{{ $agenda->financial_issues ?: 'N/A' }}</div>
+                            @endif
                         </div>
                         <div class="col-12 mb-3">
                             <strong>{{ __('messages.other_topics') }}:</strong>
-                            <div class="p-3 bg-light rounded">{{ $agenda->other_topics ?: 'N/A' }}</div>
+                            @if(is_array($agenda->other_topics))
+                                @forelse($agenda->other_topics as $item)
+                                    @if(is_array($item) && isset($item['title']))
+                                        <div class="p-3 bg-light rounded mb-2">
+                                            <strong>{{ $item['title'] }}:</strong>
+                                            <div>{{ $item['content'] }}</div>
+                                        </div>
+                                    @else
+                                        <div class="p-3 bg-light rounded mb-2">{{ $item }}</div>
+                                    @endif
+                                @empty
+                                    <div class="p-3 bg-light rounded">N/A</div>
+                                @endforelse
+                            @else
+                                <div class="p-3 bg-light rounded">{{ $agenda->other_topics ?: 'N/A' }}</div>
+                            @endif
                         </div>
                     </div>
 

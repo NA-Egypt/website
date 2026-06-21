@@ -157,7 +157,10 @@
 
                                                             <div class="mb-3 text-secondary small p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px dashed var(--glass-border); line-height: 1.6;">
                                                                 <strong>{{ __('messages.recovery_atmosphere') }}:</strong>
-                                                                <span class="text-dark">{{ Str::limit($agenda->recovery_atmosphere, 200, '...') ?: '-' }}</span>
+                                                                @php
+                                                                    $recAtmText = is_array($agenda->recovery_atmosphere) ? implode(', ', $agenda->recovery_atmosphere) : $agenda->recovery_atmosphere;
+                                                                @endphp
+                                                                <span class="text-dark">{{ Str::limit($recAtmText, 200, '...') ?: '-' }}</span>
                                                             </div>
                                                             
                                                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top" style="border-color: rgba(0, 0, 0, 0.05) !important;">
@@ -205,7 +208,7 @@
                 @foreach($months as $monthNum => $agendas)
                     @foreach($agendas as $agenda)
                         <div class="modal fade" id="quickViewModal{{ $agenda->id }}" tabindex="-1" aria-labelledby="quickViewModalLabel{{ $agenda->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
                                 <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.96) !important; backdrop-filter: blur(25px); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;">
                                     {{-- HSL Gradient Header Accent --}}
                                     <div class="modal-header border-bottom-0 pb-3 pt-4 px-4 d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(14, 165, 233, 0.05)); border-bottom: 1px solid var(--glass-border) !important;">
@@ -320,19 +323,53 @@
                                                 <div class="d-flex flex-column gap-3">
                                                     <div>
                                                         <h6 class="fw-bold text-dark mb-1"><i class="bi bi-chat-left-text text-primary me-2"></i> {{ __('messages.recovery_atmosphere') }}</h6>
-                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->recovery_atmosphere ?: '-' }}</div>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                            @if(is_array($agenda->recovery_atmosphere))
+                                                                {{ implode("\n", $agenda->recovery_atmosphere) ?: '-' }}
+                                                            @else
+                                                                {{ $agenda->recovery_atmosphere ?: '-' }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <h6 class="fw-bold text-dark mb-1"><i class="bi bi-people text-info me-2"></i> {{ __('messages.trusted_servants') }}</h6>
-                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->trusted_servants ?: '-' }}</div>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                            @if(is_array($agenda->trusted_servants))
+                                                                {{ implode("\n", $agenda->trusted_servants) ?: '-' }}
+                                                            @else
+                                                                {{ $agenda->trusted_servants ?: '-' }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <h6 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i> {{ __('messages.financial_issues') }}</h6>
-                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->financial_issues ?: '-' }}</div>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                            @if(is_array($agenda->financial_issues))
+                                                                {{ implode("\n", $agenda->financial_issues) ?: '-' }}
+                                                            @else
+                                                                {{ $agenda->financial_issues ?: '-' }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <h6 class="fw-bold text-dark mb-1"><i class="bi bi-three-dots text-secondary me-2"></i> {{ __('messages.other_topics') }}</h6>
-                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->other_topics ?: '-' }}</div>
+                                                        <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                            @if(is_array($agenda->other_topics))
+                                                                @php
+                                                                    $lines = [];
+                                                                    foreach($agenda->other_topics as $item) {
+                                                                        if (is_array($item) && isset($item['title'])) {
+                                                                            $lines[] = $item['title'] . ": " . $item['content'];
+                                                                        } else {
+                                                                            $lines[] = $item;
+                                                                        }
+                                                                    }
+                                                                @endphp
+                                                                {{ implode("\n", $lines) ?: '-' }}
+                                                            @else
+                                                                {{ $agenda->other_topics ?: '-' }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -28,6 +28,8 @@ class Agenda extends Model
         'agenda_date' => 'date',
         'next_business_meeting' => 'datetime',
         'recovery_meetings_changes' => 'boolean',
+        'trusted_servants' => 'array',
+        'other_topics' => 'array',
     ];
 
     public function group()

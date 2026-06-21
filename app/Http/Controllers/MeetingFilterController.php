@@ -74,6 +74,20 @@ class MeetingFilterController extends Controller
         $html = view('pdf.meetings', compact('meetings'))->render();
         $mpdf->WriteHTML($html);
 
+        try {
+            \App\Models\Transaction::create([
+                'model' => 'PDF',
+                'operation' => 'download',
+                'details' => ['type' => 'meetings_pdf'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'url' => request()->fullUrl(),
+                'user_id' => auth()->id(),
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to log PDF download: ' . $e->getMessage());
+        }
+
         return response($mpdf->Output('meetings.pdf', 'S'), 200)
                ->header('Content-Type', 'application/pdf')
                ->header('Content-Disposition', 'attachment; filename="meetings.pdf"');

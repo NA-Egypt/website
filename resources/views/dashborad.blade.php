@@ -30,7 +30,7 @@
       </div>
       {{-- / Total cities --}}
 
-      @if (!auth()->user()->hasRole('ServiceBody'))
+      @if ($showUsersCard)
       {{-- Total Users --}}
       <div class="col">
           <x-dashboard.card-statics name="{{ __('messages.Total Users') }}" qty="{{ $usersCount }}" color-theme="info" icon="person-badge" />
@@ -63,6 +63,36 @@
         </a>
       </div>
       {{-- / Events --}}
+
+      @if (auth()->user()->hasRole('super admin'))
+      {{-- PDF downloads count --}}
+      <div class="col">
+        <x-dashboard.card-statics name="{{ __('messages.Meetings PDF Downloads') }}" qty="{{ $pdfDownloadsCount }}" color-theme="info" icon="file-earmark-pdf" description="{{ __('messages.Downloads in :month', ['month' => \App\Services\DateNumberHelper::translatedFormat(now(), 'F Y')]) }}" />
+      </div>
+      {{-- / PDF downloads count --}}
+      @endif
+
+      @if ($showNewAdditionsCard)
+      {{-- New Groups count --}}
+      <div class="col">
+        <x-dashboard.card-statics name="{{ __('messages.New Groups') }}" qty="{{ $newGroupsCount }}" color-theme="primary" icon="people-fill" description="{{ __('messages.Added this month') }}" />
+      </div>
+      {{-- / New Groups count --}}
+
+      {{-- New Meetings count --}}
+      <div class="col">
+        <x-dashboard.card-statics name="{{ __('messages.New Meetings') }}" qty="{{ $newMeetingsCount }}" color-theme="success" icon="calendar-week" description="{{ __('messages.Added this month') }}" />
+      </div>
+      {{-- / New Meetings count --}}
+      @endif
+
+      {{-- IT Change Requests count --}}
+      <div class="col">
+        <a href="{{ route('change-requests.index') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.IT Change Requests') }}" qty="{{ $changeRequestsCount }}" color-theme="warning" icon="wrench-adjustable" description="{{ __('messages.Added this month') }}" />
+        </a>
+      </div>
+      {{-- / IT Change Requests count --}}
     </div>
     {{-- / Cards --}}
     {{-- / Cards --}}

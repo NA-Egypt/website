@@ -1011,5 +1011,15 @@ return [
     'Approve' => 'Approve',
     'Service Body Logo' => 'Service Body Logo',
     'Are you sure?' => 'Are you sure?',
+    'Meetings PDF Downloads' => 'Meetings PDF Downloads',
+    'Downloads in :month' => 'Downloads in :month',
+    'New Groups & Meetings' => 'New Groups & Meetings',
+    'Added this month' => 'Added this month',
+    'New Groups' => 'New Groups',
+    'New Meetings' => 'New Meetings',
+    'alt_gsr_position' => 'Group Alt. GSR',
+    'select_option' => 'Select Option',
+    'submitter_name_placeholder' => 'First Name and First Letter of Last Name',
+    'agenda_exists_warning' => 'An agenda already exists for this month. Saving a new one will automatically delete the older one. Do you want to proceed?',
 ];
 

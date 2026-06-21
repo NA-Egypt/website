@@ -21,7 +21,7 @@
             
             {{-- Arabic Group Name --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic Group Name') }}</p>
@@ -36,7 +36,7 @@
 
             {{-- English Group Name --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English Group Name') }}</p>
@@ -51,7 +51,7 @@
 
             {{-- Email --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Email')}}</p>
@@ -66,7 +66,7 @@
 
             {{-- Phone --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Phone')}}</p>
@@ -81,7 +81,7 @@
 
             {{-- Capacity --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Capacity')}}</p>
@@ -97,7 +97,7 @@
 
             {{-- Locations --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Locations')}}</p>
@@ -118,7 +118,7 @@
 
             {{-- Service Body --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Service Body')}}</p>
@@ -133,7 +133,7 @@
 
             {{-- Neighborhood --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Neighborhood')}}</p>
@@ -148,7 +148,7 @@
 
             {{-- Arabic GSR Name --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.Arabic GSR Name')}}</p>
@@ -163,7 +163,7 @@
 
             {{-- English GSR Name --}}
             <div class="col">
-                <div class="glass-card h-100 p-4 rounded-4 transition-hover">
+                <div class="glass-card h-100 p-3 p-md-4 rounded-4 transition-hover">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500;">{{ __('messages.English GSR Name')}}</p>
@@ -179,7 +179,7 @@
         </div>
 
         {{-- Meetings Section --}}
-        <div class="glass-card p-4 rounded-4 mt-5">
+        <div class="glass-card p-3 p-md-4 rounded-4 mt-4 mt-md-5">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-calendar-event me-2"></i> {{ __('messages.Meetings') }}</h4>
                 @unless(auth()->user()->hasRole('ServiceBody'))
@@ -191,7 +191,7 @@
                 <div class="row row-cols-1 row-cols-lg-2 g-4">
                     @foreach($meetings as $meeting)
                         <div class="col">
-                            <div class="glass-card h-100 p-4 rounded-4 border position-relative transition-hover" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.01);">
+                            <div class="glass-card h-100 p-3 p-md-4 rounded-4 border position-relative transition-hover" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.01);">
                                 
                                 {{-- Meeting Header --}}
                                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -286,7 +286,7 @@
         </div>
 
         {{-- Agendas Section --}}
-        <div class="glass-card p-4 rounded-4 mt-5">
+        <div class="glass-card p-3 p-md-4 rounded-4 mt-4 mt-md-5">
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-journal-text me-2"></i> {{ __('messages.agendas') ?? 'Agendas' }}</h4>
                 <x-button-a href="{{ route('agenda.create', ['group_id' => $group->id]) }}" color='outline-primary' name="{{__('messages.create_agenda') ?? 'Create Agenda'}}" class="rounded-pill" />
@@ -296,7 +296,7 @@
                 <div class="row row-cols-1 row-cols-md-2 g-4">
                     @foreach($group->agendas->sortByDesc('agenda_date') as $agenda)
                         <div class="col">
-                            <div class="glass-card h-100 p-4 rounded-4 border position-relative transition-hover d-flex flex-column justify-content-between" style="border-color: var(--glass-border) !important; background: rgba(255,255,255,0.4);">
+                            <div class="glass-card h-100 p-3 p-md-4 rounded-4 border position-relative transition-hover d-flex flex-column justify-content-between" style="border-color: var(--glass-border) !important; background: rgba(255,255,255,0.4);">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <h5 class="mb-0 text-primary fw-bold">
@@ -310,11 +310,16 @@
                                     
                                     <div class="mb-3 text-secondary small p-3 rounded-3" style="background: rgba(0,0,0,0.02); border: 1px dashed var(--glass-border);">
                                         <strong>{{ __('messages.recovery_atmosphere') }}:</strong>
-                                        <span class="text-dark">{{ Str::limit($agenda->recovery_atmosphere, 120, '...') ?: '-' }}</span>
+                                        <span class="text-dark">
+                                            @php
+                                                $recAtm = is_array($agenda->recovery_atmosphere) ? implode(', ', $agenda->recovery_atmosphere) : $agenda->recovery_atmosphere;
+                                            @endphp
+                                            {{ Str::limit($recAtm, 120, '...') ?: '-' }}
+                                        </span>
                                     </div>
                                 </div>
                                 
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top" style="border-color: var(--glass-border) !important;">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center flex-wrap gap-3 pt-3 border-top" style="border-color: var(--glass-border) !important;">
                                     <div class="d-flex flex-wrap gap-2">
                                         <span class="badge rounded-pill px-3 py-2 fw-medium bg-light text-primary border">
                                             <i class="bi bi-calendar-check me-1"></i>
@@ -329,14 +334,14 @@
                                     </div>
                                     
                                     <!-- Actions -->
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#quickViewModalGroup{{ $agenda->id }}">
+                                    <div class="d-flex flex-wrap gap-2 w-100 w-sm-auto justify-content-stretch justify-content-sm-end">
+                                        <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#quickViewModalGroup{{ $agenda->id }}">
                                             <i class="bi bi-eye-fill"></i> {{ __('messages.Details') }}
                                         </button>
-                                        <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <a href="{{ route('agenda.show', $agenda->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
                                             <i class="bi bi-arrow-right-short"></i> {{ __('messages.Show') }}
                                         </a>
-                                        <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-secondary rounded-pill px-3">
+                                        <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-secondary rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
                                             <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.PDF') }}
                                         </a>
                                     </div>
@@ -369,18 +374,18 @@
                         </div>
                         <div class="modal-body px-4 pt-3 pb-4">
                             {{-- Custom styled tab navs --}}
-                            <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-3 bg-light" id="agendaTabGroup{{ $agenda->id }}" role="tablist" style="border: 1px solid var(--glass-border);">
-                                <li class="nav-item" role="presentation">
+                            <ul class="nav nav-pills flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="agendaTabGroup{{ $agenda->id }}" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                                <li class="nav-item flex-shrink-0" role="presentation">
                                     <button class="nav-link active py-2 rounded-2 fw-bold" id="general-tab-group{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#general-group{{ $agenda->id }}" type="button" role="tab" aria-controls="general-group{{ $agenda->id }}" aria-selected="true" style="font-size: 0.9rem;">
                                         <i class="bi bi-info-circle-fill me-1"></i> {{ __('messages.group_data') }}
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item flex-shrink-0" role="presentation">
                                     <button class="nav-link py-2 rounded-2 fw-bold" id="news-tab-group{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#news-group{{ $agenda->id }}" type="button" role="tab" aria-controls="news-group{{ $agenda->id }}" aria-selected="false" style="font-size: 0.9rem;">
                                         <i class="bi bi-megaphone-fill me-1"></i> {{ __('messages.group_news') }}
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <li class="nav-item flex-shrink-0" role="presentation">
                                     <button class="nav-link py-2 rounded-2 fw-bold" id="agenda-content-tab-group{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#agenda-content-group{{ $agenda->id }}" type="button" role="tab" aria-controls="agenda-content-group{{ $agenda->id }}" aria-selected="false" style="font-size: 0.9rem;">
                                         <i class="bi bi-file-text-fill me-1"></i> {{ __('messages.the_agenda') }}
                                     </button>
@@ -473,19 +478,53 @@
                                     <div class="d-flex flex-column gap-3">
                                         <div>
                                             <h6 class="fw-bold text-dark mb-1"><i class="bi bi-chat-left-text text-primary me-2"></i> {{ __('messages.recovery_atmosphere') }}</h6>
-                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->recovery_atmosphere ?: '-' }}</div>
+                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                @if(is_array($agenda->recovery_atmosphere))
+                                                    {{ implode("\n", $agenda->recovery_atmosphere) ?: '-' }}
+                                                @else
+                                                    {{ $agenda->recovery_atmosphere ?: '-' }}
+                                                @endif
+                                            </div>
                                         </div>
                                         <div>
                                             <h6 class="fw-bold text-dark mb-1"><i class="bi bi-people text-info me-2"></i> {{ __('messages.trusted_servants') }}</h6>
-                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->trusted_servants ?: '-' }}</div>
+                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                @if(is_array($agenda->trusted_servants))
+                                                    {{ implode("\n", $agenda->trusted_servants) ?: '-' }}
+                                                @else
+                                                    {{ $agenda->trusted_servants ?: '-' }}
+                                                @endif
+                                            </div>
                                         </div>
                                         <div>
                                             <h6 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i> {{ __('messages.financial_issues') }}</h6>
-                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->financial_issues ?: '-' }}</div>
+                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                @if(is_array($agenda->financial_issues))
+                                                    {{ implode("\n", $agenda->financial_issues) ?: '-' }}
+                                                @else
+                                                    {{ $agenda->financial_issues ?: '-' }}
+                                                @endif
+                                            </div>
                                         </div>
                                         <div>
                                             <h6 class="fw-bold text-dark mb-1"><i class="bi bi-three-dots text-secondary me-2"></i> {{ __('messages.other_topics') }}</h6>
-                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">{{ $agenda->other_topics ?: '-' }}</div>
+                                            <div class="p-3 rounded-3 bg-light text-secondary small" style="white-space: pre-line; border: 1px solid var(--glass-border);">
+                                                @if(is_array($agenda->other_topics))
+                                                    @php
+                                                        $lines = [];
+                                                        foreach($agenda->other_topics as $item) {
+                                                            if (is_array($item) && isset($item['title'])) {
+                                                                $lines[] = $item['title'] . ": " . $item['content'];
+                                                            } else {
+                                                                $lines[] = $item;
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    {{ implode("\n", $lines) ?: '-' }}
+                                                @else
+                                                    {{ $agenda->other_topics ?: '-' }}
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -523,6 +562,15 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4rem;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.overflow-x-auto::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.overflow-x-auto {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 /* RTL specific fixes */
 [dir="rtl"] .me-1 { margin-left: 0.25rem !important; margin-right: 0 !important; }

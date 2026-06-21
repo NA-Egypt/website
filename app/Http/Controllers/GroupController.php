@@ -83,9 +83,6 @@ class GroupController extends Controller implements HasMiddleware
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(GroupsRequest $request, Group $group)
     {
         Gate::authorize('update', $group);
@@ -93,7 +90,11 @@ class GroupController extends Controller implements HasMiddleware
 
         $group->update($validatedData);
 
-        return redirect()->route('group.index');
+        if (auth()->user()->hasRole('super admin')) {
+            return redirect()->route('group.index')->with('success', 'Group updated successfully.');
+        }
+
+        return redirect()->route('group.show', $group->id)->with('success', 'Group updated successfully.');
     }
 
     public function show(Group $group)

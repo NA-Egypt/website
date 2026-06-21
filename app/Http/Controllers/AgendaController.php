@@ -22,7 +22,20 @@ class AgendaController extends Controller
         // Ensure user can view the group to create an agenda for it.
         Gate::authorize('view', $group);
 
-        return view('agenda.create', compact('group'));
+        $businessMeeting = $group->meetings()
+            ->whereHas('topics', function ($query) {
+                $query->where('en_name', 'Group Business Meeting');
+            })
+            ->first();
+
+        $nextBusinessMeeting = $businessMeeting ? $businessMeeting->getNextOccurrence() : null;
+
+        $hasExistingAgenda = $group->agendas()
+            ->whereYear('agenda_date', now()->year)
+            ->whereMonth('agenda_date', now()->month)
+            ->exists();
+
+        return view('agenda.create', compact('group', 'nextBusinessMeeting', 'hasExistingAgenda'));
     }
 
     /**
@@ -45,15 +58,36 @@ class AgendaController extends Controller
             'open_positions' => 'nullable|string',
             'next_business_meeting' => 'nullable|date',
             'recovery_meetings_changes' => 'nullable|boolean',
-            'recovery_atmosphere' => 'nullable|string',
-            'trusted_servants' => 'nullable|string',
-            'financial_issues' => 'nullable|string',
-            'other_topics' => 'nullable|string',
+            'recovery_atmosphere' => 'required|string|min:1',
+            'financial_issues' => 'required|string|min:1',
+            'other_topics' => 'nullable|array',
+            'other_topics.*.title' => 'required|string|max:255',
+            'other_topics.*.content' => 'required|string',
         ]);
 
         if (!isset($validatedData['recovery_meetings_changes'])) {
             $validatedData['recovery_meetings_changes'] = false;
         }
+
+        $otherTopics = [];
+        if ($request->has('other_topics')) {
+            foreach ($request->input('other_topics') as $item) {
+                if (!empty($item['title']) && !empty($item['content'])) {
+                    $otherTopics[] = [
+                        'title' => $item['title'],
+                        'content' => $item['content']
+                    ];
+                }
+            }
+        }
+        $validatedData['other_topics'] = $otherTopics;
+        $validatedData['trusted_servants'] = null;
+
+        $agendaDate = \Carbon\Carbon::parse($validatedData['agenda_date']);
+        $group->agendas()
+            ->whereYear('agenda_date', $agendaDate->year)
+            ->whereMonth('agenda_date', $agendaDate->month)
+            ->delete();
 
         Agenda::create($validatedData);
 

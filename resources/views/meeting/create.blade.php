@@ -181,6 +181,22 @@
             // Topics Tag Manager
             const topicSelector = document.getElementById('topic-selector');
             const container = document.getElementById('selected-topics-container');
+            const typeSwitch = document.getElementById('meeting-type');
+            const typeLabel = document.getElementById('label-type');
+
+            function syncMeetingTypeForBusiness() {
+                if (!container || !typeSwitch) return;
+                const businessTag = container.querySelector('.topic-tag[data-is-business="true"]');
+                if (businessTag) {
+                    typeSwitch.checked = true;
+                    typeSwitch.disabled = true;
+                    if (typeLabel) {
+                        typeLabel.textContent = translations.closed;
+                    }
+                } else {
+                    typeSwitch.disabled = false;
+                }
+            }
 
             if(topicSelector && container) {
                 topicSelector.addEventListener('change', function() {
@@ -216,6 +232,7 @@
                             <button type="button" class="btn-close btn-close-white remove-topic" style="font-size: 0.5rem; margin-inline-start: 0.5rem;" aria-label="Close"></button>
                         `;
                         container.appendChild(tag);
+                        syncMeetingTypeForBusiness();
                     }
 
                     // Reset selector
@@ -226,6 +243,7 @@
                 container.addEventListener('click', function(e) {
                     if (e.target.classList.contains('remove-topic')) {
                         e.target.closest('.topic-tag').remove();
+                        syncMeetingTypeForBusiness();
                     }
                 });
             }
@@ -260,6 +278,8 @@
                     label.textContent = input.checked ? on : off;
                 });
             });
+
+            syncMeetingTypeForBusiness();
 
             // Recurrence checkbox exclusivity logic
             const weeklyCheckbox = document.getElementById('recurrence-weekly');

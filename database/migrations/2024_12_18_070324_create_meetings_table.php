@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->time('start_time');
             $table->time('end_time');
-            $table->enum('type', ['open', 'close'])->default('close');
+            $table->enum('type', ['open', 'closed'])->default('closed');
             $table->foreignIdFor(Group::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Topic::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(Day::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();

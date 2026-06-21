@@ -187,4 +187,157 @@ class MeetingTopicExclusivityTest extends TestCase
 
         $response->assertSessionHasErrors('topics');
     }
+
+    public function test_group_business_meeting_topic_forces_closed_type_on_create()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+        $this->actingAs($admin);
+
+        $day = Day::firstOrCreate(['id' => 1], ['name' => 'Saturday']);
+        
+        $serviceBody = ServiceBody::firstOrCreate(['id' => 1], [
+            'en_name' => 'Cairo',
+            'ar_name' => 'القاهرة',
+            'day_id' => $day->id,
+            'start_time' => '18:00',
+            'end_time' => '19:00',
+            'location' => 'Cairo'
+        ]);
+
+        $city = City::firstOrCreate(['id' => 1], [
+            'en_name' => 'Cairo',
+            'ar_name' => 'القاهرة'
+        ]);
+
+        $neighborhood = Neighborhood::firstOrCreate(['id' => 1], [
+            'en_name' => 'Heliopolis',
+            'ar_name' => 'مصر الجديدة',
+            'city_id' => $city->id
+        ]);
+
+        $group = Group::forceCreate([
+            'id' => 1,
+            'en_name' => 'Group A',
+            'ar_name' => 'المجموعة أ',
+            'group_type' => 'فعلي',
+            'ar_gsr_name' => 'Test',
+            'en_gsr_name' => 'Test',
+            'phone' => '1234567890',
+            'location' => 'Cairo',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+            'user_id' => $admin->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address'
+        ]);
+
+        $businessTopic = Topic::forceCreate([
+            'id' => 27,
+            'en_name' => 'Group Business Meeting',
+            'ar_name' => 'اجتماع عمل المجموعة'
+        ]);
+
+        // Submit 'open' type for business meeting
+        $response = $this->post(route('meeting.store'), [
+            'group_id' => $group->id,
+            'day_id' => $day->id,
+            'start_time' => '18:00',
+            'end_time' => '19:00',
+            'type' => 'open',
+            'lang' => 'english',
+            'status' => 'available',
+            'recurrence' => ['weekly'],
+            'topics' => [$businessTopic->id]
+        ]);
+
+        $response->assertRedirect();
+        
+        $meeting = Meeting::latest()->first();
+        $this->assertEquals('closed', $meeting->type);
+    }
+
+    public function test_group_business_meeting_topic_forces_closed_type_on_update()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+        $this->actingAs($admin);
+
+        $day = Day::firstOrCreate(['id' => 1], ['name' => 'Saturday']);
+
+        $serviceBody = ServiceBody::firstOrCreate(['id' => 1], [
+            'en_name' => 'Cairo',
+            'ar_name' => 'القاهرة',
+            'day_id' => $day->id,
+            'start_time' => '18:00',
+            'end_time' => '19:00',
+            'location' => 'Cairo'
+        ]);
+
+        $city = City::firstOrCreate(['id' => 1], [
+            'en_name' => 'Cairo',
+            'ar_name' => 'القاهرة'
+        ]);
+
+        $neighborhood = Neighborhood::firstOrCreate(['id' => 1], [
+            'en_name' => 'Heliopolis',
+            'ar_name' => 'مصر الجديدة',
+            'city_id' => $city->id
+        ]);
+
+        $group = Group::forceCreate([
+            'id' => 1,
+            'en_name' => 'Group A',
+            'ar_name' => 'المجموعة أ',
+            'group_type' => 'فعلي',
+            'ar_gsr_name' => 'Test',
+            'en_gsr_name' => 'Test',
+            'phone' => '1234567890',
+            'location' => 'Cairo',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+            'user_id' => $admin->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address'
+        ]);
+
+        $businessTopic = Topic::forceCreate([
+            'id' => 27,
+            'en_name' => 'Group Business Meeting',
+            'ar_name' => 'اجتماع عمل المجموعة'
+        ]);
+
+        $meeting = Meeting::forceCreate([
+            'id' => 1,
+            'day_id' => $day->id,
+            'group_id' => $group->id,
+            'topic_id' => $businessTopic->id,
+            'start_time' => '18:00',
+            'end_time' => '19:00',
+            'type' => 'closed',
+            'lang' => 'english',
+            'status' => 'available',
+            'recurrence' => ['weekly']
+        ]);
+
+        $meeting->topics()->sync([$businessTopic->id]);
+
+        // Try to update meeting to 'open' type
+        $response = $this->put(route('meeting.update', $meeting->id), [
+            'group_id' => $group->id,
+            'day_id' => $day->id,
+            'start_time' => '18:00',
+            'end_time' => '19:00',
+            'type' => 'open',
+            'lang' => 'english',
+            'status' => 'available',
+            'recurrence' => ['weekly'],
+            'topics' => [$businessTopic->id]
+        ]);
+
+        $response->assertRedirect();
+        
+        $meeting->refresh();
+        $this->assertEquals('closed', $meeting->type);
+    }
 }

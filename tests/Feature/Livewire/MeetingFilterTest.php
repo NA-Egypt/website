@@ -77,7 +77,7 @@ class MeetingFilterTest extends TestCase
             'topic_id' => 27,
             'start_time' => '20:45',
             'end_time' => '21:45',
-            'type' => 'close',
+            'type' => 'closed',
             'lang' => 'arabic',
             'status' => 'available',
             'recurrence' => ['3rd']

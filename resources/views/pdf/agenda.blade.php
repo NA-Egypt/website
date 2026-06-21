@@ -140,22 +140,48 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     
     <strong>{{ __('messages.recovery_atmosphere') ?? 'Recovery Atmosphere' }}:</strong>
     <div class="content-box">
-        {{ $agenda->recovery_atmosphere ?: '-' }}
+        @if(is_array($agenda->recovery_atmosphere))
+            {!! implode('<br/><br/>', array_map('nl2br', array_map('e', $agenda->recovery_atmosphere))) ?: '-' !!}
+        @else
+            {!! nl2br(e($agenda->recovery_atmosphere)) ?: '-' !!}
+        @endif
     </div>
 
     <strong>{{ __('messages.trusted_servants') ?? 'Trusted Servants' }}:</strong>
     <div class="content-box">
-        {{ $agenda->trusted_servants ?: '-' }}
+        @if(is_array($agenda->trusted_servants))
+            {!! implode('<br/><br/>', array_map('nl2br', array_map('e', $agenda->trusted_servants))) ?: '-' !!}
+        @else
+            {!! nl2br(e($agenda->trusted_servants)) ?: '-' !!}
+        @endif
     </div>
 
     <strong>{{ __('messages.financial_issues') ?? 'Financial Issues' }}:</strong>
     <div class="content-box">
-        {{ $agenda->financial_issues ?: '-' }}
+        @if(is_array($agenda->financial_issues))
+            {!! implode('<br/><br/>', array_map('nl2br', array_map('e', $agenda->financial_issues))) ?: '-' !!}
+        @else
+            {!! nl2br(e($agenda->financial_issues)) ?: '-' !!}
+        @endif
     </div>
 
     <strong>{{ __('messages.other_topics') ?? 'Other Topics' }}:</strong>
     <div class="content-box">
-        {{ $agenda->other_topics ?: '-' }}
+        @if(is_array($agenda->other_topics))
+            @php
+                $pdfLines = [];
+                foreach($agenda->other_topics as $item) {
+                    if (is_array($item) && isset($item['title'])) {
+                        $pdfLines[] = '<strong>' . e($item['title']) . ':</strong><br/>' . nl2br(e($item['content']));
+                    } else {
+                        $pdfLines[] = nl2br(e($item));
+                    }
+                }
+            @endphp
+            {!! implode('<br/><br/>', $pdfLines) ?: '-' !!}
+        @else
+            {!! nl2br(e($agenda->other_topics)) ?: '-' !!}
+        @endif
     </div>
 
     @if(!$loop->last)

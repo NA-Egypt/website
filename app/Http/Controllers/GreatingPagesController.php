@@ -12,6 +12,7 @@ use App\Models\CommitteeReport;
 use App\Models\CustomForm;
 use App\Models\ServiceCommittee;
 use App\Models\CalendarEvent;
+use App\Models\ChangeRequest;
 use App\Traits\EventRecurrenceTrait;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,39 @@ class GreatingPagesController extends Controller
     public function dashboard() {
         
         $user = auth()->user();
+
+        $showNewAdditionsCard = false;
+        $newGroupsCount = 0;
+        $newMeetingsCount = 0;
+
+        if ($user) {
+            $isSuperAdmin = $user->hasRole('super admin');
+            $isRsc = $user->hasRole('rsc');
+            $isServiceBody = $user->hasRole('ServiceBody');
+            
+            $committee = ServiceCommittee::where('user_id', $user->id)
+                ->orWhere('email', $user->email)
+                ->first();
+            $isCommittee = !empty($committee);
+
+            if ($isSuperAdmin || $isRsc || $isCommittee || $isServiceBody) {
+                $showNewAdditionsCard = true;
+                
+                $groupsQuery = Group::where('created_at', '>=', now()->startOfMonth());
+                $meetingsQuery = Meeting::where('created_at', '>=', now()->startOfMonth());
+                
+                if ($isServiceBody && $user->service_body_id) {
+                    $sbId = $user->service_body_id;
+                    $groupsQuery->where('service_body_id', $sbId);
+                    $meetingsQuery->whereHas('group', function($q) use ($sbId) {
+                        $q->where('service_body_id', $sbId);
+                    });
+                }
+                
+                $newGroupsCount = $groupsQuery->count();
+                $newMeetingsCount = $meetingsQuery->count();
+            }
+        }
         
         // Calculate reportsCount based on permissions
         $reportsQuery = CommitteeReport::query();
@@ -62,7 +96,17 @@ class GreatingPagesController extends Controller
         $serviceBodies = ServiceBody::all();
         $cities = City::with('neighborhoods.groups')->get();
         $groups = Group::all();
-        $usersCount = User::count();
+        $showUsersCard = false;
+        $usersCount = 0;
+        if ($user) {
+            if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
+                $usersCount = User::count();
+                $showUsersCard = true;
+            } elseif ($user->hasRole('ServiceBody')) {
+                $usersCount = User::where('service_body_id', $user->service_body_id)->count();
+                $showUsersCard = true;
+            }
+        }
         $agendas = collect();
 
         if ($user && $user->hasRole('ServiceBody') && $user->service_body_id) {
@@ -107,6 +151,16 @@ class GreatingPagesController extends Controller
             $eventsCount += count($this->generateOccurrences($event, $windowStart, $windowEnd));
         }
 
+        $pdfDownloadsCount = 0;
+        if ($user && $user->hasRole('super admin')) {
+            $pdfDownloadsCount = Transaction::where('model', 'PDF')
+                ->where('operation', 'download')
+                ->where('created_at', '>=', now()->startOfMonth())
+                ->count();
+        }
+
+        $changeRequestsCount = ChangeRequest::where('created_at', '>=', now()->startOfMonth())->count();
+
         return view('dashborad', [
 
             'meetings'          => $meetings,
@@ -119,6 +173,12 @@ class GreatingPagesController extends Controller
             'reportsCount'      => $reportsCount,
             'customFormsCount'  => $customFormsCount,
             'eventsCount'       => $eventsCount,
+            'pdfDownloadsCount' => $pdfDownloadsCount,
+            'showNewAdditionsCard' => $showNewAdditionsCard,
+            'newGroupsCount'    => $newGroupsCount,
+            'newMeetingsCount'  => $newMeetingsCount,
+            'changeRequestsCount' => $changeRequestsCount,
+            'showUsersCard'     => $showUsersCard,
         ]);
     }
 }

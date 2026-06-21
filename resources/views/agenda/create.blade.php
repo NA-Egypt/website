@@ -18,7 +18,7 @@
                             
                             <div class="mb-3">
                                 <label class="form-label">{{ __('messages.meetings_per_week') }}</label>
-                                <input type="number" name="meetings_per_week" class="form-control" value="{{ $group->meetings()->count() }}" readonly style="background-color: #e9ecef;">
+                                <input type="number" name="meetings_per_week" class="form-control" value="{{ $group->meetings->filter(fn($m) => empty($m->recurrence) || in_array('weekly', $m->recurrence))->count() }}" readonly style="background-color: #e9ecef;">
                             </div>
 
                             <div class="mb-3">
@@ -44,21 +44,21 @@
 
                             <div class="mb-3" id="submitterNameWrapper" style="display: none;">
                                 <label class="form-label">{{ __('messages.submitter_name') }} ({{ __('messages.gsr') }} / {{ __('messages.alt_gsr') }} / {{ __('messages.delegate') ?? 'Delegate' }})</label>
-                                <input type="text" name="submitter_name" id="submitter_name" class="form-control" placeholder="First Name and First Letter of Last Name">
+                                <input type="text" name="submitter_name" id="submitter_name" class="form-control" placeholder="{{ __('messages.submitter_name_placeholder') }}">
                             </div>
 
                             <div class="row" id="gsrExtraWrapper" style="display: none;">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Group Alt. GSR</label>
+                                    <label class="form-label">{{ __('messages.alt_gsr_position') }}</label>
                                     <select name="alt_gsr_position" id="alt_gsr_position" class="form-select" onchange="handleAltGsrChange()">
-                                        <option value="">Select Option</option>
+                                        <option value="">{{ __('messages.select_option') }}</option>
                                         <option value="Open Position">{{ __('messages.open_position') }}</option>
                                         <option value="Alt. GSR">{{ __('messages.alt_gsr') }}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3" id="altGsrNameWrapper" style="display: none;">
                                     <label class="form-label">{{ __('messages.alt_gsr_name') }}</label>
-                                    <input type="text" name="alt_gsr_name" id="alt_gsr_name" class="form-control" placeholder="First Name and First Letter of Last Name">
+                                    <input type="text" name="alt_gsr_name" id="alt_gsr_name" class="form-control" placeholder="{{ __('messages.submitter_name_placeholder') }}">
                                 </div>
                             </div>
 
@@ -83,7 +83,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">{{ __('messages.next_business_meeting') }}</label>
-                                <input type="datetime-local" name="next_business_meeting" class="form-control">
+                                <input type="datetime-local" name="next_business_meeting" class="form-control" value="{{ old('next_business_meeting', $nextBusinessMeeting ? $nextBusinessMeeting->format('Y-m-d\TH:i') : '') }}">
                             </div>
 
                             <div class="mb-3">
@@ -108,24 +108,25 @@
                         <div id="section3" class="form-section" style="display: none;">
                             <h5 class="mb-3 text-primary border-bottom pb-2">{{ __('messages.the_agenda') }}</h5>
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('messages.recovery_atmosphere') }}</label>
-                                <textarea name="recovery_atmosphere" class="form-control" rows="3"></textarea>
+                            <!-- Recovery Atmosphere -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">{{ __('messages.recovery_atmosphere') }} *</label>
+                                <textarea name="recovery_atmosphere" class="form-control" rows="3" required placeholder="{{ __('messages.recovery_atmosphere') }}"></textarea>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('messages.trusted_servants') }}</label>
-                                <textarea name="trusted_servants" class="form-control" rows="3"></textarea>
+                            <!-- Financial Issues -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">{{ __('messages.financial_issues') }} *</label>
+                                <textarea name="financial_issues" class="form-control" rows="3" required placeholder="{{ __('messages.financial_issues') }}"></textarea>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('messages.financial_issues') }}</label>
-                                <textarea name="financial_issues" class="form-control" rows="3"></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">{{ __('messages.other_topics') }}</label>
-                                <textarea name="other_topics" class="form-control" rows="3"></textarea>
+                            <!-- Other Repeatable Topics -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">{{ __('messages.other_topics') }}</label>
+                                <div id="other_topics_container">
+                                    {{-- JavaScript will inject repeatable items here --}}
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addOtherTopicItem()"><i class="bi bi-plus-circle me-1"></i> {{ __('messages.Add Section') ?? 'Add More' }}</button>
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
@@ -171,10 +172,20 @@
     }
 
     function nextSection(current) {
-        // Simple HTML5 validation check
-        const form = document.getElementById('agendaForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
+        // Only validate fields within the current section
+        const section = document.getElementById('section' + current);
+        const inputs = section.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        
+        for (const input of inputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                isValid = false;
+                break;
+            }
+        }
+        
+        if (!isValid) {
             return;
         }
 
@@ -186,5 +197,41 @@
         document.getElementById('section' + current).style.display = 'none';
         document.getElementById('section' + (current - 1)).style.display = 'block';
     }
+
+    document.getElementById('agendaForm').addEventListener('submit', function(e) {
+        @if($hasExistingAgenda)
+            if (!confirm("{{ __('messages.agenda_exists_warning') }}")) {
+                e.preventDefault();
+            }
+        @endif
+    });
+
+    let otherTopicIndex = 0;
+    function addOtherTopicItem(title = '', content = '') {
+        const container = document.getElementById('other_topics_container');
+        const newRow = document.createElement('div');
+        newRow.className = 'card p-3 mb-3 other-topic-row position-relative border shadow-sm';
+        newRow.style.background = 'rgba(0, 0, 0, 0.01)';
+        
+        newRow.innerHTML = `
+            <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" onclick="this.closest('.other-topic-row').remove()"><i class="bi bi-trash"></i></button>
+            <div class="mb-2 pe-4">
+                <label class="form-label fw-bold small">${"{{ __('messages.Topic Title') }}"}</label>
+                <input type="text" name="other_topics[${otherTopicIndex}][title]" class="form-control form-control-sm" required value="${title}" placeholder="${"{{ __('messages.Topic Title') }}"}">
+            </div>
+            <div>
+                <label class="form-label fw-bold small">${"{{ __('messages.Topic') }}"}</label>
+                <textarea name="other_topics[${otherTopicIndex}][content]" class="form-control form-control-sm" rows="2" required placeholder="${"{{ __('messages.Topic') }}"}">${content}</textarea>
+            </div>
+        `;
+        
+        container.appendChild(newRow);
+        otherTopicIndex++;
+    }
+
+    // Add one initial empty item on load
+    document.addEventListener('DOMContentLoaded', function() {
+        addOtherTopicItem();
+    });
 </script>
 </x-layout>
