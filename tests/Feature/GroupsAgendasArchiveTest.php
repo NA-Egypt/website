@@ -426,4 +426,95 @@ class GroupsAgendasArchiveTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('أرشيف أجندات مجموعة الاختبار المميزة');
     }
+
+    public function test_super_admin_and_rsc_can_see_all_groups_agendas_in_archive()
+    {
+        $day = \App\Models\Day::first() ?? \App\Models\Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
+        $serviceBody = \App\Models\ServiceBody::first() ?? \App\Models\ServiceBody::create([
+            'ar_name' => 'كيان خدمي',
+            'en_name' => 'Service Body',
+            'description' => 'Desc',
+            'day_id' => $day->id,
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Test Location',
+        ]);
+        $city = \App\Models\City::first() ?? \App\Models\City::create(['ar_name' => 'القاهرة', 'en_name' => 'Cairo']);
+        $neighborhood = \App\Models\Neighborhood::first() ?? \App\Models\Neighborhood::create([
+            'ar_name' => 'حي الاختبار',
+            'en_name' => 'Test Neighborhood',
+            'city_id' => $city->id,
+        ]);
+
+        $user1 = User::factory()->create();
+        $group1 = Group::create([
+            'ar_name' => 'Group One',
+            'en_name' => 'Group One',
+            'ar_gsr_name' => 'GSR1',
+            'en_gsr_name' => 'GSR1',
+            'email' => 'g1@example.com',
+            'phone' => '12345678',
+            'user_id' => $user1->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+        ]);
+
+        $user2 = User::factory()->create();
+        $group2 = Group::create([
+            'ar_name' => 'Group Two',
+            'en_name' => 'Group Two',
+            'ar_gsr_name' => 'GSR2',
+            'en_gsr_name' => 'GSR2',
+            'email' => 'g2@example.com',
+            'phone' => '87654321',
+            'user_id' => $user2->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+        ]);
+
+        $agenda1 = Agenda::create([
+            'group_id' => $group1->id,
+            'meetings_per_week' => 2,
+            'agenda_date' => '2026-06-01',
+            'service_position' => 'GSR',
+            'submitter_name' => 'Submitter One',
+        ]);
+
+        $agenda2 = Agenda::create([
+            'group_id' => $group2->id,
+            'meetings_per_week' => 3,
+            'agenda_date' => '2026-06-02',
+            'service_position' => 'GSR',
+            'submitter_name' => 'Submitter Two',
+        ]);
+
+        // As Super Admin
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
+        $response = $this->get(route('groups-agendas.archive'));
+        $response->assertStatus(200);
+        $response->assertSee('Submitter One');
+        $response->assertSee('Submitter Two');
+
+        // As RSC member
+        $rscUser = User::factory()->create();
+        $rscUser->assignRole('rsc');
+        $this->actingAs($rscUser);
+
+        $response = $this->get(route('groups-agendas.archive'));
+        $response->assertStatus(200);
+        $response->assertSee('Submitter One');
+        $response->assertSee('Submitter Two');
+    }
 }
