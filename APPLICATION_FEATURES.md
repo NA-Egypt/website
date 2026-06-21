@@ -34,8 +34,8 @@ This document outlines the core features of the NA-Egypt website and application
 - **Topic Management:** Manage relevant topics or tags for discussions.
 
 ## 3. Mobile API
-- **Comprehensive REST API:** Endpoints exposing data for all major models (meetings, groups, cities, events, reports, transactions, etc.).
-- **Authentication:** Public read access (index, show) with Laravel Sanctum token-based authentication for modification endpoints (store, update, destroy).
+- **Comprehensive REST API:** Endpoints exposing data for all major models (meetings, groups, cities, events, reports, transactions, group agendas, service body agendas, etc.).
+- **Authentication & Authorization:** Public read access (index, show) for most resources. Group agendas are public. Service body agendas enforce release-date and status rules matching the web app. Laravel Sanctum token-based authentication is required for all state-changing endpoints (store, update, destroy).
 - **Semi-Online Support:** Designed to provide data necessary for mobile applications that can function intermittently offline.
 
 ---
@@ -76,6 +76,6 @@ This document outlines the core features of the NA-Egypt website and application
 - **إدارة المواضيع:** إدارة المواضيع أو العلامات (Topics) المتعلقة بالنقاشات.
 
 ## 3. واجهة برمجة تطبيقات الهاتف المحمول (API)
-- **واجهة برمجة تطبيقات شاملة (REST API):** توفير نقاط اتصال (Endpoints) لجميع النماذج الرئيسية (الاجتماعات، المجموعات، المدن، الفعاليات، التقارير، المعاملات، وغيرها).
-- **المصادقة:** إتاحة الوصول العام للقراءة فقط (index, show) مع فرض مصادقة تعتمد على الرموز (Tokens) باستخدام Laravel Sanctum لعمليات التعديل (store, update, destroy).
+- **واجهة برمجة تطبيقات شاملة (REST API):** توفير نقاط اتصال (Endpoints) لجميع النماذج الرئيسية (الاجتماعات، المجموعات، المدن، الفعاليات، التقارير، المعاملات، جدول أعمال المجموعات، جدول أعمال هيئات الخدمة، وغيرها).
+- **المصادقة والصلاحيات:** إتاحة الوصول العام للقراءة فقط (index, show) لمعظم الموارد. جداول أعمال المجموعات عامة ومتاحة للجميع، بينما تطبق جداول أعمال هيئات الخدمة قواعد الصلاحيات وتاريخ النشر المطابقة لموقع الويب. فرض مصادقة تعتمد على الرموز (Tokens) باستخدام Laravel Sanctum لعمليات التعديل (store, update, destroy).
 - **دعم الاستخدام شبه المتصل (Semi-Online):** مصمم لتوفير البيانات اللازمة لتطبيقات الهاتف التي يمكن أن تعمل بشكل متقطع بدون إنترنت.

@@ -10,6 +10,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/login/azure', [\App\Http\Controllers\Api\AzureAuthController::class, 'login']);
 
 $controllers = [
+    'agendas' => \App\Http\Controllers\Api\AgendaController::class,
     'calendar-events' => \App\Http\Controllers\Api\CalendarEventController::class,
     'cities' => \App\Http\Controllers\Api\CityController::class,
     'committee-reports' => \App\Http\Controllers\Api\CommitteeReportController::class,
@@ -25,6 +26,7 @@ $controllers = [
     'roles' => \App\Http\Controllers\Api\RoleController::class,
     'sc-meetings' => \App\Http\Controllers\Api\ScMeetingController::class,
     'service-bodies' => \App\Http\Controllers\Api\ServiceBodyController::class,
+    'service-body-agendas' => \App\Http\Controllers\Api\ServiceBodyAgendaController::class,
     'service-committees' => \App\Http\Controllers\Api\ServiceCommitteeController::class,
     'topics' => \App\Http\Controllers\Api\TopicController::class,
     'transactions' => \App\Http\Controllers\Api\TransactionController::class,
