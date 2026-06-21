@@ -180,7 +180,9 @@ class AgendaController extends Controller
 
         $query = Agenda::with('group');
 
-        if ($user->hasRole('gsr')) {
+        if ($this->isAuthorized($user)) {
+            // Super Admin and RSC members see all agendas, no ownership restrictions
+        } elseif ($user->hasRole('gsr')) {
             $query->whereHas('group', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
@@ -235,7 +237,9 @@ class AgendaController extends Controller
             });
         });
 
-        if ($user->hasRole('gsr')) {
+        if ($this->isAuthorized($user)) {
+            $groups = Group::all();
+        } elseif ($user->hasRole('gsr')) {
             $groups = Group::where('user_id', $user->id)->get();
         } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
             $groups = Group::where('service_body_id', $user->service_body_id)->get();
