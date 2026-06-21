@@ -976,6 +976,7 @@ return [
     'Are you sure you want to delete this agenda?' => 'Are you sure you want to delete this agenda?',
     'Are you sure you want to approve and send this agenda to RSC?' => 'Are you sure you want to approve and send this agenda to RSC?',
     'Service Body Agendas Archive' => 'Service Body Agendas Archive',
+    'Archive Files' => 'Archive Files',
     'Enter group name...' => 'Enter group name...',
     'Create Service Body Agenda' => 'Create Service Body Agenda',
     'Choose a Service Body...' => 'Choose a Service Body...',

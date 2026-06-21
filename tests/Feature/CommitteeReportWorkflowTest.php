@@ -548,8 +548,10 @@ class CommitteeReportWorkflowTest extends TestCase
         $user = User::factory()->create(['email' => 'comm@naegypt.org']);
         $committee = $this->createCommittee($user);
 
-        // Current month report
-        $currentMonthDate = now()->format('Y-m-d');
+        // Current month report: e.g. meeting on 2026-06-15.
+        // It is only visible on/after 2026-07-10.
+        // Since now is 2026-06-21, it must NOT be visible.
+        $currentMonthDate = now()->day(15)->format('Y-m-d');
         $approvedReportCurrentMonth = CommitteeReport::create([
             'service_committee_id' => $committee->id,
             'meeting_date' => $currentMonthDate,
@@ -558,8 +560,10 @@ class CommitteeReportWorkflowTest extends TestCase
             'status' => 'approved',
         ]);
 
-        // Previous month report
-        $previousMonthDate = now()->subMonth()->format('Y-m-d');
+        // Previous month report: e.g. meeting on 2026-05-15.
+        // It is visible on/after 2026-06-10.
+        // Since now is 2026-06-21 (which is >= 10), it MUST be visible.
+        $previousMonthDate = now()->subMonth()->day(15)->format('Y-m-d');
         $approvedReportPreviousMonth = CommitteeReport::create([
             'service_committee_id' => $committee->id,
             'meeting_date' => $previousMonthDate,
@@ -573,24 +577,25 @@ class CommitteeReportWorkflowTest extends TestCase
         $serviceBodyUser->assignRole('ServiceBody');
         $this->actingAs($serviceBodyUser);
 
-        // Previous month report is always visible in index, archive & detail view
         $response = $this->get(route('committee-reports.index'));
         $response->assertStatus(200);
-        $response->assertSee('Previous Month Report');
 
         $responseArchive = $this->get(route('committee-reports.archive'));
-        $responseArchive->assertSee('Previous Month Report');
-        $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(200);
 
-        // Current month report availability depends on current day of month
+        // Current month report is never visible in current month
+        $response->assertDontSee('Current Month Report');
+        $responseArchive->assertDontSee('Current Month Report');
+        $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(403);
+
+        // Previous month report visibility depends on current day of month (>= 10th of current month)
         if (now()->day < 10) {
-            $response->assertDontSee('Current Month Report');
-            $responseArchive->assertDontSee('Current Month Report');
-            $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(403);
+            $response->assertDontSee('Previous Month Report');
+            $responseArchive->assertDontSee('Previous Month Report');
+            $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(403);
         } else {
-            $response->assertSee('Current Month Report');
-            $responseArchive->assertSee('Current Month Report');
-            $this->get(route('committee-reports.show', $approvedReportCurrentMonth->id))->assertStatus(200);
+            $response->assertSee('Previous Month Report');
+            $responseArchive->assertSee('Previous Month Report');
+            $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(200);
         }
     }
     public function test_service_committee_logo_and_footers()
@@ -697,5 +702,40 @@ class CommitteeReportWorkflowTest extends TestCase
 
         Storage::disk('storagebox')->assertExists($expectedPath1Suffix);
         Storage::disk('storagebox')->assertExists($expectedPath2Suffix);
+    }
+
+    public function test_servicebody_cannot_see_add_report_button_and_review_notes()
+    {
+        $user = User::factory()->create(['email' => 'comm@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        // Create approved report with review notes
+        $previousMonthDate = now()->subMonth()->day(15)->format('Y-m-d');
+        $report = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => $previousMonthDate,
+            'meeting_day_description' => 'Previous Month Report',
+            'body' => 'Details',
+            'status' => 'approved',
+            'review_notes' => 'Secret RSC review notes',
+        ]);
+
+        $serviceBodyUser = User::factory()->create();
+        $serviceBodyUser->assignRole('ServiceBody');
+        $this->actingAs($serviceBodyUser);
+
+        // 1. Verify "Add Report" button is not visible on index page
+        $response = $this->get(route('committee-reports.index'));
+        $response->assertDontSee(route('committee-reports.create'));
+
+        // 2. Verify review notes are not visible in show view
+        $responseShow = $this->get(route('committee-reports.show', $report->id));
+        $responseShow->assertStatus(200);
+        $responseShow->assertDontSee('Secret RSC review notes');
+
+        // 3. Verify review notes are not returned in JSON API response
+        $apiResponse = $this->getJson("/api/committee-reports/{$report->id}");
+        $apiResponse->assertStatus(200);
+        $apiResponse->assertJsonMissing(['review_notes' => 'Secret RSC review notes']);
     }
 }

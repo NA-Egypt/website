@@ -2,49 +2,54 @@
     <x-backhead>{{ __('messages.Service Body Agendas Archive') ?? 'Service Body Agendas Archive' }}</x-backhead>
 
     <div class="container mt-4">
-        <!-- Advanced Filter & Search Card -->
-        <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2">
-                <h5 class="mb-0 fw-bold text-primary">
-                    <i class="bi bi-funnel-fill me-2"></i>{{ __('messages.Filter Options') ?? 'Filter Options' }}
-                </h5>
-            </div>
-            <div class="card-body p-4 border-top">
-                <form action="{{ route('service-body-agendas.archive') }}" method="GET" id="searchFilterForm">
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <label for="search" class="form-label fw-semibold text-muted">{{ __('messages.Search') ?? 'Search' }}</label>
-                            <input type="text" name="search" id="search" class="form-control rounded-3" value="{{ request('search') }}" placeholder="{{ __('messages.Search agendas...') ?? 'Search agendas...' }}">
+        <!-- Toggle Filters Button -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 fw-bold text-gradient"><i class="bi bi-archive-fill me-2"></i>{{ __('messages.Archive Files') ?? 'Archive Explorer' }}</h5>
+            <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm border" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+                <i class="bi bi-funnel-fill me-1"></i> {{ __('messages.Toggle Filters') ?? 'Toggle Filters' }}
+            </button>
+        </div>
+
+        <!-- Advanced Filter & Search Collapsible Block -->
+        <div class="collapse {{ request('search') || request('service_body_id') || request('start_date') || request('end_date') ? 'show' : '' }}" id="collapseFilters">
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden" style="background: rgba(255, 255, 255, 0.45) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border: 1px solid rgba(255, 255, 255, 0.25) !important;">
+                <div class="card-body p-4">
+                    <form action="{{ route('service-body-agendas.archive') }}" method="GET" id="searchFilterForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <label for="search" class="form-label fw-semibold text-muted small"><i class="bi bi-search me-1"></i>{{ __('messages.Search') ?? 'Search' }}</label>
+                                <input type="text" name="search" id="search" class="form-control rounded-3" value="{{ request('search') }}" placeholder="{{ __('messages.Search agendas...') ?? 'Search agendas...' }}">
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <label for="service_body_id" class="form-label fw-semibold text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ __('messages.Service Body') ?? 'Service Body' }}</label>
+                                <select name="service_body_id" id="service_body_id" class="form-select rounded-3 select2">
+                                    <option value="">{{ __('messages.All Service Bodies') ?? 'All Service Bodies' }}</option>
+                                    @foreach($serviceBodies as $sb)
+                                        <option value="{{ $sb->id }}" {{ request('service_body_id') == $sb->id ? 'selected' : '' }}>
+                                            {{ $sb->ar_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-2">
+                                <label for="start_date" class="form-label fw-semibold text-muted small"><i class="bi bi-calendar-event me-1"></i>{{ __('messages.Start Date') ?? 'Start Date' }}</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control rounded-3" value="{{ request('start_date') }}">
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-2">
+                                <label for="end_date" class="form-label fw-semibold text-muted small"><i class="bi bi-calendar-event me-1"></i>{{ __('messages.End Date') ?? 'End Date' }}</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control rounded-3" value="{{ request('end_date') }}">
+                            </div>
+                            <div class="col-12 col-md-4 col-lg-2 d-flex gap-2">
+                                <a href="{{ route('service-body-agendas.archive') }}" class="btn btn-light rounded-pill flex-fill py-2 text-center text-secondary small border">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                                <button type="submit" class="btn btn-primary rounded-pill flex-fill py-2 small">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <label for="service_body_id" class="form-label fw-semibold text-muted">{{ __('messages.Service Body') ?? 'Service Body' }}</label>
-                            <select name="service_body_id" id="service_body_id" class="form-select rounded-3">
-                                <option value="">{{ __('messages.All Service Bodies') ?? 'All Service Bodies' }}</option>
-                                @foreach($serviceBodies as $sb)
-                                    <option value="{{ $sb->id }}" {{ request('service_body_id') == $sb->id ? 'selected' : '' }}>
-                                        {{ $sb->ar_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-2">
-                            <label for="start_date" class="form-label fw-semibold text-muted">{{ __('messages.Start Date') ?? 'Start Date' }}</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control rounded-3" value="{{ request('start_date') }}">
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-2">
-                            <label for="end_date" class="form-label fw-semibold text-muted">{{ __('messages.End Date') ?? 'End Date' }}</label>
-                            <input type="date" name="end_date" id="end_date" class="form-control rounded-3" value="{{ request('end_date') }}">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                        <a href="{{ route('service-body-agendas.archive') }}" class="btn btn-light px-4 rounded-pill">
-                           <i class="bi bi-x-circle me-1"></i> {{ __('messages.Reset') ?? 'Reset' }}
-                        </a>
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill">
-                            <i class="bi bi-search me-1"></i> {{ __('messages.Search') ?? 'Search' }}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
 

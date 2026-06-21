@@ -279,12 +279,26 @@
 
       {{-- Service Body Agendas Area --}}
       @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc')))
+      @php
+        $user = auth()->user();
+        $agendaTitle = __('messages.Service Body Agendas') ?? 'Service Body Agendas';
+        if ($user && $user->hasRole('ServiceBody') && $user->service_body_id) {
+            $sb = \App\Models\ServiceBody::find($user->service_body_id);
+            if ($sb) {
+                if (app()->getLocale() === 'ar') {
+                    $agendaTitle = 'أجندات ' . $sb->ar_name;
+                } else {
+                    $agendaTitle = 'Agendas of ' . ($sb->en_name ?: $sb->ar_name);
+                }
+            }
+        }
+      @endphp
       <li class="menu-label">{{ __('messages.Service Body Agendas') ?? 'Service Body Agendas' }}</li>
       <li>
         <a href="{{ route('service-body-agendas.index') }}">
           <div class="parent-icon"><i class="bi bi-file-earmark-medical"></i>
           </div>
-          <div class="menu-title">{{ __('messages.Service Body Agendas') ?? 'Service Body Agendas' }}</div>
+          <div class="menu-title">{{ $agendaTitle }}</div>
         </a>
       </li>
       <li>

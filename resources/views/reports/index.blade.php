@@ -8,7 +8,9 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex gap-2">
-                <x-button-a href="{{ route('committee-reports.create') }}" color="outline-primary" name="{{ __('messages.Add Report') }}" />
+                @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc') || \App\Models\ServiceCommittee::where('user_id', auth()->id())->orWhere('email', auth()->user()->email)->exists()))
+                    <x-button-a href="{{ route('committee-reports.create') }}" color="outline-primary" name="{{ __('messages.Add Report') }}" />
+                @endif
                 <a href="{{ route('committee-reports.archive') }}" class="btn btn-outline-info">
                     <i class="bi bi-archive-fill"></i> {{ __('messages.Reports Archive') ?? 'Reports Archive' }}
                 </a>

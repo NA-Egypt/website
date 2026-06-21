@@ -44,16 +44,14 @@ class CommitteeReportController extends Controller
 
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
-            $now = now();
-            if ($now->day < 10) {
-                $query->where(function($dateQ) use ($now) {
-                    $dateQ->whereYear('meeting_date', '<', $now->year)
-                          ->orWhere(function($inner) use ($now) {
-                              $inner->whereYear('meeting_date', $now->year)
-                                    ->whereMonth('meeting_date', '<', $now->month);
-                          });
-                });
-            }
+            $threshold = now()->day >= 10 ? now() : now()->subMonth();
+            $query->where(function($q) use ($threshold) {
+                $q->whereYear('meeting_date', '<', $threshold->year)
+                  ->orWhere(function($sub) use ($threshold) {
+                      $sub->whereYear('meeting_date', $threshold->year)
+                          ->whereMonth('meeting_date', '<', $threshold->month);
+                  });
+            });
         } elseif (!$isRsc) {
             $committee = $this->getServiceCommittee();
             if (!$committee) {
@@ -200,13 +198,11 @@ class CommitteeReportController extends Controller
                 return false;
             }
 
-            // Available on the 10th of every month
+            // Available on the 10th of the month following the meeting date
             $meetingDate = $report->meeting_date;
-            $now = now();
-            if ($meetingDate->year === $now->year && $meetingDate->month === $now->month) {
-                if ($now->day < 10) {
-                    return false;
-                }
+            $publishDate = \Carbon\Carbon::parse($meetingDate)->addMonth()->day(10)->startOfDay();
+            if (now()->lt($publishDate)) {
+                return false;
             }
             return true;
         }
@@ -448,15 +444,14 @@ class CommitteeReportController extends Controller
                 if ($this->isRestrictedConsumer($user)) {
                     $q->orWhere(function($sub) use ($now) {
                         $sub->where('status', 'approved');
-                        if ($now->day < 10) {
-                            $sub->where(function($dateQ) use ($now) {
-                                $dateQ->whereYear('meeting_date', '<', $now->year)
-                                      ->orWhere(function($inner) use ($now) {
-                                          $inner->whereYear('meeting_date', $now->year)
-                                                ->whereMonth('meeting_date', '<', $now->month);
-                                      });
-                            });
-                        }
+                        $threshold = $now->day >= 10 ? $now : $now->copy()->subMonth();
+                        $sub->where(function($dateQ) use ($threshold) {
+                            $dateQ->whereYear('meeting_date', '<', $threshold->year)
+                                  ->orWhere(function($inner) use ($threshold) {
+                                      $inner->whereYear('meeting_date', $threshold->year)
+                                            ->whereMonth('meeting_date', '<', $threshold->month);
+                                  });
+                        });
                     });
                 } else {
                     $q->orWhereIn('status', ['submitted', 'approved']);
@@ -611,15 +606,14 @@ class CommitteeReportController extends Controller
                 if ($this->isRestrictedConsumer($user)) {
                     $q->orWhere(function($sub) use ($now) {
                         $sub->where('status', 'approved');
-                        if ($now->day < 10) {
-                            $sub->where(function($dateQ) use ($now) {
-                                $dateQ->whereYear('meeting_date', '<', $now->year)
-                                      ->orWhere(function($inner) use ($now) {
-                                          $inner->whereYear('meeting_date', $now->year)
-                                                ->whereMonth('meeting_date', '<', $now->month);
-                                      });
-                            });
-                        }
+                        $threshold = $now->day >= 10 ? $now : $now->copy()->subMonth();
+                        $sub->where(function($dateQ) use ($threshold) {
+                            $dateQ->whereYear('meeting_date', '<', $threshold->year)
+                                  ->orWhere(function($inner) use ($threshold) {
+                                      $inner->whereYear('meeting_date', $threshold->year)
+                                            ->whereMonth('meeting_date', '<', $threshold->month);
+                                  });
+                        });
                     });
                 } else {
                     $q->orWhereIn('status', ['submitted', 'approved']);

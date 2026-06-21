@@ -14,6 +14,15 @@ class CommitteeReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $data = parent::toArray($request);
+
+        $user = auth()->user();
+        $isRestricted = !$user || $user->hasRole('ServiceBody') || $user->hasRole('gsr');
+
+        if ($isRestricted) {
+            unset($data['review_notes']);
+        }
+
+        return $data;
     }
 }

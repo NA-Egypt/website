@@ -979,6 +979,7 @@ return [
     'Are you sure you want to delete this agenda?' => 'هل أنت متأكد من رغبتك في حذف هذه الأجندة؟',
     'Are you sure you want to approve and send this agenda to RSC?' => 'هل أنت متأكد من رغبتك في اعتماد وإرسال هذه الأجندة إلى لجنة خدمة الإقليم؟',
     'Service Body Agendas Archive' => 'أرشيف أجندات المناطق والمنتديات',
+    'Archive Files' => 'ملفات الأرشيف',
     'Enter group name...' => 'أدخل اسم المجموعة...',
     'Create Service Body Agenda' => 'إنشاء أجندة المناطق والمنتديات',
     'Choose a Service Body...' => 'اختر منطقة أو منتدى...',

@@ -26,11 +26,11 @@
             </div>
         @endif
 
-        <!-- Filter Form -->
-        <div class="card mb-4 border-0 shadow-sm" style="border-radius: 12px; background: rgba(255, 255, 255, 0.9);">
-            <div class="card-body p-3">
-                <form action="{{ route('service-body-agendas.index') }}" method="GET" class="row g-2 align-items-end">
-                    @if($isRsc)
+        <!-- Filter/Search Box -->
+        @if($isRsc)
+            <div class="card mb-4 border-0 shadow-sm" style="border-radius: 12px; background: rgba(255, 255, 255, 0.9);">
+                <div class="card-body p-3">
+                    <form action="{{ route('service-body-agendas.index') }}" method="GET" class="row g-2 align-items-end">
                         <div class="col-md-4 col-sm-6">
                             <label class="form-label small fw-bold text-muted">{{ __('messages.Filter by Service Body') ?? 'Filter by Service Body' }}</label>
                             <select name="service_body_id" class="form-select">
@@ -40,17 +40,49 @@
                                 @endforeach
                             </select>
                         </div>
-                    @endif
-                    <div class="col-md-4 col-sm-6">
-                        <label class="form-label small fw-bold text-muted">{{ __('messages.Search') ?? 'Search' }}</label>
-                        <input type="text" name="search" class="form-control" placeholder="{{ __('messages.Search agendas...') ?? 'Search agendas...' }}" value="{{ request('search') }}">
-                    </div>
-                    <div class="col-md-2 col-sm-12 ms-auto d-grid">
-                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-filter"></i> {{ __('messages.Filter') ?? 'Filter' }}</button>
+                        <div class="col-md-4 col-sm-6">
+                            <label class="form-label small fw-bold text-muted">{{ __('messages.Search') ?? 'Search' }}</label>
+                            <input type="text" name="search" class="form-control" placeholder="{{ __('messages.Search agendas...') ?? 'Search agendas...' }}" value="{{ request('search') }}">
+                        </div>
+                        <div class="col-md-2 col-sm-12 ms-auto d-grid">
+                            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-filter"></i> {{ __('messages.Filter') ?? 'Filter' }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @else
+            <div class="mb-4">
+                <form action="{{ route('service-body-agendas.index') }}" method="GET" id="searchFilterForm">
+                    <div class="input-group shadow-sm rounded-pill overflow-hidden border" style="background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25) !important;">
+                        <span class="input-group-text border-0 bg-transparent ps-4 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" id="searchInput" class="form-control border-0 bg-transparent py-3" placeholder="{{ __('messages.Search agendas...') ?? 'Search agendas...' }}" value="{{ request('search') }}" style="box-shadow: none;">
+                        @if(request('search'))
+                            <a href="{{ route('service-body-agendas.index') }}" class="btn border-0 bg-transparent text-muted d-flex align-items-center justify-content-center pe-4" style="box-shadow: none;">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </a>
+                        @endif
                     </div>
                 </form>
             </div>
-        </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const searchInput = document.getElementById('searchInput');
+                    const searchForm = document.getElementById('searchFilterForm');
+                    if (searchInput && searchForm) {
+                        let timeout = null;
+                        searchInput.addEventListener('input', function() {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(function() {
+                                searchForm.submit();
+                            }, 500);
+                        });
+                    }
+                });
+            </script>
+        @endif
 
         <!-- Agendas Table -->
         <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden; background: rgba(255, 255, 255, 0.95);">

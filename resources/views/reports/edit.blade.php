@@ -12,7 +12,7 @@
             </div>
         @endif
 
-        @if($report->review_notes)
+        @if($report->review_notes && auth()->check() && !auth()->user()->hasRole('ServiceBody') && !auth()->user()->hasRole('gsr'))
             <div class="alert alert-warning border-start border-warning border-4 mb-4 shadow-sm">
                 <h5 class="alert-heading fw-bold text-dark"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>{{ __('messages.Review Notes') ?? 'RSC Review Notes / Comments' }}</h5>
                 <p class="mb-0 text-dark">{{ $report->review_notes }}</p>

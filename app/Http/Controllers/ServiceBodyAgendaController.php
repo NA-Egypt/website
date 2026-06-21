@@ -116,22 +116,18 @@ class ServiceBodyAgendaController extends Controller
         if ($this->isRestrictedConsumer($user)) {
             // Only approved and released
             $query->where('status', 'approved');
-            // We'll filter the collection or query to match the release date logic:
-            $query->where(function($q) {
+            
+            $daySql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+                ? "cast(strftime('%d', meeting_date) as integer)"
+                : "DAY(meeting_date)";
+
+            $query->where(function($q) use ($daySql) {
                 // Exceptional are visible immediately
                 $q->where('is_exceptional', true)
-                  ->orWhere(function($subQ) {
+                  ->orWhere(function($subQ) use ($daySql) {
                       $now = now();
-                      // Released if:
-                      // Case A: meeting_date <= 10th of current month, and today is >= 10th of that month.
-                      // Case B: meeting_date > 10th of current month, and today is >= 10th of next month.
-                      // Simply put, we can filter using raw sql or eloquent where date queries.
-                      // Let's filter out anything where today is before the release date:
-                      // release_date = (day(meeting_date) <= 10) ? 10th of same month : 10th of next month.
-                      // For a query, we can check:
-                      // If meeting_date's release date is in the past:
-                      $subQ->where(function($inner) use ($now) {
-                          $inner->whereRaw("DAY(meeting_date) <= 10")
+                      $subQ->where(function($inner) use ($now, $daySql) {
+                          $inner->whereRaw("{$daySql} <= 10")
                                 ->where(function($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
                                           ->orWhere(function($yQ) use ($now) {
@@ -140,21 +136,18 @@ class ServiceBodyAgendaController extends Controller
                                                      $mQ->whereMonth('meeting_date', '<', $now->month)
                                                         ->orWhere(function($dQ) use ($now) {
                                                             $dQ->whereMonth('meeting_date', $now->month)
-                                                               ->whereDay('meeting_date', '<=', $now->day); // Wait, if meeting_date is June 5, release is June 10. If today is June 10, then we are fine.
+                                                               ->whereDay('meeting_date', '<=', $now->day);
                                                         });
                                                  });
                                           });
                                   });
-                      })->orWhere(function($inner) use ($now) {
-                          $inner->whereRaw("DAY(meeting_date) > 10")
+                      })->orWhere(function($inner) use ($now, $daySql) {
+                          $inner->whereRaw("{$daySql} > 10")
                                 ->where(function($dateQ) use ($now) {
-                                    // Release date is 10th of next month. So meeting_date must be from previous months.
-                                    // If meeting_date is in same year: month(meeting_date) < month(now), or (month(meeting_date) == month(now) - 1 and day(now) >= 10)
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
                                           ->orWhere(function($yQ) use ($now) {
                                               $yQ->whereYear('meeting_date', $now->year)
                                                  ->where(function($mQ) use ($now) {
-                                                     // If meeting_date's month is at least 2 months ago:
                                                      $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
                                                  });
                                           });
@@ -498,14 +491,18 @@ class ServiceBodyAgendaController extends Controller
         $user = auth()->user();
         $query = ServiceBodyAgenda::with('serviceBody');
 
+        $daySql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+            ? "cast(strftime('%d', meeting_date) as integer)"
+            : "DAY(meeting_date)";
+
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
-            $query->where(function($q) {
+            $query->where(function($q) use ($daySql) {
                 $q->where('is_exceptional', true)
-                  ->orWhere(function($subQ) {
+                  ->orWhere(function($subQ) use ($daySql) {
                       $now = now();
-                      $subQ->where(function($inner) use ($now) {
-                          $inner->whereRaw("DAY(meeting_date) <= 10")
+                      $subQ->where(function($inner) use ($now, $daySql) {
+                          $inner->whereRaw("{$daySql} <= 10")
                                 ->where(function($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
                                           ->orWhere(function($yQ) use ($now) {
@@ -519,8 +516,8 @@ class ServiceBodyAgendaController extends Controller
                                                  });
                                           });
                                   });
-                      })->orWhere(function($inner) use ($now) {
-                          $inner->whereRaw("DAY(meeting_date) > 10")
+                      })->orWhere(function($inner) use ($now, $daySql) {
+                          $inner->whereRaw("{$daySql} > 10")
                                 ->where(function($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
                                           ->orWhere(function($yQ) use ($now) {
@@ -537,12 +534,51 @@ class ServiceBodyAgendaController extends Controller
             // RSC / Super Admin / RCM
             if (!$this->isRsc()) {
                 $sb = $this->getServiceBody();
-                if ($sb) {
-                    $query->where('service_body_id', $sb->id);
-                    // RCM sees draft, submitted, and approved of their own Service Body
-                } else {
-                    $query->whereRaw('1 = 0'); // Show nothing if no SB assigned
-                }
+                $sbId = $sb ? $sb->id : 0;
+                $query->where(function($q) use ($sbId, $daySql) {
+                    if ($sbId) {
+                        $q->where('service_body_id', $sbId);
+                    }
+                    $q->orWhere(function($otherQ) use ($sbId, $daySql) {
+                        if ($sbId) {
+                            $otherQ->where('service_body_id', '!=', $sbId);
+                        }
+                        $otherQ->where('status', 'approved');
+                        $otherQ->where(function($releaseQ) use ($daySql) {
+                            $releaseQ->where('is_exceptional', true)
+                                     ->orWhere(function($subQ) use ($daySql) {
+                                         $now = now();
+                                         $subQ->where(function($inner) use ($now, $daySql) {
+                                             $inner->whereRaw("{$daySql} <= 10")
+                                                   ->where(function($dateQ) use ($now) {
+                                                       $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                             ->orWhere(function($yQ) use ($now) {
+                                                                 $yQ->whereYear('meeting_date', $now->year)
+                                                                    ->where(function($mQ) use ($now) {
+                                                                        $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                                           ->orWhere(function($dQ) use ($now) {
+                                                                               $dQ->whereMonth('meeting_date', $now->month)
+                                                                                  ->whereDay('meeting_date', '<=', $now->day);
+                                                                           });
+                                                                    });
+                                                             });
+                                                     });
+                                         })->orWhere(function($inner) use ($now, $daySql) {
+                                             $inner->whereRaw("{$daySql} > 10")
+                                                   ->where(function($dateQ) use ($now) {
+                                                       $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                             ->orWhere(function($yQ) use ($now) {
+                                                                 $yQ->whereYear('meeting_date', $now->year)
+                                                                    ->where(function($mQ) use ($now) {
+                                                                        $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                                    });
+                                                             });
+                                                     });
+                                         });
+                                     });
+                        });
+                    });
+                });
             } else {
                 // Super Admin & RSC see all agendas (draft, submitted, approved)
                 // No status restriction
@@ -618,19 +654,26 @@ class ServiceBodyAgendaController extends Controller
         $serviceBodies = ServiceBody::all();
         $filesAndDirs = [];
 
-        // Build mapping of allowed filenames for restricted consumers from the dbAgendas (which only has approved, released agendas)
-        if ($this->isRestrictedConsumer($user)) {
+        // Build mapping of allowed filenames for restricted consumers / other Service Bodies' agendas from the dbAgendas (which only has approved, released agendas for others/restricted consumers)
+        if ($this->isRestrictedConsumer($user) || (!$this->isRsc() && $userSb)) {
             foreach ($dbAgendas as $agenda) {
-                $year = $agenda->meeting_date->format('Y');
-                $monthNum = (int)$agenda->meeting_date->format('m');
-                $monthStr = $agenda->meeting_date->format('m');
-                $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
-                $sbName = $agenda->serviceBody ? $agenda->serviceBody->ar_name : 'خدمة';
-                $sbName = str_replace(['/', '\\', "\0"], '', $sbName);
-                $cleanedSbName = str_replace(' ', '_', $sbName);
-                $suffix = $agenda->is_exceptional ? '_EX' : '';
-                $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
-                $allowedFilenames[] = strtolower($filename);
+                // If user is RCM, only add it to allowedFilenames if it's NOT their own (own is already allowed unconditionally by folder name matching)
+                if (!$this->isRestrictedConsumer($user) && $agenda->service_body_id === $userSb->id) {
+                    continue;
+                }
+                
+                if ($agenda->status === 'approved') {
+                    $year = $agenda->meeting_date->format('Y');
+                    $monthNum = (int)$agenda->meeting_date->format('m');
+                    $monthStr = $agenda->meeting_date->format('m');
+                    $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
+                    $sbName = $agenda->serviceBody ? $agenda->serviceBody->ar_name : 'خدمة';
+                    $sbName = str_replace(['/', '\\', "\0"], '', $sbName);
+                    $cleanedSbName = str_replace(' ', '_', $sbName);
+                    $suffix = $agenda->is_exceptional ? '_EX' : '';
+                    $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
+                    $allowedFilenames[] = strtolower($filename);
+                }
             }
         }
 
@@ -658,7 +701,7 @@ class ServiceBodyAgendaController extends Controller
                 }
             }
 
-            // If user is RCM (not RSC/SuperAdmin), enforce own service body filter on physical files
+            // If user is RCM (not RSC/SuperAdmin), enforce own service body filter OR approved/released filter on physical files
             if (!$this->isRsc() && !$this->isRestrictedConsumer($user) && $userSb) {
                 $arName = $userSb->ar_name ? mb_strtolower($userSb->ar_name, 'UTF-8') : null;
                 $enName = $userSb->en_name ? mb_strtolower($userSb->en_name, 'UTF-8') : null;
@@ -672,7 +715,9 @@ class ServiceBodyAgendaController extends Controller
                     $match = true;
                 }
                 if (!$match) {
-                    continue;
+                    if (!in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
+                        continue;
+                    }
                 }
             }
 
