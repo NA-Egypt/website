@@ -67,19 +67,20 @@
                     </nav>
                     <div class="d-flex align-items-center gap-3">
                         <!-- Instant text search filter -->
+                        <!-- Instant text search filter -->
                         <div class="position-relative" style="width: 220px;">
                             <span class="position-absolute top-50 start-0 translate-middle-y ps-2 text-muted" style="pointer-events: none;">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="text" id="explorer-filter" class="form-control form-control-sm ps-4 rounded-pill" placeholder="Filter view..." style="padding-left: 1.8rem !important; padding-right: 1rem !important;">
+                            <input type="text" id="explorer-filter" class="form-control form-control-sm ps-4 rounded-pill" placeholder="{{ __('messages.Filter view...') ?? 'Filter view...' }}" style="padding-left: 1.8rem !important; padding-right: 1rem !important;">
                         </div>
 
                         <!-- Grid/List layout toggle buttons -->
                         <div class="btn-group btn-group-sm rounded-pill overflow-hidden border shadow-sm" role="group">
-                            <button type="button" class="btn btn-light border-0" id="btn-layout-grid" title="Grid View">
+                            <button type="button" class="btn btn-light border-0" id="btn-layout-grid" title="{{ __('messages.Grid View') ?? 'Grid View' }}">
                                 <i class="bi bi-grid-fill"></i>
                             </button>
-                            <button type="button" class="btn btn-light border-0" id="btn-layout-list" title="List View">
+                            <button type="button" class="btn btn-light border-0" id="btn-layout-list" title="{{ __('messages.List View') ?? 'List View' }}">
                                 <i class="bi bi-list"></i>
                             </button>
                         </div>
@@ -106,7 +107,7 @@
     <div id="details-drawer-panel" class="details-drawer">
         <div class="d-flex align-items-center justify-content-between pb-3 border-bottom mb-4">
             <h5 class="fw-bold mb-0 text-primary">
-                <i class="bi bi-info-circle-fill me-2"></i>Details
+                <i class="bi bi-info-circle-fill me-2"></i>{{ __('messages.Details') ?? 'Details' }}
             </h5>
             <button type="button" class="btn-close" onclick="closeDetailsDrawer()" aria-label="Close"></button>
         </div>
@@ -118,27 +119,27 @@
 
             <!-- Metadata info -->
             <div class="mb-3">
-                <span class="text-muted small d-block">Name</span>
+                <span class="text-muted small d-block">{{ __('messages.Name') ?? 'Name' }}</span>
                 <span id="drawer-file-name" class="fw-semibold text-dark text-break fs-6"></span>
             </div>
             <div class="row g-2 mb-3">
                 <div class="col-6">
-                    <span class="text-muted small d-block">Type</span>
+                    <span class="text-muted small d-block">{{ __('messages.Type') ?? 'Type' }}</span>
                     <span id="drawer-file-type" class="badge bg-secondary"></span>
                 </div>
                 <div class="col-6">
-                    <span class="text-muted small d-block">Size</span>
+                    <span class="text-muted small d-block">{{ __('messages.Size') ?? 'Size' }}</span>
                     <span id="drawer-file-size" class="fw-medium text-dark"></span>
                 </div>
             </div>
             <div class="mb-4">
-                <span class="text-muted small d-block">Path</span>
+                <span class="text-muted small d-block">{{ __('messages.Path') ?? 'Path' }}</span>
                 <span id="drawer-file-path" class="small text-muted text-break font-monospace bg-light p-2 rounded d-block mt-1 border"></span>
             </div>
         </div>
         <div class="pt-3 border-top d-grid gap-2">
             <button type="button" id="drawer-preview-btn" class="btn btn-outline-primary rounded-pill py-2">
-                <i class="bi bi-eye-fill me-1"></i> Preview File
+                <i class="bi bi-eye-fill me-1"></i> {{ __('messages.Preview File') ?? 'Preview File' }}
             </button>
             <a href="#" id="drawer-download-btn" class="btn btn-primary rounded-pill py-2" target="_blank">
                 <i class="bi bi-download me-1"></i> {{ __('messages.Download') ?? 'Download' }}
@@ -392,7 +393,7 @@
             
             const badge = document.createElement('span');
             badge.className = 'badge bg-white text-secondary border small';
-            badge.textContent = 'Folder';
+            badge.textContent = @json(__('messages.Folder') ?? 'Folder');
             topDiv.appendChild(badge);
             card.appendChild(topDiv);
 
@@ -556,7 +557,7 @@
                 const errIcon = document.createElement('i');
                 errIcon.className = 'bi bi-exclamation-circle fs-3 d-block mb-2 text-warning';
                 errDiv.appendChild(errIcon);
-                errDiv.appendChild(document.createTextNode('Folder not found.'));
+                errDiv.appendChild(document.createTextNode(@json(__('messages.Folder not found.') ?? 'Folder not found.')));
                 container.appendChild(errDiv);
                 return;
             }
@@ -655,7 +656,7 @@
                 emptyIcon.className = 'bi bi-folder-open fs-2 d-block mb-2 text-secondary';
                 emptyDiv.appendChild(emptyIcon);
                 const textSpan = document.createElement('span');
-                textSpan.textContent = "This folder is empty.";
+                textSpan.textContent = @json(__('messages.This folder is empty.') ?? 'This folder is empty.');
                 emptyDiv.appendChild(textSpan);
                 container.appendChild(emptyDiv);
             }
@@ -760,7 +761,7 @@
                 spinner.className = 'spinner-border spinner-border-sm text-primary me-2';
                 spinner.setAttribute('role', 'status');
                 spinnerDiv.appendChild(spinner);
-                spinnerDiv.appendChild(document.createTextNode('Parsing document...'));
+                spinnerDiv.appendChild(document.createTextNode(@json(__('messages.Parsing document...') ?? 'Parsing document...')));
                 docxContainer.appendChild(spinnerDiv);
                 
                 fetch(inlineUrl)
@@ -797,7 +798,7 @@
                 spinner.className = 'spinner-border spinner-border-sm text-success me-2';
                 spinner.setAttribute('role', 'status');
                 spinnerDiv.appendChild(spinner);
-                spinnerDiv.appendChild(document.createTextNode('Loading workbook sheets...'));
+                spinnerDiv.appendChild(document.createTextNode(@json(__('messages.Loading workbook sheets...') ?? 'Loading workbook sheets...')));
                 excelContainer.appendChild(spinnerDiv);
 
                 fetch(inlineUrl)
@@ -855,7 +856,7 @@
                                 parsedTable.className = 'table table-bordered table-striped table-hover mb-0';
                                 wrapper.appendChild(parsedTable);
                             } else {
-                                wrapper.textContent = 'No table found in sheet';
+                                wrapper.textContent = @json(__('messages.No table found in sheet') ?? 'No table found in sheet');
                             }
 
                             pane.appendChild(wrapper);

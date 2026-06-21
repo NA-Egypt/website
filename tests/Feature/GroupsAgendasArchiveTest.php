@@ -27,17 +27,100 @@ class GroupsAgendasArchiveTest extends TestCase
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
     }
 
-    public function test_unauthorized_user_cannot_access_groups_agendas_archive()
+    public function test_unauthenticated_user_cannot_access_groups_agendas_archive()
     {
         // Unauthenticated
         $this->get(route('groups-agendas.archive'))->assertRedirect();
+    }
 
-        // Authenticated but normal user (GSR)
-        $user = User::factory()->create();
-        $user->assignRole('gsr');
-        $this->actingAs($user);
+    public function test_gsr_user_can_access_archive_and_see_only_own_group_agendas()
+    {
+        $day = \App\Models\Day::first() ?? \App\Models\Day::create([
+            'ar_name' => 'السبت',
+            'en_name' => 'Saturday',
+        ]);
+        $serviceBody = \App\Models\ServiceBody::create([
+            'ar_name' => 'كيان خدمي',
+            'en_name' => 'Service Body',
+            'description' => 'Desc',
+            'day_id' => $day->id,
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Location',
+        ]);
+        $city = \App\Models\City::first() ?? \App\Models\City::create([
+            'ar_name' => 'القاهرة',
+            'en_name' => 'Cairo',
+        ]);
+        $neighborhood = \App\Models\Neighborhood::first() ?? \App\Models\Neighborhood::create([
+            'ar_name' => 'حي الاختبار',
+            'en_name' => 'Test Neighborhood',
+            'city_id' => $city->id,
+        ]);
 
-        $this->get(route('groups-agendas.archive'))->assertStatus(403);
+        $user1 = User::factory()->create();
+        $user1->assignRole('gsr');
+
+        $user2 = User::factory()->create();
+        $user2->assignRole('gsr');
+
+        $group1 = Group::create([
+            'ar_name' => 'Group 1',
+            'en_name' => 'Group 1',
+            'ar_gsr_name' => 'GSR 1',
+            'en_gsr_name' => 'GSR 1',
+            'email' => 'g1@example.com',
+            'phone' => '12345678',
+            'user_id' => $user1->id,
+            'ar_address' => 'عنوان 1',
+            'en_address' => 'Address 1',
+            'location' => 'https://maps.google.com/1',
+            'group_type' => 'open',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+        ]);
+
+        $group2 = Group::create([
+            'ar_name' => 'Group 2',
+            'en_name' => 'Group 2',
+            'ar_gsr_name' => 'GSR 2',
+            'en_gsr_name' => 'GSR 2',
+            'email' => 'g2@example.com',
+            'phone' => '12345678',
+            'user_id' => $user2->id,
+            'ar_address' => 'عنوان 2',
+            'en_address' => 'Address 2',
+            'location' => 'https://maps.google.com/2',
+            'group_type' => 'open',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+        ]);
+
+        $agenda1 = Agenda::create([
+            'group_id' => $group1->id,
+            'meetings_per_week' => 2,
+            'agenda_date' => '2026-06-01',
+            'service_position' => 'GSR',
+            'submitter_name' => 'John Group1',
+        ]);
+
+        $agenda2 = Agenda::create([
+            'group_id' => $group2->id,
+            'meetings_per_week' => 3,
+            'agenda_date' => '2026-06-02',
+            'service_position' => 'GSR',
+            'submitter_name' => 'Jane Group2',
+        ]);
+
+        // Login as User 1 (GSR of Group 1)
+        $this->actingAs($user1);
+        $response = $this->get(route('groups-agendas.archive'));
+        $response->assertStatus(200);
+
+        // Should see Group 1's agenda but not Group 2's
+        $response->assertSee('John Group1');
+        $response->assertDontSee('Jane Group2');
     }
 
     public function test_super_admin_can_access_groups_agendas_archive_and_view_details()
@@ -290,5 +373,57 @@ class GroupsAgendasArchiveTest extends TestCase
             'group_id' => $group->id,
             'trusted_servants' => 'Active trusted servants here',
         ]);
+    }
+
+    public function test_groups_agendas_archive_dynamic_header_for_selected_group()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('gsr');
+        $this->actingAs($user);
+
+        $day = \App\Models\Day::first() ?? \App\Models\Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
+        $serviceBody = \App\Models\ServiceBody::first() ?? \App\Models\ServiceBody::create([
+            'ar_name' => 'كيان خدمي',
+            'en_name' => 'Service Body',
+            'description' => 'Desc',
+            'day_id' => $day->id,
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Test Location',
+        ]);
+        $city = \App\Models\City::first() ?? \App\Models\City::create(['ar_name' => 'القاهرة', 'en_name' => 'Cairo']);
+        $neighborhood = \App\Models\Neighborhood::first() ?? \App\Models\Neighborhood::create([
+            'ar_name' => 'حي الاختبار',
+            'en_name' => 'Test Neighborhood',
+            'city_id' => $city->id,
+        ]);
+        $group = Group::create([
+            'ar_name' => 'مجموعة الاختبار المميزة',
+            'en_name' => 'Special Test Group',
+            'ar_gsr_name' => 'GSR',
+            'en_gsr_name' => 'GSR',
+            'email' => 'tg@example.com',
+            'phone' => '12345678',
+            'user_id' => $user->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $serviceBody->id,
+            'neighborhood_id' => $neighborhood->id,
+        ]);
+
+        // When group_id parameter is passed, we should see the group's archive title in English
+        app()->setLocale('en');
+        $response = $this->get(route('groups-agendas.archive', ['group_id' => $group->id]));
+        $response->assertStatus(200);
+        $response->assertSee('Agendas Archive of Special Test Group');
+
+        // And in Arabic
+        app()->setLocale('ar');
+        $response = $this->get(route('groups-agendas.archive', ['group_id' => $group->id]));
+        $response->assertStatus(200);
+        $response->assertSee('أرشيف أجندات مجموعة الاختبار المميزة');
     }
 }

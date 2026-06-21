@@ -107,7 +107,7 @@ class AgendaController extends Controller
         if (!$user) {
             return false;
         }
-        return $this->isAuthorized($user) || $user->hasRole('ServiceBody');
+        return $this->isAuthorized($user) || $user->hasRole('ServiceBody') || $user->hasRole('gsr');
     }
 
     /**
@@ -180,7 +180,11 @@ class AgendaController extends Controller
 
         $query = Agenda::with('group');
 
-        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+        if ($user->hasRole('gsr')) {
+            $query->whereHas('group', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
             $query->whereHas('group', function ($q) use ($user) {
                 $q->where('service_body_id', $user->service_body_id);
             });
@@ -231,13 +235,22 @@ class AgendaController extends Controller
             });
         });
 
-        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+        if ($user->hasRole('gsr')) {
+            $groups = Group::where('user_id', $user->id)->get();
+        } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
             $groups = Group::where('service_body_id', $user->service_body_id)->get();
         } else {
             $groups = Group::all();
         }
 
-        return view('agenda.archive', compact('archive', 'groups', 'totalAgendas', 'monthlyAgendas', 'activeGroupsCount'));
+        $selectedGroup = null;
+        if ($request->has('group_id') && $request->group_id != '') {
+            $selectedGroup = $groups->firstWhere('id', $request->group_id);
+        } elseif ($groups->count() === 1) {
+            $selectedGroup = $groups->first();
+        }
+
+        return view('agenda.archive', compact('archive', 'groups', 'totalAgendas', 'monthlyAgendas', 'activeGroupsCount', 'selectedGroup'));
     }
 
     /**
@@ -257,7 +270,11 @@ class AgendaController extends Controller
         }
 
         $query = Agenda::whereIn('id', $agendaIds);
-        if ($user->hasRole('ServiceBody') && $user->service_body_id) {
+        if ($user->hasRole('gsr')) {
+            $query->whereHas('group', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
             $query->whereHas('group', function ($q) use ($user) {
                 $q->where('service_body_id', $user->service_body_id);
             });

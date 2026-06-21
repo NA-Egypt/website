@@ -1,5 +1,11 @@
 <x-layout>
-    <x-backhead>{{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}</x-backhead>
+    <x-backhead>
+        @if(isset($selectedGroup) && $selectedGroup)
+            {{ __('messages.agendas_archive_of', ['name' => (app()->getLocale() === 'ar' ? $selectedGroup->ar_name : $selectedGroup->en_name)]) }}
+        @else
+            {{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}
+        @endif
+    </x-backhead>
 
     <div class="container mt-4">
         <!-- Statistics Summary Section -->
