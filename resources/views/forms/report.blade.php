@@ -1,4 +1,50 @@
 <x-layout>
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #charts-pane, #charts-pane * {
+                visibility: visible;
+            }
+            #charts-pane {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #analytics-export-wrapper {
+                display: none !important;
+            }
+            .glass-card {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+            }
+            .col-lg-6 {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+            }
+            .col-12 {
+                width: 100% !important;
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
+        }
+    </style>
 
     <x-backhead>{{ __('messages.Form Reports') ?? 'Form Reports' }}</x-backhead>
 
@@ -262,28 +308,9 @@
     @endforeach
     @if (!empty($chartData))
         <script src="{{ asset('assets/js/chart.js') }}"></script>
-        <script src="{{ asset('assets/js/html2pdf.bundle.min.js') }}"></script>
         <script>
             function exportAnalyticsToPDF() {
-                const element = document.getElementById('charts-pane');
-                const btnWrapper = document.getElementById('analytics-export-wrapper');
-                
-                if (btnWrapper) btnWrapper.style.display = 'none';
-
-                const opt = {
-                    margin:       10,
-                    filename:     'form_{{ $form->id }}_analytics.pdf',
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                html2pdf().set(opt).from(element).save().then(() => {
-                    if (btnWrapper) btnWrapper.style.display = 'flex';
-                }).catch(err => {
-                    console.error('PDF export failed:', err);
-                    if (btnWrapper) btnWrapper.style.display = 'flex';
-                });
+                window.print();
             }
 
             document.addEventListener('DOMContentLoaded', function() {
