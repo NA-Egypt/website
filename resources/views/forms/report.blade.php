@@ -19,6 +19,7 @@
                 box-shadow: none !important;
                 border: none !important;
                 background: transparent !important;
+                overflow: visible !important;
             }
             #charts-pane {
                 position: absolute;
@@ -28,32 +29,42 @@
                 background: none !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                overflow: visible !important;
             }
             #analytics-export-wrapper {
                 display: none !important;
             }
             .glass-card {
-                page-break-inside: avoid;
-                break-inside: avoid;
+                page-break-inside: auto !important;
+                break-inside: auto !important;
                 background: #ffffff !important;
                 border: 1px solid #cbd5e1 !important;
                 box-shadow: none !important;
                 margin-bottom: 25px !important;
                 padding: 20px !important;
                 width: 100% !important;
+                overflow: visible !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
             .chart-container {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
                 height: 250px !important;
                 max-height: 250px !important;
                 width: 100% !important;
+                overflow: visible !important;
+            }
+            h5, h6, .d-flex {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
             }
             .row {
                 display: flex !important;
                 flex-wrap: wrap !important;
                 margin-left: 0 !important;
                 margin-right: 0 !important;
+                overflow: visible !important;
             }
             .col-md-6 {
                 width: 100% !important;
@@ -61,14 +72,20 @@
                 max-width: 100% !important;
                 padding: 0 !important;
                 margin-bottom: 20px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: visible !important;
             }
             .col-12 {
                 width: 100% !important;
                 flex: 0 0 100% !important;
                 max-width: 100% !important;
                 padding: 0 !important;
+                overflow: visible !important;
             }
             table {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
                 width: 100% !important;
                 border-collapse: collapse !important;
             }
