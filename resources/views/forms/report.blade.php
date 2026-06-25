@@ -57,34 +57,128 @@
             </div>
         </div>
 
-        <div class="glass-card p-4">
-            <div class="table-responsive" style="overflow: visible !important;">
-                <table class="table neo-table align-middle text-center display" id="submissions-table" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th>{{ __('messages.Submission ID') ?? 'ID' }}</th>
-                            <th>{{ __('messages.Date') ?? 'Submitted At' }}</th>
-                            <th>{{ __('messages.Submitted By') ?? 'Submitted By' }}</th>
-                            <th>{{ __('messages.Actions') ?? 'Actions' }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($submissions as $submission)
-                            <tr>
-                                <td class="fw-bold">#{{ $submission->id }}</td>
-                                <td class="text-secondary">{{ $submission->created_at->format('Y-m-d H:i') }}</td>
-                                <td class="fw-semibold">
-                                    {{ $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest') }}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#submissionModal-{{ $submission->id }}">
-                                        <i class="bi bi-eye-fill"></i> {{ __('messages.View Details') ?? 'View Details' }}
-                                    </button>
-                                </td>
-                            </tr>
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4 gap-2" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="submissions-tab" data-bs-toggle="pill" data-bs-target="#submissions-pane" type="button" role="tab" aria-controls="submissions-pane" aria-selected="true" style="transition: all 0.2s ease;">
+                    <i class="bi bi-list-task"></i> {{ __('messages.Submissions List') ?? 'Submissions List' }}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="charts-tab" data-bs-toggle="pill" data-bs-target="#charts-pane" type="button" role="tab" aria-controls="charts-pane" aria-selected="false" style="transition: all 0.2s ease;">
+                    <i class="bi bi-bar-chart-line-fill"></i> {{ __('messages.Visual Analytics') ?? 'Visual Analytics' }}
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="reportTabsContent">
+            <!-- Submissions List Tab Pane -->
+            <div class="tab-pane fade show active" id="submissions-pane" role="tabpanel" aria-labelledby="submissions-tab" tabindex="0">
+                <div class="glass-card p-4">
+                    <div class="table-responsive" style="overflow: visible !important;">
+                        <table class="table neo-table align-middle text-center display" id="submissions-table" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('messages.Submission ID') ?? 'ID' }}</th>
+                                    <th>{{ __('messages.Date') ?? 'Submitted At' }}</th>
+                                    <th>{{ __('messages.Submitted By') ?? 'Submitted By' }}</th>
+                                    <th>{{ __('messages.Actions') ?? 'Actions' }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($submissions as $submission)
+                                    <tr>
+                                        <td class="fw-bold">#{{ $submission->id }}</td>
+                                        <td class="text-secondary">{{ $submission->created_at->format('Y-m-d H:i') }}</td>
+                                        <td class="fw-semibold">
+                                            {{ $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest') }}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#submissionModal-{{ $submission->id }}">
+                                                <i class="bi bi-eye-fill"></i> {{ __('messages.View Details') ?? 'View Details' }}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Tab Pane -->
+            <div class="tab-pane fade" id="charts-pane" role="tabpanel" aria-labelledby="charts-tab" tabindex="0">
+                @if (empty($chartData))
+                    <div class="glass-card p-5 text-center text-secondary" style="background: rgba(255,255,255,0.4) !important; border: 1px solid var(--glass-border) !important;">
+                        <i class="bi bi-bar-chart display-4 opacity-50 mb-3 text-primary"></i>
+                        <h5 class="fw-bold text-dark">{{ __('messages.No Chartable Data') ?? 'No Chartable Data Available' }}</h5>
+                        <p class="small mb-0 text-secondary">{{ __('messages.Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.') ?? 'Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.' }}</p>
+                    </div>
+                @else
+                    <div class="row g-4">
+                        @foreach ($chartData as $cId => $chart)
+                            @if ($chart['type'] === 'date')
+                                <div class="col-12">
+                                    <div class="glass-card p-4 shadow-sm border border-opacity-10" style="background: rgba(255,255,255,0.6) !important; border: 1px solid var(--glass-border) !important;">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.15rem; letter-spacing: -0.2px;">{{ $chart['label'] }}</h5>
+                                            <span class="badge rounded-pill px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.65rem; border: 1px solid rgba(139, 92, 246, 0.2); background-color: rgba(139, 92, 246, 0.08); color: rgb(139, 92, 246);">
+                                                {{ __('messages.Date Field') ?? 'Date Field' }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Date Stats Grid -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="p-3 rounded-3" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1);">
+                                                    <div class="text-secondary small fw-semibold">{{ __('messages.Total Entries') ?? 'Total Entries' }}</div>
+                                                    <h5 class="mb-0 fw-bold text-dark mt-1">{{ $chart['total_entries'] }}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="p-3 rounded-3" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
+                                                    <div class="text-secondary small fw-semibold">{{ __('messages.Exact Total Elapsed') ?? 'Exact Total Elapsed' }}</div>
+                                                    <h5 class="mb-0 fw-bold text-dark mt-1" style="font-size: 0.95rem;">{{ $chart['exact_total'] }}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="p-3 rounded-3" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.1);">
+                                                    <div class="text-secondary small fw-semibold">{{ __('messages.Oldest Entry') ?? 'Biggest Elapsed (Oldest)' }}</div>
+                                                    <h5 class="mb-0 fw-bold text-dark mt-1" style="font-size: 0.95rem;">{{ $chart['oldest_elapsed'] }}</h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="p-3 rounded-3" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
+                                                    <div class="text-secondary small fw-semibold">{{ __('messages.Newest Entry') ?? 'Smallest Elapsed (Newest)' }}</div>
+                                                    <h5 class="mb-0 fw-bold text-dark mt-1" style="font-size: 0.95rem;">{{ $chart['newest_elapsed'] }}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="fw-semibold text-secondary small mb-2">{{ __('messages.Elapsed Duration Distribution') ?? 'Elapsed Duration Distribution' }}</div>
+                                        <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                                            <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="glass-card p-4 h-100 shadow-sm border border-opacity-10 d-flex flex-column" style="background: rgba(255,255,255,0.6) !important; border: 1px solid var(--glass-border) !important;">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 1.05rem; letter-spacing: -0.2px;">{{ $chart['label'] }}</h6>
+                                            <span class="badge rounded-pill px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.65rem; border: 1px solid rgba(59, 130, 246, 0.2); background-color: rgba(59, 130, 246, 0.08); color: var(--text-primary);">
+                                                {{ str_replace('_', ' ', $chart['type']) }}
+                                            </span>
+                                        </div>
+                                        <div class="chart-container flex-grow-1" style="position: relative; height: 320px; width: 100%;">
+                                            <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -127,7 +221,27 @@
                                                 @endforeach
                                             </div>
                                         @else
-                                            {{ $val }}
+                                            @if ($field->type === 'date' && !empty($val) && strtotime($val))
+                                                @php
+                                                    $submittedDate = new \DateTime($val);
+                                                    $now = new \DateTime();
+                                                    $interval = $submittedDate->diff($now);
+                                                    $locale = app()->getLocale();
+                                                    if ($submittedDate > $now) {
+                                                        $elapsedStr = $locale === 'ar' ? 'في المستقبل' : 'in the future';
+                                                    } else {
+                                                        $elapsedStr = sprintf(
+                                                            $locale === 'ar' ? '(%d سنة، %d شهر، %d يوم)' : '(%d years, %d months, %d days ago)',
+                                                            $interval->y,
+                                                            $interval->m,
+                                                            $interval->d
+                                                        );
+                                                    }
+                                                @endphp
+                                                {{ $val }} <span class="text-primary small fw-semibold">{{ $elapsedStr }}</span>
+                                            @else
+                                                {{ $val }}
+                                            @endif
                                         @endif
                                     </div>
                                 </div>
@@ -141,5 +255,102 @@
             </div>
         </div>
     @endforeach
+    @if (!empty($chartData))
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const chartData = @json($chartData);
+                const colorPalette = [
+                    'rgba(59, 130, 246, 0.75)',   // Blue
+                    'rgba(16, 185, 129, 0.75)',  // Green
+                    'rgba(245, 158, 11, 0.75)',   // Amber
+                    'rgba(239, 68, 68, 0.75)',    // Red
+                    'rgba(139, 92, 246, 0.75)',   // Purple
+                    'rgba(236, 72, 153, 0.75)',   // Pink
+                    'rgba(6, 182, 212, 0.75)',    // Cyan
+                    'rgba(107, 114, 128, 0.75)'   // Gray
+                ];
+                const borderPalette = [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(239, 68, 68, 1)',
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(236, 72, 153, 1)',
+                    'rgba(6, 182, 212, 1)',
+                    'rgba(107, 114, 128, 1)'
+                ];
+
+                Object.keys(chartData).forEach(function(fieldId) {
+                    const canvasElement = document.getElementById('chart-' + fieldId);
+                    if (!canvasElement) return;
+
+                    const ctx = canvasElement.getContext('2d');
+                    const cInfo = chartData[fieldId];
+                    const isMulti = cInfo.type === 'checkbox';
+                    const isDate = cInfo.type === 'date';
+                    
+                    const chartType = (isMulti || isDate) ? 'bar' : 'doughnut';
+
+                    const config = {
+                        type: chartType,
+                        data: {
+                            labels: cInfo.labels,
+                            datasets: [{
+                                label: "{{ __('messages.Submissions') ?? 'Submissions' }}",
+                                data: cInfo.data,
+                                backgroundColor: colorPalette.slice(0, cInfo.labels.length),
+                                borderColor: borderPalette.slice(0, cInfo.labels.length),
+                                borderWidth: 1.5,
+                                borderRadius: chartType === 'bar' ? 6 : 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: chartType !== 'bar',
+                                    position: 'bottom',
+                                    labels: {
+                                        boxWidth: 12,
+                                        font: {
+                                            family: 'Outfit, Inter, system-ui',
+                                            size: 11
+                                        },
+                                        padding: 15
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    if (chartType === 'bar') {
+                        config.options.scales = {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                    font: {
+                                        family: 'Outfit, Inter, system-ui'
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        family: 'Outfit, Inter, system-ui'
+                                    }
+                                }
+                            }
+                        };
+                        config.options.plugins.legend.display = false;
+                    }
+
+                    new Chart(ctx, config);
+                });
+            });
+        </script>
+    @endif
 
 </x-layout>

@@ -256,7 +256,198 @@ class CustomFormController extends Controller
         $this->checkAccess($form);
         $form->load('fields');
         $submissions = $form->submissions()->with('user')->latest()->get();
-        return view('forms.report', compact('form', 'submissions'));
+
+        $groupsMap = [];
+        $citiesMap = [];
+        $neighborhoodsMap = [];
+        $committeesMap = [];
+        $serviceBodiesMap = [];
+
+        $locale = app()->getLocale();
+        $nameField = $locale === 'ar' ? 'ar_name' : 'en_name';
+
+        foreach ($form->fields as $field) {
+            if ($field->type === 'groups') {
+                $groupsMap = \App\Models\Group::pluck($nameField, 'id')->toArray();
+            } elseif ($field->type === 'cities') {
+                $citiesMap = \App\Models\City::pluck($nameField, 'id')->toArray();
+            } elseif ($field->type === 'neighborhoods') {
+                $neighborhoodsMap = \App\Models\Neighborhood::pluck($nameField, 'id')->toArray();
+            } elseif ($field->type === 'committees') {
+                $committeesMap = \App\Models\ServiceCommittee::pluck($nameField, 'id')->toArray();
+            } elseif ($field->type === 'servicebodies') {
+                $serviceBodiesMap = \App\Models\ServiceBody::pluck($nameField, 'id')->toArray();
+            }
+        }
+
+        $chartData = [];
+        foreach ($form->fields as $field) {
+            if (!in_array($field->type, ['select', 'checkbox', 'groups', 'cities', 'neighborhoods', 'committees', 'servicebodies', 'date'])) {
+                continue;
+            }
+
+            if ($field->type === 'date') {
+                $totalDays = 0;
+                $entriesCount = 0;
+                $minInterval = null;
+                $maxInterval = null;
+                $minDateStr = null;
+                $maxDateStr = null;
+
+                $brackets = [
+                    'under 30 days' => 0,
+                    'under 60 days' => 0,
+                    'under 90 days' => 0,
+                    'under 6 months' => 0,
+                    'under 1 year' => 0,
+                    '1-5 Years' => 0,
+                    '5-10 years' => 0,
+                    '10+ years' => 0,
+                ];
+
+                $now = new \DateTime();
+
+                foreach ($submissions as $submission) {
+                    $value = $submission->data[$field->id] ?? null;
+                    if ($value === null || $value === '' || !strtotime($value)) {
+                        continue;
+                    }
+
+                    $submittedDate = new \DateTime($value);
+                    $interval = $submittedDate->diff($now);
+                    $daysElapsed = $interval->days;
+
+                    if ($submittedDate > $now) {
+                        $daysElapsed = 0;
+                        $years = 0;
+                        $months = 0;
+                        $days = 0;
+                    } else {
+                        $years = $interval->y;
+                        $months = $interval->m;
+                        $days = $interval->d;
+                    }
+
+                    $totalDays += $daysElapsed;
+                    $entriesCount++;
+
+                    if ($minInterval === null || $daysElapsed < $minInterval) {
+                        $minInterval = $daysElapsed;
+                        $minDateStr = sprintf($locale === 'ar' ? '%d سنة، %d شهر، %d يوم' : '%d years, %d months, %d days', $years, $months, $days);
+                    }
+                    if ($maxInterval === null || $daysElapsed > $maxInterval) {
+                        $maxInterval = $daysElapsed;
+                        $maxDateStr = sprintf($locale === 'ar' ? '%d سنة، %d شهر، %d يوم' : '%d years, %d months, %d days', $years, $months, $days);
+                    }
+
+                    if ($daysElapsed < 30) {
+                        $brackets['under 30 days']++;
+                    } elseif ($daysElapsed < 60) {
+                        $brackets['under 60 days']++;
+                    } elseif ($daysElapsed < 90) {
+                        $brackets['under 90 days']++;
+                    } elseif ($daysElapsed < 180) {
+                        $brackets['under 6 months']++;
+                    } elseif ($daysElapsed < 365) {
+                        $brackets['under 1 year']++;
+                    } elseif ($daysElapsed < 365 * 5) {
+                        $brackets['1-5 Years']++;
+                    } elseif ($daysElapsed < 365 * 10) {
+                        $brackets['5-10 years']++;
+                    } else {
+                        $brackets['10+ years']++;
+                    }
+                }
+
+                if ($entriesCount > 0) {
+                    $totalYears = floor($totalDays / 365);
+                    $remDays = $totalDays % 365;
+                    $totalMonths = floor($remDays / 30);
+                    $finalDays = $remDays % 30;
+
+                    $exactTotalStr = sprintf($locale === 'ar' ? '%d سنة، %d شهر، %d يوم' : '%d years, %d months, %d days', $totalYears, $totalMonths, $finalDays);
+
+                    $chartData[$field->id] = [
+                        'field_id' => $field->id,
+                        'label' => $field->label,
+                        'type' => 'date',
+                        'total_entries' => $entriesCount,
+                        'exact_total' => $exactTotalStr,
+                        'newest_elapsed' => $minDateStr,
+                        'oldest_elapsed' => $maxDateStr,
+                        'labels' => array_keys($brackets),
+                        'data' => array_values($brackets),
+                    ];
+                }
+            } else {
+                $counts = [];
+
+                // Initialize expected options for select and checkbox
+                if (in_array($field->type, ['select', 'checkbox'])) {
+                    $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
+                    $choices = array_filter($choices, function($val, $key) {
+                        return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
+                    }, ARRAY_FILTER_USE_BOTH);
+
+                    foreach ($choices as $choice) {
+                        $counts[$choice] = 0;
+                    }
+                }
+
+                // Aggregate counts from submissions
+                foreach ($submissions as $submission) {
+                    $value = $submission->data[$field->id] ?? null;
+                    if ($value === null || $value === '') {
+                        continue;
+                    }
+
+                    if (is_array($value)) {
+                        foreach ($value as $val) {
+                            if ($val !== null && $val !== '') {
+                                $counts[$val] = ($counts[$val] ?? 0) + 1;
+                            }
+                        }
+                    } else {
+                        $counts[$value] = ($counts[$value] ?? 0) + 1;
+                    }
+                }
+
+                $labels = [];
+                $data = [];
+                
+                if (in_array($field->type, ['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'])) {
+                    $map = [];
+                    if ($field->type === 'groups') $map = $groupsMap;
+                    elseif ($field->type === 'cities') $map = $citiesMap;
+                    elseif ($field->type === 'neighborhoods') $map = $neighborhoodsMap;
+                    elseif ($field->type === 'committees') $map = $committeesMap;
+                    elseif ($field->type === 'servicebodies') $map = $serviceBodiesMap;
+
+                    foreach ($counts as $id => $count) {
+                        $name = $map[$id] ?? (($locale === 'ar' ? 'غير معروف' : 'Unknown') . " (#$id)");
+                        $labels[] = $name;
+                        $data[] = $count;
+                    }
+                } else {
+                    foreach ($counts as $label => $count) {
+                        $labels[] = $label;
+                        $data[] = $count;
+                    }
+                }
+
+                if (!empty($labels)) {
+                    $chartData[$field->id] = [
+                        'field_id' => $field->id,
+                        'label' => $field->label,
+                        'type' => $field->type,
+                        'labels' => $labels,
+                        'data' => $data,
+                    ];
+                }
+            }
+        }
+
+        return view('forms.report', compact('form', 'submissions', 'chartData'));
     }
 
     public function exportPdf(CustomForm $form)

@@ -1038,5 +1038,16 @@ return [
     'Browse regional committees reports and archives' => 'Browse regional committees reports and archives.',
     'Browse monthly group agendas and documents' => 'Browse monthly group agendas and documents.',
     'agendas_archive_of' => 'Agendas Archive of :name',
+    'Submissions List' => 'Submissions List',
+    'Visual Analytics' => 'Visual Analytics',
+    'No Chartable Data' => 'No Chartable Data Available',
+    'Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.' => 'Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.',
+    'Date Field' => 'Date Field',
+    'Total Entries' => 'Total Entries',
+    'Exact Total Elapsed' => 'Exact Total Elapsed',
+    'Oldest Entry' => 'Biggest Elapsed (Oldest)',
+    'Newest Entry' => 'Smallest Elapsed (Newest)',
+    'Elapsed Duration Distribution' => 'Elapsed Duration Distribution',
+    'Unknown' => 'Unknown',
 ];
 

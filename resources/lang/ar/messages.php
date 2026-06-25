@@ -1042,5 +1042,16 @@ return [
     'Browse regional committees reports and archives' => 'تصفح تقارير وأرشيف اللجان الخدمية بالإقليم.',
     'Browse monthly group agendas and documents' => 'تصفح الأجندات الشهرية للمجموعة والمستندات.',
     'agendas_archive_of' => 'أرشيف أجندات :name',
+    'Submissions List' => 'قائمة الردود',
+    'Visual Analytics' => 'التحليلات المرئية',
+    'No Chartable Data' => 'لا توجد بيانات قابلة للرسم البياني',
+    'Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.' => 'تتطلب الرسوم البيانية أسئلة قائمة على الاختيار (قائمة منسدلة، مربعات اختيار، إلخ) ورد واحد على الأقل.',
+    'Date Field' => 'حقل التاريخ',
+    'Total Entries' => 'إجمالي المدخلات',
+    'Exact Total Elapsed' => 'إجمالي المدة الفعلي',
+    'Oldest Entry' => 'المدخل الأقدم (الأطول عمراً)',
+    'Newest Entry' => 'المدخل الأحدث (الأقصر عمراً)',
+    'Elapsed Duration Distribution' => 'توزيع المدة المنقضية',
+    'Unknown' => 'غير معروف',
 ];
 
