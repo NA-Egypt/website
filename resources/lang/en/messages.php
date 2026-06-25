@@ -1049,5 +1049,6 @@ return [
     'Newest Entry' => 'Smallest Elapsed (Newest)',
     'Elapsed Duration Distribution' => 'Elapsed Duration Distribution',
     'Unknown' => 'Unknown',
+    'Download Analytics PDF' => 'Download Analytics PDF',
 ];
 

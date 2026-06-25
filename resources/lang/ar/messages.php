@@ -1053,5 +1053,6 @@ return [
     'Newest Entry' => 'المدخل الأحدث (الأقصر عمراً)',
     'Elapsed Duration Distribution' => 'توزيع المدة المنقضية',
     'Unknown' => 'غير معروف',
+    'Download Analytics PDF' => 'تحميل التحليلات كـ PDF',
 ];
 
