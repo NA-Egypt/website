@@ -115,6 +115,11 @@
                         <p class="small mb-0 text-secondary">{{ __('messages.Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.') ?? 'Charts require choice-based questions (Dropdown, Checkboxes, etc.) and at least one submission.' }}</p>
                     </div>
                 @else
+                    <div class="d-flex justify-content-end mb-3" id="analytics-export-wrapper">
+                        <button type="button" class="btn btn-outline-danger rounded-pill px-4 d-flex align-items-center gap-2" onclick="exportAnalyticsToPDF()">
+                            <i class="bi bi-file-earmark-pdf-fill"></i> {{ __('messages.Download Analytics PDF') ?? 'Download Analytics PDF' }}
+                        </button>
+                    </div>
                     <div class="row g-4">
                         @foreach ($chartData as $cId => $chart)
                             @if ($chart['type'] === 'date')
@@ -257,7 +262,30 @@
     @endforeach
     @if (!empty($chartData))
         <script src="{{ asset('assets/js/chart.js') }}"></script>
+        <script src="{{ asset('assets/js/html2pdf.bundle.min.js') }}"></script>
         <script>
+            function exportAnalyticsToPDF() {
+                const element = document.getElementById('charts-pane');
+                const btnWrapper = document.getElementById('analytics-export-wrapper');
+                
+                if (btnWrapper) btnWrapper.style.display = 'none';
+
+                const opt = {
+                    margin:       10,
+                    filename:     'form_{{ $form->id }}_analytics.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    if (btnWrapper) btnWrapper.style.display = 'flex';
+                }).catch(err => {
+                    console.error('PDF export failed:', err);
+                    if (btnWrapper) btnWrapper.style.display = 'flex';
+                });
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
                 const chartData = @json($chartData);
                 const colorPalette = [
