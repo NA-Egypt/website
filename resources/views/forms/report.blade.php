@@ -1,11 +1,24 @@
 <x-layout>
     <style>
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm 10mm;
+            }
             body * {
                 visibility: hidden;
             }
             #charts-pane, #charts-pane * {
                 visibility: visible;
+            }
+            html, body, .container-fluid, .page-content, .wrapper, .page-wrapper {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: transparent !important;
             }
             #charts-pane {
                 position: absolute;
@@ -23,25 +36,51 @@
                 page-break-inside: avoid;
                 break-inside: avoid;
                 background: #ffffff !important;
-                border: 1px solid #e2e8f0 !important;
+                border: 1px solid #cbd5e1 !important;
                 box-shadow: none !important;
-                margin-bottom: 20px !important;
+                margin-bottom: 25px !important;
+                padding: 20px !important;
+                width: 100% !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+            }
+            .chart-container {
+                height: 250px !important;
+                max-height: 250px !important;
+                width: 100% !important;
             }
             .row {
                 display: flex !important;
                 flex-wrap: wrap !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
-            .col-lg-6 {
-                width: 50% !important;
-                flex: 0 0 50% !important;
-                max-width: 50% !important;
+            .col-md-6 {
+                width: 100% !important;
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin-bottom: 20px !important;
             }
             .col-12 {
                 width: 100% !important;
                 flex: 0 0 100% !important;
                 max-width: 100% !important;
+                padding: 0 !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            th, td {
+                padding: 6px 8px !important;
+                font-size: 11px !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            th {
+                background-color: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
@@ -207,22 +246,88 @@
                                         </div>
 
                                         <div class="fw-semibold text-secondary small mb-2">{{ __('messages.Elapsed Duration Distribution') ?? 'Elapsed Duration Distribution' }}</div>
-                                        <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                                            <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                                                    <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="table-responsive">
+                                                    <table class="table align-middle table-sm text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{ __('messages.Bracket') ?? 'Bracket' }}</th>
+                                                                <th>{{ __('messages.Entries') ?? 'Entries' }}</th>
+                                                                <th>{{ __('messages.Percentage') ?? 'Percentage' }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                                $totalEntries = array_sum($chart['data']);
+                                                            @endphp
+                                                            @foreach ($chart['labels'] as $idx => $label)
+                                                                @php
+                                                                    $val = $chart['data'][$idx];
+                                                                    $percentage = $totalEntries > 0 ? round(($val / $totalEntries) * 100, 1) : 0;
+                                                                @endphp
+                                                                <tr>
+                                                                    <td class="text-start fw-semibold text-secondary">{{ __('messages.' . $label) ?? $label }}</td>
+                                                                    <td class="fw-bold">{{ $val }}</td>
+                                                                    <td class="text-primary fw-semibold">{{ $percentage }}%</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             @else
-                                <div class="col-lg-6 col-md-12">
-                                    <div class="glass-card p-4 h-100 shadow-sm border border-opacity-10 d-flex flex-column" style="background: rgba(255,255,255,0.6) !important; border: 1px solid var(--glass-border) !important;">
+                                <div class="col-12">
+                                    <div class="glass-card p-4 shadow-sm border border-opacity-10 d-flex flex-column" style="background: rgba(255,255,255,0.6) !important; border: 1px solid var(--glass-border) !important;">
                                         <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 1.05rem; letter-spacing: -0.2px;">{{ $chart['label'] }}</h6>
+                                            <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.1rem; letter-spacing: -0.2px;">{{ $chart['label'] }}</h5>
                                             <span class="badge rounded-pill px-2.5 py-1 text-uppercase fw-semibold" style="font-size: 0.65rem; border: 1px solid rgba(59, 130, 246, 0.2); background-color: rgba(59, 130, 246, 0.08); color: var(--text-primary);">
                                                 {{ str_replace('_', ' ', $chart['type']) }}
                                             </span>
                                         </div>
-                                        <div class="chart-container flex-grow-1" style="position: relative; height: 320px; width: 100%;">
-                                            <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                        <div class="row g-3 flex-grow-1">
+                                            <div class="col-md-6">
+                                                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                                                    <canvas id="chart-{{ $chart['field_id'] }}"></canvas>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="table-responsive">
+                                                    <table class="table align-middle table-sm text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{ __('messages.Option') ?? 'Option' }}</th>
+                                                                <th>{{ __('messages.Submissions') ?? 'Submissions' }}</th>
+                                                                <th>{{ __('messages.Percentage') ?? 'Percentage' }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+                                                                $totalEntries = array_sum($chart['data']);
+                                                            @endphp
+                                                            @foreach ($chart['labels'] as $idx => $label)
+                                                                @php
+                                                                    $val = $chart['data'][$idx];
+                                                                    $percentage = $totalEntries > 0 ? round(($val / $totalEntries) * 100, 1) : 0;
+                                                                @endphp
+                                                                <tr>
+                                                                    <td class="text-start fw-semibold text-secondary">{{ $label }}</td>
+                                                                    <td class="fw-bold">{{ $val }}</td>
+                                                                    <td class="text-primary fw-semibold">{{ $percentage }}%</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

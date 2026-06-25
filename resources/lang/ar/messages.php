@@ -1054,5 +1054,17 @@ return [
     'Elapsed Duration Distribution' => 'توزيع المدة المنقضية',
     'Unknown' => 'غير معروف',
     'Download Analytics PDF' => 'تحميل التحليلات كـ PDF',
+    'Bracket' => 'الفئة',
+    'Entries' => 'المدخلات',
+    'Percentage' => 'النسبة المئوية',
+    'Option' => 'الخيار',
+    'under 30 days' => 'أقل من 30 يوماً',
+    'under 60 days' => 'أقل من 60 يوماً',
+    'under 90 days' => 'أقل من 90 يوماً',
+    'under 6 months' => 'أقل من 6 أشهر',
+    'under 1 year' => 'أقل من سنة',
+    '1-5 Years' => 'من 1 إلى 5 سنوات',
+    '5-10 years' => 'من 5 إلى 10 سنوات',
+    '10+ years' => 'أكثر من 10 سنوات',
 ];
 

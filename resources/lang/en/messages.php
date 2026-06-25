@@ -1050,5 +1050,17 @@ return [
     'Elapsed Duration Distribution' => 'Elapsed Duration Distribution',
     'Unknown' => 'Unknown',
     'Download Analytics PDF' => 'Download Analytics PDF',
+    'Bracket' => 'Bracket',
+    'Entries' => 'Entries',
+    'Percentage' => 'Percentage',
+    'Option' => 'Option',
+    'under 30 days' => 'under 30 days',
+    'under 60 days' => 'under 60 days',
+    'under 90 days' => 'under 90 days',
+    'under 6 months' => 'under 6 months',
+    'under 1 year' => 'under 1 year',
+    '1-5 Years' => '1-5 Years',
+    '5-10 years' => '5-10 years',
+    '10+ years' => '10+ years',
 ];
 
