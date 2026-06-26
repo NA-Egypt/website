@@ -36,6 +36,14 @@ class RoleRedirect
                     return redirect()->route('serviceCommittee.show', ['serviceCommittee' => $serviceCommittee->id]);
                 }
             }
+
+            if ($user->can('manage store')) {
+                return redirect()->route('store.index');
+            }
+
+            if ($user->can('view lit inventory')) {
+                return redirect()->route('lit.index');
+            }
         }
 
         return $next($request);

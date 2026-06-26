@@ -345,6 +345,37 @@
       </li>
       @endif
 
+      {{-- Store Area --}}
+      @if(auth()->check() && auth()->user()->can('manage store'))
+      <li class="menu-label">{{ app()->getLocale() === 'ar' ? 'المخزن والمطبوعات' : 'Store & Lit' }}</li>
+      <li>
+        <a href="{{ route('store.index') }}">
+          <div class="parent-icon"><i class="bi bi-box-seam"></i>
+          </div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'مخزون المستودع' : 'Store Inventory' }}</div>
+        </a>
+      </li>
+      <li>
+        <a href="{{ route('store.reports') }}">
+          <div class="parent-icon"><i class="bi bi-bar-chart-line"></i>
+          </div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'تقارير المستودع' : 'Store Reports' }}</div>
+        </a>
+      </li>
+      @endif
+
+      {{-- Lit read-only Area --}}
+      @if(auth()->check() && auth()->user()->can('view lit inventory') && !auth()->user()->can('manage store'))
+      <li class="menu-label">{{ app()->getLocale() === 'ar' ? 'المطبوعات' : 'Literature' }}</li>
+      <li>
+        <a href="{{ route('lit.index') }}">
+          <div class="parent-icon"><i class="bi bi-book"></i>
+          </div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'مخزون المطبوعات' : 'Lit Inventory' }}</div>
+        </a>
+      </li>
+      @endif
+
     </ul>
     <!--end navigation-->
 

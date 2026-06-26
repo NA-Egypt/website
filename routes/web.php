@@ -43,6 +43,21 @@ Route::group(
             Route::get('/dashboard', [GreatingPagesController::class, 'dashboard'])
                 ->name('dashboard');
 
+            // Store Inventory Routes:
+            Route::get('/store', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
+            Route::post('/store', [\App\Http\Controllers\StoreController::class, 'store'])->name('store.store');
+            Route::put('/store/{item}', [\App\Http\Controllers\StoreController::class, 'update'])->name('store.update');
+            Route::delete('/store/{item}', [\App\Http\Controllers\StoreController::class, 'destroy'])->name('store.destroy');
+            Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');
+            Route::post('/store/{item}/transfer', [\App\Http\Controllers\StoreController::class, 'transfer'])->name('store.transfer');
+            Route::post('/store/{item}/return', [\App\Http\Controllers\StoreController::class, 'returnStock'])->name('store.return');
+            Route::get('/store/reports', [\App\Http\Controllers\StoreController::class, 'reports'])->name('store.reports');
+            Route::get('/store/reports/pdf', [\App\Http\Controllers\StoreController::class, 'exportPdf'])->name('store.reports.pdf');
+            Route::get('/store/reports/csv', [\App\Http\Controllers\StoreController::class, 'exportCsv'])->name('store.reports.csv');
+
+            // Lit Inventory Routes:
+            Route::get('/lit', [\App\Http\Controllers\LitController::class, 'index'])->name('lit.index');
+
 //            Route::get('/group/show/{group}', [GroupController::class, 'show'])
 //                ->name('group.show');
 
