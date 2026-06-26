@@ -19,6 +19,9 @@ class TransactionEnhancementTest extends TestCase
             'password' => 'secret123',
         ];
 
+        // Clear migration-seeded transactions
+        Transaction::truncate();
+
         // Perform creation via model to trigger observer
         $user = User::create($userData);
 

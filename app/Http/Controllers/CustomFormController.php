@@ -424,7 +424,7 @@ class CustomFormController extends Controller
                     elseif ($field->type === 'servicebodies') $map = $serviceBodiesMap;
 
                     foreach ($counts as $id => $count) {
-                        $name = $map[$id] ?? (($locale === 'ar' ? 'غير معروف' : 'Unknown') . " (#$id)");
+                        $name = $map[$id] ?? "#$id";
                         $labels[] = $name;
                         $data[] = $count;
                     }
