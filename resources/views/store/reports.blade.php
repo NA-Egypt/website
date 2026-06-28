@@ -65,7 +65,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <span class="text-secondary small fw-semibold">{{ __('messages.total_stock_value') }}</span>
-                            <h3 class="mt-1 mb-0 font-bold text-warning-emphasis">EGP {{ number_format($totalValuation, 2) }}</h3>
+                            <h3 class="mt-1 mb-0 font-bold text-warning-emphasis">{{ __('messages.EGP') }} {{ number_format($totalValuation, 2) }}</h3>
                         </div>
                         <div class="fs-2 text-warning bg-warning-subtle rounded-3 p-2 px-3"><i class="bi bi-currency-dollar"></i></div>
                     </div>

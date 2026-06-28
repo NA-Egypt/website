@@ -1186,5 +1186,7 @@ return [
     'no_users_selected' => 'No users selected',
     'selected_users_deleted' => 'Selected users deleted successfully',
     'invalid_action' => 'Invalid action',
+    'EGP' => 'EGP',
+    'inventory_report' => 'Inventory Report',
 ];
 

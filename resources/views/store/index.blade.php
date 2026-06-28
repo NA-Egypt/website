@@ -110,7 +110,7 @@
                                     <span class="text-secondary small">{{ Str::limit($item->description, 60) ?: '-' }}</span>
                                 </td>
                                 <td class="text-end fw-bold text-dark">
-                                    EGP {{ number_format($item->selling_price, 2) }}
+                                    {{ __('messages.EGP') }} {{ number_format($item->selling_price, 2) }}
                                 </td>
                                 <td class="text-center">
                                     <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fs-6">
@@ -274,7 +274,7 @@
                                                 </select>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.selling_price') }} (EGP)</label>
+                                                <label class="form-label fw-semibold">{{ __('messages.selling_price') }} ({{ __('messages.EGP') }})</label>
                                                 <input type="number" step="0.01" name="selling_price" value="{{ $item->selling_price }}" required class="form-control rounded-3">
                                             </div>
                                             <div class="mb-3">
@@ -328,7 +328,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ __('messages.selling_price') }} (EGP)</label>
+                        <label class="form-label fw-semibold">{{ __('messages.selling_price') }} ({{ __('messages.EGP') }})</label>
                         <input type="number" step="0.01" name="selling_price" required class="form-control rounded-3" placeholder="e.g. 150.00">
                     </div>
                     <div class="mb-3">

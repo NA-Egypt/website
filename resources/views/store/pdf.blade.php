@@ -2,7 +2,7 @@
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
-    <title>Inventory Report</title>
+    <title>{{ __('messages.inventory_report') }}</title>
     <style>
         body {
             font-family: 'DejaVu Sans', 'sans-serif';
@@ -77,7 +77,7 @@
             </tr>
             <tr>
                 <td><strong>{{ __('messages.total_lit_stock') }}:</strong> {{ $items->sum('lit_quantity') }}</td>
-                <td><strong>{{ __('messages.total_valuation') }}</strong> EGP {{ number_format($totalValuation, 2) }}</td>
+                <td><strong>{{ __('messages.total_valuation') }}</strong> {{ __('messages.EGP') }} {{ number_format($totalValuation, 2) }}</td>
             </tr>
         </table>
     </div>
@@ -86,7 +86,7 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>{{ __('messages.id') }}</th>
                 <th>{{ __('messages.date_time') }}</th>
                 <th>{{ __('messages.item_name') }}</th>
                 <th>{{ __('messages.Category') }}</th>

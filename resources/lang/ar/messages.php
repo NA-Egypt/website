@@ -1190,5 +1190,7 @@ return [
     'no_users_selected' => 'لم يتم تحديد أي مستخدمين',
     'selected_users_deleted' => 'تم حذف المستخدمين المحددين بنجاح',
     'invalid_action' => 'إجراء غير صالح',
+    'EGP' => 'ج.م',
+    'inventory_report' => 'تقرير المخزون',
 ];
 
