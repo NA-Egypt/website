@@ -1132,5 +1132,15 @@ return [
     'transfer_success' => 'Quantity transferred to Lit successfully.',
     'insufficient_lit_stock' => 'Insufficient stock in Lit to return.',
     'return_success' => 'Quantity returned from Lit successfully.',
+    'Category' => 'Category',
+    'cat_arabic_books' => 'Arabic Books',
+    'cat_arabic_ip' => 'Arabic IP',
+    'cat_english_books' => 'English Books',
+    'cat_english_ip' => 'English IP',
+    'cat_chips' => 'Chips',
+    'cat_coins' => 'Coins',
+    'cat_medallions' => 'Medallions',
+    'cat_readings' => 'Readings',
+    'cat_others' => 'Others',
 ];
 

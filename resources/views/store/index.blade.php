@@ -35,13 +35,23 @@
             </div>
         @endif
 
-        {{-- Search & Overview Cards --}}
+        {{-- Search & Category Filter --}}
         <div class="row g-4 mb-4">
             <div class="col-12 col-xl-8">
                 <div class="card p-3 shadow-sm border-0 h-100 justify-content-center">
                     <form action="{{ route('store.index') }}" method="GET" class="row g-2 align-items-center">
-                        <div class="col-12 col-md-9 position-relative">
+                        <div class="col-12 col-md-5 position-relative">
                             <input type="search" name="search" value="{{ request('search') }}" class="form-control rounded-pill bg-transparent border-secondary-subtle px-4" placeholder="{{ __('messages.Search') }}...">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <select name="category" class="form-select rounded-pill border-secondary-subtle px-3">
+                                <option value="">{{ __('messages.Category') }} ({{ __('messages.all') }})</option>
+                                @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                                    <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
+                                        {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-12 col-md-3">
                             <button type="submit" class="btn btn-secondary rounded-pill w-100 shadow-sm">
@@ -77,6 +87,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>{{ __('messages.item_name') }}</th>
+                            <th>{{ __('messages.Category') }}</th>
                             <th>{{ __('messages.Description') }}</th>
                             <th class="text-end">{{ __('messages.selling_price') }}</th>
                             <th class="text-center">{{ __('messages.store_qty') }}</th>
@@ -89,6 +100,11 @@
                             <tr>
                                 <td>
                                     <div class="fw-bold text-dark">{{ $item->name }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+                                        {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $item->category))) }}
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="text-secondary small">{{ Str::limit($item->description, 60) ?: '-' }}</span>
@@ -248,6 +264,16 @@
                                                 <input type="text" name="name" value="{{ $item->name }}" required class="form-control rounded-3">
                                             </div>
                                             <div class="mb-3">
+                                                <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
+                                                <select name="category" required class="form-select rounded-3">
+                                                    @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                                                        <option value="{{ $cat }}" {{ $item->category === $cat ? 'selected' : '' }}>
+                                                            {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
                                                 <label class="form-label fw-semibold">{{ __('messages.selling_price') }} (EGP)</label>
                                                 <input type="number" step="0.01" name="selling_price" value="{{ $item->selling_price }}" required class="form-control rounded-3">
                                             </div>
@@ -265,7 +291,7 @@
                             </div>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-secondary py-5">
+                                <td colspan="7" class="text-center text-secondary py-5">
                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                     {{ __('messages.no_items_found') }}
                                 </td>
@@ -290,6 +316,16 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.item_name') }}</label>
                         <input type="text" name="name" required class="form-control rounded-3" placeholder="e.g. Basic Text Book">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
+                        <select name="category" required class="form-select rounded-3">
+                            @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                                <option value="{{ $cat }}">
+                                    {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.selling_price') }} (EGP)</label>

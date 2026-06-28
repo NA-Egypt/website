@@ -45,11 +45,21 @@
             </div>
         </div>
 
-        {{-- Search filter --}}
+        {{-- Search & Category filter --}}
         <div class="card p-3 shadow-sm border-0 mb-4 justify-content-center">
             <form action="{{ route('lit.index') }}" method="GET" class="row g-2 align-items-center">
-                <div class="col-12 col-md-9 position-relative">
+                <div class="col-12 col-md-5 position-relative">
                     <input type="search" name="search" value="{{ request('search') }}" class="form-control rounded-pill bg-transparent border-secondary-subtle px-4" placeholder="{{ __('messages.search_literature') }}">
+                </div>
+                <div class="col-12 col-md-4">
+                    <select name="category" class="form-select rounded-pill border-secondary-subtle px-3">
+                        <option value="">{{ __('messages.Category') }} ({{ __('messages.all') }})</option>
+                        @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                            <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
+                                {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" class="btn btn-secondary rounded-pill w-100 shadow-sm">
@@ -67,6 +77,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>{{ __('messages.literature_title') }}</th>
+                            <th>{{ __('messages.Category') }}</th>
                             <th>{{ __('messages.Description') }}</th>
                             <th class="text-end">{{ __('messages.selling_price') }}</th>
                             <th class="text-center">{{ __('messages.available_stock_lit') }}</th>
@@ -77,6 +88,11 @@
                             <tr>
                                 <td>
                                     <div class="fw-bold text-dark">{{ $item->name }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+                                        {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $item->category))) }}
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="text-secondary small">{{ Str::limit($item->description, 100) ?: '-' }}</span>
@@ -92,7 +108,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-secondary py-5">
+                                <td colspan="5" class="text-center text-secondary py-5">
                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                     {{ __('messages.no_literature_found') }}
                                 </td>

@@ -1137,5 +1137,15 @@ return [
     'transfer_success' => 'تم تحويل الكمية إلى المطبوعات بنجاح.',
     'insufficient_lit_stock' => 'الكمية غير كافية في المطبوعات للاسترجاع.',
     'return_success' => 'تم استرجاع الكمية من المطبوعات بنجاح.',
+    'Category' => 'الفئة',
+    'cat_arabic_books' => 'كتب عربية',
+    'cat_arabic_ip' => 'كتيبات عربية',
+    'cat_english_books' => 'كتب إنجليزية',
+    'cat_english_ip' => 'كتيبات إنجليزية',
+    'cat_chips' => 'شرائح',
+    'cat_coins' => 'عملات معدنية',
+    'cat_medallions' => 'ميداليات',
+    'cat_readings' => 'قراءات',
+    'cat_others' => 'أخرى',
 ];
 

@@ -64,6 +64,7 @@ class StoreTest extends TestCase
             'description' => 'A guide to living clean.',
             'selling_price' => 120.00,
             'initial_store_quantity' => 10,
+            'category' => 'Arabic Books',
         ]);
 
         $response->assertRedirect(route('store.index'));
@@ -71,11 +72,36 @@ class StoreTest extends TestCase
             'name' => 'Living Clean Book',
             'store_quantity' => 10,
             'lit_quantity' => 0,
+            'category' => 'Arabic Books',
         ]);
         $this->assertDatabaseHas('inventory_transactions', [
             'type' => 'receive',
             'quantity' => 10,
         ]);
+    }
+
+    public function test_store_manager_can_filter_items_by_category()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Store Manager');
+
+        $book = InventoryItem::create([
+            'name' => 'Arabic Book',
+            'selling_price' => 100.00,
+            'category' => 'Arabic Books',
+        ]);
+
+        $coin = InventoryItem::create([
+            'name' => 'Gold Coin',
+            'selling_price' => 50.00,
+            'category' => 'Coins',
+        ]);
+
+        // Filter by Arabic Books
+        $response = $this->actingAs($user)->get(route('store.index', ['category' => 'Arabic Books']));
+        $response->assertStatus(200);
+        $response->assertSee('Arabic Book');
+        $response->assertDontSee('Gold Coin');
     }
 
     public function test_store_manager_can_receive_stock()

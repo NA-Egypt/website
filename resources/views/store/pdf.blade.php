@@ -6,43 +6,43 @@
     <style>
         body {
             font-family: 'DejaVu Sans', 'sans-serif';
-            font-size: 12px;
+            font-size: 11px;
             color: #333;
             line-height: 1.5;
         }
         .header {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border-bottom: 2px solid #0d6efd;
             padding-bottom: 10px;
         }
         .title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #0d6efd;
         }
         .meta {
-            font-size: 10px;
+            font-size: 9px;
             color: #666;
             margin-top: 5px;
         }
         .summary-box {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
-            padding: 15px;
+            padding: 12px;
             border-radius: 5px;
         }
         .summary-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #495057;
         }
         .summary-grid {
             width: 100%;
         }
         .summary-grid td {
-            padding: 5px 10px;
+            padding: 4px 8px;
         }
         table.data-table {
             width: 100%;
@@ -51,7 +51,7 @@
         }
         table.data-table th, table.data-table td {
             border: 1px solid #dee2e6;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
         }
         table.data-table th {
@@ -89,6 +89,7 @@
                 <th>ID</th>
                 <th>{{ __('messages.date_time') }}</th>
                 <th>{{ __('messages.item_name') }}</th>
+                <th>{{ __('messages.Category') }}</th>
                 <th>{{ __('messages.Type') }}</th>
                 <th class="text-center">{{ __('messages.Capacity') }}</th>
                 <th>{{ __('messages.operator') }}</th>
@@ -101,6 +102,7 @@
                     <td>#{{ $t->id }}</td>
                     <td>{{ $t->created_at->format('Y-m-d H:i:s') }}</td>
                     <td><strong>{{ $t->item->name ?? 'Deleted Item' }}</strong></td>
+                    <td>{{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $t->item->category ?? 'Others'))) }}</td>
                     <td>
                         @if ($t->type === 'receive')
                             {{ __('messages.receive') }}
@@ -116,7 +118,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">{{ __('messages.no_transactions_recorded') }}</td>
+                    <td colspan="8" class="text-center">{{ __('messages.no_transactions_recorded') }}</td>
                 </tr>
             @endforelse
         </tbody>

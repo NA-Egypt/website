@@ -25,8 +25,14 @@ class StoreController extends Controller implements HasMiddleware
         $query = InventoryItem::query();
         
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
         }
 
         $items = $query->orderBy('name')->get();
@@ -41,6 +47,7 @@ class StoreController extends Controller implements HasMiddleware
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
             'initial_store_quantity' => 'nullable|integer|min:0',
+            'category' => 'required|string|in:' . implode(',', InventoryItem::CATEGORIES),
         ]);
 
         $item = InventoryItem::create([
@@ -48,6 +55,7 @@ class StoreController extends Controller implements HasMiddleware
             'description' => $fields['description'] ?? null,
             'selling_price' => $fields['selling_price'],
             'store_quantity' => $fields['initial_store_quantity'] ?? 0,
+            'category' => $fields['category'],
         ]);
 
         if (($fields['initial_store_quantity'] ?? 0) > 0) {
@@ -69,6 +77,7 @@ class StoreController extends Controller implements HasMiddleware
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
+            'category' => 'required|string|in:' . implode(',', InventoryItem::CATEGORIES),
         ]);
 
         $item->update($fields);
@@ -164,6 +173,12 @@ class StoreController extends Controller implements HasMiddleware
             $query->where('inventory_item_id', $request->item_id);
         }
 
+        if ($request->filled('category')) {
+            $query->whereHas('item', function ($q) use ($request) {
+                $q->where('category', $request->category);
+            });
+        }
+
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
@@ -173,7 +188,12 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $transactions = $query->orderBy('created_at', 'desc')->get();
-        $items = InventoryItem::orderBy('name')->get();
+        
+        $itemsQuery = InventoryItem::query();
+        if ($request->filled('category')) {
+            $itemsQuery->where('category', $request->category);
+        }
+        $items = $itemsQuery->orderBy('name')->get();
 
         // Calculate summary metrics
         $totalItems = $items->count();
@@ -198,6 +218,12 @@ class StoreController extends Controller implements HasMiddleware
             $query->where('inventory_item_id', $request->item_id);
         }
 
+        if ($request->filled('category')) {
+            $query->whereHas('item', function ($q) use ($request) {
+                $q->where('category', $request->category);
+            });
+        }
+
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
@@ -207,7 +233,12 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $transactions = $query->orderBy('created_at', 'desc')->get();
-        $items = InventoryItem::orderBy('name')->get();
+        
+        $itemsQuery = InventoryItem::query();
+        if ($request->filled('category')) {
+            $itemsQuery->where('category', $request->category);
+        }
+        $items = $itemsQuery->orderBy('name')->get();
         
         $totalValuation = $items->sum(function ($item) {
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
@@ -227,6 +258,12 @@ class StoreController extends Controller implements HasMiddleware
 
         if ($request->filled('item_id')) {
             $query->where('inventory_item_id', $request->item_id);
+        }
+
+        if ($request->filled('category')) {
+            $query->whereHas('item', function ($q) use ($request) {
+                $q->where('category', $request->category);
+            });
         }
 
         if ($request->filled('start_date')) {

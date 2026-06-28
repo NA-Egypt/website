@@ -76,13 +76,25 @@
         {{-- Filter Panel --}}
         <div class="card border-0 shadow-sm p-4 mb-4">
             <form action="{{ route('store.reports') }}" method="GET" class="row g-3">
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-2">
                     <label class="form-label small fw-semibold">{{ __('messages.transaction_type') }}</label>
                     <select name="type" class="form-select rounded-3">
                         <option value="">{{ __('messages.all_types') }}</option>
                         <option value="receive" {{ request('type') === 'receive' ? 'selected' : '' }}>{{ __('messages.receive') }}</option>
                         <option value="transfer_to_lit" {{ request('type') === 'transfer_to_lit' ? 'selected' : '' }}>{{ __('messages.transfer_to_lit') }}</option>
                         <option value="return_from_lit" {{ request('type') === 'return_from_lit' ? 'selected' : '' }}>{{ __('messages.return_from_lit') }}</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="form-label small fw-semibold">{{ __('messages.Category') }}</label>
+                    <select name="category" class="form-select rounded-3">
+                        <option value="">{{ __('messages.all') }}</option>
+                        @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                            <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
+                                {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -96,12 +108,12 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-2">
                     <label class="form-label small fw-semibold">{{ __('messages.start_date') }}</label>
                     <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control rounded-3">
                 </div>
 
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-2">
                     <label class="form-label small fw-semibold">{{ __('messages.end_date') }}</label>
                     <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control rounded-3">
                 </div>
@@ -123,6 +135,7 @@
                             <th>{{ __('messages.id') }}</th>
                             <th>{{ __('messages.date_time') }}</th>
                             <th>{{ __('messages.item_name') }}</th>
+                            <th>{{ __('messages.Category') }}</th>
                             <th>{{ __('messages.Type') }}</th>
                             <th class="text-center">{{ __('messages.Capacity') }}</th>
                             <th>{{ __('messages.operator') }}</th>
@@ -139,6 +152,11 @@
                                 </td>
                                 <td>
                                     <span class="fw-bold text-dark">{{ $t->item->name ?? 'Deleted Item' }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 small">
+                                        {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $t->item->category ?? 'Others'))) }}
+                                    </span>
                                 </td>
                                 <td>
                                     @if ($t->type === 'receive')
@@ -167,7 +185,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-secondary py-5">
+                                <td colspan="8" class="text-center text-secondary py-5">
                                     <i class="bi bi-info-circle fs-2 d-block mb-2"></i>
                                     {{ __('messages.no_transactions_match') }}
                                 </td>
