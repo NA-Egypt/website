@@ -171,7 +171,7 @@ class CommitteeReportController extends Controller
             app(\App\Services\ReportArchiver::class)->archive($report);
         }
 
-        return redirect()->route('committee-reports.index')->with('success', 'Report created successfully.');
+        return redirect()->route('committee-reports.index')->with('success', __('messages.report_created_success'));
     }
 
     protected function isRestrictedConsumer($user)
@@ -242,7 +242,7 @@ class CommitteeReportController extends Controller
         // Only drafts can be edited by committee members
         if (!$this->isRsc() && $report->status !== 'draft') {
             return redirect()->route('committee-reports.show', $report->id)
-                ->with('error', 'Submitted reports cannot be edited.');
+                ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
 
         $committees = $this->isRsc() ? ServiceCommittee::all() : [];
@@ -264,7 +264,7 @@ class CommitteeReportController extends Controller
 
         if (!$this->isRsc() && $report->status !== 'draft') {
             return redirect()->route('committee-reports.show', $report->id)
-                ->with('error', 'Submitted reports cannot be edited.');
+                ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
 
         $isRsc = $this->isRsc();
@@ -336,7 +336,7 @@ class CommitteeReportController extends Controller
             app(\App\Services\ReportArchiver::class)->archive($report->fresh());
         }
 
-        return redirect()->route('committee-reports.index')->with('success', 'Report updated successfully.');
+        return redirect()->route('committee-reports.index')->with('success', __('messages.report_updated_success'));
     }
 
     public function destroy($id)
@@ -363,7 +363,7 @@ class CommitteeReportController extends Controller
 
         $report->delete();
 
-        return redirect()->route('committee-reports.index')->with('success', 'Report deleted successfully.');
+        return redirect()->route('committee-reports.index')->with('success', __('messages.report_deleted_success'));
     }
 
     public function pdf($id)
@@ -517,13 +517,13 @@ class CommitteeReportController extends Controller
         }
 
         if ($report->status !== 'draft') {
-            return redirect()->back()->with('error', 'Report is already submitted.');
+            return redirect()->back()->with('error', __('messages.report_already_submitted'));
         }
 
         $report->update(['status' => 'submitted']);
         $this->sendNotificationEmail($report);
         
-        return redirect()->back()->with('success', 'Report approved and sent to Region Service Committee.');
+        return redirect()->back()->with('success', __('messages.report_approved_sent_rsc'));
     }
 
     public function downloadAttachment($id)
@@ -586,7 +586,7 @@ class CommitteeReportController extends Controller
 
         $attachment->delete();
 
-        return redirect()->back()->with('success', 'Attachment deleted successfully.');
+        return redirect()->back()->with('success', __('messages.attachment_deleted_success'));
     }
 
     public function archive(Request $request)
@@ -923,7 +923,7 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::findOrFail($id);
         
         if ($report->status !== 'submitted') {
-            return redirect()->back()->with('error', 'Only submitted reports can be approved.');
+            return redirect()->back()->with('error', __('messages.only_submitted_reports_approved'));
         }
 
         $report->update([
@@ -933,7 +933,7 @@ class CommitteeReportController extends Controller
 
         app(\App\Services\ReportArchiver::class)->archive($report);
 
-        return redirect()->route('committee-reports.index')->with('success', 'Report approved and published successfully.');
+        return redirect()->route('committee-reports.index')->with('success', __('messages.report_approved_published'));
     }
 
     public function returnToDraft(Request $request, $id)
@@ -949,7 +949,7 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::findOrFail($id);
 
         if ($report->status !== 'submitted') {
-            return redirect()->back()->with('error', 'Only submitted reports can be returned to draft.');
+            return redirect()->back()->with('error', __('messages.only_submitted_reports_returned_draft'));
         }
 
         $report->update([
@@ -957,7 +957,7 @@ class CommitteeReportController extends Controller
             'review_notes' => $request->review_notes,
         ]);
 
-        return redirect()->route('committee-reports.index')->with('success', 'Report returned to committee draft with review notes.');
+        return redirect()->route('committee-reports.index')->with('success', __('messages.report_returned_draft_notes'));
     }
 
     protected function sendNotificationEmail($report)

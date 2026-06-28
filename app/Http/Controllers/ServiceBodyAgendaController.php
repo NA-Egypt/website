@@ -257,7 +257,7 @@ class ServiceBodyAgendaController extends Controller
             app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda);
         }
 
-        return redirect()->route('service-body-agendas.index')->with('success', 'Agenda created successfully.');
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_created_success'));
     }
 
     public function show($id)
@@ -283,7 +283,7 @@ class ServiceBodyAgendaController extends Controller
             }
             if ($agenda->status !== 'draft') {
                 return redirect()->route('service-body-agendas.show', $agenda->id)
-                    ->with('error', 'Submitted agendas cannot be edited.');
+                    ->with('error', __('messages.submitted_agendas_cannot_be_edited'));
             }
         }
 
@@ -304,7 +304,7 @@ class ServiceBodyAgendaController extends Controller
             }
             if ($agenda->status !== 'draft') {
                 return redirect()->route('service-body-agendas.show', $agenda->id)
-                    ->with('error', 'Submitted agendas cannot be edited.');
+                    ->with('error', __('messages.submitted_agendas_cannot_be_edited'));
             }
         }
 
@@ -361,7 +361,7 @@ class ServiceBodyAgendaController extends Controller
             app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda->fresh());
         }
 
-        return redirect()->route('service-body-agendas.index')->with('success', 'Agenda updated successfully.');
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_updated_success'));
     }
 
     public function destroy($id)
@@ -388,7 +388,7 @@ class ServiceBodyAgendaController extends Controller
 
         $agenda->delete();
 
-        return redirect()->route('service-body-agendas.index')->with('success', 'Agenda deleted successfully.');
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_deleted_success'));
     }
 
     public function pdf($id)
@@ -460,14 +460,14 @@ class ServiceBodyAgendaController extends Controller
         $agenda = ServiceBodyAgenda::findOrFail($id);
         
         if ($agenda->status !== 'submitted') {
-            return redirect()->back()->with('error', 'Only submitted agendas can be approved.');
+            return redirect()->back()->with('error', __('messages.only_submitted_agendas_approved'));
         }
 
         $agenda->update(['status' => 'approved']);
 
         app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda);
 
-        return redirect()->route('service-body-agendas.index')->with('success', 'Agenda approved and archived successfully.');
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_approved_archived'));
     }
 
     public function returnToDraft(Request $request, $id)
@@ -479,11 +479,11 @@ class ServiceBodyAgendaController extends Controller
         $agenda = ServiceBodyAgenda::findOrFail($id);
 
         if ($agenda->status !== 'submitted') {
-            return redirect()->back()->with('error', 'Only submitted agendas can be returned to draft.');
+            return redirect()->back()->with('error', __('messages.only_submitted_agendas_returned_draft'));
         }
 
         $agenda->update(['status' => 'draft']);
-        return redirect()->route('service-body-agendas.index')->with('success', 'Agenda returned to draft.');
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_returned_draft'));
     }
 
     public function archive(Request $request)
@@ -916,6 +916,6 @@ class ServiceBodyAgendaController extends Controller
 
         $attachment->delete();
 
-        return redirect()->back()->with('success', 'Attachment deleted successfully.');
+        return redirect()->back()->with('success', __('messages.attachment_deleted_success'));
     }
 }

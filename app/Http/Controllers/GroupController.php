@@ -91,10 +91,10 @@ class GroupController extends Controller implements HasMiddleware
         $group->update($validatedData);
 
         if (auth()->user()->hasRole('super admin')) {
-            return redirect()->route('group.index')->with('success', 'Group updated successfully.');
+            return redirect()->route('group.index')->with('success', __('messages.group_updated_success'));
         }
 
-        return redirect()->route('group.show', $group->id)->with('success', 'Group updated successfully.');
+        return redirect()->route('group.show', $group->id)->with('success', __('messages.group_updated_success'));
     }
 
     public function show(Group $group)

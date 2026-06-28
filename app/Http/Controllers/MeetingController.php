@@ -137,9 +137,9 @@ class MeetingController extends Controller
         $meeting->topics()->sync($topics);
 
         if (auth()->user()->hasRole('super admin')) {
-            return redirect()->route('meeting.index')->with('success', 'Meeting created successfully');
+            return redirect()->route('meeting.index')->with('success', __('messages.meeting_created_success'));
         }
-        return redirect()->route('dashboard')->with('success', 'Meeting created successfully');
+        return redirect()->route('dashboard')->with('success', __('messages.meeting_created_success'));
     }
 
     /**
@@ -220,9 +220,9 @@ class MeetingController extends Controller
         $meeting->topics()->sync($topics);
 
         if (auth()->user()->hasRole('super admin')) {
-            return redirect()->route('meeting.index')->with('success', 'Meeting updated successfully');
+            return redirect()->route('meeting.index')->with('success', __('messages.meeting_updated_success'));
         }
-        return redirect()->route('dashboard')->with('success', 'Meeting updated successfully');
+        return redirect()->route('dashboard')->with('success', __('messages.meeting_updated_success'));
     }
 
     /**
@@ -234,8 +234,8 @@ class MeetingController extends Controller
         $meeting->delete();
 
         if (auth()->user()->hasRole('super admin')) {
-            return redirect()->route('meeting.index')->with('success', 'Meeting deleted successfully');
+            return redirect()->route('meeting.index')->with('success', __('messages.meeting_deleted_success'));
         }
-        return redirect()->route('dashboard')->with('success', 'Meeting deleted successfully');
+        return redirect()->route('dashboard')->with('success', __('messages.meeting_deleted_success'));
     }
 }

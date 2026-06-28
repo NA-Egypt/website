@@ -27,7 +27,7 @@ class PermissionController extends Controller
         ]);
         Permission::create($iputs );
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission created!');
+            ->with('success', __('messages.permission_created'));
     }
 
     public function edit(Permission $permission)
@@ -48,7 +48,7 @@ class PermissionController extends Controller
         $permission->update($field);
 
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission Updated!');
+            ->with('success', __('messages.permission_updated'));
     }
 
     /**
@@ -59,6 +59,6 @@ class PermissionController extends Controller
         $permission->delete();
 
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission Deleted!');
+            ->with('success', __('messages.permission_deleted'));
     }
 }

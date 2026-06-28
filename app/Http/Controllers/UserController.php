@@ -43,7 +43,7 @@ class UserController extends Controller
             $user->roles()->sync($request->roles);
         }
 
-        return redirect()->route('users.index')->with('success', 'User created successfully');
+        return redirect()->route('users.index')->with('success', __('messages.user_created_success'));
     }
 
     public function edit(User $user)
@@ -70,7 +70,7 @@ class UserController extends Controller
         ]);
 
         $user->roles()->sync($request->roles);
-        return redirect()->route('users.index')->with('success', 'User updated successfully');
+        return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));
     }
 
     public function destroy(User $user)
@@ -78,7 +78,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')
-            ->with('success', 'User Deleted!');
+            ->with('success', __('messages.user_deleted'));
     }
 
     public function bulkAction(Request $request)
@@ -87,7 +87,7 @@ class UserController extends Controller
         $userIds = $request->input('user_ids', []);
 
         if (empty($userIds)) {
-            return redirect()->route('users.index')->with('error', 'No users selected');
+            return redirect()->route('users.index')->with('error', __('messages.no_users_selected'));
         }
 
         if ($action === 'delete') {
@@ -96,9 +96,9 @@ class UserController extends Controller
             foreach ($users as $user) {
                 $user->delete();
             }
-            return redirect()->route('users.index')->with('success', 'Selected users deleted successfully');
+            return redirect()->route('users.index')->with('success', __('messages.selected_users_deleted'));
         }
 
-        return redirect()->route('users.index')->with('error', 'Invalid action');
+        return redirect()->route('users.index')->with('error', __('messages.invalid_action'));
     }
 }

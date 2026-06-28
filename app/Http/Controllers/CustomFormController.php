@@ -115,7 +115,7 @@ class CustomFormController extends Controller
             }
         }
 
-        return redirect()->route('forms.index')->with('success', 'Form created successfully.');
+        return redirect()->route('forms.index')->with('success', __('messages.form_created_success'));
     }
 
     public function edit(CustomForm $form)
@@ -198,14 +198,14 @@ class CustomFormController extends Controller
             }
         }
 
-        return redirect()->route('forms.index')->with('success', 'Form updated successfully.');
+        return redirect()->route('forms.index')->with('success', __('messages.form_updated_success'));
     }
 
     public function destroy(CustomForm $form)
     {
         $this->checkAccess($form);
         $form->delete();
-        return redirect()->route('forms.index')->with('success', 'Form deleted successfully.');
+        return redirect()->route('forms.index')->with('success', __('messages.form_deleted_success'));
     }
 
     public function toggleStatus(CustomForm $form)
@@ -214,7 +214,7 @@ class CustomFormController extends Controller
         $form->status = $form->status === 'published' ? 'unpublished' : 'published';
         $form->save();
 
-        return back()->with('success', 'Form status updated successfully.');
+        return back()->with('success', __('messages.form_status_updated'));
     }
 
     public function duplicate(CustomForm $form)
@@ -238,7 +238,7 @@ class CustomFormController extends Controller
             $newField->save();
         }
 
-        return redirect()->route('forms.index')->with('success', 'Form duplicated successfully. It appears at the top of the list.');
+        return redirect()->route('forms.index')->with('success', __('messages.form_duplicated_success'));
     }
 
     public function resetSubmissions(CustomForm $form)
@@ -248,7 +248,7 @@ class CustomFormController extends Controller
         $form->views = 0;
         $form->save();
 
-        return redirect()->route('forms.index')->with('success', 'Form submissions and views reset successfully.');
+        return redirect()->route('forms.index')->with('success', __('messages.form_reset_success'));
     }
 
     public function showReport(CustomForm $form)

@@ -36,7 +36,7 @@ class RoleController extends Controller
             $role->permissions()->attach($request->permissions);
         }
 
-        return redirect()->route('roles.index')->with('success', 'Role created successfully');
+        return redirect()->route('roles.index')->with('success', __('messages.role_created_success'));
     }
 
     public function assignPermissions(Role $role)
@@ -51,7 +51,7 @@ class RoleController extends Controller
         $request->validate(['permissions' => 'required|array']);
         $role->permissions()->sync($request->permissions);
         return redirect()->route('roles.index')
-            ->with('success', 'Permissions updated!');
+            ->with('success', __('messages.permissions_updated'));
     }
 
     public function destroy(Role $role)
@@ -59,6 +59,6 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role Deleted!');
+            ->with('success', __('messages.role_deleted'));
     }
 }
