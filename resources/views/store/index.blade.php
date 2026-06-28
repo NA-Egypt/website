@@ -126,25 +126,31 @@
                                     <div class="d-flex justify-content-center gap-1 flex-wrap">
                                         {{-- Receive --}}
                                         <button type="button" class="btn btn-sm btn-outline-success rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#receiveModal{{ $item->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#receiveModal"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}">
                                             <i class="bi bi-plus-circle me-1"></i>{{ __('messages.receive') }}
                                         </button>
 
                                         {{-- Transfer --}}
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#transferModal{{ $item->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#transferModal"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-store-qty="{{ $item->store_quantity }}">
                                             <i class="bi bi-arrow-right-circle me-1"></i>{{ __('messages.transfer_to_lit') }}
                                         </button>
 
                                         {{-- Return --}}
                                         <button type="button" class="btn btn-sm btn-outline-warning rounded-pill text-dark" 
-                                                data-bs-toggle="modal" data-bs-target="#returnModal{{ $item->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#returnModal"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-lit-qty="{{ $item->lit_quantity }}">
                                             <i class="bi bi-arrow-left-circle me-1"></i>{{ __('messages.return_from_lit') }}
                                         </button>
 
                                         {{-- Edit --}}
                                         <button type="button" class="btn btn-sm btn-light border rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#editModal"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}"
+                                                data-category="{{ $item->category }}" data-price="{{ $item->selling_price }}"
+                                                data-description="{{ $item->description }}">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -159,136 +165,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            {{-- Modals for current item --}}
-                            {{-- Receive Modal --}}
-                            <div class="modal fade" id="receiveModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <form action="{{ route('store.receive', $item->id) }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
-                                        @csrf
-                                        <div class="modal-header border-0 bg-success-subtle text-success">
-                                            <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>{{ __('messages.receive_stock_for', ['name' => $item->name]) }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body p-4">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.received_quantity') }}</label>
-                                                <input type="number" name="quantity" min="1" required class="form-control rounded-3" placeholder="e.g. 50">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
-                                                <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Received from printer / main supplier"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
-                                            <button type="submit" class="btn btn-success rounded-pill px-4">{{ __('messages.confirm_receipt') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            {{-- Transfer Modal --}}
-                            <div class="modal fade" id="transferModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <form action="{{ route('store.transfer', $item->id) }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
-                                        @csrf
-                                        <div class="modal-header border-0 bg-primary-subtle text-primary">
-                                            <h5 class="modal-title fw-bold"><i class="bi bi-arrow-right-circle me-2"></i>{{ __('messages.transfer_to_lit_title', ['name' => $item->name]) }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body p-4">
-                                            <div class="mb-3 text-secondary">
-                                                {{ __('messages.current_store_balance') }} <span class="badge bg-secondary">{{ $item->store_quantity }}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.qty_to_transfer') }}</label>
-                                                <input type="number" name="quantity" min="1" max="{{ $item->store_quantity }}" required class="form-control rounded-3" placeholder="e.g. 10">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
-                                                <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Sent to Literature committee"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
-                                            <button type="submit" class="btn btn-primary rounded-pill px-4">{{ __('messages.confirm_transfer') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            {{-- Return Modal --}}
-                            <div class="modal fade" id="returnModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <form action="{{ route('store.return', $item->id) }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
-                                        @csrf
-                                        <div class="modal-header border-0 bg-warning-subtle text-warning-emphasis">
-                                            <h5 class="modal-title fw-bold"><i class="bi bi-arrow-left-circle me-2"></i>{{ __('messages.return_from_lit_title', ['name' => $item->name]) }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body p-4">
-                                            <div class="mb-3 text-secondary">
-                                                {{ __('messages.current_lit_balance') }} <span class="badge bg-secondary">{{ $item->lit_quantity }}</span>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.qty_to_return') }}</label>
-                                                <input type="number" name="quantity" min="1" max="{{ $item->lit_quantity }}" required class="form-control rounded-3" placeholder="e.g. 5">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
-                                                <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Excess stock returned to main store"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
-                                            <button type="submit" class="btn btn-warning rounded-pill px-4 text-dark">{{ __('messages.confirm_return') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            {{-- Edit Modal --}}
-                            <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <form action="{{ route('store.update', $item->id) }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header border-0 bg-light">
-                                            <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>{{ __('messages.edit_item_details') }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body p-4">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.item_name') }}</label>
-                                                <input type="text" name="name" value="{{ $item->name }}" required class="form-control rounded-3">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
-                                                <select name="category" required class="form-select rounded-3">
-                                                    @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
-                                                        <option value="{{ $cat }}" {{ $item->category === $cat ? 'selected' : '' }}>
-                                                            {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.selling_price') }} ({{ __('messages.EGP') }})</label>
-                                                <input type="number" step="0.01" name="selling_price" value="{{ $item->selling_price }}" required class="form-control rounded-3">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">{{ __('messages.Description') }}</label>
-                                                <textarea name="description" class="form-control rounded-3" rows="3">{{ $item->description }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
-                                            <button type="submit" class="btn btn-primary rounded-pill px-4">{{ __('messages.save_changes') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center text-secondary py-5">
@@ -300,6 +176,147 @@
                     </tbody>
                 </table>
             </div>
+            
+            {{-- Pagination Links --}}
+            <div class="mt-4 d-flex justify-content-center">
+                {{ $items->links() }}
+            </div>
+        </div>
+    </div>
+
+    {{-- Reusable Modals --}}
+    {{-- Receive Modal --}}
+    <div class="modal fade" id="receiveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-success-subtle text-success">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>{{ __('messages.receive_stock_for', ['name' => '']) }}<span class="modal-title-name"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.received_quantity') }}</label>
+                        <input type="number" name="quantity" min="1" required class="form-control rounded-3" placeholder="e.g. 50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Received from printer / main supplier"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">{{ __('messages.confirm_receipt') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Transfer Modal --}}
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-primary-subtle text-primary">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-arrow-right-circle me-2"></i>{{ __('messages.transfer_to_lit_title', ['name' => '']) }}<span class="modal-title-name"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3 text-secondary">
+                        {{ __('messages.current_store_balance') }} <span class="badge bg-secondary current-balance-badge"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.qty_to_transfer') }}</label>
+                        <input type="number" name="quantity" min="1" required class="form-control rounded-3" placeholder="e.g. 10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Sent to Literature committee"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">{{ __('messages.confirm_transfer') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Return Modal --}}
+    <div class="modal fade" id="returnModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-warning-subtle text-warning-emphasis">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-arrow-left-circle me-2"></i>{{ __('messages.return_from_lit_title', ['name' => '']) }}<span class="modal-title-name"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3 text-secondary">
+                        {{ __('messages.current_lit_balance') }} <span class="badge bg-secondary current-balance-badge"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.qty_to_return') }}</label>
+                        <input type="number" name="quantity" min="1" required class="form-control rounded-3" placeholder="e.g. 5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Excess stock returned to main store"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4 text-dark">{{ __('messages.confirm_return') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Edit Modal --}}
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                @method('PUT')
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>{{ __('messages.edit_item_details') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.item_name') }}</label>
+                        <input type="text" name="name" required class="form-control rounded-3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
+                        <select name="category" required class="form-select rounded-3">
+                            @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                                <option value="{{ $cat }}">
+                                    {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.selling_price') }} ({{ __('messages.EGP') }})</label>
+                        <input type="number" step="0.01" name="selling_price" required class="form-control rounded-3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Description') }}</label>
+                        <textarea name="description" class="form-control rounded-3" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">{{ __('messages.save_changes') }}</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -347,4 +364,95 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Reusable Receive Modal Setup
+            const receiveModal = document.getElementById('receiveModal');
+            if (receiveModal) {
+                receiveModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    
+                    const form = receiveModal.querySelector('form');
+                    form.action = "{{ route('store.receive', ':id') }}".replace(':id', id);
+                    
+                    const titleName = receiveModal.querySelector('.modal-title-name');
+                    if (titleName) titleName.textContent = name;
+                });
+            }
+
+            // Reusable Transfer Modal Setup
+            const transferModal = document.getElementById('transferModal');
+            if (transferModal) {
+                transferModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const storeQty = button.getAttribute('data-store-qty');
+                    
+                    const form = transferModal.querySelector('form');
+                    form.action = "{{ route('store.transfer', ':id') }}".replace(':id', id);
+                    
+                    const titleName = transferModal.querySelector('.modal-title-name');
+                    if (titleName) titleName.textContent = name;
+                    
+                    const balanceSpan = transferModal.querySelector('.current-balance-badge');
+                    if (balanceSpan) balanceSpan.textContent = storeQty;
+                    
+                    const qtyInput = transferModal.querySelector('input[name="quantity"]');
+                    if (qtyInput) {
+                        qtyInput.max = storeQty;
+                    }
+                });
+            }
+
+            // Reusable Return Modal Setup
+            const returnModal = document.getElementById('returnModal');
+            if (returnModal) {
+                returnModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const litQty = button.getAttribute('data-lit-qty');
+                    
+                    const form = returnModal.querySelector('form');
+                    form.action = "{{ route('store.return', ':id') }}".replace(':id', id);
+                    
+                    const titleName = returnModal.querySelector('.modal-title-name');
+                    if (titleName) titleName.textContent = name;
+                    
+                    const balanceSpan = returnModal.querySelector('.current-balance-badge');
+                    if (balanceSpan) balanceSpan.textContent = litQty;
+                    
+                    const qtyInput = returnModal.querySelector('input[name="quantity"]');
+                    if (qtyInput) {
+                        qtyInput.max = litQty;
+                    }
+                });
+            }
+
+            // Reusable Edit Modal Setup
+            const editModal = document.getElementById('editModal');
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const category = button.getAttribute('data-category');
+                    const price = button.getAttribute('data-price');
+                    const description = button.getAttribute('data-description');
+                    
+                    const form = editModal.querySelector('form');
+                    form.action = "{{ route('store.update', ':id') }}".replace(':id', id);
+                    
+                    editModal.querySelector('input[name="name"]').value = name;
+                    editModal.querySelector('select[name="category"]').value = category;
+                    editModal.querySelector('input[name="selling_price"]').value = price;
+                    editModal.querySelector('textarea[name="description"]').value = description || '';
+                });
+            }
+        });
+    </script>
 </x-layout>

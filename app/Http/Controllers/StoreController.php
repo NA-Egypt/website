@@ -35,7 +35,7 @@ class StoreController extends Controller implements HasMiddleware
             $query->where('category', $request->category);
         }
 
-        $items = $query->orderBy('name')->get();
+        $items = $query->orderBy('name')->paginate(15)->withQueryString();
 
         return view('store.index', compact('items'));
     }
