@@ -25,3 +25,5 @@ yarn-error.log
 
 /bootstrap/compiled.php
 .antigravityignore
+/db-backup/backup.sh
+/db-backup/README.md
