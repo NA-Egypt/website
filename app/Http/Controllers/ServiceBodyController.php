@@ -8,7 +8,7 @@ use App\Models\ServiceBody;
 use Illuminate\Http\Request;
 
 use App\Models\Agenda;
-use Mpdf\Mpdf;
+use App\Services\MpdfService;
 
 class ServiceBodyController extends Controller
 {
@@ -97,31 +97,7 @@ class ServiceBodyController extends Controller
             return back()->with('error', __('messages.no_agendas_selected') ?? 'No valid agendas found for export.');
         }
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-        
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $html = view('pdf.agenda', compact('agendas'))->render();
         $mpdf->WriteHTML($html);

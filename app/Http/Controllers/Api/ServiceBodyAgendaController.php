@@ -161,6 +161,16 @@ class ServiceBodyAgendaController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::guard('sanctum')->user() ?? auth()->user();
+        $isRsc = $this->isRsc($user);
+
+        if (!$isRsc) {
+            $sbId = $user ? $user->service_body_id : 0;
+            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sbId || $sbId !== (int)$request->service_body_id) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
         $validatedData = $request->validate([
             'service_body_id' => 'required|exists:service_bodies,id',
             'meeting_date' => 'required|date',
@@ -204,6 +214,19 @@ class ServiceBodyAgendaController extends Controller
      */
     public function update(Request $request, ServiceBodyAgenda $serviceBodyAgenda)
     {
+        $user = Auth::guard('sanctum')->user() ?? auth()->user();
+        $isRsc = $this->isRsc($user);
+
+        if (!$isRsc) {
+            $sbId = $user ? $user->service_body_id : 0;
+            if (!$user || !$user->hasPermissionTo('edit sb agenda') || !$sbId || $sbId !== $serviceBodyAgenda->service_body_id || $sbId !== (int)$request->service_body_id) {
+                abort(403, 'Unauthorized');
+            }
+            if ($serviceBodyAgenda->status !== 'draft') {
+                abort(403, 'Only draft agendas can be edited.');
+            }
+        }
+
         $validatedData = $request->validate([
             'service_body_id' => 'required|exists:service_bodies,id',
             'meeting_date' => 'required|date',
@@ -233,6 +256,19 @@ class ServiceBodyAgendaController extends Controller
      */
     public function destroy(ServiceBodyAgenda $serviceBodyAgenda)
     {
+        $user = Auth::guard('sanctum')->user() ?? auth()->user();
+        $isRsc = $this->isRsc($user);
+
+        if (!$isRsc) {
+            $sbId = $user ? $user->service_body_id : 0;
+            if (!$user || !$user->hasPermissionTo('delete sb agenda') || !$sbId || $sbId !== $serviceBodyAgenda->service_body_id) {
+                abort(403, 'Unauthorized');
+            }
+            if ($serviceBodyAgenda->status !== 'draft') {
+                abort(403, 'Only draft agendas can be deleted.');
+            }
+        }
+
         $serviceBodyAgenda->delete();
         return response()->json(null, 204);
     }

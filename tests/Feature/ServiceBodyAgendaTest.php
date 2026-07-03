@@ -114,4 +114,138 @@ class ServiceBodyAgendaTest extends TestCase
         // Other unreleased approved agenda must NOT be visible
         $response->assertDontSee($sb2->ar_name . ' - ' . $otherUnreleased->meeting_date->format('Y-m-d'));
     }
+
+    public function test_user_with_create_permission_can_create_agenda()
+    {
+        $sb = $this->createServiceBody();
+        $user = User::factory()->create(['service_body_id' => $sb->id]);
+        $user->assignRole('ServiceBody');
+        $createPerm = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'create sb agenda', 'guard_name' => 'web']);
+        $user->givePermissionTo($createPerm);
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('service-body-agendas.create'));
+        $response->assertStatus(200);
+
+        $response = $this->post(route('service-body-agendas.store'), [
+            'meeting_date' => '2026-07-15',
+            'sections' => [
+                ['headline' => 'Section 1', 'content' => 'Content 1']
+            ],
+            'status' => 'draft'
+        ]);
+        $response->assertRedirect(route('service-body-agendas.index'));
+        $this->assertDatabaseHas('service_body_agendas', [
+            'service_body_id' => $sb->id,
+            'meeting_date' => '2026-07-15 00:00:00'
+        ]);
+    }
+
+    public function test_user_without_create_permission_cannot_create_agenda()
+    {
+        $sb = $this->createServiceBody();
+        $user = User::factory()->create(['service_body_id' => $sb->id]);
+        $user->assignRole('ServiceBody');
+        // No permissions given
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('service-body-agendas.create'));
+        $response->assertStatus(403);
+
+        $response = $this->post(route('service-body-agendas.store'), [
+            'meeting_date' => '2026-07-15',
+            'sections' => [
+                ['headline' => 'Section 1', 'content' => 'Content 1']
+            ],
+            'status' => 'draft'
+        ]);
+        $response->assertStatus(403);
+    }
+
+    public function test_user_with_edit_permission_can_edit_draft_agenda()
+    {
+        $sb = $this->createServiceBody();
+        $user = User::factory()->create(['service_body_id' => $sb->id]);
+        $user->assignRole('ServiceBody');
+        $editPerm = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'edit sb agenda', 'guard_name' => 'web']);
+        $user->givePermissionTo($editPerm);
+
+        $agenda = ServiceBodyAgenda::create([
+            'service_body_id' => $sb->id,
+            'agenda_date' => now()->toDateString(),
+            'meeting_date' => '2026-07-15',
+            'status' => 'draft',
+            'body' => [['headline' => 'Section 1', 'content' => 'Content 1']],
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->get(route('service-body-agendas.edit', $agenda->id));
+        $response->assertStatus(200);
+
+        $response = $this->put(route('service-body-agendas.update', $agenda->id), [
+            'meeting_date' => '2026-07-20',
+            'sections' => [
+                ['headline' => 'Updated Section', 'content' => 'Updated Content']
+            ],
+            'status' => 'draft'
+        ]);
+        $response->assertRedirect(route('service-body-agendas.index'));
+        $this->assertDatabaseHas('service_body_agendas', [
+            'id' => $agenda->id,
+            'meeting_date' => '2026-07-20 00:00:00'
+        ]);
+    }
+
+    public function test_user_with_approve_permission_can_approve_submitted_agenda()
+    {
+        $sb = $this->createServiceBody();
+        $user = User::factory()->create(['service_body_id' => $sb->id]);
+        $user->assignRole('ServiceBody');
+        $approvePerm = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'approve sb agenda', 'guard_name' => 'web']);
+        $user->givePermissionTo($approvePerm);
+
+        $agenda = ServiceBodyAgenda::create([
+            'service_body_id' => $sb->id,
+            'agenda_date' => now()->toDateString(),
+            'meeting_date' => '2026-07-15',
+            'status' => 'submitted',
+            'body' => [['headline' => 'Section 1', 'content' => 'Content 1']],
+        ]);
+
+        // Mock the archiver service
+        $archiverMock = $this->mock(\App\Services\ServiceBodyAgendaArchiver::class);
+        $archiverMock->shouldReceive('archive')->once();
+
+        $this->actingAs($user);
+
+        $response = $this->post(route('service-body-agendas.approve', $agenda->id));
+        $response->assertRedirect(route('service-body-agendas.index'));
+        $this->assertEquals('approved', $agenda->fresh()->status);
+    }
+
+    public function test_user_with_delete_permission_can_delete_draft_agenda()
+    {
+        $sb = $this->createServiceBody();
+        $user = User::factory()->create(['service_body_id' => $sb->id]);
+        $user->assignRole('ServiceBody');
+        $deletePerm = \Spatie\Permission\Models\Permission::firstOrCreate(['name' => 'delete sb agenda', 'guard_name' => 'web']);
+        $user->givePermissionTo($deletePerm);
+
+        $agenda = ServiceBodyAgenda::create([
+            'service_body_id' => $sb->id,
+            'agenda_date' => now()->toDateString(),
+            'meeting_date' => '2026-07-15',
+            'status' => 'draft',
+            'body' => [['headline' => 'Section 1', 'content' => 'Content 1']],
+        ]);
+
+        $this->actingAs($user);
+
+        $response = $this->delete(route('service-body-agendas.destroy', $agenda->id));
+        $response->assertRedirect(route('service-body-agendas.index'));
+        $this->assertDatabaseMissing('service_body_agendas', ['id' => $agenda->id]);
+    }
 }

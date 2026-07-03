@@ -7,8 +7,7 @@ use App\Models\CustomFormField;
 use App\Models\CustomFormSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Mpdf\Mpdf;
+use App\Services\MpdfService;
 
 class CustomFormController extends Controller
 {
@@ -455,31 +454,7 @@ class CustomFormController extends Controller
         $this->checkAccess($form);
         $form->load(['fields', 'submissions.user']);
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-        
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $html = view('forms.report_pdf', compact('form'))->render();
         $mpdf->WriteHTML($html);
@@ -499,8 +474,14 @@ class CustomFormController extends Controller
         }
         $form->load('fields');
 
-        $pdf = Pdf::loadView('forms.submission_pdf', compact('form', 'submission'));
-        return $pdf->download("submission_{$submission->id}.pdf");
+        $mpdf = MpdfService::create();
+        $html = view('forms.submission_pdf', compact('form', 'submission'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = "submission_{$submission->id}.pdf";
+        return response($mpdf->Output($filename, 'S'), 200)
+               ->header('Content-Type', 'application/pdf')
+               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function exportCsv(CustomForm $form)

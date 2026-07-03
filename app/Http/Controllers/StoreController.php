@@ -6,7 +6,7 @@ use App\Models\InventoryItem;
 use App\Models\InventoryTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\MpdfService;
 
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -244,8 +244,14 @@ class StoreController extends Controller implements HasMiddleware
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
         });
 
-        $pdf = Pdf::loadView('store.pdf', compact('transactions', 'items', 'totalValuation'));
-        return $pdf->download('inventory_report_' . date('Ymd_His') . '.pdf');
+        $mpdf = MpdfService::create();
+        $html = view('store.pdf', compact('transactions', 'items', 'totalValuation'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = 'inventory_report_' . date('Ymd_His') . '.pdf';
+        return response($mpdf->Output($filename, 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     public function exportCsv(Request $request)

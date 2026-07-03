@@ -1196,5 +1196,12 @@ return [
     'invalid_action' => 'إجراء غير صالح',
     'EGP' => 'ج.م',
     'inventory_report' => 'تقرير المخزون',
+    'User Information' => 'معلومات المستخدم',
+    'Direct Permissions' => 'الصلاحيات المباشرة',
+    'Roles List' => 'قائمة الأدوار',
+    'Permissions List' => 'قائمة الصلاحيات',
+    'No permissions assigned' => 'لم يتم تعيين صلاحيات',
+    'Search Permissions...' => 'البحث عن الصلاحيات...',
+    'General & Others' => 'عامة وأخرى',
 ];
 

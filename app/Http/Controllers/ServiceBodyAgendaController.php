@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Mpdf\Mpdf;
+use App\Services\MpdfService;
 use Carbon\Carbon;
 use Exception;
 
@@ -186,15 +186,17 @@ class ServiceBodyAgendaController extends Controller
 
     public function create()
     {
+        $user = Auth::user();
         $isRsc = $this->isRsc();
         $sb = $this->getServiceBody();
         $serviceBodies = [];
 
         if ($isRsc) {
             $serviceBodies = ServiceBody::with('groups')->get();
-        } elseif (!$sb) {
-            abort(403, 'Only Service Body members (RCM) can create agendas.');
         } else {
+            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sb) {
+                abort(403, 'Only users with create sb agenda permission can create agendas.');
+            }
             $sb->load('groups');
         }
 
@@ -203,11 +205,14 @@ class ServiceBodyAgendaController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         $isRsc = $this->isRsc();
         $sb = $this->getServiceBody();
 
-        if (!$isRsc && !$sb) {
-            abort(403, 'Unauthorized');
+        if (!$isRsc) {
+            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sb) {
+                abort(403, 'Unauthorized');
+            }
         }
 
         $request->validate([
@@ -273,12 +278,13 @@ class ServiceBodyAgendaController extends Controller
 
     public function edit($id)
     {
+        $user = Auth::user();
         $isRsc = $this->isRsc();
         $agenda = ServiceBodyAgenda::with(['serviceBody', 'attachments'])->findOrFail($id);
 
         if (!$isRsc) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id) {
+            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('edit sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -296,10 +302,11 @@ class ServiceBodyAgendaController extends Controller
     public function update(Request $request, $id)
     {
         $agenda = ServiceBodyAgenda::findOrFail($id);
+        $user = Auth::user();
 
         if (!$this->isRsc()) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id) {
+            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('edit sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -367,10 +374,11 @@ class ServiceBodyAgendaController extends Controller
     public function destroy($id)
     {
         $agenda = ServiceBodyAgenda::findOrFail($id);
+        $user = Auth::user();
 
         if (!$this->isRsc()) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id) {
+            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('delete sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -399,31 +407,7 @@ class ServiceBodyAgendaController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-        
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $agendas = collect([$agenda]);
         $html = view('service-body-agendas.pdf', compact('agendas'))->render();
@@ -453,11 +437,16 @@ class ServiceBodyAgendaController extends Controller
 
     public function approve($id)
     {
-        if (!$this->isRsc()) {
-            abort(403, 'Unauthorized');
-        }
-
         $agenda = ServiceBodyAgenda::findOrFail($id);
+        $user = Auth::user();
+        $isRsc = $this->isRsc();
+
+        if (!$isRsc) {
+            $sb = $this->getServiceBody();
+            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('approve sb agenda')) {
+                abort(403, 'Unauthorized');
+            }
+        }
         
         if ($agenda->status !== 'submitted') {
             return redirect()->back()->with('error', __('messages.only_submitted_agendas_approved'));
@@ -472,11 +461,16 @@ class ServiceBodyAgendaController extends Controller
 
     public function returnToDraft(Request $request, $id)
     {
-        if (!$this->isRsc()) {
-            abort(403, 'Unauthorized');
-        }
-
         $agenda = ServiceBodyAgenda::findOrFail($id);
+        $user = Auth::user();
+        $isRsc = $this->isRsc();
+
+        if (!$isRsc) {
+            $sb = $this->getServiceBody();
+            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('approve sb agenda')) {
+                abort(403, 'Unauthorized');
+            }
+        }
 
         if ($agenda->status !== 'submitted') {
             return redirect()->back()->with('error', __('messages.only_submitted_agendas_returned_draft'));

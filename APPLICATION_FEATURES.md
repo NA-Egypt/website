@@ -14,7 +14,7 @@ This document outlines the core features of the NA-Egypt website and application
 
 ## 2. Management Dashboard (Admin Panel)
 - **Secure Authentication:** Integrated Microsoft Azure Active Directory (Azure AD) for secure, enterprise-grade login.
-- **Role-Based Access Control (RBAC):** Comprehensive management of Users, Roles, and detailed Permissions.
+- **Role-Based Access Control (RBAC):** Comprehensive management of Users, Roles, and detailed Spatie Permissions, with direct user-level permission overrides and modern switch accordions in the UI.
 - **Geographic Management:** Create and manage entries for Cities (Governorates) and Neighborhoods.
 - **Organizational Structure:** Tools to manage Groups, Service Bodies, and Service Committees.
 - **Meeting Management:** Full CRUD (Create, Read, Update, Delete) capabilities to manage meeting schedules, locations, and linked features.
@@ -23,7 +23,7 @@ This document outlines the core features of the NA-Egypt website and application
   - Create agendas for group business meetings.
   - Archive groups' agendas (filter by date, search submitter name, group, etc.).
   - Export individual or multiple agendas to PDF (using Amiri/Cairo fonts).
-  - Configurable access control based on user roles and service body scope.
+  - Position-based access control inside Service Bodies (RCM, Facilitator, Secretary) enforcing specific permissions (`create`, `edit`, `approve`, `delete` agendas).
 - **Change Request System:**
   - Submit requests to modify meeting/group schedules, committee details, or general website content.
   - File attachments support (PDF, images, Word, Excel documents).
@@ -56,7 +56,7 @@ This document outlines the core features of the NA-Egypt website and application
 
 ## 2. لوحة التحكم الإدارية (لوحة المشرفين)
 - **مصادقة آمنة:** تسجيل دخول متكامل مع Microsoft Azure Active Directory (Azure AD) لتوفير أمان عالي.
-- **التحكم في الوصول بناءً على الأدوار (RBAC):** إدارة شاملة للمستخدمين، والأدوار، والصلاحيات التفصيلية.
+- **التحكم في الوصول بناءً على الأدوار (RBAC):** إدارة شاملة للمستخدمين، والأدوار، وصلاحيات Spatie التفصيلية، مع إمكانية تعيين صلاحيات مباشرة لكل مستخدم وواجهة مستخدم حديثة تحتوي على منسدلات ومفاتيح تبديل.
 - **إدارة جغرافية:** إضافة وإدارة بيانات المدن (المحافظات) والأحياء.
 - **الهيكل التنظيمي:** أدوات لإدارة المجموعات، وهيئات الخدمة، ولجان الخدمة.
 - **إدارة الاجتماعات:** قدرات تحكم كاملة (إنشاء، قراءة، تحديث، حذف) لإدارة جداول الاجتماعات ومواقعها والبيانات المرتبطة بها.
@@ -65,7 +65,7 @@ This document outlines the core features of the NA-Egypt website and application
   - إنشاء أجندات لاجتماعات عمل المجموعات.
   - أرشيف لأجندات المجموعات (تصفية حسب التاريخ، البحث باسم مقدم الطلب، المجموعة، إلخ).
   - تصدير أجندة واحدة أو متعددة إلى ملف PDF (باستخدام خطوط Amiri و Cairo).
-  - صلاحيات وصول مهيأة بناءً على أدوار المستخدمين ونطاق هيئة الخدمة.
+  - صلاحيات وصول مهيأة بناءً على مناصب هيئات الخدمة (ممثل لجنة الخدمة RCM، الميسر FAC، السكرتير SEC) مع تطبيق صلاحيات محددة (إنشاء، تعديل، اعتماد، حذف الأجندات).
 - **نظام طلبات التعديل:**
   - تقديم طلبات لتعديل جداول الاجتماعات/المجموعات، معلومات اللجان، أو محتوى الموقع العام.
   - دعم إرفاق الملفات (PDF، صور، مستندات Word و Excel).

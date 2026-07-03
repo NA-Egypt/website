@@ -710,7 +710,7 @@ class CommitteeReportWorkflowTest extends TestCase
         $committee = $this->createCommittee($user);
 
         // Create approved report with review notes
-        $previousMonthDate = now()->subMonth()->day(15)->format('Y-m-d');
+        $previousMonthDate = now()->subMonths(2)->day(15)->format('Y-m-d');
         $report = CommitteeReport::create([
             'service_committee_id' => $committee->id,
             'meeting_date' => $previousMonthDate,

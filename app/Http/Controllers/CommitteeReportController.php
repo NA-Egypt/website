@@ -7,7 +7,7 @@ use App\Models\ServiceCommittee;
 use App\Models\CommitteeReportAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\MpdfService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -380,31 +380,7 @@ class CommitteeReportController extends Controller
             }
         }
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-        
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $reports = collect([$report]);
         $html = view('reports.pdf', compact('reports'))->render();
@@ -471,31 +447,7 @@ class CommitteeReportController extends Controller
             return back()->with('error', __('messages.no_reports_selected') ?? 'No valid reports found for export.');
         }
 
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-        
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $html = view('reports.pdf', compact('reports'))->render();
         $mpdf->WriteHTML($html);

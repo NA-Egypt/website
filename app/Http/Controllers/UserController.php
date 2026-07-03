@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Models\ServiceBody;
 use Illuminate\Http\Request;
@@ -18,8 +19,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
+        $permissions = Permission::all();
         $serviceBodies = ServiceBody::all();
-        return view('users.create', compact('roles', 'serviceBodies'));
+        return view('users.create', compact('roles', 'permissions', 'serviceBodies'));
     }
 
     public function store(Request $request)
@@ -28,6 +30,7 @@ class UserController extends Controller
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'roles' => 'array',
+            'permissions' => 'array',
             'service_body_id' => 'nullable|exists:service_bodies,id',
         ]);
 
@@ -43,14 +46,19 @@ class UserController extends Controller
             $user->roles()->sync($request->roles);
         }
 
+        if ($request->has('permissions')) {
+            $user->syncPermissions($request->permissions);
+        }
+
         return redirect()->route('users.index')->with('success', __('messages.user_created_success'));
     }
 
     public function edit(User $user)
     {
         $roles = Role::all();
+        $permissions = Permission::all();
         $serviceBodies = ServiceBody::all();
-        return view('users.edit', compact('user', 'roles', 'serviceBodies'));
+        return view('users.edit', compact('user', 'roles', 'permissions', 'serviceBodies'));
     }
 
     public function update(Request $request, User $user)
@@ -59,6 +67,7 @@ class UserController extends Controller
             'display_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'roles' => 'array',
+            'permissions' => 'array',
             'service_body_id' => 'nullable|exists:service_bodies,id',
         ]);
 
@@ -69,7 +78,8 @@ class UserController extends Controller
             'service_body_id' => $request->service_body_id,
         ]);
 
-        $user->roles()->sync($request->roles);
+        $user->roles()->sync($request->roles ?? []);
+        $user->syncPermissions($request->permissions ?? []);
         return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));
     }
 

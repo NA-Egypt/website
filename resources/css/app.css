@@ -119,3 +119,204 @@ nav[role="navigation"],
 .page-link, .paginate_button {
   unicode-bidi: isolate !important;
 }
+
+/* --- Premium User UI/UX Enhancements --- */
+
+/* Center and restrict container card width */
+.glass-card-compact {
+    max-width: 750px !important;
+    margin: 2rem auto !important;
+}
+
+/* Glassmorphism card container override */
+.glass-card {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--neon-glow) !important;
+    border-radius: 16px !important;
+    transition: all 0.3s ease !important;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12) !important;
+}
+
+/* Premium Header styling */
+.glass-card-header {
+    background: linear-gradient(135deg, rgba(78, 115, 223, 0.1) 0%, rgba(30, 224, 172, 0.05) 100%) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+    padding: 1.5rem !important;
+}
+
+.glass-card-body {
+    padding: 2rem !important;
+}
+
+/* Premium Accordions for categories */
+.accordion-premium {
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    margin-bottom: 1rem !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.accordion-premium:hover {
+    border-color: rgba(78, 115, 223, 0.3) !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+}
+
+.accordion-premium-header {
+    padding: 1.2rem 1.5rem !important;
+    font-weight: 600 !important;
+    color: #4e73df !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    user-select: none !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.accordion-premium-header:hover {
+    background-color: rgba(78, 115, 223, 0.05) !important;
+}
+
+.accordion-premium-content {
+    max-height: 0 !important;
+    overflow: hidden !important;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease !important;
+    padding: 0 1.5rem !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.accordion-premium.open .accordion-premium-content {
+    max-height: 1000px !important;
+    padding: 1.5rem !important;
+    border-top: 1px solid var(--glass-border) !important;
+}
+
+.accordion-premium .chevron-icon {
+    font-size: 1.2rem !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.accordion-premium.open .chevron-icon {
+    transform: rotate(180deg) !important;
+}
+
+/* Premium IOS-like Toggle Switches */
+.form-switch-premium {
+    position: relative !important;
+    display: inline-block !important;
+    width: 48px !important;
+    height: 24px !important;
+}
+
+.form-switch-premium input {
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.slider-premium {
+    position: absolute !important;
+    cursor: pointer !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: #cbd5e1 !important;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 24px !important;
+}
+
+.slider-premium:before {
+    position: absolute !important;
+    content: "" !important;
+    height: 18px !important;
+    width: 18px !important;
+    left: 3px !important;
+    bottom: 3px !important;
+    background-color: white !important;
+    transition: .3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15) !important;
+}
+
+.form-switch-premium input:checked + .slider-premium {
+    background-color: #4e73df !important;
+}
+
+.form-switch-premium input:focus + .slider-premium {
+    box-shadow: 0 0 1px #4e73df !important;
+}
+
+.form-switch-premium input:checked + .slider-premium:before {
+    transform: translateX(24px) !important;
+}
+
+/* RTL translation for toggles */
+[dir="rtl"] .form-switch-premium input:checked + .slider-premium:before {
+    transform: translateX(-24px) !important;
+}
+
+[dir="rtl"] .slider-premium:before {
+    left: auto !important;
+    right: 3px !important;
+}
+
+/* Premium form controls */
+.glow-input {
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s ease !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    color: var(--text-primary) !important;
+}
+
+.glow-input:focus {
+    outline: none !important;
+    border-color: #4e73df !important;
+    box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15) !important;
+    background-color: #fff !important;
+}
+
+/* Interactive elements animations */
+.btn-premium-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.75rem !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 14px rgba(78, 115, 223, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-premium-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(78, 115, 223, 0.4) !important;
+}
+
+.btn-premium-primary:active {
+    transform: translateY(1px) !important;
+}
+
+.btn-premium-secondary {
+    background: transparent !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-secondary) !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.75rem !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-premium-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}

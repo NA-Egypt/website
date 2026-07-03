@@ -17,7 +17,7 @@ class GroupController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('role:super admin', only: ['index', 'create', 'store', 'destroy']),
+            new Middleware('role:super admin', only: ['create', 'store', 'destroy']),
         ];
     }
 
@@ -26,7 +26,16 @@ class GroupController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $groups = Group::all();
+        $user = auth()->user();
+        if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
+            $groups = Group::all();
+        } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
+            $groups = Group::where('service_body_id', $user->service_body_id)->get();
+        } elseif ($user->hasRole('gsr')) {
+            $groups = Group::where('user_id', $user->id)->get();
+        } else {
+            $groups = collect();
+        }
 
         return view('group.index', ['groups' => $groups]);
     }

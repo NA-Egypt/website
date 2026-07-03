@@ -6,9 +6,7 @@ use App\Models\CommitteeReport;
 use App\Models\CommitteeReportAttachment;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
+use App\Services\MpdfService;
 use Exception;
 
 class ReportArchiver
@@ -160,31 +158,7 @@ class ReportArchiver
      */
     protected function generatePdfContent(CommitteeReport $report): string
     {
-        $defaultConfig = (new ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'directionality' => app()->getLocale() == 'ar' ? 'rtl' : 'ltr',
-            'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-            'fontdata' => $fontData + [
-                'amiri' => [
-                    'R' => 'Amiri-Regular.ttf',
-                ],
-                'cairo' => [
-                    'R' => 'Cairo-Regular.ttf',
-                ],
-            ],
-            'default_font' => 'xbriyaz',
-        ]);
-
-        $mpdf->autoArabic = true;
-        $mpdf->autoScriptToLang = true;
-        $mpdf->autoLangToFont = true;
+        $mpdf = MpdfService::create();
 
         $reports = collect([$report]);
         $html = view('reports.pdf', compact('reports'))->render();

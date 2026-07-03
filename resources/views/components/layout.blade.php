@@ -166,15 +166,9 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       z-index: 1030;
   }
   .sidebar-wrapper .navigation { background: transparent !important; }
-  .sidebar-wrapper .navigation li a { color: var(--text-primary) !important; transition: all 0.3s ease; }
-  .sidebar-wrapper .navigation li a:hover, 
-  .sidebar-wrapper .navigation li.mm-active > a { 
-      background: rgba(0, 0, 0, 0.05) !important; 
-      border-radius: 8px;
-  }
+  .sidebar-wrapper .navigation li a { transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); }
   .sidebar-wrapper .navigation .menu-label { color: var(--text-secondary) !important; }
   .sidebar-wrapper .navigation ul { background: transparent !important; }
-  .sidebar-wrapper .navigation ul li a:hover { background: rgba(0, 0, 0, 0.03) !important; }
 
   /* RTL Form Check adjustments */
   [dir="rtl"] .form-check {

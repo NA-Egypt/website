@@ -1192,5 +1192,12 @@ return [
     'invalid_action' => 'Invalid action',
     'EGP' => 'EGP',
     'inventory_report' => 'Inventory Report',
+    'User Information' => 'User Information',
+    'Direct Permissions' => 'Direct Permissions',
+    'Roles List' => 'Roles List',
+    'Permissions List' => 'Permissions List',
+    'No permissions assigned' => 'No permissions assigned',
+    'Search Permissions...' => 'Search Permissions...',
+    'General & Others' => 'General & Others',
 ];
 

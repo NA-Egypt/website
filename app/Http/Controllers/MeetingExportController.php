@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Meeting;
 use App\Models\Group;
 use App\Models\Day;
-use Mpdf\Mpdf;
+use App\Services\MpdfService;
 
 class MeetingExportController extends Controller
 {
@@ -92,13 +92,6 @@ class MeetingExportController extends Controller
         // Render view
         $html = view('exports.meetings-pdf', compact('meetingsByDay', 'groups', 'fields', 'exportDate', 'pageSize'))->render();
 
-        // Initialize mPDF
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
         // Settings based on paper size
         if ($pageSize === 'A5') {
             $marginTop = 10;
@@ -124,8 +117,7 @@ class MeetingExportController extends Controller
         error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
         try {
-            $mpdf = new Mpdf([
-                'mode' => 'utf-8',
+            $mpdf = MpdfService::create([
                 'format' => $pageSize,
                 'directionality' => 'rtl',
                 'margin_left' => 5,
@@ -134,15 +126,6 @@ class MeetingExportController extends Controller
                 'margin_bottom' => $marginBottom,
                 'margin_header' => $marginHeader,
                 'margin_footer' => $marginFooter,
-                'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'amiri' => [
-                        'R' => 'Amiri-Regular.ttf',
-                    ],
-                    'cairo' => [
-                        'R' => 'Cairo-Regular.ttf',
-                    ],
-                ],
                 'default_font' => 'cairo',
             ]);
 
