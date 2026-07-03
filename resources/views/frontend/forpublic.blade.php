@@ -1,6 +1,4 @@
 <x-frontend.layout>
-    <x-section-head>{{ __('messages.forpublicheader') }}</x-section-head>
-
     @php
         $isArabic = app()->getLocale() === 'ar';
         $pageDir = $isArabic ? 'rtl' : 'ltr';
@@ -111,18 +109,28 @@
 
         {{-- Hero Section --}}
         <div class="hero-section">
-            <div class="container">
+            <div class="mesh-blob mesh-blob-1"></div>
+            <div class="mesh-blob mesh-blob-2"></div>
+            <div class="mesh-blob mesh-blob-3"></div>
+            <div class="container hero-container">
+                <div class="hero-badge fade-in">
+                    <span><i class="bi bi-shield-heart-fill"></i> {{ __('messages.test_page.nav.local.kicker') }}</span>
+                </div>
                 <h1 class="hero-title fade-in">{{__('messages.General information about Narcotics Anonymous')}}</h1>
                 <p class="hero-subtitle fade-in fade-in-delay-1">
                     {{__('messages.Discover the journey of recovery and hope through our community')}}</p>
-                <div class="hero-links fade-in fade-in-delay-2 mt-4 d-flex justify-content-center flex-wrap gap-2">
-                    <a href="#definition" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.definition.title') }}</a>
-                    <a href="#local-fellowship" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.local.title') }}</a>
-                    <a href="#local-statistics" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.stats.title') }}</a>
-                    <a href="#arabic-brochures" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.brochures.title') }}</a>
-                    <a href="#community-benefits" class="btn btn-outline-light rounded-pill px-4">{{ __('messages.test_page.nav.benefits.title') }}</a>
+                
+                <div class="hero-glass-card fade-in fade-in-delay-2">
+                    <div class="hero-links d-flex justify-content-center flex-wrap gap-2">
+                        <a href="#definition" class="hero-nav-link"><i class="bi bi-globe2"></i> {{ __('messages.test_page.nav.definition.title') }}</a>
+                        <a href="#local-fellowship" class="hero-nav-link"><i class="bi bi-geo-alt-fill"></i> {{ __('messages.test_page.nav.local.title') }}</a>
+                        <a href="#local-statistics" class="hero-nav-link"><i class="bi bi-pie-chart-fill"></i> {{ __('messages.test_page.nav.stats.title') }}</a>
+                        <a href="#arabic-brochures" class="hero-nav-link"><i class="bi bi-journals"></i> {{ __('messages.test_page.nav.brochures.title') }}</a>
+                        <a href="#community-benefits" class="hero-nav-link"><i class="bi bi-people-fill"></i> {{ __('messages.test_page.nav.benefits.title') }}</a>
+                    </div>
                 </div>
-                <div class="mt-4 text-center">
+
+                <div class="mt-5 text-center fade-in fade-in-delay-3 hero-cta-wrapper">
                     <livewire:cooperation-form />
                 </div>
             </div>
@@ -176,6 +184,13 @@
                     <p>{{ __('messages.test_page.nav.benefits.desc') }}</p>
                     <span class="card-arrow"><i class="bi {{ $cardArrowIcon }}"></i></span>
                 </a>
+            </div>
+        </div>
+
+        {{-- Disclaimer / Warning Banner --}}
+        <div class="container my-4 fade-in">
+            <div class="alert alert-warning text-center border-warning-subtle py-3" role="alert" style="background: #fffce0; border: 1px #dbd06a solid; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: #856404; font-weight: 600; font-size: 0.95rem; margin: 0 auto; max-width: 820px;">
+                <p class="m-0"><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>{{ __('messages.thewarning') }}</p>
             </div>
         </div>
 
@@ -466,11 +481,16 @@
 
         {{-- Back to Top Button --}}
         <a href="#top" class="back-to-top-btn">
-            <i class="bi bi-arrow-up"></i> {{ __('messages.test_page.back_to_top') }}
+            <i class="bi bi-arrow-up"></i> <span>{{ __('messages.test_page.back_to_top') }}</span>
         </a>
     </div>
 
     <style>
+        .main-nav {
+            position: relative;
+            z-index: 1050 !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -480,72 +500,217 @@
         .modern-page {
             min-height: 100vh;
             padding-top: 0;
+            margin-top: -2.5rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
         }
 
-        /* Hero Section */
+        @media (min-width: 768px) {
+            .modern-page {
+                margin-left: -3rem;
+                margin-right: -3rem;
+            }
+        }
+
+        /* Hero Section Premium Styles */
         .hero-section {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            background-color: #0b1329;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.25) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.3) 0px, transparent 50%);
             color: #ffffff;
-            padding: 80px 20px;
+            padding: 120px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .hero-section::before {
-            content: '';
+        /* Animated Mesh Blobs */
+        .mesh-blob {
             position: absolute;
-            top: -50%;
-            right: -50%;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+            z-index: 1;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+
+        .mesh-blob-1 {
+            top: 10%;
+            left: 15%;
             width: 300px;
             height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            background: radial-gradient(circle, #3b82f6 0%, transparent 80%);
+            animation: float-blob-1 20s infinite alternate;
         }
 
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: -30%;
+        .mesh-blob-2 {
+            bottom: 10%;
+            right: 15%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #8b5cf6 0%, transparent 80%);
+            animation: float-blob-2 25s infinite alternate;
+        }
+
+        .mesh-blob-3 {
+            top: 40%;
+            left: 50%;
             width: 250px;
             height: 250px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite reverse;
+            background: radial-gradient(circle, #10b981 0%, transparent 80%);
+            animation: float-blob-3 18s infinite alternate;
         }
 
-        .hero-section .container {
+        @keyframes float-blob-1 {
+            0% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(60px, -40px) scale(1.2); }
+            100% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        @keyframes float-blob-2 {
+            0% { transform: translate(0px, 0px) scale(1.1); }
+            50% { transform: translate(-50px, 50px) scale(0.8); }
+            100% { transform: translate(40px, -30px) scale(1.2); }
+        }
+
+        @keyframes float-blob-3 {
+            0% { transform: translate(0px, 0px) scale(0.9); }
+            50% { transform: translate(-30px, -60px) scale(1.1); }
+            100% { transform: translate(50px, 30px) scale(1); }
+        }
+
+        .hero-container {
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            max-width: 960px;
         }
 
+        /* Hero Badge */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 18px;
+            border-radius: 100px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-badge span {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #93c5fd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Hero Typography */
         .hero-title {
             color: #ffffff;
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 700;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            text-shadow: 0 0 1px rgba(255, 255, 255, 1);
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.45;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #bfdbfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
-            opacity: 0.95;
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            opacity: 0.9;
             font-weight: 300;
+            line-height: 1.6;
+            max-width: 720px;
+            margin: 0 auto 40px;
+            color: #cbd5e1;
         }
 
-        @keyframes float {
+        /* Glassmorphic Navigation Card */
+        .hero-glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+            max-width: 820px;
+        }
 
-            0%,
-            100% {
-                transform: translateY(0px) translateX(0px);
-            }
+        /* Custom Premium Link Buttons */
+        .hero-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(4px);
+        }
 
-            50% {
-                transform: translateY(30px) translateX(20px);
-            }
+        .hero-nav-link i {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-nav-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-nav-link:hover i {
+            transform: scale(1.15);
+        }
+
+        /* Primary Cooperation CTA Button Overrides */
+        .hero-cta-wrapper button {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 18px 42px !important;
+            border-radius: 50px !important;
+            font-weight: 700 !important;
+            font-size: 1.15rem !important;
+            letter-spacing: 0.02em !important;
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.6), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        .hero-cta-wrapper button:hover {
+            transform: translateY(-4px) scale(1.02) !important;
+            box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.7), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+        }
+
+        .hero-cta-wrapper button:active {
+            transform: translateY(-1px) scale(0.98) !important;
         }
 
         /* Navigation Grid */
@@ -730,7 +895,7 @@
 
         /* Content Sections */
         .content-section {
-            padding: 60px 20px;
+            padding: 48px 20px;
             animation-fill-mode: forwards;
             scroll-margin-top: 90px;
         }
@@ -1354,7 +1519,8 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-title {
-                font-size: 1.75rem;
+                font-size: 1.6rem;
+                line-height: 1.45;
             }
 
             .hero-subtitle {
@@ -1429,6 +1595,12 @@
             .donut-layout {
                 grid-template-columns: 1fr;
             }
+
+            /* Cooperation Form trigger adjustments on tablets */
+            .hero-cta-wrapper button {
+                padding: 14px 32px !important;
+                font-size: 1rem !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1437,7 +1609,49 @@
             }
 
             .hero-title {
-                font-size: 1.25rem;
+                font-size: 1.35rem;
+                line-height: 1.5;
+            }
+
+            .hero-cta-wrapper button {
+                padding: 12px 20px !important;
+                font-size: 0.95rem !important;
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Modal form adjustments on mobile */
+            .modal-dialog {
+                margin: 0.5rem;
+                max-width: calc(100% - 1rem);
+            }
+
+            .modal-content {
+                border-radius: 16px !important;
+            }
+
+            .modal-body {
+                padding: 16px !important;
+            }
+
+            .modal-body .row.g-3 {
+                --bs-gutter-y: 1rem;
+            }
+
+            .modal-header, .modal-footer {
+                padding: 12px 16px !important;
+            }
+
+            .modal-header h5 {
+                font-size: 1.05rem !important;
+            }
+
+            .modal-body h5 {
+                font-size: 1rem !important;
+            }
+
+            .modal-body p, .modal-body label, .modal-body span {
+                font-size: 0.88rem !important;
             }
 
             .content-section {
@@ -1477,6 +1691,22 @@
                 padding: 15px 20px;
                 font-size: 1rem;
             }
+
+            /* Back to top button optimized for mobile screen */
+            .back-to-top-btn {
+                bottom: 20px !important;
+                inset-inline-end: 20px !important;
+                width: 48px !important;
+                height: 48px !important;
+                padding: 0 !important;
+                border-radius: 50% !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+
+            .back-to-top-btn span {
+                display: none !important;
+            }
         }
     </style>
 
@@ -1492,16 +1722,20 @@
             });
         });
 
-        // Scroll to top visibility
+        // Scroll to top visibility with mobile touch fallback
         const scrollToTopBtn = document.querySelector('.back-to-top-btn');
         if (scrollToTopBtn) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    scrollToTopBtn.style.display = 'inline-flex';
+            const toggleScrollBtn = () => {
+                const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > 300) {
+                    scrollToTopBtn.style.setProperty('display', 'inline-flex', 'important');
                 } else {
-                    scrollToTopBtn.style.display = 'none';
+                    scrollToTopBtn.style.setProperty('display', 'none', 'important');
                 }
-            });
+            };
+            window.addEventListener('scroll', toggleScrollBtn);
+            window.addEventListener('touchmove', toggleScrollBtn);
+            toggleScrollBtn();
         }
 
         // Animation on scroll
