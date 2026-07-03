@@ -500,7 +500,7 @@
         .modern-page {
             min-height: 100vh;
             padding-top: 0;
-            margin-top: -2.5rem;
+            margin-top: 0;
             margin-left: -1rem;
             margin-right: -1rem;
         }
