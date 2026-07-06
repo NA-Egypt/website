@@ -20,7 +20,7 @@ class AzureAuthController extends Controller
             return redirect()->away("https://naegypt.org/{$locale}/login/microsoft?from=https://egyptna.org");
         }
 
-        // On production, if we have a 'from' parameter, we pass it via encrypted state
+        // On production, if we have a 'from' parameter, we pass it via base64 encoded state
         $stateData = [];
         if ($request->has('from')) {
             $stateData['from'] = $request->query('from');
@@ -32,7 +32,7 @@ class AzureAuthController extends Controller
         $azure = Socialite::driver('azure')->stateless();
 
         if (!empty($stateData)) {
-            $azure->with(['state' => encrypt($stateData)]);
+            $azure->with(['state' => base64_encode(json_encode($stateData))]);
         }
 
         return $azure->with(['tenant' => env('AZURE_TENANT_ID')])
@@ -54,14 +54,10 @@ class AzureAuthController extends Controller
         $locale = LaravelLocalization::getCurrentLocale();
 
         if ($state) {
-            try {
-                $stateData = decrypt($state);
-                if (is_array($stateData)) {
-                    $redirectBack = $stateData['from'] ?? null;
-                    $locale = $stateData['locale'] ?? $locale;
-                }
-            } catch (\Exception $e) {
-                // Ignore decryption failures
+            $stateData = json_decode(base64_decode($state), true);
+            if (is_array($stateData)) {
+                $redirectBack = $stateData['from'] ?? null;
+                $locale = $stateData['locale'] ?? $locale;
             }
         }
 
