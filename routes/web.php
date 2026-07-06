@@ -219,7 +219,6 @@ Route::group(
         // Auth:
         Route::get('/login/microsoft', [AzureAuthController::class, 'redirectToAzure']);
         Route::get('/login/microsoft/callback', [AzureAuthController::class, 'handleAzureCallback']);
-        Route::get('/login/bridge', [AzureAuthController::class, 'handleBridgeCallback'])->name('login.bridge');
 
         // Logout:
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');
