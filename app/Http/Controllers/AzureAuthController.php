@@ -15,9 +15,10 @@ class AzureAuthController extends Controller
         $host = $request->getHost();
         $locale = LaravelLocalization::getCurrentLocale();
 
-        // If the user initiates login on staging (egyptna.org), redirect to production as a bridge
-        if ($host === 'egyptna.org') {
-            return redirect()->away("https://naegypt.org/{$locale}/login/microsoft?from=https://egyptna.org");
+        // If the user initiates login on any non-production domain (like egyptna.org), redirect to production as a bridge
+        if (!str_contains($host, 'naegypt.org')) {
+            $scheme = $request->secure() ? 'https' : 'http';
+            return redirect()->away("https://naegypt.org/{$locale}/login/microsoft?from={$scheme}://{$host}");
         }
 
         // On production, if we have a 'from' parameter, we pass it via base64 encoded state
@@ -61,7 +62,7 @@ class AzureAuthController extends Controller
             }
         }
 
-        if ($redirectBack && str_contains($redirectBack, 'egyptna.org')) {
+        if ($redirectBack && !str_contains($redirectBack, 'naegypt.org')) {
             $expires = time() + 300; // 5 minutes validity
             $signature = hash_hmac('sha256', $email . '|' . $name . '|' . $expires, config('app.key'));
 
