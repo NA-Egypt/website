@@ -8,7 +8,23 @@
 
                     @auth
                         @can('is-super-admin')
-                            <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">{{ __('Group Type') }}</label>
+                                        <select id="group-type-selector" class="form-select rounded-pill shadow-sm">
+                                            <option value="legacy" selected>{{ __('Standard Group') }}</option>
+                                            <option value="direct_online">{{ __('Direct Online Group') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="legacy-group-container">
+                                <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name')}}"/>
+                            </div>
+                            <div id="direct-online-group-container" style="display: none;">
+                                <x-forms.select :groups="$directOnlineGroups" name="direct_online_group_id" label="Direct Online Group Name"/>
+                            </div>
                         @else
                             <input type="hidden" name="group_id" value="{{ $group_id }}">
                         @endcan
@@ -343,6 +359,92 @@
                     weeklyCheckbox.checked = false;
                     weeklyCheckbox.disabled = true;
                 }
+            }
+
+            // Group Type switching logic
+            const groupTypeSelector = document.getElementById('group-type-selector');
+            const legacyContainer = document.getElementById('legacy-group-container');
+            const directOnlineContainer = document.getElementById('direct-online-group-container');
+            const legacySelect = legacyContainer ? legacyContainer.querySelector('select') : null;
+            const directOnlineSelect = directOnlineContainer ? directOnlineContainer.querySelector('select') : null;
+
+            const optionsHeader = document.querySelector('h6 i.bi-ui-checks-grid') ? document.querySelector('h6 i.bi-ui-checks-grid').closest('h6') : null;
+            const optionsSection = document.querySelector('.options-section');
+            const langSwitch = document.getElementById('lang-switch');
+            const labelLang = document.getElementById('label-lang');
+            const hiddenLangInput = document.querySelector('input[type="hidden"][name="lang"]');
+
+            function handleGroupTypeChange() {
+                if (!groupTypeSelector) return;
+                
+                const businessTopicOption = document.querySelector('#topic-selector option[data-is-business="true"]');
+                const topicSelector = document.getElementById('topic-selector');
+
+                if (groupTypeSelector.value === 'direct_online') {
+                    if (legacyContainer) legacyContainer.style.display = 'none';
+                    if (directOnlineContainer) directOnlineContainer.style.display = 'block';
+                    if (legacySelect) legacySelect.value = '';
+                    
+                    // Hide meeting options
+                    if (optionsHeader) optionsHeader.style.display = 'none';
+                    if (optionsSection) {
+                        optionsSection.style.display = 'none';
+                        optionsSection.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                    }
+                    
+                    // Lock language to Arabic
+                    if (langSwitch) {
+                        langSwitch.checked = true;
+                        langSwitch.disabled = true;
+                        if (labelLang) labelLang.textContent = translations.arabic;
+                    }
+                    if (hiddenLangInput) {
+                        hiddenLangInput.value = 'arabic';
+                    }
+
+                    // Disable Group Business Meeting topic
+                    if (businessTopicOption) {
+                        businessTopicOption.disabled = true;
+                        businessTopicOption.style.display = 'none';
+                        if (topicSelector && topicSelector.value == businessTopicOption.value) {
+                            topicSelector.value = '';
+                        }
+                    }
+                    const businessTag = container ? container.querySelector('.topic-tag[data-is-business="true"]') : null;
+                    if (businessTag) {
+                        businessTag.remove();
+                        if (typeSwitch) {
+                            typeSwitch.disabled = false;
+                        }
+                    }
+                } else {
+                    if (legacyContainer) legacyContainer.style.display = 'block';
+                    if (directOnlineContainer) directOnlineContainer.style.display = 'none';
+                    if (directOnlineSelect) directOnlineSelect.value = '';
+                    
+                    // Show meeting options
+                    if (optionsHeader) optionsHeader.style.display = 'block';
+                    if (optionsSection) optionsSection.style.display = 'flex';
+                    
+                    // Unlock language switch
+                    if (langSwitch) {
+                        langSwitch.disabled = false;
+                    }
+                    if (hiddenLangInput) {
+                        hiddenLangInput.value = 'english';
+                    }
+
+                    // Enable Group Business Meeting topic
+                    if (businessTopicOption) {
+                        businessTopicOption.disabled = false;
+                        businessTopicOption.style.display = 'block';
+                    }
+                }
+            }
+
+            if (groupTypeSelector) {
+                groupTypeSelector.addEventListener('change', handleGroupTypeChange);
+                handleGroupTypeChange();
             }
         });
     </script>

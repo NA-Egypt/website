@@ -13,6 +13,7 @@ class Meeting extends Model
     use MeetingDurationTrait;
     protected $fillable = [
         'group_id',
+        'direct_online_group_id',
         'topic_id',
         'day_id',
         'start_time',
@@ -30,6 +31,15 @@ class Meeting extends Model
     ];
     public function group() {
         return $this->belongsTo(Group::class);
+    }
+
+    public function directOnlineGroup() {
+        return $this->belongsTo(DirectOnlineGroup::class);
+    }
+
+    public function getGroupOrDirectAttribute()
+    {
+        return $this->group ?: $this->directOnlineGroup;
     }
 
     public function day() {

@@ -203,6 +203,11 @@
             </li>
             @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))
             <li> 
+              <a href="{{ route('direct-online-group.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.legend_online') }} ({{ __('messages.Direct') ?? 'Direct' }})</a>
+            </li>
+            @endif
+            @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))
+            <li> 
               <a href="{{ route('meeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Meetings') }}</a>
             </li>
             @endif

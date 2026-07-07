@@ -9,7 +9,7 @@ class MeetingFilterService
 {
     public function filterMeetings($filters)
     {
-        $query = Meeting::with(['day', 'group.neighborhood.city', 'options', 'topics']);
+        $query = Meeting::with(['day', 'group.neighborhood.city', 'directOnlineGroup', 'options', 'topics']);
         $locale = app()->getLocale();
         // Determine the field based on locale
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
@@ -59,30 +59,40 @@ class MeetingFilterService
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->whereHas('group', function ($q) use ($search) {
-                $q->where('ar_name', 'LIKE', '%' . $search . '%')
-                  ->orWhere('en_name', 'LIKE', '%' . $search . '%')
-                  ->orWhere('ar_address', 'LIKE', '%' . $search . '%')
-                  ->orWhere('en_address', 'LIKE', '%' . $search . '%');
+            $query->where(function ($bigSearch) use ($search) {
+                $bigSearch->whereHas('group', function ($q) use ($search) {
+                    $q->where('ar_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('en_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('ar_address', 'LIKE', '%' . $search . '%')
+                      ->orWhere('en_address', 'LIKE', '%' . $search . '%');
+                })->orWhereHas('directOnlineGroup', function ($q) use ($search) {
+                    $q->where('ar_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('en_name', 'LIKE', '%' . $search . '%');
+                });
             });
         }
 
         if (!empty($filters['virtualOnly'])) {
-            $query->whereHas('group', function ($q) {
-                $q->whereIn('group_type', ['اونلاين', 'اون لاين', 'online'])
-                  ->where(function ($sub) {
-                      $sub->whereNull('location')
-                          ->orWhere(function ($sub2) {
-                              $sub2->where('location', 'not like', '%map%')
-                                   ->where('location', 'not like', '%goo.gl%');
-                          });
-                  });
+            $query->where(function ($bigQ) {
+                $bigQ->whereHas('group', function ($q) {
+                    $q->whereIn('group_type', ['اونلاين', 'اون لاين', 'online'])
+                      ->where(function ($sub) {
+                          $sub->whereNull('location')
+                              ->orWhere(function ($sub2) {
+                                  $sub2->where('location', 'not like', '%map%')
+                                       ->where('location', 'not like', '%goo.gl%');
+                              });
+                      });
+                })->orWhereNotNull('direct_online_group_id');
             });
         } else {
             $query->where(function ($q) {
-                $q->whereDoesntHave('group')
-                  ->orWhereHas('group', function ($sub) {
-                      $sub->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+                $q->whereNull('direct_online_group_id')
+                  ->where(function ($subQ) {
+                      $subQ->whereDoesntHave('group')
+                           ->orWhereHas('group', function ($sub) {
+                               $sub->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+                           });
                   });
             });
         }
