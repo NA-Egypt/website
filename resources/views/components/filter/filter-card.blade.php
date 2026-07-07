@@ -100,10 +100,13 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         <div class="col-12">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4 {{ $meetings->count() === 1 ? 'justify-content-center' : '' }}">
 @foreach($meetings as $meeting)
-@if(!$meeting->group || !$meeting->day) @continue @endif
+@php
+    $group = $meeting->groupOrDirect;
+@endphp
+@if(!$group || !$meeting->day) @continue @endif
 <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($loop->first) id="tour-meeting-card" @endif>
     @php
-        $isOnline = $meeting->group && in_array($meeting->group->group_type, ['اونلاين', 'اون لاين', 'online']);
+        $isOnline = $meeting->direct_online_group_id !== null || ($group && in_array($group->group_type, ['اونلاين', 'اون لاين', 'online']));
         $isBusiness = $meeting->topics && $meeting->topics->contains('en_name', 'Group Business Meeting');
     @endphp
     @if($meeting->status=="suspended")
@@ -139,7 +142,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         </span>
     </div>
     <div class="meeting-group-name">
-        {{ $direction === 'rtl' ? $meeting->group->ar_name : $meeting->group->en_name }}
+        {{ $direction === 'rtl' ? $group->ar_name : $group->en_name }}
     </div>
 
     <!-- Type and Topic in a single row -->
@@ -169,10 +172,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 {{ __("messages." . $meeting->type) }}
             </div>
         @endif
-        @if($meeting->group && $meeting->group->capacity)
+        @if($group && isset($group->capacity) && $group->capacity)
             <div class="meeting-topic-badge">
                 <x-fas-users style="width:16px; height:16px;"/>
-                {{$meeting->group->capacity }}
+                {{$group->capacity }}
             </div>
         @endif
     </div>
@@ -194,14 +197,14 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             }
         }
     @endphp
-    @if($meeting->group->phone && !$isBot)
+    @if($group && $group->phone && !$isBot)
     <div data-nosnippet>
         <x-fas-user-circle style="width:16px; height:16px;"/>
-        {{ $direction === 'rtl' ? $meeting->group->ar_gsr_name : $meeting->group->en_gsr_name }}
+        {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
         <br />
         <x-fas-mobile-alt style="width:16px; height:16px;"/>
-        <a href="tel:{{ $meeting->group->phone }}" itemprop="telephone">
-            {{ $meeting->group->phone }}
+        <a href="tel:{{ $group->phone }}" itemprop="telephone">
+            {{ $group->phone }}
         </a>
     </div>
     @endif
@@ -240,27 +243,36 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     </div>
     @endif
 
-    @if($meeting->group->ar_address)
+    @if($group && $group->ar_address)
         <div class="meeting-options">
             <x-fas-map-pin style="width:16px; height:16px;"/>
             {{
                 $direction === 'rtl'
-                    ? $meeting->group->ar_address
-                    : ($meeting->group->en_address ?: $meeting->group->ar_address)
+                    ? $group->ar_address
+                    : ($group->en_address ?: $group->ar_address)
             }}
-            @if($meeting->group->location)
-            <br />
-            <a href="{{ $meeting->group->location }}" target="_blank">
-            @if(\Illuminate\Support\Str::contains(strtolower($meeting->group->location), ['map', 'goo.gl']))
-                <x-fas-map-marker-alt style="width:16px; height:16px;"/> {{__('messages.Map')}}
-            @elseif(\Illuminate\Support\Str::contains(strtolower($meeting->group->location), ['zoom', 'meet', 'teams']))
-                <x-fas-video style="width:16px; height:16px;"/> {{__('messages.zoomlink')}}
-            @elseif($meeting->group->group_type !== 'فعلي')
-                <x-fas-video style="width:16px; height:16px;"/> {{__('messages.zoomlink')}}
+        </div>
+    @endif
+
+    @if($group && $group->location)
+        <div class="meeting-options d-flex align-items-center gap-2 flex-wrap">
+            <a href="{{ $group->location }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
+            @if(\Illuminate\Support\Str::contains(strtolower($group->location), ['map', 'goo.gl']))
+                <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
+            @elseif(\Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']))
+                <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
+            @elseif($group instanceof \App\Models\DirectOnlineGroup || $group->group_type !== 'فعلي')
+                <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
             @else
-                <x-fas-map-marker-alt style="width:16px; height:16px;"/> {{__('messages.Map')}}
+                <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
             @endif
             </a>
+
+            @if($group instanceof \App\Models\DirectOnlineGroup || \Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']) || ($group && $group->group_type !== 'فعلي'))
+                <a href="https://wa.me/201060933888" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
+                    <x-fab-whatsapp style="width:12px; height:12px;" class="me-1"/>
+                    <span>{{ __('messages.Helpline') }}</span>
+                </a>
             @endif
         </div>
     @endif

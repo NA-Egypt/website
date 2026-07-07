@@ -1203,5 +1203,14 @@ return [
     'No permissions assigned' => 'لم يتم تعيين صلاحيات',
     'Search Permissions...' => 'البحث عن الصلاحيات...',
     'General & Others' => 'عامة وأخرى',
+    'Group Type' => 'نوع المجموعة',
+    'Standard Group' => 'مجموعة عادية',
+    'Direct Online Group' => 'مجموعة أونلاين مباشرة',
+    'Direct Online Groups' => 'مجموعات أونلاين مباشرة',
+    'Direct Online Group Name' => 'اسم مجموعة أونلاين مباشرة',
+    'Zoom Link' => 'رابط زووم',
+    'Direct' => 'مباشر',
+    'optional' => 'اختياري',
+    'Helpline' => 'خط المساعدة',
 ];
 

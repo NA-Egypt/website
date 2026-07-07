@@ -5,6 +5,7 @@ use App\Http\Controllers\GreatingPagesController;
 use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\DirectOnlineGroupController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\NeighborhoodController;
 use App\Http\Controllers\PermissionController;
@@ -106,6 +107,15 @@ Route::group(
             Route::get('/group/{group}',[GroupController::class,'edit'])->name('group.edit');
             Route::put('/group/{group}',[GroupController::class,'update'])->name('group.update');
             Route::delete('/group/{group}',[GroupController::class,'destroy'])->name('group.destroy');
+
+            // Direct Online Group Routes:
+            Route::get('/direct-online-group',[DirectOnlineGroupController::class,'index'])->name('direct-online-group.index');
+            Route::get('/direct-online-group/create',[DirectOnlineGroupController::class,'create'])->name('direct-online-group.create');
+            Route::post('/direct-online-group',[DirectOnlineGroupController::class,'store'])->name('direct-online-group.store');
+            Route::get('/direct-online-group/show/{directOnlineGroup}',[DirectOnlineGroupController::class,'show'])->name('direct-online-group.show');
+            Route::get('/direct-online-group/{directOnlineGroup}',[DirectOnlineGroupController::class,'edit'])->name('direct-online-group.edit');
+            Route::put('/direct-online-group/{directOnlineGroup}',[DirectOnlineGroupController::class,'update'])->name('direct-online-group.update');
+            Route::delete('/direct-online-group/{directOnlineGroup}',[DirectOnlineGroupController::class,'destroy'])->name('direct-online-group.destroy');
 
             // Service Committees Routes:
             Route::get('/serviceCommittee',[serviceCommitteeController::class,'index'])->name('serviceCommittee.index');

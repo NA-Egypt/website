@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Day;
 use App\Models\Group;
+use App\Models\DirectOnlineGroup;
 use App\Models\Meeting;
 use App\Models\Option;
 use App\Models\Topic;
@@ -32,6 +33,7 @@ class MeetingController extends Controller
         Gate::authorize('create', Meeting::class);
         $topics = Topic::all();
         $groups = Group::all();
+        $directOnlineGroups = DirectOnlineGroup::all();
         $days = Day::all();
         $options = Option::all();
 
@@ -51,6 +53,7 @@ class MeetingController extends Controller
         return view('meeting.create', [
             'topics'    => $topics,
             'groups'    => $groups,
+            'directOnlineGroups' => $directOnlineGroups,
             'days'      => $days,
             'options'   => $options,
             'group_id'  => $group_id
@@ -85,20 +88,21 @@ class MeetingController extends Controller
         Gate::authorize('create', Meeting::class);
 
         $fields = request()->validate([
-            'group_id'      => 'required',
-            'topics'        => 'nullable|array|max:3',
-            'topics.*'      => 'exists:topics,id',
-            'day_id'        => 'required',
-            'start_time'    => 'required',
-            'end_time'      => 'required|after:start_time',
-            'notes'         => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
-            'type'          => 'required',
-            'lang'          => 'required|in:arabic,english',
-            'status'        => 'required|in:suspended,available',
-            'options'       => 'nullable|array',
-            'options.*'     => 'exists:options,id',
-            'recurrence'    => 'required|array',
-            'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
+            'group_id'               => 'required_without:direct_online_group_id|nullable|exists:groups,id',
+            'direct_online_group_id' => 'required_without:group_id|nullable|exists:direct_online_groups,id',
+            'topics'                 => 'nullable|array|max:3',
+            'topics.*'               => 'exists:topics,id',
+            'day_id'                 => 'required',
+            'start_time'             => 'required',
+            'end_time'               => 'required|after:start_time',
+            'notes'                  => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
+            'type'                   => 'required',
+            'lang'                   => 'required|in:' . ($request->filled('direct_online_group_id') ? 'arabic' : 'arabic,english'),
+            'status'                 => 'required|in:suspended,available',
+            'options'                => 'nullable|array',
+            'options.*'              => 'exists:options,id',
+            'recurrence'             => 'required|array',
+            'recurrence.*'           => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
 
         if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
@@ -116,16 +120,17 @@ class MeetingController extends Controller
         }
 
         $meeting = Meeting::create([
-            'group_id'      => $fields['group_id'],
-            'topic_id'      => $topics[0],
-            'day_id'        => $fields['day_id'],
-            'start_time'    => $fields['start_time'],
-            'end_time'      => $fields['end_time'],
-            'notes'         => $fields['notes'] ?? null,
-            'type'          => $fields['type'],
-            'lang'          => $fields['lang'],
-            'status'        => $fields['status'],
-            'recurrence'    => $fields['recurrence'],
+            'group_id'               => $fields['group_id'] ?? null,
+            'direct_online_group_id' => $fields['direct_online_group_id'] ?? null,
+            'topic_id'               => $topics[0],
+            'day_id'                 => $fields['day_id'],
+            'start_time'             => $fields['start_time'],
+            'end_time'               => $fields['end_time'],
+            'notes'                  => $fields['notes'] ?? null,
+            'type'                   => $fields['type'],
+            'lang'                   => $fields['lang'],
+            'status'                 => $fields['status'],
+            'recurrence'             => $fields['recurrence'],
         ]);
 
         if (!empty($fields['options'])) {
@@ -149,20 +154,18 @@ class MeetingController extends Controller
     {
         Gate::authorize('update', $meeting);
         $topics = Topic::all();
-
         $groups = Group::all();
-
+        $directOnlineGroups = DirectOnlineGroup::all();
         $days = Day::all();
-
         $options = Option::all();
 
         return view('meeting.edit', [
-
-            'topics'    => $topics,
-            'groups'    => $groups,
-            'days'      => $days,
-            'meeting'   => $meeting,
-            'options'   => $options
+            'topics'             => $topics,
+            'groups'             => $groups,
+            'directOnlineGroups' => $directOnlineGroups,
+            'days'               => $days,
+            'meeting'            => $meeting,
+            'options'            => $options
         ]);
     }
 
@@ -173,20 +176,21 @@ class MeetingController extends Controller
     {
         Gate::authorize('update', $meeting);
         $fields = $request->validate([
-            'group_id'      => 'required|exists:groups,id',
-            'topics'        => 'nullable|array|max:3',
-            'topics.*'      => 'exists:topics,id',
-            'day_id'        => 'required|exists:days,id',
-            'start_time'    => 'required',
-            'end_time'      => 'required|after:start_time',
-            'notes'         => 'nullable|string',
-            'type'          => 'required',
-            'lang'          => 'required|in:arabic,english',
-            'status'        => 'required|in:suspended,available',
-            'options'       => 'nullable|array',
-            'options.*'     => 'exists:options,id',
-            'recurrence'    => 'required|array',
-            'recurrence.*'  => 'in:weekly,1st,2nd,3rd,4th,5th,last',
+            'group_id'               => 'required_without:direct_online_group_id|nullable|exists:groups,id',
+            'direct_online_group_id' => 'required_without:group_id|nullable|exists:direct_online_groups,id',
+            'topics'                 => 'nullable|array|max:3',
+            'topics.*'               => 'exists:topics,id',
+            'day_id'                 => 'required|exists:days,id',
+            'start_time'             => 'required',
+            'end_time'               => 'required|after:start_time',
+            'notes'                  => 'nullable|string',
+            'type'                   => 'required',
+            'lang'                   => 'required|in:' . ($request->filled('direct_online_group_id') ? 'arabic' : 'arabic,english'),
+            'status'                 => 'required|in:suspended,available',
+            'options'                => 'nullable|array',
+            'options.*'              => 'exists:options,id',
+            'recurrence'             => 'required|array',
+            'recurrence.*'           => 'in:weekly,1st,2nd,3rd,4th,5th,last',
         ]);
     
         if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
@@ -204,16 +208,17 @@ class MeetingController extends Controller
         }
 
         $meeting->update([
-            'group_id'    => $fields['group_id'],
-            'topic_id'    => $topics[0],
-            'day_id'      => $fields['day_id'],
-            'start_time'  => $fields['start_time'],
-            'end_time'    => $fields['end_time'],
-            'notes'       => $fields['notes'] ?? null,
-            'type'        => $fields['type'],
-            'lang'        => $fields['lang'],
-            'status'      => $fields['status'],
-            'recurrence'  => $fields['recurrence'],
+            'group_id'               => $fields['group_id'] ?? null,
+            'direct_online_group_id' => $fields['direct_online_group_id'] ?? null,
+            'topic_id'               => $topics[0],
+            'day_id'                 => $fields['day_id'],
+            'start_time'             => $fields['start_time'],
+            'end_time'               => $fields['end_time'],
+            'notes'                  => $fields['notes'] ?? null,
+            'type'                   => $fields['type'],
+            'lang'                   => $fields['lang'],
+            'status'                 => $fields['status'],
+            'recurrence'             => $fields['recurrence'],
         ]);
     
         $meeting->options()->sync($fields['options'] ?? []);

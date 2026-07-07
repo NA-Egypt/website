@@ -1199,5 +1199,14 @@ return [
     'No permissions assigned' => 'No permissions assigned',
     'Search Permissions...' => 'Search Permissions...',
     'General & Others' => 'General & Others',
+    'Group Type' => 'Group Type',
+    'Standard Group' => 'Standard Group',
+    'Direct Online Group' => 'Direct Online Group',
+    'Direct Online Groups' => 'Direct Online Groups',
+    'Direct Online Group Name' => 'Direct Online Group Name',
+    'Zoom Link' => 'Zoom Link',
+    'Direct' => 'Direct',
+    'optional' => 'Optional',
+    'Helpline' => 'Helpline',
 ];
 

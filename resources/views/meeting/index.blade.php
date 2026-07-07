@@ -29,7 +29,7 @@
                     @foreach ($meetings as $meeting)                    
                         <tr>
                             {{-- <td>{{ $meeting->id }}</td> --}}
-                            <td>{{ $meeting->group->ar_name }}</td>
+                            <td>{{ $meeting->groupOrDirect?->ar_name }}</td>
                             <td>
                                 @if(app()->getLocale() === 'ar')
                                     {{$meeting->topic?->ar_name}}
