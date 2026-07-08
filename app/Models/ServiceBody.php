@@ -68,5 +68,9 @@ class ServiceBody extends Model
     {
         return $this->formatDate($this->date);
     }
-    
+
+    public function literatureRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(LiteratureRequest::class);
+    }
 }

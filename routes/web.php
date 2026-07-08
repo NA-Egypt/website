@@ -59,6 +59,18 @@ Route::group(
             // Lit Inventory Routes:
             Route::get('/lit', [\App\Http\Controllers\LitController::class, 'index'])->name('lit.index');
 
+            // Literature Request Routes:
+            Route::get('/literature-requests/cart', [\App\Http\Controllers\LiteratureRequestController::class, 'cart'])->name('literature-requests.cart');
+            Route::post('/literature-requests/cart/update', [\App\Http\Controllers\LiteratureRequestController::class, 'updateCart'])->name('literature-requests.cart.update');
+            Route::post('/literature-requests/submit', [\App\Http\Controllers\LiteratureRequestController::class, 'submitRequest'])->name('literature-requests.submit');
+            Route::get('/literature-requests/treasurer', [\App\Http\Controllers\LiteratureRequestController::class, 'treasurerDashboard'])->name('literature-requests.treasurer');
+            Route::post('/literature-requests/{id}/approve-send', [\App\Http\Controllers\LiteratureRequestController::class, 'approveAndSend'])->name('literature-requests.approve-send');
+            Route::get('/literature-requests/committee', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeDashboard'])->name('literature-requests.committee');
+            Route::get('/literature-requests/committee/{id}/edit', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeEdit'])->name('literature-requests.committee.edit');
+            Route::post('/literature-requests/committee/{id}/update', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeUpdate'])->name('literature-requests.committee.update');
+            Route::get('/literature-requests/archive', [\App\Http\Controllers\LiteratureRequestController::class, 'archive'])->name('literature-requests.archive');
+            Route::get('/literature-requests/{id}/pdf', [\App\Http\Controllers\LiteratureRequestController::class, 'exportPdf'])->name('literature-requests.pdf');
+
 //            Route::get('/group/show/{group}', [GroupController::class, 'show'])
 //                ->name('group.show');
 

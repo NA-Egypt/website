@@ -51,4 +51,9 @@ class Group extends Model
     {
         return $this->hasMany(Agenda::class);
     }
+
+    public function literatureRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(LiteratureRequest::class);
+    }
 }

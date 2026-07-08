@@ -382,6 +382,41 @@
       </li>
       @endif
 
+      {{-- Literature Requests Area --}}
+      @if(auth()->check())
+      <li class="menu-label">{{ __('messages.Literature Requests') }}</li>
+      @if(auth()->user()->hasRole('gsr'))
+      <li>
+        <a href="{{ route('literature-requests.cart') }}">
+          <div class="parent-icon"><i class="bi bi-cart"></i></div>
+          <div class="menu-title">{{ __('messages.Literature Request') }}</div>
+        </a>
+      </li>
+      @endif
+      @if(auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin'))
+      <li>
+        <a href="{{ route('literature-requests.treasurer') }}">
+          <div class="parent-icon"><i class="bi bi-wallet2"></i></div>
+          <div class="menu-title">{{ __('messages.Treasurer Dashboard') }}</div>
+        </a>
+      </li>
+      @endif
+      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User'))
+      <li>
+        <a href="{{ route('literature-requests.committee') }}">
+          <div class="parent-icon"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+          <div class="menu-title">{{ __('messages.Literature Requests') }}</div>
+        </a>
+      </li>
+      @endif
+      <li>
+        <a href="{{ route('literature-requests.archive') }}">
+          <div class="parent-icon"><i class="bi bi-archive"></i></div>
+          <div class="menu-title">{{ __('messages.literature_requests_archive') }}</div>
+        </a>
+      </li>
+      @endif
+
     </ul>
     <!--end navigation-->
 
