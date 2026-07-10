@@ -89,6 +89,28 @@
             <form action="{{ route('literature-requests.cart.update') }}" method="POST" id="cart-form">
                 @csrf
                 <input type="hidden" name="group_id" value="{{ $group->id }}">
+
+                {{-- Category Tabs --}}
+                @php
+                    $itemCategories = $items->pluck('category')->unique();
+                @endphp
+                @if($items->count() > 0)
+                    <ul class="nav nav-pills flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="categoryTabList" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
+                        <li class="nav-item flex-shrink-0" role="presentation">
+                            <button class="nav-link active py-2 rounded-2 fw-bold category-tab-btn" data-category="all" type="button" style="font-size: 0.9rem;">
+                                {{ __('messages.all') ?? 'All' }}
+                            </button>
+                        </li>
+                        @foreach($itemCategories as $cat)
+                            <li class="nav-item flex-shrink-0" role="presentation">
+                                <button class="nav-link py-2 rounded-2 fw-bold category-tab-btn" data-category="{{ Str::slug($cat) }}" type="button" style="font-size: 0.9rem;">
+                                    {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+
                 <div class="table-responsive">
                     <table class="table align-middle table-hover mb-0">
                         <thead class="table-light">
@@ -106,7 +128,7 @@
                                     $existingItem = $request ? $request->items->where('inventory_item_id', $item->id)->first() : null;
                                     $existingQty = $existingItem ? $existingItem->quantity : 0;
                                 @endphp
-                                <tr class="item-row" data-price="{{ $item->selling_price }}">
+                                <tr class="item-row" data-price="{{ $item->selling_price }}" data-category="{{ Str::slug($item->category) }}">
                                     <td>
                                         <div class="fw-bold">{{ $item->name }}</div>
                                         <small class="text-muted">{{ $item->description }}</small>
@@ -197,6 +219,27 @@
             });
 
             recalculateCart();
+
+            // Tab filtering logic
+            const tabBtns = document.querySelectorAll('.category-tab-btn');
+            const itemRows = document.querySelectorAll('.item-row');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const selectedCategory = this.getAttribute('data-category');
+
+                    itemRows.forEach(row => {
+                        if (selectedCategory === 'all' || row.getAttribute('data-category') === selectedCategory) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
         });
     </script>
 </x-layout>
