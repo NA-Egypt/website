@@ -109,7 +109,7 @@
                 <i class="bi bi-folder-fill me-2"></i> {{ __('messages.Service & Archives Quick Access') ?? 'Service & Archives Quick Access' }}
             </h4>
             <div class="row g-4">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-4">
                     <div class="p-3 rounded-4 h-100 d-flex flex-column justify-content-between transition-hover animate-card" style="background: rgba(59, 130, 246, 0.03); border: 1px solid var(--glass-border);">
                         <div class="d-flex align-items-start gap-3 mb-3">
                             <div class="widgets-icons bg-light text-primary rounded-3 flex-shrink-0 shadow-sm border border-light">
@@ -127,7 +127,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-4">
                     <div class="p-3 rounded-4 h-100 d-flex flex-column justify-content-between transition-hover animate-card" style="background: rgba(16, 185, 129, 0.03); border: 1px solid var(--glass-border);">
                         <div class="d-flex align-items-start gap-3 mb-3">
                             <div class="widgets-icons bg-light text-success rounded-3 flex-shrink-0 shadow-sm border border-light">
@@ -140,6 +140,37 @@
                         </div>
                         <div class="d-flex justify-content-end">
                             <a href="{{ route('groups-agendas.archive', ['group_id' => $group->id]) }}" class="btn btn-success rounded-pill px-4 btn-sm">
+                                <i class="bi bi-folder2-open me-1"></i> {{ __('messages.Show') ?? 'Open' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="p-3 rounded-4 h-100 d-flex flex-column justify-content-between transition-hover animate-card" style="background: rgba(245, 158, 11, 0.03); border: 1px solid var(--glass-border);">
+                        <div class="d-flex align-items-start gap-3 mb-3">
+                            <div class="widgets-icons bg-light text-warning rounded-3 flex-shrink-0 shadow-sm border border-light">
+                                <i class="bi bi-cart-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1 text-dark">{{ __('messages.Literature Requests') }}</h5>
+                                <p class="text-secondary small mb-0">{{ app()->getLocale() === 'ar' ? 'طلب المطبوعات شهرياً وعرض الطلبات السابقة والفواتير.' : 'Request literature monthly and view past requests/invoices.' }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 flex-wrap">
+                            @if(auth()->user()->hasRole('gsr'))
+                                <a href="{{ route('literature-requests.cart') }}" class="btn btn-warning text-white rounded-pill px-3 btn-sm">
+                                    <i class="bi bi-cart-plus me-1"></i> {{ __('messages.submit_request') }}
+                                </a>
+                            @elseif(auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody'))
+                                <a href="{{ route('literature-requests.treasurer') }}" class="btn btn-warning text-white rounded-pill px-3 btn-sm">
+                                    <i class="bi bi-wallet2 me-1"></i> {{ __('messages.Treasurer Dashboard') }}
+                                </a>
+                            @elseif(auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User'))
+                                <a href="{{ route('literature-requests.committee') }}" class="btn btn-warning text-white rounded-pill px-3 btn-sm">
+                                    <i class="bi bi-file-earmark-spreadsheet me-1"></i> {{ __('messages.Literature Requests') }}
+                                </a>
+                            @endif
+                            <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-warning rounded-pill px-3 btn-sm">
                                 <i class="bi bi-folder2-open me-1"></i> {{ __('messages.Show') ?? 'Open' }}
                             </a>
                         </div>
