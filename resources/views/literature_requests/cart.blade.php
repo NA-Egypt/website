@@ -23,7 +23,7 @@
             <div class="card mb-4 border-0 shadow-sm p-3">
                 <form action="{{ route('literature-requests.cart') }}" method="GET" class="row g-2 align-items-center">
                     <div class="col-12 col-md-4">
-                        <label class="form-label fw-bold text-secondary">Requesting on behalf of group:</label>
+                        <label class="form-label fw-bold text-secondary">{{ __('messages.Requesting on behalf of group:') }}</label>
                         <select name="group_id" class="form-select rounded-pill" onchange="this.form.submit()">
                             @foreach($allGroups as $g)
                                 <option value="{{ $g->id }}" {{ $group->id == $g->id ? 'selected' : '' }}>
