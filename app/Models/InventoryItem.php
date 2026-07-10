@@ -22,7 +22,13 @@ class InventoryItem extends Model
 
     public function getStoreDisplayNameAttribute()
     {
-        return $this->name_en ? "{$this->name_en} / {$this->name}" : $this->name;
+        $isEnglishCategory = in_array($this->category, ['English Books', 'English IP']);
+        
+        if ($isEnglishCategory) {
+            return $this->name_en ?: $this->name;
+        }
+        
+        return $this->name ?: $this->name_en;
     }
 
     public function transactions()
