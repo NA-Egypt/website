@@ -220,16 +220,36 @@
             background-color: rgba(59, 130, 246, 0.04) !important;
             transform: scale(1.002);
         }
+        .select2-container {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
         /* Custom styling to match Bootstrap 5 minimal theme for Select2 */
         .select2-container--bootstrap4 .select2-selection--single {
             border: 1px solid var(--glass-border) !important;
             border-radius: 8px !important;
-            height: calc(1.5em + .75rem + 2px) !important;
+            height: 38px !important;
             background: rgba(0, 0, 0, 0.02) !important;
+            display: flex !important;
+            align-items: center !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
         }
         .select2-container--bootstrap4 .select2-selection__rendered {
             color: var(--text-primary) !important;
-            line-height: calc(1.5em + .75rem) !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            line-height: normal !important;
+        }
+        .select2-container--bootstrap4 .select2-selection__arrow {
+            height: 36px !important;
+            top: 1px !important;
+            right: 10px !important;
+        }
+        [dir="rtl"] .select2-container--bootstrap4 .select2-selection__arrow {
+            left: 10px !important;
+            right: auto !important;
         }
     </style>
 
