@@ -27,10 +27,14 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     /**
      * Helper to get group of current user
      */
-    private function getCurrentGroup()
+    private function getCurrentGroup(Request $request = null)
     {
         $user = Auth::user();
         if ($user->hasRole('super admin')) {
+            $groupId = $request ? ($request->input('group_id') ?? $request->input('selected_group_id')) : request('group_id');
+            if ($groupId) {
+                return Group::find($groupId);
+            }
             return Group::first();
         }
         return Group::where('user_id', $user->id)->first();
@@ -39,9 +43,9 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     /**
      * GSR/Group Cart view
      */
-    public function cart()
+    public function cart(Request $request)
     {
-        $group = $this->getCurrentGroup();
+        $group = $this->getCurrentGroup($request);
         if (!$group) {
             return redirect()->route('dashboard')->with('error', 'You must be associated with a group to request literature.');
         }
@@ -50,7 +54,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $isLocked = Carbon::now()->day > 19;
 
         // Check if there is an existing request for this month
-        $request = LiteratureRequest::where('group_id', $group->id)
+        $requestData = LiteratureRequest::where('group_id', $group->id)
             ->where('month', $month)
             ->first();
 
@@ -60,7 +64,16 @@ class LiteratureRequestController extends Controller implements HasMiddleware
               ->orWhere('lit_quantity', '>', 0);
         })->orderBy('name')->get();
 
-        return view('literature_requests.cart', compact('group', 'request', 'items', 'isLocked', 'month'));
+        $allGroups = Auth::user()->hasRole('super admin') ? Group::orderBy('ar_name')->get() : collect();
+
+        return view('literature_requests.cart', [
+            'group' => $group,
+            'request' => $requestData,
+            'items' => $items,
+            'isLocked' => $isLocked,
+            'month' => $month,
+            'allGroups' => $allGroups
+        ]);
     }
 
     /**
@@ -68,13 +81,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
      */
     public function updateCart(Request $request)
     {
-        $group = $this->getCurrentGroup();
+        $group = $this->getCurrentGroup($request);
         if (!$group) {
-            return response()->json(['error' => 'No group associated.'], 403);
+            return redirect()->back()->with('error', 'No group associated.');
         }
 
         if (Carbon::now()->day > 19) {
-            return response()->json(['error' => __('messages.locked_after_19th')], 403);
+            return redirect()->back()->with('error', __('messages.locked_after_19th'));
         }
 
         $month = Carbon::now()->startOfMonth();
@@ -128,15 +141,15 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             'total_price' => $totalPrice,
         ]);
 
-        return redirect()->route('literature-requests.cart')->with('success', __('messages.item_updated_success'));
+        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', __('messages.item_updated_success'));
     }
 
     /**
      * Submit group literature request
      */
-    public function submitRequest()
+    public function submitRequest(Request $request)
     {
-        $group = $this->getCurrentGroup();
+        $group = $this->getCurrentGroup($request);
         if (!$group) {
             return redirect()->back()->with('error', 'Group not found.');
         }
@@ -160,7 +173,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         $litRequest->update(['status' => 'submitted']);
 
-        return redirect()->route('literature-requests.cart')->with('success', 
+        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', 
             $isOverride ? __('messages.request_overridden_success') : __('messages.request_submitted_success')
         );
     }

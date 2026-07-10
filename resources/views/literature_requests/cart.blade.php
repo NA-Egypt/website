@@ -18,6 +18,24 @@
             </div>
         </div>
 
+        {{-- Group switcher for Super Admin --}}
+        @if(auth()->user()->hasRole('super admin') && count($allGroups) > 0)
+            <div class="card mb-4 border-0 shadow-sm p-3">
+                <form action="{{ route('literature-requests.cart') }}" method="GET" class="row g-2 align-items-center">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label fw-bold text-secondary">Requesting on behalf of group:</label>
+                        <select name="group_id" class="form-select rounded-pill" onchange="this.form.submit()">
+                            @foreach($allGroups as $g)
+                                <option value="{{ $g->id }}" {{ $group->id == $g->id ? 'selected' : '' }}>
+                                    {{ $g->{app()->getLocale() . '_name'} ?? $g->en_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+            </div>
+        @endif
+
         {{-- Alerts --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
@@ -70,6 +88,7 @@
         <div class="card border-0 shadow-sm p-4">
             <form action="{{ route('literature-requests.cart.update') }}" method="POST" id="cart-form">
                 @csrf
+                <input type="hidden" name="group_id" value="{{ $group->id }}">
                 <div class="table-responsive">
                     <table class="table align-middle table-hover mb-0">
                         <thead class="table-light">
@@ -141,6 +160,7 @@
                         @if($request && $request->items->count() > 0)
                             <form action="{{ route('literature-requests.submit') }}" method="POST" class="d-inline">
                                 @csrf
+                                <input type="hidden" name="group_id" value="{{ $group->id }}">
                                 <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
                                     <i class="bi bi-send me-1"></i>
                                     {{ __('messages.submit_request') }}
