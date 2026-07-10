@@ -1260,5 +1260,15 @@ return [
     'Try adjusting filters or search parameters.' => 'جرّب تعديل عوامل التصفية أو معايير البحث.',
     'qty' => 'الكمية',
     'Requesting on behalf of group:' => 'طلب باسم المجموعة:',
+    'draft' => 'مسودة',
+    'submitted' => 'مُقدّم',
+    'sent_to_committee' => 'أُرسل للجنة الأدبيات',
+    'returned_by_committee' => 'مُرتجع من لجنة الأدبيات',
+    'literature_requests_archive_description' => 'تصفح طلبات الأدبيات حسب السنة والشهر.',
+    'group_or_service_body' => 'المجموعة / المنطقة أو المنتدى',
+    'Month' => 'الشهر',
+    'Year' => 'السنة',
+    'Received Service Body Accumulated Invoices' => 'الفواتير المجمعة المستلمة من المناطق أو المنتديات',
+    'No service body requests received.' => 'لا توجد طلبات مقدمة من المناطق أو المنتديات.',
 ];
 

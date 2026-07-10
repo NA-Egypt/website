@@ -1256,5 +1256,14 @@ return [
     'Try adjusting filters or search parameters.' => 'Try adjusting filters or search parameters.',
     'qty' => 'Quantity',
     'Requesting on behalf of group:' => 'Requesting on behalf of group:',
+    'draft' => 'Draft',
+    'submitted' => 'Submitted',
+    'sent_to_committee' => 'Sent to Committee',
+    'returned_by_committee' => 'Returned by Committee',
+    'group_or_service_body' => 'Group / Service Body',
+    'literature_requests_archive_description' => 'Browse literature requests by Year and Month.',
+    'Month' => 'Month',
+    'Year' => 'Year',
+    'Received Service Body Accumulated Invoices' => 'Received Service Body Accumulated Invoices',
+    'No service body requests received.' => 'No service body requests received.',
 ];
-

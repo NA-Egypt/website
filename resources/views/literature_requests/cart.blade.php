@@ -72,7 +72,7 @@
                         elseif ($request->status === 'returned_by_committee') $badgeColor = 'bg-success';
                     @endphp
                     <span class="badge {{ $badgeColor }} rounded-pill px-3 py-2">
-                        {{ strtoupper($request->status) }}
+                        {{ __('messages.' . $request->status) }}
                     </span>
                 </h5>
                 <p class="mb-1 text-secondary">
