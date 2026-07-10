@@ -1257,5 +1257,6 @@ return [
     'no_agendas_submitted_yet' => 'لا توجد طلبات مقدمة بعد',
     'Try adjusting filters or search parameters.' => 'جرّب تعديل عوامل التصفية أو معايير البحث.',
     'qty' => 'الكمية',
+    'Requesting on behalf of group:' => 'طلب باسم المجموعة:',
 ];
 

@@ -1253,5 +1253,6 @@ return [
     'no_agendas_submitted_yet' => 'No submitted requests yet',
     'Try adjusting filters or search parameters.' => 'Try adjusting filters or search parameters.',
     'qty' => 'Quantity',
+    'Requesting on behalf of group:' => 'Requesting on behalf of group:',
 ];
 
