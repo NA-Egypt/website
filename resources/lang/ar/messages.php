@@ -783,7 +783,7 @@ return [
 
     // Reconciled translations
     'Approved' => 'تمت الموافقة',
-    'Are you sure you want to approve and send this report to ASC?' => 'هل أنت متأكد من الموافقة وإرسال هذا التقرير إلى لجنة الخدمة المحلية (ASC)؟',
+    'Are you sure you want to approve and send this report to ASC?' => 'هل أنت متأكد من الموافقة وإرسال هذا التقرير إلى لجنة خدمة الإقليم (ASC)؟',
     'Committee Review Notes' => 'ملاحظات مراجعة اللجنة',
     'Edit Permission' => 'تعديل الإذن',
     'My Committee' => 'لجنتي الخدمية',
@@ -1240,7 +1240,7 @@ return [
     'request_overridden_success' => 'تم استبدال طلبك القديم وتحديثه بنجاح.',
     'locked_after_19th' => 'تم إغلاق تقديم الطلبات أو تعديلها بعد يوم ١٩ من الشهر.',
     'approve_and_send_to_committee' => 'اعتماد وإرسال إلى لجنة الأدبيات',
-    'save_and_return_to_servicebody' => 'حفظ وإرجاع إلى هيئة الخدمة',
+    'save_and_return_to_servicebody' => 'حفظ وإرجاع إلى المنطقة أو المنتدى',
     'literature_requests_archive' => 'أرشيف طلبات الأدبيات',
     'accumulated_invoice' => 'الفاتورة المجمعة',
     'groups_invoices' => 'فواتير المجموعات',
@@ -1249,9 +1249,13 @@ return [
     'no_available_items' => 'لا توجد عناصر متوفرة في المخزن.',
     'status' => 'الحالة',
     'Status' => 'الحالة',
-    'Service Body' => 'هيئة الخدمة',
-    'service_body' => 'هيئة الخدمة',
-    'Service Committee' => 'لجنة الخدمة',
-    'service_committee' => 'لجنة الخدمة',
+    'Service Body' => 'المنطقة أو المنتدى',
+    'service_body' => 'المنطقة أو المنتدى',
+    'Service Committee' => 'اللجنة الخدمية',
+    'service_committee' => 'اللجنة الخدمية',
+    'no_items_selected' => 'لم يتم تحديد أي أصناف.',
+    'no_agendas_submitted_yet' => 'لا توجد طلبات مقدمة بعد',
+    'Try adjusting filters or search parameters.' => 'جرّب تعديل عوامل التصفية أو معايير البحث.',
+    'qty' => 'الكمية',
 ];
 
