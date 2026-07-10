@@ -285,4 +285,84 @@ class LiteratureRequestTest extends TestCase
             'total_price' => 60.00,
         ]);
     }
+
+    public function test_archive_can_be_filtered_by_group_with_proper_restrictions()
+    {
+        Carbon::setTestNow('2026-07-20');
+
+        // Create literature request for our group
+        $req1 = LiteratureRequest::create([
+            'group_id' => $this->group->id,
+            'service_body_id' => $this->serviceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'group',
+            'status' => 'submitted',
+        ]);
+
+        // Create literature request for another group in another service body
+        $otherServiceBody = ServiceBody::create([
+            'ar_name' => 'هيئة أخرى',
+            'en_name' => 'Other Service Body',
+            'day_id' => $this->serviceBody->day_id,
+            'description' => 'Other',
+            'type' => 'rsc',
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Cairo',
+        ]);
+        $otherUser = User::factory()->create([
+            'email' => 'other_gsr@test.com',
+        ]);
+        $otherGroup = Group::create([
+            'ar_name' => 'مجموعة أخرى',
+            'en_name' => 'Other Group',
+            'ar_gsr_name' => 'GSR2',
+            'en_gsr_name' => 'GSR2',
+            'email' => 'other@naegypt.org',
+            'phone' => '87654321',
+            'user_id' => $otherUser->id,
+            'ar_address' => 'العنوان 2',
+            'en_address' => 'Address 2',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $otherServiceBody->id,
+            'neighborhood_id' => $this->group->neighborhood_id,
+        ]);
+        $req2 = LiteratureRequest::create([
+            'group_id' => $otherGroup->id,
+            'service_body_id' => $otherServiceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'group',
+            'status' => 'submitted',
+        ]);
+
+        $groupName = $this->group->{app()->getLocale() . '_name'};
+        $otherGroupName = $otherGroup->{app()->getLocale() . '_name'};
+
+        // 1. Super admin can filter and see group 1 archive
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+        $response = $this->actingAs($admin)->get(route('literature-requests.archive', ['group_id' => $this->group->id]));
+        $response->assertStatus(200);
+        $response->assertSee($groupName);
+        $response->assertDontSee($otherGroupName);
+
+        // 2. Treasurer of serviceBody can filter and see group 1 archive
+        $response = $this->actingAs($this->treasurerUser)->get(route('literature-requests.archive', ['group_id' => $this->group->id]));
+        $response->assertStatus(200);
+        $response->assertSee($groupName);
+        $response->assertDontSee($otherGroupName);
+
+        // 3. Treasurer cannot see group 2 archive (not in their service body)
+        $response = $this->actingAs($this->treasurerUser)->get(route('literature-requests.archive', ['group_id' => $otherGroup->id]));
+        $response->assertStatus(200);
+        $response->assertDontSee($otherGroupName);
+
+        // 4. GSR is restricted to their own group regardless of filter
+        $response = $this->actingAs($this->gsrUser)->get(route('literature-requests.archive', ['group_id' => $otherGroup->id]));
+        $response->assertStatus(200);
+        $response->assertSee($groupName);
+        $response->assertDontSee($otherGroupName);
+    }
 }

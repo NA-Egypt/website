@@ -170,7 +170,7 @@
                                     <i class="bi bi-file-earmark-spreadsheet me-1"></i> {{ __('messages.Literature Requests') }}
                                 </a>
                             @endif
-                            <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-warning rounded-pill px-3 btn-sm">
+                            <a href="{{ route('literature-requests.archive', ['group_id' => $group->id]) }}" class="btn btn-outline-warning rounded-pill px-3 btn-sm">
                                 <i class="bi bi-folder2-open me-1"></i> {{ __('messages.Show') ?? 'Open' }}
                             </a>
                         </div>
