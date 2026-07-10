@@ -96,11 +96,11 @@
                         {{ $litRequest->serviceBody->{app()->getLocale() . '_name'} ?? $litRequest->serviceBody->en_name }}
                     @endif
                 </td>
-                <td><strong>Status:</strong> {{ strtoupper($litRequest->status) }}</td>
+                 <td><strong>{{ __('messages.status') ?? 'Status' }}:</strong> {{ __('messages.' . $litRequest->status) }}</td>
             </tr>
             <tr>
-                <td><strong>Total Items count:</strong> {{ $litRequest->total_items_count }}</td>
-                <td><strong>Total Price:</strong> {{ number_format($litRequest->total_price, 2) }} {{ __('messages.EGP') }}</td>
+                <td><strong>{{ __('messages.total_unique_items') ?? 'Total Items count' }}:</strong> {{ $litRequest->total_items_count }}</td>
+                <td><strong>{{ __('messages.total_valuation') ?? 'Total Price' }}:</strong> {{ number_format($litRequest->total_price, 2) }} {{ __('messages.EGP') }}</td>
             </tr>
         </table>
     </div>

@@ -1,4 +1,25 @@
 <x-layout>
+    <style>
+        .inventory-row {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid transparent !important;
+        }
+        .inventory-row:hover {
+            background-color: rgba(59, 130, 246, 0.03) !important;
+            transform: scale(1.001) translateX(2px);
+            border-left: 4px solid #3b82f6 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+        }
+        .action-btn-group .btn {
+            transition: all 0.2s ease-in-out;
+            opacity: 0.85;
+        }
+        .action-btn-group .btn:hover {
+            opacity: 1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+    </style>
     <div class="container-fluid py-4">
         {{-- Header Section --}}
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -40,18 +61,9 @@
             <div class="col-12 col-xl-8">
                 <div class="card p-3 shadow-sm border-0 h-100 justify-content-center">
                     <form action="{{ route('store.index') }}" method="GET" class="row g-2 align-items-center">
-                        <div class="col-12 col-md-5 position-relative">
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                        <div class="col-12 col-md-9 position-relative">
                             <input type="search" name="search" value="{{ request('search') }}" class="form-control rounded-pill bg-transparent border-secondary-subtle px-4" placeholder="{{ __('messages.Search') }}...">
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <select name="category" class="form-select rounded-pill border-secondary-subtle px-3">
-                                <option value="">{{ __('messages.Category') }} ({{ __('messages.all') }})</option>
-                                @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
-                                    <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>
-                                        {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
-                                    </option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="col-12 col-md-3">
                             <button type="submit" class="btn btn-secondary rounded-pill w-100 shadow-sm">
@@ -78,6 +90,24 @@
                     <div class="h3 mb-0 mt-2 font-bold">{{ $items->sum('lit_quantity') }}</div>
                 </div>
             </div>
+        </div>
+
+        {{-- Category Tabs --}}
+        <div class="mb-4">
+            <ul class="nav nav-pills flex-nowrap overflow-x-auto p-1 rounded-3 bg-light" id="categoryTabList" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
+                <li class="nav-item flex-shrink-0" role="presentation">
+                    <a href="{{ route('store.index', ['search' => request('search')]) }}" class="nav-link py-2 rounded-2 fw-semibold {{ !request('category') ? 'active bg-primary text-white' : 'text-secondary' }}" style="font-size: 0.9rem;">
+                        {{ __('messages.all') }}
+                    </a>
+                </li>
+                @foreach(\App\Models\InventoryItem::CATEGORIES as $cat)
+                    <li class="nav-item flex-shrink-0" role="presentation">
+                        <a href="{{ route('store.index', ['category' => $cat, 'search' => request('search')]) }}" class="nav-link py-2 rounded-2 fw-semibold {{ request('category') === $cat ? 'active bg-primary text-white' : 'text-secondary' }}" style="font-size: 0.9rem;">
+                            {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $cat))) }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         </div>
 
         {{-- Bulk Actions Toolbar --}}
@@ -124,7 +154,7 @@
                     </thead>
                     <tbody>
                         @forelse ($items as $item)
-                            <tr>
+                            <tr class="inventory-row">
                                 <td>
                                     <input type="checkbox" class="form-check-input item-checkbox" 
                                            data-id="{{ $item->id }}" 
@@ -147,55 +177,84 @@
                                     {{ __('messages.EGP') }} {{ number_format($item->selling_price, 2) }}
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fs-6">
-                                        {{ $item->store_quantity }}
-                                    </span>
+                                    @if ($item->store_quantity == 0)
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>0
+                                        </span>
+                                    @elseif ($item->store_quantity < 10)
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
+                                            <i class="bi bi-exclamation-circle me-1"></i>{{ $item->store_quantity }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
+                                            {{ $item->store_quantity }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fs-6">
-                                        {{ $item->lit_quantity }}
-                                    </span>
+                                    @if ($item->lit_quantity == 0)
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                                            0
+                                        </span>
+                                    @elseif ($item->lit_quantity < 10)
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
+                                            {{ $item->lit_quantity }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill fw-bold">
+                                            {{ $item->lit_quantity }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-center gap-1 flex-wrap">
-                                        {{-- Receive --}}
-                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#receiveModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}">
-                                            <i class="bi bi-plus-circle me-1"></i>{{ __('messages.receive') }}
-                                        </button>
-
-                                        {{-- Transfer --}}
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#transferModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-store-qty="{{ $item->store_quantity }}">
-                                            <i class="bi bi-arrow-right-circle me-1"></i>{{ __('messages.transfer_to_lit') }}
-                                        </button>
-
-                                        {{-- Return --}}
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill text-dark" 
-                                                data-bs-toggle="modal" data-bs-target="#returnModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-lit-qty="{{ $item->lit_quantity }}">
-                                            <i class="bi bi-arrow-left-circle me-1"></i>{{ __('messages.return_from_lit') }}
-                                        </button>
-
-                                        {{-- Edit --}}
-                                        <button type="button" class="btn btn-sm btn-light border rounded-pill" 
-                                                data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-name-en="{{ $item->name_en }}"
-                                                data-category="{{ $item->category }}" data-price="{{ $item->selling_price }}"
-                                                data-description="{{ $item->description }}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-
-                                        {{-- Delete --}}
-                                        <form action="{{ route('store.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.confirm_delete_item') }}')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">
-                                                <i class="bi bi-trash"></i>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-link text-secondary p-0 border-0 dropdown-toggle-nocaret" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical fs-5"></i>
                                             </button>
-                                        </form>
+                                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded-3">
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-success py-2" 
+                                                            data-bs-toggle="modal" data-bs-target="#receiveModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}">
+                                                        <i class="bi bi-plus-circle-fill"></i>{{ __('messages.receive') }}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-primary py-2" 
+                                                            data-bs-toggle="modal" data-bs-target="#transferModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-store-qty="{{ $item->store_quantity }}">
+                                                        <i class="bi bi-arrow-right-circle-fill"></i>{{ __('messages.transfer_to_lit') }}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-warning-emphasis py-2" 
+                                                            data-bs-toggle="modal" data-bs-target="#returnModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-lit-qty="{{ $item->lit_quantity }}">
+                                                        <i class="bi bi-arrow-left-circle-fill"></i>{{ __('messages.return_from_lit') }}
+                                                    </button>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-dark py-2" 
+                                                            data-bs-toggle="modal" data-bs-target="#editModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-name-en="{{ $item->name_en }}"
+                                                            data-category="{{ $item->category }}" data-price="{{ $item->selling_price }}"
+                                                            data-description="{{ $item->description }}">
+                                                        <i class="bi bi-pencil-fill text-secondary"></i>{{ __('messages.Edit') ?? 'Edit' }}
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('store.destroy', $item->id) }}" method="POST" onsubmit="return confirm('{{ __('messages.confirm_delete_item') }}')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger py-2">
+                                                            <i class="bi bi-trash-fill"></i>{{ __('messages.Delete') ?? 'Delete' }}
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

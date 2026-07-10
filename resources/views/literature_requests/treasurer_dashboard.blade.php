@@ -82,7 +82,7 @@
                                         <td class="text-end fw-bold text-primary">{{ $gReq->total_price }} {{ __('messages.EGP') }}</td>
                                         <td class="text-center">
                                             <span class="badge bg-success rounded-pill px-2 py-1">
-                                                {{ strtoupper($gReq->status) }}
+                                                {{ __('messages.' . $gReq->status) }}
                                             </span>
                                         </td>
                                     </tr>
@@ -125,7 +125,7 @@
                                     elseif ($accumulatedRequest->status === 'returned_by_committee') $badgeColor = 'bg-success';
                                 @endphp
                                 <span class="badge {{ $badgeColor }} rounded-pill px-2 py-1">
-                                    {{ strtoupper($accumulatedRequest->status) }}
+                                    {{ __('messages.' . $accumulatedRequest->status) }}
                                 </span>
                             </h5>
                             <p class="mb-1 text-secondary">

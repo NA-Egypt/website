@@ -7,7 +7,7 @@
                     {{ __('messages.Literature Requests') }}
                 </h1>
                 <p class="text-secondary mb-0">
-                    Received Service Body Accumulated Invoices
+                    {{__('messages.Received Service Body Accumulated Invoices')}}
                 </p>
             </div>
             <div>
@@ -59,7 +59,7 @@
                                         elseif ($req->status === 'returned_by_committee') $badgeColor = 'bg-success';
                                     @endphp
                                     <span class="badge {{ $badgeColor }} rounded-pill px-2 py-1">
-                                        {{ strtoupper($req->status) }}
+                                        {{ __('messages.' . $req->status) }}
                                     </span>
                                 </td>
                                 <td class="text-center">
@@ -79,7 +79,7 @@
                             <tr>
                                 <td colspan="6" class="text-center py-4 text-muted">
                                     <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
-                                    No service body requests received.
+                                    {{__('messages.No service body requests received.')}}
                                 </td>
                             </tr>
                         @endforelse
