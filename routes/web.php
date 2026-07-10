@@ -47,6 +47,10 @@ Route::group(
             // Store Inventory Routes:
             Route::get('/store', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
             Route::post('/store', [\App\Http\Controllers\StoreController::class, 'store'])->name('store.store');
+            Route::post('/store/bulk-receive', [\App\Http\Controllers\StoreController::class, 'bulkReceive'])->name('store.bulk_receive');
+            Route::post('/store/bulk-transfer', [\App\Http\Controllers\StoreController::class, 'bulkTransfer'])->name('store.bulk_transfer');
+            Route::post('/store/bulk-return', [\App\Http\Controllers\StoreController::class, 'bulkReturn'])->name('store.bulk_return');
+            Route::post('/store/bulk-delete', [\App\Http\Controllers\StoreController::class, 'bulkDestroy'])->name('store.bulk_delete');
             Route::put('/store/{item}', [\App\Http\Controllers\StoreController::class, 'update'])->name('store.update');
             Route::delete('/store/{item}', [\App\Http\Controllers\StoreController::class, 'destroy'])->name('store.destroy');
             Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');

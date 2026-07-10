@@ -80,12 +80,39 @@
             </div>
         </div>
 
+        {{-- Bulk Actions Toolbar --}}
+        <div id="bulkActionsToolbar" class="d-none mb-4 p-3 bg-light rounded-4 border d-flex align-items-center justify-content-between flex-wrap gap-2 animate__animated animate__fadeIn">
+            <div class="d-flex align-items-center gap-2">
+                <span class="fw-semibold text-secondary">
+                    <i class="bi bi-check2-square me-1 text-primary"></i>
+                    <span id="selectedCount">0</span> {{ __('messages.selected_items') }}
+                </span>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkReceiveModal">
+                    <i class="bi bi-plus-circle me-1"></i>{{ __('messages.bulk_receive') }}
+                </button>
+                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkTransferModal">
+                    <i class="bi bi-arrow-right-circle me-1"></i>{{ __('messages.bulk_transfer') }}
+                </button>
+                <button type="button" class="btn btn-sm btn-warning rounded-pill px-3 text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkReturnModal">
+                    <i class="bi bi-arrow-left-circle me-1"></i>{{ __('messages.bulk_return') }}
+                </button>
+                <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm" id="btnBulkDelete">
+                    <i class="bi bi-trash me-1"></i>{{ __('messages.bulk_delete') }}
+                </button>
+            </div>
+        </div>
+
         {{-- Inventory Items Table --}}
         <div class="card border-0 shadow-sm p-4">
             <div class="table-responsive">
                 <table class="table align-middle table-hover mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
                             <th>{{ __('messages.item_name') }}</th>
                             <th>{{ __('messages.Category') }}</th>
                             <th>{{ __('messages.Description') }}</th>
@@ -99,7 +126,14 @@
                         @forelse ($items as $item)
                             <tr>
                                 <td>
-                                    <div class="fw-bold text-dark">{{ $item->name }}</div>
+                                    <input type="checkbox" class="form-check-input item-checkbox" 
+                                           data-id="{{ $item->id }}" 
+                                           data-name="{{ $item->store_display_name }}"
+                                           data-store-qty="{{ $item->store_quantity }}"
+                                           data-lit-qty="{{ $item->lit_quantity }}">
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $item->store_display_name }}</div>
                                 </td>
                                 <td>
                                     <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
@@ -127,28 +161,28 @@
                                         {{-- Receive --}}
                                         <button type="button" class="btn btn-sm btn-outline-success rounded-pill" 
                                                 data-bs-toggle="modal" data-bs-target="#receiveModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}">
+                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}">
                                             <i class="bi bi-plus-circle me-1"></i>{{ __('messages.receive') }}
                                         </button>
 
                                         {{-- Transfer --}}
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill" 
                                                 data-bs-toggle="modal" data-bs-target="#transferModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-store-qty="{{ $item->store_quantity }}">
+                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-store-qty="{{ $item->store_quantity }}">
                                             <i class="bi bi-arrow-right-circle me-1"></i>{{ __('messages.transfer_to_lit') }}
                                         </button>
 
                                         {{-- Return --}}
                                         <button type="button" class="btn btn-sm btn-outline-warning rounded-pill text-dark" 
                                                 data-bs-toggle="modal" data-bs-target="#returnModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-lit-qty="{{ $item->lit_quantity }}">
+                                                data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-lit-qty="{{ $item->lit_quantity }}">
                                             <i class="bi bi-arrow-left-circle me-1"></i>{{ __('messages.return_from_lit') }}
                                         </button>
 
                                         {{-- Edit --}}
                                         <button type="button" class="btn btn-sm btn-light border rounded-pill" 
                                                 data-bs-toggle="modal" data-bs-target="#editModal"
-                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}"
+                                                data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-name-en="{{ $item->name_en }}"
                                                 data-category="{{ $item->category }}" data-price="{{ $item->selling_price }}"
                                                 data-description="{{ $item->description }}">
                                             <i class="bi bi-pencil"></i>
@@ -167,7 +201,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-secondary py-5">
+                                <td colspan="8" class="text-center text-secondary py-5">
                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                     {{ __('messages.no_items_found') }}
                                 </td>
@@ -290,8 +324,12 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ __('messages.item_name') }}</label>
+                        <label class="form-label fw-semibold">{{ __('messages.item_name_ar') }}</label>
                         <input type="text" name="name" required class="form-control rounded-3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.item_name_en') }}</label>
+                        <input type="text" name="name_en" class="form-control rounded-3">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
@@ -331,8 +369,12 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ __('messages.item_name') }}</label>
-                        <input type="text" name="name" required class="form-control rounded-3" placeholder="e.g. Basic Text Book">
+                        <label class="form-label fw-semibold">{{ __('messages.item_name_ar') }}</label>
+                        <input type="text" name="name" required class="form-control rounded-3" placeholder="e.g. كتاب أساسي">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.item_name_en') }}</label>
+                        <input type="text" name="name_en" class="form-control rounded-3" placeholder="e.g. Basic Text Book">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.Category') }}</label>
@@ -364,6 +406,127 @@
             </form>
         </div>
     </div>
+
+    {{-- Bulk Receive Modal --}}
+    <div class="modal fade" id="bulkReceiveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <form action="{{ route('store.bulk_receive') }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-success-subtle text-success">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>{{ __('messages.bulk_receive') }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('messages.item_name') }}</th>
+                                    <th style="width: 150px;">{{ __('messages.qty') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkReceiveList">
+                                {{-- Loaded via JS --}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Bulk stock received"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">{{ __('messages.confirm_receipt') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Bulk Transfer Modal --}}
+    <div class="modal fade" id="bulkTransferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <form action="{{ route('store.bulk_transfer') }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-primary-subtle text-primary">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-arrow-right-circle me-2"></i>{{ __('messages.bulk_transfer') }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('messages.item_name') }}</th>
+                                    <th>{{ __('messages.store_qty') }}</th>
+                                    <th style="width: 150px;">{{ __('messages.qty_to_transfer') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkTransferList">
+                                {{-- Loaded via JS --}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Bulk transfer to Lit"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">{{ __('messages.confirm_transfer') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Bulk Return Modal --}}
+    <div class="modal fade" id="bulkReturnModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <form action="{{ route('store.bulk_return') }}" method="POST" class="modal-content border-0 shadow-lg rounded-4">
+                @csrf
+                <div class="modal-header border-0 bg-warning-subtle text-warning-emphasis">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-arrow-left-circle me-2"></i>{{ __('messages.bulk_return') }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('messages.item_name') }}</th>
+                                    <th>{{ __('messages.lit_qty') }}</th>
+                                    <th style="width: 150px;">{{ __('messages.qty_to_return') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkReturnList">
+                                {{-- Loaded via JS --}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.Notes') }}</label>
+                        <textarea name="notes" class="form-control rounded-3" rows="3" placeholder="e.g. Bulk return from Lit"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4 text-dark">{{ __('messages.confirm_return') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Hidden form for Bulk Delete --}}
+    <form id="bulkDeleteForm" action="{{ route('store.bulk_delete') }}" method="POST" class="d-none">
+        @csrf
+    </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -440,6 +603,7 @@
                     const button = event.relatedTarget;
                     const id = button.getAttribute('data-id');
                     const name = button.getAttribute('data-name');
+                    const nameEn = button.getAttribute('data-name-en');
                     const category = button.getAttribute('data-category');
                     const price = button.getAttribute('data-price');
                     const description = button.getAttribute('data-description');
@@ -448,9 +612,151 @@
                     form.action = "{{ route('store.update', ':id') }}".replace(':id', id);
                     
                     editModal.querySelector('input[name="name"]').value = name;
+                    editModal.querySelector('input[name="name_en"]').value = nameEn || '';
                     editModal.querySelector('select[name="category"]').value = category;
                     editModal.querySelector('input[name="selling_price"]').value = price;
                     editModal.querySelector('textarea[name="description"]').value = description || '';
+                });
+            }
+
+            // Bulk Actions logic
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const bulkToolbar = document.getElementById('bulkActionsToolbar');
+            const selectedCountSpan = document.getElementById('selectedCount');
+
+            function getSelectedCheckboxes() {
+                return Array.from(checkboxes).filter(cb => cb.checked);
+            }
+
+            function updateBulkToolbar() {
+                const selected = getSelectedCheckboxes();
+                if (selected.length > 0) {
+                    bulkToolbar.classList.remove('d-none');
+                    selectedCountSpan.textContent = selected.length;
+                } else {
+                    bulkToolbar.classList.add('d-none');
+                }
+            }
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(cb => {
+                        cb.checked = selectAll.checked;
+                    });
+                    updateBulkToolbar();
+                });
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAll.checked = false;
+                    } else if (getSelectedCheckboxes().length === checkboxes.length) {
+                        selectAll.checked = true;
+                    }
+                    updateBulkToolbar();
+                });
+            });
+
+            // Populate Bulk Receive Modal
+            const bulkReceiveModal = document.getElementById('bulkReceiveModal');
+            if (bulkReceiveModal) {
+                bulkReceiveModal.addEventListener('show.bs.modal', function () {
+                    const selected = getSelectedCheckboxes();
+                    const listContainer = document.getElementById('bulkReceiveList');
+                    listContainer.innerHTML = '';
+                    
+                    selected.forEach(cb => {
+                        const id = cb.getAttribute('data-id');
+                        const name = cb.getAttribute('data-name');
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><div class="fw-bold">${name}</div></td>
+                            <td>
+                                <input type="number" name="quantities[${id}]" min="0" class="form-control form-control-sm rounded-3" placeholder="0">
+                            </td>
+                        `;
+                        listContainer.appendChild(tr);
+                    });
+                });
+            }
+
+            // Populate Bulk Transfer Modal
+            const bulkTransferModal = document.getElementById('bulkTransferModal');
+            if (bulkTransferModal) {
+                bulkTransferModal.addEventListener('show.bs.modal', function () {
+                    const selected = getSelectedCheckboxes();
+                    const listContainer = document.getElementById('bulkTransferList');
+                    listContainer.innerHTML = '';
+                    
+                    selected.forEach(cb => {
+                        const id = cb.getAttribute('data-id');
+                        const name = cb.getAttribute('data-name');
+                        const storeQty = cb.getAttribute('data-store-qty');
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><div class="fw-bold">${name}</div></td>
+                            <td><span class="badge bg-secondary-subtle text-secondary px-3 py-1 rounded-pill">${storeQty}</span></td>
+                            <td>
+                                <input type="number" name="quantities[${id}]" min="0" max="${storeQty}" class="form-control form-control-sm rounded-3" placeholder="0">
+                            </td>
+                        `;
+                        listContainer.appendChild(tr);
+                    });
+                });
+            }
+
+            // Populate Bulk Return Modal
+            const bulkReturnModal = document.getElementById('bulkReturnModal');
+            if (bulkReturnModal) {
+                bulkReturnModal.addEventListener('show.bs.modal', function () {
+                    const selected = getSelectedCheckboxes();
+                    const listContainer = document.getElementById('bulkReturnList');
+                    listContainer.innerHTML = '';
+                    
+                    selected.forEach(cb => {
+                        const id = cb.getAttribute('data-id');
+                        const name = cb.getAttribute('data-name');
+                        const litQty = cb.getAttribute('data-lit-qty');
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><div class="fw-bold">${name}</div></td>
+                            <td><span class="badge bg-secondary-subtle text-secondary px-3 py-1 rounded-pill">${litQty}</span></td>
+                            <td>
+                                <input type="number" name="quantities[${id}]" min="0" max="${litQty}" class="form-control form-control-sm rounded-3" placeholder="0">
+                            </td>
+                        `;
+                        listContainer.appendChild(tr);
+                    });
+                });
+            }
+
+            // Bulk Delete handler
+            const btnBulkDelete = document.getElementById('btnBulkDelete');
+            if (btnBulkDelete) {
+                btnBulkDelete.addEventListener('click', function() {
+                    const selected = getSelectedCheckboxes();
+                    if (selected.length === 0) return;
+                    
+                    if (confirm("{{ __('messages.confirm_bulk_delete') }}")) {
+                        const form = document.getElementById('bulkDeleteForm');
+                        // Remove old inputs if any
+                        form.querySelectorAll('input[name="ids[]"]').forEach(el => el.remove());
+                        
+                        selected.forEach(cb => {
+                            const id = cb.getAttribute('data-id');
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'ids[]';
+                            input.value = id;
+                            form.appendChild(input);
+                        });
+                        form.submit();
+                    }
                 });
             }
         });

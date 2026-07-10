@@ -27,6 +27,7 @@ class StoreController extends Controller implements HasMiddleware
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('name_en', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
@@ -44,6 +45,7 @@ class StoreController extends Controller implements HasMiddleware
     {
         $fields = $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
             'initial_store_quantity' => 'nullable|integer|min:0',
@@ -52,6 +54,7 @@ class StoreController extends Controller implements HasMiddleware
 
         $item = InventoryItem::create([
             'name' => $fields['name'],
+            'name_en' => $fields['name_en'] ?? null,
             'description' => $fields['description'] ?? null,
             'selling_price' => $fields['selling_price'],
             'store_quantity' => $fields['initial_store_quantity'] ?? 0,
@@ -75,6 +78,7 @@ class StoreController extends Controller implements HasMiddleware
     {
         $fields = $request->validate([
             'name' => 'required|string|max:255',
+            'name_en' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
             'category' => 'required|string|in:' . implode(',', InventoryItem::CATEGORIES),
@@ -312,5 +316,138 @@ class StoreController extends Controller implements HasMiddleware
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function bulkReceive(Request $request)
+    {
+        $fields = $request->validate([
+            'quantities' => 'required|array',
+            'quantities.*' => 'nullable|integer|min:0',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $processedCount = 0;
+        foreach ($fields['quantities'] as $itemId => $qty) {
+            if ($qty > 0) {
+                $item = InventoryItem::find($itemId);
+                if ($item) {
+                    $item->increment('store_quantity', $qty);
+                    InventoryTransaction::create([
+                        'inventory_item_id' => $item->id,
+                        'user_id' => Auth::id(),
+                        'type' => 'receive',
+                        'quantity' => $qty,
+                        'notes' => $fields['notes'] ?? null,
+                    ]);
+                    $processedCount++;
+                }
+            }
+        }
+
+        if ($processedCount === 0) {
+            return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
+        }
+
+        return redirect()->route('store.index')->with('success', __('messages.bulk_operation_success'));
+    }
+
+    public function bulkTransfer(Request $request)
+    {
+        $fields = $request->validate([
+            'quantities' => 'required|array',
+            'quantities.*' => 'nullable|integer|min:0',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        // First validate store balance for all items to transfer
+        foreach ($fields['quantities'] as $itemId => $qty) {
+            if ($qty > 0) {
+                $item = InventoryItem::find($itemId);
+                if (!$item || $item->store_quantity < $qty) {
+                    return redirect()->route('store.index')->with('error', __('messages.insufficient_store_stock'));
+                }
+            }
+        }
+
+        $processedCount = 0;
+        foreach ($fields['quantities'] as $itemId => $qty) {
+            if ($qty > 0) {
+                $item = InventoryItem::find($itemId);
+                if ($item) {
+                    $item->decrement('store_quantity', $qty);
+                    $item->increment('lit_quantity', $qty);
+                    InventoryTransaction::create([
+                        'inventory_item_id' => $item->id,
+                        'user_id' => Auth::id(),
+                        'type' => 'transfer_to_lit',
+                        'quantity' => $qty,
+                        'notes' => $fields['notes'] ?? null,
+                    ]);
+                    $processedCount++;
+                }
+            }
+        }
+
+        if ($processedCount === 0) {
+            return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
+        }
+
+        return redirect()->route('store.index')->with('success', __('messages.bulk_operation_success'));
+    }
+
+    public function bulkReturn(Request $request)
+    {
+        $fields = $request->validate([
+            'quantities' => 'required|array',
+            'quantities.*' => 'nullable|integer|min:0',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        // Validate lit balance
+        foreach ($fields['quantities'] as $itemId => $qty) {
+            if ($qty > 0) {
+                $item = InventoryItem::find($itemId);
+                if (!$item || $item->lit_quantity < $qty) {
+                    return redirect()->route('store.index')->with('error', __('messages.insufficient_lit_stock'));
+                }
+            }
+        }
+
+        $processedCount = 0;
+        foreach ($fields['quantities'] as $itemId => $qty) {
+            if ($qty > 0) {
+                $item = InventoryItem::find($itemId);
+                if ($item) {
+                    $item->decrement('lit_quantity', $qty);
+                    $item->increment('store_quantity', $qty);
+                    InventoryTransaction::create([
+                        'inventory_item_id' => $item->id,
+                        'user_id' => Auth::id(),
+                        'type' => 'return_from_lit',
+                        'quantity' => $qty,
+                        'notes' => $fields['notes'] ?? null,
+                    ]);
+                    $processedCount++;
+                }
+            }
+        }
+
+        if ($processedCount === 0) {
+            return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
+        }
+
+        return redirect()->route('store.index')->with('success', __('messages.bulk_operation_success'));
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $fields = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:inventory_items,id',
+        ]);
+
+        InventoryItem::whereIn('id', $fields['ids'])->delete();
+
+        return redirect()->route('store.index')->with('success', __('messages.item_deleted_success'));
     }
 }
