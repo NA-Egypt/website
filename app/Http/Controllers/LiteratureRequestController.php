@@ -367,18 +367,31 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     /**
      * Archive with Accordion Hierarchy
      */
-    public function archive()
+    public function archive(Request $request)
     {
         $user = Auth::user();
         
         $query = LiteratureRequest::with(['group', 'serviceBody', 'items.item']);
 
+        $targetGroupId = $request->input('group_id');
+
         // Restrictions on who can view what
         if ($user->hasRole('super admin') || $user->hasRole('Lit User') || $user->hasRole('Store Manager')) {
             // Super admins and Literature Committee roles see all
+            if ($targetGroupId) {
+                $query->where('group_id', $targetGroupId);
+            }
         } elseif ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
             // Service Body roles see requests within their Service Body only
             $query->where('service_body_id', $user->service_body_id);
+            if ($targetGroupId) {
+                $targetGroup = Group::find($targetGroupId);
+                if ($targetGroup && $targetGroup->service_body_id == $user->service_body_id) {
+                    $query->where('group_id', $targetGroupId);
+                } else {
+                    $query->where('id', 0); // Empty results for unauthorized access
+                }
+            }
         } elseif ($user->hasRole('gsr')) {
             // GSR sees only their group requests
             $group = $this->getCurrentGroup();
