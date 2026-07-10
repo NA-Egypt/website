@@ -1123,6 +1123,8 @@ return [
     'operator' => 'Operator',
     'no_transactions_match' => 'No transactions match the selected filters.',
     'current_inventory_summary' => 'Current Inventory Summary',
+    'total_value' => 'Total Value',
+    'total_quantity' => 'Total Quantity',
     'total_valuation' => 'Total Valuation:',
     'transaction_history' => 'Transaction History',
     'no_transactions_recorded' => 'No transactions recorded.',

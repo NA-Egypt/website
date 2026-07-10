@@ -99,11 +99,13 @@
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <label class="form-label small fw-semibold">{{ __('messages.Topic') }}</label>
-                    <select name="item_id" class="form-select rounded-3">
+                    <label class="form-label small fw-semibold">{{ __('messages.item_name') }}</label>
+                    <select name="item_id" class="form-select rounded-3 select2">
                         <option value="">{{ __('messages.all_items') }}</option>
                         @foreach ($items as $item)
-                            <option value="{{ $item->id }}" {{ request('item_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                            <option value="{{ $item->id }}" {{ request('item_id') == $item->id ? 'selected' : '' }}>
+                                {{ $item->store_display_name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -127,57 +129,69 @@
 
         {{-- Transactions Ledger Table --}}
         <div class="card border-0 shadow-sm p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>{{ __('messages.transaction_ledger') }}</h5>
+            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history text-primary"></i>
+                {{ __('messages.transaction_ledger') }}
+            </h5>
             <div class="table-responsive">
-                <table class="table align-middle table-hover mb-0">
+                <table class="table align-middle table-hover mb-0" id="ledgerTable">
                     <thead class="table-light">
                         <tr>
-                            <th>{{ __('messages.id') }}</th>
-                            <th>{{ __('messages.date_time') }}</th>
+                            <th style="width: 80px;">{{ __('messages.id') }}</th>
+                            <th style="width: 150px;">{{ __('messages.date_time') }}</th>
                             <th>{{ __('messages.item_name') }}</th>
                             <th>{{ __('messages.Category') }}</th>
-                            <th>{{ __('messages.Type') }}</th>
-                            <th class="text-center">{{ __('messages.Capacity') }}</th>
+                            <th>{{ __('messages.transaction_type') }}</th>
+                            <th class="text-center" style="width: 110px;">{{ __('messages.qty') }}</th>
                             <th>{{ __('messages.operator') }}</th>
                             <th>{{ __('messages.Notes') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($transactions as $t)
-                            <tr>
-                                <td><span class="text-secondary font-monospace">#{{ $t->id }}</span></td>
+                            <tr class="ledger-row">
                                 <td>
-                                    <div class="small fw-semibold text-dark">{{ $t->created_at->format('Y-m-d') }}</div>
-                                    <div class="text-secondary small">{{ $t->created_at->format('H:i:s') }}</div>
+                                    <span class="text-secondary font-monospace fw-semibold">#{{ $t->id }}</span>
                                 </td>
                                 <td>
-                                    <span class="fw-bold text-dark">{{ $t->item->name ?? 'Deleted Item' }}</span>
+                                    <div class="fw-semibold text-dark">{{ $t->created_at->format('Y-m-d') }}</div>
+                                    <div class="text-secondary small fs-7">{{ $t->created_at->format('H:i:s') }}</div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 small">
+                                    <div class="fw-bold text-dark">{{ $t->item->store_display_name ?? 'Deleted Item' }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1 small">
                                         {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $t->item->category ?? 'Others'))) }}
                                     </span>
                                 </td>
                                 <td>
                                     @if ($t->type === 'receive')
-                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill">
-                                            <i class="bi bi-plus-circle-fill me-1"></i>{{ __('messages.receive') }}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
+                                            <i class="bi bi-plus-circle-fill"></i>{{ __('messages.receive') }}
                                         </span>
                                     @elseif ($t->type === 'transfer_to_lit')
-                                        <span class="badge bg-primary-subtle text-primary px-2 py-1 rounded-pill">
-                                            <i class="bi bi-arrow-right-circle-fill me-1"></i>{{ __('messages.transfer_to_lit') }}
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
+                                            <i class="bi bi-arrow-right-circle-fill"></i>{{ __('messages.transfer_to_lit') }}
                                         </span>
                                     @elseif ($t->type === 'return_from_lit')
-                                        <span class="badge bg-warning-subtle text-warning-emphasis px-2 py-1 rounded-pill">
-                                            <i class="bi bi-arrow-left-circle-fill me-1"></i>{{ __('messages.return_from_lit') }}
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm text-dark">
+                                            <i class="bi bi-arrow-left-circle-fill"></i>{{ __('messages.return_from_lit') }}
                                         </span>
                                     @endif
                                 </td>
-                                <td class="text-center fw-bold">
-                                    {{ $t->quantity }}
+                                <td class="text-center">
+                                    <span class="badge bg-dark-subtle text-dark px-3 py-2 rounded-pill font-monospace fw-bold fs-6">
+                                        {{ $t->quantity }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <span class="text-secondary small"><i class="bi bi-person me-1"></i>{{ $t->user->name ?? 'System' }}</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-secondary-subtle text-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px; font-size: 0.8rem; font-weight: 600;">
+                                            {{ strtoupper(substr($t->user->name ?? 'S', 0, 2)) }}
+                                        </div>
+                                        <span class="text-dark small fw-semibold">{{ $t->user->name ?? 'System' }}</span>
+                                    </div>
                                 </td>
                                 <td>
                                     <span class="text-secondary small">{{ $t->notes ?: '-' }}</span>
@@ -196,4 +210,39 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .fs-7 { font-size: 0.75rem; }
+        .ledger-row {
+            transition: all 0.2s ease-in-out;
+        }
+        .ledger-row:hover {
+            background-color: rgba(59, 130, 246, 0.04) !important;
+            transform: scale(1.002);
+        }
+        /* Custom styling to match Bootstrap 5 minimal theme for Select2 */
+        .select2-container--bootstrap4 .select2-selection--single {
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 8px !important;
+            height: calc(1.5em + .75rem + 2px) !important;
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            color: var(--text-primary) !important;
+            line-height: calc(1.5em + .75rem) !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.jQuery && $.fn.select2) {
+                $('.select2').select2({
+                    theme: 'bootstrap4',
+                    width: '100%',
+                    placeholder: "{{ __('messages.all_items') }}",
+                    allowClear: true
+                });
+            }
+        });
+    </script>
 </x-layout>

@@ -248,8 +248,13 @@ class StoreController extends Controller implements HasMiddleware
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
         });
 
+        $totalQty = $transactions->sum('quantity');
+        $totalValue = $transactions->sum(function ($t) {
+            return $t->quantity * ($t->item->selling_price ?? 0);
+        });
+
         $mpdf = MpdfService::create();
-        $html = view('store.pdf', compact('transactions', 'items', 'totalValuation'))->render();
+        $html = view('store.pdf', compact('transactions', 'items', 'totalValuation', 'totalQty', 'totalValue'))->render();
         $mpdf->WriteHTML($html);
 
         $filename = 'inventory_report_' . date('Ymd_His') . '.pdf';
@@ -294,9 +299,14 @@ class StoreController extends Controller implements HasMiddleware
             "Expires"             => "0"
         ];
 
-        $columns = ['ID', 'Date', 'Item Name', 'Transaction Type', 'Quantity', 'User', 'Notes'];
+        $columns = ['ID', 'Date', 'Item Name', 'Transaction Type', 'Quantity', 'Unit Price (EGP)', 'Total Value (EGP)', 'User', 'Notes'];
 
-        $callback = function() use($transactions, $columns) {
+        $totalQty = $transactions->sum('quantity');
+        $totalValue = $transactions->sum(function ($t) {
+            return $t->quantity * ($t->item->selling_price ?? 0);
+        });
+
+        $callback = function() use($transactions, $columns, $totalQty, $totalValue) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
@@ -304,13 +314,27 @@ class StoreController extends Controller implements HasMiddleware
                 fputcsv($file, [
                     $t->id,
                     $t->created_at->format('Y-m-d H:i:s'),
-                    $t->item->name ?? 'Deleted Item',
+                    $t->item->store_display_name ?? 'Deleted Item',
                     ucwords(str_replace('_', ' ', $t->type)),
                     $t->quantity,
+                    $t->item->selling_price ?? 0,
+                    $t->quantity * ($t->item->selling_price ?? 0),
                     $t->user->name ?? 'System',
                     $t->notes ?? ''
                 ]);
             }
+
+            fputcsv($file, [
+                'Total',
+                '',
+                '',
+                '',
+                $totalQty,
+                '',
+                $totalValue,
+                '',
+                ''
+            ]);
 
             fclose($file);
         };
