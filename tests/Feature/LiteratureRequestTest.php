@@ -129,7 +129,7 @@ class LiteratureRequestTest extends TestCase
             ]
         ]);
 
-        $response->assertRedirect(route('literature-requests.cart'));
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $this->group->id]));
 
         $this->assertDatabaseHas('literature_requests', [
             'group_id' => $this->group->id,
@@ -150,7 +150,8 @@ class LiteratureRequestTest extends TestCase
             ]
         ]);
 
-        $response->assertStatus(403);
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
     }
 
     public function test_gsr_can_submit_request_and_override_before_19th()
@@ -166,7 +167,7 @@ class LiteratureRequestTest extends TestCase
 
         // 2. Submit
         $response = $this->actingAs($this->gsrUser)->post(route('literature-requests.submit'));
-        $response->assertRedirect(route('literature-requests.cart'));
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $this->group->id]));
 
         $this->assertDatabaseHas('literature_requests', [
             'group_id' => $this->group->id,
@@ -364,5 +365,61 @@ class LiteratureRequestTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($groupName);
         $response->assertDontSee($otherGroupName);
+    }
+
+    public function test_super_admin_can_request_on_behalf_of_specific_group()
+    {
+        Carbon::setTestNow('2026-07-10'); // Before 19th
+
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+
+        $otherUser = User::factory()->create([
+            'email' => 'other_admin_gsr@test.com',
+        ]);
+        $otherGroup = Group::create([
+            'ar_name' => 'مجموعة أخرى ب',
+            'en_name' => 'Other Group B',
+            'ar_gsr_name' => 'GSRB',
+            'en_gsr_name' => 'GSRB',
+            'email' => 'otherb@naegypt.org',
+            'phone' => '87654322',
+            'user_id' => $otherUser->id,
+            'ar_address' => 'العنوان ب',
+            'en_address' => 'Address B',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $this->serviceBody->id,
+            'neighborhood_id' => $this->group->neighborhood_id,
+        ]);
+
+        // 1. Admin updates cart on behalf of otherGroup
+        $response = $this->actingAs($admin)->post(route('literature-requests.cart.update'), [
+            'group_id' => $otherGroup->id,
+            'quantities' => [
+                $this->item1->id => 12,
+            ]
+        ]);
+
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $otherGroup->id]));
+
+        $this->assertDatabaseHas('literature_requests', [
+            'group_id' => $otherGroup->id,
+            'status' => 'draft',
+            'total_items_count' => 12,
+        ]);
+
+        // 2. Admin submits request on behalf of otherGroup
+        $response = $this->actingAs($admin)->post(route('literature-requests.submit'), [
+            'group_id' => $otherGroup->id,
+        ]);
+
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $otherGroup->id]));
+
+        $this->assertDatabaseHas('literature_requests', [
+            'group_id' => $otherGroup->id,
+            'status' => 'submitted',
+            'total_items_count' => 12,
+        ]);
     }
 }
