@@ -101,7 +101,7 @@
                 <tr>
                     <td>#{{ $t->id }}</td>
                     <td>{{ $t->created_at->format('Y-m-d H:i:s') }}</td>
-                    <td><strong>{{ $t->item->name ?? 'Deleted Item' }}</strong></td>
+                    <td><strong>{{ $t->item->store_display_name ?? 'Deleted Item' }}</strong></td>
                     <td>{{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $t->item->category ?? 'Others'))) }}</td>
                     <td>
                         @if ($t->type === 'receive')
@@ -122,6 +122,15 @@
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr style="background-color: #f8f9fa; font-weight: bold; border-top: 2px solid #333;">
+                <td colspan="5" class="text-right" style="padding: 8px;">{{ __('messages.Total') }}:</td>
+                <td class="text-center" style="padding: 8px;"><strong>{{ $totalQty }}</strong></td>
+                <td colspan="2" style="padding: 8px; font-size: 10px;">
+                    <strong>{{ __('messages.total_value') }}:</strong> {{ __('messages.EGP') }} {{ number_format($totalValue, 2) }}
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </body>
 </html>
