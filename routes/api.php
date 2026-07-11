@@ -33,7 +33,9 @@ $controllers = [
     'users' => \App\Http\Controllers\Api\UserController::class,
 ];
 
-foreach ($controllers as $uri => $controller) {
-    Route::apiResource($uri, $controller)->only(['index', 'show']);
-    Route::apiResource($uri, $controller)->except(['index', 'show'])->middleware('auth:sanctum');
-}
+Route::name('api.')->group(function () use ($controllers) {
+    foreach ($controllers as $uri => $controller) {
+        Route::apiResource($uri, $controller)->only(['index', 'show']);
+        Route::apiResource($uri, $controller)->except(['index', 'show'])->middleware('auth:sanctum');
+    }
+});
