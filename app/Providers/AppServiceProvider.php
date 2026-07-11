@@ -64,13 +64,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::useBootstrapFive();
-
         // Fix Livewire 404 with LaravelLocalization
         Livewire::setUpdateRoute(function ($handle) {
-            return Route::post(LaravelLocalization::setLocale() . '/livewire/update', $handle)
-                ->middleware(['web', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath']);
+            return Route::post('/livewire/update', $handle)
+                ->middleware(['web'])
+                ->prefix(\Mcamara\LaravelLocalization\Facades\LaravelLocalization::setLocale());
         });
-
         RouteServiceProvider::loadCachedRoutesUsing(fn() => $this->loadCachedRoutes());
     }
 }
