@@ -18,6 +18,8 @@ window.bootstrap = bootstrap;
 import '@popperjs/core';
 import Swal from 'sweetalert2';
 window.Swal = Swal;
+import Splide from '@splidejs/splide';
+window.Splide = Splide;
 // 1. Initialize Globals explicitly
 window.jQuery = window.$ = $;
 import select2 from 'select2'; // Import Select2 JS
