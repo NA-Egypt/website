@@ -206,85 +206,101 @@
         min-height: unset;
       }
     }
+    .splide__pagination {
+      bottom: -1.5rem !important;
+    }
+    .splide__pagination__page {
+      background: rgba(50, 85, 127, 0.2) !important;
+      transition: transform 0.2s ease, background-color 0.2s ease !important;
+    }
+    .splide__pagination__page.is-active {
+      background: #32557f !important;
+      transform: scale(1.4) !important;
+    }
+    .splide__arrow {
+      background: rgba(50, 85, 127, 0.08) !important;
+      color: #32557f !important;
+      transition: all 0.3s ease !important;
+    }
+    .splide__arrow:hover {
+      background: #32557f !important;
+      color: #fff !important;
+    }
+    .splide__arrow svg {
+      fill: currentColor !important;
+    }
   </style>
 
-  <div id="infoCarousel" class="carousel carousel-dark slide mt-4 mb-5" data-bs-ride="carousel">
-    <div class="carousel-inner">
-      <!-- Slide 1 -->
-      <div class="carousel-item active" data-bs-interval="15000">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <div class="card h-100 shadow-sm border-0 info-card p-4">
-              <div class="card-body text-center">
-                <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3"
-                  style="width:80px; height:80px; object-fit: contain;">
-                <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
-                <p class="card-text text-muted">{{ __('messages.whatistheprogramtxt') }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Slide 2 -->
-      <div class="carousel-item" data-bs-interval="15000">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <div class="card h-100 shadow-sm border-0 info-card p-4">
-              <div class="card-body text-center">
-                <img src="{{ asset('assets/images/slide-icon-recover.png') }}" alt="Recover Logo" class="mb-3"
-                  style="width:80px; height:80px; object-fit: contain;">
-                <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.wedorecover') }}</h3>
-                <p class="card-text text-muted">{{ __('messages.wedorecovertxt') }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Slide 3 -->
-      <div class="carousel-item" data-bs-interval="15000">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block">
+  <div id="infoCarousel" class="splide mt-4 mb-5" aria-label="Information Carousel">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <!-- Slide 1 -->
+        <li class="splide__slide">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
               <div class="card h-100 shadow-sm border-0 info-card p-4">
-                <div class="card-body text-center d-flex flex-column align-items-center">
-                  <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين" class="img-fluid rounded mb-4 shadow-sm"
-                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
-                  
-                  <h3 class="card-title font-weight-bold mb-3 gradient-text" dir="rtl">
-                    المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026
-                    <span class="fs-4 d-block mt-2 font-weight-bold gradient-text text-center">مسار يجمعنا</span>
-                  </h3>
-                  <div class="card-text text-muted text-end w-100" dir="rtl" style="font-size: 0.95rem; line-height: 1.8;">
-                    <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-2 bg-light rounded text-center">
-                      <span class="mx-3">
-                        📅 <strong>التاريخ:</strong> 8 - 9 أكتوبر 2026
-                      </span>
-                      <span class="mx-3">
-                        📍 <strong>المكان:</strong> الجامعة الأمريكية بالقاهرة
-                      </span>
-                      <span class="mx-3">
-                      يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.
-                      تستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة،
-                      نتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.
-                      </span>
+                <div class="card-body text-center">
+                  <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3"
+                    style="width:80px; height:80px; object-fit: contain;">
+                  <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
+                  <p class="card-text text-muted">{{ __('messages.whatistheprogramtxt') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- Slide 2 -->
+        <li class="splide__slide">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card h-100 shadow-sm border-0 info-card p-4">
+                <div class="card-body text-center">
+                  <img src="{{ asset('assets/images/slide-icon-recover.png') }}" alt="Recover Logo" class="mb-3"
+                    style="width:80px; height:80px; object-fit: contain;">
+                  <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.wedorecover') }}</h3>
+                  <p class="card-text text-muted">{{ __('messages.wedorecovertxt') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- Slide 3 -->
+        <li class="splide__slide">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block">
+                <div class="card h-100 shadow-sm border-0 info-card p-4">
+                  <div class="card-body text-center d-flex flex-column align-items-center">
+                    <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين" class="img-fluid rounded mb-4 shadow-sm"
+                      style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                    
+                    <h3 class="card-title font-weight-bold mb-3 gradient-text" dir="rtl">
+                      المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026
+                      <span class="fs-4 d-block mt-2 font-weight-bold gradient-text text-center">مسار يجمعنا</span>
+                    </h3>
+                    <div class="card-text text-muted text-end w-100" dir="rtl" style="font-size: 0.95rem; line-height: 1.8;">
+                      <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-2 bg-light rounded text-center">
+                        <span class="mx-3">
+                          📅 <strong>التاريخ:</strong> 8 - 9 أكتوبر 2026
+                        </span>
+                        <span class="mx-3">
+                          📍 <strong>المكان:</strong> الجامعة الأمريكية بالقاهرة
+                        </span>
+                        <span class="mx-3">
+                        يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.
+                        تستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة،
+                        نتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#infoCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#infoCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
   </div>
 
   <div class="row justify-content-center">
@@ -536,6 +552,19 @@
           myModal.show();
           sessionStorage.setItem('convention_popup_shown', 'true');
         }
+      }
+
+      if (window.Splide) {
+        const dir = document.documentElement.getAttribute('dir') || 'ltr';
+        new window.Splide('#infoCarousel', {
+          type: 'loop',
+          autoplay: true,
+          interval: 15000,
+          direction: dir,
+          arrows: true,
+          pagination: true,
+          gap: '1rem',
+        }).mount();
       }
     });
   </script>
