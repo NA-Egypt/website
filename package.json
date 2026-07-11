@@ -55,5 +55,8 @@
     "overrides": {
         "webpack-dev-server": "$webpack-dev-server",
         "uuid": "$uuid"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "^4.62.2"
     }
 }
