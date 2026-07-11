@@ -84,7 +84,6 @@ class MeetingFilterTest extends TestCase
         ]);
         $meeting->topics()->attach($topic->id);
 
-        // Run the Livewire test
         Livewire::test(MeetingFilter::class)
             ->set('day', 'Thursday')
             ->set('businessMeetingsOnly', false)
@@ -93,5 +92,55 @@ class MeetingFilterTest extends TestCase
             ->assertSet('day', '')
             ->assertSet('virtualOnly', false)
             ->assertSet('englishOnly', false);
+    }
+
+    public function test_recurrence_filtering_behavior()
+    {
+        $thursday = Day::find(6);
+        $topic = Topic::forceCreate(['id' => 1, 'en_name' => 'Discussion', 'ar_name' => 'مناقشة']);
+        $city = \App\Models\City::forceCreate(['id' => 2, 'en_name' => 'Giza', 'ar_name' => 'الجيزة']);
+        $serviceBody = ServiceBody::forceCreate([
+            'id' => 2, 'en_name' => 'Giza', 'ar_name' => 'الجيزة', 'day_id' => 6,
+            'start_time' => '18:00', 'end_time' => '19:00', 'location' => 'Giza'
+        ]);
+        $neighborhood = Neighborhood::forceCreate(['id' => 2, 'en_name' => 'Dokki', 'ar_name' => 'الدقي', 'city_id' => 2]);
+        $user = \App\Models\User::factory()->create();
+        $group = Group::forceCreate([
+            'id' => 186, 'en_name' => 'Dokki Group', 'ar_name' => 'مجموعة الدقي', 'group_type' => 'فعلي',
+            'ar_gsr_name' => 'Test', 'en_gsr_name' => 'Test', 'phone' => '1234567890', 'location' => '',
+            'service_body_id' => 2, 'neighborhood_id' => 2, 'user_id' => $user->id,
+            'ar_address' => 'الدقي', 'en_address' => 'Dokki'
+        ]);
+
+        // Create a weekly meeting (no recurrence array or contains 'weekly')
+        $weeklyMeeting = Meeting::forceCreate([
+            'id' => 320, 'day_id' => 6, 'group_id' => 186, 'topic_id' => 1, 'start_time' => '20:45', 'end_time' => '21:45',
+            'type' => 'open', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => null
+        ]);
+
+        // Create a monthly recurring meeting (recurrence has '1st')
+        $monthlyMeeting = Meeting::forceCreate([
+            'id' => 321, 'day_id' => 6, 'group_id' => 186, 'topic_id' => 1, 'start_time' => '21:00', 'end_time' => '22:00',
+            'type' => 'open', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => ['1st']
+        ]);
+
+        // 1. Default (recurrence is 'weekly') -> should return both weekly and monthly recurring meetings
+        $component = Livewire::test(MeetingFilter::class)
+            ->set('day', 'الخميس');
+        $meetings = $component->viewData('meetings');
+        $this->assertTrue($meetings->contains('id', 320));
+        $this->assertTrue($meetings->contains('id', 321));
+
+        // 2. Filter by 'monthly' -> should return only the monthly meeting
+        $component->set('recurrence', 'monthly');
+        $meetings = $component->viewData('meetings');
+        $this->assertFalse($meetings->contains('id', 320));
+        $this->assertTrue($meetings->contains('id', 321));
+
+        // 3. Filter by '1st' -> should return only the monthly meeting
+        $component->set('recurrence', '1st');
+        $meetings = $component->viewData('meetings');
+        $this->assertFalse($meetings->contains('id', 320));
+        $this->assertTrue($meetings->contains('id', 321));
     }
 }

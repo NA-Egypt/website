@@ -99,14 +99,7 @@ class MeetingFilterService
 
         if (!empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
             if ($filters['recurrence'] === 'weekly') {
-                $query->where(function($q) {
-                    $q->whereNull('recurrence')
-                      ->orWhere(function($sub) {
-                          foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
-                              $sub->where('recurrence', 'not like', '%"' . $item . '"%');
-                          }
-                      });
-                });
+                // 'weekly' is the default "Weekly Meetings" filter which should now show both weekly and monthly recurring meetings
             } elseif ($filters['recurrence'] === 'monthly') {
                 $query->where(function($q) {
                     $q->whereNotNull('recurrence')

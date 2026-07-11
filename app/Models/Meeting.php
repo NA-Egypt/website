@@ -100,14 +100,7 @@ class Meeting extends Model
 
     public function scopeNotMonthlyRecurrent($query)
     {
-        return $query->where(function($q) {
-            $q->whereNull('recurrence')
-              ->orWhere(function($sub) {
-                  foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
-                      $sub->where('recurrence', 'not like', '%"' . $item . '"%');
-                  }
-              });
-        })->whereDoesntHave('topics', function($q) {
+        return $query->whereDoesntHave('topics', function($q) {
             $q->where('en_name', 'Group Business Meeting');
         });
     }
