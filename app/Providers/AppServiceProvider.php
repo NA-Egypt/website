@@ -21,9 +21,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Mcamara\LaravelLocalization\Traits\LoadsTranslatedCachedRoutes;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    use LoadsTranslatedCachedRoutes;
     /**
      * Register any application services.
      */
@@ -67,5 +70,7 @@ class AppServiceProvider extends ServiceProvider
             return Route::post(LaravelLocalization::setLocale() . '/livewire/update', $handle)
                 ->middleware(['web', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath']);
         });
+
+        RouteServiceProvider::loadCachedRoutesUsing(fn() => $this->loadCachedRoutes());
     }
 }
