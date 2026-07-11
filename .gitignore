@@ -28,3 +28,5 @@ yarn-error.log
 /db-backup/backup.sh
 /db-backup/README.md
 stats.html
+composer.json
+composer.lock
