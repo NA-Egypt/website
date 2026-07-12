@@ -229,6 +229,20 @@
     .splide__arrow svg {
       fill: currentColor !important;
     }
+    #infoCarousel .splide__track {
+      mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+    }
+    #infoCarousel .splide__slide {
+      display: flex !important;
+      height: auto !important;
+    }
+    #infoCarousel .info-card {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
   </style>
 
   <div id="infoCarousel" class="splide mt-4 mb-5" aria-label="Information Carousel">
@@ -242,8 +256,8 @@
                 <div class="card-body">
                   <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3"
                     style="width:80px; height:80px; object-fit: contain;">
-                  <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
-                  <p class="card-text text-muted">{{ __('messages.whatistheprogramtxt') }}</p>
+                  <h4 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
+                  <p class="card-text text-muted mt-2">{{ __('messages.whatistheprogramtxt') }}</p>
                 </div>
               </div>
             </div>
@@ -254,11 +268,14 @@
           <div class="row justify-content-center">
             <div class="col-md-8">
               <div class="card h-100 shadow-sm border-0 info-card p-4">
-                <div class="card-body text-center">
-                  <img src="{{ asset('assets/images/slide-icon-recover.png') }}" alt="Recover Logo" class="mb-3"
-                    style="width:80px; height:80px; object-fit: contain;">
-                  <h3 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.wedorecover') }}</h3>
-                  <p class="card-text text-muted">{{ __('messages.wedorecovertxt') }}</p>
+                <div class="card-body text-center d-flex flex-column align-items-center">
+                  <!-- Desktop Image -->
+                  <img src="{{ asset('assets/images/we-do-recover.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-none d-md-block"
+                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                  <!-- Mobile Image -->
+                  <img src="{{ asset('assets/images/we-do-recover-mobile.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-block d-md-none"
+                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                  <p class="card-text text-muted mt-2">{{ __('messages.wedorecovertxt') }}</p>
                 </div>
               </div>
             </div>
@@ -271,15 +288,15 @@
               <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block">
                 <div class="card h-100 shadow-sm border-0 info-card p-4">
                   <div class="card-body text-center d-flex flex-column align-items-center">
-                    <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded mb-4 shadow-sm"
+                    <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded mb-3 shadow-sm"
                       style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
                     
-                    <h3 class="card-title font-weight-bold mb-3 gradient-text">
+                    <h4 class="card-title font-weight-bold mb-2 gradient-text text-center" style="font-size: 1.25rem;">
                       {{ __('messages.convention_title') }}
-                      <span class="fs-4 d-block mt-2 font-weight-bold gradient-text text-center">{{ __('messages.convention_subtitle') }}</span>
-                    </h3>
-                    <div class="card-text text-muted w-100" style="font-size: 0.95rem; line-height: 1.8;">
-                      <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-2 bg-light rounded text-center">
+                      <span class="fs-6 d-block mt-1 font-weight-bold text-muted text-center">{{ __('messages.convention_subtitle') }}</span>
+                    </h4>
+                    <div class="card-text text-muted w-100" style="font-size: 0.9rem; line-height: 1.6;">
+                      <div class="d-flex flex-wrap justify-content-center gap-3 my-2 py-1 bg-light rounded text-center">
                         <span class="mx-3">
                           📅 <strong>{{ __('messages.convention_date') }}</strong> {{ __('messages.convention_date_val') }}
                         </span>
@@ -562,6 +579,7 @@
           arrows: true,
           pagination: true,
           gap: '1rem',
+          autoHeight: true,
         }).mount();
       }
     });
