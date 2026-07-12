@@ -201,6 +201,9 @@ Route::group(
                 Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
                 Route::get('/subscribers/create', [SubscriberController::class, 'create'])->name('subscribers.create');
                 Route::post('/subscribers', [SubscriberController::class, 'store'])->name('subscribers.store_admin');
+                Route::post('/subscribers/bulk-action', [SubscriberController::class, 'bulkAction'])->name('subscribers.bulk_action');
+                Route::get('/subscribers/ids', [SubscriberController::class, 'getSubscriberIds'])->name('subscribers.ids');
+                Route::post('/subscribers/verify-batch', [SubscriberController::class, 'verifyBatch'])->name('subscribers.verify_batch');
                 Route::post('/subscribers/{subscriber}/toggle-verification', [SubscriberController::class, 'toggleVerification'])->name('subscribers.toggle-verification');
                 Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy_admin');
                 Route::get('/subscribers-export', [SubscriberController::class, 'export'])->name('subscribers.export');
@@ -271,6 +274,8 @@ Route::group(
         // Searches:
         Route::get('/searches/city/{id}/groups', [SearchController::class, 'city'])->name('searches.city');
         Route::get('/group/{id}/meetings', [SearchController::class, 'groupMeetings'])->name('searches.meeting');
+
+        Route::post('/subscribers/subscriber', [SubscriberController::class, 'storeFrontend'])->name('subscribers.store');
 
         // Frontend:
         Route::get('/', function(){
