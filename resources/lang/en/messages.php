@@ -1266,4 +1266,17 @@ return [
     'Year' => 'Year',
     'Received Service Body Accumulated Invoices' => 'Received Service Body Accumulated Invoices',
     'No service body requests received.' => 'No service body requests received.',
+    'About NA' => 'About NA',
+    'Resources' => 'Resources',
+    'comms' => 'Committees Meetings',
+    'fdsurvey' => 'FD Survey (Arabic)',
+    'convention_title' => 'The 30th Annual Convention of Narcotics Anonymous Egypt 2026',
+    'convention_subtitle' => 'A Path That Unite Us',
+    'convention_date' => 'Date:',
+    'convention_date_val' => 'October 8 - 9, 2026',
+    'convention_location' => 'Location:',
+    'convention_location_val' => 'The American University in Cairo - Tahrir',
+    'convention_desc' => 'The annual convention is a special opportunity for members and friends to gather in an atmosphere of recovery, service, and unity, through a diverse program including meetings, sharings, activities, and events reflecting the fellowship\'s message and spirit. Preparations for the convention continue through various service teams to ensure an event worthy of this special occasion. We look forward to seeing you all at the 30th Annual Convention of Narcotics Anonymous in Egypt, in an event that brings us together on the path of recovery, service, and unity.',
 ];
+
+
