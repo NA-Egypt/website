@@ -34,6 +34,18 @@
       position: relative;
     }
 
+    .home-stats-shell::before {
+      content: '';
+      position: absolute;
+      inset-inline-end: -26px;
+      top: -26px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: rgba(50, 85, 127, 0.06);
+      z-index: 0;
+    }
+
     .home-stats-shell::after {
       content: '';
       position: absolute;
@@ -42,7 +54,12 @@
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      background: rgba(50, 85, 127, 0.06);
+      background-image: url('/assets/images/na-symbol.png');
+      background-size: 70px;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.08;
+      z-index: 0;
     }
 
     .stats-heading {
@@ -71,8 +88,41 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
+    }
+
+    .helpline-box {
+      background: #ffffff !important;
+      border: 1px solid rgba(50, 85, 127, 0.10) !important;
+      border-radius: 18px !important;
+      padding: 20px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+      position: relative;
+      z-index: 1;
+    }
+    .helpline-box::before {
+      display: none !important;
+    }
+    .helpline-box h4 {
+      color: #32557f !important;
+      font-weight: 700 !important;
+      font-size: 1.15rem !important;
+      margin-bottom: 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+    .calc-box {
+      background: #ffffff !important;
+      border: 1px solid rgba(50, 85, 127, 0.10) !important;
+      border-radius: 18px !important;
+      padding: 20px !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
     }
 
     .stat-card-home {
@@ -243,6 +293,94 @@
       width: 100% !important;
       height: 100% !important;
     }
+
+    .helpline-box, .calc-box, .stat-card-home {
+      position: relative !important;
+      overflow: hidden !important;
+      background: #ffffff !important; /* Pure solid white background! */
+      z-index: 1 !important;
+    }
+    .helpline-box::before, .calc-box::before, .stat-card-home::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      background-repeat: no-repeat !important;
+      opacity: 0.035 !important; /* Fades the watermark down to 3.5% opacity */
+      pointer-events: none !important;
+      z-index: -1 !important;
+    }
+    
+    .helpline-box::before {
+      background-image: url('/assets/images/na-symbol.png') !important;
+      background-size: 140px !important;
+      background-position: right -20px bottom -20px !important;
+    }
+    [dir="rtl"] .helpline-box::before {
+      background-position: left -20px bottom -20px !important;
+    }
+
+    .calc-box::before {
+      background-image: url('/assets/images/na-symbol.png') !important;
+      background-size: 140px !important;
+      background-position: right -20px bottom -20px !important;
+    }
+    [dir="rtl"] .calc-box::before {
+      background-position: left -20px bottom -20px !important;
+    }
+
+    .stat-card-home::before {
+      background-image: url('/assets/images/na-watermark.png') !important;
+      background-size: 120px !important;
+      background-position: right -20px bottom -20px !important;
+    }
+    [dir="rtl"] .stat-card-home::before {
+      background-position: left -20px bottom -20px !important;
+    }
+
+    .helpline-box h4 {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      color: #32557f !important;
+      margin-bottom: 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+    .helpline-region {
+      font-weight: 600 !important;
+      color: #64748b !important;
+      margin-bottom: 6px !important;
+      font-size: 0.9rem !important;
+    }
+    .helpline-num-link {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      color: #32557f !important;
+      text-decoration: none !important;
+      transition: color 0.2s ease !important;
+      display: inline-block !important;
+      margin-bottom: 4px !important;
+    }
+    .helpline-num-link:hover {
+      color: #00698f !important;
+      text-decoration: underline !important;
+    }
+    .whatsapp-btn-link {
+      display: inline-block !important;
+      transition: transform 0.2s ease !important;
+    }
+    .whatsapp-btn-link:hover {
+      transform: scale(1.15) !important;
+    }
+    .timing-info {
+      font-size: 0.82rem !important;
+      color: #64748b !important;
+      font-weight: 600 !important;
+      margin-top: 8px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
   </style>
 
   <div id="infoCarousel" class="splide mt-4 mb-5" aria-label="Information Carousel">
@@ -322,55 +460,48 @@
     <div class="col-md-8">
       <div class="home-stats-shell">
         <div class="row justify-content-center mt-5">
-          <div class="col-md-4 helpline-box mb-3">
+          <div class="col-md-4 helpline-box mb-3 p-4">
             <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
-            <p dir="ltr"><a href="tel:+201006979198">+201006979198</a><br /><a
-                href="tel:+201060933888">+201060933888</a>
-              <br />
-              <a href="https://wa.me/201060933888" target="_blank"><x-fab-whatsapp
-                  style="width:24px; height:24px;" /></a>
-              <br />
-              <x-fas-clock style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.regionaltiming') }}
-              <br />
+            <p dir="ltr" class="mb-2">
+              <a class="helpline-num-link" href="tel:+201006979198">+201006979198</a><br />
+              <a class="helpline-num-link" href="tel:+201060933888">+201060933888</a>
             </p>
+            <div class="mb-2">
+              <a href="https://wa.me/201060933888" target="_blank" class="whatsapp-btn-link">
+                <x-fab-whatsapp style="width:26px; height:26px;" />
+              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.regionaltiming') }}
+            </div>
           </div>
-          <div class="col-md-4 helpline-box mb-3">
+
+          <div class="col-md-4 helpline-box mb-3 p-4">
             <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-            <div>{{ __('messages.alexandria') }}</div>
-            <p dir="ltr"><a href="tel:+201503884411">+201503884411</a><br />
-              <a href="https://wa.me/201503884411" target="_blank"><x-fab-whatsapp
-                  style="width:24px; height:24px;" /></a>
-              <br />
-              <x-fas-clock style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.leactiming') }}
-              <br />
+            <div class="helpline-region">{{ __('messages.alexandria') }}</div>
+            <p dir="ltr" class="mb-2">
+              <a class="helpline-num-link" href="tel:+201503884411">+201503884411</a>
             </p>
+            <div class="mb-2">
+              <a href="https://wa.me/201503884411" target="_blank" class="whatsapp-btn-link">
+                <x-fab-whatsapp style="width:26px; height:26px;" />
+              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.leactiming') }}
+            </div>
           </div>
-          <div class="col-md-4 helpline-box mb-3">
+
+          <div class="col-md-4 helpline-box mb-3 p-4">
             <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-            <div>{{ __('messages.westgiza') }}</div>
-            <p dir="ltr"><a href="tel:+201003694690">+201003694690</a><br />
-              <a href="https://wa.me/201003694690" target="_blank"><x-fab-whatsapp
-                  style="width:24px; height:24px;" /></a>
-              <br />
-              <x-fas-clock style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.ahramtiming') }}
-              <br />
+            <div class="helpline-region">{{ __('messages.westgiza') }}</div>
+            <p dir="ltr" class="mb-2">
+              <a class="helpline-num-link" href="tel:+201003694690">+201003694690</a>
             </p>
+            <div class="mb-2">
+              <a href="https://wa.me/201003694690" target="_blank" class="whatsapp-btn-link">
+                <x-fab-whatsapp style="width:26px; height:26px;" />
+              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.ahramtiming') }}
+            </div>
           </div>
         </div>
         <div class="row justify-content-center mt-3">
-          <div class="col-md-4 helpline-box mb-3">
-            <div class="row px-4 py-1">
-              <a class="btn btn-outline-light"
-                href="{{ route('frontend.meetings') }}">{{ __('messages.Meetings') }}&nbsp;<x-fas-users
-                  style="width:16px; height:16px;" /></a>
-            </div>
-            <div class="row px-4 py-1 mt-2">
-              <a class="btn btn-outline-info"
-                href="{{ route('frontend.comms') }}">{{ __('messages.Service Committees') }}&nbsp;<x-fas-users
-                  style="width:16px; height:16px;" /></a>
-            </div>
-          </div>
-          <div class="col-md-4 helpline-box mb-3">
+          <div class="col-md-6 helpline-box mb-3 p-4">
+            <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
             @if (session('subscribed'))
               <div class="alert alert-success p-2">
                 {{ __('messages.' . session('subscribed')) }}
@@ -378,46 +509,49 @@
             @endif
             <form action="{{ route('subscribers.store') }}" method="post">
               @csrf
-              <div class="form-group">
-                <input type="email" name="email" class="form-control"
-                  placeholder="{{ __('messages.Enter your email') }}">
-                <br />
-                <button class="btn btn-outline-success"
+              <div class="form-group mb-0">
+                <input type="email" name="email" class="form-control mb-3"
+                  placeholder="{{ __('messages.Enter your email') }}" required>
+                <button class="btn btn-outline-success w-100" style="font-weight: 600;"
                   type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope
                     style="width:16px; height:16px;" /></button>
               </div>
             </form>
           </div>
-          <div class="col-md-4 calc-box mb-3">
-            <div class="form-group">
-              <h5><label for="date">{{ __('messages.calculator') }}</label></h5>
-              <input type="date" class="form-control mb-3" onchange="setDate(this)">
+          <div class="col-md-6 calc-box mb-3 d-flex flex-column justify-content-between p-4">
+            <div class="form-group mb-0">
+              <h5 class="font-weight-bold mb-3 text-primary d-flex align-items-center justify-content-center gap-2" style="color: #32557f !important; font-weight: 700;">
+                <i class="bi bi-calendar-check-fill"></i>&nbsp;{{ __('messages.calculator') }}
+              </h5>
+              <input type="date" class="form-control mb-3 text-center border-2 border-primary-subtle rounded-3" style="font-weight: 600;" onchange="setDate(this); findTime(document.myForm)">
             </div>
-            <form name="myForm">
-              <div class="form-group" dir="ltr">
-                <div class="input-group mb-2">
-                  <input type="text" class="form-control" name="Fyears" placeholder="{{ __('messages.years') }}"
-                    readonly>
-                  <div class="input-group-append">
-                    <span class="input-group-text">{{ __('messages.years') }}</span>
+            <form name="myForm" class="w-100">
+              <!-- Hidden inputs to maintain form compatibility -->
+              <input type="hidden" name="Fyears" value="0">
+              <input type="hidden" name="Fmonth" value="0">
+              <input type="hidden" name="FR" value="0">
+              
+              <!-- Beautiful Modern Stats Display -->
+              <div class="row g-2 justify-content-center text-center mt-2">
+                <div class="col-4">
+                  <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
+                    <div id="years-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
+                    <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.years') }}</div>
                   </div>
                 </div>
-                <div class="input-group mb-2">
-                  <input type="text" class="form-control" name="Fmonth" placeholder="{{ __('messages.months') }}"
-                    readonly>
-                  <div class="input-group-append">
-                    <span class="input-group-text">{{ __('messages.months') }}</span>
+                <div class="col-4">
+                  <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
+                    <div id="months-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
+                    <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.months') }}</div>
                   </div>
                 </div>
-                <div class="input-group mb-2">
-                  <input type="text" class="form-control" name="FR" placeholder="{{ __('messages.days') }}" readonly>
-                  <div class="input-group-append">
-                    <span class="input-group-text">{{ __('messages.days') }}</span>
+                <div class="col-4">
+                  <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
+                    <div id="days-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
+                    <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.days') }}</div>
                   </div>
                 </div>
               </div>
-              <button type="button" onclick="findTime(document.myForm)"
-                class="btn btn-info w-100">{{ __('messages.calculate') }}</button>
             </form>
           </div>
         </div>
@@ -448,14 +582,6 @@
                 <span class="stat-label-home">{{ __('messages.groups_count') }}</span>
               </div>
               <div class="stat-value-home">{{ number_format($homeStats['groups']) }}</div>
-            </div>
-
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-map-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.governorates_count') }}</span>
-              </div>
-              <div class="stat-value-home">{{ number_format($homeStats['governorates']) }}</div>
             </div>
 
           </div>
@@ -530,8 +656,7 @@
     }
 
     function findTime(form) {
-      if (!selectedDate) {
-        alert("Please select a date first!");
+      if (!selectedDate || isNaN(selectedDate.getTime())) {
         return;
       }
 
@@ -555,6 +680,11 @@
       form.Fyears.value = totalYears;
       form.Fmonth.value = totalMonths;
       form.FR.value = totalDays;
+
+      // Update modern styled results display
+      document.getElementById('years-result').textContent = totalYears;
+      document.getElementById('months-result').textContent = totalMonths;
+      document.getElementById('days-result').textContent = totalDays;
 
       console.log(`Difference: ${totalYears} years / ${totalMonths} months / ${totalDays} days`);
     }

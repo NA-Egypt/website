@@ -224,6 +224,7 @@ return [
     'Account' => 'Account',
     'Enter your email' => 'Enter your email',
     'Subscribe' => 'Subscribe',
+    'subscribe_desc' => 'Receive the latest news and updates from Narcotics Anonymous Egypt.',
     'Map' => 'Map',
     'You are successfully subscribed to our list!' => 'You are successfully subscribed to our list!',
     'You are successfully unsubscribed from our list!' => 'You are successfully unsubscribed from our list!',

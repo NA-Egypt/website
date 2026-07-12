@@ -225,6 +225,7 @@ return [
     'Account' => 'المستخدم',
     'Enter your email' => 'أدخل بريدك الإلكتروني',
     'Subscribe' => 'الإشتراك',
+    'subscribe_desc' => 'احصل على آخر الأخبار والتحديثات من زمالة المدمنين المجهولين بمصر.',
     'Map' => 'الخريطة',
     'You are successfully subscribed to our list!' => 'لقد اشتركت في قائمتنا!',
     'You are successfully unsubscribed from our list!' => 'لقد حذفت اشتراكك من قائمتنا!',

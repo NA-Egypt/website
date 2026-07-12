@@ -560,7 +560,7 @@ footer {
   position: sticky;
   top: 15px;
   z-index: 1040;
-  background: rgba(0, 4, 135, 0.75) !important;
+  background: #1F2A38 !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
