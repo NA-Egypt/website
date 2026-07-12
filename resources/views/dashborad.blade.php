@@ -70,6 +70,14 @@
         <x-dashboard.card-statics name="{{ __('messages.Meetings PDF Downloads') }}" qty="{{ $pdfDownloadsCount }}" color-theme="info" icon="file-earmark-pdf" description="{{ __('messages.Downloads in :month', ['month' => \App\Services\DateNumberHelper::translatedFormat(now(), 'F Y')]) }}" />
       </div>
       {{-- / PDF downloads count --}}
+      
+      {{-- Subscribers card --}}
+      <div class="col">
+        <a href="{{ route('subscribers.index') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.Subscribers') }}" qty="{{ $subscribersCount }}" color-theme="primary" icon="envelope-paper-fill" />
+        </a>
+      </div>
+      {{-- / Subscribers card --}}
       @endif
 
       @if ($showNewAdditionsCard)

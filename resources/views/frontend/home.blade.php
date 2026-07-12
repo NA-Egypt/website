@@ -93,13 +93,24 @@
     }
 
     .helpline-box {
-      background: #ffffff !important;
-      border: 1px solid rgba(50, 85, 127, 0.10) !important;
-      border-radius: 18px !important;
+      background: rgba(255, 255, 255, 0.75) !important;
+      backdrop-filter: blur(12px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(190%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.45) !important;
+      border-radius: 20px !important;
       padding: 20px !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04) !important;
       position: relative;
       z-index: 1;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      min-height: 270px !important;
+      width: calc(100% + 3px) !important;
+      margin-left: -1.5px !important;
+    }
+    .helpline-box:hover {
+      transform: translateY(-5px) scale(1.01) !important;
+      box-shadow: 0 20px 40px 0 rgba(50, 85, 127, 0.12), 0 0 0 1px rgba(50, 85, 127, 0.1) !important;
+      border-color: rgba(50, 85, 127, 0.2) !important;
     }
     .helpline-box::before {
       display: none !important;
@@ -118,11 +129,12 @@
       border: 1px solid rgba(50, 85, 127, 0.10) !important;
       border-radius: 18px !important;
       padding: 20px !important;
-      margin: 0 !important;
-      width: 100% !important;
-      max-width: 100% !important;
+      margin: 0 0 0 -1.5px !important;
+      width: calc(100% + 3px) !important;
+      max-width: calc(100% + 3px) !important;
       display: block !important;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+      min-height: 270px !important;
     }
 
     .stat-card-home {
@@ -294,10 +306,15 @@
       height: 100% !important;
     }
 
-    .helpline-box, .calc-box, .stat-card-home {
+    .calc-box, .stat-card-home {
       position: relative !important;
       overflow: hidden !important;
       background: #ffffff !important; /* Pure solid white background! */
+      z-index: 1 !important;
+    }
+    .helpline-box {
+      position: relative !important;
+      overflow: hidden !important;
       z-index: 1 !important;
     }
     .helpline-box::before, .calc-box::before, .stat-card-home::before {
@@ -353,33 +370,117 @@
       font-size: 0.9rem !important;
     }
     .helpline-num-link {
-      font-size: 1.15rem !important;
+      font-size: 0.95rem !important;
       font-weight: 700 !important;
       color: #32557f !important;
       text-decoration: none !important;
-      transition: color 0.2s ease !important;
-      display: inline-block !important;
-      margin-bottom: 4px !important;
+      transition: all 0.3s ease !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      background: rgba(50, 85, 127, 0.05) !important;
+      border: 1px solid rgba(50, 85, 127, 0.08) !important;
+      padding: 8px 10px !important;
+      border-radius: 12px !important;
+      width: 100% !important;
     }
     .helpline-num-link:hover {
-      color: #00698f !important;
-      text-decoration: underline !important;
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #32557f 0%, #00698f 100%) !important;
+      border-color: transparent !important;
+      box-shadow: 0 4px 12px rgba(50, 85, 127, 0.2) !important;
+      transform: translateY(-2px) !important;
+      text-decoration: none !important;
     }
-    .whatsapp-btn-link {
-      display: inline-block !important;
-      transition: transform 0.2s ease !important;
-    }
-    .whatsapp-btn-link:hover {
-      transform: scale(1.15) !important;
-    }
-    .timing-info {
-      font-size: 0.82rem !important;
-      color: #64748b !important;
-      font-weight: 600 !important;
-      margin-top: 8px !important;
+    .whatsapp-float-btn {
+      position: absolute !important;
+      top: 16px !important;
+      right: 16px !important;
+      width: 36px !important;
+      height: 36px !important;
+      background: #25d366 !important;
+      color: #ffffff !important;
+      border-radius: 50% !important;
       display: flex !important;
       align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3) !important;
+      z-index: 10 !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      animation: whatsapp-pulse 2s infinite !important;
+    }
+    [dir="rtl"] .whatsapp-float-btn {
+      right: auto !important;
+      left: 16px !important;
+    }
+    .whatsapp-float-btn:hover {
+      transform: scale(1.15) !important;
+      background: #20ba5a !important;
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5) !important;
+      color: #ffffff !important;
+    }
+    @keyframes whatsapp-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+      }
+    }
+    .timing-badge-bottom {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
       gap: 6px !important;
+      background: rgba(50, 85, 127, 0.04) !important;
+      border: 1px solid rgba(50, 85, 127, 0.06) !important;
+      padding: 8px 12px !important;
+      border-radius: 10px !important;
+      font-size: 0.8rem !important;
+      color: #64748b !important;
+      font-weight: 600 !important;
+      margin-top: 10px !important;
+    }
+    .subscribe-input {
+      border: 2px solid rgba(50, 85, 127, 0.12) !important;
+      border-radius: 12px !important;
+      padding: 12px 16px !important;
+      font-size: 0.95rem !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      background: rgba(255, 255, 255, 0.6) !important;
+    }
+    .subscribe-input:focus {
+      outline: none !important;
+      border-color: #32557f !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 4px rgba(50, 85, 127, 0.15) !important;
+    }
+    .subscribe-btn {
+      background: linear-gradient(135deg, #32557f 0%, #00698f 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 12px 20px !important;
+      border-radius: 12px !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      box-shadow: 0 4px 12px rgba(50, 85, 127, 0.15) !important;
+    }
+    .subscribe-btn:hover {
+      background: linear-gradient(135deg, #00698f 0%, #32557f 100%) !important;
+      box-shadow: 0 6px 16px rgba(50, 85, 127, 0.25) !important;
+      transform: translateY(-2px) !important;
+    }
+    .subscribe-btn:active {
+      transform: translateY(0) !important;
     }
   </style>
 
@@ -460,63 +561,85 @@
     <div class="col-md-8">
       <div class="home-stats-shell">
         <div class="row justify-content-center mt-5">
-          <div class="col-md-4 helpline-box mb-3 p-4">
-            <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helplines') }}</h4>
-            <p dir="ltr" class="mb-2">
-              <a class="helpline-num-link" href="tel:+201006979198">+201006979198</a><br />
-              <a class="helpline-num-link" href="tel:+201060933888">+201060933888</a>
-            </p>
-            <div class="mb-2">
-              <a href="https://wa.me/201060933888" target="_blank" class="whatsapp-btn-link">
-                <x-fab-whatsapp style="width:26px; height:26px;" />
-              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.regionaltiming') }}
+          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+            <a href="https://wa.me/201060933888" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
+              <x-fab-whatsapp style="width:20px; height:20px;" />
+            </a>
+            <div>
+              <h4><x-fas-headset style="width:16px; height:16px;" />{{ __('messages.helplines') }}</h4>
+            </div>
+            <div dir="ltr" class="d-flex flex-column gap-2 my-auto py-3">
+              <a class="helpline-num-link" href="tel:+201006979198">
+                <i class="bi bi-telephone-fill"></i> +201006979198
+              </a>
+              <a class="helpline-num-link" href="tel:+201060933888">
+                <i class="bi bi-telephone-fill"></i> +201060933888
+              </a>
+            </div>
+            <div class="timing-badge-bottom">
+              <x-fas-clock style="width:12px; height:12px; fill: currentColor;" />
+              <span>{{ __('messages.regionaltiming') }}</span>
             </div>
           </div>
 
-          <div class="col-md-4 helpline-box mb-3 p-4">
-            <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-            <div class="helpline-region">{{ __('messages.alexandria') }}</div>
-            <p dir="ltr" class="mb-2">
-              <a class="helpline-num-link" href="tel:+201503884411">+201503884411</a>
-            </p>
-            <div class="mb-2">
-              <a href="https://wa.me/201503884411" target="_blank" class="whatsapp-btn-link">
-                <x-fab-whatsapp style="width:26px; height:26px;" />
-              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.leactiming') }}
+          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+            <a href="https://wa.me/201503884411" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
+              <x-fab-whatsapp style="width:20px; height:20px;" />
+            </a>
+            <div>
+              <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
+              <div class="helpline-region mt-2">{{ __('messages.alexandria') }}</div>
+            </div>
+            <div dir="ltr" class="d-flex flex-column gap-2 my-auto py-3">
+              <a class="helpline-num-link" href="tel:+201503884411">
+                <i class="bi bi-telephone-fill"></i> +201503884411
+              </a>
+            </div>
+            <div class="timing-badge-bottom">
+              <x-fas-clock style="width:12px; height:12px; fill: currentColor;" />
+              <span>{{ __('messages.leactiming') }}</span>
             </div>
           </div>
 
-          <div class="col-md-4 helpline-box mb-3 p-4">
-            <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-            <div class="helpline-region">{{ __('messages.westgiza') }}</div>
-            <p dir="ltr" class="mb-2">
-              <a class="helpline-num-link" href="tel:+201003694690">+201003694690</a>
-            </p>
-            <div class="mb-2">
-              <a href="https://wa.me/201003694690" target="_blank" class="whatsapp-btn-link">
-                <x-fab-whatsapp style="width:26px; height:26px;" />
-              </a>&NonBreakingSpace;<x-fas-clock style="width:14px; height:14px; fill: currentColor;" />&NonBreakingSpace;{{ __('messages.ahramtiming') }}
+          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+            <a href="https://wa.me/201003694690" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
+              <x-fab-whatsapp style="width:20px; height:20px;" />
+            </a>
+            <div>
+              <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
+              <div class="helpline-region mt-2">{{ __('messages.westgiza') }}</div>
+            </div>
+            <div dir="ltr" class="d-flex flex-column gap-2 my-auto py-3">
+              <a class="helpline-num-link" href="tel:+201003694690">
+                <i class="bi bi-telephone-fill"></i> +201003694690
+              </a>
+            </div>
+            <div class="timing-badge-bottom">
+              <x-fas-clock style="width:12px; height:12px; fill: currentColor;" />
+              <span>{{ __('messages.ahramtiming') }}</span>
             </div>
           </div>
         </div>
         <div class="row justify-content-center mt-3">
-          <div class="col-md-6 helpline-box mb-3 p-4">
-            <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
-            @if (session('subscribed'))
-              <div class="alert alert-success p-2">
-                {{ __('messages.' . session('subscribed')) }}
-              </div>
-            @endif
-            <form action="{{ route('subscribers.store') }}" method="post">
-              @csrf
-              <div class="form-group mb-0">
-                <input type="email" name="email" class="form-control mb-3"
-                  placeholder="{{ __('messages.Enter your email') }}" required>
-                <button class="btn btn-outline-success w-100" style="font-weight: 600;"
-                  type="submit">{{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope
-                    style="width:16px; height:16px;" /></button>
-              </div>
-            </form>
+          <div class="col-md-6 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+            <div>
+              <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
+              @if (session('subscribed'))
+                <div class="alert alert-success p-2">
+                  {{ __('messages.' . session('subscribed')) }}
+                </div>
+              @endif
+              <form action="{{ route('subscribers.store') }}" method="post">
+                @csrf
+                <div class="form-group mb-0">
+                  <input type="email" name="email" class="form-control subscribe-input mb-3"
+                    placeholder="{{ __('messages.Enter your email') }}" required>
+                  <button class="subscribe-btn w-100" style="font-weight: 600;" type="submit">
+                    {{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;" />
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
           <div class="col-md-6 calc-box mb-3 d-flex flex-column justify-content-between p-4">
             <div class="form-group mb-0">

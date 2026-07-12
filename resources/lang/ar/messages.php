@@ -1282,6 +1282,20 @@ return [
     'convention_location' => 'المكان:',
     'convention_location_val' => 'الجامعة الأمريكية بالقاهرة - التحرير',
     'convention_desc' => 'يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها. تستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة، نتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.',
+
+    // Subscribers Management:
+    'Subscribers' => 'المشتركين',
+    'Manage Subscribers' => 'إدارة المشتركين',
+    'Add Subscriber' => 'إضافة مشترك',
+    'Subscriber added successfully' => 'تم إضافة المشترك بنجاح.',
+    'Subscriber unverified successfully' => 'تم إلغاء تفعيل المشترك بنجاح.',
+    'Subscriber verified successfully' => 'تم تفعيل المشترك بنجاح.',
+    'Subscriber deleted successfully' => 'تم حذف المشترك بنجاح.',
+    'Export CSV' => 'تصدير CSV',
+    'Unverify' => 'إلغاء التفعيل',
+    'Verify' => 'تفعيل',
+    'Unverified' => 'غير مفعل',
+    'Are you sure you want to delete this subscriber?' => 'هل أنت متأكد من حذف هذا المشترك؟',
 ];
 
 

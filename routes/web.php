@@ -16,6 +16,7 @@ use App\Http\Controllers\ServiceCommitteeController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MeetingFilterController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -195,6 +196,14 @@ Route::group(
                     [RoleController::class, 'destroy'])->name('roles.destroy');
                 Route::delete('/users/{user}',
                     [UserController::class, 'destroy'])->name('users.destroy');
+
+                // Subscribers:
+                Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
+                Route::get('/subscribers/create', [SubscriberController::class, 'create'])->name('subscribers.create');
+                Route::post('/subscribers', [SubscriberController::class, 'store'])->name('subscribers.store_admin');
+                Route::post('/subscribers/{subscriber}/toggle-verification', [SubscriberController::class, 'toggleVerification'])->name('subscribers.toggle-verification');
+                Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy_admin');
+                Route::get('/subscribers-export', [SubscriberController::class, 'export'])->name('subscribers.export');
             });
 
             // Custom Form Builder:

@@ -161,9 +161,15 @@ class GreatingPagesController extends Controller
 
         $changeRequestsCount = ChangeRequest::where('created_at', '>=', now()->startOfMonth())->count();
 
+        $subscribersCount = 0;
+        if ($user && $user->hasRole('super admin')) {
+            $subscribersCount = \Mydnic\Subscribers\Subscriber::count();
+        }
+
         return view('dashborad', [
 
             'meetings'          => $meetings,
+            'subscribersCount'  => $subscribersCount,
             'serviceBodies'     => $serviceBodies,
             'cities'            => $cities,
             'groups'            => $groups,
