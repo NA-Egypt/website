@@ -23,6 +23,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\ForPublicController;
+use App\Http\Controllers\FacebookTargetingController;
 use Illuminate\Support\Facades\App;
 use App\Models\City;
 use App\Models\Group;
@@ -114,6 +115,11 @@ Route::group(
                 Route::get('/topic/{topic}',[TopicController::class,'edit'])->name('topic.edit');
                 Route::put('/topic/{topic}',[TopicController::class,'update'])->name('topic.update');
                 Route::delete('/topic/{topic}',[TopicController::class,'destroy'])->name('topic.destroy');
+
+                // Facebook Targeting Routes
+                Route::get('/facebook-targeting', [FacebookTargetingController::class, 'index'])->name('facebook-targeting.index');
+                Route::post('/facebook-targeting/sync', [FacebookTargetingController::class, 'sync'])->name('facebook-targeting.sync');
+                Route::post('/facebook-targeting/download', [FacebookTargetingController::class, 'download'])->name('facebook-targeting.download');
             });
 
             // Group Routes:

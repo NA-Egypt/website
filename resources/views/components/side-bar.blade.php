@@ -166,6 +166,8 @@
             </li>
             <li> <a href="{{route('subscribers.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Subscribers')}}</a>
             </li>
+            <li> <a href="{{ route('facebook-targeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</a>
+            </li>
           </ul>
         </div>
       </li>
