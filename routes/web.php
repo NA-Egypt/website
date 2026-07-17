@@ -123,6 +123,7 @@ Route::group(
             Route::middleware(['role:super admin|Committees'])->group(function () {
                 Route::get('/facebook-targeting', [FacebookTargetingController::class, 'index'])->name('facebook-targeting.index');
                 Route::post('/facebook-targeting/download', [FacebookTargetingController::class, 'download'])->name('facebook-targeting.download');
+                Route::post('/facebook-targeting/static-map', [FacebookTargetingController::class, 'generateStaticMapUrl'])->name('facebook-targeting.static-map');
             });
 
             // Group Routes:

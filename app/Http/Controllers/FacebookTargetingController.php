@@ -291,6 +291,86 @@ class FacebookTargetingController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function generateStaticMapUrl(Request $request)
+    {
+        $selectedIds = $request->input('selected_groups', []);
+        $radii = $request->input('radii', []);
+
+        $apiKey = env('GOOGLE_MAPS_API_KEY', 'AIzaSyAJ15C_GQbFUD1oqhVSZQDsVamHRoPkmhE');
+        $signingSecret = env('GOOGLE_MAPS_SIGNING_SECRET', 'vjs-829dDUD29dnvDUH928ndjD98nsjD');
+
+        $baseUrl = "https://maps.googleapis.com/maps/api/staticmap";
+        $params = [
+            'size' => '800x600',
+            'maptype' => 'roadmap',
+            'key' => $apiKey,
+        ];
+
+        $markerCoords = [];
+        $paths = [];
+
+        foreach ($selectedIds as $item) {
+            $parts = explode(':', $item, 4);
+            if (count($parts) >= 4) {
+                $id = $parts[0];
+                $lat = (float)$parts[1];
+                $lng = (float)$parts[2];
+                
+                $markerCoords[] = "{$lat},{$lng}";
+
+                $radius = isset($radii[$id]) ? (float)$radii[$id] : 5;
+                
+                $circlePoints = [];
+                $earthRadius = 6371;
+                $latRad = deg2rad($lat);
+                $lngRad = deg2rad($lng);
+                $d = $radius / $earthRadius;
+
+                for ($i = 0; $i < 360; $i += 45) {
+                    $bearing = deg2rad($i);
+                    $pLat = asin(sin($latRad) * cos($d) + cos($latRad) * sin($d) * cos($bearing));
+                    $pLng = $lngRad + atan2(sin($bearing) * sin($d) * cos($latRad), cos($d) - sin($latRad) * sin($pLat));
+                    
+                    $pLatDeg = round(rad2deg($pLat), 6);
+                    $pLngDeg = round(rad2deg($pLng), 6);
+                    $circlePoints[] = "{$pLatDeg},{$pLngDeg}";
+                }
+                $circlePoints[] = $circlePoints[0];
+
+                $paths[] = "color:0x3461ff|weight:1|fillcolor:0x3461ff22|" . implode('|', $circlePoints);
+            }
+        }
+
+        $queryParams = http_build_query($params);
+
+        if (!empty($markerCoords)) {
+            $queryParams .= "&markers=color:red|size:small|" . implode('|', $markerCoords);
+        }
+
+        foreach ($paths as $path) {
+            $queryParams .= "&path=" . urlencode($path);
+        }
+
+        $fullUrl = $baseUrl . '?' . $queryParams;
+
+        if (!empty($signingSecret)) {
+            try {
+                $urlParts = parse_url($fullUrl);
+                $urlToSign = $urlParts['path'] . '?' . $urlParts['query'];
+                $decodedKey = base64_decode(str_replace(['-', '_'], ['+', '/'], $signingSecret));
+                if ($decodedKey) {
+                    $signature = hash_hmac("sha1", $urlToSign, $decodedKey, true);
+                    $encodedSignature = str_replace(['+', '/'], ['-', '_'], base64_encode($signature));
+                    $fullUrl .= '&signature=' . $encodedSignature;
+                }
+            } catch (\Exception $e) {
+                // Return unsigned url
+            }
+        }
+
+        return response()->json(['url' => $fullUrl]);
+    }
+
     private function parseCoordinates($url)
     {
         $url = urldecode($url);

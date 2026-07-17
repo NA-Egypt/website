@@ -1,9 +1,8 @@
 <x-layout>
     <x-backhead>{{ __('Facebook Targeting Area Mapper') }}</x-backhead>
 
-    <!-- Leaflet.js CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Google Maps JS SDK -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJ15C_GQbFUD1oqhVSZQDsVamHRoPkmhE" async defer></script>
 
     <style>
         #map {
@@ -66,25 +65,25 @@
                             <div class="row g-2 mb-4">
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Active Groups') }}</div>
+                                        <div class="text-muted small mb-1{{ app()->getLocale() === 'ar' ? ' me-1' : '' }}">{{ __('Active Groups') }}</div>
                                         <h3 class="fw-bold mb-0 text-dark" id="stat-total-groups">{{ count($groups) }}</h3>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Accuracy Rate') }}</div>
+                                        <div class="text-muted small mb-1{{ app()->getLocale() === 'ar' ? ' me-1' : '' }}">{{ __('Accuracy Rate') }}</div>
                                         <h3 class="fw-bold mb-0 text-success" id="stat-accuracy-rate">0%</h3>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light" id="stat-overlap-card">
-                                        <div class="text-muted small mb-1">{{ __('Overlapping Areas') }}</div>
+                                        <div class="text-muted small mb-1{{ app()->getLocale() === 'ar' ? ' me-1' : '' }}">{{ __('Overlapping Areas') }}</div>
                                         <h3 class="fw-bold mb-0 text-warning" id="stat-overlap-count">0</h3>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Needs Precise Link') }}</div>
+                                        <div class="text-muted small mb-1{{ app()->getLocale() === 'ar' ? ' me-1' : '' }}">{{ __('Needs Precise Link') }}</div>
                                         <h3 class="fw-bold mb-0 text-danger" id="stat-imprecise-count">0</h3>
                                     </div>
                                 </div>
@@ -101,8 +100,8 @@
                         </div>
 
                         <!-- Sync Action Button -->
-                        @if(auth()->user()->hasRole('super admin'))
                         <div class="mt-4">
+                            @if(auth()->user()->hasRole('super admin'))
                             <form action="{{ route('facebook-targeting.sync') }}" method="POST" onsubmit="showLoadingState()">
                                 @csrf
                                 <button type="submit" id="syncBtn" class="btn btn-primary w-100 py-2.5 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2">
@@ -114,8 +113,8 @@
                                 <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                                 {{ __('Resolving redirects and geocoding, please wait...') }}
                             </div>
+                            @endif
                         </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -127,7 +126,7 @@
                 @csrf
                 <div class="card-header bg-transparent py-3">
                     <div class="row g-3 align-items-center">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
                                 <input type="text" id="searchBox" class="form-control border-start-0" placeholder="{{ __('Search groups, addresses...') }}">
@@ -154,10 +153,16 @@
                                 <label class="form-check-label small" for="toggleImpreciseOnly">{{ __('Imprecise Only') }}</label>
                             </div>
                         </div>
-                        <div class="col-md-3 text-end">
+                        <div class="col-md-2 text-end">
                             <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-download"></i>
-                                {{ __('Download Facebook CSV') }}
+                                {{ __('Download CSV') }}
+                            </button>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" id="getStaticMapBtn" class="btn btn-info btn-sm w-100 rounded-pill shadow-sm text-white d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-link-45deg"></i>
+                                {{ __('Copy Signed Map URL') }}
                             </button>
                         </div>
                     </div>
@@ -256,34 +261,27 @@
         </div>
     </div>
 
-    <!-- JS logic for Leaflet Map, real-time metrics, and overlap checking -->
+    <!-- JS logic for Google Maps, real-time metrics, and overlap checking -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Initialize map centered on Egypt
-            const map = L.map('map').setView([26.8206, 30.8025], 6);
+        let map;
+        const mapElements = {};
+        const groupData = [];
 
-            // Add OpenStreetMap tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+        function initMap() {
+            // Initialize Google Map centered on Egypt
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 26.8206, lng: 30.8025 },
+                zoom: 6,
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
 
-            const mapElements = {};
+            // Fetch group rows data
             const rows = document.querySelectorAll('.group-row');
-            const groupData = [];
+            const bounds = new google.maps.LatLngBounds();
+            let hasBounds = false;
 
-            // Haversine formula to compute distance in km between two lat/lng points
-            function getHaversineDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371; // Earth radius in km
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c;
-            }
-
-            // Initialize markers and circles
             rows.forEach(row => {
                 const id = row.getAttribute('data-id');
                 const name = row.getAttribute('data-name');
@@ -296,20 +294,34 @@
                 const defaultRadius = parseFloat(radiusInput.value);
 
                 if (!isNaN(lat) && !isNaN(lng)) {
-                    const marker = L.marker([lat, lng]).addTo(map);
-                    
+                    const position = { lat, lng };
+
+                    // Add Google Marker
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        title: name
+                    });
+
+                    // Define circle color
                     let circleColor = '#28a745'; // green for parsed
                     if (imprecise) circleColor = '#fd7e14'; // orange for fallbacks
 
-                    const circle = L.circle([lat, lng], {
-                        color: circleColor,
+                    // Add Google Circle
+                    const circle = new google.maps.Circle({
+                        strokeColor: circleColor,
+                        strokeOpacity: 0.8,
+                        strokeWeight: 1.5,
                         fillColor: circleColor,
                         fillOpacity: 0.15,
+                        map: map,
+                        center: position,
                         radius: defaultRadius * 1000 // in meters
-                    }).addTo(map);
+                    });
 
+                    // Add Info Window popup
                     const popupContent = `
-                        <div style="font-family: Cairo, sans-serif;">
+                        <div style="font-family: Cairo, sans-serif; min-width: 150px;">
                             <h6 class="fw-bold mb-1">${name}</h6>
                             <p class="mb-1 text-muted small">${city}</p>
                             <p class="mb-1 small font-monospace">${lat.toFixed(5)}, ${lng.toFixed(5)}</p>
@@ -320,7 +332,17 @@
                             </div>
                         </div>
                     `;
-                    marker.bindPopup(popupContent);
+
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: popupContent
+                    });
+
+                    marker.addListener('click', () => {
+                        infoWindow.open(map, marker);
+                    });
+
+                    bounds.extend(position);
+                    hasBounds = true;
 
                     mapElements[id] = { marker, circle, lat, lng, source, imprecise };
 
@@ -342,9 +364,8 @@
             });
 
             // Adjust bounds to fit all markers
-            const latLngs = groupData.map(g => [g.lat, g.lng]);
-            if (latLngs.length > 0) {
-                map.fitBounds(L.latLngBounds(latLngs));
+            if (hasBounds) {
+                map.fitBounds(bounds);
             }
 
             // Real-time Metrics & Overlap Calculator
@@ -365,7 +386,6 @@
                     return false;
                 });
 
-                // Calculate imprecise counts from all visible rows
                 groupData.forEach(g => {
                     if (g.row.style.display !== 'none' && g.imprecise) {
                         impreciseCount++;
@@ -375,6 +395,18 @@
                 // Calculate Overlapping Areas among active groups
                 let overlapCount = 0;
                 const overlappingGroupIds = new Set();
+
+                // Haversine formula helper
+                function getHaversineDistance(lat1, lon1, lat2, lon2) {
+                    const R = 6371;
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    return R * c;
+                }
 
                 for (let i = 0; i < activeGroups.length; i++) {
                     const gA = activeGroups[i];
@@ -394,32 +426,32 @@
 
                 overlapCount = overlappingGroupIds.size;
 
-                // Update Leaflet circle border styles dynamically based on overlap state
+                // Update Google Map circle styles based on overlap state
                 groupData.forEach(g => {
                     if (mapElements[g.id]) {
                         const circleObj = mapElements[g.id].circle;
                         if (overlappingGroupIds.has(g.id)) {
-                            circleObj.setStyle({
-                                dashArray: '5, 10',
-                                weight: 2.5
+                            // Set dashed style for overlapping circles
+                            circleObj.setOptions({
+                                strokePattern: [5, 10], // approximated pattern if supported
+                                strokeWeight: 2.5
                             });
                         } else {
-                            circleObj.setStyle({
-                                dashArray: null,
-                                weight: 1.5
+                            circleObj.setOptions({
+                                strokePattern: null,
+                                strokeWeight: 1.5
                             });
                         }
                     }
                 });
 
-                // Update UI KPI elements
+                // Update UI elements
                 const accuracyRate = totalSelected > 0 ? Math.round((preciseSelected / totalSelected) * 100) : 0;
                 document.getElementById('stat-total-groups').innerText = totalSelected;
                 document.getElementById('stat-accuracy-rate').innerText = `${accuracyRate}%`;
                 document.getElementById('stat-imprecise-count').innerText = impreciseCount;
                 document.getElementById('stat-overlap-count').innerText = overlapCount;
 
-                // Colorize overlap warning badge
                 const overlapCard = document.getElementById('stat-overlap-card');
                 if (overlapCount > 0) {
                     overlapCard.classList.add('bg-warning-subtle');
@@ -428,7 +460,7 @@
                 }
             }
 
-            // Listeners for radius, selection and inputs
+            // Real-time Radius Change
             document.querySelectorAll('.radius-input').forEach(input => {
                 input.addEventListener('change', function () {
                     const id = this.getAttribute('data-group-id');
@@ -447,7 +479,7 @@
                 checkbox.addEventListener('change', calculateMetrics);
             });
 
-            // Filtering & Search
+            // Filters implementation
             const searchBox = document.getElementById('searchBox');
             const filterCity = document.getElementById('filterCity');
             const filterSource = document.getElementById('filterSource');
@@ -475,16 +507,12 @@
 
                     if (matchesSearch && matchesCity && matchesSource && matchesImpreciseToggle) {
                         g.row.style.display = '';
-                        if (!map.hasLayer(g.marker)) {
-                            g.marker.addTo(map);
-                            g.circle.addTo(map);
-                        }
+                        g.marker.setMap(map);
+                        g.circle.setMap(map);
                     } else {
                         g.row.style.display = 'none';
-                        if (map.hasLayer(g.marker)) {
-                            map.removeLayer(g.marker);
-                            map.removeLayer(g.circle);
-                        }
+                        g.marker.setMap(null);
+                        g.circle.setMap(null);
                     }
                 });
 
@@ -496,7 +524,7 @@
             filterSource.addEventListener('change', applyFilters);
             toggleImpreciseOnly.addEventListener('change', applyFilters);
 
-            // Bulk toggle checkboxes
+            // Select All toggle
             const selectAll = document.getElementById('selectAll');
             selectAll.addEventListener('change', function () {
                 const isChecked = this.checked;
@@ -508,8 +536,78 @@
                 calculateMetrics();
             });
 
-            // Initial calculation
+            // AJAX signed Static Map URL generation
+            const getStaticMapBtn = document.getElementById('getStaticMapBtn');
+            getStaticMapBtn.addEventListener('click', function () {
+                const originalText = this.innerHTML;
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Generating...';
+
+                // Gather checked row data
+                const selectedGroups = [];
+                const radii = {};
+
+                groupData.forEach(g => {
+                    if (g.row.style.display !== 'none' && g.checkbox.checked) {
+                        selectedGroups.push(`${g.id}:${g.lat}:${g.lng}:${g.name}`);
+                        radii[g.id] = g.radiusInput.value;
+                    }
+                });
+
+                if (selectedGroups.length === 0) {
+                    alert("{{ __('Please select at least one group to generate the static map.') }}");
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+                    return;
+                }
+
+                // Send POST request
+                fetch("{{ route('facebook-targeting.static-map') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        selected_groups: selectedGroups,
+                        radii: radii
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.url) {
+                        navigator.clipboard.writeText(data.url)
+                            .then(() => {
+                                alert("{{ __('Signed Static Map URL copied to clipboard successfully!') }}");
+                            })
+                            .catch(err => {
+                                console.error('Failed to copy text: ', err);
+                                alert("{{ __('Could not copy to clipboard automatically. URL: ') }}" + data.url);
+                            });
+                    } else {
+                        alert("{{ __('Failed to generate Static Map URL.') }}");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("{{ __('An error occurred while generating the map URL.') }}");
+                })
+                .finally(() => {
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+                });
+            });
+
             calculateMetrics();
+        }
+
+        // Trigger Google Maps Callback
+        window.addEventListener('load', () => {
+            if (typeof google !== 'undefined') {
+                initMap();
+            } else {
+                console.error("Google Maps SDK failed to load.");
+            }
         });
 
         // Show Spinner / Loading State on Sync
@@ -519,10 +617,10 @@
             const syncText = document.getElementById('syncText');
             const loadingMessage = document.getElementById('loadingMessage');
 
-            syncBtn.disabled = true;
-            syncIcon.classList.add('bi-spin', 'd-none');
-            syncText.innerText = "{{ __('Processing...') }}";
-            loadingMessage.classList.remove('d-none');
+            if (syncBtn) syncBtn.disabled = true;
+            if (syncIcon) syncIcon.classList.add('bi-spin', 'd-none');
+            if (syncText) syncText.innerText = "{{ __('Processing...') }}";
+            if (loadingMessage) loadingMessage.classList.remove('d-none');
         }
     </script>
 </x-layout>
