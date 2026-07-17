@@ -42,6 +42,15 @@
 }
 </style>
 <title>{{__('messages.NA')}}</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TX958298Y6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TX958298Y6');
+</script>
 </head>
   <body class="hanken-grotesk {{$direction}}">
     <x-frontend.nav-bar />
