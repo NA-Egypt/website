@@ -77,10 +77,20 @@
         :page="params.current_page"
         :sortColumn="params.sort_column"
         :sortDirection="params.sort_direction"
-        @change="changeServer"
+        :sortable="true"
+        :pagination="true"
+        :showPageSize="true"
+        :pageSizeOptions="[10, 20, 50, 100]"
+        :showNumbersCount="5"
         @changeServer="changeServer"
+        @page-change="onPageChange"
+        @page-size-change="onPageSizeChange"
         class="alt-pagination"
       >
+        <template #firstArrow>First</template>
+        <template #lastArrow>Last</template>
+        <template #previousArrow>Prev</template>
+        <template #nextArrow>Next</template>
         <!-- Operation Slot -->
         <template #operation="data">
           <span :class="['badge', getBadgeClass(data.value.operation), 'px-2', 'py-1']">
@@ -103,7 +113,7 @@
         </template>
 
         <!-- Date Slot -->
-        <template #date="data">
+        <template #created_at="data">
           {{ formatDate(data.value.created_at) }}
         </template>
 
@@ -261,7 +271,7 @@ const columns = ref([
   { field: 'operation', title: 'Operation', sort: true },
   { field: 'model', title: 'Model', sort: true },
   { field: 'user', title: 'User', sort: false },
-  { field: 'date', title: 'Date', sort: false },
+  { field: 'created_at', title: 'Date', sort: true },
   { field: 'time', title: 'Time', sort: false },
   { field: 'context', title: 'Context', sort: false },
   { field: 'actions', title: 'Action', sort: false, headerClass: 'text-center', cellClass: 'text-center' }
@@ -334,10 +344,21 @@ const toggleRow = (id) => {
 };
 
 const changeServer = (newParams) => {
-  params.current_page = newParams.current_page || newParams.page || params.current_page;
-  params.pagesize = newParams.pagesize || newParams.pageSize || params.pagesize;
-  params.sort_column = newParams.sort_column === 'date' || newParams.sort_column === 'time' ? 'created_at' : (newParams.sort_column || params.sort_column);
-  params.sort_direction = newParams.sort_direction || params.sort_direction;
+  if (newParams.current_page) params.current_page = newParams.current_page;
+  if (newParams.pagesize) params.pagesize = newParams.pagesize;
+  if (newParams.sort_column) params.sort_column = newParams.sort_column === 'date' || newParams.sort_column === 'time' ? 'created_at' : newParams.sort_column;
+  if (newParams.sort_direction) params.sort_direction = newParams.sort_direction;
+  fetchData();
+};
+
+const onPageChange = (page) => {
+  params.current_page = page;
+  fetchData();
+};
+
+const onPageSizeChange = (pageSize) => {
+  params.pagesize = pageSize;
+  params.current_page = 1;
   fetchData();
 };
 

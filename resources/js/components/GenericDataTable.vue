@@ -56,10 +56,20 @@
         :sortDirection="params.sort_direction"
         :paginationInfo="labels.paginationInfo"
         :noDataContent="labels.noDataContent"
-        @change="changeServer"
+        :sortable="true"
+        :pagination="true"
+        :showPageSize="true"
+        :pageSizeOptions="[10, 20, 50, 100]"
+        :showNumbersCount="5"
         @changeServer="changeServer"
+        @page-change="onPageChange"
+        @page-size-change="onPageSizeChange"
         class="alt-pagination"
       >
+        <template #firstArrow>{{ labels.first }}</template>
+        <template #lastArrow>{{ labels.last }}</template>
+        <template #previousArrow>{{ labels.prev }}</template>
+        <template #nextArrow>{{ labels.next }}</template>
         <!-- Checkbox Column -->
         <template #checkbox="data">
           <input
@@ -147,13 +157,6 @@
           </div>
         </template>
 
-        <!-- Localized Pagination Arrows -->
-        <template #previousArrow>
-          {{ isAr ? 'السابق' : 'Previous' }}
-        </template>
-        <template #nextArrow>
-          {{ isAr ? 'التالي' : 'Next' }}
-        </template>
       </vue3-datatable>
     </div>
   </div>
@@ -268,7 +271,11 @@ const labels = computed(() => {
       noDataContent: 'لا توجد بيانات متاحة',
       confirmDelete: 'هل أنت متأكد أنك تريد حذف هذا العنصر؟',
       confirmBulk: 'هل أنت متأكد أنك تريد تطبيق هذا الإجراء على العناصر المحددة؟',
-      noItems: 'لم يتم تحديد أي عناصر.'
+      noItems: 'لم يتم تحديد أي عناصر.',
+      first: 'الأول',
+      last: 'الأخير',
+      prev: 'السابق',
+      next: 'التالي'
     };
   }
   return {
@@ -286,7 +293,11 @@ const labels = computed(() => {
     noDataContent: 'No data available',
     confirmDelete: 'Are you sure you want to delete this item?',
     confirmBulk: 'Are you sure you want to apply this action to selected items?',
-    noItems: 'No items selected.'
+    noItems: 'No items selected.',
+    first: 'First',
+    last: 'Last',
+    prev: 'Prev',
+    next: 'Next'
   };
 });
 
@@ -440,10 +451,21 @@ const applyBulkAction = () => {
 };
 
 const changeServer = (newParams) => {
-  params.current_page = newParams.current_page || newParams.page || params.current_page;
-  params.pagesize = newParams.pagesize || newParams.pageSize || params.pagesize;
-  params.sort_column = newParams.sort_column || params.sort_column;
-  params.sort_direction = newParams.sort_direction || params.sort_direction;
+  if (newParams.current_page) params.current_page = newParams.current_page;
+  if (newParams.pagesize)     params.pagesize      = newParams.pagesize;
+  if (newParams.sort_column)  params.sort_column   = newParams.sort_column;
+  if (newParams.sort_direction) params.sort_direction = newParams.sort_direction;
+  fetchData();
+};
+
+const onPageChange = (page) => {
+  params.current_page = page;
+  fetchData();
+};
+
+const onPageSizeChange = (pageSize) => {
+  params.pagesize = pageSize;
+  params.current_page = 1;
   fetchData();
 };
 

@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 trait PaginatesDataTables
 {
@@ -17,9 +18,9 @@ trait PaginatesDataTables
             $perPage = 15;
         }
 
-        $sortColumn = $request->input('sort_column');
+        $sortColumn    = $request->input('sort_column');
         $sortDirection = $request->input('sort_direction', 'desc') === 'asc' ? 'asc' : 'desc';
-        $search = $request->input('search');
+        $search        = $request->input('search');
 
         // Apply global search across specified columns (and relation columns)
         if (!empty($search) && !empty($searchableColumns)) {
@@ -38,11 +39,50 @@ trait PaginatesDataTables
         }
 
         // Apply sorting
-        if (!empty($sortColumn) && !str_contains($sortColumn, '.')) {
-            // Check if column exists in table to prevent errors
-            $query->orderBy($sortColumn, $sortDirection);
+        if (!empty($sortColumn)) {
+            $model = $query->getModel();
+            $table = $model->getTable();
+
+            // Map common virtual/formatted columns to real DB columns
+            $columnMap = [
+                'created_at_formatted' => 'created_at',
+                'updated_at_formatted' => 'updated_at',
+                'status'               => ($table === 'subscribers') ? 'email_verified_at' : 'status',
+            ];
+
+            if (isset($columnMap[$sortColumn])) {
+                $sortColumn = $columnMap[$sortColumn];
+            }
+
+            if (str_contains($sortColumn, '.')) {
+                // Relationship sort: e.g. "city.ar_name" → JOIN cities ON ... ORDER BY cities.ar_name
+                [$relation, $relColumn] = explode('.', $sortColumn, 2);
+
+                // Attempt to resolve the relation table automatically
+                if (method_exists($model, $relation)) {
+                    try {
+                        $relationInstance = $model->$relation();
+                        $relatedTable     = $relationInstance->getRelated()->getTable();
+                        $foreignKey       = $relationInstance->getForeignKeyName();
+                        $ownerKey         = $relationInstance->getOwnerKeyName();
+
+                        $query
+                            ->join($relatedTable, "$table.$foreignKey", '=', "$relatedTable.$ownerKey")
+                            ->select("$table.*")
+                            ->orderBy("$relatedTable.$relColumn", $sortDirection);
+                    } catch (\Throwable $e) {
+                        $query->orderBy($model->getKeyName(), $sortDirection);
+                    }
+                } else {
+                    $query->orderBy($model->getKeyName(), $sortDirection);
+                }
+            } elseif (Schema::hasColumn($table, $sortColumn)) {
+                $query->orderBy("$table.$sortColumn", $sortDirection);
+            } else {
+                $query->orderBy($model->getKeyName(), $sortDirection);
+            }
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy($query->getModel()->getKeyName(), 'desc');
         }
 
         return $query->paginate($perPage)->withQueryString();

@@ -151,16 +151,32 @@
         </div>
 
         <!-- DataTable -->
-        <div class="table-responsive alt-pagination">
+        <div class="table-responsive">
           <vue3-datatable
             :rows="filteredRows"
             :columns="columns"
             :loading="loading"
             :pageSize="15"
-            class="bh-table-hover align-middle mb-0 text-center"
+            :pageSizeOptions="[10, 15, 20, 50]"
+            :showPageSize="true"
+            :showNumbersCount="5"
+            :page="page"
+            :totalRows="filteredRows.length"
+            :sortColumn="sortColumn"
+            :sortDirection="sortDirection"
+            :sortable="true"
+            :pagination="true"
+            @change="changeParams"
+            @page-change="onPageChange"
+            @page-size-change="onPageSizeChange"
             :paginationInfo="labels.paginationInfo"
             :noDataContent="labels.noDataContent"
+            class="alt-pagination bh-table-hover align-middle mb-0 text-center"
           >
+            <template #firstArrow>{{ isAr ? 'الأول' : 'First' }}</template>
+            <template #lastArrow>{{ isAr ? 'الأخير' : 'Last' }}</template>
+            <template #previousArrow>{{ isAr ? 'السابق' : 'Prev' }}</template>
+            <template #nextArrow>{{ isAr ? 'التالي' : 'Next' }}</template>
             <!-- Checkbox Column -->
             <template #checkbox="data">
               <input
@@ -228,13 +244,6 @@
               </div>
             </template>
 
-            <!-- Localized Pagination Arrows -->
-            <template #previousArrow>
-              {{ isAr ? 'السابق' : 'Previous' }}
-            </template>
-            <template #nextArrow>
-              {{ isAr ? 'التالي' : 'Next' }}
-            </template>
           </vue3-datatable>
         </div>
       </form>
@@ -269,6 +278,19 @@ const search = ref('');
 const cityFilter = ref('');
 const sourceFilter = ref('');
 const impreciseOnly = ref(false);
+const page = ref(1);
+const sortColumn = ref('name');
+const sortDirection = ref('asc');
+
+const changeParams = (newParams) => {
+  if (newParams.current_page) page.value = newParams.current_page;
+  if (newParams.sort_column) sortColumn.value = newParams.sort_column;
+  if (newParams.sort_direction) sortDirection.value = newParams.sort_direction;
+};
+
+const onPageChange = (p) => { page.value = p; };
+const onPageSizeChange = () => { page.value = 1; };
+
 const selectedIds = ref(props.initialGroups.map(g => g.id));
 const successMessage = ref('');
 const syncing = ref(false);
@@ -345,8 +367,8 @@ const columns = computed(() => {
     { field: 'name', title: isAr.value ? 'اسم المجموعة' : 'Group Name', sort: true },
     { field: 'city', title: isAr.value ? 'المدينة' : 'City', sort: true },
     { field: 'neighborhood', title: isAr.value ? 'الحي' : 'Neighborhood', sort: true },
-    { field: 'location_url', title: isAr.value ? 'رابط خرائط جوجل' : 'Google Maps Link', sort: false },
-    { field: 'coordinates', title: isAr.value ? 'الإحداثيات' : 'Coordinates', sort: false },
+    { field: 'location_url', title: isAr.value ? 'رابط خرائط جوجل' : 'Google Maps Link', sort: true },
+    { field: 'coordinates', title: isAr.value ? 'الإحداثيات' : 'Coordinates', sort: true },
     { field: 'source', title: isAr.value ? 'المصدر' : 'Source', sort: true },
     { field: 'radius', title: isAr.value ? 'نصف القطر الاستهدافي (كم)' : 'Targeting Radius (km)', sort: true }
   ];
@@ -358,7 +380,7 @@ const uniqueCities = computed(() => {
 });
 
 const filteredRows = computed(() => {
-  return groups.value.filter(g => {
+  const list = groups.value.filter(g => {
     const matchesSearch = !search.value || 
                           g.name.toLowerCase().includes(search.value.toLowerCase()) ||
                           g.neighborhood.toLowerCase().includes(search.value.toLowerCase());
@@ -376,6 +398,8 @@ const filteredRows = computed(() => {
 
     return matchesSearch && matchesCity && matchesSource && matchesImprecise;
   });
+
+  return list;
 });
 
 const stats = ref({
