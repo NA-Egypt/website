@@ -24,7 +24,9 @@ class CityNameRequest extends FormRequest
     {
         return [
             'ar_name' => 'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
-            'en_name' => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u'
+            'en_name' => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180'
         ];
     }
 

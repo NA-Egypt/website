@@ -166,13 +166,22 @@
             </li>
             <li> <a href="{{route('subscribers.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Subscribers')}}</a>
             </li>
-            <li> <a href="{{ route('facebook-targeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</a>
-            </li>
           </ul>
         </div>
       </li>
       @endcan
       {{-- / Admin Area --}}
+
+      {{-- Facebook Targeting Area --}}
+      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Committees')))
+      <li class="menu-label">{{ app()->getLocale() === 'ar' ? 'أدوات الاستهداف' : 'Targeting Tools' }}</li>
+      <li>
+        <a href="{{ route('facebook-targeting.index') }}">
+          <div class="parent-icon"><i class="bi bi-facebook"></i></div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</div>
+        </a>
+      </li>
+      @endif
 
       {{-- Sections Area --}}
       @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr') || auth()->user()->hasRole('rsc')))

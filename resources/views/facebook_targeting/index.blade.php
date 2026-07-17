@@ -15,13 +15,19 @@
             z-index: 1;
         }
         .badge-parsed { background-color: #28a745; color: white; }
+        .badge-fallback { background-color: #fd7e14; color: white; }
         .badge-neighborhood { background-color: #007bff; color: white; }
         .badge-city { background-color: #ffc107; color: #212529; }
         .badge-default { background-color: #6c757d; color: white; }
-        .badge-online { background-color: #e83e8c; color: white; }
         
         .radius-input {
             width: 80px;
+        }
+        .row-imprecise {
+            background-color: rgba(253, 126, 20, 0.05) !important;
+        }
+        .warning-border {
+            border-left: 4px solid #fd7e14 !important;
         }
     </style>
 
@@ -52,7 +58,7 @@
             <div class="col-lg-4">
                 <div class="card h-100 shadow-sm border-0">
                     <div class="card-header bg-transparent py-3">
-                        <h5 class="mb-0 fw-bold"><i class="bi bi-sliders text-primary me-2"></i>{{ __('Actions & Stats') }}</h5>
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-sliders text-primary me-2"></i>{{ __('Targeting Metrics') }}</h5>
                     </div>
                     <div class="card-body d-flex flex-column justify-content-between">
                         <!-- Stats Grid -->
@@ -60,42 +66,42 @@
                             <div class="row g-2 mb-4">
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Total Groups') }}</div>
-                                        <h3 class="fw-bold mb-0 text-dark">{{ count($groups) }}</h3>
+                                        <div class="text-muted small mb-1">{{ __('Active Groups') }}</div>
+                                        <h3 class="fw-bold mb-0 text-dark" id="stat-total-groups">{{ count($groups) }}</h3>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Parsed Coords') }}</div>
-                                        <h3 class="fw-bold mb-0 text-success">
-                                            {{ count(array_filter($groups, fn($g) => $g['source'] === 'parsed')) }}
-                                        </h3>
+                                        <div class="text-muted small mb-1">{{ __('Accuracy Rate') }}</div>
+                                        <h3 class="fw-bold mb-0 text-success" id="stat-accuracy-rate">0%</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 border rounded text-center bg-light" id="stat-overlap-card">
+                                        <div class="text-muted small mb-1">{{ __('Overlapping Areas') }}</div>
+                                        <h3 class="fw-bold mb-0 text-warning" id="stat-overlap-count">0</h3>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Fallbacks Used') }}</div>
-                                        <h3 class="fw-bold mb-0 text-warning">
-                                            {{ count(array_filter($groups, fn($g) => in_array($g['source'], ['neighborhood', 'city', 'default']))) }}
-                                        </h3>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="p-3 border rounded text-center bg-light">
-                                        <div class="text-muted small mb-1">{{ __('Online Groups') }}</div>
-                                        <h3 class="fw-bold mb-0 text-danger">
-                                            {{ count(array_filter($groups, fn($g) => $g['source'] === 'online')) }}
-                                        </h3>
+                                        <div class="text-muted small mb-1">{{ __('Needs Precise Link') }}</div>
+                                        <h3 class="fw-bold mb-0 text-danger" id="stat-imprecise-count">0</h3>
                                     </div>
                                 </div>
                             </div>
 
+                            <div class="alert alert-warning border-0 small mb-4 py-2.5">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                {{ __('Targeting overlapping regions increases ad spend competition against your own groups.') }}
+                            </div>
+                            
                             <p class="text-muted small">
-                                {{ __('This tool prepares group locations for Facebook Ads targeting. Shortened Google Maps links are resolved to absolute coordinates. Groups without coordinates fall back to their neighborhood average or city center.') }}
+                                {{ __('To improve ad accuracy and reduce budget waste, add specific Google Maps links to groups currently utilizing City or Neighborhood fallback coordinates.') }}
                             </p>
                         </div>
 
                         <!-- Sync Action Button -->
+                        @if(auth()->user()->hasRole('super admin'))
                         <div class="mt-4">
                             <form action="{{ route('facebook-targeting.sync') }}" method="POST" onsubmit="showLoadingState()">
                                 @csrf
@@ -109,6 +115,7 @@
                                 {{ __('Resolving redirects and geocoding, please wait...') }}
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -126,7 +133,7 @@
                                 <input type="text" id="searchBox" class="form-control border-start-0" placeholder="{{ __('Search groups, addresses...') }}">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select id="filterCity" class="form-select form-select-sm">
                                 <option value="">{{ __('All Cities') }}</option>
                                 @foreach (array_unique(array_column($groups, 'city')) as $c)
@@ -134,14 +141,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select id="filterSource" class="form-select form-select-sm">
                                 <option value="">{{ __('All Sources') }}</option>
                                 <option value="parsed">{{ __('Parsed Coordinates') }}</option>
-                                <option value="neighborhood">{{ __('Neighborhood Fallback') }}</option>
-                                <option value="city">{{ __('City Fallback') }}</option>
-                                <option value="online">{{ __('Online / Virtual') }}</option>
+                                <option value="fallback">{{ __('Any Fallback') }}</option>
                             </select>
+                        </div>
+                        <div class="col-md-2 text-start">
+                            <div class="form-check form-switch mt-1">
+                                <input class="form-check-input" type="checkbox" id="toggleImpreciseOnly">
+                                <label class="form-check-label small" for="toggleImpreciseOnly">{{ __('Imprecise Only') }}</label>
+                            </div>
                         </div>
                         <div class="col-md-3 text-end">
                             <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2">
@@ -170,20 +181,28 @@
                         </thead>
                         <tbody>
                             @foreach ($groups as $g)
-                                <tr class="group-row" 
+                                @php
+                                    $isImprecise = in_array($g['source'], ['neighborhood_avg', 'city_preset', 'default']);
+                                @endphp
+                                <tr class="group-row {{ $isImprecise ? 'row-imprecise warning-border' : '' }}" 
                                     data-id="{{ $g['id'] }}"
                                     data-name="{{ $g['name'] }}"
                                     data-city="{{ $g['city'] }}"
                                     data-source="{{ $g['source'] }}"
+                                    data-imprecise="{{ $isImprecise ? 'true' : 'false' }}"
                                     data-lat="{{ $g['lat'] }}"
                                     data-lng="{{ $g['lng'] }}">
                                     <td>
-                                        <!-- Value structure: id:lat:lng:name -->
                                         <input type="checkbox" name="selected_groups[]" 
                                                value="{{ $g['id'] }}:{{ $g['lat'] }}:{{ $g['lng'] }}:{{ $g['name'] }}" 
                                                class="form-check-input row-checkbox" checked>
                                     </td>
-                                    <td class="fw-bold">{{ $g['name'] }}</td>
+                                    <td class="fw-bold">
+                                        {{ $g['name'] }}
+                                        @if ($isImprecise)
+                                            <i class="bi bi-exclamation-triangle-fill text-warning ms-1" title="{{ __('Fallback location used') }}"></i>
+                                        @endif
+                                    </td>
                                     <td>{{ $g['city'] }}</td>
                                     <td>{{ $g['neighborhood'] }}</td>
                                     <td>
@@ -192,7 +211,7 @@
                                                 <i class="bi bi-box-arrow-up-right me-1"></i>Link
                                             </a>
                                         @else
-                                            <span class="text-muted">-</span>
+                                            <span class="text-danger small"><i class="bi bi-link-45deg"></i>{{ __('Missing') }}</span>
                                         @endif
                                     </td>
                                     <td class="small font-monospace">
@@ -205,12 +224,14 @@
                                     <td>
                                         @if ($g['source'] === 'parsed')
                                             <span class="badge badge-parsed">{{ __('Parsed') }}</span>
-                                        @elseif($g['source'] === 'neighborhood')
-                                            <span class="badge badge-neighborhood">{{ __('Neighborhood Fallback') }}</span>
-                                        @elseif($g['source'] === 'city')
-                                            <span class="badge badge-city">{{ __('City Fallback') }}</span>
-                                        @elseif($g['source'] === 'online')
-                                            <span class="badge badge-online">{{ __('Online') }}</span>
+                                        @elseif($g['source'] === 'neighborhood_db')
+                                            <span class="badge badge-neighborhood" title="{{ __('Neighborhood coordinates set in DB') }}">{{ __('Neighborhood (DB)') }}</span>
+                                        @elseif($g['source'] === 'neighborhood_avg')
+                                            <span class="badge badge-fallback" title="{{ __('Neighborhood Center average fallback') }}">{{ __('Neighborhood (Avg)') }}</span>
+                                        @elseif($g['source'] === 'city_db')
+                                            <span class="badge badge-neighborhood" title="{{ __('City coordinates set in DB') }}">{{ __('City (DB)') }}</span>
+                                        @elseif($g['source'] === 'city_preset')
+                                            <span class="badge badge-fallback" title="{{ __('City Center fallback preset') }}">{{ __('City (Preset)') }}</span>
                                         @else
                                             <span class="badge badge-default">{{ __('Default') }}</span>
                                         @endif
@@ -235,7 +256,7 @@
         </div>
     </div>
 
-    <!-- JS logic for Leaflet Map and table interaction -->
+    <!-- JS logic for Leaflet Map, real-time metrics, and overlap checking -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize map centered on Egypt
@@ -246,48 +267,54 @@
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Store Leaflet marker & circle instances
             const mapElements = {};
-
-            // Fetch group rows data
             const rows = document.querySelectorAll('.group-row');
             const groupData = [];
 
+            // Haversine formula to compute distance in km between two lat/lng points
+            function getHaversineDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Earth radius in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            // Initialize markers and circles
             rows.forEach(row => {
                 const id = row.getAttribute('data-id');
                 const name = row.getAttribute('data-name');
                 const city = row.getAttribute('data-city');
                 const source = row.getAttribute('data-source');
+                const imprecise = row.getAttribute('data-imprecise') === 'true';
                 const lat = parseFloat(row.getAttribute('data-lat'));
                 const lng = parseFloat(row.getAttribute('data-lng'));
                 const radiusInput = row.querySelector('.radius-input');
                 const defaultRadius = parseFloat(radiusInput.value);
 
                 if (!isNaN(lat) && !isNaN(lng)) {
-                    // Create marker and circle on the map
                     const marker = L.marker([lat, lng]).addTo(map);
                     
-                    // Style circle color based on source
-                    let circleColor = '#6c757d';
-                    if (source === 'parsed') circleColor = '#28a745';
-                    else if (source === 'neighborhood') circleColor = '#007bff';
-                    else if (source === 'city') circleColor = '#ffc107';
-                    else if (source === 'online') circleColor = '#e83e8c';
+                    let circleColor = '#28a745'; // green for parsed
+                    if (imprecise) circleColor = '#fd7e14'; // orange for fallbacks
 
                     const circle = L.circle([lat, lng], {
                         color: circleColor,
                         fillColor: circleColor,
                         fillOpacity: 0.15,
-                        radius: defaultRadius * 1000 // Leaflet radius is in meters
+                        radius: defaultRadius * 1000 // in meters
                     }).addTo(map);
 
-                    // Add popup details
                     const popupContent = `
                         <div style="font-family: Cairo, sans-serif;">
                             <h6 class="fw-bold mb-1">${name}</h6>
                             <p class="mb-1 text-muted small">${city}</p>
                             <p class="mb-1 small font-monospace">${lat.toFixed(5)}, ${lng.toFixed(5)}</p>
-                            <span class="badge small mb-2" style="background-color: ${circleColor}; color: ${source === 'city' ? '#212529' : 'white'};">${source.toUpperCase()}</span>
+                            <span class="badge small mb-2" style="background-color: ${circleColor}; color: white;">${source.toUpperCase()}</span>
+                            ${imprecise ? `<div class="text-warning small mb-2"><i class="bi bi-exclamation-triangle"></i> Fallback Area</div>` : ''}
                             <div class="mt-1">
                                 <label class="small text-muted mb-0">Radius: <strong id="popup-radius-val-${id}">${defaultRadius}</strong> km</label>
                             </div>
@@ -295,55 +322,158 @@
                     `;
                     marker.bindPopup(popupContent);
 
-                    // Save elements reference
-                    mapElements[id] = { marker, circle };
+                    mapElements[id] = { marker, circle, lat, lng, source, imprecise };
 
-                    groupData.push({ id, name, city, source, lat, lng, row, marker, circle });
+                    groupData.push({ 
+                        id, 
+                        name, 
+                        city, 
+                        source, 
+                        imprecise, 
+                        lat, 
+                        lng, 
+                        row, 
+                        checkbox: row.querySelector('.row-checkbox'),
+                        radiusInput,
+                        marker, 
+                        circle 
+                    });
                 }
             });
 
-            // Adjust bounds to fit all markers if we have any
+            // Adjust bounds to fit all markers
             const latLngs = groupData.map(g => [g.lat, g.lng]);
             if (latLngs.length > 0) {
                 map.fitBounds(L.latLngBounds(latLngs));
             }
 
-            // Real-time Radius Change interaction
+            // Real-time Metrics & Overlap Calculator
+            function calculateMetrics() {
+                let totalSelected = 0;
+                let preciseSelected = 0;
+                let impreciseCount = 0;
+
+                const activeGroups = groupData.filter(g => {
+                    const rowVisible = g.row.style.display !== 'none';
+                    const isChecked = g.checkbox.checked;
+                    
+                    if (rowVisible && isChecked) {
+                        totalSelected++;
+                        if (!g.imprecise) preciseSelected++;
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Calculate imprecise counts from all visible rows
+                groupData.forEach(g => {
+                    if (g.row.style.display !== 'none' && g.imprecise) {
+                        impreciseCount++;
+                    }
+                });
+
+                // Calculate Overlapping Areas among active groups
+                let overlapCount = 0;
+                const overlappingGroupIds = new Set();
+
+                for (let i = 0; i < activeGroups.length; i++) {
+                    const gA = activeGroups[i];
+                    const radA = parseFloat(gA.radiusInput.value) || 5;
+
+                    for (let j = i + 1; j < activeGroups.length; j++) {
+                        const gB = activeGroups[j];
+                        const radB = parseFloat(gB.radiusInput.value) || 5;
+
+                        const distance = getHaversineDistance(gA.lat, gA.lng, gB.lat, gB.lng);
+                        if (distance < (radA + radB)) {
+                            overlappingGroupIds.add(gA.id);
+                            overlappingGroupIds.add(gB.id);
+                        }
+                    }
+                }
+
+                overlapCount = overlappingGroupIds.size;
+
+                // Update Leaflet circle border styles dynamically based on overlap state
+                groupData.forEach(g => {
+                    if (mapElements[g.id]) {
+                        const circleObj = mapElements[g.id].circle;
+                        if (overlappingGroupIds.has(g.id)) {
+                            circleObj.setStyle({
+                                dashArray: '5, 10',
+                                weight: 2.5
+                            });
+                        } else {
+                            circleObj.setStyle({
+                                dashArray: null,
+                                weight: 1.5
+                            });
+                        }
+                    }
+                });
+
+                // Update UI KPI elements
+                const accuracyRate = totalSelected > 0 ? Math.round((preciseSelected / totalSelected) * 100) : 0;
+                document.getElementById('stat-total-groups').innerText = totalSelected;
+                document.getElementById('stat-accuracy-rate').innerText = `${accuracyRate}%`;
+                document.getElementById('stat-imprecise-count').innerText = impreciseCount;
+                document.getElementById('stat-overlap-count').innerText = overlapCount;
+
+                // Colorize overlap warning badge
+                const overlapCard = document.getElementById('stat-overlap-card');
+                if (overlapCount > 0) {
+                    overlapCard.classList.add('bg-warning-subtle');
+                } else {
+                    overlapCard.classList.remove('bg-warning-subtle');
+                }
+            }
+
+            // Listeners for radius, selection and inputs
             document.querySelectorAll('.radius-input').forEach(input => {
                 input.addEventListener('change', function () {
                     const id = this.getAttribute('data-group-id');
                     const newRadiusKm = parseFloat(this.value) || 5;
                     
                     if (mapElements[id]) {
-                        // Update Leaflet circle radius
                         mapElements[id].circle.setRadius(newRadiusKm * 1000);
-                        
-                        // Update popup label if open
                         const popupLabel = document.getElementById(`popup-radius-val-${id}`);
-                        if (popupLabel) {
-                            popupLabel.innerText = newRadiusKm;
-                        }
+                        if (popupLabel) popupLabel.innerText = newRadiusKm;
                     }
+                    calculateMetrics();
                 });
+            });
+
+            document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', calculateMetrics);
             });
 
             // Filtering & Search
             const searchBox = document.getElementById('searchBox');
             const filterCity = document.getElementById('filterCity');
             const filterSource = document.getElementById('filterSource');
+            const toggleImpreciseOnly = document.getElementById('toggleImpreciseOnly');
 
             function applyFilters() {
                 const searchVal = searchBox.value.toLowerCase();
                 const cityVal = filterCity.value;
                 const sourceVal = filterSource.value;
+                const impreciseOnly = toggleImpreciseOnly.checked;
 
                 groupData.forEach(g => {
                     const matchesSearch = g.name.toLowerCase().includes(searchVal) || 
                                           g.row.querySelector('td:nth-child(4)').innerText.toLowerCase().includes(searchVal);
                     const matchesCity = !cityVal || g.city === cityVal;
-                    const matchesSource = !sourceVal || g.source === sourceVal;
+                    
+                    let matchesSource = true;
+                    if (sourceVal === 'parsed') {
+                        matchesSource = !g.imprecise;
+                    } else if (sourceVal === 'fallback') {
+                        matchesSource = g.imprecise;
+                    }
 
-                    if (matchesSearch && matchesCity && matchesSource) {
+                    const matchesImpreciseToggle = !impreciseOnly || g.imprecise;
+
+                    if (matchesSearch && matchesCity && matchesSource && matchesImpreciseToggle) {
                         g.row.style.display = '';
                         if (!map.hasLayer(g.marker)) {
                             g.marker.addTo(map);
@@ -357,26 +487,29 @@
                         }
                     }
                 });
+
+                calculateMetrics();
             }
 
             searchBox.addEventListener('input', applyFilters);
             filterCity.addEventListener('change', applyFilters);
             filterSource.addEventListener('change', applyFilters);
+            toggleImpreciseOnly.addEventListener('change', applyFilters);
 
             // Bulk toggle checkboxes
             const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-
             selectAll.addEventListener('change', function () {
                 const isChecked = this.checked;
-                checkboxes.forEach(cb => {
-                    // Only toggle visible rows' checkboxes
-                    const row = cb.closest('tr');
-                    if (row.style.display !== 'none') {
-                        cb.checked = isChecked;
+                groupData.forEach(g => {
+                    if (g.row.style.display !== 'none') {
+                        g.checkbox.checked = isChecked;
                     }
                 });
+                calculateMetrics();
             });
+
+            // Initial calculation
+            calculateMetrics();
         });
 
         // Show Spinner / Loading State on Sync

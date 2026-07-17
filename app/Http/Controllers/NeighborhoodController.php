@@ -36,7 +36,9 @@ class NeighborhoodController extends Controller
         $fields = request()->validate([
             'ar_name'      => 'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
             'en_name'      => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
-            'city_id'      => 'required'
+            'city_id'      => 'required',
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180'
         ], [
             'ar_name.regex'     => __('messages.The Arabic name must contain only Arabic letters.'),
             'en_name.regex'     => __('messages.The English name must contain only English letters.'),
@@ -70,7 +72,9 @@ class NeighborhoodController extends Controller
         $fields = request()->validate([
             'ar_name'      => 'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
             'en_name'      => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
-            'city_id'      => 'required'
+            'city_id'      => 'required',
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180'
         ], [
             'ar_name.regex'     => __('messages.The Arabic name must contain only Arabic letters.'),
             'en_name.regex'     => __('messages.The English name must contain only English letters.'),

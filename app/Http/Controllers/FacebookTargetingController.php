@@ -73,7 +73,17 @@ class FacebookTargetingController extends Controller
     public function index()
     {
         $cached = $this->loadCache();
-        $groups = Group::with(['neighborhood.city'])->get();
+        
+        // Exclude online groups by group_type AND location Zoom URLs
+        $groups = Group::with(['neighborhood.city'])
+            ->whereNotIn('group_type', ['online', 'اونلاين', 'اون لاين'])
+            ->get()
+            ->filter(function ($g) {
+                if ($g->location && preg_match('/zoom/i', $g->location)) {
+                    return false;
+                }
+                return true;
+            });
 
         // 1. Pre-calculate neighborhood centers (average of parsed coordinates in each neighborhood)
         $neighborhoodCoords = [];
@@ -104,46 +114,50 @@ class FacebookTargetingController extends Controller
             $source = 'unresolved';
             $defaultRadius = 5;
 
-            // Check if online group
-            $isOnline = false;
-            if ($g->location && preg_match('/zoom\.us/i', $g->location)) {
-                $isOnline = true;
-            }
-
-            if ($isOnline) {
-                $source = 'online';
-                $lat = $this->cityCoordinates['Virtual']['lat'];
-                $lng = $this->cityCoordinates['Virtual']['lng'];
-                $defaultRadius = 20;
-            } elseif (isset($cached[$g->id])) {
+            if (isset($cached[$g->id])) {
                 $lat = $cached[$g->id]['lat'];
                 $lng = $cached[$g->id]['lng'];
                 $source = 'parsed';
                 $defaultRadius = 5;
             } else {
-                // Fallback 1: Neighborhood center
-                if ($g->neighborhood_id && isset($neighborhoodCenters[$g->neighborhood_id])) {
+                // Fallback 1: Database Neighborhood Coordinates
+                if ($g->neighborhood && !is_null($g->neighborhood->latitude) && !is_null($g->neighborhood->longitude)) {
+                    $lat = (float)$g->neighborhood->latitude;
+                    $lng = (float)$g->neighborhood->longitude;
+                    $source = 'neighborhood_db';
+                    $defaultRadius = 10;
+                }
+                // Fallback 2: Neighborhood average coordinates
+                elseif ($g->neighborhood_id && isset($neighborhoodCenters[$g->neighborhood_id])) {
                     $lat = $neighborhoodCenters[$g->neighborhood_id]['lat'];
                     $lng = $neighborhoodCenters[$g->neighborhood_id]['lng'];
-                    $source = 'neighborhood';
+                    $source = 'neighborhood_avg';
                     $defaultRadius = 10;
-                } else {
-                    // Fallback 2: City center
+                }
+                // Fallback 3: Database City Coordinates
+                elseif ($g->neighborhood && $g->neighborhood->city && !is_null($g->neighborhood->city->latitude) && !is_null($g->neighborhood->city->longitude)) {
+                    $lat = (float)$g->neighborhood->city->latitude;
+                    $lng = (float)$g->neighborhood->city->longitude;
+                    $source = 'city_db';
+                    $defaultRadius = 20;
+                }
+                // Fallback 4: Hardcoded City presets
+                else {
                     $cityName = $g->neighborhood && $g->neighborhood->city ? $g->neighborhood->city->en_name : null;
                     $cityArName = $g->neighborhood && $g->neighborhood->city ? $g->neighborhood->city->ar_name : null;
 
                     if ($cityName && isset($this->cityCoordinates[$cityName])) {
                         $lat = $this->cityCoordinates[$cityName]['lat'];
                         $lng = $this->cityCoordinates[$cityName]['lng'];
-                        $source = 'city';
+                        $source = 'city_preset';
                         $defaultRadius = 20;
                     } elseif ($cityArName && isset($this->cityCoordinates[$cityArName])) {
                         $lat = $this->cityCoordinates[$cityArName]['lat'];
                         $lng = $this->cityCoordinates[$cityArName]['lng'];
-                        $source = 'city';
+                        $source = 'city_preset';
                         $defaultRadius = 20;
                     } else {
-                        // Fallback 3: Cairo default
+                        // Fallback 5: Cairo default
                         $lat = $this->cityCoordinates['Cairo']['lat'];
                         $lng = $this->cityCoordinates['Cairo']['lng'];
                         $source = 'default';
@@ -173,17 +187,30 @@ class FacebookTargetingController extends Controller
 
     public function sync()
     {
-        $groups = Group::whereNotNull('location')->where('location', '!=', '')->get();
+        if (!auth()->user() || !auth()->user()->hasRole('super admin')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Exclude online groups by group_type AND location Zoom URLs
+        $groups = Group::whereNotIn('group_type', ['online', 'اونلاين', 'اون لاين'])
+            ->get()
+            ->filter(function ($g) {
+                if ($g->location && preg_match('/zoom/i', $g->location)) {
+                    return false;
+                }
+                return true;
+            });
+            
         $cached = $this->loadCache();
 
         foreach ($groups as $g) {
             $url = $g->location;
-            if (!preg_match('/^https?:\/\//i', $url)) {
-                $url = 'https://' . $url;
+            if (empty($url)) {
+                continue;
             }
 
-            if (preg_match('/zoom\.us/i', $url)) {
-                continue; // Online meetings handled dynamically
+            if (!preg_match('/^https?:\/\//i', $url)) {
+                $url = 'https://' . $url;
             }
 
             // Resolve redirect if shortened URL
@@ -236,11 +263,9 @@ class FacebookTargetingController extends Controller
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
             // Facebook bulk location import headers
-            // Latitude, Longitude, Radius, Name, Country Code
             fputcsv($file, ['Latitude', 'Longitude', 'Radius', 'Name', 'Country Code']);
 
             foreach ($selectedIds as $item) {
-                // Format: id:lat:lng:name
                 $parts = explode(':', $item, 4);
                 if (count($parts) >= 4) {
                     $id = $parts[0];
@@ -269,12 +294,10 @@ class FacebookTargetingController extends Controller
     private function parseCoordinates($url)
     {
         $url = urldecode($url);
-        // Look for @lat,lng or q=lat,lng patterns
         if (preg_match('/(?:@|search\/|q=)(-?\d+\.\d+)\s*,\s*\+?(-?\d+\.\d+)/i', $url, $matches)) {
             return ['lat' => (float)$matches[1], 'lng' => (float)$matches[2]];
         }
         
-        // General search for coordinates in the path (e.g. Egypt range lat 20-34, lng 24-37)
         if (preg_match('/(-?\d+\.\d+)\s*,\s*\+?(-?\d+\.\d+)/', $url, $matches)) {
             $lat = (float)$matches[1];
             $lng = (float)$matches[2];

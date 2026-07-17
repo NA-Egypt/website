@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Neighborhood extends Model
 {
 
-    protected $fillable = ['en_name', 'ar_name', 'city_id'];
+    protected $fillable = ['en_name', 'ar_name', 'city_id', 'latitude', 'longitude'];
     public function city() {
         return $this->belongsTo(City::class);
     }

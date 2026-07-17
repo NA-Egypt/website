@@ -116,9 +116,12 @@ Route::group(
                 Route::put('/topic/{topic}',[TopicController::class,'update'])->name('topic.update');
                 Route::delete('/topic/{topic}',[TopicController::class,'destroy'])->name('topic.destroy');
 
-                // Facebook Targeting Routes
-                Route::get('/facebook-targeting', [FacebookTargetingController::class, 'index'])->name('facebook-targeting.index');
+                // Facebook Targeting Routes (Sync is Super Admin only)
                 Route::post('/facebook-targeting/sync', [FacebookTargetingController::class, 'sync'])->name('facebook-targeting.sync');
+            });
+
+            Route::middleware(['role:super admin|Committees'])->group(function () {
+                Route::get('/facebook-targeting', [FacebookTargetingController::class, 'index'])->name('facebook-targeting.index');
                 Route::post('/facebook-targeting/download', [FacebookTargetingController::class, 'download'])->name('facebook-targeting.download');
             });
 

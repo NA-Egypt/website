@@ -8,6 +8,8 @@
 
             <x-forms.input name="ar_name" label="{{ __('messages.City Arabic Name')}}"/>
             <x-forms.input name="en_name" label="{{ __('messages.City English Name')}}"/>
+            <x-forms.input name="latitude" label="{{ __('Latitude') }}"/>
+            <x-forms.input name="longitude" label="{{ __('Longitude') }}"/>
             <x-forms.normal-button color='outline-dark' name="{{ __('messages.Save') }}" />
 
         </form>
