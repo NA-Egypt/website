@@ -4,45 +4,25 @@
 
     <div class="container glass-card p-4 mt-4 mb-5">
 
-        {{-- Add Button --}}
-        <div class="mt-3 mb-3">
-            <x-button-a 
-                href="{{ route('direct-online-group.create') }}" 
-                color='outline-primary' 
-                name="{{__('messages.Add') . ' ' . __('messages.Group')}}" 
-            />
-        </div>
+        @php
+        $columns = [
+            ['field' => 'ar_name', 'title' => __('messages.Arabic Group Name'), 'sort' => true],
+            ['field' => 'en_name', 'title' => __('messages.English Group Name'), 'sort' => true],
+            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
+            ['field' => 'location', 'title' => __('messages.Locations') . ' (Zoom)', 'sort' => false],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+        @endphp
 
-        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables text-center table table-bordered display" id="example">
-                <thead>
-                    <tr>
-                        <th>{{  __('messages.Arabic Group Name') }}</th>
-                        <th>{{  __('messages.English Group Name') }}</th>
-                        <th>{{  __('messages.Email') }}</th>
-                        <th>{{  __('messages.Locations') }} (Zoom)</th>
-                        <th>{{  __('messages.Control') }}</th>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    @foreach ($directOnlineGroups as $group)                    
-                        <tr>
-                            <td>{{ $group->ar_name }}</td>
-                            <td>{{ $group->en_name }}</td>
-                            <td>{{ $group->user ? $group->user->email : '-' }}</td>
-                            <td>
-                                <a href="{{ $group->location }}" target="_blank" class="text-primary text-decoration-underline">{{ $group->location }}</a>
-                            </td>
-                            <td>
-                                <x-button-a href="{{ route('direct-online-group.edit', $group->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                                <x-button-a href="{{ route('direct-online-group.show', $group->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
-                                <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$group->id}}" routeName="direct-online-group.destroy" />
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('direct-online-group.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('direct-online-group.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.Group') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('direct-online-group.edit', ['directOnlineGroup' => 1])) }}"
+             data-show-route-template="{{ str_replace('1', '{id}', route('direct-online-group.show', ['directOnlineGroup' => 1])) }}"
+             data-delete-route-name="direct-online-group.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('direct-online-group.destroy', ['directOnlineGroup' => 1])) }}">
         </div>
     </div>
 

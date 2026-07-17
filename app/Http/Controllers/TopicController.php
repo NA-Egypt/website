@@ -5,15 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class TopicController extends Controller
 {
+    use PaginatesDataTables;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $topics = Topic::all();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Topic::query();
+            $topics = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'description']);
+            return response()->json($topics);
+        }
 
+        $topics = collect();
         return view('topic.index', ['topics'=>$topics]);
     }
 

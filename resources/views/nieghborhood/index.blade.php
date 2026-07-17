@@ -4,41 +4,25 @@
 
     <div class="container">
 
-        <div class="m-3">
-            <x-button-a href="{{ route('neighborhood.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Neighborhood')}}" />
-        </div>
+        @php
+        $columns = [
+            ['field' => 'ar_name', 'title' => __('messages.Neighborhood Arabic Name'), 'sort' => true],
+            ['field' => 'en_name', 'title' => __('messages.Neighborhood English Name'), 'sort' => true],
+            ['field' => 'city_ar', 'title' => __('messages.City Arabic Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'city.ar_name'],
+            ['field' => 'city_en', 'title' => __('messages.City English Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'city.en_name'],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+        @endphp
 
-        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
-                <thead>
-                <tr>
-                    {{-- <td>#{{ __('messages.ID')}}</td> --}}
-                    <th>{{  __('messages.Neighborhood Arabic Name') }}</th>
-                    <th>{{  __('messages.Neighborhood English Name') }}</th>
-                    <th>{{  __('messages.City Arabic Name') }}</th>
-                    <th>{{  __('messages.City English Name') }}</th>
-                    <th>{{  __('messages.Control') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                @foreach ($neighborhoods as $nh)
-                    <tr>
-                        {{-- <td>{{ $nh->id }}</td> --}}
-                        <td>{{ $nh->ar_name }}</td>
-                        <td>{{ $nh->en_name }}</td>
-                        <td>{{ $nh->city->ar_name }}</td>
-                        <td>{{ $nh->city->en_name }}</td>
-                        <td>
-                            <x-button-a href="{{ route('neighborhood.edit', $nh->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$nh->id}}" routeName="neighborhood.destroy" />
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('neighborhood.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('neighborhood.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.Neighborhood') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('neighborhood.edit', ['neighborhood' => 1])) }}"
+             data-delete-route-name="neighborhood.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('neighborhood.destroy', ['neighborhood' => 1])) }}">
         </div>
-        {{-- {{$neighborhoods->links()}} --}}
     </div>
 
 </x-layout>

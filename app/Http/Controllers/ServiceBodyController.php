@@ -10,13 +10,28 @@ use Illuminate\Http\Request;
 use App\Models\Agenda;
 use App\Services\MpdfService;
 
+use App\Traits\PaginatesDataTables;
+
 class ServiceBodyController extends Controller
 {
-
+    use PaginatesDataTables;
     
-    public function index() {
+    public function index(Request $request) {
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = ServiceBody::with('day');
+            $sb = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'helpline']);
+            
+            $sb->getCollection()->transform(function($s) {
+                $s->day_name = $s->day ? (app()->getLocale() === 'ar' ? $s->day->ar_name : $s->day->en_name) : '-';
+                $s->from_time = $s->formatted_start_time;
+                $s->to_time = $s->formatted_end_time;
+                return $s;
+            });
 
-        $sb = ServiceBody::all();
+            return response()->json($sb);
+        }
+
+        $sb = collect();
         return view('serviceBody.index', ['sb' => $sb]);
     }
 

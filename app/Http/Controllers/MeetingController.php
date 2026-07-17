@@ -11,16 +11,48 @@ use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
+use App\Traits\PaginatesDataTables;
+
 class MeetingController extends Controller
 {
+    use PaginatesDataTables;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('viewAny', Meeting::class);
-        $meetings = Meeting::all();
 
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Meeting::with(['group', 'directOnlineGroup', 'topic', 'day']);
+            $meetings = $this->paginateDataTable($query, $request, [
+                'group.en_name', 'group.ar_name', 
+                'directOnlineGroup.en_name', 'directOnlineGroup.ar_name', 
+                'day.ar_name', 'day.en_name', 'topic.ar_name', 'topic.en_name'
+            ]);
+
+            $meetings->getCollection()->transform(function($m) {
+                $m->group_name = $m->groupOrDirect ? (app()->getLocale() === 'ar' ? ($m->groupOrDirect->ar_name ?: $m->groupOrDirect->en_name) : ($m->groupOrDirect->en_name ?: $m->groupOrDirect->ar_name)) : 'N/A';
+                $m->topic_name = $m->topic ? (app()->getLocale() === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A';
+                
+                $dayStr = app()->getLocale() === 'ar' ? $m->day->ar_name : $m->day->en_name;
+                if (!empty($m->recurrence) && !in_array('weekly', $m->recurrence)) {
+                    $m->day_name = $m->formatted_recurrence . ' - ' . $dayStr;
+                } else {
+                    $m->day_name = $dayStr;
+                }
+
+                $m->from_time = $m->formatted_start_time;
+                $m->to_time = $m->formatted_end_time;
+                $m->status_label = app()->getLocale() === 'ar' ? __('messages.' . $m->status) : $m->status;
+                return $m;
+            });
+
+            return response()->json($meetings);
+        }
+
+        $meetings = collect();
         return view('meeting.index', ['meetings' => $meetings]);
     }
 

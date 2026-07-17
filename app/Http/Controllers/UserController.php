@@ -8,11 +8,21 @@ use App\Models\User;
 use App\Models\ServiceBody;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class UserController extends Controller
 {
-    public function index()
+    use PaginatesDataTables;
+
+    public function index(Request $request)
     {
-        $users = User::with(['roles', 'serviceBody'])->get();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = User::with(['roles', 'serviceBody']);
+            $users = $this->paginateDataTable($query, $request, ['display_name', 'email', 'roles.name']);
+            return response()->json($users);
+        }
+
+        $users = collect();
         return view('users.index', compact('users'));
     }
 

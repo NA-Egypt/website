@@ -6,11 +6,21 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class RoleController extends Controller
 {
-    public function index()
+    use PaginatesDataTables;
+
+    public function index(Request $request)
     {
-        $roles = Role::with('permissions')->get();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Role::with('permissions');
+            $roles = $this->paginateDataTable($query, $request, ['name', 'permissions.name']);
+            return response()->json($roles);
+        }
+
+        $roles = collect();
         return view('roles.index', compact('roles'));
     }
 

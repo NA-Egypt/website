@@ -71,3 +71,87 @@ import.meta.glob([
     '../images/**'
 ]);
 
+import { createApp, h } from 'vue';
+import TransactionsTable from './components/TransactionsTable.vue';
+import GenericDataTable from './components/GenericDataTable.vue';
+import FacebookTargeting from './components/FacebookTargeting.vue';
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Mount FacebookTargeting
+    const fbEl = document.querySelector('[data-vue-app="FacebookTargeting"]');
+    if (fbEl) {
+        const initialGroups = JSON.parse(fbEl.getAttribute('data-initial-groups') || '[]');
+        const syncRoute = fbEl.getAttribute('data-sync-route') || '';
+        const downloadRoute = fbEl.getAttribute('data-download-route') || '';
+        const staticMapRoute = fbEl.getAttribute('data-static-map-route') || '';
+        const csrfToken = fbEl.getAttribute('data-csrf-token') || '';
+        const isSuperAdmin = fbEl.hasAttribute('data-is-super-admin');
+
+        const app = createApp({
+            render: () => h(FacebookTargeting, {
+                initialGroups,
+                syncRoute,
+                downloadRoute,
+                staticMapRoute,
+                csrfToken,
+                isSuperAdmin
+            })
+        });
+        app.mount(fbEl);
+    }
+
+    // Mount TransactionsTable
+    const transactionsEl = document.querySelector('[data-vue-app="TransactionsTable"]');
+    if (transactionsEl) {
+        const fetchUrl = transactionsEl.getAttribute('data-fetch-url');
+        const availableModels = JSON.parse(transactionsEl.getAttribute('data-available-models') || '[]');
+        const availableOperations = JSON.parse(transactionsEl.getAttribute('data-available-operations') || '[]');
+
+        const app = createApp({
+            render: () => h(TransactionsTable, {
+                fetchUrl,
+                availableModels,
+                availableOperations
+            })
+        });
+        app.mount(transactionsEl);
+    }
+
+    // Mount GenericDataTable
+    const genericEls = document.querySelectorAll('[data-vue-app="GenericDataTable"]');
+    genericEls.forEach(el => {
+        const fetchUrl = el.getAttribute('data-fetch-url');
+        const columns = JSON.parse(el.getAttribute('data-columns') || '[]');
+        const createRoute = el.getAttribute('data-create-route') || '';
+        const createLabel = el.getAttribute('data-create-label') || '';
+        const bulkActionRoute = el.getAttribute('data-bulk-action-route') || '';
+        const bulkActions = JSON.parse(el.getAttribute('data-bulk-actions') || '[]');
+        const bulkIdsName = el.getAttribute('data-bulk-ids-name') || 'ids[]';
+        const editRouteTemplate = el.getAttribute('data-edit-route-template') || '';
+        const showRouteTemplate = el.getAttribute('data-show-route-template') || '';
+        const deleteRouteTemplate = el.getAttribute('data-delete-route-template') || '';
+        const hasAgendasButton = el.hasAttribute('data-has-agendas-button');
+        const hasToggleVerificationButton = el.hasAttribute('data-has-toggle-verification-button');
+        const deleteRouteName = el.getAttribute('data-delete-route-name') || '';
+
+        const app = createApp({
+            render: () => h(GenericDataTable, {
+                fetchUrl,
+                columns,
+                createRoute,
+                createLabel,
+                bulkActionRoute,
+                bulkActions,
+                bulkIdsName,
+                editRouteTemplate,
+                showRouteTemplate,
+                deleteRouteTemplate,
+                hasAgendasButton,
+                hasToggleVerificationButton,
+                deleteRouteName
+            })
+        });
+        app.mount(el);
+    });
+});
+

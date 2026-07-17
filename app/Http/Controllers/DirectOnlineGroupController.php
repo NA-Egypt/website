@@ -8,8 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
+use App\Traits\PaginatesDataTables;
+
 class DirectOnlineGroupController extends Controller implements HasMiddleware
 {
+    use PaginatesDataTables;
+
     public static function middleware(): array
     {
         return [
@@ -17,9 +21,15 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $directOnlineGroups = DirectOnlineGroup::all();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = DirectOnlineGroup::query();
+            $directOnlineGroups = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'location']);
+            return response()->json($directOnlineGroups);
+        }
+
+        $directOnlineGroups = collect();
         return view('direct-online-group.index', ['directOnlineGroups' => $directOnlineGroups]);
     }
 

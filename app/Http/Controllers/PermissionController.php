@@ -5,11 +5,21 @@ namespace App\Http\Controllers;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class PermissionController extends Controller
 {
-    public function index()
+    use PaginatesDataTables;
+
+    public function index(Request $request)
     {
-        $permissions = Permission::all();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Permission::query();
+            $permissions = $this->paginateDataTable($query, $request, ['name', 'description']);
+            return response()->json($permissions);
+        }
+
+        $permissions = collect();
         return view('permissions.index', compact('permissions'));
     }
 

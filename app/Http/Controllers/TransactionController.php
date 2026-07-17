@@ -10,6 +10,15 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = $request->input('pagesize', 15);
+        $sortColumn = $request->input('sort_column', 'created_at');
+        
+        $allowedSorts = ['operation', 'model', 'created_at', 'id'];
+        if (!in_array($sortColumn, $allowedSorts)) {
+            $sortColumn = 'created_at';
+        }
+        $sortDirection = $request->input('sort_direction', 'desc') === 'asc' ? 'asc' : 'desc';
+
         $query = Transaction::with('user');
 
         if ($request->filled('filter_model')) {
@@ -21,10 +30,22 @@ class TransactionController extends Controller
         }
 
         if ($request->filled('search_user')) {
-            $search = $request->input('search_user');
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+            $searchUser = $request->input('search_user');
+            $query->whereHas('user', function ($q) use ($searchUser) {
+                $q->where('name', 'like', "%{$searchUser}%")
+                  ->orWhere('email', 'like', "%{$searchUser}%");
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('model', 'like', "%{$search}%")
+                  ->orWhere('operation', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -36,7 +57,13 @@ class TransactionController extends Controller
             $query->whereDate('created_at', '<=', $request->input('date_to'));
         }
 
-        $transactions = $query->latest()->paginate(15)->withQueryString();
+        if ($sortColumn === 'created_at') {
+            $query->orderBy('created_at', $sortDirection);
+        } else {
+            $query->orderBy($sortColumn, $sortDirection)->orderBy('created_at', 'desc');
+        }
+
+        $transactions = $query->paginate($perPage)->withQueryString();
 
         // Augment the paginated collection with `group_name`
         $transactions->getCollection()->transform(function ($transaction) {
@@ -46,6 +73,10 @@ class TransactionController extends Controller
             }
             return $transaction;
         });
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json($transactions);
+        }
 
         $availableModels = Transaction::distinct()->pluck('model')->toArray();
         $availableOperations = Transaction::distinct()->pluck('operation')->toArray();

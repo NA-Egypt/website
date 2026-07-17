@@ -5,12 +5,27 @@ namespace App\Http\Controllers;
 use Mydnic\Subscribers\Subscriber;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Traits\PaginatesDataTables;
 
 class SubscriberController extends Controller
 {
-    public function index()
+    use PaginatesDataTables;
+    public function index(Request $request)
     {
-        $subscribers = Subscriber::latest()->get();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Subscriber::query();
+            $subscribers = $this->paginateDataTable($query, $request, ['email']);
+            
+            $subscribers->getCollection()->transform(function($s) {
+                $s->status = $s->hasVerifiedEmail() ? __('messages.Verified') : __('messages.Unverified');
+                $s->created_at_formatted = $s->created_at->format('Y-m-d H:i');
+                return $s;
+            });
+
+            return response()->json($subscribers);
+        }
+
+        $subscribers = collect();
         return view('subscribers.index', compact('subscribers'));
     }
 

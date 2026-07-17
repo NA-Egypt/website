@@ -6,15 +6,24 @@ use App\Models\City;
 use App\Models\Neighborhood;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class NeighborhoodController extends Controller
 {
+    use PaginatesDataTables;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $neighborhoods = Neighborhood::all();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = Neighborhood::with('city');
+            $neighborhoods = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'city.ar_name', 'city.en_name']);
+            return response()->json($neighborhoods);
+        }
 
+        $neighborhoods = collect();
         return view('nieghborhood.index', ['neighborhoods' => $neighborhoods]);
     }
 

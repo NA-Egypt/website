@@ -12,8 +12,12 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
+use App\Traits\PaginatesDataTables;
+
 class GroupController extends Controller implements HasMiddleware
 {
+    use PaginatesDataTables;
+
     public static function middleware(): array
     {
         return [
@@ -24,19 +28,30 @@ class GroupController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
-            $groups = Group::all();
+            $query = Group::query();
         } elseif ($user->hasRole('ServiceBody') && $user->service_body_id) {
-            $groups = Group::where('service_body_id', $user->service_body_id)->get();
+            $query = Group::where('service_body_id', $user->service_body_id);
         } elseif ($user->hasRole('gsr')) {
-            $groups = Group::where('user_id', $user->id)->get();
+            $query = Group::where('user_id', $user->id);
         } else {
-            $groups = collect();
+            $query = Group::whereRaw('1 = 0');
         }
 
+        if ($request->wantsJson() || $request->ajax()) {
+            $query->with(['user', 'serviceBody', 'neighborhood']);
+            $groups = $this->paginateDataTable($query, $request, [
+                'ar_name', 'en_name', 'user.email', 
+                'serviceBody.ar_name', 'serviceBody.en_name', 
+                'neighborhood.ar_name', 'neighborhood.en_name'
+            ]);
+            return response()->json($groups);
+        }
+
+        $groups = collect();
         return view('group.index', ['groups' => $groups]);
     }
 

@@ -4,83 +4,27 @@
 
     <div class="container glass-card p-4 mt-4 mb-5">
 
-        {{-- Add Button --}}
-        <div class="mt-3 mb-3">
-            <x-button-a 
-            href="{{ route('group.create') }}" 
-            color='outline-primary' 
-            name="{{__('messages.Add') . ' ' . __('messages.Group')}}" 
-            />
+        @php
+        $columns = [
+            ['field' => 'ar_name', 'title' => __('messages.Arabic Group Name'), 'sort' => true],
+            ['field' => 'en_name', 'title' => __('messages.English Group Name'), 'sort' => true],
+            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
+            ['field' => 'service_body', 'title' => __('messages.Service Body Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
+            ['field' => 'neighborhood', 'title' => __('messages.Neighborhood Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'neighborhood.' . app()->getLocale() . '_name'],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+        @endphp
+
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('group.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('group.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.Group') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('group.edit', ['group' => 1])) }}"
+             data-show-route-template="{{ str_replace('1', '{id}', route('group.show', ['group' => 1])) }}"
+             data-delete-route-name="group.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('group.destroy', ['group' => 1])) }}">
         </div>
-        {{-- / Add Button --}}
-
-        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables text-center table table-bordered display" id="example">
-                <thead>
-
-                    <tr>
-                        {{-- <th>#{{ __('messages.ID')}}</th> --}}
-                        <th>{{  __('messages.Arabic Group Name') }}</th>
-                        <th>{{  __('messages.English Group Name') }}</th>
-                        {{-- <th>{{  __('messages.Arabic GSR Name') }}</th>
-                        <th>{{  __('messages.English GSR Name') }}</th> --}}
-                        <th>{{  __('messages.Email') }}</th>
-                        {{-- <th>{{  __('messages.Phone') }}</th>
-                        <th>{{  __('messages.Address') }}</th>
-                        <th>{{  __('messages.Locations') }}</th>
-                        <th>{{  __('messages.Group Type') }}</th> --}}
-                        <th>{{  __('messages.Service Body Name') }}</th>
-                        <th>{{  __('messages.Neighborhood Name') }}</th>
-                        <th>{{  __('messages.Control') }}</th>
-                    </tr>
-
-                </thead>
-                
-                <tbody>
-                    @foreach ($groups as $group)                    
-
-                        <tr>
-                            {{-- <td>{{ $group->id }}</td> --}}
-                            <td>{{ $group->ar_name }}</td>
-                            <td>{{ $group->en_name }}</td>
-                            {{-- <td>{{ $group->ar_gsr_name }}</td>
-                            <td>{{ $group->en_gsr_name }}</td> --}}
-                            <td>{{ $group->user->email }}</td>
-                            {{-- <td>{{ $group->phone }}</td>
-                            <td>
-                            @if(app()->getLocale() === 'ar')
-                                {{$group->ar_address}}
-                            @else
-                                {{$group->en_address}}
-                            @endif
-                        </td>
-                        <td>{{ $group->location }}</td>
-                            <td>{{ $group->group_type }}</td> --}}
-                            <td>
-                                @if(app()->getLocale() === 'ar')
-                                    {{$group->serviceBody->ar_name}}
-                                @else
-                                    {{$group->serviceBody->en_name}}
-                                @endif
-                            </td>
-                            <td>
-                                @if(app()->getLocale() === 'ar')
-                                    {{$group->neighborhood->ar_name}}
-                                @else
-                                    {{$group->neighborhood->en_name}}
-                                @endif
-                            </td>
-                            <td>
-                                <x-button-a href="{{ route('group.edit', $group->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                                <x-button-a href="{{ route('group.show', $group->id) }}" color='outline-info' name="{{  __('messages.Show') }}" />
-                                <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$group->id}}" routeName="group.destroy" />
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        {{-- {{$group->links()}} --}}
     </div>
 
 </x-layout>

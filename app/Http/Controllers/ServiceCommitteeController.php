@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
+use App\Traits\PaginatesDataTables;
+
 class ServiceCommitteeController extends Controller implements HasMiddleware
 {
+    use PaginatesDataTables;
+
     public static function middleware(): array
     {
         return [
@@ -22,10 +26,15 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ServiceCommittee = ServiceCommittee::all();
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = ServiceCommittee::query();
+            $ServiceCommittee = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'chairman_name', 'chairman_phone']);
+            return response()->json($ServiceCommittee);
+        }
 
+        $ServiceCommittee = collect();
         return view('serviceCommittee.index', ['ServiceCommittee'=>$ServiceCommittee]);
     }
 

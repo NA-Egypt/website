@@ -4,52 +4,26 @@
 
     <div class="container">
 
-        <div class="m-3">
-            <x-button-a href="{{ route('serviceBody.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Service Body')}}" />
-        </div>
+        @php
+        $columns = [
+            ['field' => 'ar_name', 'title' => __('messages.Service Body Arabic Name'), 'sort' => true],
+            ['field' => 'day_name', 'title' => __('messages.Day'), 'sort' => false],
+            ['field' => 'from_time', 'title' => __('messages.From'), 'sort' => false],
+            ['field' => 'to_time', 'title' => __('messages.To'), 'sort' => false],
+            ['field' => 'location', 'title' => __('messages.Location'), 'sort' => true],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+        @endphp
 
-        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
-                <thead>
-                    <tr>
-                        {{-- <td>#{{ __('messages.ID')}}</td> --}}
-                        <th>{{  __('messages.Service Body Arabic Name') }}</th>
-                        {{-- <td>{{  __('messages.Service Body English Name') }}</td>
-                        <td>{{  __('messages.Description') }}</td> --}}
-                        <th>{{  __('messages.Day') }}</th>
-                        {{-- <td>{{  __('messages.Date') }}</td> --}}
-                        <th>{{  __('messages.From') }}</th>
-                        <th>{{  __('messages.To') }}</th>
-                        <th>{{  __('messages.Location') }}</th>
-                        <th>{{  __('messages.Control') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                @foreach ($sb as $service)                    
-                    <tr>
-                        {{-- <td>{{ $service->id }}</td> --}}
-                        <td>{{ $service->ar_name }}</td>
-                        {{-- <td>{{ $service->en_name }}</td>
-                        <td>{{ $service->description }}</td> --}}
-                        @if(app()->getLocale() === 'ar')
-                            <td>{{ $service->day->ar_name }}</td>
-                        @else
-                            <td>{{ $service->day->en_name }}</td>
-                        @endif
-                        {{-- <td>{{ $service->formatted_date }}</td> --}}
-                        <td>{{ $service->formatted_start_time }}</td>
-                        <td>{{ $service->formatted_end_time}}</td>
-                        <td>{{ $service->location }}</td>
-                        <td>
-                            <x-button-a href="{{ route('serviceBody.agendas', $service->id) }}" color='outline-primary' name="{{ __('messages.agendas') ?? 'Agendas' }}" />
-                            <x-button-a href="{{ route('serviceBody.edit', $service->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$service->id}}" routeName="serviceBody.destroy" />
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('serviceBody.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('serviceBody.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.Service Body') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('serviceBody.edit', ['serviceBody' => 1])) }}"
+             data-has-agendas-button
+             data-delete-route-name="serviceBody.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('serviceBody.destroy', ['serviceBody' => 1])) }}">
         </div>
         {{-- {{$serviceBody->links()}} --}}
     </div>

@@ -6,15 +6,32 @@ use App\Http\Requests\CityNameRequest;
 use App\Models\City;
 use Illuminate\Http\Request;
 
+use App\Traits\PaginatesDataTables;
+
 class CityController extends Controller
 {
+    use PaginatesDataTables;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cities = City::all();
-        return view('city.index', ['cities' => $cities]);
+        if ($request->wantsJson() || $request->ajax()) {
+            $query = City::query();
+            $cities = $this->paginateDataTable($query, $request, ['ar_name', 'en_name']);
+            return response()->json($cities);
+        }
+
+        $columns = [
+            ['field' => 'ar_name', 'title' => __('messages.City Arabic Name'), 'sort' => true],
+            ['field' => 'en_name', 'title' => __('messages.City English Name'), 'sort' => true],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+
+        return view('city.index', [
+            'columns' => $columns
+        ]);
     }
 
     /**

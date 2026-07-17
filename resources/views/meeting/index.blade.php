@@ -4,83 +4,27 @@
 
     <div class="container glass-card p-4 mt-4 mb-5">
 
-        <div class="mt-3 mb-3">
-            <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" />
-        </div>
+        @php
+        $columns = [
+            ['field' => 'group_name', 'title' => __('messages.Group Name'), 'sort' => true],
+            ['field' => 'topic_name', 'title' => __('messages.Meeting Topic'), 'sort' => true],
+            ['field' => 'day_name', 'title' => __('messages.Day'), 'sort' => false],
+            ['field' => 'from_time', 'title' => __('messages.From'), 'sort' => false],
+            ['field' => 'to_time', 'title' => __('messages.To'), 'sort' => false],
+            ['field' => 'status_label', 'title' => __('messages.Status'), 'sort' => true],
+            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        ];
+        @endphp
 
-        <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
-                <thead>
-                    <tr>
-                        {{-- <th>#{{ __('messages.ID')}}</th> --}}
-                        <th>{{  __('messages.Group Name') }}</th>
-                        <th>{{  __('messages.Meeting Topic') }}</th>
-                        <th>{{  __('messages.Day') }}</th>
-                        <th>{{  __('messages.From') }}</th>
-                        <th>{{  __('messages.To') }}</th>
-                    {{-- <th>{{  __('messages.Language') }}</th> --}}
-                    <th>{{  __('messages.Status') }}</th>
-                    {{-- <th>{{  __('messages.Capacity') }}</th>
-                        <th>{{  __('messages.Notes') }}</th> --}}
-                        <th>{{  __('messages.Control') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($meetings as $meeting)                    
-                        <tr>
-                            {{-- <td>{{ $meeting->id }}</td> --}}
-                            <td>{{ $meeting->groupOrDirect?->ar_name }}</td>
-                            <td>
-                                @if(app()->getLocale() === 'ar')
-                                    {{$meeting->topic?->ar_name}}
-                                @else
-                                    {{$meeting->topic?->en_name}}
-                                @endif
-                            </td>
-                            <td>
-                                @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
-                                    @if(app()->getLocale() === 'ar')
-                                        {{$meeting->day->ar_name}}
-                                    @else
-                                        {{$meeting->day->en_name}}
-                                    @endif
-                                @else
-                                    {{ $meeting->formatted_recurrence }} - 
-                                    @if(app()->getLocale() === 'ar')
-                                        {{$meeting->day->ar_name}}
-                                    @else
-                                        {{$meeting->day->en_name}}
-                                    @endif
-                                @endif
-                            </td>
-                            <td>{{ $meeting->formatted_start_time }}</td>
-                            <td>{{ $meeting->formatted_end_time }}</td>
-                            {{-- <td>
-                            @if(app()->getLocale() === 'ar')
-                                {{__('messages.'. $meeting->lang)}}
-                            @else
-                                {{$meeting->lang}}
-                            @endif
-                        </td> --}}
-                        <td>
-                            @if(app()->getLocale() === 'ar')
-                                {{__('messages.'. $meeting->status)}}
-                            @else
-                                {{$meeting->status}}
-                            @endif
-                        </td>
-                        {{-- <td>{{ $meeting->capacity }}</td>
-                        <td>{{ $meeting->notes }}</td> --}}
-                            <td>
-                                <x-button-a href="{{ route('meeting.edit', $meeting->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                                <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$meeting->id}}" routeName="meeting.destroy" />
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('meeting.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('meeting.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.Meeting') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('meeting.edit', ['meeting' => 1])) }}"
+             data-delete-route-name="meeting.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('meeting.destroy', ['meeting' => 1])) }}">
         </div>
-        {{-- {{$meetings->links()}} --}}
     </div>
 
 </x-layout>

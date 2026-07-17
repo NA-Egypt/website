@@ -8,31 +8,14 @@
             <x-button-a href="{{ route('city.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.City')}}" />
         </div>
 
-        <div class="table-responsive">
-            <table class="main-tables manage-member text-center table table-bordered display" id="example">
-                <thead>
-                <tr>
-                    {{-- <td>#{{ __('messages.ID')}}</td> --}}
-                    <th>{{  __('messages.City Arabic Name') }}</th>
-                    <th>{{  __('messages.City English Name') }}</th>
-                    <th>{{  __('messages.Control') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                
-                @foreach ($cities as $city)                 
-                    <tr>
-                        {{-- <td>{{ $city->id }}</td> --}}
-                        <td>{{ $city->ar_name }}</td>
-                        <td>{{ $city->en_name }}</td>
-                        <td>
-                            <x-button-a href="{{ route('city.edit', $city->id) }}" color='outline-info' name="{{  __('messages.Edit') }}" />
-                            <x-forms.delete-button name="{{  __('messages.Delete') }}" formName='delete-item' id="{{$city->id}}" routeName="city.destroy" />
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+        <div data-vue-app="GenericDataTable"
+             data-fetch-url="{{ route('city.index') }}"
+             data-columns="{{ json_encode($columns) }}"
+             data-create-route="{{ route('city.create') }}"
+             data-create-label="{{ __('messages.Add') . ' ' . __('messages.City') }}"
+             data-edit-route-template="{{ str_replace('1', '{id}', route('city.edit', ['city' => 1])) }}"
+             data-delete-route-name="city.destroy"
+             data-delete-route-template="{{ str_replace('1', '{id}', route('city.destroy', ['city' => 1])) }}">
         </div>
         {{-- {{$items->links()}} --}}
     </div>
