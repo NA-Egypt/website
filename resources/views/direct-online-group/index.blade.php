@@ -8,8 +8,8 @@
         $columns = [
             ['field' => 'ar_name', 'title' => __('messages.Arabic Group Name'), 'sort' => true],
             ['field' => 'en_name', 'title' => __('messages.English Group Name'), 'sort' => true],
-            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
-            ['field' => 'location', 'title' => __('messages.Locations') . ' (Zoom)', 'sort' => false],
+            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
+            ['field' => 'location', 'title' => __('messages.Locations') . ' (Zoom)', 'sort' => true],
             ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
         ];
         @endphp

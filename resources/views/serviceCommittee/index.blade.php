@@ -8,7 +8,7 @@
         $columns = [
             ['field' => 'ar_name', 'title' => __('messages.Arabic Service Committee Name'), 'sort' => true],
             ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true],
-            ['field' => 'notes', 'title' => __('messages.Committee Meetings'), 'sort' => false],
+            ['field' => 'notes', 'title' => __('messages.Committee Meetings'), 'sort' => true],
             ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
         ];
         @endphp

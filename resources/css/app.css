@@ -388,3 +388,36 @@ th {
   text-align: left !important;
   direction: ltr !important;
 }
+
+/* ==========================================================================
+   Alt Pagination — exact CSS from the official vue3-datatable documentation
+   Source: https://vue3-datatable-document.vercel.app/_nuxt/alt-pagination.DsejvkKG.css
+   ========================================================================== */
+
+/* Make page buttons rectangular with auto width instead of fixed circles */
+.alt-pagination .bh-pagination .bh-page-item {
+  min-width: 32px;
+  border-radius: 0.25rem !important;
+  width: max-content !important;
+}
+
+/* First/Last/Prev/Next text buttons — wider to fit the label */
+.alt-pagination .bh-pagination .bh-page-item:first-child,
+.alt-pagination .bh-pagination .bh-page-item:last-child,
+.alt-pagination .bh-pagination .bh-page-item:nth-child(2),
+.alt-pagination .bh-pagination .bh-page-item:nth-last-child(2) {
+  min-width: 60px;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Page numbers row spacing */
+.alt-pagination .bh-pagination-number {
+  gap: 0.25rem;
+}
+
+/* Pagination container layout */
+.alt-pagination .bh-pagination {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}

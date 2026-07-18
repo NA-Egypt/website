@@ -12,7 +12,6 @@
 
         @php
         $columns = [
-            ['field' => 'checkbox', 'title' => '', 'sort' => false],
             ['field' => 'email', 'title' => __('messages.Email') ?? 'Email', 'sort' => true],
             ['field' => 'status', 'title' => __('messages.Status') ?? 'Status', 'sort' => true],
             ['field' => 'created_at_formatted', 'title' => __('messages.Created At') ?? 'Created At', 'sort' => true],

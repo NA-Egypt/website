@@ -166,7 +166,7 @@
             :sortDirection="sortDirection"
             :sortable="true"
             :pagination="true"
-            @change="changeParams"
+            @sort-change="onSortChange"
             @page-change="onPageChange"
             @page-size-change="onPageSizeChange"
             :paginationInfo="labels.paginationInfo"
@@ -282,10 +282,11 @@ const page = ref(1);
 const sortColumn = ref('name');
 const sortDirection = ref('asc');
 
-const changeParams = (newParams) => {
-  if (newParams.current_page) page.value = newParams.current_page;
-  if (newParams.sort_column) sortColumn.value = newParams.sort_column;
-  if (newParams.sort_direction) sortDirection.value = newParams.sort_direction;
+const onSortChange = (sortData) => {
+  if (sortData && sortData.field) {
+    sortColumn.value = sortData.field;
+    sortDirection.value = sortData.direction || 'asc';
+  }
 };
 
 const onPageChange = (p) => { page.value = p; };

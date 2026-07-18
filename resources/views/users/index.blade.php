@@ -13,11 +13,10 @@
 {{--    </ul>--}}
     @php
     $columns = [
-        ['field' => 'checkbox', 'title' => '', 'sort' => false],
         ['field' => 'display_name', 'title' => __('messages.Display Name'), 'sort' => true],
         ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true],
         ['field' => 'roles', 'title' => __('messages.Roles'), 'sort' => false, 'renderType' => 'array', 'fieldPath' => 'roles', 'arrayKey' => 'name'],
-        ['field' => 'service_body', 'title' => __('messages.Service Body'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
+        ['field' => 'service_body', 'title' => __('messages.Service Body'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
         ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
     ];
     $bulkActions = [

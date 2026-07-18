@@ -61,24 +61,17 @@
         :showPageSize="true"
         :pageSizeOptions="[10, 20, 50, 100]"
         :showNumbersCount="5"
-        @changeServer="changeServer"
+        :hasCheckbox="bulkActions.length > 0"
+        @sort-change="onSortChange"
         @page-change="onPageChange"
         @page-size-change="onPageSizeChange"
+        @row-select="onRowSelect"
         class="alt-pagination"
       >
         <template #firstArrow>{{ labels.first }}</template>
         <template #lastArrow>{{ labels.last }}</template>
         <template #previousArrow>{{ labels.prev }}</template>
         <template #nextArrow>{{ labels.next }}</template>
-        <!-- Checkbox Column -->
-        <template #checkbox="data">
-          <input
-            type="checkbox"
-            :value="data.value.id"
-            v-model="selectedRowIds"
-            class="form-check-input row-checkbox"
-          />
-        </template>
 
         <!-- Dynamic Column Formatting and Alignment Wrapper for ALL data columns -->
         <template v-for="col in dataColumns" :key="col.field" #[col.field]="data">
@@ -301,19 +294,6 @@ const labels = computed(() => {
   };
 });
 
-// Watch selectedRowIds to check headers if needed, or manage header checkbox
-const isAllSelected = computed({
-  get() {
-    return state.rows.length > 0 && selectedRowIds.value.length === state.rows.length;
-  },
-  set(value) {
-    if (value) {
-      selectedRowIds.value = state.rows.map(row => row.id);
-    } else {
-      selectedRowIds.value = [];
-    }
-  }
-});
 
 const getEditUrl = (id) => {
   console.log('GenericDataTable getEditUrl called for ID:', id, 'Template:', props.editRouteTemplate);
@@ -450,12 +430,14 @@ const applyBulkAction = () => {
   }
 };
 
-const changeServer = (newParams) => {
-  if (newParams.current_page) params.current_page = newParams.current_page;
-  if (newParams.pagesize)     params.pagesize      = newParams.pagesize;
-  if (newParams.sort_column)  params.sort_column   = newParams.sort_column;
-  if (newParams.sort_direction) params.sort_direction = newParams.sort_direction;
-  fetchData();
+const onSortChange = (sortData) => {
+  // Library emits sortChange with {field, direction, offset, limit}
+  if (sortData && sortData.field) {
+    params.sort_column    = sortData.field;
+    params.sort_direction = sortData.direction || 'asc';
+    params.current_page   = 1;
+    fetchData();
+  }
 };
 
 const onPageChange = (page) => {
@@ -467,6 +449,10 @@ const onPageSizeChange = (pageSize) => {
   params.pagesize = pageSize;
   params.current_page = 1;
   fetchData();
+};
+
+const onRowSelect = (selectedRows) => {
+  selectedRowIds.value = selectedRows.map(row => row.id);
 };
 
 const debounceFetch = () => {

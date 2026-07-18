@@ -8,9 +8,9 @@
         $columns = [
             ['field' => 'ar_name', 'title' => __('messages.Arabic Group Name'), 'sort' => true],
             ['field' => 'en_name', 'title' => __('messages.English Group Name'), 'sort' => true],
-            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
-            ['field' => 'service_body', 'title' => __('messages.Service Body Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
-            ['field' => 'neighborhood', 'title' => __('messages.Neighborhood Name'), 'sort' => false, 'renderType' => 'nested', 'fieldPath' => 'neighborhood.' . app()->getLocale() . '_name'],
+            ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'user.email'],
+            ['field' => 'service_body', 'title' => __('messages.Service Body Name'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
+            ['field' => 'neighborhood', 'title' => __('messages.Neighborhood Name'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'neighborhood.' . app()->getLocale() . '_name'],
             ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
         ];
         @endphp

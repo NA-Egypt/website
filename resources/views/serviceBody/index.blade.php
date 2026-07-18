@@ -7,9 +7,9 @@
         @php
         $columns = [
             ['field' => 'ar_name', 'title' => __('messages.Service Body Arabic Name'), 'sort' => true],
-            ['field' => 'day_name', 'title' => __('messages.Day'), 'sort' => false],
-            ['field' => 'from_time', 'title' => __('messages.From'), 'sort' => false],
-            ['field' => 'to_time', 'title' => __('messages.To'), 'sort' => false],
+            ['field' => 'day_name', 'title' => __('messages.Day'), 'sort' => true],
+            ['field' => 'from_time', 'title' => __('messages.From'), 'sort' => true],
+            ['field' => 'to_time', 'title' => __('messages.To'), 'sort' => true],
             ['field' => 'location', 'title' => __('messages.Location'), 'sort' => true],
             ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
         ];

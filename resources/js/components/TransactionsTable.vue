@@ -82,7 +82,7 @@
         :showPageSize="true"
         :pageSizeOptions="[10, 20, 50, 100]"
         :showNumbersCount="5"
-        @changeServer="changeServer"
+        @sort-change="onSortChange"
         @page-change="onPageChange"
         @page-size-change="onPageSizeChange"
         class="alt-pagination"
@@ -343,12 +343,13 @@ const toggleRow = (id) => {
   }
 };
 
-const changeServer = (newParams) => {
-  if (newParams.current_page) params.current_page = newParams.current_page;
-  if (newParams.pagesize) params.pagesize = newParams.pagesize;
-  if (newParams.sort_column) params.sort_column = newParams.sort_column === 'date' || newParams.sort_column === 'time' ? 'created_at' : newParams.sort_column;
-  if (newParams.sort_direction) params.sort_direction = newParams.sort_direction;
-  fetchData();
+const onSortChange = (sortData) => {
+  if (sortData && sortData.field) {
+    params.sort_column    = sortData.field === 'date' || sortData.field === 'time' ? 'created_at' : sortData.field;
+    params.sort_direction = sortData.direction || 'asc';
+    params.current_page   = 1;
+    fetchData();
+  }
 };
 
 const onPageChange = (page) => {
