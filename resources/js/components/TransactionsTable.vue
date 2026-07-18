@@ -143,7 +143,7 @@
               isExpanded(data.value.id) ? 'btn-secondary text-white' : 'btn-outline-primary',
               'toggle-details'
             ]"
-            @click="toggleRow(data.value.id)"
+            @click="toggleRow(data.value.id, $event)"
           >
             {{ isExpanded(data.value.id) ? 'Hide' : 'Show' }}
           </button>
@@ -151,9 +151,10 @@
       </vue3-datatable>
     </div>
 
-    <!-- Custom Collapsible Detail Rows rendered outside Vue3-Datatable to match layout styling -->
+    <!-- Custom Collapsible Detail Rows rendered inline under the clicked row via Teleport -->
     <div v-for="row in state.rows" :key="'details-' + row.id">
-      <div v-if="isExpanded(row.id)" class="p-3 text-start bg-light rounded border mt-2 mb-3">
+      <teleport v-if="isExpanded(row.id)" :to="'#expand-target-' + row.id">
+        <div class="p-3 text-start bg-light rounded border m-2">
         <!-- Context Badges -->
         <div class="row g-2 mb-3">
           <div class="col-md-4">
@@ -241,8 +242,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </teleport>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -335,11 +337,33 @@ const formatValue = (val) => {
 
 const isExpanded = (id) => expandedRows.value.includes(id);
 
-const toggleRow = (id) => {
-  if (expandedRows.value.includes(id)) {
+const toggleRow = (id, event) => {
+  const isCurrentlyExpanded = expandedRows.value.includes(id);
+  
+  if (isCurrentlyExpanded) {
     expandedRows.value = expandedRows.value.filter(rowId => rowId !== id);
+    // Remove the placeholder row from the DOM
+    const target = document.getElementById(`expand-target-${id}`);
+    if (target) {
+      const detailTr = target.closest('tr');
+      if (detailTr) detailTr.remove();
+    }
   } else {
     expandedRows.value.push(id);
+    
+    // Find the parent row in the DOM and insert the detail placeholder row next to it
+    if (event && event.currentTarget) {
+      const button = event.currentTarget;
+      const tr = button.closest('tr');
+      if (tr && tr.parentNode) {
+        // Calculate the colspan to match the table columns (columns list length + action/checkbox columns)
+        const colspan = tr.cells.length;
+        const detailTr = document.createElement('tr');
+        detailTr.className = 'detail-row bg-light';
+        detailTr.innerHTML = `<td colspan="${colspan}" class="p-0 border-0"><div id="expand-target-${id}"></div></td>`;
+        tr.parentNode.insertBefore(detailTr, tr.nextSibling);
+      }
+    }
   }
 };
 
@@ -387,6 +411,7 @@ const fetchData = async () => {
     // Map Laravel response structure
     state.rows = response.data.data;
     state.totalRows = response.data.total;
+    expandedRows.value = []; // Reset selections on reload
   } catch (error) {
     console.error('Error fetching transactions:', error);
   } finally {

@@ -12,6 +12,7 @@
 
         @php
         $columns = [
+            ['field' => 'id', 'title' => 'ID', 'sort' => true, 'isUnique' => true, 'hide' => true],
             ['field' => 'email', 'title' => __('messages.Email') ?? 'Email', 'sort' => true],
             ['field' => 'status', 'title' => __('messages.Status') ?? 'Status', 'sort' => true],
             ['field' => 'created_at_formatted', 'title' => __('messages.Created At') ?? 'Created At', 'sort' => true],

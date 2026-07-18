@@ -45,6 +45,7 @@
     <!-- Datatable -->
     <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
       <vue3-datatable
+        ref="datatableRef"
         :rows="state.rows"
         :columns="columns"
         :loading="state.loading"
@@ -231,6 +232,7 @@ const params = reactive({
 
 const selectedBulkAction = ref('');
 const selectedRowIds = ref([]);
+const datatableRef = ref(null);
 let debounceTimer = null;
 
 // Find columns requiring custom render logic
@@ -240,7 +242,7 @@ const customColumns = computed(() => {
 
 // All columns excluding checkbox and action buttons
 const dataColumns = computed(() => {
-  return props.columns.filter(col => col.field !== 'checkbox' && col.field !== 'actions');
+  return props.columns.filter(col => col.field !== 'checkbox' && col.field !== 'actions' && !col.hide);
 });
 
 const isAr = computed(() => {
@@ -396,7 +398,12 @@ const getCellAlignmentClass = (value) => {
 
 const applyBulkAction = () => {
   if (!selectedBulkAction.value) return;
-  if (selectedRowIds.value.length === 0) {
+  
+  // Directly query the component selections to ensure select-all states are captured
+  const selectedRows = datatableRef.value ? datatableRef.value.getSelectedRows() : [];
+  const ids = selectedRows.map(row => row.id);
+  
+  if (ids.length === 0) {
     alert(labels.value.noItems);
     return;
   }
@@ -417,7 +424,7 @@ const applyBulkAction = () => {
     actionInput.value = selectedBulkAction.value;
     form.appendChild(actionInput);
 
-    selectedRowIds.value.forEach(id => {
+    ids.forEach(id => {
       const idInput = document.createElement('input');
       idInput.type = 'hidden';
       idInput.name = props.bulkIdsName;

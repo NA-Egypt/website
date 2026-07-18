@@ -13,6 +13,7 @@
 {{--    </ul>--}}
     @php
     $columns = [
+        ['field' => 'id', 'title' => 'ID', 'sort' => true, 'isUnique' => true, 'hide' => true],
         ['field' => 'display_name', 'title' => __('messages.Display Name'), 'sort' => true],
         ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true],
         ['field' => 'roles', 'title' => __('messages.Roles'), 'sort' => false, 'renderType' => 'array', 'fieldPath' => 'roles', 'arrayKey' => 'name'],
