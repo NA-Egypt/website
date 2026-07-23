@@ -75,6 +75,7 @@ import { createApp, h } from 'vue';
 import TransactionsTable from './components/TransactionsTable.vue';
 import GenericDataTable from './components/GenericDataTable.vue';
 import FacebookTargeting from './components/FacebookTargeting.vue';
+import CtkDateTimePickerWrapper from './components/CtkDateTimePickerWrapper.vue';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Mount FacebookTargeting
@@ -153,5 +154,40 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         app.mount(el);
     });
+
+    // Mount VueCtkDateTimePicker instances globally
+    const datePickerEls = document.querySelectorAll('[data-vue-app="VueCtkDateTimePicker"]');
+    datePickerEls.forEach(el => {
+        const name = el.getAttribute('data-name') || '';
+        const id = el.getAttribute('data-id') || '';
+        const value = el.getAttribute('data-value') || null;
+        const enableTime = el.getAttribute('data-enable-time') === 'true';
+        const timeOnly = el.getAttribute('data-time-only') === 'true';
+        const placeholder = el.getAttribute('data-placeholder') || '';
+        const locale = el.getAttribute('data-locale') || 'ar';
+
+        const app = createApp({
+            render: () => h(CtkDateTimePickerWrapper, {
+                name,
+                id,
+                modelValue: value,
+                enableTime,
+                timeOnly,
+                placeholder,
+                locale,
+                onChange: (val) => {
+                    // Dispatch custom change event to native DOM element for external listeners like setDate / findTime
+                    const hiddenInput = el.querySelector('input[type="hidden"]');
+                    if (hiddenInput) {
+                        hiddenInput.value = typeof val === 'object' && val.hours !== undefined ? `${String(val.hours).padStart(2, '0')}:${String(val.minutes).padStart(2, '0')}` : (val instanceof Date ? val.toISOString() : val);
+                        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    el.dispatchEvent(new CustomEvent('picker-change', { detail: val, bubbles: true }));
+                }
+            })
+        });
+        app.mount(el);
+    });
 });
+
 

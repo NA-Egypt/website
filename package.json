@@ -34,6 +34,7 @@
         "@fullcalendar/timegrid": "^6.1.20",
         "@popperjs/core": "^2.11.8",
         "@splidejs/splide": "^4.1.4",
+        "@vuepic/vue-datepicker": "^14.0.0",
         "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.13.1",
         "datatables.net": "^2.1.8",
@@ -42,6 +43,8 @@
         "datatables.net-buttons-bs5": "^3.2.5",
         "datatables.net-buttons-dt": "^3.1.2",
         "datatables.net-dt": "^2.1.8",
+        "date-fns": "^4.4.0",
+        "flatpickr": "^4.6.13",
         "jquery": "^3.7.1",
         "laravel-mix": "^6.0.3",
         "metismenu": "^3.0.7",
@@ -51,7 +54,8 @@
         "shell-quote": "^1.8.4",
         "swagger-autogen": "^2.23.7",
         "sweetalert2": "^11.26.17",
-        "vue": "^3.5.13"
+        "vue": "^3.5.13",
+        "vue-ctk-date-time-picker": "^2.5.0"
     },
     "overrides": {
         "webpack-dev-server": "$webpack-dev-server",

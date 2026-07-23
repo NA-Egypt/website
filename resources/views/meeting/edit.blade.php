@@ -69,10 +69,10 @@
                             <x-forms.select :$days name="day_id" label="{{ __('messages.Day') }}" value="{{ $meeting->day_id }}" />
                         </div>
                         <div class="col-md-4">
-                            <x-forms.input name="start_time" label="{{ __('messages.From') }}" type="time" value="{{ $meeting->start_time }}" />
+                            <x-forms.datetime-picker name="start_time" label="{{ __('messages.From') }}" type="time" value="{{ $meeting->start_time }}" col="col-12" />
                         </div>
                         <div class="col-md-4">
-                            <x-forms.input name="end_time" label="{{ __('messages.To') }}" type="time" value="{{ $meeting->end_time }}" />
+                            <x-forms.datetime-picker name="end_time" label="{{ __('messages.To') }}" type="time" value="{{ $meeting->end_time }}" col="col-12" />
                         </div>
                     </div>
                     

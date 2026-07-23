@@ -642,11 +642,13 @@
             </div>
           </div>
           <div class="col-md-6 calc-box mb-3 d-flex flex-column justify-content-between p-4">
-            <div class="form-group mb-0">
+            <div class="form-group mb-0 text-center">
               <h5 class="font-weight-bold mb-3 text-primary d-flex align-items-center justify-content-center gap-2" style="color: #32557f !important; font-weight: 700;">
                 <i class="bi bi-calendar-check-fill"></i>&nbsp;{{ __('messages.calculator') }}
               </h5>
-              <input type="date" class="form-control mb-3 text-center border-2 border-primary-subtle rounded-3" style="font-weight: 600;" onchange="setDate(this); findTime(document.myForm)">
+              <div id="cleantime-picker-container" class="mb-3">
+                <x-forms.datetime-picker id="cleantime_date_input" name="cleantime_date" type="date" placeholder="{{ __('messages.calculator') }}" />
+              </div>
             </div>
             <form name="myForm" class="w-100">
               <!-- Hidden inputs to maintain form compatibility -->
@@ -775,8 +777,22 @@
     let selectedDate = null;
 
     function setDate(input) {
+      if (!input || !input.value) return;
       selectedDate = new Date(input.value);
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const pickerEl = document.querySelector('[data-id="cleantime_date_input"]');
+      if (pickerEl) {
+        pickerEl.addEventListener('picker-change', (e) => {
+          const val = e.detail;
+          if (val) {
+            selectedDate = new Date(val);
+            findTime(document.myForm);
+          }
+        });
+      }
+    });
 
     function findTime(form) {
       if (!selectedDate || isNaN(selectedDate.getTime())) {
