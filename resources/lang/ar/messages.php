@@ -1322,6 +1322,12 @@ return [
     'no_unverified_found' => 'لا يوجد مشتركين غير مفعلين للتحقق منهم.',
     'Created At' => 'تاريخ الإضافة',
     'Updated At' => 'تاريخ التعديل',
+    'agenda_deleted_successfully' => 'تم حذف الأجندة بنجاح.',
+    'agendas_deleted_successfully' => 'تم حذف الأجندات المحددة بنجاح.',
+    'delete_agenda' => 'حذف الأجندة',
+    'delete_selected_agendas' => 'حذف الأجندات المحددة',
+    'confirm_delete_agenda' => 'هل أنت متأكد من رغبتك في حذف هذه الأجندة؟ لا يمكن التراجع عن هذا الإجراء.',
+    'confirm_bulk_delete_agendas' => 'هل أنت متأكد من رغبتك في حذف الأجندات المحددة؟ لا يمكن التراجع عن هذا الإجراء.',
 ];
 
 

@@ -1318,6 +1318,12 @@ return [
     'no_unverified_found' => 'No unverified subscribers found to verify.',
     'Created At' => 'Created At',
     'Updated At' => 'Updated At',
+    'agenda_deleted_successfully' => 'Agenda deleted successfully.',
+    'agendas_deleted_successfully' => 'Selected agendas deleted successfully.',
+    'delete_agenda' => 'Delete Agenda',
+    'delete_selected_agendas' => 'Delete Selected Agendas',
+    'confirm_delete_agenda' => 'Are you sure you want to delete this agenda? This action cannot be undone.',
+    'confirm_bulk_delete_agendas' => 'Are you sure you want to delete the selected agendas? This action cannot be undone.',
 ];
 
 

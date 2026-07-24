@@ -173,6 +173,10 @@ Route::group(
             Route::post('/serviceBody/{serviceBody}/agendas/export',[ServiceBodyController::class,'exportAgendasPdf'])->name('serviceBody.agendas.exportPdf');
 
             Route::middleware(['role:super admin'])->group(function () {
+                // Agenda Delete Routes:
+                Route::delete('/agenda/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy'])->name('agenda.destroy');
+                Route::post('/groups-agendas/bulk-delete', [\App\Http\Controllers\AgendaController::class, 'bulkDestroy'])->name('groups-agendas.bulk_delete');
+
                 // Permissions:
                 Route::get('/permissions', [PermissionController::class, 'index'])
                     ->name('permissions.index');

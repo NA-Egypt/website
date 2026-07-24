@@ -8,6 +8,20 @@
     </x-backhead>
 
     <div class="container mt-4">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 12px;">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 12px;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <!-- Statistics Summary Section -->
         <div class="row g-4 mb-4">
             <div class="col-12 col-md-4">
@@ -128,20 +142,30 @@
                 <p class="text-secondary mb-0 small">{{ __('messages.Try adjusting filters or search parameters.') ?? 'Try adjusting filters or search parameters.' }}</p>
             </div>
         @else
-            <!-- Bulk Export Form -->
-            <form action="{{ route('groups-agendas.exportPdf') }}" method="POST" id="bulkExportForm">
+            <!-- Hidden forms for bulk actions to avoid invalid HTML form nesting -->
+            <form action="{{ route('groups-agendas.exportPdf') }}" method="POST" id="bulkExportForm" style="display: none;">
                 @csrf
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 px-2">
-                    <div class="form-check d-flex align-items-center">
-                        <input class="form-check-input cursor-pointer" type="checkbox" id="selectAllAgendas" style="width: 20px; height: 20px; margin-top: 0;">
-                        <label class="form-check-label fw-bold ms-2 cursor-pointer text-dark" for="selectAllAgendas" style="font-size: 0.95rem; user-select: none;">
-                            {{ __('messages.Select All') ?? 'Select All' }}
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm hover-up">
+                <div id="bulkExportInputsContainer"></div>
+            </form>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 px-2">
+                <div class="form-check d-flex align-items-center">
+                    <input class="form-check-input cursor-pointer" type="checkbox" id="selectAllAgendas" style="width: 20px; height: 20px; margin-top: 0;">
+                    <label class="form-check-label fw-bold ms-2 cursor-pointer text-dark" for="selectAllAgendas" style="font-size: 0.95rem; user-select: none;">
+                        {{ __('messages.Select All') ?? 'Select All' }}
+                    </label>
+                </div>
+                <div class="d-flex gap-2">
+                    @if(auth()->check() && auth()->user()->hasRole('super admin'))
+                        <button type="button" id="triggerBulkDeleteBtn" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm hover-up">
+                            <i class="bi bi-trash-fill me-1"></i> {{ __('messages.delete_selected_agendas') ?? 'Delete Selected' }}
+                        </button>
+                    @endif
+                    <button type="button" id="triggerBulkExportBtn" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm hover-up">
                         <i class="bi bi-file-earmark-pdf-fill me-1"></i> {{ __('messages.export_selected_to_pdf') ?? 'Export Selected to PDF' }}
                     </button>
                 </div>
+            </div>
 
                 <div class="accordion border-0" id="archiveAccordion">
                     @foreach($archive as $year => $months)
@@ -236,6 +260,11 @@
                                                                     <a href="{{ route('agenda.exportPdf', $agenda->id) }}" class="btn btn-sm btn-secondary rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center justify-content-center" title="{{ __('messages.PDF') }}">
                                                                         <i class="bi bi-file-earmark-pdf"></i>
                                                                     </a>
+                                                                    @if(auth()->check() && auth()->user()->hasRole('super admin'))
+                                                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#deleteAgendaModal{{ $agenda->id }}" title="{{ __('messages.delete_agenda') }}">
+                                                                            <i class="bi bi-trash"></i>
+                                                                        </button>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -438,13 +467,75 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if(auth()->check() && auth()->user()->hasRole('super admin'))
+                            <div class="modal fade" id="deleteAgendaModal{{ $agenda->id }}" tabindex="-1" aria-labelledby="deleteAgendaModalLabel{{ $agenda->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.98) !important; border-radius: 20px;">
+                                        <div class="modal-header border-bottom-0 pt-4 px-4">
+                                            <h5 class="modal-title fw-bold text-danger" id="deleteAgendaModalLabel{{ $agenda->id }}">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ __('messages.delete_agenda') }}
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body px-4 py-3">
+                                            <p class="mb-0 text-secondary">
+                                                {{ __('messages.confirm_delete_agenda') }}
+                                            </p>
+                                            <div class="mt-3 p-3 bg-light rounded-3 text-start">
+                                                <strong>{{ $agenda->group->ar_name ?? $agenda->group->en_name }}</strong> - {{ \App\Services\DateNumberHelper::translatedFormat($agenda->agenda_date, 'd M Y') }}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0 px-4 pb-4">
+                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.close') ?? 'Cancel' }}</button>
+                                            <form action="{{ route('agenda.destroy', $agenda->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">
+                                                    <i class="bi bi-trash-fill me-1"></i> {{ __('messages.delete_agenda') }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endforeach
                 @endforeach
             @endforeach
+
+            @if(auth()->check() && auth()->user()->hasRole('super admin'))
+                <div class="modal fade" id="bulkDeleteModal" tabindex="-1" aria-labelledby="bulkDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content glass-card border-0" style="background: rgba(255, 255, 255, 0.98) !important; border-radius: 20px;">
+                            <div class="modal-header border-bottom-0 pt-4 px-4">
+                                <h5 class="modal-title fw-bold text-danger" id="bulkDeleteModalLabel">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ __('messages.delete_selected_agendas') }}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body px-4 py-3 text-start">
+                                <p class="mb-0 text-secondary">
+                                    {{ __('messages.confirm_bulk_delete_agendas') }}
+                                </p>
+                            </div>
+                            <div class="modal-footer border-top-0 px-4 pb-4">
+                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.close') ?? 'Cancel' }}</button>
+                                <form id="bulkDeleteForm" action="{{ route('groups-agendas.bulk_delete') }}" method="POST">
+                                    @csrf
+                                    <div id="bulkDeleteInputsContainer"></div>
+                                    <button type="button" id="confirmBulkDeleteBtn" class="btn btn-danger rounded-pill px-4 fw-bold">
+                                        <i class="bi bi-trash-fill me-1"></i> {{ __('messages.delete_selected_agendas') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endif
     </div>
 
-    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const selectAllCheckbox = document.getElementById('selectAllAgendas');
@@ -462,26 +553,89 @@
             agendaCheckboxes.forEach(cb => {
                 cb.addEventListener('change', function() {
                     if (!this.checked) {
-                        selectAllCheckbox.checked = false;
+                        if (selectAllCheckbox) selectAllCheckbox.checked = false;
                     } else {
-                        const allChecked = Array.from(agendaCheckboxes).every(c => c.checked);
-                        selectAllCheckbox.checked = allChecked;
+                        if (selectAllCheckbox) {
+                            const allChecked = Array.from(agendaCheckboxes).every(c => c.checked);
+                            selectAllCheckbox.checked = allChecked;
+                        }
                     }
                 });
             });
 
-            // Prevent form submit if no checkboxes are selected
-            const bulkForm = document.getElementById('bulkExportForm');
-            if (bulkForm) {
-                bulkForm.addEventListener('submit', function(e) {
-                    const selected = Array.from(agendaCheckboxes).some(cb => cb.checked);
-                    if (!selected) {
-                        e.preventDefault();
+            // Trigger Bulk Export
+            const triggerBulkExportBtn = document.getElementById('triggerBulkExportBtn');
+            if (triggerBulkExportBtn) {
+                triggerBulkExportBtn.addEventListener('click', function() {
+                    const selectedCheckboxes = document.querySelectorAll('.agenda-checkbox:checked');
+                    if (selectedCheckboxes.length === 0) {
                         alert('{{ __("messages.no_agendas_selected") ?? "No agendas selected" }}');
+                        return;
+                    }
+                    const container = document.getElementById('bulkExportInputsContainer');
+                    if (container) {
+                        container.innerHTML = '';
+                        selectedCheckboxes.forEach(cb => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'agenda_ids[]';
+                            input.value = cb.value;
+                            container.appendChild(input);
+                        });
+                    }
+                    const bulkExportForm = document.getElementById('bulkExportForm');
+                    if (bulkExportForm) {
+                        bulkExportForm.submit();
+                    }
+                });
+            }
+
+            // Trigger Bulk Delete Modal
+            const triggerBulkDeleteBtn = document.getElementById('triggerBulkDeleteBtn');
+            if (triggerBulkDeleteBtn) {
+                triggerBulkDeleteBtn.addEventListener('click', function() {
+                    const selectedCheckboxes = document.querySelectorAll('.agenda-checkbox:checked');
+                    if (selectedCheckboxes.length === 0) {
+                        alert('{{ __("messages.no_agendas_selected") ?? "No agendas selected" }}');
+                        return;
+                    }
+                    const modalEl = document.getElementById('bulkDeleteModal');
+                    if (modalEl && typeof bootstrap !== 'undefined') {
+                        let modalObj = bootstrap.Modal.getInstance(modalEl);
+                        if (!modalObj) {
+                            modalObj = new bootstrap.Modal(modalEl);
+                        }
+                        modalObj.show();
+                    }
+                });
+            }
+
+            // Confirm Bulk Delete Action
+            const confirmBulkDeleteBtn = document.getElementById('confirmBulkDeleteBtn');
+            if (confirmBulkDeleteBtn) {
+                confirmBulkDeleteBtn.addEventListener('click', function() {
+                    const selectedCheckboxes = document.querySelectorAll('.agenda-checkbox:checked');
+                    if (selectedCheckboxes.length === 0) {
+                        alert('{{ __("messages.no_agendas_selected") ?? "No agendas selected" }}');
+                        return;
+                    }
+                    const container = document.getElementById('bulkDeleteInputsContainer');
+                    if (container) {
+                        container.innerHTML = '';
+                        selectedCheckboxes.forEach(cb => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'agenda_ids[]';
+                            input.value = cb.value;
+                            container.appendChild(input);
+                        });
+                    }
+                    const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+                    if (bulkDeleteForm) {
+                        bulkDeleteForm.submit();
                     }
                 });
             }
         });
     </script>
-    @endpush
 </x-layout>

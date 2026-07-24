@@ -250,7 +250,9 @@ class AgendaController extends Controller
         }
 
         $query = Agenda::whereIn('id', $agendaIds);
-        if ($user->hasRole('gsr')) {
+        if ($this->isAuthorized($user)) {
+            // Super Admin and RSC members can export all requested agendas
+        } elseif ($user->hasRole('gsr')) {
             $query->whereHas('group', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
@@ -276,5 +278,44 @@ class AgendaController extends Controller
         return response($mpdf->Output($filename, 'S'), 200)
                ->header('Content-Type', 'application/pdf')
                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Remove the specified agenda from storage.
+     */
+    public function destroy(Agenda $agenda)
+    {
+        if (!auth()->user() || !auth()->user()->hasRole('super admin')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $agenda->delete();
+
+        return redirect()->route('groups-agendas.archive')->with('success', __('messages.agenda_deleted_successfully') ?? 'Agenda deleted successfully.');
+    }
+
+    /**
+     * Remove multiple agendas from storage.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        if (!auth()->user() || !auth()->user()->hasRole('super admin')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'agenda_ids' => 'required|array',
+            'agenda_ids.*' => 'exists:agendas,id',
+        ]);
+
+        $agendaIds = $request->input('agenda_ids', []);
+
+        if (empty($agendaIds)) {
+            return back()->with('error', __('messages.no_agendas_selected') ?? 'No agendas selected for deletion.');
+        }
+
+        Agenda::whereIn('id', $agendaIds)->delete();
+
+        return redirect()->route('groups-agendas.archive')->with('success', __('messages.agendas_deleted_successfully') ?? 'Selected agendas deleted successfully.');
     }
 }
