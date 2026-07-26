@@ -5,7 +5,6 @@
       type="text"
       class="form-control flatpickr-custom-input"
       :placeholder="placeholder || (timeOnly ? 'اختر الوقت' : 'اختر التاريخ')"
-      :value="modelValue"
     />
     <input type="hidden" :name="name" :id="id" :value="hiddenValue" />
   </div>
@@ -42,10 +41,13 @@ onMounted(() => {
     locale: props.locale === 'ar' ? Arabic : 'default',
     enableTime: isTime,
     noCalendar: isTime,
-    dateFormat: isTime ? 'h:i K' : 'Y-m-d',
-    time_24hr: false, // Strict 12-hour AM/PM format
+    dateFormat: isTime ? 'H:i' : 'Y-m-d',
+    altInput: isTime,
+    altFormat: isTime ? 'h:i K' : 'Y-m-d',
+    time_24hr: false, // 12-hour selection with AM/PM toggle
     defaultDate: props.modelValue || null,
     onChange: (selectedDates, dateStr) => {
+      // dateStr holds the formatted 24h 'H:i' (e.g. "14:30") or 'Y-m-d' for server
       hiddenValue.value = dateStr;
       emit('update:modelValue', dateStr);
       emit('change', dateStr);
@@ -83,7 +85,8 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.flatpickr-custom-input {
+.flatpickr-custom-input,
+.ctk-flatpickr-wrapper .form-control {
   font-size: 0.85rem !important;
   height: 38px !important;
   border-radius: 10px !important;
