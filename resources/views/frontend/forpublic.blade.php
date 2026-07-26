@@ -265,7 +265,7 @@
                             </div>
                             <div class="timeline-content">
                                 <h5>{{ __('messages.test_page.local.timeline.growth.title') }}</h5>
-                                <p>{{ __('messages.test_page.local.timeline.growth.text', ['groups' => \App\Models\Group::count(), 'cities' => \App\Models\City::count(), 'meetings' => \App\Models\Meeting::notMonthlyRecurrent()->count()]) }}</p>
+                                <p>{{ __('messages.test_page.local.timeline.growth.text', ['groups' => \App\Models\Group::inPersonOnly()->count(), 'cities' => \App\Models\City::count(), 'meetings' => \App\Models\Meeting::notMonthlyRecurrent()->inPersonOnly()->count()]) }}</p>
                             </div>
                         </div>
                     </div>

@@ -15,9 +15,9 @@ class ForPublicController extends Controller
         // بيانات حية فقط من قاعدة البيانات
         $data = [
             // إحصائيات حية من الداتابيز فقط
-            'groupsCount' => Group::count(),
+            'groupsCount' => Group::inPersonOnly()->count(),
             'citiesCount' => City::count(),
-            'meetingsCount' => Meeting::notMonthlyRecurrent()->count(),
+            'meetingsCount' => Meeting::notMonthlyRecurrent()->inPersonOnly()->count(),
 
             // معلومات أول اجتماع (ثابتة من ملف الوورد)
             'firstMeeting' => [

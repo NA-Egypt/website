@@ -294,8 +294,8 @@ Route::group(
         // Frontend:
         Route::get('/', function(){
             $homeStats = [
-                'weekly_meetings' => Meeting::notMonthlyRecurrent()->count(),
-                'groups' => Group::count(),
+                'weekly_meetings' => Meeting::notMonthlyRecurrent()->inPersonOnly()->count(),
+                'groups' => Group::inPersonOnly()->count(),
                 'governorates' => City::count(),
             ];
 

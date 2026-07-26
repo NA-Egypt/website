@@ -56,4 +56,9 @@ class Group extends Model
     {
         return $this->hasMany(LiteratureRequest::class);
     }
+
+    public function scopeInPersonOnly($query)
+    {
+        return $query->whereNotIn('group_type', ['online', 'اونلاين', 'اون لاين']);
+    }
 }

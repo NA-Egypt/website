@@ -105,6 +105,14 @@ class Meeting extends Model
         });
     }
 
+    public function scopeInPersonOnly($query)
+    {
+        return $query->whereNull('direct_online_group_id')
+            ->whereHas('group', function($q) {
+                $q->whereNotIn('group_type', ['online', 'اونلاين', 'اون لاين']);
+            });
+    }
+
     public function getNextOccurrence()
     {
         if (!$this->day || !$this->start_time) {

@@ -93,11 +93,11 @@ class GreatingPagesController extends Controller
         }
         $customFormsCount = $customFormsQuery->count();
 
-        $meetings = Meeting::all();
+        $meetings = Meeting::inPersonOnly()->get();
         $serviceBodies = ServiceBody::all();
         $cities = City::with('neighborhoods.groups')->get();
         $neighborhoods = Neighborhood::all();
-        $groups = Group::all();
+        $groups = Group::inPersonOnly()->get();
         $showUsersCard = false;
         $usersCount = 0;
         if ($user) {
@@ -114,10 +114,10 @@ class GreatingPagesController extends Controller
         if ($user && $user->hasRole('ServiceBody') && $user->service_body_id) {
             $sbId = $user->service_body_id;
             
-            $groups = Group::where('service_body_id', $sbId)->get();
+            $groups = Group::inPersonOnly()->where('service_body_id', $sbId)->get();
             $groupIds = $groups->pluck('id')->toArray();
             
-            $meetings = Meeting::whereHas('group', function($q) use ($sbId) {
+            $meetings = Meeting::inPersonOnly()->whereHas('group', function($q) use ($sbId) {
                 $q->where('service_body_id', $sbId);
             })->get();
             
