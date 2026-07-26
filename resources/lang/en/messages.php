@@ -28,6 +28,7 @@ return [
     'Cities' => 'Cities',
     'City Name' => 'City Name',
     'Neighborhood' => 'Neighborhood',
+    'Neighborhoods' => 'Neighborhoods',
     'Neighborhood Name' => 'Neighborhood Name',
     'Topics' => 'Topics',
     'Topic' => 'Topic',

@@ -28,6 +28,7 @@ return [
     'Cities' => 'المدن',
     'City Name' => 'اسم المدينة',
     'Neighborhood' => 'الحي',
+    'Neighborhoods' => 'الأحياء',
     'Neighborhood Name' => 'اسم الحي',
     'Topic' => 'موضوع',
     'Topics' => 'الموضوعات',

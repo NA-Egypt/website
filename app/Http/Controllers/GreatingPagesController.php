@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
+use App\Models\Neighborhood;
 use App\Models\Group;
 use App\Models\Meeting;
 use App\Models\ServiceBody;
@@ -95,6 +96,7 @@ class GreatingPagesController extends Controller
         $meetings = Meeting::all();
         $serviceBodies = ServiceBody::all();
         $cities = City::with('neighborhoods.groups')->get();
+        $neighborhoods = Neighborhood::all();
         $groups = Group::all();
         $showUsersCard = false;
         $usersCount = 0;
@@ -122,6 +124,10 @@ class GreatingPagesController extends Controller
             $cities = City::with(['neighborhoods.groups' => function($q) use ($sbId) {
                 $q->where('service_body_id', $sbId);
             }])->whereHas('neighborhoods.groups', function($q) use ($sbId) {
+                $q->where('service_body_id', $sbId);
+            })->get();
+
+            $neighborhoods = Neighborhood::whereHas('groups', function($q) use ($sbId) {
                 $q->where('service_body_id', $sbId);
             })->get();
 
@@ -172,6 +178,7 @@ class GreatingPagesController extends Controller
             'subscribersCount'  => $subscribersCount,
             'serviceBodies'     => $serviceBodies,
             'cities'            => $cities,
+            'neighborhoods'     => $neighborhoods,
             'groups'            => $groups,
             'usersCount'        => $usersCount,
             'transactions'      => $transactions,

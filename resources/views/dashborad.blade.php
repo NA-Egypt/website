@@ -22,13 +22,13 @@
       </div>
       {{-- / total Groups --}}
 
-      {{-- Total cities --}}
+      {{-- Total Neighborhoods --}}
       <div class="col">
-        <a href="{{ route('city.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Cities') }}" qty="{{ $cities->count() }}" color-theme="warning" icon="geo-alt-fill" />
+        <a href="{{ route('neighborhood.index') }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Neighborhoods') }}" qty="{{ $neighborhoods->count() }}" color-theme="warning" icon="geo-alt-fill" />
         </a>
       </div>
-      {{-- / Total cities --}}
+      {{-- / Total Neighborhoods --}}
 
       @if ($showUsersCard)
       {{-- Total Users --}}
