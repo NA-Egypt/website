@@ -264,6 +264,47 @@
       }
     }
 
+    @media (max-width: 767px) {
+      .subscription-box-column {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+      }
+      .subscription-box-wrapper {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        text-align: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .subscription-box-wrapper > div {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: auto !important;
+      }
+      .subscription-box-wrapper h4 {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+      }
+      .subscription-box-wrapper .subscribe-input {
+        text-align: center !important;
+      }
+      .subscription-box-wrapper form {
+        width: 100% !important;
+      }
+    }
+
     @media (max-width: 576px) {
       .home-stats-shell {
         padding: 20px 16px;
@@ -631,8 +672,8 @@
           </div>
         </div>
         <div class="row justify-content-center align-items-stretch mt-3 g-3">
-          <div class="col-md-4 mb-3 d-flex">
-            <div class="helpline-box w-100 p-4 d-flex flex-column justify-content-between">
+          <div class="col-md-4 mb-3 d-flex subscription-box-column">
+            <div class="helpline-box subscription-box-wrapper w-100 p-4 d-flex flex-column justify-content-between">
               <div>
                 <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
                 @if (session('subscribed'))
@@ -655,11 +696,12 @@
           </div>
           <div class="col-md-8 mb-3 d-flex">
             <div class="calc-box w-100 p-4 d-flex flex-column justify-content-between">
-            <div class="form-group mb-0 text-center">
-              <h5 class="font-weight-bold mb-3 text-primary d-flex align-items-center justify-content-center gap-2" style="color: #32557f !important; font-weight: 700;">
-                <i class="bi bi-calendar-check-fill"></i>&nbsp;{{ __('messages.calculator') }}
-              </h5>
-              <div id="cleantime-picker-container" class="mb-3">
+            <div class="form-group mb-2 text-center">
+              <div class="d-inline-flex align-items-center justify-content-center gap-2 px-3 py-2 rounded-pill mb-2 shadow-sm" style="background: rgba(50, 85, 127, 0.08); border: 1px solid rgba(50, 85, 127, 0.15);">
+                <i class="bi bi-calendar-check-fill" style="color: #32557f; font-size: 1.15rem;"></i>
+                <span class="font-weight-bold" style="color: #32557f !important; font-weight: 700; font-size: 1.05rem;">{{ __('messages.calculator') }}</span>
+              </div>
+              <div id="cleantime-picker-container" class="mb-3 p-1 rounded-3 shadow-sm" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px); border: 1px solid rgba(50, 85, 127, 0.18); transition: all 0.3s ease;">
                 <x-forms.datetime-picker id="cleantime_date_input" name="cleantime_date" type="date" placeholder="{{ __('messages.calculator') }}" />
               </div>
             </div>
