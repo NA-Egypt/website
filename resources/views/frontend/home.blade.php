@@ -558,14 +558,14 @@
           <div class="row justify-content-center">
             <div class="col-md-8">
               <div class="card h-100 shadow-sm border-0 info-card p-4">
-                <div class="card-body text-center d-flex flex-column align-items-center">
+                <div class="card-body d-flex flex-column align-items-center">
                   <!-- Desktop Image -->
                   <img src="{{ asset('assets/images/we-do-recover.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-none d-md-block"
                     style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
                   <!-- Mobile Image -->
                   <img src="{{ asset('assets/images/we-do-recover-mobile.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-block d-md-none"
                     style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
-                  <p class="card-text text-muted mt-2">{{ __('messages.wedorecovertxt') }}</p>
+                  <p class="card-text text-muted mt-2 text-start w-100">{{ __('messages.wedorecovertxt') }}</p>
                 </div>
               </div>
             </div>
