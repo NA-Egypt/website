@@ -33,11 +33,22 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    // Group vendor libraries into separate chunks
-                    vendor: ['lodash', 'axios', 'vue'],
-                    // Group specific features or routes into separate chunks
-                    //dashboard: ['./resources/js/views/Dashboard.js'],
-                    //settings: ['./resources/js/views/Settings.js'],
+                    // Core framework vendor chunk
+                    'core-vendor': ['vue', 'pinia', 'axios', 'lodash'],
+                    // Heavy fullcalendar vendor chunk
+                    'fullcalendar-vendor': [
+                        '@fullcalendar/core',
+                        '@fullcalendar/daygrid',
+                        '@fullcalendar/timegrid',
+                        '@fullcalendar/interaction',
+                        '@fullcalendar/multimonth'
+                    ],
+                    // Heavy datatables vendor chunk
+                    'datatables-vendor': [
+                        'jquery',
+                        'datatables.net',
+                        'datatables.net-dt'
+                    ],
                 },
             },
         },

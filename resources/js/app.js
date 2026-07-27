@@ -71,15 +71,16 @@ import.meta.glob([
     '../images/**'
 ]);
 
-import { createApp, h } from 'vue';
+import { createApp, h, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia';
 import '@kodeglot/vue-calendar/style.css';
-import TransactionsTable from './components/TransactionsTable.vue';
-import GenericDataTable from './components/GenericDataTable.vue';
-import FacebookTargeting from './components/FacebookTargeting.vue';
-import CtkDateTimePickerWrapper from './components/CtkDateTimePickerWrapper.vue';
-import EventsCalendar from './components/EventsCalendar.vue';
-import AnimatedStatCard from './components/AnimatedStatCard.vue';
+
+const TransactionsTable = defineAsyncComponent(() => import('./components/TransactionsTable.vue'));
+const GenericDataTable = defineAsyncComponent(() => import('./components/GenericDataTable.vue'));
+const FacebookTargeting = defineAsyncComponent(() => import('./components/FacebookTargeting.vue'));
+const CtkDateTimePickerWrapper = defineAsyncComponent(() => import('./components/CtkDateTimePickerWrapper.vue'));
+const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCalendar.vue'));
+const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
 
 document.addEventListener("DOMContentLoaded", () => {
     // Mount EventsCalendar
