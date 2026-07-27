@@ -30,3 +30,5 @@ yarn-error.log
 stats.html
 composer.json
 composer.lock
+package-lock.json
+package.json

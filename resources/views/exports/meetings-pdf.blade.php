@@ -98,7 +98,7 @@
     @php
         $satMeetings = $meetingsByDay['السبت'] ?? collect();
         $sunMeetings = $meetingsByDay['الأحد'] ?? collect();
-        $monMeetings = $meetingsByDay['الإثنين'] ?? collect();
+        $monMeetings = $meetingsByDay['الاثنين'] ?? $meetingsByDay['الإثنين'] ?? collect();
         $tueMeetings = $meetingsByDay['الثلاثاء'] ?? collect();
         $wedMeetings = $meetingsByDay['الأربعاء'] ?? collect();
         $thuMeetings = $meetingsByDay['الخميس'] ?? collect();
@@ -140,7 +140,7 @@
                     @include('exports.meetings-day-table-partial', ['dayName' => 'الأحد', 'meetings' => $sunMeetings])
                 @endif
                 @if($monMeetings->isNotEmpty())
-                    @include('exports.meetings-day-table-partial', ['dayName' => 'الإثنين', 'meetings' => $monMeetings])
+                    @include('exports.meetings-day-table-partial', ['dayName' => 'الاثنين', 'meetings' => $monMeetings])
                 @endif
                 @if($tuePart1->isNotEmpty())
                     @include('exports.meetings-day-table-partial', ['dayName' => 'الثلاثاء', 'meetings' => $tuePart1])

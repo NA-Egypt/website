@@ -60,7 +60,7 @@ class MeetingExportController extends Controller
         $dayOrderAr = [
             'Saturday' => 'السبت',
             'Sunday' => 'الأحد',
-            'Monday' => 'الإثنين',
+            'Monday' => 'الاثنين',
             'Tuesday' => 'الثلاثاء',
             'Wednesday' => 'الأربعاء',
             'Thursday' => 'الخميس',

@@ -29,17 +29,9 @@ class MeetingFilter extends Component
     {
         if (empty($this->day)) {
             $englishDay = now()->format('l');
-            if (app()->getLocale() === 'ar') {
-                $days = [
-                    'Saturday' => 'السبت',
-                    'Sunday' => 'الأحد',
-                    'Monday' => 'الإثنين',
-                    'Tuesday' => 'الثلاثاء',
-                    'Wednesday' => 'الأربعاء',
-                    'Thursday' => 'الخميس',
-                    'Friday' => 'الجمعة',
-                ];
-                $this->day = $days[$englishDay] ?? '';
+            $today = Day::where('en_name', $englishDay)->first();
+            if ($today) {
+                $this->day = app()->getLocale() === 'ar' ? $today->ar_name : $today->en_name;
             } else {
                 $this->day = $englishDay;
             }

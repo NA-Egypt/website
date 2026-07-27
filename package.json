@@ -61,10 +61,7 @@
         "vue": "^3.5.13",
         "vue-ctk-date-time-picker": "^2.5.0"
     },
-    "overrides": {
-        "webpack-dev-server": "$webpack-dev-server",
-        "uuid": "$uuid"
-    },
+
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.62.2"
     }
