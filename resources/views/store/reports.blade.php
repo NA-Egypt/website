@@ -28,10 +28,10 @@
                 <div class="card p-3 border-0 shadow-sm">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_unique_items') }}</span>
-                            <h3 class="mt-1 mb-0 font-bold text-dark">{{ $totalItems }}</h3>
+                            <span class="text-secondary small fw-semibold">{{ __('messages.total_transactions') ?? 'Total Transactions' }}</span>
+                            <h3 class="mt-1 mb-0 font-bold text-dark">{{ $totalTransactions }}</h3>
                         </div>
-                        <div class="fs-2 text-primary bg-primary-subtle rounded-3 p-2 px-3"><i class="bi bi-tags"></i></div>
+                        <div class="fs-2 text-primary bg-primary-subtle rounded-3 p-2 px-3"><i class="bi bi-receipt"></i></div>
                     </div>
                 </div>
             </div>
@@ -40,10 +40,10 @@
                 <div class="card p-3 border-0 shadow-sm">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_store_stock') }}</span>
-                            <h3 class="mt-1 mb-0 font-bold text-success">{{ $totalStoreStock }}</h3>
+                            <span class="text-secondary small fw-semibold">{{ __('messages.total_received_qty') ?? 'Total Received Qty' }}</span>
+                            <h3 class="mt-1 mb-0 font-bold text-success">{{ $totalReceivedQty }}</h3>
                         </div>
-                        <div class="fs-2 text-success bg-success-subtle rounded-3 p-2 px-3"><i class="bi bi-box-seam"></i></div>
+                        <div class="fs-2 text-success bg-success-subtle rounded-3 p-2 px-3"><i class="bi bi-box-arrow-in-down"></i></div>
                     </div>
                 </div>
             </div>
@@ -52,10 +52,10 @@
                 <div class="card p-3 border-0 shadow-sm">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_lit_stock') }}</span>
-                            <h3 class="mt-1 mb-0 font-bold text-info">{{ $totalLitStock }}</h3>
+                            <span class="text-secondary small fw-semibold">{{ __('messages.total_transferred_qty') ?? 'Total Transferred Qty' }}</span>
+                            <h3 class="mt-1 mb-0 font-bold text-info">{{ $totalTransferredQty }}</h3>
                         </div>
-                        <div class="fs-2 text-info bg-info-subtle rounded-3 p-2 px-3"><i class="bi bi-book"></i></div>
+                        <div class="fs-2 text-info bg-info-subtle rounded-3 p-2 px-3"><i class="bi bi-box-arrow-up-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                 <div class="card p-3 border-0 shadow-sm">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_stock_value') }}</span>
-                            <h3 class="mt-1 mb-0 font-bold text-warning-emphasis">{{ __('messages.EGP') }} {{ number_format($totalValuation, 2) }}</h3>
+                            <span class="text-secondary small fw-semibold">{{ __('messages.total_transaction_value') ?? 'Transaction Valuation' }}</span>
+                            <h3 class="mt-1 mb-0 font-bold text-warning-emphasis">{{ __('messages.EGP') }} {{ number_format($totalTransactionValuation, 2) }}</h3>
                         </div>
                         <div class="fs-2 text-warning bg-warning-subtle rounded-3 p-2 px-3"><i class="bi bi-currency-dollar"></i></div>
                     </div>
@@ -170,7 +170,7 @@
                                         <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
                                             <i class="bi bi-plus-circle-fill"></i>{{ __('messages.receive') }}
                                         </span>
-                                    @elseif ($t->type === 'transfer_to_lit')
+                                    @elseif ($t->type === 'transfer_to_lit' || $t->type === 'transfer')
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
                                             <i class="bi bi-arrow-right-circle-fill"></i>{{ __('messages.transfer_to_lit') }}
                                         </span>

@@ -106,7 +106,7 @@
                     <td>
                         @if ($t->type === 'receive')
                             {{ __('messages.receive') }}
-                        @elseif ($t->type === 'transfer_to_lit')
+                        @elseif ($t->type === 'transfer_to_lit' || $t->type === 'transfer')
                             {{ __('messages.transfer_to_lit') }}
                         @elseif ($t->type === 'return_from_lit')
                             {{ __('messages.return_from_lit') }}

@@ -19,6 +19,20 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
         }
+        .inventory-row .dropdown-menu {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+            z-index: 1050 !important;
+            opacity: 1 !important;
+        }
+        .inventory-row .dropdown-item {
+            transition: background-color 0.15s ease;
+        }
+        .inventory-row .dropdown-item:hover {
+            background-color: rgba(59, 130, 246, 0.08) !important;
+        }
     </style>
     <div class="container-fluid py-4">
         {{-- Header Section --}}
@@ -119,6 +133,9 @@
                 </span>
             </div>
             <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm" id="btnBulkQuickEdit">
+                    <i class="bi bi-pencil-square me-1"></i>{{ __('messages.quick_edit_selected') ?? 'Quick Edit Selected' }}
+                </button>
                 <button type="button" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkReceiveModal">
                     <i class="bi bi-plus-circle me-1"></i>{{ __('messages.bulk_receive') }}
                 </button>
@@ -134,10 +151,26 @@
             </div>
         </div>
 
+        {{-- Floating Bulk Edit Save Bar --}}
+        <div id="bulkEditBar" class="position-fixed bottom-0 start-50 translate-middle-x mb-4 p-3 bg-dark text-white rounded-pill shadow-lg d-none" style="z-index: 1050; border: 1px solid rgba(255,255,255,0.2);">
+            <div class="d-flex align-items-center gap-3 px-2">
+                <span class="fw-semibold"><i class="bi bi-pencil-fill text-warning me-2"></i>{{ __('messages.editing') ?? 'Editing' }} <span id="bulkEditCount" class="badge bg-warning text-dark me-1">0</span> {{ __('messages.selected_items') }}</span>
+                <button type="button" class="btn btn-sm btn-success rounded-pill px-4 shadow-sm" id="btnSaveBulkEdit">
+                    <i class="bi bi-check-circle me-1"></i>{{ __('messages.save_all_selected') ?? 'Save All Selected' }}
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3" id="btnCancelBulkEdit">
+                    <i class="bi bi-x-circle me-1"></i>{{ __('messages.Cancel') ?? 'Cancel' }}
+                </button>
+            </div>
+        </div>
+
         {{-- Inventory Items Table --}}
         <div class="card border-0 shadow-sm p-4">
             <div class="table-responsive">
-                <table class="table align-middle table-hover mb-0">
+                @php 
+                    $canEditPrice = auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Committees') || auth()->user()->can('view lit inventory')); 
+                @endphp
+                <table class="table align-middle table-hover mb-0" id="inventoryTable">
                     <thead class="table-light">
                         <tr>
                             <th style="width: 40px;">
@@ -146,15 +179,17 @@
                             <th>{{ __('messages.item_name') }}</th>
                             <th>{{ __('messages.Category') }}</th>
                             <th>{{ __('messages.Description') }}</th>
-                            <th class="text-end">{{ __('messages.selling_price') }}</th>
+                            <th class="text-end" style="min-width: 110px;">{{ __('messages.selling_price') }}</th>
+                            <th class="text-center" style="min-width: 95px;">+ {{ __('messages.received_quantity') ?? 'Rec. Qty' }}</th>
+                            <th class="text-center" style="min-width: 95px;">→ {{ __('messages.transfer_to_lit') ?? 'Trans. Qty' }}</th>
                             <th class="text-center">{{ __('messages.store_qty') }}</th>
                             <th class="text-center">{{ __('messages.lit_qty') }}</th>
-                            <th class="text-center">{{ __('messages.Actions') }}</th>
+                            <th class="text-center" style="min-width: 110px;">{{ __('messages.Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($items as $item)
-                            <tr class="inventory-row">
+                            <tr class="inventory-row" data-row-id="{{ $item->id }}">
                                 <td>
                                     <input type="checkbox" class="form-check-input item-checkbox" 
                                            data-id="{{ $item->id }}" 
@@ -173,10 +208,45 @@
                                 <td>
                                     <span class="text-secondary small">{{ Str::limit($item->description, 60) ?: '-' }}</span>
                                 </td>
-                                <td class="text-end fw-bold text-dark">
-                                    {{ __('messages.EGP') }} {{ number_format($item->selling_price, 2) }}
+                                <td class="text-end">
+                                    {{-- Read mode price --}}
+                                    <div class="read-mode-field">
+                                        <span class="fw-bold text-dark me-1">{{ __('messages.EGP') }} <span class="price-val">{{ number_format($item->selling_price, 2) }}</span></span>
+                                    </div>
+                                    {{-- Edit mode price --}}
+                                    <div class="edit-mode-field d-none">
+                                        @if ($canEditPrice)
+                                            <div class="input-group input-group-sm ms-auto" style="max-width: 110px;">
+                                                <span class="input-group-text px-1 bg-light border-secondary-subtle text-muted small">EGP</span>
+                                                <input type="number" step="0.01" min="0" class="form-control form-control-sm text-end fw-bold inline-price-input" 
+                                                       data-id="{{ $item->id }}" data-original="{{ number_format($item->selling_price, 2, '.', '') }}" value="{{ number_format($item->selling_price, 2, '.', '') }}">
+                                            </div>
+                                        @else
+                                            <span class="fw-bold text-dark me-1">{{ __('messages.EGP') }} {{ number_format($item->selling_price, 2) }}</span>
+                                            <input type="hidden" class="inline-price-input" data-id="{{ $item->id }}" data-original="{{ number_format($item->selling_price, 2, '.', '') }}" value="{{ number_format($item->selling_price, 2, '.', '') }}">
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="text-center">
+                                    <div class="read-mode-field">
+                                        <span class="text-muted small">-</span>
+                                    </div>
+                                    <div class="edit-mode-field d-none">
+                                        <input type="number" min="0" class="form-control form-control-sm text-center mx-auto inline-receive-input border-success-subtle" 
+                                               data-id="{{ $item->id }}" placeholder="0" style="max-width: 80px;">
+                                    </div>
+                                </td>
+                                <td class="text-center position-relative">
+                                    <div class="read-mode-field">
+                                        <span class="text-muted small">-</span>
+                                    </div>
+                                    <div class="edit-mode-field d-none">
+                                        <input type="number" min="0" class="form-control form-control-sm text-center mx-auto inline-transfer-input border-primary-subtle" 
+                                               data-id="{{ $item->id }}" data-store-qty="{{ $item->store_quantity }}" placeholder="0" style="max-width: 80px;">
+                                        <div class="transfer-warning-msg text-danger fw-semibold mt-1 d-none" style="font-size: 0.7rem;">Exceeds stock</div>
+                                    </div>
+                                </td>
+                                <td class="text-center store-qty-container" id="store-qty-container-{{ $item->id }}">
                                     @if ($item->store_quantity == 0)
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
                                             <i class="bi bi-exclamation-triangle-fill me-1"></i>0
@@ -191,7 +261,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center lit-qty-container" id="lit-qty-container-{{ $item->id }}">
                                     @if ($item->lit_quantity == 0)
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
                                             0
@@ -207,8 +277,32 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-center">
-                                        <div class="dropdown">
+                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                        {{-- Read mode actions --}}
+                                        <div class="read-mode-actions d-flex align-items-center gap-1">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle btn-quick-edit shadow-sm" 
+                                                    data-id="{{ $item->id }}" title="{{ __('messages.Edit') ?? 'Quick Edit' }}" 
+                                                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                        </div>
+
+                                        {{-- Edit mode actions --}}
+                                        <div class="edit-mode-actions d-none align-items-center gap-1">
+                                            <button type="button" class="btn btn-sm btn-success rounded-circle shadow-sm inline-save-btn" 
+                                                    data-id="{{ $item->id }}" title="{{ __('messages.Save') ?? 'Save' }}" 
+                                                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-check-lg fs-6"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle inline-cancel-btn" 
+                                                    data-id="{{ $item->id }}" title="{{ __('messages.Cancel') ?? 'Cancel' }}" 
+                                                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+
+                                        {{-- Actions Dropdown --}}
+                                        <div class="dropdown ms-1">
                                             <button class="btn btn-link text-secondary p-0 border-0 dropdown-toggle-nocaret" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bi bi-three-dots-vertical fs-5"></i>
                                             </button>
@@ -817,6 +911,325 @@
                         form.submit();
                     }
                 });
+            }
+
+            // --- Inline Edit Toggle & Real-time Validation System ---
+
+            function toggleRowEditMode(row, enableEdit) {
+                const readFields = row.querySelectorAll('.read-mode-field, .read-mode-actions');
+                const editFields = row.querySelectorAll('.edit-mode-field, .edit-mode-actions');
+
+                if (enableEdit) {
+                    row.classList.add('is-editing', 'table-warning');
+                    readFields.forEach(el => el.classList.add('d-none'));
+                    editFields.forEach(el => el.classList.remove('d-none'));
+                    validateRowInputs(row);
+                } else {
+                    row.classList.remove('is-editing', 'table-warning');
+                    readFields.forEach(el => el.classList.remove('d-none'));
+                    editFields.forEach(el => el.classList.add('d-none'));
+                    // Reset inputs to original state
+                    const priceInput = row.querySelector('.inline-price-input');
+                    const receiveInput = row.querySelector('.inline-receive-input');
+                    const transferInput = row.querySelector('.inline-transfer-input');
+                    if (priceInput && priceInput.hasAttribute('data-original')) {
+                        priceInput.value = priceInput.getAttribute('data-original');
+                    }
+                    if (receiveInput) receiveInput.value = '';
+                    if (transferInput) {
+                        transferInput.value = '';
+                        transferInput.classList.remove('is-invalid');
+                    }
+                    const warningMsg = row.querySelector('.transfer-warning-msg');
+                    if (warningMsg) warningMsg.classList.add('d-none');
+
+                    const saveBtn = row.querySelector('.inline-save-btn');
+                    if (saveBtn) saveBtn.disabled = false;
+                }
+            }
+
+            function validateRowInputs(row) {
+                const transferInput = row.querySelector('.inline-transfer-input');
+                const saveBtn = row.querySelector('.inline-save-btn');
+                const warningMsg = row.querySelector('.transfer-warning-msg');
+                if (!transferInput) return true;
+
+                const storeQty = parseInt(transferInput.getAttribute('data-store-qty') || 0, 10);
+                const transferVal = parseInt(transferInput.value || 0, 10);
+
+                if (transferVal > storeQty) {
+                    transferInput.classList.add('is-invalid');
+                    if (warningMsg) warningMsg.classList.remove('d-none');
+                    if (saveBtn) saveBtn.disabled = true;
+                    return false;
+                } else {
+                    transferInput.classList.remove('is-invalid');
+                    if (warningMsg) warningMsg.classList.add('d-none');
+                    if (saveBtn) saveBtn.disabled = false;
+                    return true;
+                }
+            }
+
+            // Real-time input listeners for validation
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('inline-transfer-input')) {
+                    const row = e.target.closest('tr');
+                    if (row) validateRowInputs(row);
+                    updateBulkEditSaveState();
+                }
+            });
+
+            // Quick Edit pencil button click
+            document.addEventListener('click', function(e) {
+                const editBtn = e.target.closest('.btn-quick-edit');
+                if (editBtn) {
+                    const row = editBtn.closest('tr');
+                    if (row) toggleRowEditMode(row, true);
+                }
+
+                const cancelBtn = e.target.closest('.inline-cancel-btn');
+                if (cancelBtn) {
+                    const row = cancelBtn.closest('tr');
+                    if (row) toggleRowEditMode(row, false);
+                }
+            });
+
+            // Single Row Inline Save Handler
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.inline-save-btn');
+                if (!btn) return;
+
+                const id = btn.getAttribute('data-id');
+                const row = btn.closest('tr');
+                if (!row) return;
+
+                if (!validateRowInputs(row)) return;
+
+                const priceInput = row.querySelector('.inline-price-input');
+                const receiveInput = row.querySelector('.inline-receive-input');
+                const transferInput = row.querySelector('.inline-transfer-input');
+
+                const payload = {
+                    selling_price: priceInput ? priceInput.value : null,
+                    receive_qty: receiveInput ? receiveInput.value : 0,
+                    transfer_qty: transferInput ? transferInput.value : 0,
+                };
+
+                const originalBtnHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+                fetch(`/store/${id}/inline-update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status >= 200 && status < 300 && body.success) {
+                        updateRowDisplayData(row, body.item);
+                        toggleRowEditMode(row, false);
+                        showToast(body.message || "{{ __('messages.item_updated_success') }}", 'success');
+                    } else {
+                        showToast(body.message || 'An error occurred.', 'danger');
+                    }
+                })
+                .catch(err => {
+                    showToast('Failed to save changes.', 'danger');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+                });
+            });
+
+            // Bulk Quick Edit button click
+            const btnBulkQuickEdit = document.getElementById('btnBulkQuickEdit');
+            const bulkEditBar = document.getElementById('bulkEditBar');
+            const bulkEditCount = document.getElementById('bulkEditCount');
+
+            if (btnBulkQuickEdit) {
+                btnBulkQuickEdit.addEventListener('click', function() {
+                    const selected = getSelectedCheckboxes();
+                    if (selected.length === 0) return;
+
+                    selected.forEach(cb => {
+                        const row = cb.closest('tr');
+                        if (row) toggleRowEditMode(row, true);
+                    });
+
+                    if (bulkEditBar) {
+                        bulkEditCount.textContent = selected.length;
+                        bulkEditBar.classList.remove('d-none');
+                    }
+                });
+            }
+
+            // Bulk Edit Cancel button click
+            const btnCancelBulkEdit = document.getElementById('btnCancelBulkEdit');
+            if (btnCancelBulkEdit) {
+                btnCancelBulkEdit.addEventListener('click', function() {
+                    document.querySelectorAll('.inventory-row.is-editing').forEach(row => {
+                        toggleRowEditMode(row, false);
+                    });
+                    if (bulkEditBar) bulkEditBar.classList.add('d-none');
+                });
+            }
+
+            // Bulk Save button click
+            const btnSaveBulkEdit = document.getElementById('btnSaveBulkEdit');
+            if (btnSaveBulkEdit) {
+                btnSaveBulkEdit.addEventListener('click', function() {
+                    const editingRows = document.querySelectorAll('.inventory-row.is-editing');
+                    if (editingRows.length === 0) return;
+
+                    let hasErrors = false;
+                    const itemsPayload = [];
+
+                    editingRows.forEach(row => {
+                        if (!validateRowInputs(row)) hasErrors = true;
+                        const id = row.getAttribute('data-row-id');
+                        const priceInput = row.querySelector('.inline-price-input');
+                        const receiveInput = row.querySelector('.inline-receive-input');
+                        const transferInput = row.querySelector('.inline-transfer-input');
+
+                        itemsPayload.push({
+                            id: id,
+                            selling_price: priceInput ? priceInput.value : null,
+                            receive_qty: receiveInput ? receiveInput.value : 0,
+                            transfer_qty: transferInput ? transferInput.value : 0,
+                        });
+                    });
+
+                    if (hasErrors) {
+                        showToast('Please resolve validation errors before saving.', 'danger');
+                        return;
+                    }
+
+                    const originalHtml = btnSaveBulkEdit.innerHTML;
+                    btnSaveBulkEdit.disabled = true;
+                    btnSaveBulkEdit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...';
+
+                    fetch('/store/bulk-inline-update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ items: itemsPayload })
+                    })
+                    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                    .then(({ status, body }) => {
+                        if (status >= 200 && status < 300 && body.success) {
+                            (body.updated_items || []).forEach(itemData => {
+                                const row = document.querySelector(`.inventory-row[data-row-id="${itemData.id}"]`);
+                                if (row) {
+                                    updateRowDisplayData(row, itemData);
+                                    toggleRowEditMode(row, false);
+                                }
+                            });
+                            if (bulkEditBar) bulkEditBar.classList.add('d-none');
+                            showToast(body.message || 'Bulk update completed successfully', 'success');
+                        } else {
+                            showToast(body.message || 'An error occurred during bulk update.', 'danger');
+                        }
+                    })
+                    .catch(err => {
+                        showToast('Failed to save bulk changes.', 'danger');
+                    })
+                    .finally(() => {
+                        btnSaveBulkEdit.disabled = false;
+                        btnSaveBulkEdit.innerHTML = originalHtml;
+                    });
+                });
+            }
+
+            function updateRowDisplayData(row, itemData) {
+                // Update price read display
+                const priceValEl = row.querySelector('.price-val');
+                if (priceValEl) priceValEl.textContent = itemData.selling_price;
+
+                const priceInput = row.querySelector('.inline-price-input');
+                if (priceInput) priceInput.setAttribute('data-original', itemData.selling_price);
+
+                // Update store qty badge
+                const storeContainer = row.querySelector('.store-qty-container');
+                if (storeContainer) {
+                    const sq = itemData.store_quantity;
+                    let badgeClass = sq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle' : (sq < 10 ? 'bg-warning-subtle text-warning-emphasis border-warning-subtle' : 'bg-success-subtle text-success border-success-subtle');
+                    let icon = sq == 0 ? '<i class="bi bi-exclamation-triangle-fill me-1"></i>' : (sq < 10 ? '<i class="bi bi-exclamation-circle me-1"></i>' : '');
+                    storeContainer.innerHTML = `<span class="badge ${badgeClass} border px-3 py-2 rounded-pill fw-bold">${icon}${sq}</span>`;
+                }
+
+                // Update literature stock badge consistently
+                const litContainer = row.querySelector('.lit-qty-container');
+                if (litContainer) {
+                    const lq = itemData.lit_quantity;
+                    let badgeClass = lq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle' : (lq < 10 ? 'bg-warning-subtle text-warning-emphasis border-warning-subtle' : 'bg-info-subtle text-info border-info-subtle');
+                    litContainer.innerHTML = `<span class="badge ${badgeClass} border px-3 py-2 rounded-pill fw-bold">${lq}</span>`;
+                }
+
+                // Update input dataset store-qty limit
+                const transferInput = row.querySelector('.inline-transfer-input');
+                if (transferInput) transferInput.setAttribute('data-store-qty', itemData.store_quantity);
+
+                // Update checkbox datasets
+                const checkbox = row.querySelector('.item-checkbox');
+                if (checkbox) {
+                    checkbox.setAttribute('data-store-qty', itemData.store_quantity);
+                    checkbox.setAttribute('data-lit-qty', itemData.lit_quantity);
+                }
+            }
+
+            function updateBulkEditSaveState() {
+                const editingRows = document.querySelectorAll('.inventory-row.is-editing');
+                let anyErrors = false;
+                editingRows.forEach(row => {
+                    if (!validateRowInputs(row)) anyErrors = true;
+                });
+                if (btnSaveBulkEdit) btnSaveBulkEdit.disabled = anyErrors;
+            }
+
+            // Enter Key press handler in inline inputs
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && (e.target.classList.contains('inline-price-input') || e.target.classList.contains('inline-receive-input') || e.target.classList.contains('inline-transfer-input'))) {
+                    e.preventDefault();
+                    const row = e.target.closest('tr');
+                    if (row) {
+                        const saveBtn = row.querySelector('.inline-save-btn');
+                        if (saveBtn && !saveBtn.disabled) saveBtn.click();
+                    }
+                }
+            });
+
+            // Helper toast function
+            function showToast(message, type) {
+                let toastContainer = document.getElementById('storeToastContainer');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.id = 'storeToastContainer';
+                    toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                    toastContainer.style.zIndex = '1100';
+                    document.body.appendChild(toastContainer);
+                }
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${type} border-0 show`;
+                toastEl.setAttribute('role', 'alert');
+                toastEl.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body fw-semibold">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                toastContainer.appendChild(toastEl);
+                setTimeout(() => {
+                    toastEl.remove();
+                }, 3500);
             }
         });
     </script>

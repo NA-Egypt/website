@@ -53,6 +53,8 @@ Route::group(
             Route::post('/store/bulk-transfer', [\App\Http\Controllers\StoreController::class, 'bulkTransfer'])->name('store.bulk_transfer');
             Route::post('/store/bulk-return', [\App\Http\Controllers\StoreController::class, 'bulkReturn'])->name('store.bulk_return');
             Route::post('/store/bulk-delete', [\App\Http\Controllers\StoreController::class, 'bulkDestroy'])->name('store.bulk_delete');
+            Route::post('/store/bulk-inline-update', [\App\Http\Controllers\StoreController::class, 'bulkInlineUpdate'])->name('store.bulk_inline_update');
+            Route::post('/store/{item}/inline-update', [\App\Http\Controllers\StoreController::class, 'inlineUpdate'])->name('store.inline_update');
             Route::put('/store/{item}', [\App\Http\Controllers\StoreController::class, 'update'])->name('store.update');
             Route::delete('/store/{item}', [\App\Http\Controllers\StoreController::class, 'destroy'])->name('store.destroy');
             Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');

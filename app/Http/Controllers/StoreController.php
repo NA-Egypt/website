@@ -89,6 +89,183 @@ class StoreController extends Controller implements HasMiddleware
         return redirect()->route('store.index')->with('success', __('messages.item_updated_success'));
     }
 
+    public function inlineUpdate(Request $request, InventoryItem $item)
+    {
+        $user = Auth::user();
+        $canEditPrice = $user->hasRole('super admin') || $user->hasRole('Lit User') || $user->hasRole('Committees') || $user->can('view lit inventory');
+
+        $request->validate([
+            'selling_price' => 'nullable|numeric|min:0',
+            'receive_qty' => 'nullable|integer|min:0',
+            'transfer_qty' => 'nullable|integer|min:0',
+        ]);
+
+        $messages = [];
+
+        // 1. Update selling_price if provided and allowed
+        if ($request->filled('selling_price')) {
+            $newPrice = (float) $request->input('selling_price');
+            if ($newPrice != (float) $item->selling_price) {
+                if (!$canEditPrice) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => __('messages.unauthorized_price_edit')
+                    ], 403);
+                }
+                $item->selling_price = $newPrice;
+                $item->save();
+                $messages[] = __('messages.price_updated');
+            }
+        }
+
+        // 2. Process Receive stock
+        $receiveQty = (int) $request->input('receive_qty', 0);
+        if ($receiveQty > 0) {
+            $item->increment('store_quantity', $receiveQty);
+            InventoryTransaction::create([
+                'inventory_item_id' => $item->id,
+                'user_id' => Auth::id(),
+                'type' => 'receive',
+                'quantity' => $receiveQty,
+                'notes' => __('messages.inline_receive'),
+            ]);
+            $messages[] = __('messages.stock_received');
+        }
+
+        // 3. Process Transfer stock to Lit
+        $transferQty = (int) $request->input('transfer_qty', 0);
+        if ($transferQty > 0) {
+            $item->refresh();
+            if ($item->store_quantity < $transferQty) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.insufficient_store_stock')
+                ], 422);
+            }
+            $item->decrement('store_quantity', $transferQty);
+            $item->increment('lit_quantity', $transferQty);
+            InventoryTransaction::create([
+                'inventory_item_id' => $item->id,
+                'user_id' => Auth::id(),
+                'type' => 'transfer_to_lit',
+                'quantity' => $transferQty,
+                'notes' => __('messages.inline_transfer'),
+            ]);
+            $messages[] = __('messages.stock_transferred_to_lit');
+        }
+
+        $item->refresh();
+        $totalStoreStock = InventoryItem::sum('store_quantity');
+        $totalLitStock = InventoryItem::sum('lit_quantity');
+
+        return response()->json([
+            'success' => true,
+            'message' => count($messages) > 0 ? implode(', ', $messages) : __('messages.no_changes_made'),
+            'item' => [
+                'id' => $item->id,
+                'selling_price' => number_format($item->selling_price, 2, '.', ''),
+                'store_quantity' => $item->store_quantity,
+                'lit_quantity' => $item->lit_quantity,
+            ],
+            'total_store_stock' => $totalStoreStock,
+            'total_lit_stock' => $totalLitStock,
+        ]);
+    }
+
+    public function bulkInlineUpdate(Request $request)
+    {
+        $user = Auth::user();
+        $canEditPrice = $user->hasRole('super admin') || $user->hasRole('Lit User') || $user->hasRole('Committees') || $user->can('view lit inventory');
+
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|exists:inventory_items,id',
+            'items.*.selling_price' => 'nullable|numeric|min:0',
+            'items.*.receive_qty' => 'nullable|integer|min:0',
+            'items.*.transfer_qty' => 'nullable|integer|min:0',
+        ]);
+
+        $updatedItems = [];
+        \DB::beginTransaction();
+        try {
+            foreach ($request->items as $row) {
+                $item = InventoryItem::find($row['id']);
+                if (!$item) continue;
+
+                // Price update
+                if (isset($row['selling_price']) && $row['selling_price'] !== null && (float)$row['selling_price'] != (float)$item->selling_price) {
+                    if (!$canEditPrice) {
+                        \DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => __('messages.unauthorized_price_edit_item', ['name' => $item->name])
+                        ], 403);
+                    }
+                    $item->selling_price = (float)$row['selling_price'];
+                    $item->save();
+                }
+
+                // Receive stock
+                $receiveQty = (int)($row['receive_qty'] ?? 0);
+                if ($receiveQty > 0) {
+                    $item->increment('store_quantity', $receiveQty);
+                    InventoryTransaction::create([
+                        'inventory_item_id' => $item->id,
+                        'user_id' => Auth::id(),
+                        'type' => 'receive',
+                        'quantity' => $receiveQty,
+                        'notes' => __('messages.bulk_inline_receive'),
+                    ]);
+                }
+
+                // Transfer stock
+                $transferQty = (int)($row['transfer_qty'] ?? 0);
+                if ($transferQty > 0) {
+                    $item->refresh();
+                    if ($item->store_quantity < $transferQty) {
+                        \DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => __('messages.insufficient_store_stock_item', ['name' => $item->store_display_name])
+                        ], 422);
+                    }
+                    $item->decrement('store_quantity', $transferQty);
+                    $item->increment('lit_quantity', $transferQty);
+                    InventoryTransaction::create([
+                        'inventory_item_id' => $item->id,
+                        'user_id' => Auth::id(),
+                        'type' => 'transfer_to_lit',
+                        'quantity' => $transferQty,
+                        'notes' => __('messages.bulk_inline_transfer'),
+                    ]);
+                }
+
+                $item->refresh();
+                $updatedItems[] = [
+                    'id' => $item->id,
+                    'selling_price' => number_format($item->selling_price, 2, '.', ''),
+                    'store_quantity' => $item->store_quantity,
+                    'lit_quantity' => $item->lit_quantity,
+                ];
+            }
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+
+        $totalStoreStock = InventoryItem::sum('store_quantity');
+        $totalLitStock = InventoryItem::sum('lit_quantity');
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.bulk_update_success'),
+            'updated_items' => $updatedItems,
+            'total_store_stock' => $totalStoreStock,
+            'total_lit_stock' => $totalLitStock,
+        ]);
+    }
+
     public function destroy(InventoryItem $item)
     {
         $item->delete();
@@ -170,7 +347,11 @@ class StoreController extends Controller implements HasMiddleware
         $query = InventoryTransaction::with(['item', 'user']);
 
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            if ($request->type === 'transfer_to_lit') {
+                $query->whereIn('type', ['transfer_to_lit', 'transfer']);
+            } else {
+                $query->where('type', $request->type);
+            }
         }
 
         if ($request->filled('item_id')) {
@@ -197,9 +378,20 @@ class StoreController extends Controller implements HasMiddleware
         if ($request->filled('category')) {
             $itemsQuery->where('category', $request->category);
         }
+        if ($request->filled('item_id')) {
+            $itemsQuery->where('id', $request->item_id);
+        }
         $items = $itemsQuery->orderBy('name')->get();
 
-        // Calculate summary metrics
+        // Calculate transaction report summary metrics
+        $totalTransactions = $transactions->count();
+        $totalReceivedQty = $transactions->where('type', 'receive')->sum('quantity');
+        $totalTransferredQty = $transactions->whereIn('type', ['transfer_to_lit', 'transfer'])->sum('quantity');
+        $totalTransactionValuation = $transactions->sum(function ($t) {
+            return $t->quantity * ($t->item->selling_price ?? 0);
+        });
+
+        // Item stock metrics
         $totalItems = $items->count();
         $totalStoreStock = $items->sum('store_quantity');
         $totalLitStock = $items->sum('lit_quantity');
@@ -207,7 +399,10 @@ class StoreController extends Controller implements HasMiddleware
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
         });
 
-        return view('store.reports', compact('transactions', 'items', 'totalItems', 'totalStoreStock', 'totalLitStock', 'totalValuation'));
+        return view('store.reports', compact(
+            'transactions', 'items', 'totalItems', 'totalStoreStock', 'totalLitStock', 'totalValuation',
+            'totalTransactions', 'totalReceivedQty', 'totalTransferredQty', 'totalTransactionValuation'
+        ));
     }
 
     public function exportPdf(Request $request)
@@ -215,7 +410,11 @@ class StoreController extends Controller implements HasMiddleware
         $query = InventoryTransaction::with(['item', 'user']);
 
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            if ($request->type === 'transfer_to_lit') {
+                $query->whereIn('type', ['transfer_to_lit', 'transfer']);
+            } else {
+                $query->where('type', $request->type);
+            }
         }
 
         if ($request->filled('item_id')) {
@@ -241,6 +440,9 @@ class StoreController extends Controller implements HasMiddleware
         $itemsQuery = InventoryItem::query();
         if ($request->filled('category')) {
             $itemsQuery->where('category', $request->category);
+        }
+        if ($request->filled('item_id')) {
+            $itemsQuery->where('id', $request->item_id);
         }
         $items = $itemsQuery->orderBy('name')->get();
         
@@ -268,7 +470,11 @@ class StoreController extends Controller implements HasMiddleware
         $query = InventoryTransaction::with(['item', 'user']);
 
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            if ($request->type === 'transfer_to_lit') {
+                $query->whereIn('type', ['transfer_to_lit', 'transfer']);
+            } else {
+                $query->where('type', $request->type);
+            }
         }
 
         if ($request->filled('item_id')) {

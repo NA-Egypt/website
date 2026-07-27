@@ -1332,6 +1332,30 @@ return [
     'delete_selected_agendas' => 'Delete Selected Agendas',
     'confirm_delete_agenda' => 'Are you sure you want to delete this agenda? This action cannot be undone.',
     'confirm_bulk_delete_agendas' => 'Are you sure you want to delete the selected agendas? This action cannot be undone.',
+
+    // Store & Reports Translations:
+    'quick_edit_selected' => 'Quick Edit Selected',
+    'save_all_selected' => 'Save All Selected',
+    'editing' => 'Editing',
+    'total_transactions' => 'Total Transactions',
+    'total_received_qty' => 'Total Received Qty',
+    'total_transferred_qty' => 'Total Transferred Qty',
+    'total_transaction_value' => 'Transaction Valuation',
+    'unauthorized_price_edit' => 'Unauthorized to edit selling price.',
+    'unauthorized_price_edit_item' => 'Unauthorized to edit selling price for item: :name',
+    'no_changes_made' => 'No changes made.',
+    'bulk_update_success' => 'Bulk update completed successfully.',
+    'inline_receive' => 'Inline stock receive',
+    'inline_transfer' => 'Inline transfer to Literature',
+    'bulk_inline_receive' => 'Bulk inline receive',
+    'bulk_inline_transfer' => 'Bulk inline transfer to Literature',
+    'insufficient_store_stock_item' => 'Insufficient store stock for item: :name',
+    'price_updated' => 'Price updated',
+    'stock_received' => 'Stock received',
+    'stock_transferred_to_lit' => 'Stock transferred to Literature',
+    'failed_to_save_changes' => 'Failed to save changes.',
+    'resolve_validation_errors' => 'Please resolve validation errors before saving.',
+    'exceeds_stock' => 'Exceeds stock',
 ];
 
 

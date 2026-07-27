@@ -1336,6 +1336,30 @@ return [
     'delete_selected_agendas' => 'حذف الأجندات المحددة',
     'confirm_delete_agenda' => 'هل أنت متأكد من رغبتك في حذف هذه الأجندة؟ لا يمكن التراجع عن هذا الإجراء.',
     'confirm_bulk_delete_agendas' => 'هل أنت متأكد من رغبتك في حذف الأجندات المحددة؟ لا يمكن التراجع عن هذا الإجراء.',
+
+    // Store & Reports Translations:
+    'quick_edit_selected' => 'تعديل سريع للمحدد',
+    'save_all_selected' => 'حفظ كافة العناصر المحددة',
+    'editing' => 'جاري تعديل',
+    'total_transactions' => 'إجمالي المعاملات',
+    'total_received_qty' => 'إجمالي الكميات المستلمة',
+    'total_transferred_qty' => 'إجمالي الكميات المحولة للأدبيات',
+    'total_transaction_value' => 'القيمة الإجمالية للمعاملات',
+    'unauthorized_price_edit' => 'غير مصرح لك بتعديل سعر البيع.',
+    'unauthorized_price_edit_item' => 'غير مصرح لك بتعديل سعر البيع للعنصر: :name',
+    'no_changes_made' => 'لم يتم إجراء أي تغييرات.',
+    'bulk_update_success' => 'تم التعديل المجمع بنجاح.',
+    'inline_receive' => 'استلام رصيد سريع',
+    'inline_transfer' => 'تحويل سريع للجنة الأدبيات',
+    'bulk_inline_receive' => 'استلام سريع مجمع',
+    'bulk_inline_transfer' => 'تحويل سريع مجمع للجنة الأدبيات',
+    'insufficient_store_stock_item' => 'رصيد المستودع الرئيسي غير كافٍ للعنصر: :name',
+    'price_updated' => 'تم تحديث السعر',
+    'stock_received' => 'تم استلام الرصيد',
+    'stock_transferred_to_lit' => 'تم تحويل الرصيد للأدبيات',
+    'failed_to_save_changes' => 'فشل حفظ التغييرات.',
+    'resolve_validation_errors' => 'يرجى تصحيح أخطاء الإدخال قبل الحفظ.',
+    'exceeds_stock' => 'يتجاوز الرصيد',
 ];
 
 
