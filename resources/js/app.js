@@ -79,6 +79,7 @@ import GenericDataTable from './components/GenericDataTable.vue';
 import FacebookTargeting from './components/FacebookTargeting.vue';
 import CtkDateTimePickerWrapper from './components/CtkDateTimePickerWrapper.vue';
 import EventsCalendar from './components/EventsCalendar.vue';
+import AnimatedStatCard from './components/AnimatedStatCard.vue';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Mount EventsCalendar
@@ -211,6 +212,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     el.dispatchEvent(new CustomEvent('picker-change', { detail: val, bubbles: true }));
                 }
+            })
+        });
+        app.mount(el);
+    });
+
+    // Mount AnimatedStatCard instances
+    const animatedStatEls = document.querySelectorAll('[data-vue-app="AnimatedStatCard"]');
+    animatedStatEls.forEach(el => {
+        const weeklyMeetings = el.getAttribute('data-weekly-meetings') || '0';
+        const groupsCount = el.getAttribute('data-groups-count') || '0';
+        const weeklyMeetingsLabel = el.getAttribute('data-weekly-meetings-label') || 'اجتماعات أسبوعية';
+        const groupsCountLabel = el.getAttribute('data-groups-count-label') || 'مجموعات';
+
+        const app = createApp({
+            render: () => h(AnimatedStatCard, {
+                weeklyMeetings,
+                groupsCount,
+                weeklyMeetingsLabel,
+                groupsCountLabel
             })
         });
         app.mount(el);

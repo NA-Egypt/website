@@ -674,20 +674,28 @@
         <div class="row justify-content-center align-items-stretch mt-3 g-3">
           <div class="col-md-4 mb-3 d-flex subscription-box-column">
             <div class="helpline-box subscription-box-wrapper w-100 p-4 d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
+              <div class="w-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center gap-2 px-3 py-2 rounded-pill mb-2 shadow-sm" style="background: rgba(50, 85, 127, 0.08); border: 1px solid rgba(50, 85, 127, 0.15);">
+                  <i class="bi bi-envelope-paper-fill" style="color: #32557f; font-size: 1.15rem;"></i>
+                  <span class="font-weight-bold" style="color: #32557f !important; font-weight: 700; font-size: 1.05rem;">{{ __('messages.Subscribe') }}</span>
+                </div>
+                <p class="text-muted small mb-3" style="font-size: 0.82rem; font-weight: 600;">
+                  {{ app()->getLocale() === 'ar' ? 'احصل على جديد الأخبار والنشرات' : 'Get our latest updates and newsletter' }}
+                </p>
                 @if (session('subscribed'))
-                  <div class="alert alert-success p-2">
+                  <div class="alert alert-success p-2 rounded-3 text-center small mb-3">
                     {{ __('messages.' . session('subscribed')) }}
                   </div>
                 @endif
-                <form action="{{ route('subscribers.store') }}" method="post">
+                <form action="{{ route('subscribers.store') }}" method="post" class="w-100">
                   @csrf
                   <div class="form-group mb-0">
-                    <input type="email" name="email" class="form-control subscribe-input mb-3"
-                      placeholder="{{ __('messages.Enter your email') }}" required>
-                    <button class="subscribe-btn w-100" style="font-weight: 600;" type="submit">
-                      {{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;" />
+                    <div class="position-relative mb-3">
+                      <input type="email" name="email" class="form-control subscribe-input"
+                        placeholder="{{ __('messages.Enter your email') }}" required>
+                    </div>
+                    <button class="subscribe-btn w-100" style="font-weight: 700;" type="submit">
+                      <span>{{ __('messages.Subscribe') }}</span>&nbsp;<i class="bi bi-send-fill ms-1"></i>
                     </button>
                   </div>
                 </form>
@@ -748,23 +756,15 @@
             <p>{{ __('messages.recovery_network_desc') }}</p>
           </div>
 
-          <div class="stats-grid-home">
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-calendar-week-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.weekly_meetings') }}</span>
+          <div class="row justify-content-center mt-3">
+            <div class="col-md-8 col-lg-7">
+              <div data-vue-app="AnimatedStatCard"
+                   data-weekly-meetings="{{ $homeStats['weekly_meetings'] }}"
+                   data-groups-count="{{ $homeStats['groups'] }}"
+                   data-weekly-meetings-label="{{ __('messages.weekly_meetings') }}"
+                   data-groups-count-label="{{ __('messages.groups_count') }}">
               </div>
-              <div class="stat-value-home">{{ number_format($homeStats['weekly_meetings']) }}</div>
             </div>
-
-            <div class="stat-card-home">
-              <div class="stat-top">
-                <span class="stat-icon-home"><i class="bi bi-people-fill"></i></span>
-                <span class="stat-label-home">{{ __('messages.groups_count') }}</span>
-              </div>
-              <div class="stat-value-home">{{ number_format($homeStats['groups']) }}</div>
-            </div>
-
           </div>
         </div>
       </div>
