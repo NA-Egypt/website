@@ -258,6 +258,9 @@ Route::group(
 
             // Calendar
             Route::get('/calendar', \App\Livewire\YearlyCalendar::class)->name('calendar.index');
+            Route::post('/web-calendar-events', [\App\Http\Controllers\Api\CalendarEventController::class, 'store'])->name('web-calendar-events.store');
+            Route::put('/web-calendar-events/{calendarEvent}', [\App\Http\Controllers\Api\CalendarEventController::class, 'update'])->name('web-calendar-events.update');
+            Route::delete('/web-calendar-events/{calendarEvent}', [\App\Http\Controllers\Api\CalendarEventController::class, 'destroy'])->name('web-calendar-events.destroy');
 
             // Change Requests:
             Route::get('change-requests', [\App\Http\Controllers\ChangeRequestController::class, 'index'])->name('change-requests.index');
@@ -327,6 +330,7 @@ Route::group(
         })->name('frontend.questions');
 
         Route::get('/events', [\App\Http\Controllers\FrontendEventController::class, 'index'])->name('frontend.events');
+        Route::get('/web-calendar-events', [\App\Http\Controllers\Api\CalendarEventController::class, 'index'])->name('web-calendar-events.index');
 
         Route::get('/test', [ForPublicController::class, 'index'])->name('frontend.test');
 

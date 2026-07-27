@@ -8,87 +8,144 @@
             </div>
         @else
             <!-- View Toggle -->
-            <ul class="nav nav-pills justify-content-center mb-4 w-100 mx-auto" id="eventsViewTab" role="tablist" dir="ltr" style="max-width: 600px;">
-                <li class="nav-item col-6 pe-1" role="presentation">
-                    <button class="nav-link active w-100" id="slider-tab" data-bs-toggle="pill" data-bs-target="#slider-view" type="button" role="tab" aria-controls="slider-view" aria-selected="true" style="border-radius: 20px 0 0 20px; border: 1px solid #00698f;">{{ __('messages.Slider View') ?? 'Slider View' }}</button>
-                </li>
-                <li class="nav-item col-6 ps-1" role="presentation">
-                    <button class="nav-link w-100" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="false" style="border-radius: 0 20px 20px 0; border: 1px solid #00698f;">{{ __('messages.Calendar View') ?? 'Calendar View' }}</button>
-                </li>
-            </ul>
+            <div class="d-flex justify-content-center mb-5">
+                <ul class="nav nav-pills bg-light p-2.5 rounded-pill shadow-sm border border-light w-100" id="eventsViewTab" role="tablist" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" style="max-width: 960px;">
+                    <li class="nav-item col-6" role="presentation">
+                        <button class="nav-link active w-100 rounded-pill py-3 font-semibold transition-all d-flex align-items-center justify-content-center gap-2" id="slider-tab" data-bs-toggle="pill" data-bs-target="#slider-view" type="button" role="tab" aria-controls="slider-view" aria-selected="true" style="font-size: 1.1rem;">
+                            <i class="bi bi-view-list fs-4"></i>
+                            <span>{{ __('messages.List') }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item col-6" role="presentation">
+                        <button class="nav-link w-100 rounded-pill py-3 font-semibold transition-all d-flex align-items-center justify-content-center gap-2" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="false" style="font-size: 1.1rem;">
+                            <i class="bi bi-calendar3 fs-4"></i>
+                            <span>{{ __('messages.Calendar') }}</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
             <div class="tab-content w-100" id="eventsViewTabContent">
-                <!-- Slider View -->
+                <!-- List View (Interactive Timeline) -->
                 <div class="tab-pane fade show active w-100" id="slider-view" role="tabpanel" aria-labelledby="slider-tab">
-                    <div id="eventsCarousel" class="carousel slide w-100" data-bs-ride="false" data-bs-interval="false">
-                        <div class="carousel-inner">
-                            @foreach($events as $month => $monthEvents)
-                                <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                                    <div class="px-4 px-md-5 pb-4" style="width: 100%; overflow-x: hidden;">
-                                        <div class="text-center mb-4">
-                                            <h3 class="fw-bold" style="color: #00698f;">{{ $month }}</h3>
-                                        </div>
-                                        <div class="row g-4 mx-0">
-                                            @foreach($monthEvents as $event)
-                                                <div class="col-12 px-2">
-                                                    <div class="card shadow-sm border-0 info-card hov-scale w-100">
-                                                        <div class="card-body p-3 p-md-4">
-                                                            <h4 class="card-title fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" style="color: {{ $event->color ? $event->color : '#00698f' }};">
-                                                                <span>{{ $event->title }}</span>
-                                                                @if($event->is_featured)
-                                                                    <span class="badge rounded-pill bg-warning text-dark fs-6 px-3 py-1 shadow-sm" style="font-size: 0.8rem !important; font-weight: 600;">
-                                                                        ⭐ {{ __('messages.Featured') }}
-                                                                    </span>
-                                                                @endif
-                                                            </h4>
-                                                            <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
-                                                                <x-fas-calendar-alt style="width:14px; height:14px;" /> 
-                                                                {{ \Carbon\Carbon::parse($event->start)->translatedFormat('M d, Y h:i A') }} - 
-                                                                {{ \Carbon\Carbon::parse($event->end)->translatedFormat('M d, Y h:i A') }}
-                                                            </h6>
-                                                            @if($event->location)
-                                                            <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
-                                                                <x-fas-map-marker-alt style="width:14px; height:14px;" /> {{ $event->location }}
-                                                            </h6>
+                    
+                    <!-- Search & Filter Header Bar -->
+                    <div class="card border-0 shadow-sm rounded-4 mb-4 p-3 bg-white">
+                        <div class="row g-3 align-items-center">
+                            <!-- Search Box -->
+                            <div class="col-12 col-md-5">
+                                <div class="input-group search-input-group" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+                                    <span class="input-group-text bg-light border-0 text-muted px-3" style="border-radius: {{ app()->getLocale() === 'ar' ? '0 12px 12px 0' : '12px 0 0 12px' }};">
+                                        <i class="bi bi-search" style="color: #00698f;"></i>
+                                    </span>
+                                    <input type="text" id="eventSearchInput" class="form-control bg-light border-0 shadow-none text-start" style="border-radius: {{ app()->getLocale() === 'ar' ? '12px 0 0 12px' : '0 12px 12px 0' }};" placeholder="{{ __('messages.Search events...') }}">
+                                </div>
+                            </div>
+                            
+                            <!-- Month Filter Dropdown -->
+                            <div class="col-12 col-md-7">
+                                <div class="input-group month-select-group" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+                                    <span class="input-group-text bg-light border-0 text-muted px-3" style="border-radius: {{ app()->getLocale() === 'ar' ? '0 12px 12px 0' : '12px 0 0 12px' }};">
+                                        <i class="bi bi-calendar3" style="color: #00698f;"></i>
+                                    </span>
+                                    <select id="eventMonthSelect" class="form-select bg-light border-0 shadow-none text-start cursor-pointer" style="border-radius: {{ app()->getLocale() === 'ar' ? '12px 0 0 12px' : '0 12px 12px 0' }}; font-weight: 500;">
+                                        <option value="all">{{ __('messages.All Months') }}</option>
+                                        @foreach($events as $month => $monthEvents)
+                                            <option value="{{ Str::slug($month) }}">{{ $month }} ({{ $monthEvents->count() }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Feed -->
+                    <div id="eventsListContainer" class="space-y-4">
+                        @foreach($events as $month => $monthEvents)
+                            <div class="month-section mb-5" data-month-slug="{{ Str::slug($month) }}">
+                                <div class="d-flex items-center gap-3 mb-3 border-bottom pb-2">
+                                    <h4 class="fw-bold mb-0 text-primary-dark" style="color: #00698f;">
+                                        <i class="bi bi-calendar-event me-2"></i>{{ $month }}
+                                    </h4>
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+                                        {{ $monthEvents->count() }} {{ __('messages.Events') ?? 'Events' }}
+                                    </span>
+                                </div>
+
+                                <div class="row g-3">
+                                    @foreach($monthEvents as $event)
+                                        <div class="col-12 event-card-item" data-search-text="{{ strtolower($event->title . ' ' . $event->description . ' ' . $event->location . ' ' . $event->organizer) }}">
+                                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden hov-translate transition-all" style="border-left: 5px solid {{ $event->color ?? '#00698f' }} !important;">
+                                                <div class="card-body p-3 p-md-4">
+                                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-2">
+                                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                            <h5 class="card-title fw-bold mb-0" style="color: {{ $event->color ?? '#00698f' }};">
+                                                                {{ $event->title }}
+                                                            </h5>
+                                                            @if($event->is_featured)
+                                                                <span class="badge bg-warning text-dark rounded-pill px-2 py-1 shadow-xs font-semibold" style="font-size: 0.75rem;">
+                                                                    ⭐ {{ __('messages.Featured') }}
+                                                                </span>
                                                             @endif
-                                                            @if($event->organizer)
-                                                            <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
-                                                                <x-fas-user style="width:14px; height:14px;" /> {{ $event->organizer }}
-                                                            </h6>
-                                                            @endif
-                                                            @if($event->formatted_recurrence && $event->formatted_recurrence !== 'Once' && $event->formatted_recurrence !== __('messages.Once'))
-                                                            <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.9rem;">
-                                                                <i class="bi bi-arrow-repeat" style="width:14px; height:14px;"></i> {{ $event->formatted_recurrence }}
-                                                            </h6>
-                                                            @endif
-                                                            <p class="card-text">{{ $event->description }}</p>
+                                                        </div>
+
+                                                        <div class="text-muted small fw-semibold bg-light px-3 py-1.5 rounded-pill d-inline-flex align-items-center gap-1 shrink-0">
+                                                            <i class="bi bi-clock text-primary"></i>
+                                                            {{ \Carbon\Carbon::parse($event->start)->translatedFormat('M d, Y h:i A') }}
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
 
-                        @if($events->count() > 1)
-                            <!-- Carousel Controls -->
-                            <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon shadow-sm" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon shadow-sm" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        @endif
+                                                    <div class="row g-2 my-2 text-muted small">
+                                                        @if($event->location)
+                                                            <div class="col-12 col-sm-auto me-3">
+                                                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $event->location }}
+                                                            </div>
+                                                        @endif
+
+                                                        @if($event->organizer)
+                                                            <div class="col-12 col-sm-auto me-3">
+                                                                <i class="bi bi-person-fill text-info me-1"></i> {{ $event->organizer }}
+                                                            </div>
+                                                        @endif
+
+                                                        @if($event->formatted_recurrence && $event->formatted_recurrence !== 'Once' && $event->formatted_recurrence !== __('messages.Once'))
+                                                            <div class="col-12 col-sm-auto me-3">
+                                                                <i class="bi bi-arrow-repeat text-success me-1"></i> {{ $event->formatted_recurrence }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+
+                                                    @if($event->description)
+                                                        <p class="card-text text-secondary mt-2 mb-0 text-break line-clamp-3">
+                                                            {{ $event->description }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
+
+                    <div id="noSearchResults" class="alert alert-warning text-center d-none rounded-4 my-4">
+                        {{ __('messages.No matching events found.') ?? 'No matching events found.' }}
+                    </div>
+
                 </div>
 
                 <!-- Calendar View -->
                 <div class="tab-pane fade w-100" id="calendar-view" role="tabpanel" aria-labelledby="calendar-tab">
-                    <div id="frontend-calendar" class="p-2 p-md-3 bg-white rounded shadow-sm border border-light w-100" style="min-height: 500px;"></div>
+                    <div
+                        data-vue-app="EventsCalendar"
+                        data-fetch-url="{{ route('web-calendar-events.index') }}"
+                        data-store-url="{{ route('web-calendar-events.store') }}"
+                        data-locale="{{ app()->getLocale() }}"
+                        data-initial-events='{!! $allEventsJSON ?? "[]" !!}'
+                        @if(auth()->check() && (auth()->user()->hasPermissionTo('can_manage_calendar') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))) data-can-manage @endif
+                        class="w-100"
+                    ></div>
                 </div>
             </div>
         @endif
@@ -135,12 +192,20 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
         #eventsViewTab .nav-link {
-            color: #00698f;
+            color: #4b5563;
             background-color: transparent;
+            border: none;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+        #eventsViewTab .nav-link:hover:not(.active) {
+            color: #00698f;
+            background-color: #ffffff;
         }
         #eventsViewTab .nav-link.active {
-            color: #fff;
+            color: #ffffff;
             background-color: #00698f;
+            box-shadow: 0 4px 12px rgba(0, 105, 143, 0.35);
         }
         #eventsCarousel .carousel-control-prev,
         #eventsCarousel .carousel-control-next {
@@ -201,85 +266,65 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('frontend-calendar');
             var calendarTab = document.getElementById('calendar-tab');
-            var calendarInitialized = false;
-            var calendar;
+            if (calendarTab) {
+                calendarTab.addEventListener('shown.bs.tab', function () {
+                    window.dispatchEvent(new Event('resize'));
+                });
+            }
 
-            if(calendarTab && calendarEl && window.FullCalendar) {
-                calendarTab.addEventListener('shown.bs.tab', function (event) {
-                    if (!calendarInitialized) {
-                        calendar = new window.FullCalendar.Calendar(calendarEl, {
-                            plugins: [
-                                window.FullCalendar.dayGridPlugin,
-                                window.FullCalendar.timeGridPlugin,
-                                window.FullCalendar.interactionPlugin,
-                                window.FullCalendar.multiMonthPlugin
-                            ],
-                            initialView: 'dayGridMonth',
-                            headerToolbar: {
-                                left: 'prev,next today',
-                                center: 'title',
-                                right: 'dayGridMonth,timeGridWeek'
-                            },
-                            locale: '{{ app()->getLocale() }}',
-                            direction: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}',
-                            buttonText: {
-                                today: '{{ app()->getLocale() === "ar" ? "اليوم" : "Today" }}',
-                                month: '{{ app()->getLocale() === "ar" ? "شهر" : "Month" }}',
-                                week: '{{ app()->getLocale() === "ar" ? "أسبوع" : "Week" }}',
-                                day: '{{ app()->getLocale() === "ar" ? "يوم" : "Day" }}'
-                            },
-                            events: {!! $allEventsJSON ?? "[]" !!},
-                            eventClick: function(info) {
-                                var event = info.event;
-                                var color = event.extendedProps.color || '#00698f';
-                                
-                                document.getElementById('modalEventTitle').textContent = event.title;
-                                document.getElementById('modalEventTitle').style.color = color;
-                                
-                                var formatOptions = { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-                                var timeStr = calendar.formatDate(event.start, formatOptions);
-                                if (event.end) {
-                                    timeStr += ' - ' + calendar.formatDate(event.end, formatOptions);
-                                }
-                                
-                                document.getElementById('modalEventTime').textContent = timeStr;
-                                document.getElementById('modalEventDescription').textContent = event.extendedProps.description || '';
-                                
-                                var location = event.extendedProps.location;
-                                var organizer = event.extendedProps.organizer;
+            // Real-time Search & Month Filter Logic
+            var searchInput = document.getElementById('eventSearchInput');
+            var monthSelect = document.getElementById('eventMonthSelect');
+            var monthSections = document.querySelectorAll('.month-section');
+            var noResults = document.getElementById('noSearchResults');
 
-                                if (location) {
-                                    document.getElementById('modalEventLocation').textContent = location;
-                                    document.getElementById('modalEventLocationContainer').classList.remove('d-none');
-                                } else {
-                                    document.getElementById('modalEventLocationContainer').classList.add('d-none');
-                                }
+            function filterEvents() {
+                var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                var activeMonth = monthSelect ? monthSelect.value : 'all';
+                var totalVisible = 0;
 
-                                if (organizer) {
-                                    document.getElementById('modalEventOrganizer').textContent = organizer;
-                                    document.getElementById('modalEventOrganizerContainer').classList.remove('d-none');
-                                } else {
-                                    document.getElementById('modalEventOrganizerContainer').classList.add('d-none');
-                                }
+                monthSections.forEach(function(section) {
+                    var sectionMonth = section.getAttribute('data-month-slug');
+                    var isMonthMatch = (activeMonth === 'all' || activeMonth === sectionMonth);
+                    var cardItems = section.querySelectorAll('.event-card-item');
+                    var visibleInMonth = 0;
 
-                                var recurrence = event.extendedProps.recurrence;
-                                if (recurrence && recurrence !== 'Once' && recurrence !== '{{ __("messages.Once") }}') {
-                                    document.getElementById('modalEventRecurrence').textContent = recurrence;
-                                    document.getElementById('modalEventRecurrenceContainer').classList.remove('d-none');
-                                } else {
-                                    document.getElementById('modalEventRecurrenceContainer').classList.add('d-none');
-                                }
+                    cardItems.forEach(function(item) {
+                        var searchText = item.getAttribute('data-search-text') || '';
+                        var isSearchMatch = (!query || searchText.indexOf(query) !== -1);
 
-                                var modal = new bootstrap.Modal(document.getElementById('calendarEventModal'));
-                                modal.show();
-                            }
-                        });
-                        calendar.render();
-                        calendarInitialized = true;
+                        if (isMonthMatch && isSearchMatch) {
+                            item.classList.remove('d-none');
+                            visibleInMonth++;
+                            totalVisible++;
+                        } else {
+                            item.classList.add('d-none');
+                        }
+                    });
+
+                    if (visibleInMonth > 0) {
+                        section.classList.remove('d-none');
+                    } else {
+                        section.classList.add('d-none');
                     }
                 });
+
+                if (noResults) {
+                    if (totalVisible === 0) {
+                        noResults.classList.remove('d-none');
+                    } else {
+                        noResults.classList.add('d-none');
+                    }
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterEvents);
+            }
+
+            if (monthSelect) {
+                monthSelect.addEventListener('change', filterEvents);
             }
         });
     </script>

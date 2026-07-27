@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'List' => 'List',
+    'All Months' => 'All Months',
+    'Search events...' => 'Search events...',
+    'No matching events found.' => 'No matching events found.',
+    'No upcoming events.' => 'No upcoming events.',
+    'All' => 'All',
+    'Events' => 'Events',
     'in' => 'in',
     'Languages' => 'Languages',
     'Admin' => 'Admin',

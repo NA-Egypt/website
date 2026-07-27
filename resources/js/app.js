@@ -72,12 +72,39 @@ import.meta.glob([
 ]);
 
 import { createApp, h } from 'vue';
+import { createPinia } from 'pinia';
+import '@kodeglot/vue-calendar/style.css';
 import TransactionsTable from './components/TransactionsTable.vue';
 import GenericDataTable from './components/GenericDataTable.vue';
 import FacebookTargeting from './components/FacebookTargeting.vue';
 import CtkDateTimePickerWrapper from './components/CtkDateTimePickerWrapper.vue';
+import EventsCalendar from './components/EventsCalendar.vue';
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Mount EventsCalendar
+    const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
+    calendarEls.forEach(el => {
+        const fetchUrl = el.getAttribute('data-fetch-url') || '/web-calendar-events';
+        const storeUrl = el.getAttribute('data-store-url') || '/web-calendar-events';
+        const canManage = el.hasAttribute('data-can-manage');
+        const locale = el.getAttribute('data-locale') || document.documentElement.lang || 'ar';
+        const csrfToken = el.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const initialEvents = JSON.parse(el.getAttribute('data-initial-events') || '[]');
+
+        const app = createApp({
+            render: () => h(EventsCalendar, {
+                initialEvents,
+                fetchUrl,
+                storeUrl,
+                canManage,
+                locale,
+                csrfToken
+            })
+        });
+        app.use(createPinia());
+        app.mount(el);
+    });
+
     // Mount FacebookTargeting
     const fbEl = document.querySelector('[data-vue-app="FacebookTargeting"]');
     if (fbEl) {

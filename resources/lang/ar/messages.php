@@ -1,6 +1,13 @@
 <?php /** @noinspection ALL */
 
 return [
+    'List' => 'قائمة',
+    'All Months' => 'جميع الأشهر',
+    'Search events...' => 'البحث في الأحداث...',
+    'No matching events found.' => 'لم يتم العثور على أحداث مطابقة.',
+    'No upcoming events.' => 'لا توجد أحداث قادمة.',
+    'All' => 'الكل',
+    'Events' => 'الأحداث',
     'in' => 'في',
     'Languages' => 'اللغه',
     'Admin' => 'إدارة النظام',
