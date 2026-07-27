@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="اتصل بنا والخط الساخن" description="تواصل معنا عبر الخط الساخن والبريد الإلكتروني لزمالة المدمنين المجهولين في مصر.">
     <x-section-head>{{ __('messages.contactus') }}</x-section-head>
         <div class="card" @if(app()->getLocale() === 'ar') style="direction:rtl;" @endif>
             <div class="card-body">

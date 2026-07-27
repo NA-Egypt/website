@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="اجتماعات زمالة المدمنين المجهولين" description="دليل وتفاصيل ومواعيد اجتماعات زمالة المدمنين المجهولين في كافة محافظات مصر وعلى الإنترنت.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
 <x-section-head>{{__('messages.Recovery Meetings')}}</x-section-head>
 

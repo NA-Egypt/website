@@ -1,7 +1,7 @@
 @php
 $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 @endphp
-<x-frontend.layout>
+<x-frontend.layout title="لجان الاتصال والخدمة" description="معلومات عن لجان الاتصال والخدمات في زمالة المدمنين المجهولين بمصر.">
     <x-section-head>{{ __('messages.commsmeetings') }}</x-section-head>
         <div class="card" dir="{{ $direction }}">
             <div class="card-body" dir="{{ $direction }}">

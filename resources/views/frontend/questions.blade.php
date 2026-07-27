@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="الأسئلة الشائعة" description="إجابات عن الأسئلة الأكثر شيوعاً حول زمالة المدمنين المجهولين وكيفية التعافي.">
     <x-section-head>{{ __('messages.test_page.qa.title') }}</x-section-head>
 
     @php

@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="معلومات للجمهور والمهنيين" description="معلومات وتوضيحات حول زمالة المدمنين المجهولين موجهة للجمهور والمهنيين والأطباء والإعلام.">
     @php
         $isArabic = app()->getLocale() === 'ar';
         $pageDir = $isArabic ? 'rtl' : 'ltr';

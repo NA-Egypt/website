@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="الأحداث والمؤتمرات" description="جدول الأحداث والمؤتمرات والأنشطة العامة لزمالة المدمنين المجهولين في مصر.">
     <x-section-head>{{ __('messages.Events') ?? 'Events' }}</x-section-head>
 
     <div class="container my-5">

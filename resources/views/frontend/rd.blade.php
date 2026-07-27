@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout title="مندوب الإقليم" description="معلومات وتحديثات حول مندوب الإقليم والتواصل الإقليمي لزمالة المدمنين المجهولين.">
     <x-section-head>{{ __('messages.contactus') }}</x-section-head>
         <div class="card" @if(app()->getLocale() === 'ar') style="direction:rtl;" @endif>
             <div class="card-body">

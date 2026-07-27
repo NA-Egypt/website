@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout :title="__('messages.NA')" description="الموقع الرسمي لزمالة المدمنين المجهولين في مصر - ابحث عن التعافي والاجتماعات وأرقام المساعدة.">
   <x-section-head>{{ __('messages.NA') }}</x-section-head>
 
   <div class="row justify-content-center mb-3">

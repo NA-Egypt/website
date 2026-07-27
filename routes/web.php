@@ -361,3 +361,32 @@ Route::group(
     }
 );
 
+Route::get('/sitemap.xml', function () {
+    $baseUrl = config('app.url', 'https://naegypt.org');
+    $pages = [
+        ['loc' => '/', 'changefreq' => 'daily', 'priority' => '1.0'],
+        ['loc' => '/meetings', 'changefreq' => 'daily', 'priority' => '0.9'],
+        ['loc' => '/events', 'changefreq' => 'weekly', 'priority' => '0.8'],
+        ['loc' => '/literature', 'changefreq' => 'monthly', 'priority' => '0.8'],
+        ['loc' => '/forpublic', 'changefreq' => 'monthly', 'priority' => '0.7'],
+        ['loc' => '/contactus', 'changefreq' => 'monthly', 'priority' => '0.6'],
+        ['loc' => '/questions', 'changefreq' => 'monthly', 'priority' => '0.6'],
+    ];
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+    foreach ($pages as $page) {
+        $xml .= '<url>';
+        $xml .= '<loc>' . htmlspecialchars($baseUrl . $page['loc']) . '</loc>';
+        $xml .= '<changefreq>' . $page['changefreq'] . '</changefreq>';
+        $xml .= '<priority>' . $page['priority'] . '</priority>';
+        $xml .= '</url>';
+    }
+
+    $xml .= '</urlset>';
+
+    return response($xml, 200, ['Content-Type' => 'application/xml']);
+});
+
+

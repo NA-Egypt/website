@@ -184,7 +184,7 @@
         // Add more items here
     ];
 @endphp
-<x-frontend.layout>
+<x-frontend.layout title="أدبيات الزمالة والكتيبات" description="كتيبات وأدبيات زمالة المدمنين المجهولين والقراءات اليومية والتسجيلات الصوتية للتعافي.">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
     <x-section-head>{{ __('messages.Literature') }}</x-section-head>
 
