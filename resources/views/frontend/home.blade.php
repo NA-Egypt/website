@@ -125,16 +125,26 @@
       gap: 8px !important;
     }
     .calc-box {
-      background: #ffffff !important;
-      border: 1px solid rgba(50, 85, 127, 0.10) !important;
-      border-radius: 18px !important;
+      background: rgba(255, 255, 255, 0.75) !important;
+      backdrop-filter: blur(12px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(190%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.45) !important;
+      border-radius: 20px !important;
       padding: 20px !important;
       margin: 0 0 0 -1.5px !important;
       width: calc(100% + 3px) !important;
       max-width: calc(100% + 3px) !important;
-      display: block !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04) !important;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
       min-height: 270px !important;
+    }
+    .calc-box:hover {
+      transform: translateY(-5px) scale(1.01) !important;
+      box-shadow: 0 20px 40px 0 rgba(50, 85, 127, 0.12), 0 0 0 1px rgba(50, 85, 127, 0.1) !important;
+      border-color: rgba(50, 85, 127, 0.2) !important;
     }
 
     .stat-card-home {
@@ -620,28 +630,31 @@
             </div>
           </div>
         </div>
-        <div class="row justify-content-center mt-3">
-          <div class="col-md-6 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
-            <div>
-              <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
-              @if (session('subscribed'))
-                <div class="alert alert-success p-2">
-                  {{ __('messages.' . session('subscribed')) }}
-                </div>
-              @endif
-              <form action="{{ route('subscribers.store') }}" method="post">
-                @csrf
-                <div class="form-group mb-0">
-                  <input type="email" name="email" class="form-control subscribe-input mb-3"
-                    placeholder="{{ __('messages.Enter your email') }}" required>
-                  <button class="subscribe-btn w-100" style="font-weight: 600;" type="submit">
-                    {{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;" />
-                  </button>
-                </div>
-              </form>
+        <div class="row justify-content-center align-items-stretch mt-3 g-3">
+          <div class="col-md-4 mb-3 d-flex">
+            <div class="helpline-box w-100 p-4 d-flex flex-column justify-content-between">
+              <div>
+                <h4 class="mb-3"><x-fas-envelope style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.Subscribe') }}</h4>
+                @if (session('subscribed'))
+                  <div class="alert alert-success p-2">
+                    {{ __('messages.' . session('subscribed')) }}
+                  </div>
+                @endif
+                <form action="{{ route('subscribers.store') }}" method="post">
+                  @csrf
+                  <div class="form-group mb-0">
+                    <input type="email" name="email" class="form-control subscribe-input mb-3"
+                      placeholder="{{ __('messages.Enter your email') }}" required>
+                    <button class="subscribe-btn w-100" style="font-weight: 600;" type="submit">
+                      {{ __('messages.Subscribe') }}&nbsp;<x-fas-envelope style="width:16px; height:16px;" />
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-          <div class="col-md-6 calc-box mb-3 d-flex flex-column justify-content-between p-4">
+          <div class="col-md-8 mb-3 d-flex">
+            <div class="calc-box w-100 p-4 d-flex flex-column justify-content-between">
             <div class="form-group mb-0 text-center">
               <h5 class="font-weight-bold mb-3 text-primary d-flex align-items-center justify-content-center gap-2" style="color: #32557f !important; font-weight: 700;">
                 <i class="bi bi-calendar-check-fill"></i>&nbsp;{{ __('messages.calculator') }}
@@ -683,6 +696,7 @@
       </div>
     </div>
   </div>
+</div>
   <div class="home-stats-wrap">
     <div class="row justify-content-center">
       <div class="col-md-8">
@@ -718,7 +732,10 @@
   <div class="home-stats-wrap mb-5">
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <div class="home-stats-shell">
+        <div class="home-stats-shell position-relative">
+          <button type="button" class="whatsapp-float-btn border-0" onclick="shareJftToWhatsapp()" title="مشاركة عبر واتساب" style="cursor: pointer; right: 16px !important; left: auto !important;">
+            <x-fab-whatsapp style="width:20px; height:20px;" />
+          </button>
           <div class="jft-content text-right" dir="rtl" style="position: relative; z-index: 1;">
             {!! $jftContent !!}
           </div>
@@ -826,6 +843,17 @@
       document.getElementById('days-result').textContent = totalDays;
 
       console.log(`Difference: ${totalYears} years / ${totalMonths} months / ${totalDays} days`);
+    }
+
+    function shareJftToWhatsapp() {
+      const container = document.querySelector('.jft-content');
+      if (!container) return;
+
+      const fullText = (container.innerText || container.textContent || '').trim();
+      const message = fullText + '\n\n' + 'من موقع زمالة المدمنين المجهولين - مصر:\n' + window.location.href;
+      
+      const whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message);
+      window.open(whatsappUrl, '_blank');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
