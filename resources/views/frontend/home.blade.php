@@ -575,7 +575,7 @@
         <li class="splide__slide">
           <div class="row justify-content-center">
             <div class="col-md-8">
-              <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block">
+              <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block w-100 h-100">
                 <div class="card h-100 shadow-sm border-0 info-card p-4">
                   <div class="card-body text-center d-flex flex-column align-items-center">
                     <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded mb-3 shadow-sm"
@@ -593,7 +593,7 @@
                         <span class="mx-3">
                           📍 <strong>{{ __('messages.convention_location') }}</strong> {{ __('messages.convention_location_val') }}
                         </span>
-                        <span class="mx-3 d-block mt-2 px-3">
+                        <span class="mx-3 d-block mt-2 px-3 text-start w-100">
                           {{ __('messages.convention_desc') }}
                         </span>
                       </div>
@@ -789,43 +789,91 @@
 
   <!-- Convention Popup Modal -->
   <div class="modal fade" id="conventionModal" tabindex="-1" aria-labelledby="conventionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; background: linear-gradient(145deg, #ffffff 0%, #f7fbff 100%);">
-        <div class="modal-header border-0 bg-transparent pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
-          <h5 class="modal-title" id="conventionModalLabel"></h5>
-          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="background-color: rgba(50, 85, 127, 0.08); padding: 0.75rem; border-radius: 50%;"></button>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
+      <div class="modal-content border-0 shadow-2xl overflow-hidden" style="border-radius: 28px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc;">
+        <div class="modal-header border-0 pb-0 pt-3 px-4 position-relative" style="z-index: 10; min-height: 56px;">
+          <div class="d-flex align-items-center gap-2" style="position: absolute; top: 16px; right: 16px; left: auto !important; z-index: 30; direction: rtl;">
+            <button type="button" class="btn-close btn-close-white shadow-none opacity-75 hover-opacity-100" data-bs-dismiss="modal" aria-label="Close" style="background-color: rgba(255, 255, 255, 0.15); padding: 0.65rem; border-radius: 50%;"></button>
+            <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: linear-gradient(90deg, #0284c7, #0d9488); color: #fff; font-size: 0.8rem; letter-spacing: 0.5px;">
+              ✨ المؤتمر السنوي 30
+            </span>
+          </div>
         </div>
-        <div class="modal-body px-4 pb-4 pt-2 text-center d-flex flex-column align-items-center">
-          <a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-dark w-100">
-            <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين" class="img-fluid rounded mb-4 shadow-sm"
-              style="max-height: 320px; object-fit: contain; width: auto; max-width: 100%; transition: transform 0.3s ease;">
-            
-            <h3 class="card-title font-weight-bold mb-3 gradient-text text-center" dir="rtl" style="font-weight: 800; font-size: 1.3rem; text-align: center;">
-              المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026
-              <span class="fs-6 d-block mt-2 font-weight-bold gradient-text text-center">مسار يجمعنا</span>
-            </h3>
-            
-            <div class="card-text text-muted text-center w-100" dir="rtl" style="font-size: 0.95rem; line-height: 1.8;">
-              <div class="d-flex flex-wrap justify-content-center gap-3 my-3 py-3 bg-light rounded text-center border" style="border-color: rgba(50, 85, 127, 0.08) !important;">
-                <span class="mx-3">
-                  📅 <strong>التاريخ:</strong> 8 - 9 أكتوبر 2026
-                </span>
-                <span class="mx-3 border-start ps-3 border-secondary-subtle">
-                  📍 <strong>المكان:</strong> الجامعة الأمريكية بالقاهرة
+        <div class="modal-body p-4 pt-4">
+          <div class="row align-items-center g-4">
+            <!-- Left Poster Column -->
+            <div class="col-lg-5 text-center">
+              <div class="position-relative overflow-hidden rounded-4 shadow-lg group-hover-zoom" style="border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(0,0,0,0.2);">
+                <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون - مسار يجمعنا" class="img-fluid w-100 h-auto rounded-4 transition-transform duration-500 hover-scale"
+                  style="max-height: 380px; object-fit: cover;">
+              </div>
+            </div>
+
+            <!-- Right Content Column -->
+            <div class="col-lg-7 text-end" dir="rtl">
+              <h3 class="fw-extrabold mb-1" style="color: #ffffff; font-size: 1.35rem; line-height: 1.4;">
+                المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين
+              </h3>
+              <div class="mb-3">
+                <span class="badge px-3 py-1.5 rounded-pill fw-bold text-white mt-1" style="background: rgba(14, 165, 233, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8 !important;">
+                  مسار يجمعنا • A PATH THAT UNITES US
                 </span>
               </div>
-              <p class="px-2 text-center" style="color: #475569; max-width: 650px; margin: 0 auto 1.5rem;">
-                يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.
-              </p>
+
+              <!-- Live Countdown Timer -->
+              <div class="mb-3 p-3 rounded-4" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                <div class="text-center small text-uppercase text-slate-400 mb-2 fw-semibold" style="letter-spacing: 1px; color: #94a3b8; font-size: 0.75rem;">
+                  ⏳ المتبقي على انطلاق المؤتمر
+                </div>
+                <div class="d-flex justify-content-center align-items-center gap-2 dir-ltr" id="conventionCountdown">
+                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="fw-bold text-cyan-400 fs-5" id="cd-days" style="color: #38bdf8;">00</div>
+                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">أيام</div>
+                  </div>
+                  <span class="fw-bold text-slate-500">:</span>
+                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="fw-bold text-cyan-400 fs-5" id="cd-hours" style="color: #38bdf8;">00</div>
+                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">ساعات</div>
+                  </div>
+                  <span class="fw-bold text-slate-500">:</span>
+                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="fw-bold text-cyan-400 fs-5" id="cd-minutes" style="color: #38bdf8;">00</div>
+                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">دقائق</div>
+                  </div>
+                  <span class="fw-bold text-slate-500">:</span>
+                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="fw-bold text-cyan-400 fs-5" id="cd-seconds" style="color: #38bdf8;">00</div>
+                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">ثواني</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Event Details Info -->
+              <div class="d-flex flex-column gap-2 mb-3 fs-6" style="color: #cbd5e1; font-size: 0.88rem;">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="fs-5">📅</span>
+                  <span><strong>التاريخ:</strong> 9 - 10 أكتوبر 2026 (الجمعة والسبت)</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="fs-5">📍</span>
+                  <span><strong>المكان:</strong> الجامعة الأمريكية بالقاهرة - ميدان التحرير</span>
+                </div>
+              </div>
+
+              <!-- Buttons Row -->
+              <div class="d-flex flex-wrap gap-2 pt-2 justify-content-end align-items-center">
+                <button type="button" class="btn px-4 py-2 fw-bold rounded-3 d-inline-flex align-items-center gap-2 shadow-sm transition-all" 
+                  onclick="shareConventionModal()"
+                  style="background: #25D366; color: #ffffff; border: none; font-size: 0.9rem;">
+                  <x-fab-whatsapp style="width: 18px; height: 18px; fill: currentColor;" />
+                  مشاركة عبر واتساب
+                </button>
+
+                <button type="button" class="btn btn-outline-light px-4 py-2 fw-semibold rounded-3" data-bs-dismiss="modal" style="font-size: 0.9rem; border-color: rgba(255,255,255,0.2);">
+                  إغلاق
+                </button>
+              </div>
             </div>
-          </a>
-          <div class="d-flex gap-2 justify-content-center w-100 mt-2">
-            <!--<a href="https://egypt30convention.org" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-4 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #00698f 0%, #32557f 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(50, 85, 127, 0.2);">
-              التفاصيل والتسجيل
-            </a>-->
-            <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 12px; font-weight: 600;">
-              إغلاق
-            </button>
           </div>
         </div>
       </div>
@@ -898,7 +946,50 @@
       window.open(whatsappUrl, '_blank');
     }
 
+    function shareConventionModal() {
+      const title = 'المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026 (مسار يجمعنا)';
+      const details = '📅 9-10 أكتوبر 2026 | 📍 الجامعة الأمريكية بالقاهرة - ميدان التحرير';
+      const url = 'https://egypt30convention.org';
+      const message = `${title}\n${details}\n\nللمزيد من التفاصيل والمعلومات:\n${url}`;
+      
+      const whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message);
+      window.open(whatsappUrl, '_blank');
+    }
+
+    function initConventionCountdown() {
+      const targetDate = new Date('2026-10-09T09:00:00+02:00').getTime();
+
+      function updateTimer() {
+        const now = new Date().getTime();
+        const difference = targetDate - now;
+
+        if (difference <= 0) {
+          return;
+        }
+
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        const elDays = document.getElementById('cd-days');
+        const elHours = document.getElementById('cd-hours');
+        const elMinutes = document.getElementById('cd-minutes');
+        const elSeconds = document.getElementById('cd-seconds');
+
+        if (elDays) elDays.textContent = String(days).padStart(2, '0');
+        if (elHours) elHours.textContent = String(hours).padStart(2, '0');
+        if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
+        if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+      initConventionCountdown();
+
       if (!sessionStorage.getItem('convention_popup_shown')) {
         const conventionModalEl = document.getElementById('conventionModal');
         if (conventionModalEl && window.bootstrap) {
