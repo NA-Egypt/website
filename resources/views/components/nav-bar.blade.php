@@ -17,9 +17,13 @@
         <i class="bi bi-house-door-fill" style="font-size: 22px;"></i>
       </a>
       @endif
-      <div class="top-navbar d-none d-xl-block">
+      <div class="top-navbar d-none d-xl-flex align-items-center gap-2">
+        @if($hasSidebar)
+        <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="{{ app()->getLocale() === 'ar' ? 'تصغير/توسيع القائمة' : 'Toggle Sidebar' }}">
+          <i class="bi bi-list fs-4"></i>
+        </div>
+        @endif
         <a href="{{ route('dashboard') }}">
-
           <img src="{{ asset('assets/images/na.png') }}" alt="" width="150" height="50">
         </a>
       </div>
@@ -77,13 +81,21 @@
                             Guest
                           @endauth
                         </h6>
-                        <small class="text-muted small">
+                        <small class="text-muted small d-block">
                           @auth
-                            {{ Str::limit(Auth::user()->email, 20) }}
+                            {{ Str::limit(Auth::user()->email, 22) }}
                           @else
                             Welcome
                           @endauth
                         </small>
+                        @auth
+                        @php
+                          $userRole = Auth::user()->roles->first()?->name ?? 'User';
+                        @endphp
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mt-1 px-2 py-1" style="font-size: 0.7rem; text-transform: uppercase;">
+                          {{ $userRole }}
+                        </span>
+                        @endauth
                     </div>
                 </div>
               </li>

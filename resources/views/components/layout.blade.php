@@ -165,11 +165,125 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       -webkit-backdrop-filter: blur(20px) !important;
       border-inline-end: 1px solid var(--glass-border) !important;
       z-index: 1030;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .sidebar-wrapper .navigation { background: transparent !important; }
   .sidebar-wrapper .navigation li a { transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); }
   .sidebar-wrapper .navigation .menu-label { color: var(--text-secondary) !important; }
   .sidebar-wrapper .navigation ul { background: transparent !important; }
+
+  /* Flush Sidebar & Full Viewport Table Styles */
+  body.has-sidebar .sidebar-wrapper {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1030;
+      overflow-x: hidden;
+      overflow-y: auto;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  [dir="rtl"] body.has-sidebar .sidebar-wrapper {
+      left: auto !important;
+      right: 0 !important;
+  }
+
+  /* Expanded Mode (default 240px) */
+  body.has-sidebar:not(.sidebar-collapsed) .sidebar-wrapper {
+      width: 240px !important;
+  }
+  body.has-sidebar:not(.sidebar-collapsed) .top-header .navbar {
+      left: 240px !important;
+      width: calc(100% - 240px) !important;
+      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .top-header .navbar {
+      left: 0 !important;
+      right: 240px !important;
+      width: calc(100% - 240px) !important;
+  }
+  body.has-sidebar:not(.sidebar-collapsed) .page-content {
+      margin-left: 240px !important;
+      width: calc(100% - 240px) !important;
+      transition: margin 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .page-content {
+      margin-left: 0 !important;
+      margin-right: 240px !important;
+  }
+
+  /* Compact Mode (64px) */
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
+      width: 64px !important;
+  }
+  body.has-sidebar.sidebar-collapsed .top-header .navbar {
+      left: 64px !important;
+      width: calc(100% - 64px) !important;
+      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [dir="rtl"] body.has-sidebar.sidebar-collapsed .top-header .navbar {
+      left: 0 !important;
+      right: 64px !important;
+      width: calc(100% - 64px) !important;
+  }
+  body.has-sidebar.sidebar-collapsed .page-content {
+      margin-left: 64px !important;
+      width: calc(100% - 64px) !important;
+      transition: margin 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
+      margin-left: 0 !important;
+      margin-right: 64px !important;
+  }
+
+  /* 100% Table Viewport Width Spanning */
+  .page-content .container-fluid {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+  }
+
+  .table-responsive,
+  .table,
+  .card,
+  .glass-card,
+  table.dataTable {
+      width: 100% !important;
+      max-width: 100% !important;
+  }
+
+  /* Hide elements in Compact Mode */
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .menu-title,
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .sidebar-title,
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .collapse,
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .menu-divider-label {
+      display: none !important;
+  }
+
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .navigation li a {
+      justify-content: center !important;
+      padding: 8px 0 !important;
+      margin: 3px 6px !important;
+  }
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon {
+      margin-right: 0 !important;
+      margin-left: 0 !important;
+      font-size: 18px !important;
+  }
+
+  /* Hide Overlay completely on Desktop (prevent graying out layout) */
+  @media (min-width: 992px) {
+      .overlay,
+      .wrapper.toggled .overlay,
+      body.sidebar-collapsed .overlay {
+          display: none !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          visibility: hidden !important;
+      }
+  }
 
   /* RTL Form Check adjustments */
   [dir="rtl"] .form-check {
@@ -198,6 +312,21 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   </style>
 
   <title>{{__('messages.NA')}}</title>
+
+  <!-- Restore Sidebar State Early to Prevent FOCU -->
+  <script>
+    (function() {
+      try {
+        var isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+        if (isCollapsed && window.innerWidth >= 992) {
+          document.documentElement.classList.add('sidebar-collapsed-init');
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('sidebar-collapsed');
+          });
+        }
+      } catch(e){}
+    })();
+  </script>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX958298Y6"></script>

@@ -103,7 +103,67 @@
       {{-- / IT Change Requests count --}}
     </div>
     {{-- / Cards --}}
-    {{-- / Cards --}}
+
+    {{-- Quick Actions Launcher --}}
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="glass-card p-3" style="border-radius: 16px;">
+          <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+            <h6 class="mb-0 fw-bold text-uppercase opacity-75" style="color: var(--text-primary); letter-spacing: 0.5px;">
+              <i class="bi bi-lightning-charge-fill me-1 text-warning"></i>
+              {{ app()->getLocale() === 'ar' ? 'إجراءات سريعة' : 'Quick Actions' }}
+            </h6>
+          </div>
+          <div class="row row-cols-2 row-cols-md-4 g-3">
+            <div class="col">
+              <a href="{{ route('committee-reports.index') }}" class="btn btn-light w-100 p-3 rounded-4 border d-flex align-items-center gap-3 text-start neo-list-item text-decoration-none" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center text-primary" style="width: 42px; height: 42px; background: rgba(59, 130, 246, 0.12);">
+                  <i class="bi bi-file-earmark-plus-fill fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark small">{{ app()->getLocale() === 'ar' ? 'تقارير اللجان' : 'Committee Reports' }}</div>
+                  <small class="text-muted" style="font-size: 0.75rem;">{{ app()->getLocale() === 'ar' ? 'عرض وإضافة التقارير' : 'Manage & Add' }}</small>
+                </div>
+              </a>
+            </div>
+            <div class="col">
+              <a href="{{ route('meeting.index') }}" class="btn btn-light w-100 p-3 rounded-4 border d-flex align-items-center gap-3 text-start neo-list-item text-decoration-none" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center text-success" style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.12);">
+                  <i class="bi bi-calendar-event-fill fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark small">{{ app()->getLocale() === 'ar' ? 'الاجتماعات' : 'Meetings' }}</div>
+                  <small class="text-muted" style="font-size: 0.75rem;">{{ app()->getLocale() === 'ar' ? 'جدول الاجتماعات' : 'View Schedule' }}</small>
+                </div>
+              </a>
+            </div>
+            <div class="col">
+              <a href="{{ route('calendar.index') }}" class="btn btn-light w-100 p-3 rounded-4 border d-flex align-items-center gap-3 text-start neo-list-item text-decoration-none" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center text-warning" style="width: 42px; height: 42px; background: rgba(245, 158, 11, 0.12);">
+                  <i class="bi bi-calendar-check-fill fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark small">{{ app()->getLocale() === 'ar' ? 'التقويم السنوي' : 'Yearly Calendar' }}</div>
+                  <small class="text-muted" style="font-size: 0.75rem;">{{ app()->getLocale() === 'ar' ? 'الأحداث والفعاليات' : 'Events & Dates' }}</small>
+                </div>
+              </a>
+            </div>
+            <div class="col">
+              <a href="{{ route('change-requests.index') }}" class="btn btn-light w-100 p-3 rounded-4 border d-flex align-items-center gap-3 text-start neo-list-item text-decoration-none" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                <div class="rounded-3 p-2 d-flex align-items-center justify-content-center text-info" style="width: 42px; height: 42px; background: rgba(14, 165, 233, 0.12);">
+                  <i class="bi bi-cpu-fill fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark small">{{ app()->getLocale() === 'ar' ? 'طلبات الدعم' : 'IT Change Requests' }}</div>
+                  <small class="text-muted" style="font-size: 0.75rem;">{{ app()->getLocale() === 'ar' ? 'الدعم الفني' : 'Technical Support' }}</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{-- / Quick Actions Launcher --}}
 
     <div class="row g-3 mb-4">
 
