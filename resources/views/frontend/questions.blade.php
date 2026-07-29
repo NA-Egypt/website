@@ -13,7 +13,7 @@
             <div class="container">
                 <div class="hero-shell">
                     <span class="hero-kicker">{{ __('messages.test_page.nav.questions.kicker') }}</span>
-                    <h1>{{ __('messages.test_page.qa.title') }}</h1>
+                    <h2>{{ __('messages.test_page.qa.title') }}</h2>
                     <p>{{ __('messages.test_page.nav.questions.desc') }}</p>
                 </div>
             </div>

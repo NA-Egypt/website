@@ -6,7 +6,7 @@
 ])
 @php
     $defaultTitle = __('messages.NA');
-    $pageTitle = $title ? $title . ' - ' . $defaultTitle : $defaultTitle;
+    $pageTitle = ($title && trim($title) !== trim($defaultTitle)) ? $title . ' - ' . $defaultTitle : $defaultTitle;
     $pageDesc = $description ?? 'زمالة المدمنين المجهولين في مصر - Narcotics Anonymous Egypt. نبحث عن التعافي ونقدم الدعم لمساعدة أي مدمن على التوقف عن استخدام المخدرات.';
     $pageKeywords = $keywords ?? 'زمالة المدمنين المجهولين, NA Egypt, تعافي, اجتماع مدمنين مجهولين, Narcotics Anonymous, مصر, علاج الإدمان';
     $pageImage = $ogImage ?? asset('assets/images/na-logo32.webp');
