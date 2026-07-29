@@ -7,7 +7,9 @@
 @php
     $defaultTitle = __('messages.NA');
     $pageTitle = ($title && trim($title) !== trim($defaultTitle)) ? $title . ' - ' . $defaultTitle : $defaultTitle;
-    $pageDesc = $description ?? 'زمالة المدمنين المجهولين في مصر - Narcotics Anonymous Egypt. نبحث عن التعافي ونقدم الدعم لمساعدة أي مدمن على التوقف عن استخدام المخدرات.';
+    $pageDesc = $description ?? (app()->getLocale() === 'ar' 
+        ? 'الموقع الرسمي لزمالة المدمنين المجهولين في مصر (NA Egypt). نبحث عن التعافي ونقدم الدعم والمساعدة والدليل الكامل لمواعيد وأماكن الاجتماعات في كافة المحافظات.'
+        : 'Official website of Narcotics Anonymous Egypt (NA Egypt). We offer recovery, support, meeting directories, and resources to help any addict stop using drugs.');
     $pageKeywords = $keywords ?? 'زمالة المدمنين المجهولين, NA Egypt, تعافي, اجتماع مدمنين مجهولين, Narcotics Anonymous, مصر, علاج الإدمان';
     $pageImage = $ogImage ?? asset('assets/images/na-logo32.webp');
     $currentUrl = url()->current();

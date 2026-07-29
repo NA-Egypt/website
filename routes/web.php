@@ -356,6 +356,10 @@ Route::group(
         Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
         Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');
 
+        Route::get('/privacy-policy', function () {
+            return view('frontend.privacy');
+        })->name('privacy.policy');
+
         // Public Custom Forms
         Route::get('/f/{slug}', [PublicFormController::class, 'show'])->name('forms.show.public');
         Route::post('/f/{slug}', [PublicFormController::class, 'submit'])->name('forms.submit.public');
@@ -364,7 +368,10 @@ Route::group(
 );
 
 Route::get('/sitemap.xml', function () {
-    $baseUrl = config('app.url', 'https://naegypt.org');
+    $baseUrl = rtrim(request()->getSchemeAndHttpHost(), '/');
+    if (str_contains($baseUrl, '127.0.0.1') || str_contains($baseUrl, 'localhost')) {
+        $baseUrl = 'https://naegypt.org';
+    }
     $pages = [
         ['loc' => '/', 'changefreq' => 'daily', 'priority' => '1.0'],
         ['loc' => '/meetings', 'changefreq' => 'daily', 'priority' => '0.9'],

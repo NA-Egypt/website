@@ -1,4 +1,4 @@
-<x-frontend.layout>
+<x-frontend.layout :title="__('messages.fdcomm')" :description="__('messages.fdcomm')">
     <x-section-head>{{ __('messages.fdcomm') }}</x-section-head>
     <style>
         body {
