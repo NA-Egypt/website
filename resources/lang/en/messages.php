@@ -1382,6 +1382,7 @@ return [
     'Targeting Tools' => 'Targeting Tools',
     'Facebook Targeting' => 'Facebook Targeting',
     'Direct' => 'Direct',
+    'privacy_policy' => 'Privacy Policy',
 ];
 
 

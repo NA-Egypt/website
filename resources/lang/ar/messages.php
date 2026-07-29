@@ -1386,6 +1386,7 @@ return [
     'Targeting Tools' => 'أدوات الاستهداف',
     'Facebook Targeting' => 'استهداف فيسبوك',
     'Direct' => 'مباشر',
+    'privacy_policy' => 'سياسة الخصوصية',
 ];
 
 
