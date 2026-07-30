@@ -17,10 +17,7 @@ use App\Models\User;
 use App\Observers\GenericObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Mcamara\LaravelLocalization\Traits\LoadsTranslatedCachedRoutes;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
@@ -64,12 +61,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::useBootstrapFive();
-        // Fix Livewire 404 with LaravelLocalization
-        Livewire::setUpdateRoute(function ($handle) {
-            return Route::post('/livewire/update', $handle)
-                ->middleware(['web'])
-                ->prefix(\Mcamara\LaravelLocalization\Facades\LaravelLocalization::setLocale());
-        });
         RouteServiceProvider::loadCachedRoutesUsing(fn() => $this->loadCachedRoutes());
     }
 }
