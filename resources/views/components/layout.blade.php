@@ -7,6 +7,12 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 <head>
   <meta charset="utf-8">
   <meta charset="utf-8">
+  <script>
+    window.heronsignalConfig = {
+      publicKey: "pk_BmZyEnNid-kGGwequQ8VlozPsXVfs_X1"
+    };
+  </script>
+  <script src="https://api.heronsignal.com/tracker.js" async></script>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">

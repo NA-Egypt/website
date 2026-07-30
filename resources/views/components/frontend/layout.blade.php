@@ -20,6 +20,12 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    window.heronsignalConfig = {
+      publicKey: "pk_BmZyEnNid-kGGwequQ8VlozPsXVfs_X1"
+    };
+  </script>
+  <script src="https://api.heronsignal.com/tracker.js" async></script>
   <title>{{ $pageTitle }}</title>
   <meta name="description" content="{{ $pageDesc }}">
   <meta name="keywords" content="{{ $pageKeywords }}">
