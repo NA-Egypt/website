@@ -28,7 +28,7 @@ $(function() {
         });
     });
 
-    $('.select2').each(function() {
+    $('.select2:not(.select2-manual)').each(function() {
         const placeholder = $(this).data('placeholder') ?? '';
         $(this).select2({
             theme: 'bootstrap4',

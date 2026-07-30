@@ -61,6 +61,7 @@ const loadPlugins = async () => {
 
 
     } catch (err) {
+        captureError(err);
         console.error("Failed to load plugins via async/await", err);
     }
 };
@@ -74,6 +75,9 @@ import.meta.glob([
 import { createApp, h, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia';
 import '@kodeglot/vue-calendar/style.css';
+import { initHeronSignal, event, captureError } from '@heronsignal/web';
+
+void initHeronSignal({ publicKey: 'pk_BmZyEnNid-kGGwequQ8VlozPsXVfs_X1' });
 
 const TransactionsTable = defineAsyncComponent(() => import('./components/TransactionsTable.vue'));
 const GenericDataTable = defineAsyncComponent(() => import('./components/GenericDataTable.vue'));
@@ -83,6 +87,7 @@ const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCal
 const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
 
 document.addEventListener("DOMContentLoaded", () => {
+    event('dashboard_loaded', { source: 'app_js' });
     // Mount EventsCalendar
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
     calendarEls.forEach(el => {
