@@ -344,7 +344,7 @@ return [
 
     // URLs which should not be processed, e.g. '/nova', '/nova/*', '/nova-api/*' or specific application URLs
     // Defaults to []
-    'urlsIgnored' => ['/skipped', '/livewire', '/livewire/*', 'livewire', 'livewire/*'],
+    'urlsIgnored' => ['/skipped', '/livewire/update', 'livewire/update', '/livewire', 'livewire', '/livewire/*', 'livewire/*'],
 
     'httpMethodsIgnored' => ['POST', 'PUT', 'PATCH', 'DELETE'],
 ];

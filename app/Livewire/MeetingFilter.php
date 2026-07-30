@@ -35,6 +35,49 @@ class MeetingFilter extends Component
             } else {
                 $this->day = $englishDay;
             }
+        } else {
+            $this->normalizeFilters();
+        }
+    }
+
+    private function normalizeFilters()
+    {
+        $locale = app()->getLocale();
+        $targetField = $locale === 'ar' ? 'ar_name' : 'en_name';
+
+        if (!empty($this->day) && $this->day !== 'all') {
+            $dayObj = Day::where('ar_name', $this->day)->orWhere('en_name', $this->day)->first();
+            if ($dayObj) {
+                $this->day = $dayObj->$targetField;
+            }
+        }
+
+        if (!empty($this->city)) {
+            $cityObj = City::where('ar_name', $this->city)->orWhere('en_name', $this->city)->first();
+            if ($cityObj) {
+                $this->city = $cityObj->$targetField;
+            }
+        }
+
+        if (!empty($this->group)) {
+            $groupObj = Group::where('ar_name', $this->group)->orWhere('en_name', $this->group)->first();
+            if ($groupObj) {
+                $this->group = $groupObj->$targetField;
+            }
+        }
+
+        if (!empty($this->serviceBody)) {
+            $sbObj = ServiceBody::where('ar_name', $this->serviceBody)->orWhere('en_name', $this->serviceBody)->first();
+            if ($sbObj) {
+                $this->serviceBody = $sbObj->$targetField;
+            }
+        }
+
+        if (!empty($this->neighborhood)) {
+            $nObj = Neighborhood::where('ar_name', $this->neighborhood)->orWhere('en_name', $this->neighborhood)->first();
+            if ($nObj) {
+                $this->neighborhood = $nObj->$targetField;
+            }
         }
     }
 
@@ -163,6 +206,7 @@ class MeetingFilter extends Component
 
     public function render(MeetingFilterService $filterService)
     {
+        $this->normalizeFilters();
         $days = Day::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
         $serviceBodies = ServiceBody::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
         
@@ -243,6 +287,17 @@ class MeetingFilter extends Component
         ]);
 
         return view('livewire.meeting-filter', [
+            'day' => $this->day,
+            'serviceBody' => $this->serviceBody,
+            'group' => $this->group,
+            'city' => $this->city,
+            'neighborhood' => $this->neighborhood,
+            'type' => $this->type,
+            'search' => $this->search,
+            'virtualOnly' => $this->virtualOnly,
+            'englishOnly' => $this->englishOnly,
+            'businessMeetingsOnly' => $this->businessMeetingsOnly,
+            'recurrence' => $this->recurrence,
             'meetings' => $meetings,
             'days' => $days,
             'serviceBodies' => $serviceBodies,
@@ -251,7 +306,6 @@ class MeetingFilter extends Component
             'neighborhoods' => $neighborhoods,
             'openCount' => $openCount,
             'closedCount' => $closedCount,
-            'businessMeetingsOnly' => $this->businessMeetingsOnly,
             'recurrences' => $recurrences,
         ]);
     }

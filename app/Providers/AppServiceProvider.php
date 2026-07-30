@@ -62,5 +62,18 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrapFive();
         RouteServiceProvider::loadCachedRoutesUsing(fn() => $this->loadCachedRoutes());
+
+        if (env('APP_ENV') === 'production' || app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
+        \Livewire\Livewire::setUpdateRoute(function ($handle) {
+            \Illuminate\Support\Facades\Route::match(['get', 'post'], '/ar/livewire/update', $handle)->middleware('web');
+            \Illuminate\Support\Facades\Route::match(['get', 'post'], '/en/livewire/update', $handle)->middleware('web');
+
+            return \Illuminate\Support\Facades\Route::match(['get', 'post'], '/livewire/update', $handle)
+                ->middleware('web')
+                ->name('livewire.update');
+        });
     }
 }

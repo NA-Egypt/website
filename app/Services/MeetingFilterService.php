@@ -16,11 +16,11 @@ class MeetingFilterService
 
         // Day filter logic
         if (isset($filters['day'])) {  // Check if day parameter exists (even if empty)
-            if ($filters['day'] === 'all') {
+            if ($filters['day'] === 'all' || $filters['day'] === '') {
                 // Explicitly show all days - no day filter applied
             } elseif (!empty($filters['day'])) {
-                // Specific day selected
-                $query->whereHas('day', fn($q) => $q->where($field, $filters['day']));
+                // Specific day selected: match ar_name or en_name
+                $query->whereHas('day', fn($q) => $q->where('ar_name', $filters['day'])->orWhere('en_name', $filters['day']));
             }
         } else {
             // No default day filter - show all meetings on initial load
@@ -28,28 +28,26 @@ class MeetingFilterService
 
 
         if (!empty($filters['city'])) {
-            $query->whereHas('group.neighborhood.city', function ($q) use ($filters, $field) {
-                $q->where($field, $filters['city']);
+            $query->whereHas('group.neighborhood.city', function ($q) use ($filters) {
+                $q->where('ar_name', $filters['city'])->orWhere('en_name', $filters['city']);
             });
         }
 
         if (!empty($filters['serviceBody'])) {
-            $query->whereHas('group.serviceBody', function ($q) use ($filters, $field) {
-                $q->where($field, $filters['serviceBody']);
+            $query->whereHas('group.serviceBody', function ($q) use ($filters) {
+                $q->where('ar_name', $filters['serviceBody'])->orWhere('en_name', $filters['serviceBody']);
             });
         }
 
         if (!empty($filters['group'])) {
-            $query->whereHas('group', function ($q) use ($filters, $field) {
-                $q->where($field, $filters['group']);
+            $query->whereHas('group', function ($q) use ($filters) {
+                $q->where('ar_name', $filters['group'])->orWhere('en_name', $filters['group']);
             });
         }
 
-
-
         if (!empty($filters['neighborhood'])) {
-            $query->whereHas('group.neighborhood', function ($q) use ($filters, $field) {
-                $q->where($field, $filters['neighborhood']);
+            $query->whereHas('group.neighborhood', function ($q) use ($filters) {
+                $q->where('ar_name', $filters['neighborhood'])->orWhere('en_name', $filters['neighborhood']);
             });
         }
 

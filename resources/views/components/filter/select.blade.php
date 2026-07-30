@@ -35,7 +35,7 @@
     <div
         x-data="{
             model: @entangle($attributes->wire('model')),
-            init() {
+            initSelect2() {
                 let select = $(this.$refs.select).select2({
                     theme: 'bootstrap4',
                     width: '100%',
@@ -56,6 +56,21 @@
                     select.prop('disabled', this.$refs.select.disabled).trigger('change.select2');
                 });
                 observer.observe(this.$refs.select, { attributes: true, attributeFilter: ['disabled'] });
+            },
+            init() {
+                // Wait for Select2 to be available (Vite module loads asynchronously)
+                let self = this;
+                let attempts = 0;
+                let waitForSelect2 = setInterval(function() {
+                    attempts++;
+                    if (typeof $ !== 'undefined' && $.fn && $.fn.select2) {
+                        clearInterval(waitForSelect2);
+                        self.initSelect2();
+                    } else if (attempts > 100) {
+                        clearInterval(waitForSelect2);
+                        console.error('Select2 failed to load after 5 seconds');
+                    }
+                }, 50);
             }
         }"
         wire:ignore

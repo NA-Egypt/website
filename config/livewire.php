@@ -184,4 +184,5 @@ return [
 
     'release_token' => 'a',
     'asset_url' => null,
+    'update_uri' => null,
 ];
