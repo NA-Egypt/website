@@ -113,7 +113,7 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-TX958298Y6');
+  gtag('config', 'G-TX958298Y6', { 'transport_type': 'beacon' });
 </script>
 </head>
   <body class="hanken-grotesk {{ $direction ?? 'rtl' }}">
