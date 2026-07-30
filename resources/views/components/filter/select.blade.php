@@ -51,6 +51,11 @@
                 this.$watch('model', (value) => {
                     select.val(value).trigger('change.select2');
                 });
+
+                const observer = new MutationObserver(() => {
+                    select.prop('disabled', this.$refs.select.disabled).trigger('change.select2');
+                });
+                observer.observe(this.$refs.select, { attributes: true, attributeFilter: ['disabled'] });
             }
         }"
         wire:ignore
