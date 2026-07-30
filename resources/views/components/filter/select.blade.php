@@ -40,7 +40,7 @@
                     theme: 'bootstrap4',
                     width: '100%',
                     placeholder: '{{ __('messages.Choose') }} {{ $label }}...',
-                    allowClear: {{ $attributes->has('data-allow-clear') ? 'true' : 'false' }},
+                    allowClear: true,
                     dir: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}'
                 });
 
