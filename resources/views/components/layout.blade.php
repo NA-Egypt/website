@@ -336,7 +336,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-TX958298Y6');
+  gtag('config', 'G-TX958298Y6', { 'transport_type': 'beacon' });
 </script>
 </head>
 @php
