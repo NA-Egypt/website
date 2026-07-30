@@ -20,7 +20,6 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script>
   <title>{{ $pageTitle }}</title>
   <meta name="description" content="{{ $pageDesc }}">
   <meta name="keywords" content="{{ $pageKeywords }}">
@@ -115,6 +114,7 @@
 
   gtag('config', 'G-TX958298Y6', { 'transport_type': 'beacon' });
 </script>
+  @livewireStyles
 </head>
   <body class="hanken-grotesk {{ $direction ?? 'rtl' }}">
     <x-frontend.nav-bar />
@@ -124,5 +124,17 @@
         </main>
       </div>
     <x-frontend.footer />
+    @livewireScripts
+    <script>
+        // Patch Livewire's update URI to include locale prefix.
+        // Livewire reads data-update-uri lazily (on user interaction), so patching
+        // it after the script tag loads but before any click works perfectly.
+        (function() {
+            var el = document.querySelector('script[data-update-uri]');
+            if (el) {
+                el.setAttribute('data-update-uri', '/{{ app()->getLocale() }}/livewire/update');
+            }
+        })();
+    </script>
   </body>
 </html>

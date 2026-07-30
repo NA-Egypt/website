@@ -92,16 +92,16 @@
 
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                                 <div class="col" wire:key="filter-group" id="tour-group">
-                                    <x-filter.select :options="$groups" name="group" wire:model.live="group" class="form-select form-control" label="{{__('messages.Group')}}" :disabled="!!$serviceBody || !!$city || !!$neighborhood" />
+                                    <x-filter.select :options="$groups" name="group" wire:model.live="group" class="form-select form-control" label="{{__('messages.Group')}}" />
                                 </div>
                                 <div class="col" wire:key="filter-serviceBody" id="tour-service-body">
-                                    <x-filter.select :options="$serviceBodies" name="serviceBody" wire:model.live="serviceBody" class="form-select form-control" label="{{__('messages.Service Body')}}" :disabled="!!$group || !!$city || !!$neighborhood" />
+                                    <x-filter.select :options="$serviceBodies" name="serviceBody" wire:model.live="serviceBody" class="form-select form-control" label="{{__('messages.Service Body')}}" />
                                 </div>
                                 <div class="col" wire:key="filter-city" id="tour-city">
-                                    <x-filter.select :options="$cities" name="city" wire:model.live="city" class="form-select form-control" label="{{__('messages.City')}}" :disabled="!!$serviceBody || !!$group" />
+                                    <x-filter.select :options="$cities" name="city" wire:model.live="city" class="form-select form-control" label="{{__('messages.City')}}" />
                                 </div>
                                 <div class="col" wire:key="filter-neighborhood" id="tour-neighborhood">
-                                    <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" :disabled="!!$serviceBody || !!$group" />
+                                    <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" />
                                 </div>
                                 <div class="col" wire:key="filter-type" id="tour-type">
                                     <div class="d-none d-md-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden; height: 19px;">
