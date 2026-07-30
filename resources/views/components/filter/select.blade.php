@@ -3,7 +3,7 @@
 @php
         $default = [
             'data-allow-clear' => "true",
-            'class' => "select2",
+            'class' => "select2 select2-manual",
             'name' => $name,
         ];
 
