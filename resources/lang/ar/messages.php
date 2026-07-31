@@ -1234,6 +1234,7 @@ return [
     'Direct' => 'مباشر',
     'optional' => 'اختياري',
     'Helpline' => 'خط المساعدة',
+    'ShareLocation' => 'مشاركة الموقع',
 
     // Literature Requests
     'Literature Request' => 'طلبية أدبيات',

@@ -323,22 +323,56 @@ $isFirstCardAcrossSections = true;
                             </div>
                         @endif
 
-                        @if($group && $group->location)
-                            <div class="meeting-options d-flex align-items-center gap-2 flex-wrap">
-                                <a href="{{ $group->location }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
-                                @if(\Illuminate\Support\Str::contains(strtolower($group->location), ['map', 'goo.gl']))
-                                    <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
-                                @elseif(\Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']))
-                                    <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
-                                @elseif($group instanceof \App\Models\DirectOnlineGroup || $group->group_type !== 'فعلي')
-                                    <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
-                                @else
-                                    <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
+                        @if($group && ($group->location || $group->ar_address))
+                            @php
+                                $shareGroupName = $direction === 'rtl' ? $group->ar_name : $group->en_name;
+                                $shareDay = empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence)
+                                    ? ($direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name)
+                                    : $meeting->formatted_recurrence . ' - ' . ($direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name);
+                                $shareTime = \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($meeting->end_time)->format('h:i A');
+                                $shareAddress = $group->ar_address ? ($direction === 'rtl' ? $group->ar_address : ($group->en_address ?: $group->ar_address)) : null;
+                                $shareLocationUrl = $group->location;
+
+                                if ($direction === 'rtl') {
+                                    $shareText = "اجتماع: {$shareGroupName}\nاليوم: {$shareDay} ({$shareTime})";
+                                    if ($shareAddress) {
+                                        $shareText .= "\nالعنوان: {$shareAddress}";
+                                    }
+                                    if ($shareLocationUrl) {
+                                        $shareText .= "\nالموقع: {$shareLocationUrl}";
+                                    }
+                                } else {
+                                    $shareText = "Meeting: {$shareGroupName}\nDay: {$shareDay} ({$shareTime})";
+                                    if ($shareAddress) {
+                                        $shareText .= "\nAddress: {$shareAddress}";
+                                    }
+                                    if ($shareLocationUrl) {
+                                        $shareText .= "\nLocation: {$shareLocationUrl}";
+                                    }
+                                }
+                            @endphp
+                            <div class="meeting-options d-flex align-items-center gap-2 flex-wrap mt-2">
+                                @if($group->location)
+                                    <a href="{{ $group->location }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
+                                    @if(\Illuminate\Support\Str::contains(strtolower($group->location), ['map', 'goo.gl']))
+                                        <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
+                                    @elseif(\Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']))
+                                        <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
+                                    @elseif($group instanceof \App\Models\DirectOnlineGroup || $group->group_type !== 'فعلي')
+                                        <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
+                                    @else
+                                        <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
+                                    @endif
+                                    </a>
                                 @endif
+
+                                <a href="https://api.whatsapp.com/send?text={{ rawurlencode($shareText) }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;" title="{{ __('messages.ShareLocation') }}">
+                                    <x-fab-whatsapp style="width:12px; height:12px;" class="me-1"/>
+                                    <span>{{ __('messages.ShareLocation') }}</span>
                                 </a>
 
                                 @if($group instanceof \App\Models\DirectOnlineGroup || \Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']) || ($group && $group->group_type !== 'فعلي'))
-                                    <a href="https://wa.me/201060933888" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
+                                    <a href="https://wa.me/201060933888" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
                                         <x-fab-whatsapp style="width:12px; height:12px;" class="me-1"/>
                                         <span>{{ __('messages.Helpline') }}</span>
                                     </a>

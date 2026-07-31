@@ -1230,6 +1230,7 @@ return [
     'Direct' => 'Direct',
     'optional' => 'Optional',
     'Helpline' => 'Helpline',
+    'ShareLocation' => 'Share Location',
 
     // Literature Requests
     'Literature Request' => 'Literature Request',
