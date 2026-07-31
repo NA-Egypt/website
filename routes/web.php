@@ -46,23 +46,37 @@ Route::group(
             Route::get('/dashboard', [GreatingPagesController::class, 'dashboard'])
                 ->name('dashboard');
 
-            // Store Inventory Routes:
+            // Stocktaking Routes:
+            Route::get('/store/stocktaking', [\App\Http\Controllers\StocktakingController::class, 'index'])->name('store.stocktaking.index');
+            Route::post('/store/stocktaking/start', [\App\Http\Controllers\StocktakingController::class, 'start'])->name('store.stocktaking.start');
+            Route::get('/store/stocktaking/{session}/count', [\App\Http\Controllers\StocktakingController::class, 'count'])->name('store.stocktaking.count');
+            Route::post('/store/stocktaking/{session}/count', [\App\Http\Controllers\StocktakingController::class, 'updateCount'])->name('store.stocktaking.update_count');
+            Route::get('/store/stocktaking/{session}', [\App\Http\Controllers\StocktakingController::class, 'show'])->name('store.stocktaking.show');
+            Route::post('/store/stocktaking/{session}/adjust', [\App\Http\Controllers\StocktakingController::class, 'applyAdjustments'])->name('store.stocktaking.adjust');
+            Route::get('/store/stocktaking/{session}/pdf', [\App\Http\Controllers\StocktakingController::class, 'exportPdf'])->name('store.stocktaking.pdf');
+            Route::get('/store/stocktaking/{session}/csv', [\App\Http\Controllers\StocktakingController::class, 'exportCsv'])->name('store.stocktaking.csv');
+
+            // Store Inventory Read Routes:
             Route::get('/store', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
-            Route::post('/store', [\App\Http\Controllers\StoreController::class, 'store'])->name('store.store');
-            Route::post('/store/bulk-receive', [\App\Http\Controllers\StoreController::class, 'bulkReceive'])->name('store.bulk_receive');
-            Route::post('/store/bulk-transfer', [\App\Http\Controllers\StoreController::class, 'bulkTransfer'])->name('store.bulk_transfer');
-            Route::post('/store/bulk-return', [\App\Http\Controllers\StoreController::class, 'bulkReturn'])->name('store.bulk_return');
-            Route::post('/store/bulk-delete', [\App\Http\Controllers\StoreController::class, 'bulkDestroy'])->name('store.bulk_delete');
-            Route::post('/store/bulk-inline-update', [\App\Http\Controllers\StoreController::class, 'bulkInlineUpdate'])->name('store.bulk_inline_update');
-            Route::post('/store/{item}/inline-update', [\App\Http\Controllers\StoreController::class, 'inlineUpdate'])->name('store.inline_update');
-            Route::put('/store/{item}', [\App\Http\Controllers\StoreController::class, 'update'])->name('store.update');
-            Route::delete('/store/{item}', [\App\Http\Controllers\StoreController::class, 'destroy'])->name('store.destroy');
-            Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');
-            Route::post('/store/{item}/transfer', [\App\Http\Controllers\StoreController::class, 'transfer'])->name('store.transfer');
-            Route::post('/store/{item}/return', [\App\Http\Controllers\StoreController::class, 'returnStock'])->name('store.return');
             Route::get('/store/reports', [\App\Http\Controllers\StoreController::class, 'reports'])->name('store.reports');
             Route::get('/store/reports/pdf', [\App\Http\Controllers\StoreController::class, 'exportPdf'])->name('store.reports.pdf');
             Route::get('/store/reports/csv', [\App\Http\Controllers\StoreController::class, 'exportCsv'])->name('store.reports.csv');
+
+            // Store Inventory Mutation Routes (Locked during active stocktaking):
+            Route::middleware([\App\Http\Middleware\CheckStoreLocked::class])->group(function () {
+                Route::post('/store', [\App\Http\Controllers\StoreController::class, 'store'])->name('store.store');
+                Route::post('/store/bulk-receive', [\App\Http\Controllers\StoreController::class, 'bulkReceive'])->name('store.bulk_receive');
+                Route::post('/store/bulk-transfer', [\App\Http\Controllers\StoreController::class, 'bulkTransfer'])->name('store.bulk_transfer');
+                Route::post('/store/bulk-return', [\App\Http\Controllers\StoreController::class, 'bulkReturn'])->name('store.bulk_return');
+                Route::post('/store/bulk-delete', [\App\Http\Controllers\StoreController::class, 'bulkDestroy'])->name('store.bulk_delete');
+                Route::post('/store/bulk-inline-update', [\App\Http\Controllers\StoreController::class, 'bulkInlineUpdate'])->name('store.bulk_inline_update');
+                Route::post('/store/{item}/inline-update', [\App\Http\Controllers\StoreController::class, 'inlineUpdate'])->name('store.inline_update');
+                Route::put('/store/{item}', [\App\Http\Controllers\StoreController::class, 'update'])->name('store.update');
+                Route::delete('/store/{item}', [\App\Http\Controllers\StoreController::class, 'destroy'])->name('store.destroy');
+                Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');
+                Route::post('/store/{item}/transfer', [\App\Http\Controllers\StoreController::class, 'transfer'])->name('store.transfer');
+                Route::post('/store/{item}/return', [\App\Http\Controllers\StoreController::class, 'returnStock'])->name('store.return');
+            });
 
             // Lit Inventory Routes:
             Route::get('/lit', [\App\Http\Controllers\LitController::class, 'index'])->name('lit.index');

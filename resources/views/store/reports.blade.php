@@ -73,6 +73,89 @@
             </div>
         </div>
 
+        {{-- Movement Velocity & Category Analytics Row --}}
+        @php
+            $sumMovement = $totalReceivedQty + $totalTransferredQty + ($totalReturnedQty ?? 0);
+            $receivePct = $sumMovement > 0 ? round(($totalReceivedQty / $sumMovement) * 100, 1) : 0;
+            $transferPct = $sumMovement > 0 ? round(($totalTransferredQty / $sumMovement) * 100, 1) : 0;
+            $returnPct = $sumMovement > 0 ? round((($totalReturnedQty ?? 0) / $sumMovement) * 100, 1) : 0;
+        @endphp
+        <div class="row g-4 mb-4">
+            {{-- Stock Movement Velocity Bar Card --}}
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-speedometer2 text-primary"></i>
+                            {{ __('messages.stock_movement_velocity') }}
+                        </h5>
+                        <span class="badge bg-light text-secondary border px-3 py-1 rounded-pill small">Total: {{ $sumMovement }} {{ __('messages.items') }}</span>
+                    </div>
+
+                    <div class="progress rounded-pill mb-4 shadow-inner" style="height: 14px; background-color: rgba(0,0,0,0.05);">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ $receivePct }}%;" title="Received: {{ $receivePct }}%"></div>
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $transferPct }}%;" title="Transferred: {{ $transferPct }}%"></div>
+                        <div class="progress-bar bg-warning text-dark" role="progressbar" style="width: {{ $returnPct }}%;" title="Returned: {{ $returnPct }}%"></div>
+                    </div>
+
+                    <div class="row text-center g-2 pt-3 border-top mt-auto">
+                        <div class="col-12 col-sm-4">
+                            <div class="p-2 rounded bg-light-subtle">
+                                <span class="d-inline-block rounded-circle bg-success me-1" style="width: 8px; height: 8px;"></span>
+                                <span class="small text-secondary fw-semibold">{{ __('messages.receive') }}</span>
+                                <div class="fw-bold text-dark fs-7 mt-1">{{ $totalReceivedQty }} <span class="text-muted">({{ $receivePct }}%)</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="p-2 rounded bg-light-subtle">
+                                <span class="d-inline-block rounded-circle bg-primary me-1" style="width: 8px; height: 8px;"></span>
+                                <span class="small text-secondary fw-semibold">{{ __('messages.transfer_to_lit') }}</span>
+                                <div class="fw-bold text-dark fs-7 mt-1">{{ $totalTransferredQty }} <span class="text-muted">({{ $transferPct }}%)</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="p-2 rounded bg-light-subtle">
+                                <span class="d-inline-block rounded-circle bg-warning me-1" style="width: 8px; height: 8px;"></span>
+                                <span class="small text-secondary fw-semibold">{{ __('messages.return_from_lit') }}</span>
+                                <div class="fw-bold text-dark fs-7 mt-1">{{ $totalReturnedQty ?? 0 }} <span class="text-muted">({{ $returnPct }}%)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Category Valuation Share Breakdown --}}
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+                        <i class="bi bi-pie-chart text-info"></i>
+                        {{ __('messages.category_stock_share') }}
+                    </h5>
+                    <div class="row g-2">
+                        @foreach(($categoryBreakdown ?? []) as $catName => $catData)
+                            @php
+                                $catPct = $totalValuation > 0 ? round(($catData['valuation'] / $totalValuation) * 100, 1) : 0;
+                            @endphp
+                            <div class="col-12 col-sm-6">
+                                <div class="p-2.5 px-3 rounded-3 bg-light-subtle border border-light-subtle h-100 d-flex flex-column justify-content-between">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-semibold text-dark small me-1">{{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $catName))) }}</span>
+                                        <span class="badge bg-info-subtle text-info rounded-pill" style="font-size: 0.7rem;">{{ $catPct }}%</span>
+                                    </div>
+                                    <div class="progress rounded-pill mb-1 shadow-sm" style="height: 5px; background-color: rgba(0,0,0,0.06);">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ $catPct }}%;"></div>
+                                    </div>
+                                    <div class="text-secondary small fw-bold mt-1 text-end" style="font-size: 0.75rem;">
+                                        {{ __('messages.EGP') }} {{ number_format($catData['valuation'], 2) }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- Filter Panel --}}
         <div class="card border-0 shadow-sm p-4 mb-4">
             <form action="{{ route('store.reports') }}" method="GET" class="row g-3">
@@ -129,10 +212,15 @@
 
         {{-- Transactions Ledger Table --}}
         <div class="card border-0 shadow-sm p-4">
-            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                <i class="bi bi-clock-history text-primary"></i>
-                {{ __('messages.transaction_ledger') }}
-            </h5>
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-primary"></i>
+                    {{ __('messages.transaction_ledger') }}
+                </h5>
+                <div class="position-relative" style="min-width: 250px;">
+                    <input type="search" id="ledgerSearchInput" class="form-control form-control-sm rounded-pill px-3" placeholder="{{ __('messages.Search') }}...">
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table align-middle table-hover mb-0" id="ledgerTable">
                     <thead class="table-light">
@@ -261,6 +349,18 @@
                     width: '100%',
                     placeholder: "{{ __('messages.all_items') }}",
                     allowClear: true
+                });
+            }
+
+            const searchInput = document.getElementById('ledgerSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const q = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll('#ledgerTable tbody tr.ledger-row');
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(q) ? '' : 'none';
+                    });
                 });
             }
         });

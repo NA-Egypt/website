@@ -398,6 +398,12 @@
           <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'تقارير المستودع' : 'Store Reports' }}</div>
         </a>
       </li>
+      <li>
+        <a href="{{ route('store.stocktaking.index') }}" title="{{ app()->getLocale() === 'ar' ? 'الجرد الفعلي' : 'Stocktaking' }}">
+          <div class="parent-icon"><i class="bi bi-clipboard-check"></i></div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'الجرد الفعلي' : 'Stocktaking' }}</div>
+        </a>
+      </li>
       @endif
 
       {{-- Lit read-only Area --}}

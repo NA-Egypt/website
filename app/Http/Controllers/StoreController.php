@@ -37,8 +37,9 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $items = $query->orderBy('name')->paginate(15)->withQueryString();
+        $activeStocktaking = \App\Models\StocktakingSession::getActiveSession();
 
-        return view('store.index', compact('items'));
+        return view('store.index', compact('items', 'activeStocktaking'));
     }
 
     public function store(Request $request)
@@ -399,9 +400,30 @@ class StoreController extends Controller implements HasMiddleware
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
         });
 
+        $totalReturnedQty = $transactions->where('type', 'return_from_lit')->sum('quantity');
+
+        // Stock distribution by category
+        $categoryBreakdown = $items->groupBy('category')->map(function ($catItems, $catName) {
+            $store = $catItems->sum('store_quantity');
+            $lit = $catItems->sum('lit_quantity');
+            $total = $store + $lit;
+            $valuation = $catItems->sum(function($item) {
+                return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
+            });
+            return [
+                'name' => $catName,
+                'count' => $catItems->count(),
+                'store_quantity' => $store,
+                'lit_quantity' => $lit,
+                'total_quantity' => $total,
+                'valuation' => $valuation,
+            ];
+        });
+
         return view('store.reports', compact(
             'transactions', 'items', 'totalItems', 'totalStoreStock', 'totalLitStock', 'totalValuation',
-            'totalTransactions', 'totalReceivedQty', 'totalTransferredQty', 'totalTransactionValuation'
+            'totalTransactions', 'totalReceivedQty', 'totalTransferredQty', 'totalReturnedQty', 'totalTransactionValuation',
+            'categoryBreakdown'
         ));
     }
 

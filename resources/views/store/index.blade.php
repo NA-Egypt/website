@@ -53,6 +53,29 @@
             </div>
         </div>
 
+        {{-- Active Stocktaking Lock Banner --}}
+        @if (isset($activeStocktaking) && $activeStocktaking)
+            <div class="alert alert-warning border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2 p-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-lock-fill text-warning-emphasis fs-4 me-1"></i>
+                    <div>
+                        <div class="fw-bold text-dark">{{ __('messages.store_currently_locked_title') }}</div>
+                        <div class="small text-secondary">
+                            {{ __('messages.stocktaking_session_in_progress_msg', ['id' => $activeStocktaking->id, 'user' => $activeStocktaking->user->name ?? 'System']) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('store.stocktaking.count', $activeStocktaking->id) }}" class="btn btn-sm btn-warning rounded-pill px-3 fw-bold text-dark shadow-sm">
+                        <i class="bi bi-pencil-square me-1"></i>{{ __('messages.continue_counting') }}
+                    </a>
+                    <a href="{{ route('store.stocktaking.show', $activeStocktaking->id) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-sm">
+                        <i class="bi bi-eye me-1"></i>{{ __('messages.view_session') }}
+                    </a>
+                </div>
+            </div>
+        @endif
+
         {{-- Alerts --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
@@ -232,8 +255,12 @@
                                         <span class="text-muted small">-</span>
                                     </div>
                                     <div class="edit-mode-field d-none">
-                                        <input type="number" min="0" class="form-control form-control-sm text-center mx-auto inline-receive-input border-success-subtle" 
-                                               data-id="{{ $item->id }}" placeholder="0" style="max-width: 80px;">
+                                        <div class="input-group input-group-sm mx-auto shadow-sm" style="max-width: 105px;" dir="ltr">
+                                            <button class="btn btn-outline-success btn-stepper-minus px-2 py-0 border-success-subtle" type="button" data-target="inline-receive-input" data-id="{{ $item->id }}">-</button>
+                                            <input type="number" min="0" class="form-control form-control-sm text-center px-1 inline-receive-input border-success-subtle fw-semibold" 
+                                                   data-id="{{ $item->id }}" placeholder="0" style="max-width: 50px;">
+                                            <button class="btn btn-outline-success btn-stepper-plus px-2 py-0 border-success-subtle" type="button" data-target="inline-receive-input" data-id="{{ $item->id }}">+</button>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="text-center position-relative">
@@ -241,19 +268,23 @@
                                         <span class="text-muted small">-</span>
                                     </div>
                                     <div class="edit-mode-field d-none">
-                                        <input type="number" min="0" class="form-control form-control-sm text-center mx-auto inline-transfer-input border-primary-subtle" 
-                                               data-id="{{ $item->id }}" data-store-qty="{{ $item->store_quantity }}" placeholder="0" style="max-width: 80px;">
+                                        <div class="input-group input-group-sm mx-auto shadow-sm" style="max-width: 105px;" dir="ltr">
+                                            <button class="btn btn-outline-primary btn-stepper-minus px-2 py-0 border-primary-subtle" type="button" data-target="inline-transfer-input" data-id="{{ $item->id }}">-</button>
+                                            <input type="number" min="0" class="form-control form-control-sm text-center px-1 inline-transfer-input border-primary-subtle fw-semibold" 
+                                                   data-id="{{ $item->id }}" data-store-qty="{{ $item->store_quantity }}" placeholder="0" style="max-width: 50px;">
+                                            <button class="btn btn-outline-primary btn-stepper-plus px-2 py-0 border-primary-subtle" type="button" data-target="inline-transfer-input" data-id="{{ $item->id }}">+</button>
+                                        </div>
                                         <div class="transfer-warning-msg text-danger fw-semibold mt-1 d-none" style="font-size: 0.7rem;">Exceeds stock</div>
                                     </div>
                                 </td>
                                 <td class="text-center store-qty-container" id="store-qty-container-{{ $item->id }}">
                                     @if ($item->store_quantity == 0)
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
-                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>0
+                                            <i class="bi bi-exclamation-octagon-fill me-1"></i>0
                                         </span>
-                                    @elseif ($item->store_quantity < 10)
+                                    @elseif ($item->store_quantity <= 5)
                                         <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
-                                            <i class="bi bi-exclamation-circle me-1"></i>{{ $item->store_quantity }}
+                                            <i class="bi bi-exclamation-triangle me-1"></i>{{ $item->store_quantity }}
                                         </span>
                                     @else
                                         <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
@@ -266,7 +297,7 @@
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
                                             0
                                         </span>
-                                    @elseif ($item->lit_quantity < 10)
+                                    @elseif ($item->lit_quantity <= 5)
                                         <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
                                             {{ $item->lit_quantity }}
                                         </span>
@@ -976,6 +1007,52 @@
                     const row = e.target.closest('tr');
                     if (row) validateRowInputs(row);
                     updateBulkEditSaveState();
+                }
+            });
+
+            // Stepper buttons click handlers (+ / -)
+            document.addEventListener('click', function(e) {
+                const plusBtn = e.target.closest('.btn-stepper-plus');
+                const minusBtn = e.target.closest('.btn-stepper-minus');
+
+                if (plusBtn) {
+                    const targetClass = plusBtn.getAttribute('data-target');
+                    const row = plusBtn.closest('tr');
+                    const input = row ? row.querySelector('.' + targetClass) : null;
+                    if (input) {
+                        input.value = (parseInt(input.value || 0, 10) + 1);
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+
+                if (minusBtn) {
+                    const targetClass = minusBtn.getAttribute('data-target');
+                    const row = minusBtn.closest('tr');
+                    const input = row ? row.querySelector('.' + targetClass) : null;
+                    if (input) {
+                        const current = parseInt(input.value || 0, 10);
+                        if (current > 0) {
+                            input.value = current - 1;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }
+                }
+            });
+
+            // Keyboard navigation handler (Enter to Save, Esc to Cancel)
+            document.addEventListener('keydown', function(e) {
+                if (e.target.matches('.inline-price-input, .inline-receive-input, .inline-transfer-input')) {
+                    const row = e.target.closest('tr');
+                    if (!row) return;
+
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const saveBtn = row.querySelector('.inline-save-btn');
+                        if (saveBtn && !saveBtn.disabled) saveBtn.click();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        toggleRowEditMode(row, false);
+                    }
                 }
             });
 
