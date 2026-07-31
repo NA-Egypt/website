@@ -606,6 +606,7 @@ return [
     'legend_open' => 'Open',
     'legend_closed' => 'Closed',
     'legend_online' => 'Online',
+    'Online / Other' => 'Online / Other',
     'legend_suspended' => 'Suspended',
     'legend_business' => 'Business Meeting',
     'datatables' => [

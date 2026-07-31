@@ -638,6 +638,7 @@ return [
     'legend_open' => 'مفتوح',
     'legend_closed' => 'مغلق',
     'legend_online' => 'أونلاين',
+    'Online / Other' => 'أونلاين / أخرى',
     'legend_suspended' => 'معلق',
     'legend_business' => 'اجتماع عمل',
     'Committee' => 'اللجنة الخدمية',
