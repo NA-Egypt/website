@@ -66,6 +66,8 @@
         "ziggy-js": "^2.6.3"
     },
     "optionalDependencies": {
+        "@esbuild/linux-arm64": "^0.28.1",
+        "@rollup/rollup-linux-arm64-gnu": "^4.62.3",
         "@rollup/rollup-linux-x64-gnu": "^4.62.2"
     }
 }
