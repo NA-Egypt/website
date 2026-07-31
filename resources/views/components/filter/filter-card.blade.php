@@ -150,7 +150,7 @@ $isFirstCardAcrossSections = true;
     @foreach($sortedSections as $section)
         <div class="city-section mb-5" wire:key="city-section-{{ $section->id }}">
             <!-- Glassmorphic Section Header -->
-            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden" style="background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(13, 110, 253, 0.15) !important;">
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden" @if($loop->first) id="tour-city-section" @endif style="background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(13, 110, 253, 0.15) !important;">
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h4 class="mb-0 fw-bold text-primary d-flex align-items-center gap-2">
                         @if($section->isOnline)
@@ -173,8 +173,10 @@ $isFirstCardAcrossSections = true;
                     @php
                         $group = $meeting->groupOrDirect;
                     @endphp
-                    @if(!$group || !$meeting->day) @continue @endif
-                    <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isFirstCardAcrossSections) id="tour-meeting-card" @php $isFirstCardAcrossSections = false; @endphp @endif>
+                    @php
+                        $isTargetCard = $isFirstCardAcrossSections;
+                    @endphp
+                    <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isTargetCard) id="tour-meeting-card" @endif>
                         @php
                             $isOnline = $meeting->direct_online_group_id !== null || ($group && in_array($group->group_type, ['اونلاين', 'اون لاين', 'online']));
                             $isBusiness = $meeting->topics && $meeting->topics->contains('en_name', 'Group Business Meeting');
@@ -195,7 +197,7 @@ $isFirstCardAcrossSections = true;
                         @endif
 
                         <!-- Day and Time Row -->
-                        <div class="meeting-time-row d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="meeting-time-row d-flex justify-content-between align-items-center flex-wrap gap-2" @if($isTargetCard) id="tour-card-time" @endif>
                             <div class="meeting-day text-danger mb-0">
                                 <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
                                 @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
@@ -210,12 +212,12 @@ $isFirstCardAcrossSections = true;
                                 {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                             </span>
                         </div>
-                        <div class="meeting-group-name">
+                        <div class="meeting-group-name" @if($isTargetCard) id="tour-card-group" @endif>
                             {{ $direction === 'rtl' ? $group->ar_name : $group->en_name }}
                         </div>
 
                         <!-- Type and Topic in a single row -->
-                        <div class="meeting-type-topic">
+                        <div class="meeting-type-topic" @if($isTargetCard) id="tour-card-badges" @endif>
                             @if($meeting->topics && $meeting->topics->count() > 0)
                                 @foreach($meeting->topics as $topic)
                                     <div class="meeting-type-badge">
@@ -267,7 +269,7 @@ $isFirstCardAcrossSections = true;
                             }
                         @endphp
                         @if($group && $group->phone && !$isBot)
-                        <div data-nosnippet>
+                        <div data-nosnippet @if($isTargetCard) id="tour-card-contact" @endif>
                             <x-fas-user-circle style="width:16px; height:16px;"/>
                             {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
                             <br />
@@ -351,7 +353,7 @@ $isFirstCardAcrossSections = true;
                                     }
                                 }
                             @endphp
-                            <div class="meeting-options d-flex align-items-center gap-2 flex-wrap mt-2">
+                            <div class="meeting-options d-flex align-items-center gap-2 flex-wrap mt-2" @if($isTargetCard) id="tour-card-actions" @endif>
                                 @if($group->location)
                                     <a href="{{ $group->location }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
                                     @if(\Illuminate\Support\Str::contains(strtolower($group->location), ['map', 'goo.gl']))
@@ -380,6 +382,11 @@ $isFirstCardAcrossSections = true;
                             </div>
                         @endif
                         </div>
+                        @php
+                            if ($isTargetCard) {
+                                $isFirstCardAcrossSections = false;
+                            }
+                        @endphp
                     </div>
                 @endforeach
             </div>

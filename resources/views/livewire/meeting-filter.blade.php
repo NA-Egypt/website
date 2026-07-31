@@ -15,14 +15,15 @@
                     <!-- Glassmorphic Filters Card -->
                     <div x-show="open" x-transition.duration.300ms class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden position-relative" style="background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4) !important;">
                         <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 text-center">
-                            <h5 class="mb-2 fw-bold text-primary d-flex align-items-center justify-content-center">
-                                <i class="fas fa-filter mx-2"></i>{{ __('messages.Filter Options') }}
-                                <button type="button" class="btn btn-link text-info p-0 mx-2 text-decoration-none rounded-circle border border-info d-flex align-items-center justify-content-center" id="start-tour-btn" title="{{ __('messages.tour_start') }}" style="width: 24px; height: 24px; border-width: 2px !important;">
-                                    <span style="font-size: 14px; font-weight: bold; line-height: 1;">?</span>
+                            <h5 class="mb-2 fw-bold text-primary d-flex align-items-center justify-content-center flex-wrap gap-2" id="tour-filter-options">
+                                <i class="fas fa-filter mx-1"></i>{{ __('messages.Filter Options') }}
+                                <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 mx-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm transition-all hover-scale position-relative" id="start-tour-btn" onclick="startMeetingTour()" title="{{ __('messages.tour_start') }}" style="border-width: 1.5px; background: rgba(13, 202, 240, 0.08); backdrop-filter: blur(4px);">
+                                    <i class="bi bi-compass-fill text-info fs-6"></i>
+                                    <span>{{ __('messages.tour_start') }}</span>
                                 </button>
                             </h5>
                             <!-- Legend -->
-                            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2" style="font-size: 0.85rem; font-weight: 500;">
+                            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2" style="font-size: 0.85rem; font-weight: 500;" id="tour-legend">
                                 <div class="d-flex align-items-center gap-1">
                                     <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #f43f5e; display: inline-block;"></span>
                                     <span class="text-muted">{{ __('messages.legend_open') }}</span>
@@ -397,32 +398,44 @@
 
     @script
     <script>
-        function initTour() {
-            var startBtn = document.getElementById('start-tour-btn');
-            if (!startBtn || startBtn.dataset.tourInitialized) return;
-            
-            startBtn.dataset.tourInitialized = 'true';
-            
+        window.startMeetingTour = function() {
+            if (typeof window.driver === 'undefined' || !window.driver.js) {
+                console.error('Driver.js library is not loaded');
+                return;
+            }
+
             const isRtl = document.documentElement.dir === 'rtl' || document.body.dir === 'rtl';
 
             const stepIcons = {
+                '#tour-filter-options': 'bi-funnel-fill',
+                '#tour-legend': 'bi-palette',
+                '#tour-recurrence': 'bi-arrow-repeat',
                 '#tour-day': 'bi-calendar-week',
                 '#tour-group': 'bi-people',
                 '#tour-service-body': 'bi-diagram-3',
-                '#tour-type': 'bi-funnel',
+                '#tour-type': 'bi-shield-lock',
                 '#tour-city': 'bi-building',
                 '#tour-neighborhood': 'bi-geo-alt',
                 '#tour-virtual-only': 'bi-laptop',
                 '#tour-english-only': 'bi-translate',
+                '#tour-business-meetings-only': 'bi-briefcase',
                 '#tour-clear': 'bi-arrow-counterclockwise',
                 '#tour-search': 'bi-search',
                 '#tour-pdf': 'bi-file-earmark-pdf',
                 '#tour-csv': 'bi-file-earmark-excel',
-                '#tour-meeting-card': 'bi-card-heading'
+                '#tour-city-section': 'bi-pin-map',
+                '#tour-meeting-card': 'bi-card-heading',
+                '#tour-card-time': 'bi-clock-history',
+                '#tour-card-group': 'bi-hospital',
+                '#tour-card-badges': 'bi-tags',
+                '#tour-card-contact': 'bi-person-lines-fill',
+                '#tour-card-actions': 'bi-compass'
             };
             
-            const tourSteps = [
-                { popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}', icon: 'bi-compass' } },
+            let tourSteps = [
+                { element: '#tour-filter-options', popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}', icon: stepIcons['#tour-filter-options'] } },
+                { element: '#tour-legend', popover: { title: '{{ __("messages.tour_legend") }}', description: '{{ __("messages.tour_legend_desc") }}', icon: stepIcons['#tour-legend'] } },
+                { element: '#tour-recurrence', popover: { title: '{{ __("messages.tour_recurrence") }}', description: '{{ __("messages.tour_recurrence_desc") }}', icon: stepIcons['#tour-recurrence'] } },
                 { element: '#tour-day', popover: { title: '{{ __("messages.tour_day") }}', description: '{{ __("messages.tour_day_desc") }}', icon: stepIcons['#tour-day'] } },
                 { element: '#tour-group', popover: { title: '{{ __("messages.tour_group") }}', description: '{{ __("messages.tour_group_desc") }}', icon: stepIcons['#tour-group'] } },
                 { element: '#tour-service-body', popover: { title: '{{ __("messages.tour_service_body") }}', description: '{{ __("messages.tour_service_body_desc") }}', icon: stepIcons['#tour-service-body'] } },
@@ -431,13 +444,21 @@
                 { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}', icon: stepIcons['#tour-neighborhood'] } },
                 { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}', icon: stepIcons['#tour-virtual-only'] } },
                 { element: '#tour-english-only', popover: { title: '{{ __("messages.tour_english_only") }}', description: '{{ __("messages.tour_english_only_desc") }}', icon: stepIcons['#tour-english-only'] } },
+                { element: '#tour-business-meetings-only', popover: { title: '{{ __("messages.tour_business_only") }}', description: '{{ __("messages.tour_business_only_desc") }}', icon: stepIcons['#tour-business-meetings-only'] } },
                 { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}', icon: stepIcons['#tour-clear'] } },
                 { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}', icon: stepIcons['#tour-search'] } },
                 { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}', icon: stepIcons['#tour-pdf'] } },
-                { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}', icon: stepIcons['#tour-csv'] } }
+                { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}', icon: stepIcons['#tour-csv'] } },
+                { element: '#tour-city-section', popover: { title: '{{ __("messages.tour_city_section") }}', description: '{{ __("messages.tour_city_section_desc") }}', icon: stepIcons['#tour-city-section'] } },
+                { element: '#tour-meeting-card', popover: { title: '{{ __("messages.tour_meeting_card") }}', description: '{{ __("messages.tour_meeting_card_desc") }}', icon: stepIcons['#tour-meeting-card'] } },
+                { element: '#tour-card-time', popover: { title: '{{ __("messages.tour_card_time") }}', description: '{{ __("messages.tour_card_time_desc") }}', icon: stepIcons['#tour-card-time'] } },
+                { element: '#tour-card-group', popover: { title: '{{ __("messages.tour_card_group") }}', description: '{{ __("messages.tour_card_group_desc") }}', icon: stepIcons['#tour-card-group'] } },
+                { element: '#tour-card-badges', popover: { title: '{{ __("messages.tour_card_badges") }}', description: '{{ __("messages.tour_card_badges_desc") }}', icon: stepIcons['#tour-card-badges'] } },
+                { element: '#tour-card-contact', popover: { title: '{{ __("messages.tour_card_contact") }}', description: '{{ __("messages.tour_card_contact_desc") }}', icon: stepIcons['#tour-card-contact'] } },
+                { element: '#tour-card-actions', popover: { title: '{{ __("messages.tour_card_actions") }}', description: '{{ __("messages.tour_card_actions_desc") }}', icon: stepIcons['#tour-card-actions'] } }
             ];
 
-            if (document.getElementById('tour-meeting-card')) {
+            if (document.querySelector('#tour-meeting-card')) {
                 tourSteps.push({
                     element: '#tour-meeting-card',
                     popover: {
@@ -447,6 +468,9 @@
                     }
                 });
             }
+
+            // Filter out steps whose element does not exist in current DOM
+            tourSteps = tourSteps.filter(step => !step.element || document.querySelector(step.element));
 
             const nextBtnLabel = isRtl ? '{{ __("messages.tour_next") }} &larr;' : '{{ __("messages.tour_next") }} &rarr;';
             const prevBtnLabel = isRtl ? '&rarr; {{ __("messages.tour_prev") }}' : '&larr; {{ __("messages.tour_prev") }}';
@@ -464,7 +488,7 @@
                     const totalSteps = tourSteps.length;
                     const percentage = Math.round(((currentIndex + 1) / totalSteps) * 100);
 
-                    // Add / update visual top progress bar inside popover
+                    // Top visual progress bar
                     let progressBar = popover.wrapper.querySelector('.driver-popover-progress-bar');
                     if (!progressBar) {
                         progressBar = document.createElement('div');
@@ -487,7 +511,7 @@
                         popover.title.insertBefore(iconSpan, popover.title.firstChild);
                     }
 
-                    // Add keyboard hints footer if not present
+                    // Keyboard navigation hints footer
                     let keyHints = popover.wrapper.querySelector('.driver-keyboard-hints');
                     if (!keyHints) {
                         keyHints = document.createElement('div');
@@ -500,16 +524,23 @@
                 }
             });
 
-            startBtn.addEventListener('click', function() {
-                driverObj.drive();
-            });
+            driverObj.drive();
+        };
+
+        function bindTourBtn() {
+            const startBtn = document.getElementById('start-tour-btn');
+            if (startBtn && !startBtn.dataset.tourBound) {
+                startBtn.dataset.tourBound = 'true';
+                startBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.startMeetingTour();
+                });
+            }
         }
-        
-        document.addEventListener('livewire:navigated', initTour);
-        document.addEventListener('DOMContentLoaded', initTour);
-        if(document.readyState === 'complete' || document.readyState === 'interactive') {
-            setTimeout(initTour, 100);
-        }
+
+        document.addEventListener('livewire:navigated', bindTourBtn);
+        document.addEventListener('DOMContentLoaded', bindTourBtn);
+        bindTourBtn();
     </script>
     @endscript
 </div>
