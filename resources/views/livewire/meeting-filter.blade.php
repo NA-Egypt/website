@@ -395,6 +395,7 @@
         </div>
     </div>
 
+    @script
     <script>
         function initTour() {
             var startBtn = document.getElementById('start-tour-btn');
@@ -402,20 +403,38 @@
             
             startBtn.dataset.tourInitialized = 'true';
             
+            const isRtl = document.documentElement.dir === 'rtl' || document.body.dir === 'rtl';
+
+            const stepIcons = {
+                '#tour-day': 'bi-calendar-week',
+                '#tour-group': 'bi-people',
+                '#tour-service-body': 'bi-diagram-3',
+                '#tour-type': 'bi-funnel',
+                '#tour-city': 'bi-building',
+                '#tour-neighborhood': 'bi-geo-alt',
+                '#tour-virtual-only': 'bi-laptop',
+                '#tour-english-only': 'bi-translate',
+                '#tour-clear': 'bi-arrow-counterclockwise',
+                '#tour-search': 'bi-search',
+                '#tour-pdf': 'bi-file-earmark-pdf',
+                '#tour-csv': 'bi-file-earmark-excel',
+                '#tour-meeting-card': 'bi-card-heading'
+            };
+            
             const tourSteps = [
-                { popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}' } },
-                { element: '#tour-day', popover: { title: '{{ __("messages.tour_day") }}', description: '{{ __("messages.tour_day_desc") }}' } },
-                { element: '#tour-group', popover: { title: '{{ __("messages.tour_group") }}', description: '{{ __("messages.tour_group_desc") }}' } },
-                { element: '#tour-service-body', popover: { title: '{{ __("messages.tour_service_body") }}', description: '{{ __("messages.tour_service_body_desc") }}' } },
-                { element: '#tour-type', popover: { title: '{{ __("messages.tour_type") }}', description: '{{ __("messages.tour_type_desc") }}' } },
-                { element: '#tour-city', popover: { title: '{{ __("messages.tour_city") }}', description: '{{ __("messages.tour_city_desc") }}' } },
-                { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}' } },
-                { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}' } },
-                { element: '#tour-english-only', popover: { title: '{{ __("messages.tour_english_only") }}', description: '{{ __("messages.tour_english_only_desc") }}' } },
-                { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}' } },
-                { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}' } },
-                { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}' } },
-                { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}' } }
+                { popover: { title: '{{ __("messages.tour_filter_options") }}', description: '{{ __("messages.tour_filter_desc") }}', icon: 'bi-compass' } },
+                { element: '#tour-day', popover: { title: '{{ __("messages.tour_day") }}', description: '{{ __("messages.tour_day_desc") }}', icon: stepIcons['#tour-day'] } },
+                { element: '#tour-group', popover: { title: '{{ __("messages.tour_group") }}', description: '{{ __("messages.tour_group_desc") }}', icon: stepIcons['#tour-group'] } },
+                { element: '#tour-service-body', popover: { title: '{{ __("messages.tour_service_body") }}', description: '{{ __("messages.tour_service_body_desc") }}', icon: stepIcons['#tour-service-body'] } },
+                { element: '#tour-type', popover: { title: '{{ __("messages.tour_type") }}', description: '{{ __("messages.tour_type_desc") }}', icon: stepIcons['#tour-type'] } },
+                { element: '#tour-city', popover: { title: '{{ __("messages.tour_city") }}', description: '{{ __("messages.tour_city_desc") }}', icon: stepIcons['#tour-city'] } },
+                { element: '#tour-neighborhood', popover: { title: '{{ __("messages.tour_neighborhood") }}', description: '{{ __("messages.tour_neighborhood_desc") }}', icon: stepIcons['#tour-neighborhood'] } },
+                { element: '#tour-virtual-only', popover: { title: '{{ __("messages.tour_virtual_only") }}', description: '{{ __("messages.tour_virtual_only_desc") }}', icon: stepIcons['#tour-virtual-only'] } },
+                { element: '#tour-english-only', popover: { title: '{{ __("messages.tour_english_only") }}', description: '{{ __("messages.tour_english_only_desc") }}', icon: stepIcons['#tour-english-only'] } },
+                { element: '#tour-clear', popover: { title: '{{ __("messages.tour_clear") }}', description: '{{ __("messages.tour_clear_desc") }}', icon: stepIcons['#tour-clear'] } },
+                { element: '#tour-search', popover: { title: '{{ __("messages.tour_search") }}', description: '{{ __("messages.tour_search_desc") }}', icon: stepIcons['#tour-search'] } },
+                { element: '#tour-pdf', popover: { title: '{{ __("messages.tour_pdf") }}', description: '{{ __("messages.tour_pdf_desc") }}', icon: stepIcons['#tour-pdf'] } },
+                { element: '#tour-csv', popover: { title: '{{ __("messages.tour_csv") }}', description: '{{ __("messages.tour_csv_desc") }}', icon: stepIcons['#tour-csv'] } }
             ];
 
             if (document.getElementById('tour-meeting-card')) {
@@ -423,19 +442,62 @@
                     element: '#tour-meeting-card',
                     popover: {
                         title: '{{ __("messages.tour_meeting_card") }}',
-                        description: '{{ __("messages.tour_meeting_card_desc") }}'
+                        description: '{{ __("messages.tour_meeting_card_desc") }}',
+                        icon: stepIcons['#tour-meeting-card']
                     }
                 });
             }
+
+            const nextBtnLabel = isRtl ? '{{ __("messages.tour_next") }} &larr;' : '{{ __("messages.tour_next") }} &rarr;';
+            const prevBtnLabel = isRtl ? '&rarr; {{ __("messages.tour_prev") }}' : '&larr; {{ __("messages.tour_prev") }}';
 
             const driverObj = window.driver.js.driver({
                 showProgress: true,
                 animate: true,
                 progressText: '{!! __("messages.tour_progress_text") !!}',
-                nextBtnText: '{{ __("messages.tour_next") }}',
-                prevBtnText: '{{ __("messages.tour_prev") }}',
+                nextBtnText: nextBtnLabel,
+                prevBtnText: prevBtnLabel,
                 doneBtnText: '{{ __("messages.tour_done") }}',
-                steps: tourSteps
+                steps: tourSteps,
+                onPopoverRendered: (popover, { state }) => {
+                    const currentIndex = state.activeIndex || 0;
+                    const totalSteps = tourSteps.length;
+                    const percentage = Math.round(((currentIndex + 1) / totalSteps) * 100);
+
+                    // Add / update visual top progress bar inside popover
+                    let progressBar = popover.wrapper.querySelector('.driver-popover-progress-bar');
+                    if (!progressBar) {
+                        progressBar = document.createElement('div');
+                        progressBar.className = 'driver-popover-progress-bar';
+                        progressBar.innerHTML = '<div class="driver-popover-progress-fill"></div>';
+                        popover.wrapper.insertBefore(progressBar, popover.wrapper.firstChild);
+                    }
+                    const fill = progressBar.querySelector('.driver-popover-progress-fill');
+                    if (fill) {
+                        fill.style.width = percentage + '%';
+                    }
+
+                    // Prepend step icon to popover title
+                    const currentStep = tourSteps[currentIndex];
+                    const iconClass = (currentStep && currentStep.popover && currentStep.popover.icon) || 'bi-info-circle';
+                    if (popover.title && !popover.title.querySelector('.step-icon')) {
+                        const iconSpan = document.createElement('span');
+                        iconSpan.className = 'step-icon';
+                        iconSpan.innerHTML = `<i class="bi ${iconClass}"></i>`;
+                        popover.title.insertBefore(iconSpan, popover.title.firstChild);
+                    }
+
+                    // Add keyboard hints footer if not present
+                    let keyHints = popover.wrapper.querySelector('.driver-keyboard-hints');
+                    if (!keyHints) {
+                        keyHints = document.createElement('div');
+                        keyHints.className = 'driver-keyboard-hints';
+                        keyHints.innerHTML = isRtl 
+                            ? '<span><kbd>&larr;</kbd> <kbd>&rarr;</kbd> للتنقل</span><span><kbd>Esc</kbd> لإغلاق</span>'
+                            : '<span><kbd>&larr;</kbd> <kbd>&rarr;</kbd> Navigate</span><span><kbd>Esc</kbd> Close</span>';
+                        popover.wrapper.appendChild(keyHints);
+                    }
+                }
             });
 
             startBtn.addEventListener('click', function() {
@@ -445,9 +507,9 @@
         
         document.addEventListener('livewire:navigated', initTour);
         document.addEventListener('DOMContentLoaded', initTour);
-        // Fallback for dynamic updates
         if(document.readyState === 'complete' || document.readyState === 'interactive') {
             setTimeout(initTour, 100);
         }
     </script>
+    @endscript
 </div>

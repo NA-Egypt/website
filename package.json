@@ -26,13 +26,14 @@
         "webpack-dev-server": "^6.0.0"
     },
     "dependencies": {
-        "@heronsignal/web": "^0.1.0",
         "@bhplugin/vue3-datatable": "^3.0.0",
         "@fullcalendar/core": "^6.1.20",
         "@fullcalendar/daygrid": "^6.1.20",
         "@fullcalendar/interaction": "^6.1.20",
         "@fullcalendar/multimonth": "^6.1.20",
         "@fullcalendar/timegrid": "^6.1.20",
+        "@heronsignal/web": "^0.1.0",
+        "@inertiajs/vue3": "^3.6.1",
         "@kodeglot/vue-calendar": "^1.5.0",
         "@number-flow/vue": "^0.5.2",
         "@popperjs/core": "^2.11.8",
@@ -60,9 +61,10 @@
         "swagger-autogen": "^2.23.7",
         "sweetalert2": "^11.26.17",
         "vue": "^3.5.13",
-        "vue-ctk-date-time-picker": "^2.5.0"
+        "vue-ctk-date-time-picker": "^2.5.0",
+        "vue3-select-component": "^1.0.1",
+        "ziggy-js": "^2.6.3"
     },
-
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "^4.62.2"
     }

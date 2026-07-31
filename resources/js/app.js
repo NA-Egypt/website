@@ -19,14 +19,20 @@ import '@popperjs/core';
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 import Splide from '@splidejs/splide';
+import '@splidejs/splide/css';
 window.Splide = Splide;
-// 1. Initialize Globals explicitly
-window.jQuery = window.$ = $;
-import select2 from 'select2'; // Import Select2 JS
-select2(); // Register with jQuery (some versions need this, others just import)
-import './form-select2.js';
 
-// Stub Axios to prevent crash (User requested features don't strictly need it right now)
+// Global jQuery
+window.jQuery = window.$ = $;
+import select2 from 'select2';
+select2();
+import './form-select2.js';
+import "/node_modules/select2/dist/css/select2.css";
+
+// Select2 CSS & Vue3 Select styles
+import 'vue3-select-component/styles';
+
+// Axios setup
 window.axios = {
     defaults: {
         headers: {
@@ -37,32 +43,20 @@ window.axios = {
     }
 };
 
-import "/node_modules/select2/dist/css/select2.css";
-
-// 3. Load DataTables (extends global jQuery)
 import 'datatables.net-bs5';
-// import 'datatables.net-buttons-bs5';
-// import 'datatables.net-buttons/js/buttons.html5.js';
-// import 'datatables.net-buttons/js/buttons.print.js';
 
-// 4. Load Custom Scripts (Sequential loading to handle dependencies)
+// Load legacy plugins
 const loadPlugins = async () => {
     try {
-        // Libraries first
         await import('./plugin/jquery-jvectormap-2.0.2.min');
-        await import('./plugin/jquery-jvectormap-world-mill-en'); // If exists
+        await import('./plugin/jquery-jvectormap-world-mill-en');
         await import('./plugin/jquery.peity.min');
         await import('./plugin/pace.min');
         await import('./plugin/simplebar.min');
-
-        // Logic that depends on libraries
         await import('./plugin/index');
         await import('./plugin/custom');
-
-
     } catch (err) {
-        captureError(err);
-        console.error("Failed to load plugins via async/await", err);
+        console.error("Failed to load plugins", err);
     }
 };
 
@@ -75,7 +69,7 @@ import.meta.glob([
 import { createApp, h, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia';
 import '@kodeglot/vue-calendar/style.css';
-import { initHeronSignal, event, captureError } from '@heronsignal/web';
+import { initHeronSignal, event } from '@heronsignal/web';
 
 void initHeronSignal({ publicKey: 'pk_BmZyEnNid-kGGwequQ8VlozPsXVfs_X1' });
 
@@ -88,7 +82,7 @@ const AnimatedStatCard = defineAsyncComponent(() => import('./components/Animate
 
 document.addEventListener("DOMContentLoaded", () => {
     event('dashboard_loaded', { source: 'app_js' });
-    // Mount EventsCalendar
+    
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
     calendarEls.forEach(el => {
         const fetchUrl = el.getAttribute('data-fetch-url') || '/web-calendar-events';
@@ -112,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(el);
     });
 
-    // Mount FacebookTargeting
     const fbEl = document.querySelector('[data-vue-app="FacebookTargeting"]');
     if (fbEl) {
         const initialGroups = JSON.parse(fbEl.getAttribute('data-initial-groups') || '[]');
@@ -135,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(fbEl);
     }
 
-    // Mount TransactionsTable
     const transactionsEl = document.querySelector('[data-vue-app="TransactionsTable"]');
     if (transactionsEl) {
         const fetchUrl = transactionsEl.getAttribute('data-fetch-url');
@@ -152,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(transactionsEl);
     }
 
-    // Mount GenericDataTable
     const genericEls = document.querySelectorAll('[data-vue-app="GenericDataTable"]');
     genericEls.forEach(el => {
         const fetchUrl = el.getAttribute('data-fetch-url');
@@ -189,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(el);
     });
 
-    // Mount VueCtkDateTimePicker instances globally
     const datePickerEls = document.querySelectorAll('[data-vue-app="VueCtkDateTimePicker"]');
     datePickerEls.forEach(el => {
         const name = el.getAttribute('data-name') || '';
@@ -210,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 placeholder,
                 locale,
                 onChange: (val) => {
-                    // Dispatch custom change event to native DOM element for external listeners like setDate / findTime
                     const hiddenInput = el.querySelector('input[type="hidden"]');
                     if (hiddenInput) {
                         hiddenInput.value = typeof val === 'object' && val.hours !== undefined ? `${String(val.hours).padStart(2, '0')}:${String(val.minutes).padStart(2, '0')}` : (val instanceof Date ? val.toISOString() : val);
@@ -223,7 +212,6 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(el);
     });
 
-    // Mount AnimatedStatCard instances
     const animatedStatEls = document.querySelectorAll('[data-vue-app="AnimatedStatCard"]');
     animatedStatEls.forEach(el => {
         const weeklyMeetings = el.getAttribute('data-weekly-meetings') || '0';
@@ -242,5 +230,3 @@ document.addEventListener("DOMContentLoaded", () => {
         app.mount(el);
     });
 });
-
-
