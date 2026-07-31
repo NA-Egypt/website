@@ -545,8 +545,8 @@
               <div class="card h-100 shadow-sm border-0 info-card p-4">
                 <div class="card-body">
                   <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3"
-                    style="width:80px; height:80px; object-fit: contain;">
-                  <h4 class="card-title font-weight-bold mb-3 gradient-text">{{ __('messages.whatistheprogram') }}</h3>
+                    width="80" height="80" loading="lazy" style="width:80px; height:80px; object-fit: contain;">
+                  <h2 class="card-title font-weight-bold mb-3 gradient-text" style="font-size: 1.5rem;">{{ __('messages.whatistheprogram') }}</h2>
                   <p class="card-text text-muted mt-2">{{ __('messages.whatistheprogramtxt') }}</p>
                 </div>
               </div>
@@ -561,10 +561,10 @@
                 <div class="card-body d-flex flex-column align-items-center">
                   <!-- Desktop Image -->
                   <img src="{{ asset('assets/images/we-do-recover.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-none d-md-block"
-                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                    width="600" height="300" loading="lazy" style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
                   <!-- Mobile Image -->
                   <img src="{{ asset('assets/images/we-do-recover-mobile.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-block d-md-none"
-                    style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                    width="350" height="250" loading="lazy" style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
                   <p class="card-text text-muted mt-2 text-start w-100">{{ __('messages.wedorecovertxt') }}</p>
                 </div>
               </div>
@@ -579,12 +579,12 @@
                 <div class="card h-100 shadow-sm border-0 info-card p-4">
                   <div class="card-body text-center d-flex flex-column align-items-center">
                     <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded mb-3 shadow-sm"
-                      style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
+                      width="600" height="300" loading="lazy" style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
                     
-                    <h4 class="card-title font-weight-bold mb-2 gradient-text text-center" style="font-size: 1.25rem;">
+                    <h2 class="card-title font-weight-bold mb-2 gradient-text text-center" style="font-size: 1.25rem;">
                       {{ __('messages.convention_title') }}
                       <span class="fs-6 d-block mt-1 font-weight-bold text-muted text-center">{{ __('messages.convention_subtitle') }}</span>
-                    </h4>
+                    </h2>
                     <div class="card-text text-muted w-100" style="font-size: 0.9rem; line-height: 1.6;">
                       <div class="d-flex flex-wrap justify-content-center gap-3 my-2 py-1 bg-light rounded text-center">
                         <span class="mx-3">

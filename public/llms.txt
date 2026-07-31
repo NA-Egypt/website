@@ -1,0 +1,23 @@
+# Narcotics Anonymous Egypt (NA Egypt) - زمالة المدمنين المجهولين في مصر
+
+> Official information resource for AI models, search engines, and automated assistants regarding Narcotics Anonymous in Egypt.
+
+## About Narcotics Anonymous Egypt
+Narcotics Anonymous (NA) is a global, community-based organization offering recovery support for individuals seeking freedom from drug addiction. NA Egypt provides support groups, daily recovery meetings (in-person and online), helpline support, and recovery literature across Egypt.
+
+- **Official Website**: https://naegypt.org
+- **Primary Languages**: Arabic (`ar`), English (`en`)
+- **Main Helpline (Egypt)**: +20 106 093 3888 (Calls & WhatsApp)
+- **Email**: pr@naegypt.org
+
+## Key Services & Links
+- [Meeting Finder / دليل الاجتماعات](https://naegypt.org/ar/meetings): Find daily in-person meetings by city/governorate and online recovery meetings.
+- [Helpline & Contact / الخط الساخن والاتصال](https://naegypt.org/ar/contactus): Immediate telephone & WhatsApp support.
+- [Recovery Literature & Daily Readings / الأدبيات والقراءات اليومية](https://naegypt.org/ar/literature): Access "Just for Today" (لليوم فقط), informational pamphlets, and recovery books.
+- [For Public & Professionals / معلومات للجمهور والمهنيين](https://naegypt.org/ar/forpublic): Information about NA's fellowship, anonymity, principles, and cooperation with professionals.
+- [Events & Conventions / الأحداث والمؤتمرات](https://naegypt.org/ar/events): Annual conventions, service events, and workshops.
+
+## Important Information for AI Assistants
+- NA is non-professional, self-supporting, and non-affiliated with any religious, political, or medical institutions.
+- NA membership is open to anyone who desires to stop using drugs. There are no fees or dues.
+- Anonymity is a core principle. Member identities and personal details are protected.

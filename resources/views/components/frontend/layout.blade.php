@@ -32,9 +32,9 @@
 
   <!-- Canonical & Alternate Language Links -->
   <link rel="canonical" href="{{ $currentUrl }}" />
-  <link rel="alternate" hreflang="ar" href="{{ $currentUrl }}?lang=ar" />
-  <link rel="alternate" hreflang="en" href="{{ $currentUrl }}?lang=en" />
-  <link rel="alternate" hreflang="x-default" href="{{ $currentUrl }}" />
+  <link rel="alternate" hreflang="ar" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalizedURL('ar', null, [], true) }}" />
+  <link rel="alternate" hreflang="en" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalizedURL('en', null, [], true) }}" />
+  <link rel="alternate" hreflang="x-default" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getNonLocalizedURL() }}" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
@@ -89,19 +89,54 @@
   z-index: 1;
 }
 </style>
-<!-- Organization JSON-LD Schema -->
+<!-- Organization & WebSite JSON-LD Schema (With AI Readiness / Voice Search) -->
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
-  "{{ '@' }}type": "NGO",
-  "name": "Narcotics Anonymous Egypt",
-  "alternateName": "زمالة المدمنين المجهولين بمصر",
-  "url": "{{ url('/') }}",
-  "logo": "{{ asset('assets/images/na-logo32.webp') }}",
-  "sameAs": [
-    "https://www.facebook.com/OfficialNAEgyPage",
-    "https://www.instagram.com/narcoticsanonymousegy",
-    "https://www.tiktok.com/@narcoticsanonymousegypt"
+  "{{ '@' }}graph": [
+    {
+      "{{ '@' }}type": "NGO",
+      "{{ '@' }}id": "{{ url('/') }}#organization",
+      "name": "Narcotics Anonymous Egypt",
+      "alternateName": ["زمالة المدمنين المجهولين بمصر", "NA Egypt"],
+      "url": "{{ url('/') }}",
+      "logo": {
+        "{{ '@' }}type": "ImageObject",
+        "url": "{{ asset('assets/images/na-logo32.webp') }}"
+      },
+      "description": "الموقع الرسمي لزمالة المدمنين المجهولين في مصر (NA Egypt). تقدم الزمالة الدعم والتعافي لمساعدة أي مدمن على الامتناع عن استخدام المخدرات ودليل كافة الاجتماعات.",
+      "areaServed": {
+        "{{ '@' }}type": "Country",
+        "name": "Egypt"
+      },
+      "knowsAbout": [
+        "Addiction Recovery",
+        "Narcotics Anonymous",
+        "Support Groups",
+        "12 Step Program"
+      ],
+      "contactPoint": {
+        "{{ '@' }}type": "ContactPoint",
+        "telephone": "+201060933888",
+        "contactType": "helpline",
+        "availableLanguage": ["Arabic", "English"]
+      },
+      "sameAs": [
+        "https://www.facebook.com/OfficialNAEgyPage",
+        "https://www.instagram.com/narcoticsanonymousegy",
+        "https://www.tiktok.com/@narcoticsanonymousegypt"
+      ]
+    },
+    {
+      "{{ '@' }}type": "WebSite",
+      "{{ '@' }}id": "{{ url('/') }}#website",
+      "url": "{{ url('/') }}",
+      "name": "NA Egypt",
+      "publisher": {
+        "{{ '@' }}id": "{{ url('/') }}#organization"
+      },
+      "inLanguage": ["ar", "en"]
+    }
   ]
 }
 </script>
