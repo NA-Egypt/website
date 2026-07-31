@@ -266,15 +266,10 @@
       {{-- Transactions Area --}}
       @can('is-super-admin')
       <li>
-        <a href="#menuLogs" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuLogs" title="{{ __('messages.Logs Details') }}">
+        <a href="{{ route('transactions.index') }}" title="{{ __('messages.Logs Details') }}">
           <div class="parent-icon"><i class="bi bi-receipt-cutoff"></i></div>
-          <div class="menu-title">{{ __('messages.Logs Details')  }}</div>
+          <div class="menu-title">{{ __('messages.Logs Details') }}</div>
         </a>
-        <div class="collapse" id="menuLogs">
-          <ul>
-            <li> <a href="{{ route('transactions.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Logs')}}</a></li>
-          </ul>
-        </div>
       </li>
       @endcan
       {{-- /Transactions Area --}}
