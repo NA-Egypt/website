@@ -3,8 +3,12 @@ import $ from 'jquery';
 $(function() {
 	"use strict";
 
+    if (!$.fn || typeof $.fn.select2 !== 'function') {
+        return;
+    }
+
     // Global Select2 default fallback for placeholder to prevent undefined.id TypeError in Select2 adapters
-    if ($.fn && $.fn.select2 && $.fn.select2.defaults) {
+    if ($.fn.select2.defaults) {
         $.fn.select2.defaults.set('placeholder', '');
     }
 

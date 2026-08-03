@@ -3,7 +3,7 @@
 @php
         $default = [
             'data-allow-clear' => "true",
-            'class' => "select2 select2-manual",
+            'class' => "select2",
             'name' => $name,
         ];
 
@@ -13,38 +13,102 @@
 
 <x-forms.label :$name :$label />
 
-@if(app()->getLocale() === 'ar')
 <style>
+    /* Clean, non-collapsible Select2 styling for Bootstrap 5 */
+    .select2-container {
+        display: block !important;
+        width: 100% !important;
+    }
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        background-color: #fff !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 0.5rem !important;
+        position: relative !important;
+        display: block !important;
+        box-shadow: none !important;
+    }
+    .select2-container--open .select2-selection--single {
+        border-color: #86b7fe !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        color: #212529 !important;
+        line-height: 36px !important;
+        font-size: 0.9rem !important;
+        display: block !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
     .select2-container[dir="rtl"] .select2-selection--single .select2-selection__rendered {
+        text-align: right !important;
         padding-right: 0.75rem !important;
-        padding-left: 2.25rem !important;
+        padding-left: 2rem !important;
     }
-    .select2-container[dir="rtl"] .select2-selection__arrow {
+    .select2-container[dir="ltr"] .select2-selection--single .select2-selection__rendered {
+        text-align: left !important;
+        padding-left: 0.75rem !important;
+        padding-right: 2rem !important;
+    }
+    .select2-container .select2-selection--single .select2-selection__placeholder {
+        color: #6c757d !important;
+    }
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+        position: absolute !important;
+        top: 0 !important;
+        width: 25px !important;
+    }
+    .select2-container[dir="rtl"] .select2-selection--single .select2-selection__arrow {
+        left: 6px !important;
         right: auto !important;
-        left: 0.5rem !important;
     }
-    /* Fix the normal form-select for type if it has issues */
-    .form-select[dir="rtl"], [dir="rtl"] .form-select {
-        padding-right: 0.75rem;
-        padding-left: 2.25rem;
-        background-position: left 0.75rem center;
+    .select2-container[dir="ltr"] .select2-selection--single .select2-selection__arrow {
+        right: 6px !important;
+        left: auto !important;
+    }
+    .select2-dropdown {
+        border: 1px solid #ced4da !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        z-index: 999999 !important;
+        background-color: #ffffff !important;
+    }
+    .select2-results__option {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        color: #212529 !important;
     }
 </style>
-@endif
 
-    <div
+    <div x-init="init()"
         x-data="{
-            model: @entangle($attributes->wire('model')),
+            model: $wire.entangle('{{ $attributes->wire('model')->value() }}'){{ $attributes->wire('model')->hasModifier('live') ? '.live' : '' }},
+            isSyncing: false,
             initSelect2() {
-                let select = $(this.$refs.select).select2({
-                    theme: 'bootstrap4',
+                let $select = $(this.$refs.select);
+                if ($select.data('select2')) {
+                    $select.select2('destroy');
+                }
+                
+                let select = $select.select2({
                     width: '100%',
                     placeholder: '{{ __('messages.Choose') }} {{ $label }}...',
                     allowClear: true,
-                    dir: '{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}'
+                    dir: '{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}',
+                    dropdownParent: $(document.body)
                 });
 
-                select.on('change', (e) => {
+                let valToSet = this.model !== undefined && this.model !== null ? this.model : ($select.val() || '');
+                if (valToSet) {
+                    this.isSyncing = true;
+                    select.val(valToSet).trigger('change.select2');
+                    this.isSyncing = false;
+                }
+
+                select.off('change.select2-bind').on('change.select2-bind', (e) => {
+                    if (this.isSyncing) return;
                     let val = select.val() || '';
                     if (this.model !== val) {
                         this.model = val;
@@ -53,8 +117,11 @@
 
                 this.$watch('model', (value) => {
                     let currentVal = select.val() || '';
-                    if (currentVal !== (value || '')) {
-                        select.val(value || null).trigger('change.select2');
+                    let newPropsVal = value || '';
+                    if (currentVal !== newPropsVal) {
+                        this.isSyncing = true;
+                        select.val(newPropsVal || null).trigger('change.select2');
+                        this.isSyncing = false;
                     }
                 });
 

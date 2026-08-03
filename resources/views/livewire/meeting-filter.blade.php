@@ -13,7 +13,7 @@
                     </div>
 
                     <!-- Glassmorphic Filters Card -->
-                    <div x-show="open" x-transition.duration.300ms class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden position-relative" style="background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4) !important;">
+                    <div x-show="open" x-transition.duration.300ms class="card mb-4 border-0 shadow-lg rounded-4 overflow-visible position-relative" style="background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4) !important;">
                         <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 text-center">
                             <h5 class="mb-2 fw-bold text-primary d-flex align-items-center justify-content-center flex-wrap gap-2" id="tour-filter-options">
                                 <i class="fas fa-filter mx-1"></i>{{ __('messages.Filter Options') }}
@@ -92,17 +92,17 @@
                             </style>
 
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                <div class="col" wire:key="filter-group" id="tour-group">
-                                    <x-filter.select :options="$groups" name="group" wire:model.live="group" class="form-select form-control" label="{{__('messages.Group')}}" />
+                                <div wire:ignore.self class="col" wire:key="filter-group" id="tour-group">
+                                    <x-filter.select :options="$groups" name="group" wire:model.live="group" label="{{__('messages.Group')}}" />
                                 </div>
-                                <div class="col" wire:key="filter-serviceBody" id="tour-service-body">
-                                    <x-filter.select :options="$serviceBodies" name="serviceBody" wire:model.live="serviceBody" class="form-select form-control" label="{{__('messages.Service Body')}}" />
+                                <div wire:ignore.self class="col" wire:key="filter-serviceBody" id="tour-service-body">
+                                    <x-filter.select :options="$serviceBodies" name="serviceBody" wire:model.live="serviceBody" label="{{__('messages.Service Body')}}" />
                                 </div>
-                                <div class="col" wire:key="filter-city" id="tour-city">
-                                    <x-filter.select :options="$cities" name="city" wire:model.live="city" class="form-select form-control" label="{{__('messages.City')}}" />
+                                <div wire:ignore.self class="col" wire:key="filter-city" id="tour-city">
+                                    <x-filter.select :options="$cities" name="city" wire:model.live="city" label="{{__('messages.City')}}" />
                                 </div>
-                                <div class="col" wire:key="filter-neighborhood" id="tour-neighborhood">
-                                    <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" class="form-select form-control" label="{{__('messages.Neighborhood')}}" />
+                                <div wire:ignore.self class="col" wire:key="filter-neighborhood" id="tour-neighborhood">
+                                    <x-filter.select :options="$neighborhoods" name="neighborhood" wire:model.live="neighborhood" label="{{__('messages.Neighborhood')}}" />
                                 </div>
                                 <div class="col" wire:key="filter-type" id="tour-type">
                                     <div class="d-none d-md-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden; height: 19px;">
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <div class="col" wire:key="filter-recurrence" id="tour-recurrence">
-                                    <x-filter.select :options="$recurrences" name="recurrence" wire:model.live="recurrence" class="form-select form-control" label="{{__('messages.Recurrence')}}" />
+                                    <x-filter.select :options="$recurrences" name="recurrence" wire:model.live="recurrence" label="{{__('messages.Recurrence')}}" />
                                 </div>
                             </div>
 

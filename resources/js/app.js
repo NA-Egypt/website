@@ -24,12 +24,13 @@ window.Splide = Splide;
 
 // Global jQuery
 if (typeof window !== 'undefined') {
-    window.jQuery = window.$ = window.jQuery || window.$ || $;
+    window.jQuery = window.$ = $;
 }
 import select2 from 'select2';
-select2(window, window.jQuery || $);
+select2(window, $);
 import './form-select2.js';
-import "/node_modules/select2/dist/css/select2.css";
+import './frontend.js';
+import "select2/dist/css/select2.css";
 
 // Select2 CSS & Vue3 Select styles
 import 'vue3-select-component/styles';

@@ -55,9 +55,7 @@
 
   <!-- Include common styles -->
   @vite(['resources/js/app.js', 'resources/css/app.css'])
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script src="https://www.google.com/recaptcha/api.js"></script>
-  <script src="{{ asset('assets/js/frontend.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}?v={{ filemtime(public_path('assets/css/frontend.css')) }}" />
   <script src="{{ asset('assets/js/driver.js.iife.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}"/>
