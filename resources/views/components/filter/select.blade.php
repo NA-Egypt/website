@@ -41,15 +41,21 @@
                     width: '100%',
                     placeholder: '{{ __('messages.Choose') }} {{ $label }}...',
                     allowClear: true,
-                    dir: '{{ app()->getLocale() === "ar" ? "rtl" : "ltr" }}'
+                    dir: '{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}'
                 });
 
                 select.on('change', (e) => {
-                    this.model = select.val();
+                    let val = select.val() || '';
+                    if (this.model !== val) {
+                        this.model = val;
+                    }
                 });
 
                 this.$watch('model', (value) => {
-                    select.val(value).trigger('change.select2');
+                    let currentVal = select.val() || '';
+                    if (currentVal !== (value || '')) {
+                        select.val(value || null).trigger('change.select2');
+                    }
                 });
 
                 const observer = new MutationObserver(() => {
@@ -58,19 +64,24 @@
                 observer.observe(this.$refs.select, { attributes: true, attributeFilter: ['disabled'] });
             },
             init() {
-                // Wait for Select2 to be available (Vite module loads asynchronously)
                 let self = this;
-                let attempts = 0;
-                let waitForSelect2 = setInterval(function() {
-                    attempts++;
+                const start = () => {
                     if (typeof $ !== 'undefined' && $.fn && $.fn.select2) {
-                        clearInterval(waitForSelect2);
                         self.initSelect2();
-                    } else if (attempts > 100) {
-                        clearInterval(waitForSelect2);
-                        console.error('Select2 failed to load after 5 seconds');
+                        return true;
                     }
-                }, 50);
+                    return false;
+                };
+
+                if (!start()) {
+                    let attempts = 0;
+                    let timer = setInterval(() => {
+                        attempts++;
+                        if (start() || attempts > 100) {
+                            clearInterval(timer);
+                        }
+                    }, 50);
+                }
             }
         }"
         wire:ignore

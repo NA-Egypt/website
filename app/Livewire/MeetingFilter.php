@@ -207,17 +207,20 @@ class MeetingFilter extends Component
     public function render(MeetingFilterService $filterService)
     {
         $this->normalizeFilters();
-        $days = Day::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
-        $serviceBodies = ServiceBody::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
         
-        // Base Groups Query
-        $groupsQuery = Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
-        
+        $days = \Illuminate\Support\Facades\Cache::remember('meetings_filter_days', 3600, function () {
+            return Day::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
+        });
+
+        $serviceBodies = \Illuminate\Support\Facades\Cache::remember('meetings_filter_service_bodies', 3600, function () {
+            return ServiceBody::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
+        });
+
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
 
-        // Filter groups available based on selected city or neighborhood
+        // Base Groups Query
+        $groupsQuery = Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
         if ($this->city || $this->neighborhood) {
-            
             if ($this->neighborhood) {
                 $groupsQuery->whereHas('neighborhood', fn($q) => $q->where($field, $this->neighborhood));
             } elseif ($this->city) {
@@ -225,39 +228,46 @@ class MeetingFilter extends Component
             }
         }
         $groups = $groupsQuery->get();
-        
+
         $neighborhoodsQuery = Neighborhood::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
         if ($this->city) {
             $neighborhoodsQuery->whereHas('city', fn($q) => $q->where($field, $this->city));
         }
         $neighborhoods = $neighborhoodsQuery->get();
 
-        $cities = City::leftJoin('neighborhoods', 'cities.id', '=', 'neighborhoods.city_id')
-            ->leftJoin('groups', 'neighborhoods.id', '=', 'groups.neighborhood_id')
-            ->leftJoin('meetings', function($join) {
-                $join->on('groups.id', '=', 'meetings.group_id')
-                     ->where(function($q) {
-                         $q->whereNull('meetings.recurrence')
-                           ->orWhere(function($sub) {
-                               foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
-                                   $sub->where('meetings.recurrence', 'not like', '%"' . $item . '"%');
-                               }
-                           });
-                     })
-                     ->whereNotExists(function($sub) {
-                         $sub->select(\Illuminate\Support\Facades\DB::raw(1))
-                             ->from('meeting_topic')
-                             ->join('topics', 'meeting_topic.topic_id', '=', 'topics.id')
-                             ->whereRaw('meeting_topic.meeting_id = meetings.id')
-                             ->where('topics.en_name', 'Group Business Meeting');
-                     });
-            })
-            ->select('cities.id', 'cities.ar_name', 'cities.en_name', \Illuminate\Support\Facades\DB::raw('COUNT(meetings.id) as meetings_count'))
-            ->groupBy('cities.id', 'cities.ar_name', 'cities.en_name')
-            ->get();
-            
-        $openCount = \App\Models\Meeting::where('type', 'open')->notMonthlyRecurrent()->count();
-        $closedCount = \App\Models\Meeting::where('type', 'closed')->notMonthlyRecurrent()->count();
+        $cities = \Illuminate\Support\Facades\Cache::remember('meetings_filter_cities', 3600, function () {
+            return City::leftJoin('neighborhoods', 'cities.id', '=', 'neighborhoods.city_id')
+                ->leftJoin('groups', 'neighborhoods.id', '=', 'groups.neighborhood_id')
+                ->leftJoin('meetings', function($join) {
+                    $join->on('groups.id', '=', 'meetings.group_id')
+                         ->where(function($q) {
+                             $q->whereNull('meetings.recurrence')
+                               ->orWhere(function($sub) {
+                                   foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                                       $sub->where('meetings.recurrence', 'not like', '%"' . $item . '"%');
+                                   }
+                               });
+                         })
+                         ->whereNotExists(function($sub) {
+                             $sub->select(\Illuminate\Support\Facades\DB::raw(1))
+                                 ->from('meeting_topic')
+                                 ->join('topics', 'meeting_topic.topic_id', '=', 'topics.id')
+                                 ->whereRaw('meeting_topic.meeting_id = meetings.id')
+                                 ->where('topics.en_name', 'Group Business Meeting');
+                         });
+                })
+                ->select('cities.id', 'cities.ar_name', 'cities.en_name', \Illuminate\Support\Facades\DB::raw('COUNT(meetings.id) as meetings_count'))
+                ->groupBy('cities.id', 'cities.ar_name', 'cities.en_name')
+                ->get();
+        });
+
+        $openCount = \Illuminate\Support\Facades\Cache::remember('meetings_filter_open_count', 3600, function () {
+            return \App\Models\Meeting::where('type', 'open')->notMonthlyRecurrent()->count();
+        });
+
+        $closedCount = \Illuminate\Support\Facades\Cache::remember('meetings_filter_closed_count', 3600, function () {
+            return \App\Models\Meeting::where('type', 'closed')->notMonthlyRecurrent()->count();
+        });
 
         $filters = [
             'day' => $this->day,

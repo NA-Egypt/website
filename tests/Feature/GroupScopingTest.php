@@ -104,7 +104,7 @@ class GroupScopingTest extends TestCase
         $admin = User::factory()->create();
         $admin->assignRole('super admin');
 
-        $response = $this->actingAs($admin)->get(route('group.index'));
+        $response = $this->actingAs($admin)->getJson(route('group.index'));
         $response->assertStatus(200);
         $response->assertSee('Group One');
         $response->assertSee('Group Two');
@@ -189,7 +189,7 @@ class GroupScopingTest extends TestCase
         ]);
         $user->assignRole('ServiceBody');
 
-        $response = $this->actingAs($user)->get(route('group.index'));
+        $response = $this->actingAs($user)->getJson(route('group.index'));
         $response->assertStatus(200);
         $response->assertSee('Group One');
         $response->assertDontSee('Group Two');
