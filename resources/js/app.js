@@ -23,9 +23,11 @@ import '@splidejs/splide/css';
 window.Splide = Splide;
 
 // Global jQuery
-window.jQuery = window.$ = window.jQuery || window.$ || $;
+if (typeof window !== 'undefined') {
+    window.jQuery = window.$ = window.jQuery || window.$ || $;
+}
 import select2 from 'select2';
-select2(window, window.jQuery);
+select2(window, window.jQuery || $);
 import './form-select2.js';
 import "/node_modules/select2/dist/css/select2.css";
 
