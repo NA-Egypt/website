@@ -82,6 +82,7 @@ const FacebookTargeting = defineAsyncComponent(() => import('./components/Facebo
 const CtkDateTimePickerWrapper = defineAsyncComponent(() => import('./components/CtkDateTimePickerWrapper.vue'));
 const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCalendar.vue'));
 const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
+const VueSelectWrapper = defineAsyncComponent(() => import('./components/VueSelectWrapper.vue'));
 
 document.addEventListener("DOMContentLoaded", () => {
     event('dashboard_loaded', { source: 'app_js' });
@@ -228,6 +229,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 groupsCount,
                 weeklyMeetingsLabel,
                 groupsCountLabel
+            })
+        });
+        app.mount(el);
+    });
+
+    const vueSelectEls = document.querySelectorAll('[data-vue-app="VueSelectWrapper"]');
+    vueSelectEls.forEach(el => {
+        const options = JSON.parse(el.getAttribute('data-options') || '[]');
+        const placeholder = el.getAttribute('data-placeholder') || 'Select...';
+        const value = el.getAttribute('data-value') || null;
+        const name = el.getAttribute('data-name') || '';
+        
+        const app = createApp({
+            render: () => h(VueSelectWrapper, {
+                options,
+                placeholder,
+                modelValue: value,
+                name,
+                onPickerChange: (val) => {
+                    el.dispatchEvent(new CustomEvent('picker-change', { detail: val, bubbles: true }));
+                }
             })
         });
         app.mount(el);
