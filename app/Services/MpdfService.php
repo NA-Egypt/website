@@ -44,6 +44,7 @@ class MpdfService
                 ],
             ],
             'default_font' => 'cairo',
+            'tempDir' => storage_path('app/mpdf'),
         ];
 
         // Merge custom options

@@ -9,15 +9,15 @@
       );
       @endphp
       @if($hasSidebar)
-      <div class="mobile-toggle-icon d-xl-none p-2 rounded-3" style="color: var(--text-primary); cursor: pointer; transition: background 0.2s;">
-        <x-fas-bars style="width:22px; height:22px;"/>
+      <div class="mobile-toggle-icon d-lg-none p-2 rounded-3" style="color: var(--text-primary); cursor: pointer; transition: background 0.2s;" title="{{ app()->getLocale() === 'ar' ? 'القائمة' : 'Menu' }}">
+        <i class="bi bi-list fs-3"></i>
       </div>
       @else
-      <a href="{{ route('dashboard') }}" class="d-xl-none p-2 rounded-3 text-decoration-none d-flex align-items-center justify-content-center" style="color: var(--text-primary);">
+      <a href="{{ route('dashboard') }}" class="d-lg-none p-2 rounded-3 text-decoration-none d-flex align-items-center justify-content-center" style="color: var(--text-primary);">
         <i class="bi bi-house-door-fill" style="font-size: 22px;"></i>
       </a>
       @endif
-      <div class="top-navbar d-none d-xl-flex align-items-center gap-2">
+      <div class="top-navbar d-none d-lg-flex align-items-center gap-2">
         @if($hasSidebar)
         <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="{{ app()->getLocale() === 'ar' ? 'تصغير/توسيع القائمة' : 'Toggle Sidebar' }}">
           <i class="bi bi-list fs-4"></i>
@@ -45,7 +45,7 @@
             $properties = $otherLocales->first();
           @endphp
           @if ($localeCode && $properties)
-          <li class="me-3">
+          <li class="me-2 d-none d-sm-block">
             <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-light rounded-pill border shadow-sm d-flex align-items-center gap-2 px-3">
               <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="20" height="15" class="rounded-1">
               <span class="fw-bold text-dark small">{{ $properties['native'] }}</span>
@@ -107,6 +107,16 @@
                       <span class="fw-medium">{{__('messages.Web Site')}}</span>
                   </a>
               </li>
+              @if ($localeCode && $properties)
+              <li class="p-1 d-block d-sm-none">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" style="color: var(--text-primary);">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+                          <i class="bi bi-translate fs-6"></i>
+                      </div>
+                      <span class="fw-medium">{{ $properties['native'] }}</span>
+                  </a>
+              </li>
+              @endif
               <li><hr class="dropdown-divider my-1" style="border-color: var(--glass-border);"></li>
               <li class="p-1">
                 @auth

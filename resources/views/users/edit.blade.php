@@ -93,7 +93,7 @@
                                     <div class="p-3 border rounded-3 bg-white d-flex align-items-center justify-content-between shadow-sm">
                                         <span class="fw-semibold text-secondary">{{ $role->name }}</span>
                                         <label class="form-switch-premium m-0">
-                                            <input type="checkbox" name="roles[]" value="{{ $role->id }}" id="role_{{ $role->id }}" {{ $user->roles->contains($role->id) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="roles[]" value="{{ $role->name }}" id="role_{{ $role->id }}" {{ $user->roles->contains($role->id) ? 'checked' : '' }}>
                                             <span class="slider-premium"></span>
                                         </label>
                                     </div>
@@ -130,7 +130,7 @@
                                                     <div class="p-3 border rounded-3 bg-white d-flex align-items-center justify-content-between shadow-sm">
                                                         <span class="text-secondary fw-medium">{{ $permission->name }}</span>
                                                         <label class="form-switch-premium m-0">
-                                                            <input type="checkbox" class="permission-checkbox" name="permissions[]" value="{{ $permission->id }}" id="permission_{{ $permission->id }}" {{ $user->permissions->contains($permission->id) ? 'checked' : '' }}>
+                                                            <input type="checkbox" class="permission-checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission_{{ $permission->id }}" {{ $user->permissions->contains($permission->id) ? 'checked' : '' }}>
                                                             <span class="slider-premium"></span>
                                                         </label>
                                                     </div>

@@ -484,9 +484,37 @@
         globalToggles.forEach(function(btn) {
             btn.addEventListener("click", function(e) {
                 e.preventDefault();
-                toggleSidebarState();
+                if (window.innerWidth < 992) {
+                    body.classList.toggle("sidebar-open");
+                } else {
+                    toggleSidebarState();
+                }
             });
         });
+
+        // Mobile specific toggles
+        var mobileToggles = document.querySelectorAll(".mobile-toggle-icon");
+        mobileToggles.forEach(function(btn) {
+            btn.addEventListener("click", function(e) {
+                e.preventDefault();
+                body.classList.toggle("sidebar-open");
+            });
+        });
+
+        var overlay = document.querySelector(".overlay");
+        if (overlay) {
+            overlay.addEventListener("click", function() {
+                body.classList.remove("sidebar-open");
+            });
+        }
+
+        var mobileCloseBtn = document.querySelector(".nav-toggle-icon");
+        if (mobileCloseBtn && mobileCloseBtn !== overlay) {
+            mobileCloseBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                body.classList.remove("sidebar-open");
+            });
+        }
 
         // 2. Single Accordion Behavior
         if (sidebar) {

@@ -10,11 +10,8 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
-
-
   <script>
-    window.dataTablesLanguage = {
+      window.dataTablesLanguage = {
         "sEmptyTable":     "{{ __('messages.datatables.sEmptyTable') }}",
         "sInfo":           "{{ __('messages.datatables.sInfo') }}",
         "sInfoEmpty":      "{{ __('messages.datatables.sInfoEmpty') }}",
@@ -155,7 +152,23 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
   
   /* Mobile Overlay Fixes */
-  .overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+  .overlay { 
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5); 
+      backdrop-filter: blur(5px); 
+      z-index: 1025;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+  }
+  body.sidebar-open .overlay {
+      opacity: 1;
+      visibility: visible;
+  }
   
   /* Sidebar Neo-Glassmorphism */
   .sidebar-wrapper {
@@ -174,7 +187,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   /* Flush Sidebar & Full Viewport Table Styles */
   body.has-sidebar .sidebar-wrapper {
       position: fixed;
-      top: 0;
+      top: 70px; /* Offset for the full-width navbar */
       bottom: 0;
       left: 0;
       z-index: 1030;
@@ -186,20 +199,14 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       left: auto !important;
       right: 0 !important;
   }
+  
+  .top-header {
+      z-index: 1040 !important;
+  }
 
   /* Expanded Mode (default 240px) */
   body.has-sidebar:not(.sidebar-collapsed) .sidebar-wrapper {
       width: 240px !important;
-  }
-  body.has-sidebar:not(.sidebar-collapsed) .top-header .navbar {
-      left: 240px !important;
-      width: calc(100% - 240px) !important;
-      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .top-header .navbar {
-      left: 0 !important;
-      right: 240px !important;
-      width: calc(100% - 240px) !important;
   }
   body.has-sidebar:not(.sidebar-collapsed) .page-content {
       margin-left: 240px !important;
@@ -215,16 +222,6 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
       width: 64px !important;
   }
-  body.has-sidebar.sidebar-collapsed .top-header .navbar {
-      left: 64px !important;
-      width: calc(100% - 64px) !important;
-      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  [dir="rtl"] body.has-sidebar.sidebar-collapsed .top-header .navbar {
-      left: 0 !important;
-      right: 64px !important;
-      width: calc(100% - 64px) !important;
-  }
   body.has-sidebar.sidebar-collapsed .page-content {
       margin-left: 64px !important;
       width: calc(100% - 64px) !important;
@@ -233,6 +230,41 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
       margin-left: 0 !important;
       margin-right: 64px !important;
+  }
+
+  /* Mobile Offcanvas Sidebar (max-width: 991.98px) */
+  @media (max-width: 991.98px) {
+      body.has-sidebar .sidebar-wrapper {
+          transform: translateX(-100%) !important;
+          width: 280px !important; /* Slightly wider for mobile usability */
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      [dir="rtl"] body.has-sidebar .sidebar-wrapper {
+          transform: translateX(100%) !important;
+      }
+      
+      /* Active state for Mobile */
+      body.has-sidebar.sidebar-open .sidebar-wrapper {
+          transform: translateX(0) !important;
+          box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15) !important;
+      }
+      [dir="rtl"] body.has-sidebar.sidebar-open .sidebar-wrapper {
+          transform: translateX(0) !important;
+          box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15) !important;
+      }
+      
+      /* Reset page content margin on mobile so they span full width */
+      body.has-sidebar:not(.sidebar-collapsed) .page-content,
+      body.has-sidebar.sidebar-collapsed .page-content,
+      body.has-sidebar .page-content {
+          margin-left: 0 !important;
+          width: 100% !important;
+      }
+      [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .page-content,
+      [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content,
+      [dir="rtl"] body.has-sidebar .page-content {
+          margin-right: 0 !important;
+      }
   }
 
   /* 100% Table Viewport Width Spanning */

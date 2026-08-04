@@ -725,17 +725,29 @@
 
         window.previewDocument = function(url, filename) {
             let lowercaseName = filename.toLowerCase();
-            const iframeContainer = document.getElementById('documentPreviewIframeContainer');
+            const inlineUrl = url + (url.includes('?') ? '&' : '?') + 'disposition=inline';
+
+            // Mobile Viewport Check (< 992px): Open PDF in new tab for native touch panning & crisp Arabic rendering
+            if (lowercaseName.endsWith('.pdf') && window.innerWidth < 992) {
+                window.open(inlineUrl, '_blank');
+                return;
+            }
+
+            const objectContainer = document.getElementById('documentPreviewObjectContainer');
+            const objectEl = document.getElementById('documentPreviewObject');
+            const fallbackLink = document.getElementById('documentPreviewFallbackLink');
+            const openNewTabBtn = document.getElementById('pdfOpenNewTabBtn');
             const docxContainer = document.getElementById('docxPreviewContainer');
             const excelContainer = document.getElementById('excelPreviewContainer');
             const imageContainer = document.getElementById('imagePreviewContainer');
-            const iframe = document.getElementById('documentPreviewIframe');
             const img = document.getElementById('documentPreviewImg');
 
-            iframeContainer.classList.add('d-none');
+            objectContainer.classList.add('d-none');
+            objectContainer.classList.remove('d-flex');
             docxContainer.classList.add('d-none');
             excelContainer.classList.add('d-none');
             imageContainer.classList.add('d-none');
+            if (openNewTabBtn) openNewTabBtn.classList.add('d-none');
             docxContainer.replaceChildren();
             excelContainer.replaceChildren();
             img.src = '';
@@ -744,11 +756,15 @@
             const myModal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
             myModal.show();
 
-            const inlineUrl = url + (url.includes('?') ? '&' : '?') + 'disposition=inline';
-
             if (lowercaseName.endsWith('.pdf')) {
-                iframeContainer.classList.remove('d-none');
-                iframe.src = inlineUrl;
+                objectContainer.classList.remove('d-none');
+                objectContainer.classList.add('d-flex');
+                objectEl.data = inlineUrl;
+                fallbackLink.href = inlineUrl;
+                if (openNewTabBtn) {
+                    openNewTabBtn.href = inlineUrl;
+                    openNewTabBtn.classList.remove('d-none');
+                }
             } else if (lowercaseName.endsWith('.png') || lowercaseName.endsWith('.jpg') || lowercaseName.endsWith('.jpeg') || lowercaseName.endsWith('.gif')) {
                 imageContainer.classList.remove('d-none');
                 img.src = inlineUrl;
@@ -919,9 +935,16 @@
 
             const modalEl = document.getElementById('documentPreviewModal');
             if (modalEl) {
+                modalEl.addEventListener('hide.bs.modal', function () {
+                    if (document.activeElement) {
+                        document.activeElement.blur();
+                    }
+                });
                 modalEl.addEventListener('hidden.bs.modal', function () {
-                    document.getElementById('documentPreviewIframe').src = '';
-                    document.getElementById('documentPreviewImg').src = '';
+                    const objectEl = document.getElementById('documentPreviewObject');
+                    if (objectEl) objectEl.data = '';
+                    const img = document.getElementById('documentPreviewImg');
+                    if (img) img.src = '';
                     document.getElementById('docxPreviewContainer').replaceChildren();
                     document.getElementById('excelPreviewContainer').replaceChildren();
                 });
@@ -931,16 +954,26 @@
 
     <!-- Document Preview Modal -->
     <div class="modal fade" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content rounded-4 overflow-hidden shadow-lg border-0">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-centered">
+            <div class="modal-content rounded-4 overflow-hidden shadow-lg border-0 h-100">
                 <div class="modal-header bg-light border-bottom py-3 d-flex justify-content-between align-items-center">
                     <h5 class="modal-title fw-bold text-dark text-truncate" id="documentPreviewModalLabel">Document Preview</h5>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <a id="pdfOpenNewTabBtn" href="#" target="_blank" class="btn btn-sm btn-outline-primary d-none me-2">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Fullscreen
+                        </a>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 </div>
-                <div class="modal-body p-0 d-flex flex-column" style="height: 80vh;">
-                    <!-- Dynamic IFrame container for PDF -->
-                    <div id="documentPreviewIframeContainer" class="w-100 h-100 d-none">
-                        <iframe id="documentPreviewIframe" src="" class="w-100 h-100 border-0"></iframe>
+                <div class="modal-body p-0 d-flex flex-column" style="height: 80vh; background: #e9ecef;">
+                    <!-- Dynamic Object container for PDF -->
+                    <div id="documentPreviewObjectContainer" class="w-100 h-100 d-none flex-column flex-grow-1" style="height: 100%;">
+                        <object id="documentPreviewObject" data="" type="application/pdf" class="w-100 h-100 border-0 flex-grow-1 d-block" style="width: 100%; height: 100%; min-height: 100%;">
+                            <div class="p-5 text-center text-muted">
+                                <p>Your browser does not support inline PDFs.</p>
+                                <a id="documentPreviewFallbackLink" href="#" target="_blank" class="btn btn-primary">Download PDF</a>
+                            </div>
+                        </object>
                     </div>
                     <!-- Dynamic Image container -->
                     <div id="imagePreviewContainer" class="w-100 h-100 overflow-auto bg-white p-3 text-center d-none">

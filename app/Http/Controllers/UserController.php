@@ -53,7 +53,7 @@ class UserController extends Controller
         ]);
 
         if ($request->has('roles')) {
-            $user->roles()->sync($request->roles);
+            $user->syncRoles($request->roles);
         }
 
         if ($request->has('permissions')) {
@@ -88,7 +88,7 @@ class UserController extends Controller
             'service_body_id' => $request->service_body_id,
         ]);
 
-        $user->roles()->sync($request->roles ?? []);
+        $user->syncRoles($request->roles ?? []);
         $user->syncPermissions($request->permissions ?? []);
         return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));
     }
