@@ -35,6 +35,7 @@
   <link rel="alternate" hreflang="ar" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalizedURL('ar', null, [], true) }}" />
   <link rel="alternate" hreflang="en" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalizedURL('en', null, [], true) }}" />
   <link rel="alternate" hreflang="x-default" href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getNonLocalizedURL() }}" />
+  <link rel="alternate" type="text/markdown" title="LLM Information" href="/llms.txt" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">

@@ -4,6 +4,5 @@ Disallow: /export-meetings-csv
 Disallow: /*/export-meetings-pdf
 Disallow: /*/export-meetings-csv
 
-# Sitemap & AI Agent Information
+# Sitemap
 Sitemap: https://naegypt.org/sitemap.xml
-Sitemap: https://naegypt.org/llms.txt
