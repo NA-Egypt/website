@@ -184,86 +184,147 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   .sidebar-wrapper .navigation .menu-label { color: var(--text-secondary) !important; }
   .sidebar-wrapper .navigation ul { background: transparent !important; }
 
-  /* Flush Sidebar & Full Viewport Table Styles */
-  body.has-sidebar .sidebar-wrapper {
-      position: fixed;
-      top: 70px; /* Offset for the full-width navbar */
-      bottom: 0;
-      left: 0;
-      z-index: 1030;
-      overflow-x: hidden;
-      overflow-y: auto;
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
-  [dir="rtl"] body.has-sidebar .sidebar-wrapper {
-      left: auto !important;
+  /* 100% Locked Full-Width Top Navbar (Overrides legacy style.css offset rules) */
+  .top-header,
+  .top-header .navbar,
+  body .top-header .navbar,
+  body.has-sidebar .top-header .navbar,
+  body.has-sidebar .wrapper.toggled .top-header .navbar,
+  body.sidebar-collapsed .top-header .navbar,
+  [dir="rtl"] .top-header .navbar,
+  [dir="rtl"] body.has-sidebar .top-header .navbar,
+  [dir="rtl"] body.has-sidebar .wrapper.toggled .top-header .navbar,
+  [dir="rtl"] body.sidebar-collapsed .top-header .navbar {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
       right: 0 !important;
-  }
-  
-  .top-header {
+      width: 100% !important;
+      height: 70px !important;
+      margin: 0 !important;
       z-index: 1040 !important;
   }
 
-  /* Expanded Mode (default 240px) */
-  body.has-sidebar:not(.sidebar-collapsed) .sidebar-wrapper {
-      width: 240px !important;
+  .sidebar-wrapper {
+      position: fixed !important;
+      top: 70px !important;
+      bottom: 0 !important;
+      height: calc(100vh - 70px) !important;
+      left: 0 !important;
+      z-index: 1030 !important;
+      overflow-x: hidden;
+      overflow-y: auto;
   }
-  body.has-sidebar:not(.sidebar-collapsed) .page-content {
-      margin-left: 240px !important;
-      width: calc(100% - 240px) !important;
-      transition: margin 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .page-content {
-      margin-left: 0 !important;
-      margin-right: 240px !important;
-  }
-
-  /* Compact Mode (64px) */
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
-      width: 64px !important;
-  }
-  body.has-sidebar.sidebar-collapsed .page-content {
-      margin-left: 64px !important;
-      width: calc(100% - 64px) !important;
-      transition: margin 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
-      margin-left: 0 !important;
-      margin-right: 64px !important;
+  [dir="rtl"] .sidebar-wrapper {
+      left: auto !important;
+      right: 0 !important;
   }
 
-  /* Mobile Offcanvas Sidebar (max-width: 991.98px) */
-  @media (max-width: 991.98px) {
-      body.has-sidebar .sidebar-wrapper {
-          transform: translateX(-100%) !important;
-          width: 280px !important; /* Slightly wider for mobile usability */
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  .page-content {
+      margin-top: 70px !important;
+      padding-top: 20px !important;
+  }
+
+  /* Desktop Viewport Alignment (min-width: 1026px) */
+  @media (min-width: 1026px) {
+      /* Expanded Mode (default 240px) */
+      body:not(.sidebar-collapsed) .sidebar-wrapper {
+          width: 240px !important;
       }
-      [dir="rtl"] body.has-sidebar .sidebar-wrapper {
+      body:not(.sidebar-collapsed) .page-content {
+          margin-left: 240px !important;
+          width: calc(100% - 240px) !important;
+      }
+      [dir="rtl"] body:not(.sidebar-collapsed) .page-content {
+          margin-left: 0 !important;
+          margin-right: 240px !important;
+          width: calc(100% - 240px) !important;
+      }
+
+      /* Compact Mode (64px) */
+      body.sidebar-collapsed .sidebar-wrapper,
+      html.sidebar-collapsed .sidebar-wrapper,
+      .wrapper.toggled .sidebar-wrapper {
+          width: 64px !important;
+      }
+      body.sidebar-collapsed .page-content,
+      html.sidebar-collapsed .page-content,
+      .wrapper.toggled .page-content {
+          margin-left: 64px !important;
+          width: calc(100% - 64px) !important;
+      }
+      [dir="rtl"] body.sidebar-collapsed .page-content,
+      [dir="rtl"] html.sidebar-collapsed .page-content,
+      [dir="rtl"] .wrapper.toggled .page-content {
+          margin-left: 0 !important;
+          margin-right: 64px !important;
+          width: calc(100% - 64px) !important;
+      }
+  }
+
+  /* Mobile Offcanvas Sidebar (max-width: 1025.98px) */
+  @media (max-width: 1025.98px) {
+      .sidebar-wrapper {
+          position: fixed !important;
+          top: 70px !important;
+          bottom: 0 !important;
+          height: calc(100vh - 70px) !important;
+          width: 280px !important;
+          left: 0 !important;
+          right: auto !important;
+          transform: translateX(-100%) !important;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          z-index: 1035 !important;
+      }
+      [dir="rtl"] .sidebar-wrapper {
+          left: auto !important;
+          right: 0 !important;
           transform: translateX(100%) !important;
       }
       
-      /* Active state for Mobile */
-      body.has-sidebar.sidebar-open .sidebar-wrapper {
+      /* Active state for Mobile Drawer */
+      body.sidebar-open .sidebar-wrapper,
+      body.sidebar-collapsed .sidebar-wrapper,
+      .wrapper.toggled .sidebar-wrapper {
           transform: translateX(0) !important;
-          box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15) !important;
+          box-shadow: 4px 0 25px rgba(0, 0, 0, 0.2) !important;
       }
-      [dir="rtl"] body.has-sidebar.sidebar-open .sidebar-wrapper {
+      [dir="rtl"] body.sidebar-open .sidebar-wrapper,
+      [dir="rtl"] body.sidebar-collapsed .sidebar-wrapper,
+      [dir="rtl"] .wrapper.toggled .sidebar-wrapper {
           transform: translateX(0) !important;
-          box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15) !important;
+          box-shadow: -4px 0 25px rgba(0, 0, 0, 0.2) !important;
       }
       
-      /* Reset page content margin on mobile so they span full width */
-      body.has-sidebar:not(.sidebar-collapsed) .page-content,
-      body.has-sidebar.sidebar-collapsed .page-content,
-      body.has-sidebar .page-content {
+      /* Reset page content margin on mobile */
+      .page-content {
           margin-left: 0 !important;
+          margin-right: 0 !important;
           width: 100% !important;
       }
-      [dir="rtl"] body.has-sidebar:not(.sidebar-collapsed) .page-content,
-      [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content,
-      [dir="rtl"] body.has-sidebar .page-content {
-          margin-right: 0 !important;
+  }
+
+  /* Mobile Backdrop Overlay */
+  .sidebar-overlay {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1025;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+  }
+  @media (max-width: 1025.98px) {
+      body.sidebar-open .sidebar-overlay,
+      body.sidebar-collapsed .sidebar-overlay,
+      .wrapper.toggled .sidebar-overlay {
+          opacity: 1 !important;
+          pointer-events: auto !important;
       }
   }
 
@@ -285,23 +346,37 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   }
 
   /* Hide elements in Compact Mode */
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .menu-title,
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .sidebar-title,
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .collapse,
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .menu-divider-label {
+  body.sidebar-collapsed .sidebar-wrapper .menu-title,
+  html.sidebar-collapsed .sidebar-wrapper .menu-title,
+  .wrapper.toggled .sidebar-wrapper .menu-title,
+  body.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
+  html.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
+  .wrapper.toggled .sidebar-wrapper .sidebar-search-container,
+  body.sidebar-collapsed .sidebar-wrapper .sidebar-title,
+  html.sidebar-collapsed .sidebar-wrapper .sidebar-title,
+  .wrapper.toggled .sidebar-wrapper .sidebar-title,
+  body.sidebar-collapsed .sidebar-wrapper .collapse,
+  html.sidebar-collapsed .sidebar-wrapper .collapse,
+  .wrapper.toggled .sidebar-wrapper .collapse,
+  body.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
+  html.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
+  .wrapper.toggled .sidebar-wrapper .menu-divider-label {
       display: none !important;
   }
 
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .navigation li a {
+  body.sidebar-collapsed .sidebar-wrapper .navigation li a,
+  html.sidebar-collapsed .sidebar-wrapper .navigation li a,
+  .wrapper.toggled .sidebar-wrapper .navigation li a {
       justify-content: center !important;
       padding: 8px 0 !important;
       margin: 3px 6px !important;
   }
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon {
+  body.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
+  html.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
+  .wrapper.toggled .sidebar-wrapper .navigation .parent-icon {
       margin-right: 0 !important;
       margin-left: 0 !important;
-      font-size: 18px !important;
+      font-size: 20px !important;
   }
 
   /* Hide Overlay completely on Desktop (prevent graying out layout) */
@@ -340,19 +415,96 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       margin-left: 0 !important;
       background-position: right center !important;
   }
+
+  /* Preload / Instant Sidebar State to Prevent Flickering */
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper,
+  body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
+      width: 64px !important;
+  }
+  html.sidebar-collapsed body.has-sidebar .page-content,
+  body.has-sidebar.sidebar-collapsed .page-content {
+      margin-left: 64px !important;
+      width: calc(100% - 64px) !important;
+  }
+  [dir="rtl"] html.sidebar-collapsed body.has-sidebar .page-content,
+  [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
+      margin-left: 0 !important;
+      margin-right: 64px !important;
+  }
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-title,
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-search-container,
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-title,
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .collapse,
+  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-divider-label {
+      display: none !important;
+  }
+
+  /* Global Modal Header Flex & Close Button Alignment Fix */
+  .modal-header {
+      display: flex !important;
+      align-items: flex-start !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+  }
+  .modal-header .btn-close {
+      margin: 0 !important;
+      padding: 0.5rem !important;
+      opacity: 0.75;
+      transition: all 0.15s ease;
+      flex-shrink: 0 !important;
+  }
+  .modal-header .btn-close:hover {
+      opacity: 1;
+      transform: scale(1.1);
+  }
+  [dir="rtl"] .modal-header .btn-close {
+      margin-left: 0 !important;
+      margin-right: auto !important;
+  }
+  [dir="ltr"] .modal-header .btn-close {
+      margin-left: auto !important;
+      margin-right: 0 !important;
+  }
+  /* Transitions scoped ONLY to explicit toggling action to eliminate click reflow flickering */
+  body.is-toggling .sidebar-wrapper,
+  body.is-toggling .page-content {
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), margin 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
   </style>
 
   <title>{{__('messages.NA')}}</title>
 
-  <!-- Restore Sidebar State Early to Prevent FOCU -->
+  <!-- Instant Zero-Dependency Sidebar Toggle Engine -->
   <script>
+    window.toggleSidebarMenu = function() {
+      var isMobile = window.innerWidth <= 1025;
+      document.body.classList.add('is-toggling');
+      if (isMobile) {
+        var isOpen = document.body.classList.toggle('sidebar-open');
+        document.body.classList.toggle('sidebar-collapsed', isOpen);
+        var wrapper = document.querySelector('.wrapper');
+        if (wrapper) wrapper.classList.toggle('toggled', isOpen);
+      } else {
+        var isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+        document.documentElement.classList.toggle('sidebar-collapsed', isCollapsed);
+        var wrapper = document.querySelector('.wrapper');
+        if (wrapper) wrapper.classList.toggle('toggled', isCollapsed);
+        try { localStorage.setItem('sidebar_collapsed', isCollapsed ? 'true' : 'false'); } catch(e){}
+      }
+      setTimeout(function() {
+        document.body.classList.remove('is-toggling');
+      }, 300);
+    };
+
     (function() {
       try {
         var isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
-        if (isCollapsed && window.innerWidth >= 992) {
-          document.documentElement.classList.add('sidebar-collapsed-init');
+        if (isCollapsed && window.innerWidth > 1025) {
+          document.documentElement.classList.add('sidebar-collapsed');
           document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.add('sidebar-collapsed');
+            var wrapper = document.querySelector('.wrapper');
+            if (wrapper) wrapper.classList.add('toggled');
           });
         }
       } catch(e){}

@@ -36,10 +36,32 @@ class StoreController extends Controller implements HasMiddleware
             $query->where('category', $request->category);
         }
 
-        $items = $query->orderBy('name')->paginate(15)->withQueryString();
+        if ($request->boolean('low_stock')) {
+            $query->where('store_quantity', '<=', 5);
+        }
+
+        $sortColumn = in_array($request->input('sort'), ['name', 'selling_price', 'store_quantity', 'lit_quantity']) ? $request->input('sort') : 'name';
+        $sortDirection = strtolower($request->input('direction')) === 'desc' ? 'desc' : 'asc';
+
+        $items = $query->orderBy($sortColumn, $sortDirection)->paginate(15)->withQueryString();
         $activeStocktaking = \App\Models\StocktakingSession::getActiveSession();
 
-        return view('store.index', compact('items', 'activeStocktaking'));
+        $allItems = InventoryItem::orderBy('name')->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'name_en' => $item->name_en,
+                'display_name' => $item->store_display_name,
+                'category' => $item->category,
+                'selling_price' => (float) $item->selling_price,
+                'store_quantity' => (int) $item->store_quantity,
+                'lit_quantity' => (int) $item->lit_quantity,
+            ];
+        });
+
+        $lowStockCount = InventoryItem::where('store_quantity', '<=', 5)->count();
+
+        return view('store.index', compact('items', 'activeStocktaking', 'allItems', 'lowStockCount'));
     }
 
     public function store(Request $request)
@@ -701,5 +723,84 @@ class StoreController extends Controller implements HasMiddleware
         InventoryItem::whereIn('id', $fields['ids'])->delete();
 
         return redirect()->route('store.index')->with('success', __('messages.item_deleted_success'));
+    }
+
+    public function batchMovement(Request $request)
+    {
+        $fields = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|exists:inventory_items,id',
+            'items.*.type' => 'required|string|in:receive,transfer_to_lit,return_from_lit',
+            'items.*.quantity' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $batchNotes = $fields['notes'] ?? null;
+        $processedCount = 0;
+
+        \DB::beginTransaction();
+        try {
+            foreach ($fields['items'] as $row) {
+                $item = InventoryItem::find($row['id']);
+                if (!$item) continue;
+
+                $qty = (int) $row['quantity'];
+                $type = $row['type'];
+
+                if ($type === 'receive') {
+                    $item->increment('store_quantity', $qty);
+                } elseif ($type === 'transfer_to_lit') {
+                    if ($item->store_quantity < $qty) {
+                        \DB::rollBack();
+                        $errMsg = __('messages.insufficient_store_stock_item', ['name' => $item->store_display_name]);
+                        if ($request->wantsJson() || $request->ajax()) {
+                            return response()->json(['success' => false, 'message' => $errMsg], 422);
+                        }
+                        return redirect()->route('store.index')->with('error', $errMsg);
+                    }
+                    $item->decrement('store_quantity', $qty);
+                    $item->increment('lit_quantity', $qty);
+                } elseif ($type === 'return_from_lit') {
+                    if ($item->lit_quantity < $qty) {
+                        \DB::rollBack();
+                        $errMsg = __('messages.insufficient_lit_stock_item', ['name' => $item->store_display_name]);
+                        if ($request->wantsJson() || $request->ajax()) {
+                            return response()->json(['success' => false, 'message' => $errMsg], 422);
+                        }
+                        return redirect()->route('store.index')->with('error', $errMsg);
+                    }
+                    $item->decrement('lit_quantity', $qty);
+                    $item->increment('store_quantity', $qty);
+                }
+
+                InventoryTransaction::create([
+                    'inventory_item_id' => $item->id,
+                    'user_id' => Auth::id(),
+                    'type' => $type,
+                    'quantity' => $qty,
+                    'notes' => $batchNotes ?: __('messages.batch_movement_transaction'),
+                ]);
+
+                $processedCount++;
+            }
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+            return redirect()->route('store.index')->with('error', $e->getMessage());
+        }
+
+        $successMsg = __('messages.batch_movement_success', ['count' => $processedCount]);
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMsg,
+                'redirect' => route('store.index')
+            ]);
+        }
+
+        return redirect()->route('store.index')->with('success', $successMsg);
     }
 }

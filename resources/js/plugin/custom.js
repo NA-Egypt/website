@@ -22,20 +22,11 @@ window.jQuery(function () {
 	// Initialize Select2 (Removed - Now handled by AlpineJS bridge in components)
 
 	// Toggle Sidebar
-	$(".nav-toggle-icon").on("click", function () {
-		$(".wrapper").toggleClass("toggled")
-	});
-
-	$(".mobile-toggle-icon").on("click", function () {
-		$(".wrapper").addClass("toggled")
-	});
-
-	$(".toggle-icon").click(function () {
-		$(".wrapper").hasClass("toggled") ? ($(".wrapper").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover")) : ($(".wrapper").addClass("toggled"), $(".sidebar-wrapper").hover(function () {
-			$(".wrapper").addClass("sidebar-hovered")
-		}, function () {
-			$(".wrapper").removeClass("sidebar-hovered")
-		}))
+	$(document).on("click", ".nav-toggle-icon, #sidebarCollapseToggle, .toggle-sidebar-btn", function (e) {
+		e.preventDefault();
+		if (typeof window.toggleSidebarMenu === 'function') {
+			window.toggleSidebarMenu();
+		}
 	});
 
 	// Search Bar Toggle

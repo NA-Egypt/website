@@ -8,23 +8,14 @@
           auth()->user()->hasRole('rsc')
       );
       @endphp
-      @if($hasSidebar)
-      <div class="mobile-toggle-icon d-lg-none p-2 rounded-3" style="color: var(--text-primary); cursor: pointer; transition: background 0.2s;" title="{{ app()->getLocale() === 'ar' ? 'القائمة' : 'Menu' }}">
-        <i class="bi bi-list fs-3"></i>
-      </div>
-      @else
-      <a href="{{ route('dashboard') }}" class="d-lg-none p-2 rounded-3 text-decoration-none d-flex align-items-center justify-content-center" style="color: var(--text-primary);">
-        <i class="bi bi-house-door-fill" style="font-size: 22px;"></i>
-      </a>
-      @endif
-      <div class="top-navbar d-none d-lg-flex align-items-center gap-2">
-        @if($hasSidebar)
+      <div class="top-navbar d-flex align-items-center gap-2">
+        @if(auth()->check())
         <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="{{ app()->getLocale() === 'ar' ? 'تصغير/توسيع القائمة' : 'Toggle Sidebar' }}">
-          <i class="bi bi-list fs-4"></i>
+          <i class="bi bi-list fs-3"></i>
         </div>
         @endif
-        <a href="{{ route('dashboard') }}">
-          <img src="{{ asset('assets/images/na.png') }}" alt="" width="150" height="50">
+        <a href="{{ route('dashboard') }}" class="d-flex align-items-center">
+          <img src="{{ asset('assets/images/na.png') }}" alt="NA Logo" width="140" height="45" style="object-fit: contain;">
         </a>
       </div>
 

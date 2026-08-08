@@ -189,15 +189,10 @@
 
 <aside class="sidebar-wrapper" data-simplebar="true">
         
-    {{-- Header & Desktop/Mobile Controls --}}
-    <div class="sidebar-header-controls">
-        <div class="d-flex align-items-center gap-2">
-            <div class="sidebar-toggle-btn d-none d-lg-flex" id="sidebarPinToggle" title="{{ app()->getLocale() === 'ar' ? 'تثبيت/إلغاء تثبيت القائمة' : 'Pin/Unpin Sidebar' }}">
-                <i class="bi bi-pin-angle fs-6" id="pinToggleIcon"></i>
-            </div>
-            <span class="fw-bold small text-uppercase sidebar-title opacity-75" style="letter-spacing: 0.5px;">{{ __('messages.dashboard') ?? 'Dashboard' }}</span>
-        </div>
-        <div class="sidebar-toggle-btn d-xl-none nav-toggle-icon" title="{{ __('messages.back') ?? 'Back' }}">
+    {{-- Header & Controls --}}
+    <div class="sidebar-header-controls d-lg-none">
+        <span class="fw-bold small text-uppercase sidebar-title opacity-75" style="letter-spacing: 0.5px;">{{ __('messages.dashboard') ?? 'Menu' }}</span>
+        <div class="sidebar-toggle-btn nav-toggle-icon" title="{{ __('messages.back') ?? 'Back' }}">
             <i class="bi bi-x-lg fs-6"></i>
         </div>
     </div>
@@ -460,11 +455,13 @@
         var isCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
         if (isCollapsed && window.innerWidth >= 992) {
             body.classList.add("sidebar-collapsed");
+            document.documentElement.classList.add("sidebar-collapsed");
         }
 
         // Toggle Sidebar state (64px vs 240px)
         function toggleSidebarState() {
             body.classList.toggle("sidebar-collapsed");
+            document.documentElement.classList.toggle("sidebar-collapsed", body.classList.contains("sidebar-collapsed"));
             var wrapper = document.querySelector(".wrapper");
             if (wrapper) {
                 wrapper.classList.toggle("toggled", body.classList.contains("sidebar-collapsed"));
@@ -480,38 +477,9 @@
             });
         }
 
-        var globalToggles = document.querySelectorAll("#sidebarCollapseToggle, .toggle-sidebar-btn");
-        globalToggles.forEach(function(btn) {
-            btn.addEventListener("click", function(e) {
-                e.preventDefault();
-                if (window.innerWidth < 992) {
-                    body.classList.toggle("sidebar-open");
-                } else {
-                    toggleSidebarState();
-                }
-            });
-        });
-
-        // Mobile specific toggles
-        var mobileToggles = document.querySelectorAll(".mobile-toggle-icon");
-        mobileToggles.forEach(function(btn) {
-            btn.addEventListener("click", function(e) {
-                e.preventDefault();
-                body.classList.toggle("sidebar-open");
-            });
-        });
-
         var overlay = document.querySelector(".overlay");
         if (overlay) {
             overlay.addEventListener("click", function() {
-                body.classList.remove("sidebar-open");
-            });
-        }
-
-        var mobileCloseBtn = document.querySelector(".nav-toggle-icon");
-        if (mobileCloseBtn && mobileCloseBtn !== overlay) {
-            mobileCloseBtn.addEventListener("click", function(e) {
-                e.preventDefault();
                 body.classList.remove("sidebar-open");
             });
         }
@@ -561,18 +529,8 @@
                 }
             }
         });
-
-        // 4. Auto-Expand Sidebar on Submenu Item Click
-        var dropdownToggles = sidebar ? sidebar.querySelectorAll('a[data-bs-toggle="collapse"]') : [];
-        dropdownToggles.forEach(function(toggle) {
-            toggle.addEventListener("click", function() {
-                if (body.classList.contains("sidebar-collapsed")) {
-                    body.classList.remove("sidebar-collapsed");
-                    localStorage.setItem("sidebar_collapsed", "false");
-                }
-            });
-        });
     });
     </script>
 
   </aside>
+  <div class="sidebar-overlay" onclick="window.toggleSidebarMenu()"></div>
