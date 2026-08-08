@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\ServiceBody;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 use App\Traits\PaginatesDataTables;
 
 class UserController extends Controller
@@ -120,5 +123,49 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.index')->with('error', __('messages.invalid_action'));
+    }
+
+    public function impersonate(User $user)
+    {
+        $currentUser = Auth::user();
+
+        // Security check: Only Super Admin can impersonate
+        if (!$currentUser || !$currentUser->hasRole('super admin')) {
+            return redirect()->route('dashboard')->with('error', __('messages.unauthorized_impersonation'));
+        }
+
+        // Security check: Cannot impersonate another Super Admin
+        if ($user->hasRole('super admin')) {
+            return redirect()->back()->with('error', __('messages.cannot_impersonate_admin'));
+        }
+
+        // Save original admin ID in session
+        session(['impersonated_by' => $currentUser->id]);
+
+        // Login as target user
+        Auth::login($user);
+
+        Log::info("Super Admin [ID: {$currentUser->id}] started impersonating User [ID: {$user->id}, Email: {$user->email}]");
+
+        return redirect()->route('dashboard')->with('success', __('messages.impersonation_started', ['name' => $user->display_name ?? $user->name]));
+    }
+
+    public function stopImpersonating()
+    {
+        $adminId = session('impersonated_by');
+
+        if (!$adminId) {
+            return redirect()->route('dashboard');
+        }
+
+        $impersonatedUserId = Auth::id();
+
+        // Restore original admin login
+        Auth::loginUsingId($adminId);
+        session()->forget('impersonated_by');
+
+        Log::info("Super Admin [ID: {$adminId}] stopped impersonating User [ID: {$impersonatedUserId}]");
+
+        return redirect()->route('users.index')->with('success', __('messages.impersonation_ended'));
     }
 }

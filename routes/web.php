@@ -216,6 +216,7 @@ Route::group(
 
                 // users:
                 Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk_action');
+                Route::post('users/{user}/impersonate', [UserController::class, 'impersonate'])->name('users.impersonate');
                 Route::resource('users', UserController::class)->only(['index', 'edit', 'update', 'create', 'store']);
                 Route::get('/roles/{role}/assign-permissions',
                     [RoleController::class, 'assignPermissions'])
@@ -239,6 +240,9 @@ Route::group(
                 Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy_admin');
                 Route::get('/subscribers-export', [SubscriberController::class, 'export'])->name('subscribers.export');
             });
+
+            // Stop Impersonating Route (Accessible to any authenticated session currently impersonating):
+            Route::post('users/stop-impersonation', [UserController::class, 'stopImpersonating'])->name('users.stop_impersonating');
 
             // Custom Form Builder:
             Route::middleware(['permission:manage own forms'])->group(function () {

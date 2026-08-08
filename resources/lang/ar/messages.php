@@ -1509,6 +1509,15 @@ return [
     'processing' => 'جاري المعالجة...',
     'quick_edit_selected' => 'تعديل سريع للمحدد',
     'save_all_selected' => 'حفظ كافة التعديلات',
+
+    // Impersonation
+    'impersonate_user' => 'تقمص الشخصية',
+    'currently_impersonating' => 'أنت تتقمص حالياً شخصية',
+    'stop_impersonating' => 'إلغاء التقمص والعودة',
+    'impersonation_started' => 'تم تقمص شخصية :name بنجاح',
+    'impersonation_ended' => 'تم إنهاء التقمص والعودة إلى حساب المشرف الخص بك',
+    'cannot_impersonate_admin' => 'لا يمكن تقمص شخصية مشرف آخر',
+    'unauthorized_impersonation' => 'صلاحية التقمص مقتصرة على المشرفين فقط',
 ];
 
 

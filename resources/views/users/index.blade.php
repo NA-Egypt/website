@@ -34,6 +34,8 @@
          data-bulk-actions="{{ json_encode($bulkActions) }}"
          data-bulk-ids-name="user_ids[]"
          data-edit-route-template="{{ str_replace('1', '{id}', route('users.edit', ['user' => 1])) }}"
+         data-impersonate-route-template="{{ str_replace('1', '{id}', route('users.impersonate', ['user' => 1])) }}"
+         data-has-impersonate-button="true"
          data-delete-route-name="users.destroy"
          data-delete-route-template="{{ str_replace('1', '{id}', route('users.destroy', ['user' => 1])) }}">
     </div>

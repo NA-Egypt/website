@@ -143,11 +143,22 @@
                         @endforeach
                     </div>
 
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
                         <button type="submit" class="btn btn-premium-primary">{{ __('messages.Save') ?? 'Save' }}</button>
                         <a href="{{ route('users.index') }}" class="btn btn-premium-secondary d-flex align-items-center justify-content-center">{{ __('messages.Cancel') ?? 'Cancel' }}</a>
+                        @if(auth()->user()->hasRole('super admin') && !$user->hasRole('super admin'))
+                            <button type="button" class="btn btn-warning text-dark fw-bold px-3 ms-auto d-flex align-items-center gap-2 rounded-pill shadow-sm" onclick="if(confirm('{{ __('messages.impersonation_started', ['name' => $user->display_name ?? $user->name]) }}')) { document.getElementById('impersonate-form-{{ $user->id }}').submit(); }">
+                                <i class="bi bi-incognito"></i>
+                                <span>{{ __('messages.impersonate_user') }}</span>
+                            </button>
+                        @endif
                     </div>
                 </form>
+                @if(auth()->user()->hasRole('super admin') && !$user->hasRole('super admin'))
+                    <form id="impersonate-form-{{ $user->id }}" action="{{ route('users.impersonate', $user) }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                @endif
             </div>
         </div>
     </div>

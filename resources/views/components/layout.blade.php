@@ -534,6 +534,9 @@ $hasSidebar = auth()->check() && (
 {{--     wrapper--}}
     <div class="wrapper">
 
+        <!-- Impersonation Banner -->
+        <x-impersonation-banner />
+
         <!-- Nav Bar-->
         <x-nav-bar />
         <!-- / Nav Bar-->

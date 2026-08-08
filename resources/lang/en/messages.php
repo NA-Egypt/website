@@ -1504,6 +1504,15 @@ return [
     'processing' => 'Processing...',
     'quick_edit_selected' => 'Quick Edit Selected',
     'save_all_selected' => 'Save All Selected',
+
+    // Impersonation
+    'impersonate_user' => 'Impersonate',
+    'currently_impersonating' => 'Currently impersonating',
+    'stop_impersonating' => 'Stop Impersonating',
+    'impersonation_started' => 'Successfully impersonating :name',
+    'impersonation_ended' => 'Impersonation ended. Returned to your account.',
+    'cannot_impersonate_admin' => 'Cannot impersonate another Super Admin account.',
+    'unauthorized_impersonation' => 'Only Super Admins can impersonate users.',
 ];
 
 

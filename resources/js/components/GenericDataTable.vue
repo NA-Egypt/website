@@ -133,6 +133,16 @@
               {{ labels.agendas }}
             </button>
             <button
+              v-if="(hasImpersonateButton || impersonateRouteTemplate) && !isUserSuperAdmin(data.value)"
+              type="button"
+              class="btn btn-sm btn-outline-warning text-dark fw-semibold"
+              @click="impersonateUser(data.value.id)"
+              :title="labels.impersonate"
+            >
+              <i class="bi bi-incognito me-1"></i>
+              {{ labels.impersonate }}
+            </button>
+            <button
               v-if="editRouteTemplate"
               type="button"
               class="btn btn-sm btn-outline-info"
@@ -210,9 +220,21 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  deleteRouteName: {
+    type: String,
+    default: ''
+  },
   deleteRouteTemplate: {
     type: String,
     default: ''
+  },
+  impersonateRouteTemplate: {
+    type: String,
+    default: ''
+  },
+  hasImpersonateButton: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -262,6 +284,8 @@ const labels = computed(() => {
       agendas: 'الأجندة',
       edit: 'تعديل',
       delete: 'حذف',
+      impersonate: 'تقمص',
+      confirmImpersonate: 'هل أنت متأكد من تقمص شخصية هذا المستخدم؟',
       paginationInfo: 'يظهر {0} إلى {1} من {2} المدخلات',
       noDataContent: 'لا توجد بيانات متاحة',
       confirmDelete: 'هل أنت متأكد أنك تريد حذف هذا العنصر؟',
@@ -284,6 +308,8 @@ const labels = computed(() => {
     agendas: 'Agendas',
     edit: 'Edit',
     delete: 'Delete',
+    impersonate: 'Impersonate',
+    confirmImpersonate: 'Are you sure you want to impersonate this user?',
     paginationInfo: 'Showing {0} to {1} of {2} entries',
     noDataContent: 'No data available',
     confirmDelete: 'Are you sure you want to delete this item?',
@@ -296,6 +322,40 @@ const labels = computed(() => {
   };
 });
 
+const isUserSuperAdmin = (row) => {
+  if (!row || !row.roles) return false;
+  if (Array.isArray(row.roles)) {
+    return row.roles.some(role => typeof role === 'string' ? role === 'super admin' : role.name === 'super admin');
+  }
+  return false;
+};
+
+const getImpersonateUrl = (id) => {
+  if (props.impersonateRouteTemplate) {
+    return props.impersonateRouteTemplate.replace('{id}', id);
+  }
+  return `/users/${id}/impersonate`;
+};
+
+const impersonateUser = (id) => {
+  if (confirm(labels.value.confirmImpersonate)) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = getImpersonateUrl(id);
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (csrfToken) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = '_token';
+      input.value = csrfToken;
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+};
 
 const getEditUrl = (id) => {
   console.log('GenericDataTable getEditUrl called for ID:', id, 'Template:', props.editRouteTemplate);
