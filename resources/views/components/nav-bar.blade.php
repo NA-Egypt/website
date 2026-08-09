@@ -1,12 +1,7 @@
 <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
     <nav class="navbar navbar-expand">
       @php
-      $hasSidebar = auth()->check() && (
-          auth()->user()->hasRole('super admin') ||
-          auth()->user()->hasRole('Committees') ||
-          auth()->user()->hasRole('ServiceBody') ||
-          auth()->user()->hasRole('rsc')
-      );
+      $hasSidebar = auth()->check();
       @endphp
       <div class="top-navbar d-flex align-items-center gap-2">
         @if(auth()->check())

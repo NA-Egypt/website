@@ -522,13 +522,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 </script>
 </head>
 @php
-$hasSidebar = auth()->check() && (
-    auth()->user()->hasRole('super admin') ||
-    auth()->user()->hasRole('Committees') ||
-    auth()->user()->hasRole('ServiceBody') ||
-    auth()->user()->hasRole('rsc') ||
-    auth()->user()->can('manage own forms')
-);
+$hasSidebar = auth()->check();
 @endphp
 <body class="hanken-grotesk {{ $hasSidebar ? 'has-sidebar' : '' }}">
 {{--     wrapper--}}

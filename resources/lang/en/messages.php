@@ -1336,6 +1336,8 @@ return [
     'request_submitted_success' => 'Literature request submitted successfully.',
     'request_overridden_success' => 'Your old request was overridden and updated successfully.',
     'locked_after_19th' => 'Submissions and edits are locked after the 19th of the month.',
+    'accumulated_invoice_auto_compiled_note' => 'Accumulated invoice will be automatically compiled on the 19th of the month.',
+    'no_group_requests_to_accumulate' => 'No requests submitted from groups to accumulate.',
     'approve_and_send_to_committee' => 'Approve & Send to Literature Committee',
     'save_and_return_to_servicebody' => 'Save & Return to Service Body',
     'literature_requests_archive' => 'Literature Requests Archive',

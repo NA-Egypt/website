@@ -172,7 +172,7 @@
                         <div class="text-center py-5 text-muted h-100 d-flex flex-column justify-content-center align-items-center">
                             <i class="bi bi-clock-history fs-1 mb-2"></i>
                             <p class="mb-0">
-                                {{ now()->day < 19 ? 'Accumulated invoice will be automatically compiled on the 19th of the month.' : 'No requests submitted from groups to accumulate.' }}
+                                {{ now()->day < 19 ? __('messages.accumulated_invoice_auto_compiled_note') : __('messages.no_group_requests_to_accumulate') }}
                             </p>
                         </div>
                     @endif

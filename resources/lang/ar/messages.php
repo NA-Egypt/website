@@ -1341,6 +1341,8 @@ return [
     'request_submitted_success' => 'تم إرسال طلب الأدبيات بنجاح.',
     'request_overridden_success' => 'تم استبدال طلبك القديم وتحديثه بنجاح.',
     'locked_after_19th' => 'تم إغلاق تقديم الطلبات أو تعديلها بعد يوم ١٩ من الشهر.',
+    'accumulated_invoice_auto_compiled_note' => 'سوف يتم تجميع الفاتورة المجمعة تلقائياً في يوم ١٩ من الشهر.',
+    'no_group_requests_to_accumulate' => 'لا توجد طلبات مقدمة من المجموعات للتجميع.',
     'approve_and_send_to_committee' => 'اعتماد وإرسال إلى لجنة الأدبيات',
     'save_and_return_to_servicebody' => 'حفظ وإرجاع إلى المنطقة أو المنتدى',
     'literature_requests_archive' => 'أرشيف طلبات الأدبيات',

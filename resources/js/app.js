@@ -159,9 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const bulkIdsName = el.getAttribute('data-bulk-ids-name') || 'ids[]';
         const editRouteTemplate = el.getAttribute('data-edit-route-template') || '';
         const showRouteTemplate = el.getAttribute('data-show-route-template') || '';
+        const impersonateRouteTemplate = el.getAttribute('data-impersonate-route-template') || '';
         const deleteRouteTemplate = el.getAttribute('data-delete-route-template') || '';
         const hasAgendasButton = el.hasAttribute('data-has-agendas-button');
         const hasToggleVerificationButton = el.hasAttribute('data-has-toggle-verification-button');
+        const hasImpersonateButton = el.hasAttribute('data-has-impersonate-button');
         const deleteRouteName = el.getAttribute('data-delete-route-name') || '';
 
         const app = createApp({
@@ -175,9 +177,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 bulkIdsName,
                 editRouteTemplate,
                 showRouteTemplate,
+                impersonateRouteTemplate,
                 deleteRouteTemplate,
                 hasAgendasButton,
                 hasToggleVerificationButton,
+                hasImpersonateButton,
                 deleteRouteName
             })
         });

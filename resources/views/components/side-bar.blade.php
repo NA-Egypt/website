@@ -287,18 +287,22 @@
       @endif
 
       {{-- Reports Area --}}
+      @if(auth()->check() && !auth()->user()->hasRole('Store Manager'))
       <li>
         <a href="{{ route('committee-reports.index') }}" title="{{ __('messages.Committee Reports') }}">
           <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
           <div class="menu-title">{{ __('messages.Committee Reports') }}</div>
         </a>
       </li>
+      @endif
+      @if(auth()->check())
       <li>
         <a href="{{ route('committee-reports.archive') }}" title="{{ __('messages.Reports Archive') ?? 'Reports Archive' }}">
           <div class="parent-icon"><i class="bi bi-archive-fill"></i></div>
           <div class="menu-title">{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</div>
         </a>
       </li>
+      @endif
       {{-- /Reports Area --}}
 
       <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
@@ -346,12 +350,14 @@
       <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
 
       {{-- Calendar Area --}}
+      @if(auth()->check() && !auth()->user()->hasRole('Store Manager'))
       <li>
         <a href="{{ route('calendar.index') }}" title="{{ __('messages.Yearly Calendar') }}">
           <div class="parent-icon"><i class="bi bi-calendar-check"></i></div>
           <div class="menu-title">{{ __('messages.Yearly Calendar') }}</div>
         </a>
       </li>
+      @endif
       {{-- /Calendar Area --}}
 
       {{-- IT Change Requests Area --}}
@@ -424,7 +430,7 @@
         </a>
       </li>
       @endif
-      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User'))
+      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User'))
       <li>
         <a href="{{ route('literature-requests.committee') }}" title="{{ __('messages.Literature Requests') }}">
           <div class="parent-icon"><i class="bi bi-file-earmark-spreadsheet"></i></div>
@@ -432,7 +438,7 @@
         </a>
       </li>
       @endif
-      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
+      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
       <li>
         <a href="{{ route('literature-requests.archive') }}" title="{{ __('messages.literature_requests_archive') }}">
           <div class="parent-icon"><i class="bi bi-archive"></i></div>
