@@ -48,7 +48,7 @@ class MeetingController extends Controller
 
         $item->topics()->sync($topics);
 
-        return new MeetingResource($item->load(['group', 'day', 'topics', 'options']));
+        return (new MeetingResource($item->load(['group', 'day', 'topics', 'options'])))->response()->setStatusCode(201);
     }
 
     /**

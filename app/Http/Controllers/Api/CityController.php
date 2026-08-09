@@ -22,8 +22,13 @@ class CityController extends Controller
      */
     public function store(Request $request)
     {
-        $item = City::create($request->all());
-        return new CityResource($item);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+        $item = City::create($validated);
+        return (new CityResource($item))->response()->setStatusCode(201);
     }
 
     /**
@@ -39,7 +44,12 @@ class CityController extends Controller
      */
     public function update(Request $request, City $city)
     {
-        $city->update($request->all());
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+        $city->update($validated);
         return new CityResource($city);
     }
 

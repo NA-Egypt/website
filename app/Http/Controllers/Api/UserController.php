@@ -22,8 +22,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $item = User::create($request->all());
-        return new UserResource($item);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'nullable|string|min:8',
+            'service_body_id' => 'nullable|exists:service_bodies,id',
+        ]);
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        $item = User::create($validated);
+        return (new UserResource($item))->response()->setStatusCode(201);
     }
 
     /**
@@ -39,7 +50,18 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8',
+            'service_body_id' => 'nullable|exists:service_bodies,id',
+        ]);
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        $user->update($validated);
         return new UserResource($user);
     }
 

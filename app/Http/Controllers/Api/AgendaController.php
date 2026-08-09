@@ -70,7 +70,7 @@ class AgendaController extends Controller
             ->delete();
 
         $item = Agenda::create($validatedData);
-        return new AgendaResource($item);
+        return (new AgendaResource($item))->response()->setStatusCode(201);
     }
 
     /**

@@ -86,13 +86,13 @@ class ApiAgendasTest extends TestCase
             'financial_issues' => 'None',
         ]);
 
-        $response = $this->getJson('/api/agendas');
+        $response = $this->getJson('/api/v1/agendas');
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'submitter_name' => 'Test Submitter',
         ]);
 
-        $response = $this->getJson("/api/agendas/{$agenda->id}");
+        $response = $this->getJson("/api/v1/agendas/{$agenda->id}");
         $response->assertStatus(200);
         $response->assertJsonPath('data.submitter_name', 'Test Submitter');
     }
@@ -114,7 +114,7 @@ class ApiAgendasTest extends TestCase
             'financial_issues' => 'None',
         ];
 
-        $response = $this->postJson('/api/agendas', $data);
+        $response = $this->postJson('/api/v1/agendas', $data);
         $response->assertStatus(401);
     }
 
@@ -138,13 +138,13 @@ class ApiAgendasTest extends TestCase
             'financial_issues' => 'None',
         ];
 
-        $response = $this->postJson('/api/agendas', $data);
+        $response = $this->postJson('/api/v1/agendas', $data);
         $response->assertStatus(201);
         $this->assertDatabaseHas('agendas', ['submitter_name' => 'Auth Submitter']);
 
         $agendaId = $response->json('data.id');
 
-        $response = $this->deleteJson("/api/agendas/{$agendaId}");
+        $response = $this->deleteJson("/api/v1/agendas/{$agendaId}");
         $response->assertStatus(204);
         $this->assertDatabaseMissing('agendas', ['submitter_name' => 'Auth Submitter']);
     }
@@ -187,14 +187,14 @@ class ApiAgendasTest extends TestCase
 
         // A. Public / Guest:
         // Can only see $releasedAgenda, NOT $draftAgenda, NOT $unreleasedAgenda
-        $response = $this->getJson('/api/service-body-agendas');
+        $response = $this->getJson('/api/v1/service-body-agendas');
         $response->assertStatus(200);
         $response->assertJsonFragment(['meeting_date' => $releasedDate]);
         $response->assertJsonMissing(['meeting_date' => $unreleasedDate]);
 
-        $this->getJson("/api/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
-        $this->getJson("/api/service-body-agendas/{$draftAgenda->id}")->assertStatus(403);
-        $this->getJson("/api/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(403);
+        $this->getJson("/api/v1/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$draftAgenda->id}")->assertStatus(403);
+        $this->getJson("/api/v1/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(403);
 
         // B. RCM (ServiceBody role) of SB1:
         // Can see their own drafts ($draftAgenda), and released others ($releasedAgenda), but NOT others' unreleased ($unreleasedAgenda)
@@ -202,15 +202,15 @@ class ApiAgendasTest extends TestCase
         $rcmUser->assignRole('ServiceBody');
         Sanctum::actingAs($rcmUser);
 
-        $response = $this->getJson('/api/service-body-agendas');
+        $response = $this->getJson('/api/v1/service-body-agendas');
         $response->assertStatus(200);
         $response->assertJsonFragment(['meeting_date' => now()->format('Y-m-d')]); // own draft
         $response->assertJsonFragment(['meeting_date' => $releasedDate]); // other released
         $response->assertJsonMissing(['meeting_date' => $unreleasedDate]); // other unreleased
 
-        $this->getJson("/api/service-body-agendas/{$draftAgenda->id}")->assertStatus(200);
-        $this->getJson("/api/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
-        $this->getJson("/api/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(403);
+        $this->getJson("/api/v1/service-body-agendas/{$draftAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(403);
 
         // C. Super Admin:
         // Can see everything
@@ -218,14 +218,14 @@ class ApiAgendasTest extends TestCase
         $adminUser->assignRole('super admin');
         Sanctum::actingAs($adminUser);
 
-        $response = $this->getJson('/api/service-body-agendas');
+        $response = $this->getJson('/api/v1/service-body-agendas');
         $response->assertStatus(200);
         $response->assertJsonFragment(['meeting_date' => now()->format('Y-m-d')]); // own draft
         $response->assertJsonFragment(['meeting_date' => $releasedDate]); // other released
         $response->assertJsonFragment(['meeting_date' => $unreleasedDate]); // other unreleased
 
-        $this->getJson("/api/service-body-agendas/{$draftAgenda->id}")->assertStatus(200);
-        $this->getJson("/api/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
-        $this->getJson("/api/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$draftAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$releasedAgenda->id}")->assertStatus(200);
+        $this->getJson("/api/v1/service-body-agendas/{$unreleasedAgenda->id}")->assertStatus(200);
     }
 }

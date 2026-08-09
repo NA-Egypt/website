@@ -22,8 +22,14 @@ class NeighborhoodController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Neighborhood::create($request->all());
-        return new NeighborhoodResource($item);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'city_id' => 'required|exists:cities,id',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+        $item = Neighborhood::create($validated);
+        return (new NeighborhoodResource($item))->response()->setStatusCode(201);
     }
 
     /**
@@ -39,7 +45,13 @@ class NeighborhoodController extends Controller
      */
     public function update(Request $request, Neighborhood $neighborhood)
     {
-        $neighborhood->update($request->all());
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'city_id' => 'sometimes|required|exists:cities,id',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+        $neighborhood->update($validated);
         return new NeighborhoodResource($neighborhood);
     }
 

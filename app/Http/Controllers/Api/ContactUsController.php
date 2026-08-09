@@ -22,8 +22,13 @@ class ContactUsController extends Controller
      */
     public function store(Request $request)
     {
-        $item = ContactUs::create($request->all());
-        return new ContactUsResource($item);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string',
+        ]);
+        $item = ContactUs::create($validated);
+        return (new ContactUsResource($item))->response()->setStatusCode(201);
     }
 
     /**
@@ -39,7 +44,12 @@ class ContactUsController extends Controller
      */
     public function update(Request $request, ContactUs $contactUs)
     {
-        $contactUs->update($request->all());
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|max:255',
+            'message' => 'sometimes|required|string',
+        ]);
+        $contactUs->update($validated);
         return new ContactUsResource($contactUs);
     }
 

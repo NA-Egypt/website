@@ -108,7 +108,7 @@ class ServiceCommitteeTest extends TestCase
         $targetUser = User::factory()->create(['email' => 'api-target@naegypt.org']);
 
         // 1. API Store
-        $response = $this->postJson('/api/service-committees', [
+        $response = $this->postJson('/api/v1/service-committees', [
             'ar_name' => 'لجنة API',
             'en_name' => 'API Committee',
             'email' => (string)$targetUser->id,
@@ -131,7 +131,7 @@ class ServiceCommitteeTest extends TestCase
 
         // 2. API Update
         $targetUser2 = User::factory()->create(['email' => 'api-target2@naegypt.org']);
-        $response = $this->putJson("/api/service-committees/{$committeeId}", [
+        $response = $this->putJson("/api/v1/service-committees/{$committeeId}", [
             'ar_name' => 'لجنة API محدثة',
             'en_name' => 'API Committee Updated',
             'email' => (string)$targetUser2->id,

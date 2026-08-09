@@ -65,7 +65,7 @@ class CalendarEventController extends Controller
         $validated['is_featured'] = $validated['is_featured'] ?? false;
 
         $item = CalendarEvent::create($validated);
-        return new CalendarEventResource($item);
+        return (new CalendarEventResource($item))->response()->setStatusCode(201);
     }
 
     /**
