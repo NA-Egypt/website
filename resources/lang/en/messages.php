@@ -1513,6 +1513,7 @@ return [
     'impersonation_ended' => 'Impersonation ended. Returned to your account.',
     'cannot_impersonate_admin' => 'Cannot impersonate another Super Admin account.',
     'unauthorized_impersonation' => 'Only Super Admins can impersonate users.',
+    'no_archived_literature_requests' => 'No archived literature requests found.',
 ];
 
 

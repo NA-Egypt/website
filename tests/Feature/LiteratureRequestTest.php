@@ -365,6 +365,13 @@ class LiteratureRequestTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($groupName);
         $response->assertDontSee($otherGroupName);
+
+        // 5. Generic Committees role receives 403 Forbidden
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Committees', 'guard_name' => 'web']);
+        $committeeUser = User::factory()->create();
+        $committeeUser->assignRole('Committees');
+        $response = $this->actingAs($committeeUser)->get(route('literature-requests.archive'));
+        $response->assertStatus(403);
     }
 
     public function test_super_admin_can_request_on_behalf_of_specific_group()

@@ -157,7 +157,7 @@
         @else
             <div class="card p-5 border-0 shadow-sm text-center text-muted">
                 <i class="bi bi-folder-x fs-1 mb-2"></i>
-                <p class="mb-0">No archived literature requests found.</p>
+                <p class="mb-0">{{ __('messages.no_archived_literature_requests') }}</p>
             </div>
         @endif
     </div>

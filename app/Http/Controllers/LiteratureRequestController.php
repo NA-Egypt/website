@@ -184,14 +184,14 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function treasurerDashboard(Request $request)
     {
         $user = Auth::user();
-        if (!$user->hasRole('Treasurer') && !$user->hasRole('super admin') && !$user->hasRole('Store Manager') && !$user->hasRole('Lit User')) {
+        if (!$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody') && !$user->hasRole('super admin')) {
             abort(403, 'Unauthorized');
         }
 
         $serviceBodyId = $user->service_body_id;
         if ($user->hasRole('super admin') || !$serviceBodyId) {
-            // Default to first service body if admin has no service_body_id
-            $serviceBodyId = $request->input('service_body_id', ServiceBody::first()->id ?? null);
+            // Admin or user without fixed service_body_id can select service body
+            $serviceBodyId = $request->input('service_body_id', $serviceBodyId ?: (ServiceBody::first()->id ?? null));
         }
 
         if (!$serviceBodyId) {
@@ -287,8 +287,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $litRequest = LiteratureRequest::findOrFail($id);
         
         $user = Auth::user();
-        if (!$user->hasRole('Treasurer') && !$user->hasRole('super admin')) {
-            abort(403);
+        if (!$user->hasRole('super admin')) {
+            if (!$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody')) {
+                abort(403);
+            }
+            if ($litRequest->service_body_id !== $user->service_body_id) {
+                abort(403);
+            }
         }
 
         $litRequest->update([
@@ -396,13 +401,17 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             }
         } elseif ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
             // Service Body roles see requests within their Service Body only
-            $query->where('service_body_id', $user->service_body_id);
-            if ($targetGroupId) {
-                $targetGroup = Group::find($targetGroupId);
-                if ($targetGroup && $targetGroup->service_body_id == $user->service_body_id) {
-                    $query->where('group_id', $targetGroupId);
-                } else {
-                    $query->where('id', 0); // Empty results for unauthorized access
+            if (!$user->service_body_id) {
+                $query->where('id', 0);
+            } else {
+                $query->where('service_body_id', $user->service_body_id);
+                if ($targetGroupId) {
+                    $targetGroup = Group::find($targetGroupId);
+                    if ($targetGroup && $targetGroup->service_body_id == $user->service_body_id) {
+                        $query->where('group_id', $targetGroupId);
+                    } else {
+                        $query->where('id', 0); // Empty results for unauthorized access
+                    }
                 }
             }
         } elseif ($user->hasRole('gsr')) {
@@ -443,7 +452,16 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $user = Auth::user();
         // Permission check
         if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
-            if ($litRequest->service_body_id !== $user->service_body_id) {
+            if ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
+                if ($litRequest->service_body_id !== $user->service_body_id) {
+                    abort(403);
+                }
+            } elseif ($user->hasRole('gsr')) {
+                $group = $this->getCurrentGroup();
+                if (!$group || $litRequest->group_id !== $group->id) {
+                    abort(403);
+                }
+            } else {
                 abort(403);
             }
         }

@@ -170,9 +170,11 @@
                                     <i class="bi bi-file-earmark-spreadsheet me-1"></i> {{ __('messages.Literature Requests') }}
                                 </a>
                             @endif
+                            @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
                             <a href="{{ route('literature-requests.archive', ['group_id' => $group->id]) }}" class="btn btn-outline-warning rounded-pill px-3 btn-sm">
                                 <i class="bi bi-folder2-open me-1"></i> {{ __('messages.Show') ?? 'Open' }}
                             </a>
+                            @endif
                         </div>
                     </div>
                 </div>

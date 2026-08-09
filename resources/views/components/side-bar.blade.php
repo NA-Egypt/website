@@ -432,12 +432,14 @@
         </a>
       </li>
       @endif
+      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
       <li>
         <a href="{{ route('literature-requests.archive') }}" title="{{ __('messages.literature_requests_archive') }}">
           <div class="parent-icon"><i class="bi bi-archive"></i></div>
           <div class="menu-title">{{ __('messages.literature_requests_archive') }}</div>
         </a>
       </li>
+      @endif
       @endif
 
     </ul>

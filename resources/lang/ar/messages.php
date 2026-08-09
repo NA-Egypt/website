@@ -1518,6 +1518,7 @@ return [
     'impersonation_ended' => 'تم إنهاء التقمص والعودة إلى حساب المشرف الخص بك',
     'cannot_impersonate_admin' => 'لا يمكن تقمص شخصية مشرف آخر',
     'unauthorized_impersonation' => 'صلاحية التقمص مقتصرة على المشرفين فقط',
+    'no_archived_literature_requests' => 'لم يتم العثور على طلبات مطبوعات مؤرشفة.',
 ];
 
 
