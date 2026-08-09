@@ -1,5 +1,20 @@
 <x-layout>
     <style>
+        .badge-low-stock {
+            background-color: #fff3cd !important;
+            color: #d97706 !important;
+            border: 1px solid #ffe69c !important;
+        }
+        .card-low-stock-inactive {
+            background-color: #fff8ed !important;
+            color: #d97706 !important;
+            border: 1px solid #fed7aa !important;
+        }
+        .card-low-stock-active {
+            background-color: #f97316 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0.5rem 1rem rgba(249, 115, 22, 0.25) !important;
+        }
         #inventoryTable thead th {
             position: sticky;
             top: 0;
@@ -152,7 +167,7 @@
 
             <div class="col-12 col-md-4 col-xl-2">
                 <a href="{{ route('store.index', array_filter(array_merge(request()->query(), ['low_stock' => request('low_stock') ? null : 1]))) }}" class="text-decoration-none">
-                    <div class="card text-center p-3 border-0 {{ request('low_stock') ? 'bg-warning text-dark shadow' : 'bg-warning-subtle text-warning-emphasis' }} h-100 position-relative" style="cursor: pointer;">
+                    <div class="card text-center p-3 {{ request('low_stock') ? 'card-low-stock-active' : 'card-low-stock-inactive' }} h-100 position-relative" style="cursor: pointer;">
                         <div class="fs-4 mb-1"><i class="bi bi-exclamation-triangle-fill"></i></div>
                         <div class="fw-semibold">{{ __('messages.low_stock_filter') }}</div>
                         <div class="h3 mb-0 mt-2 font-bold">{{ $lowStockCount ?? 0 }}</div>
@@ -370,7 +385,7 @@
                                             <i class="bi bi-exclamation-octagon-fill me-1"></i>0
                                         </span>
                                     @elseif ($item->store_quantity <= 5)
-                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
+                                        <span class="badge badge-low-stock px-3 py-2 rounded-pill fw-bold">
                                             <i class="bi bi-exclamation-triangle me-1"></i>{{ $item->store_quantity }}
                                         </span>
                                     @else
@@ -385,7 +400,7 @@
                                             0
                                         </span>
                                     @elseif ($item->lit_quantity <= 5)
-                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
+                                        <span class="badge badge-low-stock px-3 py-2 rounded-pill fw-bold">
                                             {{ $item->lit_quantity }}
                                         </span>
                                     @else
@@ -1454,17 +1469,17 @@
                 const storeContainer = row.querySelector('.store-qty-container');
                 if (storeContainer) {
                     const sq = itemData.store_quantity;
-                    let badgeClass = sq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle' : (sq < 10 ? 'bg-warning-subtle text-warning-emphasis border-warning-subtle' : 'bg-success-subtle text-success border-success-subtle');
-                    let icon = sq == 0 ? '<i class="bi bi-exclamation-triangle-fill me-1"></i>' : (sq < 10 ? '<i class="bi bi-exclamation-circle me-1"></i>' : '');
-                    storeContainer.innerHTML = `<span class="badge ${badgeClass} border px-3 py-2 rounded-pill fw-bold">${icon}${sq}</span>`;
+                    let badgeClass = sq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle border' : (sq <= 5 ? 'badge-low-stock' : 'bg-success-subtle text-success border-success-subtle border');
+                    let icon = sq == 0 ? '<i class="bi bi-exclamation-octagon-fill me-1"></i>' : (sq <= 5 ? '<i class="bi bi-exclamation-triangle me-1"></i>' : '');
+                    storeContainer.innerHTML = `<span class="badge ${badgeClass} px-3 py-2 rounded-pill fw-bold">${icon}${sq}</span>`;
                 }
 
                 // Update literature stock badge consistently
                 const litContainer = row.querySelector('.lit-qty-container');
                 if (litContainer) {
                     const lq = itemData.lit_quantity;
-                    let badgeClass = lq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle' : (lq < 10 ? 'bg-warning-subtle text-warning-emphasis border-warning-subtle' : 'bg-info-subtle text-info border-info-subtle');
-                    litContainer.innerHTML = `<span class="badge ${badgeClass} border px-3 py-2 rounded-pill fw-bold">${lq}</span>`;
+                    let badgeClass = lq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle border' : (lq <= 5 ? 'badge-low-stock' : 'bg-info-subtle text-info border-info-subtle border');
+                    litContainer.innerHTML = `<span class="badge ${badgeClass} px-3 py-2 rounded-pill fw-bold">${lq}</span>`;
                 }
 
                 // Update input dataset store-qty limit
