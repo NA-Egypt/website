@@ -12,9 +12,11 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return GroupResource::collection(Group::all());
+        $perPage = min((int) $request->get('per_page', 15), 100);
+        $groups = Group::with(['serviceBody', 'neighborhood', 'user'])->paginate($perPage);
+        return GroupResource::collection($groups);
     }
 
     /**

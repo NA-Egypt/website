@@ -46,7 +46,12 @@ class StoreController extends Controller implements HasMiddleware
         $items = $query->orderBy($sortColumn, $sortDirection)->paginate(15)->withQueryString();
         $activeStocktaking = \App\Models\StocktakingSession::getActiveSession();
 
-        $allItems = InventoryItem::orderBy('name')->get()->map(function ($item) {
+        $allItemsQuery = InventoryItem::orderBy('name');
+        if ($request->filled('category')) {
+            $allItemsQuery->where('category', $request->category);
+        }
+
+        $allItems = $allItemsQuery->get()->map(function ($item) {
             return [
                 'id' => $item->id,
                 'name' => $item->name,

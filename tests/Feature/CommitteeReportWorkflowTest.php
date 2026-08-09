@@ -734,7 +734,7 @@ class CommitteeReportWorkflowTest extends TestCase
         $responseShow->assertDontSee('Secret RSC review notes');
 
         // 3. Verify review notes are not returned in JSON API response
-        $apiResponse = $this->getJson("/api/committee-reports/{$report->id}");
+        $apiResponse = $this->getJson("/api/v1/committee-reports/{$report->id}");
         $apiResponse->assertStatus(200);
         $apiResponse->assertJsonMissing(['review_notes' => 'Secret RSC review notes']);
     }

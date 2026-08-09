@@ -14,7 +14,10 @@ class CityController extends Controller
      */
     public function index()
     {
-        return CityResource::collection(City::all());
+        $cities = \Illuminate\Support\Facades\Cache::remember('api_cities_all', 86400, function () {
+            return City::all();
+        });
+        return CityResource::collection($cities);
     }
 
     /**
@@ -28,6 +31,7 @@ class CityController extends Controller
             'longitude' => 'nullable|numeric',
         ]);
         $item = City::create($validated);
+        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
         return (new CityResource($item))->response()->setStatusCode(201);
     }
 
@@ -50,6 +54,7 @@ class CityController extends Controller
             'longitude' => 'nullable|numeric',
         ]);
         $city->update($validated);
+        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
         return new CityResource($city);
     }
 
@@ -59,6 +64,7 @@ class CityController extends Controller
     public function destroy(City $city)
     {
         $city->delete();
+        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
         return response()->json(null, 204);
     }
 }
