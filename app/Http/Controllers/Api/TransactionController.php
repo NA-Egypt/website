@@ -14,7 +14,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return TransactionResource::collection(Transaction::all());
+        return TransactionResource::collection(Transaction::paginate());
     }
 
     /**
@@ -22,8 +22,16 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Transaction::create($request->all());
-        return new TransactionResource($item);
+        $validated = $request->validate([
+            'group_id' => 'required|exists:groups,id',
+            'amount' => 'required|numeric',
+            'type' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'transaction_date' => 'required|date',
+        ]);
+
+        $item = Transaction::create($validated);
+        return (new TransactionResource($item))->response()->setStatusCode(201);
     }
 
     /**
