@@ -141,12 +141,18 @@
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX958298Y6" onerror="this.onerror=null;"></script>
+@if(app()->environment('production'))
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17997215871"></script>
+@endif
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-TX958298Y6', { 'transport_type': 'beacon' });
+  @if(app()->environment('production'))
+  gtag('config', 'AW-17997215871');
+  @endif
 </script>
   @livewireStyles
 </head>
