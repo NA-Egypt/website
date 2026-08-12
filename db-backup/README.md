@@ -22,7 +22,7 @@ To run this backup automatically on a schedule (for example, daily at 2:00 AM), 
 
 2. Add the following line at the end of the file (make sure to use the absolute path to your backup script):
    ```cron
-   0 2 * * * /var/www/html/new/db-backup/backup.sh > /dev/null 2>&1
+   0 2 * * * /var/www/new/db-backup/backup.sh > /dev/null 2>&1
    ```
 
 3. Save and close the editor.
