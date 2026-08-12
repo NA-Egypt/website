@@ -614,36 +614,15 @@ class ServiceBodyAgendaController extends Controller
         // Build storage box files list under Archives/service_body_agendas/
         $cacheKey = 'storagebox_agendas_files_list';
         if ($request->query('refresh') == '1') {
-            Cache::forget($cacheKey);
+            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            session()->flash('info', 'جاري تحديث قائمة الأجندات المؤرشفة في الخلفية...');
         }
 
-        $allStorageboxFiles = Cache::remember($cacheKey, 43200, function () {
-            $list = [];
-            try {
-                if (Storage::disk('storagebox')->exists('Archives/service_body_agendas')) {
-                    $allFiles = Storage::disk('storagebox')->allFiles('Archives/service_body_agendas');
-                    foreach ($allFiles as $filePath) {
-                        if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
-                            continue;
-                        }
-                        try {
-                            $size = Storage::disk('storagebox')->size($filePath);
-                        } catch (Exception $e) {
-                            $size = 0;
-                        }
-
-                        $list[] = [
-                            'name' => basename($filePath),
-                            'path' => $filePath,
-                            'size' => $size,
-                        ];
-                    }
-                }
-            } catch (Exception $e) {
-                Log::error("Failed to list files from storagebox Archives/service_body_agendas: " . $e->getMessage());
-            }
-            return $list;
-        });
+        $allStorageboxFiles = Cache::get($cacheKey);
+        if ($allStorageboxFiles === null) {
+            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            $allStorageboxFiles = [];
+        }
 
         $serviceBodies = ServiceBody::all();
         $filesAndDirs = [];

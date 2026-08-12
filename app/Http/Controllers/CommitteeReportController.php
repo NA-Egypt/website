@@ -608,36 +608,15 @@ class CommitteeReportController extends Controller
         // 2. Build directories and files from storagebox disk under "Archives"
         $cacheKey = 'storagebox_archive_files_list';
         if ($request->query('refresh') == '1') {
-            \Illuminate\Support\Facades\Cache::forget($cacheKey);
+            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            session()->flash('info', 'جاري تحديث قائمة الملفات المؤرشفة في الخلفية...');
         }
 
-        $allStorageboxFiles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 43200, function () {
-            $list = [];
-            try {
-                if (\Illuminate\Support\Facades\Storage::disk('storagebox')->exists('')) {
-                    $allFiles = \Illuminate\Support\Facades\Storage::disk('storagebox')->allFiles('');
-                    foreach ($allFiles as $filePath) {
-                        if (str_starts_with(basename($filePath), '.') || str_contains($filePath, '/.')) {
-                            continue;
-                        }
-                        try {
-                            $size = \Illuminate\Support\Facades\Storage::disk('storagebox')->size($filePath);
-                        } catch (\Exception $e) {
-                            $size = 0;
-                        }
-
-                        $list[] = [
-                            'name' => basename($filePath),
-                            'path' => $filePath,
-                            'size' => $size,
-                        ];
-                    }
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Failed to list files from storagebox Archives: " . $e->getMessage());
-            }
-            return $list;
-        });
+        $allStorageboxFiles = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($allStorageboxFiles === null) {
+            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            $allStorageboxFiles = [];
+        }
 
         $committees = ServiceCommittee::all();
         $filesAndDirs = [];

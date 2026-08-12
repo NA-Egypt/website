@@ -59,7 +59,7 @@ return [
 
         'storagebox' => [
             'driver' => 'local',
-            'root' => env('STORAGEBOX_PATH', '/mnt/storagebox-archives'),
+            'root' => env('STORAGEBOX_PATH', '/mnt/storagebox-archives/Archives'),
             'throw' => true,
         ],
 
