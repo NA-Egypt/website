@@ -31,7 +31,7 @@
       <!-- Logo (Left side) -->
       <div class="logo bg-white px-3 py-1 rounded-pill shadow-sm d-flex align-items-center justify-content-center">
         <a href="{{ route('frontend.home') }}" class="d-flex align-items-center">
-          <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img">
+          <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img" fetchpriority="high" width="140" height="64">
         </a>
       </div>
 

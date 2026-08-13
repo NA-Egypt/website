@@ -1,5 +1,6 @@
 @font-face {
   font-family: "Helvetica Neue ME";
+  font-display: swap;
   src: url("../../fonts/95cecf452d3208890088a5b4c19c7ecf.eot");
   /* IE9*/
   src: url("../../fonts/95cecf452d3208890088a5b4c19c7ecf.eot?#iefix") format("embedded-opentype"),

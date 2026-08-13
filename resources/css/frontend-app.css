@@ -1,0 +1,8 @@
+/* Core Bootstrap & Icons for Frontend */
+@import './plugin/bootstrap.min.css';
+@import './plugin/bootstrap-extended.css';
+@import './plugin/icons.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* Custom Theme Style */
+@import "./style.css";

@@ -48,8 +48,11 @@ window.axios = {
 
 import 'datatables.net-bs5';
 
-// Load legacy plugins
+// Load legacy plugins (Admin pages only)
 const loadPlugins = async () => {
+    if (!document.querySelector('.wrapper, .has-sidebar, .sidebar, #sidebar-wrapper, .minimal-theme')) {
+        return;
+    }
     try {
         await import('./plugin/jquery-jvectormap-2.0.2.min');
         await import('./plugin/jquery-jvectormap-world-mill-en');

@@ -54,11 +54,14 @@
 
   <link rel="icon" href="{{ asset('assets/images/na-logo32.webp') }}" type="image/webp" />
 
+  <!-- LCP Image Preload Hint -->
+  <link rel="preload" as="image" href="{{ asset('assets/images/logo.png') }}" fetchpriority="high" type="image/png" />
+
   <!-- Include common styles -->
-  @vite(['resources/js/app.js', 'resources/css/app.css'])
-   <script src="https://www.google.com/recaptcha/api.js"></script>
+  @vite(['resources/js/app.js', 'resources/css/frontend-app.css'])
+   <script async defer src="https://www.google.com/recaptcha/api.js"></script>
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}?v={{ filemtime(public_path('assets/css/frontend.css')) }}" />
-  <script src="{{ asset('assets/js/driver.js.iife.js') }}"></script>
+  <script defer src="{{ asset('assets/js/driver.js.iife.js') }}"></script>
   <link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}"/>
   <!-- Include RTL CSS dynamically -->
   @if(($direction ?? 'rtl') === 'rtl')
