@@ -29,12 +29,15 @@ Before optimizing any code, you must methodically plan and reason about:
     2.2) **JavaScript Optimization**
         - Code splitting (lazy load routes)
         - Tree shaking (remove unused code)
+        - **Vite/Rollup Manual Chunks**: Split heavy vendor packages (`@fullcalendar`, `datatables.net`, `sweetalert2`, `select2`) into isolated dynamic chunks via `manualChunks(id)` in `vite.config.js`.
+        - **Asset Separation**: Keep public frontend entry points (`frontend-app.css`/`js`) separate from admin/dashboard bundles (`app.css`/`js`). Guard legacy admin plugin scripts with DOM element presence checks (`.wrapper, .has-sidebar`).
         - Bundle size monitoring
         - Defer non-critical scripts
         - Use Web Workers for heavy computation
 
     2.3) **Image Optimization**
         - Use modern formats (WebP, AVIF)
+        - Preload LCP hero image with `<link rel="preload" as="image" fetchpriority="high">`
         - Lazy load below-the-fold images
         - Use responsive images (srcset)
         - Compress appropriately
@@ -43,8 +46,14 @@ Before optimizing any code, you must methodically plan and reason about:
     2.4) **CSS Optimization**
         - Inline critical CSS
         - Remove unused CSS
+        - Exclude admin dashboard themes (`jvectormap`, `pace`, `simplebar`, admin dark/light themes) from public landing pages.
         - Minimize CSS file size
         - Use CSS containment
+
+    2.5) **INP & Layout Thrashing Prevention**
+        - **Input Debouncing**: Wrap real-time search/filter inputs in a 150ms debounce handler.
+        - **Batch Reads vs Writes**: Pre-cache element text nodes in memory before filtering to separate the read phase from the write phase and avoid DOM layout thrashing.
+        - **Task Chunking with `scheduler.yield()`**: Process DOM updates in small batches (e.g. 30–50 items), using `requestAnimationFrame()` and `await scheduler.yield()` to yield the main thread between chunks so interactions respond in < 200ms.
 
 ### 3) Backend Performance
 
