@@ -32,7 +32,6 @@
         "@fullcalendar/interaction": "^6.1.20",
         "@fullcalendar/multimonth": "^6.1.20",
         "@fullcalendar/timegrid": "^6.1.20",
-        "@heronsignal/web": "^0.1.0",
         "@inertiajs/vue3": "^3.6.1",
         "@kodeglot/vue-calendar": "^1.5.0",
         "@number-flow/vue": "^0.5.2",

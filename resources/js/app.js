@@ -72,9 +72,6 @@ import.meta.glob([
 import { createApp, h, defineAsyncComponent } from 'vue';
 import { createPinia } from 'pinia';
 import '@kodeglot/vue-calendar/style.css';
-import { initHeronSignal, event } from '@heronsignal/web';
-
-void initHeronSignal({ publicKey: 'pk_BmZyEnNid-kGGwequQ8VlozPsXVfs_X1' });
 
 const TransactionsTable = defineAsyncComponent(() => import('./components/TransactionsTable.vue'));
 const GenericDataTable = defineAsyncComponent(() => import('./components/GenericDataTable.vue'));
@@ -85,8 +82,6 @@ const AnimatedStatCard = defineAsyncComponent(() => import('./components/Animate
 const VueSelectWrapper = defineAsyncComponent(() => import('./components/VueSelectWrapper.vue'));
 
 document.addEventListener("DOMContentLoaded", () => {
-    event('dashboard_loaded', { source: 'app_js' });
-    
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
     calendarEls.forEach(el => {
         const fetchUrl = el.getAttribute('data-fetch-url') || '/web-calendar-events';
