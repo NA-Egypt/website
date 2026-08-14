@@ -13,7 +13,7 @@ Based on the NA-Egypt API capabilities and mobile application requirements, the 
 graph TD
     A[React Native Mobile App - Expo Router] --> B[WatermelonDB Local SQLite DB]
     A --> C[Axios / TanStack Query Sync Engine]
-    C -->|Online Sync & Outbox Flush| D[Laravel REST API /api/v1]
+    C -->|HTTPS + Accept: application/json| D[Laravel REST API /api/v1]
     B -->|Offline Read Access| A
     E[Offline Action Outbox] -->|NetInfo Listener Reconnect| C
 ```
@@ -30,11 +30,12 @@ graph TD
 
 ## 2. API Architecture & Endpoint Mapping
 
-- **Base URL:** `/api/v1`
+- **Base Production URL:** `https://egyptna.org/api/v1` (MUST use `https://` to avoid HTTP redirect issues)
+- **Mandatory Request Headers:** `Accept: application/json`, `Content-Type: application/json`
 - **Auth Header:** `Authorization: Bearer <sanctum_token>`
 
 ### 2.1 Public Endpoints (Cached in WatermelonDB)
-- `GET /api/v1/meetings` (Includes `group`, `day`, `topics`, `options`)
+- `GET /api/v1/meetings` (Includes formatted group names, cities, neighborhoods, and times)
 - `GET /api/v1/cities` & `GET /api/v1/neighborhoods`
 - `GET /api/v1/days`, `GET /api/v1/topics`, `GET /api/v1/options`
 - `GET /api/v1/groups` & `GET /api/v1/events`
@@ -61,11 +62,13 @@ You are an expert React Native & Mobile Systems Engineer.
 Task: Build a production-ready, semi-online Cross-Platform Mobile Application (iOS & Android) for NA-Egypt (Narcotics Anonymous Egypt) using React Native with Expo (Expo Router) and WatermelonDB for offline persistence, connected to the Laravel RESTful API backend described below.
 
 ==================================================
-1. TECH STACK & REQUIREMENTS
+1. TECH STACK & NETWORK CLIENT REQUIREMENTS
 ==================================================
 - Framework: React Native with Expo (Expo Router v3, TypeScript).
+- Base URL: https://egyptna.org/api/v1 (CRITICAL: Must use https:// scheme to prevent HTTP cleartext and Nginx 404/301 errors).
+- HTTP Client Config: Centralized Axios instance with mandatory default header `Accept: application/json`.
 - Offline Storage Engine: WatermelonDB (@nozbe/watermelondb) with SQLite native adapter.
-- Network Layer: Axios with TanStack Query and NetInfo (@react-native-community/netinfo) connection monitoring.
+- Network Monitoring: NetInfo (@react-native-community/netinfo) connection monitoring.
 - State & Sync Management: WatermelonDB reactive observers + custom Outbox Synchronization Engine.
 - Secure Storage: expo-secure-store for Sanctum Bearer tokens.
 - Localization: i18next + react-i18next with full RTL (Right-to-Left) layout support for Arabic and LTR for English.
@@ -75,6 +78,7 @@ Task: Build a production-ready, semi-online Cross-Platform Mobile Application (i
 ==================================================
 A. Read Path (Offline First):
    - On app launch or background sync, fetch public API datasets (/api/v1/meetings, /api/v1/cities, /api/v1/neighborhoods, /api/v1/events, /api/v1/topics, /api/v1/options) and persist/upsert into WatermelonDB.
+   - Note on Meetings Data Structure: The API endpoint `/api/v1/meetings` returns flattened group and location attributes (`group_name_ar`, `group_name_en`, `group_type`, `address_ar`, `address_en`, `city_name_ar`, `city_name_en`, `neighborhood_name_ar`, `neighborhood_name_en`, `formatted_start_time`, `formatted_end_time`, `duration`). Handle optional null fields safely for online/virtual meetings.
    - All Meeting Finder queries, filtering, and searches read directly from local WatermelonDB tables for instant UI response and 100% offline availability.
 
 B. Write Path (Outbox Queue Pattern):
@@ -85,7 +89,7 @@ B. Write Path (Outbox Queue Pattern):
 3. WATERMELONDB SCHEMA SPECIFICATION
 ==================================================
 Define the following WatermelonDB models and appSchema (version 1):
-- `meetings`: id, remote_id, group_id, day_id, start_time, end_time, notes, type, lang, status, recurrence (json), updated_at
+- `meetings`: id, remote_id, group_id, direct_online_group_id, day_id, group_name_ar, group_name_en, group_type, address_ar, address_en, city_name_ar, city_name_en, neighborhood_name_ar, neighborhood_name_en, start_time, end_time, formatted_start_time, formatted_end_time, duration, notes, type, lang, status, recurrence (json), updated_at
 - `groups`: id, remote_id, name, group_type, city_id, neighborhood_id, updated_at
 - `cities`: id, remote_id, ar_name, en_name, updated_at
 - `neighborhoods`: id, remote_id, city_id, ar_name, en_name, updated_at
@@ -124,7 +128,7 @@ Define the following WatermelonDB models and appSchema (version 1):
 ==================================================
 Provide a clean architecture project structure:
 /src
-  /api          -> Axios client, interceptors, Sanctum auth helpers
+  /api          -> Axios client (configured with https:// and Accept: application/json header), Sanctum auth helpers
   /database     -> WatermelonDB schema, models, sync engine, outbox sync worker
   /i18n         -> ar.json, en.json, RTL configuration
   /features

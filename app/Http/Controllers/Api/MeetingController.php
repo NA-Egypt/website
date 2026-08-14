@@ -12,9 +12,17 @@ class MeetingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, \App\Services\MeetingFilterService $filterService)
     {
-        return MeetingResource::collection(Meeting::with(['group', 'day', 'topics', 'options'])->get());
+        if ($request->hasAny(['day', 'city', 'serviceBody', 'group', 'neighborhood', 'type', 'search', 'virtualOnly', 'englishOnly'])) {
+            $meetings = $filterService->filterMeetings($request->all());
+        } else {
+            $meetings = Meeting::with(['group.neighborhood.city', 'directOnlineGroup', 'day', 'topics', 'options'])
+                ->where('status', 'available')
+                ->get();
+        }
+
+        return MeetingResource::collection($meetings);
     }
 
     /**
