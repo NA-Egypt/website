@@ -31,6 +31,10 @@ use App\Models\ServiceCommittee;
 use App\Models\ServiceBody;
 use App\Models\Meeting;
 
+// Mobile Azure Auth Routes:
+Route::get('/auth/azure/redirect', [\App\Http\Controllers\Auth\AzureAuthController::class, 'redirectForMobile']);
+Route::get('/auth/azure/callback', [\App\Http\Controllers\Auth\AzureAuthController::class, 'handleCallbackForMobile']);
+
 // Localization Routes:
 Route::group(
     [
