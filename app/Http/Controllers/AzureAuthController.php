@@ -9,8 +9,14 @@ use Illuminate\Http\Request;
 
 class AzureAuthController extends Controller
 {
-    public function redirectToAzure()
+    public function redirectToAzure(Request $request)
     {
+        if ($request->has('mobile')) {
+            session(['mobile_auth_redirect' => true]);
+        } else {
+            session()->forget('mobile_auth_redirect');
+        }
+
         return Socialite::driver('azure')
             ->stateless()
             ->with(['tenant' => env('AZURE_TENANT_ID')])
@@ -18,7 +24,7 @@ class AzureAuthController extends Controller
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
-    public function handleAzureCallback()
+    public function handleAzureCallback(Request $request)
     {
         $azureUser = Socialite::driver('azure')->stateless()->user();
         $email = $azureUser->getEmail();
@@ -30,6 +36,12 @@ class AzureAuthController extends Controller
         );
 
         Auth::login($user);
+
+        if (session('mobile_auth_redirect')) {
+            session()->forget('mobile_auth_redirect');
+            $token = $user->createToken('mobile-app')->plainTextToken;
+            return redirect('naegypt://auth-callback?token=' . urlencode($token));
+        }
 
         return redirect()->route('dashboard');
     }
