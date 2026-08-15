@@ -40,6 +40,28 @@ class MeetingFilter extends Component
         }
     }
 
+    public function clearFilters()
+    {
+        $englishDay = now()->format('l');
+        $today = Day::where('en_name', $englishDay)->first();
+        if ($today) {
+            $this->day = app()->getLocale() === 'ar' ? $today->ar_name : $today->en_name;
+        } else {
+            $this->day = $englishDay;
+        }
+
+        $this->serviceBody = '';
+        $this->group = '';
+        $this->city = '';
+        $this->neighborhood = '';
+        $this->type = '';
+        $this->search = '';
+        $this->virtualOnly = false;
+        $this->englishOnly = false;
+        $this->businessMeetingsOnly = false;
+        $this->recurrence = 'weekly';
+    }
+
     private function normalizeFilters()
     {
         $locale = app()->getLocale();

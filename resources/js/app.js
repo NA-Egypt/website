@@ -84,9 +84,11 @@ const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCal
 const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
 const VueSelectWrapper = defineAsyncComponent(() => import('./components/VueSelectWrapper.vue'));
 
-document.addEventListener("DOMContentLoaded", () => {
+const mountVueApps = () => {
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
     calendarEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
         const fetchUrl = el.getAttribute('data-fetch-url') || '/web-calendar-events';
         const storeUrl = el.getAttribute('data-store-url') || '/web-calendar-events';
         const canManage = el.hasAttribute('data-can-manage');
@@ -109,7 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const fbEl = document.querySelector('[data-vue-app="FacebookTargeting"]');
-    if (fbEl) {
+    if (fbEl && !fbEl.dataset.vueMounted) {
+        fbEl.dataset.vueMounted = 'true';
         const initialGroups = JSON.parse(fbEl.getAttribute('data-initial-groups') || '[]');
         const syncRoute = fbEl.getAttribute('data-sync-route') || '';
         const downloadRoute = fbEl.getAttribute('data-download-route') || '';
@@ -131,7 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const transactionsEl = document.querySelector('[data-vue-app="TransactionsTable"]');
-    if (transactionsEl) {
+    if (transactionsEl && !transactionsEl.dataset.vueMounted) {
+        transactionsEl.dataset.vueMounted = 'true';
         const fetchUrl = transactionsEl.getAttribute('data-fetch-url');
         const availableModels = JSON.parse(transactionsEl.getAttribute('data-available-models') || '[]');
         const availableOperations = JSON.parse(transactionsEl.getAttribute('data-available-operations') || '[]');
@@ -148,6 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const genericEls = document.querySelectorAll('[data-vue-app="GenericDataTable"]');
     genericEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
         const fetchUrl = el.getAttribute('data-fetch-url');
         const columns = JSON.parse(el.getAttribute('data-columns') || '[]');
         const createRoute = el.getAttribute('data-create-route') || '';
@@ -188,6 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const datePickerEls = document.querySelectorAll('[data-vue-app="VueCtkDateTimePicker"]');
     datePickerEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
         const name = el.getAttribute('data-name') || '';
         const id = el.getAttribute('data-id') || '';
         const value = el.getAttribute('data-value') || null;
@@ -220,6 +228,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const animatedStatEls = document.querySelectorAll('[data-vue-app="AnimatedStatCard"]');
     animatedStatEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
         const weeklyMeetings = el.getAttribute('data-weekly-meetings') || '0';
         const groupsCount = el.getAttribute('data-groups-count') || '0';
         const weeklyMeetingsLabel = el.getAttribute('data-weekly-meetings-label') || 'اجتماعات أسبوعية';
@@ -238,6 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const vueSelectEls = document.querySelectorAll('[data-vue-app="VueSelectWrapper"]');
     vueSelectEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
         const options = JSON.parse(el.getAttribute('data-options') || '[]');
         const placeholder = el.getAttribute('data-placeholder') || 'Select...';
         const value = el.getAttribute('data-value') || null;
@@ -256,4 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         app.mount(el);
     });
-});
+};
+
+document.addEventListener("DOMContentLoaded", mountVueApps);
+document.addEventListener("livewire:navigated", mountVueApps);
