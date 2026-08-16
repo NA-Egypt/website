@@ -11,6 +11,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/auth/azure/login', [\App\Http\Controllers\Api\AzureAuthController::class, 'login']);
     Route::post('/login/azure', [\App\Http\Controllers\Api\AzureAuthController::class, 'login']);
 
+    // Public composite & content endpoints
+    Route::get('/home', [\App\Http\Controllers\Api\HomeController::class, 'index'])->name('home');
+    Route::get('/frontpage', [\App\Http\Controllers\Api\HomeController::class, 'index'])->name('frontpage');
+    Route::get('/jft', [\App\Http\Controllers\Api\JftController::class, 'show'])->name('jft');
+    Route::get('/stats', [\App\Http\Controllers\Api\StatsController::class, 'index'])->name('stats');
+
     // Sensitive resources requiring authentication for all operations
     $protectedControllers = [
         'committee-reports'     => \App\Http\Controllers\Api\CommitteeReportController::class,
@@ -19,7 +25,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         'newsletter-members'    => \App\Http\Controllers\Api\NewsletterMemberController::class,
         'permissions'           => \App\Http\Controllers\Api\PermissionController::class,
         'roles'                 => \App\Http\Controllers\Api\RoleController::class,
-        'service-body-agendas'  => \App\Http\Controllers\Api\ServiceBodyAgendaController::class,
         'transactions'          => \App\Http\Controllers\Api\TransactionController::class,
         'users'                 => \App\Http\Controllers\Api\UserController::class,
     ];
@@ -37,6 +42,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         'options'               => \App\Http\Controllers\Api\OptionController::class,
         'sc-meetings'           => \App\Http\Controllers\Api\ScMeetingController::class,
         'service-bodies'        => \App\Http\Controllers\Api\ServiceBodyController::class,
+        'service-body-agendas'  => \App\Http\Controllers\Api\ServiceBodyAgendaController::class,
         'service-committees'    => \App\Http\Controllers\Api\ServiceCommitteeController::class,
         'topics'                => \App\Http\Controllers\Api\TopicController::class,
     ];

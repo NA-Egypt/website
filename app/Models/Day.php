@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Day extends Model
 {
+    protected $fillable = ['name', 'ar_name', 'en_name'];
+
     public function serviceBodies() {
         return $this->hasMany(ServiceBody::class);
     }
