@@ -218,20 +218,97 @@ These resources require `auth:sanctum` authentication for **all** actions (`inde
 
 These resources allow unauthenticated access for read operations (`index`, `show`), but require `auth:sanctum` authentication for write operations (`store`, `update`, `destroy`):
 
+### 6.1 Calendar Events (`/api/v1/calendar-events`)
+
+Rich calendar events supporting date-range recurrence expansion, color coding, and featured flags.
+
+- `GET /api/v1/calendar-events`
+  - **Query Params:** `start` (ISO-8601 date string), `end` (ISO-8601 date string)
+  - **Response (200 OK):**
+    ```json
+    {
+      "data": [
+        {
+          "id": 1,
+          "title": "Regional Committee Meeting",
+          "start": "2026-09-01T10:00:00.000000Z",
+          "end": "2026-09-01T14:00:00.000000Z",
+          "description": "Monthly regional meeting",
+          "user_id": 1,
+          "color": "#00698f",
+          "organizer": "Cairo Area",
+          "location": "Community Hall, Cairo",
+          "recurrence": ["monthly", "1st"],
+          "formatted_recurrence": "First Tuesday",
+          "is_featured": true,
+          "created_at": "2026-08-20T00:00:00.000000Z",
+          "updated_at": "2026-08-20T00:00:00.000000Z"
+        }
+      ]
+    }
+    ```
+- `GET /api/v1/calendar-events/{id}`
+- `POST /api/v1/calendar-events` *(Auth)* -> Returns `201 Created`
+  - **Body Schema:** `title` (required|string), `start` (required|date), `end` (required|date|after_or_equal:start), `description` (nullable|string), `color` (nullable|string), `organizer` (nullable|string), `location` (nullable|string), `recurrence` (nullable|array), `is_featured` (nullable|boolean)
+- `PUT /api/v1/calendar-events/{id}` *(Auth)* -> Returns `200 OK` (supports partial updates)
+- `DELETE /api/v1/calendar-events/{id}` *(Auth)* -> Returns `200 OK` (`{"message": "Deleted successfully"}`)
+
+---
+
+### 6.2 Announcements & Events (`/api/v1/events`)
+
+Announcements linked to specific service bodies and days of the week.
+
+- `GET /api/v1/events`
+  - **Response (200 OK):**
+    ```json
+    {
+      "data": [
+        {
+          "id": 1,
+          "name": "Unity Convention",
+          "description": "Annual convention gathering",
+          "date": "2026-10-15",
+          "service_body_id": 1,
+          "service_body": {
+            "id": 1,
+            "ar_name": "لجنة مصر",
+            "en_name": "Egypt RSC"
+          },
+          "day_id": 1,
+          "day": {
+            "id": 1,
+            "ar_name": "السبت",
+            "en_name": "Saturday"
+          },
+          "created_at": "2026-08-20T00:00:00.000000Z",
+          "updated_at": "2026-08-20T00:00:00.000000Z"
+        }
+      ]
+    }
+    ```
+- `GET /api/v1/events/{id}`
+- `POST /api/v1/events` *(Auth)* -> Returns `201 Created`
+  - **Body Schema:** `name` (required|string), `description` (required|string), `date` (required|date), `service_body_id` (required|exists:service_bodies,id), `day_id` (required|exists:days,id)
+- `PUT /api/v1/events/{id}` *(Auth)* -> Returns `200 OK` (supports partial updates)
+- `DELETE /api/v1/events/{id}` *(Auth)* -> Returns `204 No Content`
+
+---
+
+### 6.3 Other Public Directory & Data Resources
+
 1. **Agendas:** `/api/v1/agendas`
-2. **Calendar Events:** `/api/v1/calendar-events`
-3. **Cities:** `/api/v1/cities`
-4. **Days:** `/api/v1/days`
-5. **Events:** `/api/v1/events`
-6. **Groups:** `/api/v1/groups`
-7. **Meetings:** `/api/v1/meetings`
-8. **Neighborhoods:** `/api/v1/neighborhoods`
-9. **Options:** `/api/v1/options`
-10. **Service Committee Meetings:** `/api/v1/sc-meetings`
-11. **Service Bodies:** `/api/v1/service-bodies`
-12. **Service Body Agendas:** `/api/v1/service-body-agendas` *(Public sees released agendas; authenticated members see scoped drafts)*
-13. **Service Committees:** `/api/v1/service-committees`
-14. **Topics:** `/api/v1/topics`
+2. **Cities:** `/api/v1/cities`
+3. **Days:** `/api/v1/days`
+4. **Groups:** `/api/v1/groups`
+5. **Meetings:** `/api/v1/meetings`
+6. **Neighborhoods:** `/api/v1/neighborhoods`
+7. **Options:** `/api/v1/options`
+8. **Service Committee Meetings:** `/api/v1/sc-meetings`
+9. **Service Bodies:** `/api/v1/service-bodies`
+10. **Service Body Agendas:** `/api/v1/service-body-agendas` *(Public sees released agendas; authenticated members see scoped drafts)*
+11. **Service Committees:** `/api/v1/service-committees`
+12. **Topics:** `/api/v1/topics`
 
 ---
 
@@ -241,3 +318,4 @@ These resources allow unauthenticated access for read operations (`index`, `show
 - **Filtering & Search:** `?search=query` or field-specific filters where supported
 - **Sorting:** `?sort_by=created_at&sort_order=desc`
 - **Relations Loading:** `?with=relation1,relation2`
+

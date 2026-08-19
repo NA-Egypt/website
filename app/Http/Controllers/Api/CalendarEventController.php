@@ -39,7 +39,7 @@ class CalendarEventController extends Controller
             return CalendarEventResource::collection($expandedEvents);
         }
 
-        return CalendarEventResource::collection(CalendarEvent::all());
+        return CalendarEventResource::collection(CalendarEvent::orderBy('start', 'asc')->get());
     }
 
     /**
@@ -52,10 +52,11 @@ class CalendarEventController extends Controller
             'start' => 'required|date',
             'end' => 'required|date|after_or_equal:start',
             'description' => 'nullable|string',
-            'color' => 'nullable|string',
+            'color' => 'nullable|string|max:50',
             'organizer' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'recurrence' => 'nullable|array',
+            'recurrence.*' => 'string',
             'is_featured' => 'nullable|boolean',
         ]);
 
@@ -82,14 +83,15 @@ class CalendarEventController extends Controller
     public function update(Request $request, CalendarEvent $calendarEvent)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'start' => 'required|date',
-            'end' => 'required|date|after_or_equal:start',
+            'title' => 'sometimes|required|string|max:255',
+            'start' => 'sometimes|required|date',
+            'end' => 'sometimes|required|date|after_or_equal:start',
             'description' => 'nullable|string',
-            'color' => 'nullable|string',
+            'color' => 'nullable|string|max:50',
             'organizer' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'recurrence' => 'nullable|array',
+            'recurrence.*' => 'string',
             'is_featured' => 'nullable|boolean',
         ]);
 
@@ -106,3 +108,4 @@ class CalendarEventController extends Controller
         return response()->json(['message' => 'Deleted successfully'], 200);
     }
 }
+

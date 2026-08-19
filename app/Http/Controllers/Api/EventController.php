@@ -14,7 +14,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        return EventResource::collection(Event::all());
+        $events = Event::with(['day', 'servicebody'])->orderBy('date', 'asc')->get();
+        return EventResource::collection($events);
     }
 
     /**
@@ -22,8 +23,16 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Event::create($request->all());
-        return new EventResource($item);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'service_body_id' => 'required|exists:service_bodies,id',
+            'day_id' => 'required|exists:days,id',
+        ]);
+
+        $item = Event::create($validated);
+        return (new EventResource($item->load(['day', 'servicebody'])))->response()->setStatusCode(201);
     }
 
     /**
@@ -31,7 +40,7 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        return new EventResource($event);
+        return new EventResource($event->load(['day', 'servicebody']));
     }
 
     /**
@@ -39,8 +48,16 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        $event->update($request->all());
-        return new EventResource($event);
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'date' => 'sometimes|required|date',
+            'service_body_id' => 'sometimes|required|exists:service_bodies,id',
+            'day_id' => 'sometimes|required|exists:days,id',
+        ]);
+
+        $event->update($validated);
+        return new EventResource($event->load(['day', 'servicebody']));
     }
 
     /**
@@ -49,6 +66,7 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         $event->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }
+

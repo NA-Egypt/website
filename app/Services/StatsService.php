@@ -51,8 +51,8 @@ class StatsService
 
         $upcomingEvents = 0;
         try {
-            if (class_exists(Event::class)) {
-                $upcomingEvents = Event::where('start_date', '>=', now()->toDateString())->count();
+            if (class_exists(\App\Models\CalendarEvent::class)) {
+                $upcomingEvents = \App\Models\CalendarEvent::where('start', '>=', now())->count();
             }
         } catch (\Exception $e) {
             $upcomingEvents = 0;
