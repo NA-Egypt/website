@@ -111,10 +111,28 @@ Fetches all aggregated frontpage data in one consolidated response (stats, daily
       },
       "helplines": [
         {
-          "region": "Cairo & Giza",
-          "region_ar": "القاهرة والجيزة",
+          "region": "Egypt Region (General)",
+          "region_ar": "إقليم مصر (عام)",
           "phones": ["+201006979198", "+201060933888"],
-          "whatsapp": "https://wa.me/201060933888"
+          "whatsapp": "https://wa.me/201060933888",
+          "hours": "10 AM - 12 Midnight",
+          "hours_ar": "١٠ ص - ١٢ منتصف الليل"
+        },
+        {
+          "region": "Alexandria",
+          "region_ar": "الإسكندرية",
+          "phones": ["+201503884411"],
+          "whatsapp": "https://wa.me/201503884411",
+          "hours": "12 PM - 10 PM",
+          "hours_ar": "١٢ م - ١٠ م"
+        },
+        {
+          "region": "Al-Ahram Area",
+          "region_ar": "الأهرام",
+          "phones": ["+201003694690"],
+          "whatsapp": "https://wa.me/201003694690",
+          "hours": "12 PM - 10 PM",
+          "hours_ar": "١٢ م - ١٠ م"
         }
       ],
       "social_links": {
