@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الخطوط الإرشادية للجنة خدمة الإقليم – مصر (2025)</title>
+  
+  <!-- Google Fonts: Cairo & Alexandria for Modern Arabic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">NA</div>
+        <div class="app-title-box">
+          <h1>لجنة خدمة الإقليم</h1>
+          <span>دليل الخطوط الإرشادية - مصر</span>
+        </div>
+      </div>
+
+      <div class="sidebar-search-box">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="بحث ذكي في الدليل والمفاهيم..." autocomplete="off">
+          <button id="clear-search-btn" class="clear-search-btn" title="مسح البحث">✕</button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- Dynamically rendered table of contents -->
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      
+      <!-- Top Sticky Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button id="menu-toggle-btn" class="menu-toggle-btn" title="القائمة">☰ الفهرس</button>
+          <div class="breadcrumbs">
+            <span>الخطوط الإرشادية</span> &gt; 
+            <span class="current" id="breadcrumb-current">الغلاف</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button id="font-decrease-btn" class="header-btn" title="تصغير الخط">A-</button>
+          <button id="font-increase-btn" class="header-btn" title="تكبير الخط">A+</button>
+          <button id="theme-toggle-btn" class="header-btn" title="تبديل المظهر">🌙 الوضع الداكن</button>
+          <button id="copy-link-btn" class="header-btn" title="نسخ رابط المقطع">🔗 مشاركة</button>
+          <button id="print-doc-btn" class="header-btn" title="طباعة">🖨️ طباعة</button>
+        </div>
+      </header>
+
+      <!-- Search Results Overlay Pane -->
+      <div class="content-container">
+        
+        <div id="search-results-pane" class="search-results-pane">
+          <div class="search-results-header">
+            <h3>نتائج البحث الذكي (<span id="search-count-badge">0</span>)</h3>
+          </div>
+          
+          <div class="search-filter-pills">
+            <button class="filter-pill active" data-category="all">الكل</button>
+            <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
+            <button class="filter-pill" data-category="إداريو الإقليم">إداريو الإقليم</button>
+            <button class="filter-pill" data-category="اللجان الفرعية">اللجان الفرعية</button>
+            <button class="filter-pill" data-category="الإجراءات التنظيمية">الإجراءات التنظيمية</button>
+            <button class="filter-pill" data-category="المفاهيم الاثني عشر">المفاهيم الاثني عشر</button>
+            <button class="filter-pill" data-category="القواعد البرلمانية وروبرت">قواعد روبرت</button>
+          </div>
+
+          <div id="search-results-list"></div>
+        </div>
+
+        <!-- Section Content Render Target -->
+        <div id="guideline-content">
+          <!-- Article dynamically rendered from guideline_data.js -->
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="data/guideline_data.js"></script>
+  <script src="data/glossary_rules.js"></script>
+  <script src="js/search-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
