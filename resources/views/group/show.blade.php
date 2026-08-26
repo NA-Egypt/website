@@ -95,7 +95,7 @@
                         <span class="text-truncate" style="max-width: 180px; display: inline-block; vertical-align: middle;">{{ $group->user->email }}</span>
                     </a>
                     @if($group->phone)
-                        <a href="tel:{{ $group->phone }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center" dir="ltr">
+                        <a href="tel:{{ $group->phone }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;">
                             <i class="bi bi-telephone me-2 flex-shrink-0"></i> {{ $group->phone }}
                         </a>
                     @endif

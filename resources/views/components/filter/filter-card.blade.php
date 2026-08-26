@@ -274,7 +274,7 @@ $isFirstCardAcrossSections = true;
                             {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
                             <br />
                             <x-fas-mobile-alt style="width:16px; height:16px;"/>
-                            <a href="tel:{{ $group->phone }}" itemprop="telephone">
+                            <a href="tel:{{ $group->phone }}" itemprop="telephone" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;">
                                 {{ $group->phone }}
                             </a>
                         </div>

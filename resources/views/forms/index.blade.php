@@ -18,8 +18,8 @@
             </a>
         </div>
 
-        <div class="glass-card p-4">
-            <div class="table-responsive" style="overflow: visible !important;">
+        <div class="glass-card p-3 p-md-4">
+            <div class="table-responsive">
                 <table class="table neo-table align-middle text-center display" id="forms-table" style="width:100%;">
                     <thead>
                         <tr>
@@ -41,7 +41,16 @@
                             @endphp
                             <tr>
                                 <td class="fw-bold" style="color: var(--text-primary);" title="{{ $form->title }}">
-                                    {{ \Illuminate\Support\Str::limit($form->title, 30) }}
+                                    <div class="d-flex flex-column align-items-center gap-1">
+                                        <span>{{ \Illuminate\Support\Str::limit($form->title, 35) }}</span>
+                                        @if ($form->type === 'survey')
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">{{ __('messages.Survey') ?? 'Survey' }}</span>
+                                        @elseif ($form->type === 'service_position_application')
+                                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 0.7rem; background-color: rgba(99, 102, 241, 0.12); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25);">{{ __('messages.Service Position Application') ?? 'Service Position Application' }}</span>
+                                        @else
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">{{ __('messages.Event Registration') ?? 'Event Registration' }}</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center gap-2">

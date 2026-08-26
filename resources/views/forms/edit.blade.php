@@ -38,6 +38,7 @@
                                 <select name="type" id="type" class="form-select" required onchange="updatePreview()">
                                     <option value="survey" {{ $form->type === 'survey' ? 'selected' : '' }}>{{ __('messages.Survey') ?? 'Survey' }}</option>
                                     <option value="event_registration" {{ $form->type === 'event_registration' ? 'selected' : '' }}>{{ __('messages.Event Registration') ?? 'Event Entry Registration' }}</option>
+                                    <option value="service_position_application" {{ $form->type === 'service_position_application' ? 'selected' : '' }}>{{ __('messages.Service Position Application') ?? 'Service Position Application' }}</option>
                                 </select>
                             </div>
 
@@ -52,12 +53,16 @@
                         </div>
 
                         @php
-                            $selectedIcon = $form->settings['icon'] ?? 'bi-clipboard2-data';
+                            $selectedIcon = $form->settings['icon'] ?? ($form->type === 'service_position_application' ? 'bi-person-badge' : 'bi-clipboard2-data');
                         @endphp
-                        <div class="mb-3 mt-3" id="icon-selector-group" style="{{ $form->type === 'survey' ? '' : 'display: none !important;' }}">
+                        <div class="mb-3 mt-3" id="icon-selector-group" style="{{ in_array($form->type, ['survey', 'service_position_application']) ? '' : 'display: none !important;' }}">
                             <label for="settings_icon" class="form-label fw-semibold small">{{ __('messages.Form Header Icon') ?? 'Form Header Icon' }}</label>
                             <select name="settings[icon]" id="settings_icon" class="form-select" onchange="updatePreview()">
                                 <option value="bi-clipboard2-data" {{ $selectedIcon === 'bi-clipboard2-data' ? 'selected' : '' }}>📋 Clipboard Data</option>
+                                <option value="bi-person-badge" {{ $selectedIcon === 'bi-person-badge' ? 'selected' : '' }}>🪪 Person Badge (Service)</option>
+                                <option value="bi-briefcase" {{ $selectedIcon === 'bi-briefcase' ? 'selected' : '' }}>💼 Briefcase</option>
+                                <option value="bi-award" {{ $selectedIcon === 'bi-award' ? 'selected' : '' }}>🎖️ Award / Service</option>
+                                <option value="bi-person-gear" {{ $selectedIcon === 'bi-person-gear' ? 'selected' : '' }}>⚙️ Service Servant</option>
                                 <option value="bi-chat-left-text" {{ $selectedIcon === 'bi-chat-left-text' ? 'selected' : '' }}>💬 Chat Left Text</option>
                                 <option value="bi-card-checklist" {{ $selectedIcon === 'bi-card-checklist' ? 'selected' : '' }}>☑️ Card Checklist</option>
                                 <option value="bi-emoji-smile" {{ $selectedIcon === 'bi-emoji-smile' ? 'selected' : '' }}>😊 Emoji Smile</option>
@@ -91,20 +96,44 @@
                             <!-- Pre-populate existing fields -->
                             @foreach ($form->fields as $index => $field)
                                 @php
-                                    $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
-                                    $optionsString = implode(', ', $choices);
-                                    $showOptions = in_array($field->type, ['select', 'checkbox']);
+                                    $rawOptions = $field->options['raw_options'] ?? null;
+                                    $choices = isset($field->options['choices']) ? $field->options['choices'] : (isset($field->options['columns']) ? $field->options['columns'] : (is_array($field->options) ? $field->options : []));
+                                    $choices = array_filter($choices, function($val, $key) {
+                                        return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align', 'columns', 'option_notes', 'raw_options']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align', 'columns']);
+                                    }, ARRAY_FILTER_USE_BOTH);
+
+                                    if ($rawOptions !== null && $rawOptions !== '') {
+                                        $optionsString = $rawOptions;
+                                    } elseif (!empty($field->options['option_notes'])) {
+                                        $formatted = [];
+                                        foreach ($choices as $c) {
+                                            if (!empty($field->options['option_notes'][$c])) {
+                                                $formatted[] = $c . ': ' . $field->options['option_notes'][$c];
+                                            } else {
+                                                $formatted[] = $c;
+                                            }
+                                        }
+                                        $optionsString = implode(', ', $formatted);
+                                    } else {
+                                        $optionsString = implode(', ', $choices);
+                                    }
+
+                                    $showOptions = in_array($field->type, ['select', 'checkbox', 'table']);
                                     $placeholder = $field->options['placeholder'] ?? '';
                                     $description = $field->options['description'] ?? '';
                                     $bold = !empty($field->options['bold']);
                                     $italic = !empty($field->options['italic']);
                                     $align = $field->options['align'] ?? 'left';
                                     $isStatic = $field->type === 'static_text';
+                                    $isTable = $field->type === 'table';
+                                    $isYesNo = $field->type === 'yes_no_textbox';
                                 @endphp
                                 <div class="field-item card p-3 border shadow-sm position-relative" style="background: rgba(255, 255, 255, 0.4) !important; border-color: var(--glass-border) !important; transition: all 0.2s;">
-                                    <div class="row g-3">
+                                    <input type="hidden" name="fields[{{ $index }}][id]" class="field-id-input" value="{{ $field->id }}">
+                                    <div class="row g-2 g-md-3 align-items-center">
                                         <!-- Order controls -->
-                                        <div class="col-1 d-flex flex-column justify-content-center align-items-center gap-1">
+                                        <div class="col-12 col-md-1 d-flex flex-row flex-md-column justify-content-start justify-content-md-center align-items-center gap-1 mb-1 mb-md-0">
+                                            <span class="small text-muted fw-bold d-md-none me-2">{{ __('messages.Order') ?? 'Order' }}:</span>
                                             <button type="button" class="btn btn-sm btn-light border p-1 move-up-btn" onclick="moveFieldUp(this)" title="Move Up">
                                                 <i class="bi bi-arrow-up"></i>
                                             </button>
@@ -114,14 +143,14 @@
                                         </div>
 
                                         <!-- Label -->
-                                        <div class="col-md-4">
-                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Label / Name') ?? 'Field Label / Name' }}</label>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label fw-semibold small text-secondary mb-1">{{ __('messages.Field Label / Name') ?? 'Field Label / Name' }}</label>
                                             <input type="text" name="fields[{{ $index }}][label]" class="form-control label-input" placeholder="{{ __('messages.e.g. Your Name') ?? 'e.g. Your Name' }}" required value="{{ $field->label }}" oninput="updatePreview()">
                                         </div>
 
                                         <!-- Type selector -->
-                                        <div class="col-md-3">
-                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Input Type') ?? 'Field Input Type' }}</label>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label fw-semibold small text-secondary mb-1">{{ __('messages.Field Input Type') ?? 'Field Input Type' }}</label>
                                             <select name="fields[{{ $index }}][type]" class="form-select type-select" onchange="handleTypeChange(this)" required>
                                                 <optgroup label="{{ __('messages.Standard Fields') ?? 'Standard Fields' }}">
                                                     <option value="text" {{ $field->type === 'text' ? 'selected' : '' }}>{{ __('messages.Single Line Text') ?? 'Single Line Text' }}</option>
@@ -132,6 +161,8 @@
                                                     <option value="date" {{ $field->type === 'date' ? 'selected' : '' }}>{{ __('messages.Date Selector') ?? 'Date Selector' }}</option>
                                                     <option value="select" {{ $field->type === 'select' ? 'selected' : '' }}>{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
                                                     <option value="checkbox" {{ $field->type === 'checkbox' ? 'selected' : '' }}>{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
+                                                    <option value="table" {{ $field->type === 'table' ? 'selected' : '' }}>{{ __('messages.Table with Repeatable Rows') ?? 'Table with Repeatable Rows' }}</option>
+                                                    <option value="yes_no_textbox" {{ $field->type === 'yes_no_textbox' ? 'selected' : '' }}>{{ __('messages.Yes / No with Textbox on Yes') ?? 'Yes / No with Textbox on Yes' }}</option>
                                                     <option value="static_text" {{ $field->type === 'static_text' ? 'selected' : '' }}>{{ __('messages.Static Text Block') ?? 'Static Text Block' }}</option>
                                                     <option value="section_header" {{ $field->type === 'section_header' ? 'selected' : '' }}>{{ __('messages.Section Header') ?? 'Section Header' }}</option>
                                                 </optgroup>
@@ -146,27 +177,27 @@
                                         </div>
 
                                         <!-- Required check & Delete -->
-                                        <div class="col-md-4 d-flex align-items-center justify-content-between pt-4">
+                                        <div class="col-12 col-md-4 d-flex align-items-center justify-content-between pt-1 pt-md-4">
                                             <div class="form-check form-switch" style="{{ $isStatic ? 'display: none;' : '' }}">
                                                 <input class="form-check-input required-checkbox" type="checkbox" role="switch" name="fields[{{ $index }}][required]" value="1" {{ $field->required ? 'checked' : '' }} onchange="updatePreview()">
                                                 <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                                             </div>
 
-                                            <button type="button" class="btn btn-danger btn-sm px-2" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
-                                                <i class="bi bi-trash"></i>
+                                            <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
+                                                <i class="bi bi-trash"></i> {{ __('messages.Delete') ?? 'Delete' }}
                                             </button>
                                         </div>
 
-                                        <!-- Options settings (conditionally shown for Dropdown/Checkbox) -->
+                                        <!-- Options settings (conditionally shown for Dropdown/Checkbox/Table) -->
                                         <div class="col-12 options-container {{ $showOptions ? '' : 'd-none' }}">
-                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
-                                            <input type="text" name="fields[{{ $index }}][options]" class="form-control options-input" placeholder="{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}" value="{{ $optionsString }}" oninput="updatePreview()">
+                                            <label class="form-label fw-semibold small text-secondary options-label">{{ $isTable ? (__('messages.Table Column Headers (comma separated)') ?? 'Table Column Headers (comma separated)') : (__('messages.Options (comma separated list)') ?? 'Options (comma separated list)') }}</label>
+                                            <input type="text" name="fields[{{ $index }}][options]" class="form-control options-input" placeholder="{{ $isTable ? (__('messages.e.g. Service Position, Start Date, End Date, Service Committee') ?? 'e.g. Position, Start Date, End Date, Committee') : (__('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3') }}" value="{{ $optionsString }}" oninput="updatePreview()">
                                         </div>
 
                                         <!-- Placeholder setting -->
-                                        <div class="col-md-6 placeholder-settings-container {{ $isStatic ? 'd-none' : '' }}">
-                                            <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}</label>
-                                            <input type="text" name="fields[{{ $index }}][placeholder]" class="form-control placeholder-input" placeholder="e.g. Enter your value..." value="{{ $placeholder }}" oninput="updatePreview()">
+                                        <div class="col-md-6 placeholder-settings-container {{ $isStatic || $isTable ? 'd-none' : '' }}">
+                                            <label class="form-label fw-semibold small text-secondary placeholder-label">{{ $isYesNo ? (__('messages.If yes, please provide details...') ?? 'Details Placeholder on Yes') : (__('messages.Field Placeholder') ?? 'Field Placeholder') }}</label>
+                                            <input type="text" name="fields[{{ $index }}][placeholder]" class="form-control placeholder-input" placeholder="{{ $isYesNo ? (__('messages.If yes, please provide details...') ?? 'If yes, please provide details...') : 'e.g. Enter your value...' }}" value="{{ $placeholder }}" oninput="updatePreview()">
                                         </div>
 
                                         <!-- Description setting -->
@@ -256,10 +287,11 @@
 
     <!-- Template for fields configuration card -->
     <template id="field-template">
-        <div class="field-item card p-3 border shadow-sm position-relative" style="background: rgba(255, 255, 255, 0.4) !important; border-color: var(--glass-border) !important; transition: all 0.2s;">
-            <div class="row g-3">
+        <div class="field-item card p-3 border shadow-sm position-relative mb-3" style="background: rgba(255, 255, 255, 0.4) !important; border-color: var(--glass-border) !important; transition: all 0.2s;">
+            <div class="row g-2 g-md-3 align-items-center">
                 <!-- Order controls -->
-                <div class="col-1 d-flex flex-column justify-content-center align-items-center gap-1">
+                <div class="col-12 col-md-1 d-flex flex-row flex-md-column justify-content-start justify-content-md-center align-items-center gap-1 mb-1 mb-md-0">
+                    <span class="small text-muted fw-bold d-md-none me-2">{{ __('messages.Order') ?? 'Order' }}:</span>
                     <button type="button" class="btn btn-sm btn-light border p-1 move-up-btn" onclick="moveFieldUp(this)" title="Move Up">
                         <i class="bi bi-arrow-up"></i>
                     </button>
@@ -269,14 +301,14 @@
                 </div>
 
                 <!-- Label -->
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Label / Name') ?? 'Field Label / Name' }}</label>
+                <div class="col-12 col-md-4">
+                    <label class="form-label fw-semibold small text-secondary mb-1">{{ __('messages.Field Label / Name') ?? 'Field Label / Name' }}</label>
                     <input type="text" class="form-control label-input" placeholder="{{ __('messages.e.g. Your Name') ?? 'e.g. Your Name' }}" required oninput="updatePreview()">
                 </div>
 
                 <!-- Type selector -->
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Input Type') ?? 'Field Input Type' }}</label>
+                <div class="col-12 col-md-3">
+                    <label class="form-label fw-semibold small text-secondary mb-1">{{ __('messages.Field Input Type') ?? 'Field Input Type' }}</label>
                     <select class="form-select type-select" onchange="handleTypeChange(this)" required>
                         <optgroup label="{{ __('messages.Standard Fields') ?? 'Standard Fields' }}">
                             <option value="text">{{ __('messages.Single Line Text') ?? 'Single Line Text' }}</option>
@@ -287,6 +319,8 @@
                             <option value="date">{{ __('messages.Date Selector') ?? 'Date Selector' }}</option>
                             <option value="select">{{ __('messages.Dropdown Choice (Select)') ?? 'Dropdown Choice (Select)' }}</option>
                             <option value="checkbox">{{ __('messages.Checkbox Check') ?? 'Checkbox Check' }}</option>
+                            <option value="table">{{ __('messages.Table with Repeatable Rows') ?? 'Table with Repeatable Rows' }}</option>
+                            <option value="yes_no_textbox">{{ __('messages.Yes / No with Textbox on Yes') ?? 'Yes / No with Textbox on Yes' }}</option>
                             <option value="static_text">{{ __('messages.Static Text Block') ?? 'Static Text Block' }}</option>
                             <option value="section_header">{{ __('messages.Section Header') ?? 'Section Header' }}</option>
                         </optgroup>
@@ -301,26 +335,26 @@
                 </div>
 
                 <!-- Required check & Delete -->
-                <div class="col-md-4 d-flex align-items-center justify-content-between pt-4">
+                <div class="col-12 col-md-4 d-flex align-items-center justify-content-between pt-1 pt-md-4">
                     <div class="form-check form-switch">
                         <input class="form-check-input required-checkbox" type="checkbox" role="switch" onchange="updatePreview()">
                         <label class="form-check-label fw-semibold small text-secondary">{{ __('messages.Required') ?? 'Required' }}</label>
                     </div>
 
-                    <button type="button" class="btn btn-danger btn-sm px-2" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
-                        <i class="bi bi-trash"></i>
+                    <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" onclick="removeField(this)" title="{{ __('messages.Delete') ?? 'Delete' }}">
+                        <i class="bi bi-trash"></i> {{ __('messages.Delete') ?? 'Delete' }}
                     </button>
                 </div>
 
-                <!-- Options settings (conditionally shown for Dropdown/Checkbox) -->
+                <!-- Options settings (conditionally shown for Dropdown/Checkbox/Table) -->
                 <div class="col-12 options-container d-none">
-                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
+                    <label class="form-label fw-semibold small text-secondary options-label">{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}</label>
                     <input type="text" class="form-control options-input" placeholder="{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}" oninput="updatePreview()">
                 </div>
 
                 <!-- Placeholder setting -->
                 <div class="col-md-6 placeholder-settings-container">
-                    <label class="form-label fw-semibold small text-secondary">{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}</label>
+                    <label class="form-label fw-semibold small text-secondary placeholder-label">{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}</label>
                     <input type="text" class="form-control placeholder-input" placeholder="e.g. Enter your value..." oninput="updatePreview()">
                 </div>
 
@@ -431,27 +465,62 @@
         function handleTypeChange(select) {
             const row = select.closest('.row');
             const optionsContainer = row.querySelector('.options-container');
+            const optionsLabel = row.querySelector('.options-label');
+            const optionsInput = row.querySelector('.options-input');
             const placeholderContainer = row.querySelector('.placeholder-settings-container');
+            const placeholderLabel = row.querySelector('.placeholder-label');
+            const placeholderInput = row.querySelector('.placeholder-input');
             const formattingContainer = row.querySelector('.formatting-settings-container');
             const requiredSwitch = row.querySelector('.required-checkbox')?.closest('.form-switch');
 
-            if (select.value === 'select' || select.value === 'checkbox') {
+            if (select.value === 'table') {
                 optionsContainer.classList.remove('d-none');
-            } else {
+                if (optionsLabel) optionsLabel.textContent = "{{ __('messages.Table Column Headers (comma separated)') ?? 'Table Column Headers (comma separated)' }}";
+                if (optionsInput) optionsInput.placeholder = "{{ __('messages.e.g. Service Position, Start Date, End Date, Service Committee') ?? 'e.g. Position, Start Date, End Date, Committee' }}";
+                placeholderContainer.classList.add('d-none');
+                formattingContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'block';
+            } else if (select.value === 'select') {
+                optionsContainer.classList.remove('d-none');
+                if (optionsLabel) optionsLabel.textContent = "{{ __('messages.Options (e.g. Option: Attached note text, Option 2)') ?? 'Options (Optional attached note format: Option Name: Note for this option)' }}";
+                if (optionsInput) optionsInput.placeholder = "{{ __('messages.e.g. Secretary: 2 years clean time required, Treasurer: 3 years clean time, Member') ?? 'e.g. Secretary: 2 years clean time required, Treasurer: 3 years clean time, Member' }}";
+                placeholderContainer.classList.remove('d-none');
+                if (placeholderLabel) placeholderLabel.textContent = "{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}";
+                if (placeholderInput) placeholderInput.placeholder = "e.g. Choose an option...";
+                formattingContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'block';
+            } else if (select.value === 'checkbox') {
+                optionsContainer.classList.remove('d-none');
+                if (optionsLabel) optionsLabel.textContent = "{{ __('messages.Options (comma separated list)') ?? 'Options (comma separated list)' }}";
+                if (optionsInput) optionsInput.placeholder = "{{ __('messages.Option 1, Option 2, Option 3') ?? 'Option 1, Option 2, Option 3' }}";
+                placeholderContainer.classList.remove('d-none');
+                if (placeholderLabel) placeholderLabel.textContent = "{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}";
+                if (placeholderInput) placeholderInput.placeholder = "e.g. Choose an option...";
+                formattingContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'block';
+            } else if (select.value === 'yes_no_textbox') {
                 optionsContainer.classList.add('d-none');
-            }
-
-            if (select.value === 'static_text') {
+                placeholderContainer.classList.remove('d-none');
+                if (placeholderLabel) placeholderLabel.textContent = "{{ __('messages.If yes, please provide details...') ?? 'Details Placeholder on Yes' }}";
+                if (placeholderInput) placeholderInput.placeholder = "{{ __('messages.If yes, please provide details...') ?? 'If yes, please provide details...' }}";
+                formattingContainer.classList.add('d-none');
+                if (requiredSwitch) requiredSwitch.style.display = 'block';
+            } else if (select.value === 'static_text') {
+                optionsContainer.classList.add('d-none');
                 formattingContainer.classList.remove('d-none');
                 placeholderContainer.classList.add('d-none');
                 if (requiredSwitch) requiredSwitch.style.display = 'none';
             } else if (select.value === 'section_header') {
+                optionsContainer.classList.add('d-none');
                 formattingContainer.classList.add('d-none');
                 placeholderContainer.classList.add('d-none');
                 if (requiredSwitch) requiredSwitch.style.display = 'none';
             } else {
+                optionsContainer.classList.add('d-none');
                 formattingContainer.classList.add('d-none');
                 placeholderContainer.classList.remove('d-none');
+                if (placeholderLabel) placeholderLabel.textContent = "{{ __('messages.Field Placeholder') ?? 'Field Placeholder' }}";
+                if (placeholderInput) placeholderInput.placeholder = "e.g. Enter your value...";
                 if (requiredSwitch) requiredSwitch.style.display = 'block';
             }
 
@@ -480,6 +549,10 @@
             const container = document.getElementById('fields-container');
             const items = container.querySelectorAll('.field-item');
             items.forEach((item, index) => {
+                const idInput = item.querySelector('.field-id-input');
+                if (idInput) {
+                    idInput.name = `fields[${index}][id]`;
+                }
                 item.querySelector('.label-input').name = `fields[${index}][label]`;
                 item.querySelector('.type-select').name = `fields[${index}][type]`;
                 item.querySelector('.required-checkbox').name = `fields[${index}][required]`;
@@ -533,22 +606,39 @@
 
             if (typeSelect.value === 'survey') {
                 if (iconSelectorGroup) iconSelectorGroup.style.setProperty('display', 'block', 'important');
-                if (previewIconWrapper) previewIconWrapper.style.setProperty('display', 'flex', 'important');
+                if (previewIconWrapper) {
+                    previewIconWrapper.style.setProperty('display', 'flex', 'important');
+                    previewIconWrapper.style.setProperty('background-color', 'rgba(37, 99, 235, 0.1)', 'important');
+                    previewIconWrapper.style.setProperty('color', '#2563eb', 'important');
+                }
                 
-                // Update icon class
                 if (previewIcon && settingsIcon) {
                     previewIcon.className = 'bi ' + (settingsIcon.value || 'bi-clipboard2-data');
                 }
 
-                // Set Primary (blue) style for badge
                 previewTypeBadge.className = 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase';
                 previewTypeBadge.style.setProperty('background-color', 'rgba(37, 99, 235, 0.1)', 'important');
                 previewTypeBadge.style.setProperty('border-color', 'rgba(37, 99, 235, 0.2)', 'important');
+            } else if (typeSelect.value === 'service_position_application') {
+                if (iconSelectorGroup) iconSelectorGroup.style.setProperty('display', 'block', 'important');
+                if (previewIconWrapper) {
+                    previewIconWrapper.style.setProperty('display', 'flex', 'important');
+                    previewIconWrapper.style.setProperty('background-color', 'rgba(99, 102, 241, 0.12)', 'important');
+                    previewIconWrapper.style.setProperty('color', '#4f46e5', 'important');
+                }
+
+                if (previewIcon && settingsIcon) {
+                    previewIcon.className = 'bi ' + (settingsIcon.value || 'bi-person-badge');
+                }
+
+                previewTypeBadge.className = 'badge rounded-pill px-3 py-1.5 fw-bold text-uppercase';
+                previewTypeBadge.style.setProperty('background-color', 'rgba(99, 102, 241, 0.12)', 'important');
+                previewTypeBadge.style.setProperty('color', '#4f46e5', 'important');
+                previewTypeBadge.style.setProperty('border', '1px solid rgba(99, 102, 241, 0.25)', 'important');
             } else {
                 if (iconSelectorGroup) iconSelectorGroup.style.setProperty('display', 'none', 'important');
                 if (previewIconWrapper) previewIconWrapper.style.setProperty('display', 'none', 'important');
 
-                // Set Success (green) style for badge
                 previewTypeBadge.className = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold text-uppercase';
                 previewTypeBadge.style.setProperty('background-color', 'rgba(16, 185, 129, 0.1)', 'important');
                 previewTypeBadge.style.setProperty('border-color', 'rgba(16, 185, 129, 0.2)', 'important');
@@ -629,32 +719,78 @@
                     } else if (type === 'phone') {
                         inputControl = document.createElement('div');
                         inputControl.className = 'input-group input-group-sm';
+                        inputControl.setAttribute('dir', 'ltr');
                         inputControl.style.direction = 'ltr';
+                        inputControl.style.textAlign = 'left';
+                        inputControl.style.unicodeBidi = 'embed';
                         const span = document.createElement('span');
                         span.className = 'input-group-text bg-light border';
                         span.textContent = '🇪🇬 +20';
                         const phoneInp = document.createElement('input');
                         phoneInp.type = 'tel';
                         phoneInp.className = 'form-control bg-light border-start-0';
+                        phoneInp.style.direction = 'ltr';
+                        phoneInp.style.textAlign = 'left';
+                        phoneInp.style.unicodeBidi = 'embed';
                         phoneInp.placeholder = placeholder || '123 456 7890';
                         phoneInp.disabled = true;
                         inputControl.appendChild(span);
                         inputControl.appendChild(phoneInp);
                     } else if (type === 'select') {
-                        inputControl = document.createElement('select');
-                        inputControl.className = 'form-select bg-light border-0 small';
-                        inputControl.disabled = true;
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'w-100';
+                        const sel = document.createElement('select');
+                        sel.className = 'form-select bg-light border-0 small';
                         const defaultOption = document.createElement('option');
+                        defaultOption.value = "";
                         defaultOption.text = placeholder || 'Choose an option...';
-                        inputControl.appendChild(defaultOption);
+                        sel.appendChild(defaultOption);
+                        const noteBox = document.createElement('div');
+                        noteBox.className = 'select-preview-note mt-2 p-2.5 rounded-3 d-none';
+                        noteBox.style.background = 'rgba(59, 130, 246, 0.08)';
+                        noteBox.style.borderInlineStart = '3px solid #2563eb';
+                        noteBox.style.color = '#1e3a8a';
+                        noteBox.style.fontSize = '0.8rem';
+                        noteBox.innerHTML = '<div class="d-flex align-items-start gap-1.5"><i class="bi bi-info-circle-fill text-primary mt-0.5"></i><span class="note-text fw-semibold"></span></div>';
+
                         if (optionsVal) {
-                            const options = optionsVal.split(',');
+                            const options = optionsVal.split(/[\r\n,]+/);
                             options.forEach(opt => {
+                                const trimmed = opt.trim();
+                                if (!trimmed) return;
                                 const option = document.createElement('option');
-                                option.text = opt.trim();
-                                inputControl.appendChild(option);
+                                if (trimmed.includes(':')) {
+                                    const parts = trimmed.split(':');
+                                    const name = parts[0].trim();
+                                    const note = parts.slice(1).join(':').trim();
+                                    option.text = name;
+                                    option.value = name;
+                                    option.setAttribute('data-note', note);
+                                } else {
+                                    option.text = trimmed;
+                                    option.value = trimmed;
+                                }
+                                sel.appendChild(option);
                             });
                         }
+                        const optOther = document.createElement('option');
+                        optOther.value = '__other__';
+                        optOther.text = 'Other...';
+                        sel.appendChild(optOther);
+
+                        sel.addEventListener('change', function() {
+                            const selectedOpt = sel.options[sel.selectedIndex];
+                            const note = selectedOpt ? selectedOpt.getAttribute('data-note') : null;
+                            if (note) {
+                                noteBox.querySelector('.note-text').textContent = note;
+                                noteBox.classList.remove('d-none');
+                            } else {
+                                noteBox.classList.add('d-none');
+                            }
+                        });
+
+                        inputControl.appendChild(sel);
+                        inputControl.appendChild(noteBox);
                     } else if (type === 'checkbox') {
                         inputControl = document.createElement('div');
                         inputControl.className = 'd-flex flex-column gap-1';
@@ -688,13 +824,41 @@
                             wrap.appendChild(checkLbl);
                             inputControl.appendChild(wrap);
                         }
+                    } else if (type === 'table') {
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'border rounded p-2 bg-light';
+                        const cols = optionsVal ? optionsVal.split(',').map(s => s.trim()).filter(Boolean) : ['Column 1', 'Column 2'];
+                        
+                        let tableHtml = '<div class="table-responsive"><table class="table table-sm table-bordered bg-white mb-1"><thead class="table-light"><tr>';
+                        cols.forEach(c => { tableHtml += `<th class="small py-1 px-2">${c}</th>`; });
+                        tableHtml += '<th style="width: 30px;">#</th></tr></thead><tbody><tr>';
+                        cols.forEach(c => { tableHtml += `<td class="p-1"><input type="text" class="form-control form-control-sm" placeholder="${c}" disabled></td>`; });
+                        tableHtml += '<td class="text-center p-1"><button class="btn btn-sm btn-outline-danger p-0 px-1 disabled"><i class="bi bi-x"></i></button></td></tr></tbody></table></div>';
+                        tableHtml += '<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mt-1 disabled" style="font-size: 0.75rem;"><i class="bi bi-plus"></i> Add Row</button>';
+                        inputControl.innerHTML = tableHtml;
+                    } else if (type === 'yes_no_textbox') {
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'p-2 bg-light rounded border';
+                        inputControl.innerHTML = `
+                            <div class="d-flex gap-3 mb-2">
+                                <label class="form-check-label small fw-semibold"><input type="radio" checked disabled class="form-check-input me-1"> {{ __('messages.yes') ?? 'Yes' }}</label>
+                                <label class="form-check-label small fw-semibold"><input type="radio" disabled class="form-check-input me-1"> {{ __('messages.no') ?? 'No' }}</label>
+                            </div>
+                            <textarea rows="2" class="form-control form-control-sm" placeholder="${placeholder || '{{ __('messages.If yes, please provide details...') ?? 'If yes, please provide details...' }}'}" disabled></textarea>
+                        `;
                     } else if (['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'].includes(type)) {
-                        inputControl = document.createElement('select');
-                        inputControl.className = 'form-select bg-light border-0 small';
-                        inputControl.disabled = true;
-                        const opt = document.createElement('option');
-                        opt.text = placeholder || `[Dynamic List: ${type.charAt(0).toUpperCase() + type.slice(1)}]`;
-                        inputControl.appendChild(opt);
+                        inputControl = document.createElement('div');
+                        inputControl.className = 'input-group input-group-sm';
+                        const iconSpan = document.createElement('span');
+                        iconSpan.className = 'input-group-text bg-white border text-muted';
+                        iconSpan.innerHTML = '<i class="bi bi-search"></i>';
+                        const inp = document.createElement('input');
+                        inp.type = 'text';
+                        inp.className = 'form-control bg-light border-0 small';
+                        inp.placeholder = placeholder || `🔍 Search & Select ${type.charAt(0).toUpperCase() + type.slice(1)}...`;
+                        inp.disabled = true;
+                        inputControl.appendChild(iconSpan);
+                        inputControl.appendChild(inp);
                     } else {
                         inputControl = document.createElement('input');
                         inputControl.type = type;

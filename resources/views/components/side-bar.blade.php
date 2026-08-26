@@ -459,8 +459,12 @@
         var searchClear = document.getElementById("sidebarSearchClear");
         var pinBtn = document.getElementById("sidebarPinToggle");
 
-        // 1. Restore Collapsed State from LocalStorage
-        var isCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
+        // 1. Restore Collapsed State from LocalStorage safely
+        var isCollapsed = false;
+        try {
+            isCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
+        } catch(e) {}
+
         if (isCollapsed && window.innerWidth >= 992) {
             body.classList.add("sidebar-collapsed");
             document.documentElement.classList.add("sidebar-collapsed");
@@ -475,7 +479,9 @@
                 wrapper.classList.toggle("toggled", body.classList.contains("sidebar-collapsed"));
             }
             var collapsed = body.classList.contains("sidebar-collapsed");
-            localStorage.setItem("sidebar_collapsed", collapsed ? "true" : "false");
+            try {
+                localStorage.setItem("sidebar_collapsed", collapsed ? "true" : "false");
+            } catch(e) {}
         }
 
         if (pinBtn) {

@@ -990,12 +990,19 @@
     document.addEventListener('DOMContentLoaded', function() {
       initConventionCountdown();
 
-      if (!sessionStorage.getItem('convention_popup_shown')) {
+      var conventionShown = false;
+      try {
+        conventionShown = sessionStorage.getItem('convention_popup_shown') === 'true';
+      } catch(e) {}
+
+      if (!conventionShown) {
         const conventionModalEl = document.getElementById('conventionModal');
         if (conventionModalEl && window.bootstrap) {
           const myModal = new window.bootstrap.Modal(conventionModalEl);
           myModal.show();
-          sessionStorage.setItem('convention_popup_shown', 'true');
+          try {
+            sessionStorage.setItem('convention_popup_shown', 'true');
+          } catch(e) {}
         }
       }
 

@@ -73,7 +73,7 @@
                     </a>
                 @endif
                 @if($directOnlineGroup->phone)
-                    <a href="tel:{{ $directOnlineGroup->phone }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center" dir="ltr">
+                    <a href="tel:{{ $directOnlineGroup->phone }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;">
                         <i class="bi bi-telephone me-2 flex-shrink-0"></i> {{ $directOnlineGroup->phone }}
                     </a>
                 @endif

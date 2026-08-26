@@ -256,6 +256,7 @@ Route::group(
                 Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report');
                 Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf');
                 Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf');
+                Route::get('forms/{form}/submissions/{submission}/csv', [CustomFormController::class, 'exportSubmissionCsv'])->name('forms.submissionCsv');
                 Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv');
                 Route::resource('forms', CustomFormController::class);
             });

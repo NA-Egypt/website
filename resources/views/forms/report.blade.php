@@ -104,19 +104,19 @@
 
     <x-backhead>{{ __('messages.Form Reports') ?? 'Form Reports' }}</x-backhead>
 
-    <div class="container-fluid px-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container-fluid px-3 px-md-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
             <div>
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ $form->title }} - {{ __('messages.Submissions Report') ?? 'Submissions Report' }}</h4>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ route('forms.csv', $form->id) }}" class="btn btn-outline-success rounded-pill px-4 d-flex align-items-center gap-2">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('forms.csv', $form->id) }}" class="btn btn-outline-success btn-sm rounded-pill px-3 px-md-4 d-flex align-items-center gap-2">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> {{ __('messages.Export CSV') ?? 'Export CSV' }}
                 </a>
-                <a href="{{ route('forms.reportPdf', $form->id) }}" class="btn btn-outline-danger rounded-pill px-4 d-flex align-items-center gap-2">
+                <a href="{{ route('forms.reportPdf', $form->id) }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 px-md-4 d-flex align-items-center gap-2">
                     <i class="bi bi-file-earmark-pdf-fill"></i> {{ __('messages.Download Report PDF') ?? 'Download PDF' }}
                 </a>
-                <a href="{{ route('forms.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                <a href="{{ route('forms.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 px-md-4">
                     <i class="bi bi-arrow-left"></i> {{ __('messages.Back to Dashboard') ?? 'Back' }}
                 </a>
             </div>
@@ -160,14 +160,14 @@
         </div>
 
         <!-- Navigation Tabs -->
-        <ul class="nav nav-pills mb-4 gap-2" id="reportTabs" role="tablist">
+        <ul class="nav nav-pills mb-4 gap-2 flex-wrap" id="reportTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="submissions-tab" data-bs-toggle="pill" data-bs-target="#submissions-pane" type="button" role="tab" aria-controls="submissions-pane" aria-selected="true" style="transition: all 0.2s ease;">
+                <button class="nav-link active rounded-pill px-3 px-md-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="submissions-tab" data-bs-toggle="pill" data-bs-target="#submissions-pane" type="button" role="tab" aria-controls="submissions-pane" aria-selected="true" style="transition: all 0.2s ease;">
                     <i class="bi bi-list-task"></i> {{ __('messages.Submissions List') ?? 'Submissions List' }}
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="charts-tab" data-bs-toggle="pill" data-bs-target="#charts-pane" type="button" role="tab" aria-controls="charts-pane" aria-selected="false" style="transition: all 0.2s ease;">
+                <button class="nav-link rounded-pill px-3 px-md-4 fw-semibold shadow-sm d-flex align-items-center gap-2" id="charts-tab" data-bs-toggle="pill" data-bs-target="#charts-pane" type="button" role="tab" aria-controls="charts-pane" aria-selected="false" style="transition: all 0.2s ease;">
                     <i class="bi bi-bar-chart-line-fill"></i> {{ __('messages.Visual Analytics') ?? 'Visual Analytics' }}
                 </button>
             </li>
@@ -176,8 +176,8 @@
         <div class="tab-content" id="reportTabsContent">
             <!-- Submissions List Tab Pane -->
             <div class="tab-pane fade show active" id="submissions-pane" role="tabpanel" aria-labelledby="submissions-tab" tabindex="0">
-                <div class="glass-card p-4">
-                    <div class="table-responsive" style="overflow: visible !important;">
+                <div class="glass-card p-3 p-md-4">
+                    <div class="table-responsive">
                         <table class="table neo-table align-middle text-center display" id="submissions-table" style="width:100%;">
                             <thead>
                                 <tr>
@@ -196,9 +196,17 @@
                                             {{ $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest') }}
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#submissionModal-{{ $submission->id }}">
-                                                <i class="bi bi-eye-fill"></i> {{ __('messages.View Details') ?? 'View Details' }}
-                                            </button>
+                                            <div class="d-flex align-items-center justify-content-center gap-1.5 flex-wrap">
+                                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#submissionModal-{{ $submission->id }}" title="{{ __('messages.View Details') ?? 'View Details' }}">
+                                                    <i class="bi bi-eye-fill"></i> <span class="d-none d-md-inline">{{ __('messages.View Details') ?? 'View' }}</span>
+                                                </button>
+                                                <a href="{{ route('forms.submissionPdf', [$form->id, $submission->id]) }}" class="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1" title="{{ __('messages.Export Response PDF') ?? 'Export PDF' }}">
+                                                    <i class="bi bi-file-earmark-pdf-fill"></i> <span class="d-none d-md-inline">PDF</span>
+                                                </a>
+                                                <a href="{{ route('forms.submissionCsv', [$form->id, $submission->id]) }}" class="btn btn-sm btn-outline-success rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1" title="{{ __('messages.Export Response CSV') ?? 'Export CSV' }}">
+                                                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> <span class="d-none d-md-inline">CSV</span>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -361,11 +369,19 @@
         <div class="modal fade" id="submissionModal-{{ $submission->id }}" tabindex="-1" aria-labelledby="submissionModalLabel-{{ $submission->id }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 rounded-4 shadow-lg" style="background: #ffffff;">
-                    <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="submissionModalLabel-{{ $submission->id }}" style="color: var(--text-primary);">
+                    <div class="modal-header border-bottom pb-3 px-4 pt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0" id="submissionModalLabel-{{ $submission->id }}" style="color: var(--text-primary);">
                             <i class="bi bi-file-earmark-text text-primary"></i> {{ __('messages.Submission Details') ?? 'Submission Details' }} #{{ $submission->id }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="{{ route('forms.submissionPdf', [$form->id, $submission->id]) }}" class="btn btn-sm btn-outline-danger rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                            </a>
+                            <a href="{{ route('forms.submissionCsv', [$form->id, $submission->id]) }}" class="btn btn-sm btn-outline-success rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                                <i class="bi bi-file-earmark-spreadsheet-fill"></i> CSV
+                            </a>
+                            <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
                     <div class="modal-body p-4 text-start" style="text-align: initial !important;">
                         <div class="mb-4 pb-3 border-bottom d-flex flex-wrap gap-4 text-secondary small">
@@ -387,7 +403,63 @@
                                         @php
                                             $val = $submission->data[$field->id] ?? '-';
                                         @endphp
-                                        @if (is_array($val))
+                                        @if ($field->type === 'table')
+                                            @if (!empty($val) && is_array($val))
+                                                <div class="table-responsive mt-2">
+                                                    <table class="table table-sm table-bordered bg-white rounded-2 overflow-hidden mb-0">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                @php
+                                                                    $headers = !empty($val[0]) && is_array($val[0]) ? array_keys($val[0]) : [];
+                                                                @endphp
+                                                                @foreach ($headers as $h)
+                                                                    <th class="small fw-bold py-1 px-2">{{ $h }}</th>
+                                                                @endforeach
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($val as $row)
+                                                                @if (is_array($row))
+                                                                    <tr>
+                                                                        @foreach ($row as $cell)
+                                                                            <td class="small py-1 px-2">{{ $cell }}</td>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                @endif
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        @elseif ($field->type === 'yes_no_textbox')
+                                            @php
+                                                $ans = is_array($val) ? ($val['answer'] ?? null) : $val;
+                                                $det = is_array($val) ? ($val['details'] ?? null) : null;
+                                            @endphp
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if ($ans === 'yes')
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1">{{ __('messages.yes') ?? 'Yes' }}</span>
+                                                    @if (!empty($det))
+                                                        <span class="text-secondary small">({{ $det }})</span>
+                                                    @endif
+                                                @elseif ($ans === 'no')
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1">{{ __('messages.no') ?? 'No' }}</span>
+                                                @else
+                                                    <span class="text-muted small">-</span>
+                                                @endif
+                                            </div>
+                                        @elseif ($field->type === 'phone')
+                                            @if (!empty($val) && $val !== '-')
+                                                <a href="tel:{{ $val }}" class="btn btn-sm btn-light border rounded-pill px-3 py-1 text-dark d-inline-flex align-items-center gap-1.5 shadow-sm" dir="ltr" style="direction: ltr !important; text-align: left !important; unicode-bidi: embed;">
+                                                    <i class="bi bi-telephone-fill text-primary small"></i>
+                                                    <span class="fw-bold">{{ $val }}</span>
+                                                </a>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        @elseif (is_array($val))
                                             <div class="d-flex flex-wrap gap-1 mt-1">
                                                 @foreach($val as $item)
                                                     <span class="badge bg-secondary rounded-pill px-2.5 py-1 small">{{ $item }}</span>

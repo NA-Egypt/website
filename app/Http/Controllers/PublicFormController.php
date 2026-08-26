@@ -77,23 +77,48 @@ class PublicFormController extends Controller
                 continue;
             }
             $fieldName = 'field_' . $field->id;
-            $rule = [];
-            if ($field->required) {
-                $rule[] = 'required';
+
+            if ($field->type === 'yes_no_textbox') {
+                $hasAnswerDirect = $request->has($fieldName);
+                $answerFieldKey = $hasAnswerDirect ? $fieldName : ($fieldName . '_answer');
+                if ($field->required) {
+                    $rules[$answerFieldKey] = 'required|in:yes,no';
+                    $messages[$answerFieldKey . '.required'] = "The field '{$field->label}' is required.";
+                } else {
+                    $rules[$answerFieldKey] = 'nullable|in:yes,no';
+                }
+            } elseif ($field->type === 'table') {
+                if ($field->required) {
+                    $rules[$fieldName] = 'required|array|min:1';
+                    $messages[$fieldName . '.required'] = "The field '{$field->label}' is required.";
+                } else {
+                    $rules[$fieldName] = 'nullable|array';
+                }
             } else {
-                $rule[] = 'nullable';
-            }
+                $rule = [];
+                if ($field->required) {
+                    $rule[] = 'required';
+                } else {
+                    $rule[] = 'nullable';
+                }
 
-            if ($field->type === 'email') {
-                $rule[] = 'email';
-            } elseif ($field->type === 'number') {
-                $rule[] = 'numeric';
-            } elseif ($field->type === 'date') {
-                $rule[] = 'date';
-            }
+                if ($field->type === 'email') {
+                    $rule[] = 'email';
+                } elseif ($field->type === 'number') {
+                    $rule[] = 'numeric';
+                } elseif ($field->type === 'date') {
+                    $rule[] = 'date';
+                }
 
-            $rules[$fieldName] = implode('|', $rule);
-            $messages[$fieldName . '.required'] = "The field '{$field->label}' is required.";
+                $rules[$fieldName] = implode('|', $rule);
+                $messages[$fieldName . '.required'] = "The field '{$field->label}' is required.";
+
+                // If "Other" is chosen for dynamic or select field, validate other text input if field is required
+                if ($field->required && $request->input($fieldName) === '__other__') {
+                    $rules[$fieldName . '_other'] = 'required|string|max:255';
+                    $messages[$fieldName . '_other.required'] = "Please specify a value for '{$field->label}'.";
+                }
+            }
         }
 
         $validated = $request->validate($rules, $messages);
@@ -105,7 +130,48 @@ class PublicFormController extends Controller
                 continue;
             }
             $fieldName = 'field_' . $field->id;
-            $submissionData[$field->id] = $request->input($fieldName);
+
+            if ($field->type === 'yes_no_textbox') {
+                $answer = $request->input($fieldName . '_answer', $request->input($fieldName));
+                $details = $request->input($fieldName . '_details');
+                if ($answer) {
+                    $submissionData[$field->id] = [
+                        'answer' => $answer,
+                        'details' => $answer === 'yes' ? $details : null,
+                    ];
+                } else {
+                    $submissionData[$field->id] = null;
+                }
+            } elseif ($field->type === 'table') {
+                $rawRows = $request->input($fieldName, []);
+                $cleanRows = [];
+                if (is_array($rawRows)) {
+                    foreach ($rawRows as $row) {
+                        if (is_array($row)) {
+                            // Filter out empty rows
+                            $hasContent = false;
+                            foreach ($row as $cell) {
+                                if (trim((string)$cell) !== '') {
+                                    $hasContent = true;
+                                    break;
+                                }
+                            }
+                            if ($hasContent) {
+                                $cleanRows[] = $row;
+                            }
+                        }
+                    }
+                }
+                $submissionData[$field->id] = $cleanRows;
+            } else {
+                $val = $request->input($fieldName);
+                if ($val === '__other__') {
+                    $otherText = $request->input($fieldName . '_other');
+                    $submissionData[$field->id] = !empty($otherText) ? trim($otherText) : 'Other';
+                } else {
+                    $submissionData[$field->id] = $val;
+                }
+            }
         }
 
         $submission = CustomFormSubmission::create([

@@ -52,6 +52,22 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
         tr:nth-child(even) {
             background-color: #f8fafc;
         }
+        .badge-type-container {
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        .badge-type {
+            display: inline-block;
+            padding: 4px 16px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1d4ed8;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 16px;
+        }
         .footer {
             margin-top: 30px;
             font-size: 10px;
@@ -63,8 +79,15 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 <body>
 
     <h2>{{ $form->title }}</h2>
+    @if (!empty($form->settings['subtitle']))
+        <div style="font-size: 12px; line-height: 1.8; color: #475569; margin: 4px 0 10px 0;">{{ $form->settings['subtitle'] }}</div>
+    @endif
+    <div class="badge-type-container">
+        <span class="badge-type">
+            {{ $form->type === 'survey' ? (__('messages.Survey') ?? 'Survey') : ($form->type === 'service_position_application' ? (__('messages.Service Position Application') ?? 'Service Position Application') : (__('messages.Event Registration') ?? 'Event Registration')) }}
+        </span>
+    </div>
     <div class="meta">
-        {{ __('messages.Type') ?? 'Type' }}: {{ $form->type === 'survey' ? (__('messages.Survey') ?? 'Survey') : (__('messages.Event Registration') ?? 'Event Registration') }} | 
         {{ __('messages.Views') ?? 'Views' }}: {{ $form->views }} | 
         {{ __('messages.Submissions') ?? 'Submissions' }}: {{ $form->submissions->count() }} | 
         {{ __('messages.Conversion Rate') ?? 'Conversion Rate' }}: {{ $form->conversion_rate }}% | 
@@ -93,7 +116,49 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                             @php
                                 $val = $submission->data[$field->id] ?? '-';
                             @endphp
-                            @if (is_array($val))
+                            @if ($field->type === 'table' && is_array($val))
+                                @foreach ($val as $r)
+                                    @if (is_array($r))
+                                        <div>[{{ implode(' | ', $r) }}]</div>
+                                    @endif
+                                @endforeach
+                            @elseif ($field->type === 'yes_no_textbox')
+                                @php
+                                    $ans = is_array($val) ? ($val['answer'] ?? null) : $val;
+                                    $det = is_array($val) ? ($val['details'] ?? null) : null;
+                                @endphp
+                                @if ($ans === 'yes')
+                                    {{ __('messages.yes') ?? 'Yes' }}{{ !empty($det) ? ' (' . $det . ')' : '' }}
+                                @elseif ($ans === 'no')
+                                    {{ __('messages.no') ?? 'No' }}
+                                @else
+                                    -
+                                @endif
+                            @elseif ($field->type === 'date' && !empty($val) && $val !== '-' && strtotime($val))
+                                @php
+                                    $submittedDate = new \DateTime($val);
+                                    $now = new \DateTime();
+                                    $interval = $submittedDate->diff($now);
+                                    $locale = app()->getLocale();
+                                    if ($submittedDate > $now) {
+                                        $elapsedStr = $locale === 'ar' ? 'في المستقبل' : 'in the future';
+                                    } else {
+                                        $elapsedStr = sprintf(
+                                            $locale === 'ar' ? '(%d سنة، %d شهر، %d يوم)' : '(%d years, %d months, %d days)',
+                                            $interval->y,
+                                            $interval->m,
+                                            $interval->d
+                                        );
+                                    }
+                                @endphp
+                                <span>{{ $val }}</span> <span style="color: #2563eb; font-weight: bold;">{{ $elapsedStr }}</span>
+                            @elseif ($field->type === 'phone')
+                                @if ($val !== '-' && $val !== '' && $val !== null)
+                                    <span dir="ltr" style="direction: ltr !important; text-align: left !important; unicode-bidi: embed; display: inline-block;">{{ $val }}</span>
+                                @else
+                                    -
+                                @endif
+                            @elseif (is_array($val))
                                 {{ implode(', ', $val) }}
                             @else
                                 {{ $val }}
