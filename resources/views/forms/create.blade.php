@@ -528,7 +528,7 @@
 
                 if (type === 'static_text') {
                     const staticText = document.createElement('div');
-                    staticText.textContent = label;
+                    staticText.innerHTML = autolinkText(label).replace(/\n/g, '<br>');
                     staticText.style.fontWeight = bold ? 'bold' : 'normal';
                     staticText.style.fontStyle = italic ? 'italic' : 'normal';
                     staticText.style.textAlign = align;
@@ -545,7 +545,7 @@
                     if (description) {
                         const desc = document.createElement('p');
                         desc.className = 'text-muted small mb-0';
-                        desc.textContent = description;
+                        desc.innerHTML = autolinkText(description);
                         sectionHeader.appendChild(desc);
                     }
                     fieldGroup.appendChild(sectionHeader);
@@ -559,7 +559,7 @@
                         const desc = document.createElement('div');
                         desc.className = 'text-muted small mb-2';
                         desc.style.fontSize = '0.8rem';
-                        desc.textContent = description;
+                        desc.innerHTML = autolinkText(description);
                         fieldGroup.appendChild(desc);
                     }
 
@@ -636,7 +636,7 @@
                             const selectedOpt = sel.options[sel.selectedIndex];
                             const note = selectedOpt ? selectedOpt.getAttribute('data-note') : null;
                             if (note) {
-                                noteBox.querySelector('.note-text').textContent = note;
+                                noteBox.querySelector('.note-text').innerHTML = autolinkText(note);
                                 noteBox.classList.remove('d-none');
                             } else {
                                 noteBox.classList.add('d-none');

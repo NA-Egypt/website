@@ -426,4 +426,50 @@ class CustomFormFeaturesTest extends TestCase
         $reportResponse->assertStatus(200);
         $reportResponse->assertSee('5 Years');
     }
+
+    public function test_urls_in_fixed_texts_and_descriptions_are_autolinked_with_target_blank()
+    {
+        $user = User::factory()->create();
+
+        $form = CustomForm::create([
+            'user_id' => $user->id,
+            'title' => 'Form with Links',
+            'type' => 'service_position_application',
+            'status' => 'published',
+        ]);
+
+        CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Please visit https://na-egypt.org/guidelines and www.na.org for more information.',
+            'type' => 'static_text',
+            'required' => false,
+            'sort_order' => 0,
+        ]);
+
+        CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Choose Position',
+            'type' => 'select',
+            'required' => true,
+            'sort_order' => 1,
+            'options' => [
+                'choices' => [
+                    'Chair: Read handbook at https://na-egypt.org/handbook before applying',
+                ],
+                'description' => 'For inquiries visit https://na-egypt.org/contact',
+            ],
+        ]);
+
+        $response = $this->get(route('forms.show.public', $form->slug));
+        $response->assertStatus(200);
+
+        // Assert static text contains active links with target="_blank"
+        $response->assertSee('href="https://na-egypt.org/guidelines"', false);
+        $response->assertSee('href="https://www.na.org"', false);
+        $response->assertSee('target="_blank"', false);
+        $response->assertSee('rel="noopener noreferrer"', false);
+
+        // Assert field description contains active link
+        $response->assertSee('href="https://na-egypt.org/contact"', false);
+    }
 }

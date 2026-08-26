@@ -1,3 +1,17 @@
+@php
+if (!function_exists('form_autolink')) {
+    function form_autolink(?string $text): string {
+        if (!$text) return '';
+        $escaped = e($text);
+        $pattern = '/\b((https?:\/\/|www\.)[^\s<]+)/i';
+        return preg_replace_callback($pattern, function($matches) {
+            $url = $matches[0];
+            $href = str_starts_with(strtolower($url), 'www.') ? 'https://' . $url : $url;
+            return '<a href="' . $href . '" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-underline fw-semibold">' . $url . '</a>';
+        }, $escaped);
+    }
+}
+@endphp
 <x-frontend.layout>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/css/intlTelInput.css">
 
@@ -331,7 +345,7 @@
                                                         <i class="bi bi-folder2-open"></i> {{ $field->label }}
                                                     </h5>
                                                     @if (!empty($field->options['description']))
-                                                        <p class="text-muted small mb-0">{{ $field->options['description'] }}</p>
+                                                        <p class="text-muted small mb-0">{!! form_autolink($field->options['description']) !!}</p>
                                                     @endif
                                                 </div>
                                                 <div class="card-body p-3 p-md-4">
@@ -350,7 +364,7 @@
                                                 </label>
                                                 @if (!empty($field->options['description']))
                                                     <div class="text-muted small mb-2" style="font-size: 0.8rem; line-height: 1.4;">
-                                                        {{ $field->options['description'] }}
+                                                        {!! form_autolink($field->options['description']) !!}
                                                     </div>
                                                 @endif
                                             @endif
@@ -420,7 +434,7 @@
                                                         <i class="bi bi-info-circle-fill text-primary flex-shrink-0 mt-0.5" style="font-size: 1.15rem;"></i>
                                                         <div>
                                                             <span class="d-block fw-bold small text-primary mb-0.5" style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;">{{ __('messages.Important Note / Guideline') ?? 'Important Note / Guideline' }}</span>
-                                                            <div id="select_note_text_{{ $field->id }}" class="small fw-semibold" style="line-height: 1.5; color: #1e293b;">{{ $optionNotes[old('field_' . $field->id)] ?? '' }}</div>
+                                                            <div id="select_note_text_{{ $field->id }}" class="small fw-semibold" style="line-height: 1.5; color: #1e293b;">{!! form_autolink($optionNotes[old('field_' . $field->id)] ?? '') !!}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -516,7 +530,7 @@
                                                     $align = $field->options['align'] ?? 'left';
                                                 @endphp
                                                 <div style="font-weight: {{ $bold ? 'bold' : 'normal' }}; font-style: {{ $italic ? 'italic' : 'normal' }}; text-align: {{ $align }}; color: #334155; line-height: 1.6; margin-bottom: 0.5rem;">
-                                                    {!! nl2br(e($field->label)) !!}
+                                                    {!! nl2br(form_autolink($field->label)) !!}
                                                 </div>
 
                                             @elseif ($field->type === 'groups')
@@ -697,6 +711,18 @@
             }
         }
 
+        function autolinkText(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            const escaped = div.innerHTML;
+            const urlRegex = /\b((https?:\/\/|www\.)[^\s<]+)/gi;
+            return escaped.replace(urlRegex, function(url) {
+                const href = url.toLowerCase().startsWith('www.') ? 'https://' + url : url;
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-underline fw-bold">${url}</a>`;
+            });
+        }
+
         // Toggle "Other" text input and attached note for dynamic/standard selects
         function handleDynamicOther(selectEl, fieldId) {
             const container = document.getElementById('other_input_container_' + fieldId);
@@ -718,7 +744,7 @@
                 const selectedOption = selectEl.options[selectEl.selectedIndex];
                 const note = selectedOption ? selectedOption.getAttribute('data-note') : null;
                 if (note && note.trim() !== '') {
-                    noteText.textContent = note;
+                    noteText.innerHTML = autolinkText(note);
                     noteContainer.classList.remove('d-none');
                 } else {
                     noteContainer.classList.add('d-none');
