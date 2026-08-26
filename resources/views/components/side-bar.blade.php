@@ -455,57 +455,45 @@
     document.addEventListener("DOMContentLoaded", function() {
         var body = document.body;
         var sidebar = document.querySelector(".sidebar-wrapper");
-        var searchInput = document.getElementById("sidebarSearchInput");
-        var searchClear = document.getElementById("sidebarSearchClear");
         var pinBtn = document.getElementById("sidebarPinToggle");
-
-        // 1. Restore Collapsed State from LocalStorage safely
-        var isCollapsed = false;
-        try {
-            isCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
-        } catch(e) {}
-
-        if (isCollapsed && window.innerWidth >= 992) {
-            body.classList.add("sidebar-collapsed");
-            document.documentElement.classList.add("sidebar-collapsed");
-        }
-
-        // Toggle Sidebar state (64px vs 240px)
-        function toggleSidebarState() {
-            body.classList.toggle("sidebar-collapsed");
-            document.documentElement.classList.toggle("sidebar-collapsed", body.classList.contains("sidebar-collapsed"));
-            var wrapper = document.querySelector(".wrapper");
-            if (wrapper) {
-                wrapper.classList.toggle("toggled", body.classList.contains("sidebar-collapsed"));
-            }
-            var collapsed = body.classList.contains("sidebar-collapsed");
-            try {
-                localStorage.setItem("sidebar_collapsed", collapsed ? "true" : "false");
-            } catch(e) {}
-        }
 
         if (pinBtn) {
             pinBtn.addEventListener("click", function(e) {
                 e.preventDefault();
-                toggleSidebarState();
+                if (typeof window.toggleSidebarMenu === 'function') {
+                    window.toggleSidebarMenu();
+                }
             });
         }
 
-        var overlay = document.querySelector(".overlay");
-        if (overlay) {
-            overlay.addEventListener("click", function() {
-                body.classList.remove("sidebar-open");
+        // Auto-close mobile drawer on clicking direct navigation links
+        if (sidebar) {
+            sidebar.querySelectorAll("a[href]").forEach(function(link) {
+                var href = link.getAttribute("href");
+                if (href && href !== '#' && !href.startsWith('javascript:') && !link.hasAttribute("data-bs-toggle")) {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 1025) {
+                            if (typeof window.toggleSidebarMenu === 'function') {
+                                window.toggleSidebarMenu(false);
+                            } else {
+                                body.classList.remove("sidebar-open");
+                            }
+                        }
+                    });
+                }
             });
         }
 
-        // 2. Single Accordion Behavior
+        // Single Accordion Behavior for Submenus
         if (sidebar) {
             var collapses = sidebar.querySelectorAll(".collapse");
             collapses.forEach(function(collapseEl) {
                 collapseEl.addEventListener("show.bs.collapse", function() {
                     collapses.forEach(function(other) {
                         if (other !== collapseEl && other.classList.contains("show")) {
-                            var bsCollapse = bootstrap.Collapse.getInstance(other);
+                            var bsCollapse = (typeof bootstrap !== 'undefined' && bootstrap.Collapse)
+                                ? bootstrap.Collapse.getInstance(other)
+                                : null;
                             if (bsCollapse) {
                                 bsCollapse.hide();
                             } else {
@@ -517,7 +505,7 @@
             });
         }
 
-        // 3. Active Route Parent Highlighting
+        // Active Route Parent Highlighting
         var currentUrl = window.location.href.split('#')[0].split('?')[0];
         var menuLinks = sidebar ? sidebar.querySelectorAll("a[href]") : [];
         
@@ -547,4 +535,4 @@
     </script>
 
   </aside>
-  <div class="sidebar-overlay" onclick="window.toggleSidebarMenu()"></div>
+  <div class="sidebar-overlay" onclick="typeof window.toggleSidebarMenu === 'function' ? window.toggleSidebarMenu(false) : document.body.classList.remove('sidebar-open')"></div>

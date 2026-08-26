@@ -122,27 +122,45 @@
                 <img src="{{ asset('assets/images/icons/na-logo.png') }}" alt="" class="rounded-circle mb-1" width="36" height="36">
                 <div class="fw-bold text-dark small">{{ auth()->user()->name }}</div>
                 <div class="text-muted text-truncate small" style="max-width: 180px;">{{ auth()->user()->email }}</div>
-              </li>
-              @if(auth()->user()->hasRole('super admin'))
-                <li><a class="dropdown-item rounded-2 mt-1" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> {{ __('messages.Dashboard') }}</a></li>
-              @elseif(auth()->user()->hasRole('gsr'))
                 @php
-                  $group = \App\Models\Group::whereHas('user', function ($q) { $q->where('email', auth()->user()->email); })->first();
+                  $userRole = auth()->user()->roles->first()?->name;
+                @endphp
+                @if($userRole)
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mt-1 px-2 py-1" style="font-size: 0.7rem; text-transform: uppercase;">
+                    {{ $userRole }}
+                  </span>
+                @endif
+              </li>
+              <li>
+                <a class="dropdown-item rounded-2 mt-1 d-flex align-items-center" href="{{ route('dashboard') }}">
+                  <i class="bi bi-speedometer2 me-2"></i> {{ __('messages.Dashboard') ?? 'Dashboard' }}
+                </a>
+              </li>
+              @if(auth()->user()->hasRole('gsr'))
+                @php
+                  $group = \App\Models\Group::where('user_id', auth()->id())
+                    ->orWhereHas('user', function ($q) { $q->where('email', auth()->user()->email); })
+                    ->first();
                 @endphp
                 @if ($group)
-                  <li><a class="dropdown-item rounded-2 mt-1" href="{{ route('group.show', ['group' => $group->id]) }}"><i class="bi bi-card-text me-2"></i> {{ __('messages.Group Details') }}</a></li>
+                  <li>
+                    <a class="dropdown-item rounded-2 mt-1 d-flex align-items-center" href="{{ route('group.show', ['group' => $group->id]) }}">
+                      <i class="bi bi-card-text me-2"></i> {{ __('messages.Group Details') }}
+                    </a>
+                  </li>
                 @endif
               @endif
+              <li><hr class="dropdown-divider my-1"></li>
               <li>
                 <form method="POST" action="{{ route('logout') }}">
                   @csrf
-                  <a class="dropdown-item rounded-2 text-danger" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                  <a class="dropdown-item rounded-2 text-danger d-flex align-items-center" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                     <i class="bi bi-box-arrow-right me-2"></i> {{ __('messages.Logout') }}
                   </a>
                 </form>
               </li>
             @else
-              <li><a class="dropdown-item rounded-2" href="{{ url('/login/microsoft') }}"><i class="bi bi-microsoft me-2"></i> {{ __('messages.Login') }}</a></li>
+              <li><a class="dropdown-item rounded-2 d-flex align-items-center" href="{{ url('/login/microsoft') }}"><i class="bi bi-microsoft me-2"></i> {{ __('messages.Login') }}</a></li>
             @endauth
           </ul>
         </div>
@@ -281,15 +299,37 @@
               <div class="text-start">
                 <div class="fw-bold text-white small">{{ auth()->user()->name }}</div>
                 <div class="text-white-50 text-truncate small" style="max-width: 180px;">{{ auth()->user()->email }}</div>
+                @php
+                  $userRole = auth()->user()->roles->first()?->name;
+                @endphp
+                @if($userRole)
+                  <span class="badge bg-light text-dark rounded-pill mt-1 px-2 py-1" style="font-size: 0.65rem; text-transform: uppercase;">
+                    {{ $userRole }}
+                  </span>
+                @endif
               </div>
             </div>
-            <div class="d-flex gap-2 mt-3">
-              @if(auth()->user()->hasRole('super admin'))
-                <a class="btn btn-sm btn-outline-light flex-grow-1" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> {{__('messages.Dashboard')}}</a>
+            <div class="d-flex flex-column gap-2 mt-3">
+              <a class="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2" href="{{ route('dashboard') }}">
+                <i class="bi bi-speedometer2"></i> {{ __('messages.Dashboard') ?? 'Dashboard' }}
+              </a>
+              @if(auth()->user()->hasRole('gsr'))
+                @php
+                  $group = \App\Models\Group::where('user_id', auth()->id())
+                    ->orWhereHas('user', function ($q) { $q->where('email', auth()->user()->email); })
+                    ->first();
+                @endphp
+                @if ($group)
+                  <a class="btn btn-sm btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2" href="{{ route('group.show', ['group' => $group->id]) }}">
+                    <i class="bi bi-card-text"></i> {{ __('messages.Group Details') }}
+                  </a>
+                @endif
               @endif
-              <form method="POST" action="{{ route('logout') }}" class="flex-grow-1">
+              <form method="POST" action="{{ route('logout') }}" class="w-100 m-0">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-danger w-100"><i class="bi bi-box-arrow-right"></i> {{ __('messages.Logout') }}</button>
+                <button type="submit" class="btn btn-sm btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                  <i class="bi bi-box-arrow-right"></i> {{ __('messages.Logout') }}
+                </button>
               </form>
             </div>
           </div>

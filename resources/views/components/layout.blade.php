@@ -260,6 +260,51 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
           margin-right: 64px !important;
           width: calc(100% - 64px) !important;
       }
+
+      /* Hide elements in Compact Mode on Desktop ONLY */
+      body.sidebar-collapsed .sidebar-wrapper .menu-title,
+      html.sidebar-collapsed .sidebar-wrapper .menu-title,
+      .wrapper.toggled .sidebar-wrapper .menu-title,
+      body.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
+      html.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
+      .wrapper.toggled .sidebar-wrapper .sidebar-search-container,
+      body.sidebar-collapsed .sidebar-wrapper .sidebar-title,
+      html.sidebar-collapsed .sidebar-wrapper .sidebar-title,
+      .wrapper.toggled .sidebar-wrapper .sidebar-title,
+      body.sidebar-collapsed .sidebar-wrapper .collapse,
+      html.sidebar-collapsed .sidebar-wrapper .collapse,
+      .wrapper.toggled .sidebar-wrapper .collapse,
+      body.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
+      html.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
+      .wrapper.toggled .sidebar-wrapper .menu-divider-label {
+          display: none !important;
+      }
+
+      body.sidebar-collapsed .sidebar-wrapper .navigation li a,
+      html.sidebar-collapsed .sidebar-wrapper .navigation li a,
+      .wrapper.toggled .sidebar-wrapper .navigation li a {
+          justify-content: center !important;
+          padding: 8px 0 !important;
+          margin: 3px 6px !important;
+      }
+      body.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
+      html.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
+      .wrapper.toggled .sidebar-wrapper .navigation .parent-icon {
+          margin-right: 0 !important;
+          margin-left: 0 !important;
+          font-size: 20px !important;
+      }
+
+      /* Hide Overlay completely on Desktop (prevent graying out layout) */
+      .overlay,
+      .sidebar-overlay,
+      .wrapper.toggled .overlay,
+      body.sidebar-collapsed .overlay {
+          display: none !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          visibility: hidden !important;
+      }
   }
 
   /* Mobile Offcanvas Sidebar (max-width: 1025.98px) */
@@ -283,15 +328,11 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       }
       
       /* Active state for Mobile Drawer */
-      body.sidebar-open .sidebar-wrapper,
-      body.sidebar-collapsed .sidebar-wrapper,
-      .wrapper.toggled .sidebar-wrapper {
+      body.sidebar-open .sidebar-wrapper {
           transform: translateX(0) !important;
           box-shadow: 4px 0 25px rgba(0, 0, 0, 0.2) !important;
       }
-      [dir="rtl"] body.sidebar-open .sidebar-wrapper,
-      [dir="rtl"] body.sidebar-collapsed .sidebar-wrapper,
-      [dir="rtl"] .wrapper.toggled .sidebar-wrapper {
+      [dir="rtl"] body.sidebar-open .sidebar-wrapper {
           transform: translateX(0) !important;
           box-shadow: -4px 0 25px rgba(0, 0, 0, 0.2) !important;
       }
@@ -301,6 +342,14 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
           margin-left: 0 !important;
           margin-right: 0 !important;
           width: 100% !important;
+      }
+
+      /* Ensure menu titles and items are always properly displayed on mobile */
+      .sidebar-wrapper .menu-title {
+          display: block !important;
+      }
+      .sidebar-wrapper .navigation li a {
+          justify-content: flex-start !important;
       }
   }
 
@@ -320,9 +369,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       transition: opacity 0.3s ease;
   }
   @media (max-width: 1025.98px) {
-      body.sidebar-open .sidebar-overlay,
-      body.sidebar-collapsed .sidebar-overlay,
-      .wrapper.toggled .sidebar-overlay {
+      body.sidebar-open .sidebar-overlay {
           opacity: 1 !important;
           pointer-events: auto !important;
       }
@@ -343,52 +390,6 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   table.dataTable {
       width: 100% !important;
       max-width: 100% !important;
-  }
-
-  /* Hide elements in Compact Mode */
-  body.sidebar-collapsed .sidebar-wrapper .menu-title,
-  html.sidebar-collapsed .sidebar-wrapper .menu-title,
-  .wrapper.toggled .sidebar-wrapper .menu-title,
-  body.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
-  html.sidebar-collapsed .sidebar-wrapper .sidebar-search-container,
-  .wrapper.toggled .sidebar-wrapper .sidebar-search-container,
-  body.sidebar-collapsed .sidebar-wrapper .sidebar-title,
-  html.sidebar-collapsed .sidebar-wrapper .sidebar-title,
-  .wrapper.toggled .sidebar-wrapper .sidebar-title,
-  body.sidebar-collapsed .sidebar-wrapper .collapse,
-  html.sidebar-collapsed .sidebar-wrapper .collapse,
-  .wrapper.toggled .sidebar-wrapper .collapse,
-  body.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
-  html.sidebar-collapsed .sidebar-wrapper .menu-divider-label,
-  .wrapper.toggled .sidebar-wrapper .menu-divider-label {
-      display: none !important;
-  }
-
-  body.sidebar-collapsed .sidebar-wrapper .navigation li a,
-  html.sidebar-collapsed .sidebar-wrapper .navigation li a,
-  .wrapper.toggled .sidebar-wrapper .navigation li a {
-      justify-content: center !important;
-      padding: 8px 0 !important;
-      margin: 3px 6px !important;
-  }
-  body.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
-  html.sidebar-collapsed .sidebar-wrapper .navigation .parent-icon,
-  .wrapper.toggled .sidebar-wrapper .navigation .parent-icon {
-      margin-right: 0 !important;
-      margin-left: 0 !important;
-      font-size: 20px !important;
-  }
-
-  /* Hide Overlay completely on Desktop (prevent graying out layout) */
-  @media (min-width: 992px) {
-      .overlay,
-      .wrapper.toggled .overlay,
-      body.sidebar-collapsed .overlay {
-          display: none !important;
-          opacity: 0 !important;
-          pointer-events: none !important;
-          visibility: hidden !important;
-      }
   }
 
   /* RTL Form Check adjustments */
@@ -416,27 +417,29 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       background-position: right center !important;
   }
 
-  /* Preload / Instant Sidebar State to Prevent Flickering */
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper,
-  body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
-      width: 64px !important;
-  }
-  html.sidebar-collapsed body.has-sidebar .page-content,
-  body.has-sidebar.sidebar-collapsed .page-content {
-      margin-left: 64px !important;
-      width: calc(100% - 64px) !important;
-  }
-  [dir="rtl"] html.sidebar-collapsed body.has-sidebar .page-content,
-  [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
-      margin-left: 0 !important;
-      margin-right: 64px !important;
-  }
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-title,
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-search-container,
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-title,
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .collapse,
-  html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-divider-label {
-      display: none !important;
+  /* Preload / Instant Sidebar State to Prevent Flickering (Desktop Only) */
+  @media (min-width: 1026px) {
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper,
+      body.has-sidebar.sidebar-collapsed .sidebar-wrapper {
+          width: 64px !important;
+      }
+      html.sidebar-collapsed body.has-sidebar .page-content,
+      body.has-sidebar.sidebar-collapsed .page-content {
+          margin-left: 64px !important;
+          width: calc(100% - 64px) !important;
+      }
+      [dir="rtl"] html.sidebar-collapsed body.has-sidebar .page-content,
+      [dir="rtl"] body.has-sidebar.sidebar-collapsed .page-content {
+          margin-left: 0 !important;
+          margin-right: 64px !important;
+      }
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-title,
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-search-container,
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .sidebar-title,
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .collapse,
+      html.sidebar-collapsed body.has-sidebar .sidebar-wrapper .menu-divider-label {
+          display: none !important;
+      }
   }
 
   /* Global Modal Header Flex & Close Button Alignment Fix */
@@ -476,16 +479,24 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
 
   <!-- Instant Zero-Dependency Sidebar Toggle Engine -->
   <script>
-    window.toggleSidebarMenu = function() {
+    window.toggleSidebarMenu = function(forceState) {
       var isMobile = window.innerWidth <= 1025;
       document.body.classList.add('is-toggling');
       if (isMobile) {
-        var isOpen = document.body.classList.toggle('sidebar-open');
-        document.body.classList.toggle('sidebar-collapsed', isOpen);
+        var isOpen = (typeof forceState === 'boolean') 
+            ? forceState 
+            : !document.body.classList.contains('sidebar-open');
+        document.body.classList.toggle('sidebar-open', isOpen);
+        document.body.classList.remove('sidebar-collapsed');
+        document.documentElement.classList.remove('sidebar-collapsed');
         var wrapper = document.querySelector('.wrapper');
-        if (wrapper) wrapper.classList.toggle('toggled', isOpen);
+        if (wrapper) wrapper.classList.remove('toggled');
       } else {
-        var isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+        var isCollapsed = (typeof forceState === 'boolean')
+            ? forceState
+            : !document.body.classList.contains('sidebar-collapsed');
+        document.body.classList.remove('sidebar-open');
+        document.body.classList.toggle('sidebar-collapsed', isCollapsed);
         document.documentElement.classList.toggle('sidebar-collapsed', isCollapsed);
         var wrapper = document.querySelector('.wrapper');
         if (wrapper) wrapper.classList.toggle('toggled', isCollapsed);
