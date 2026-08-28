@@ -242,6 +242,7 @@
           <ul>
             @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))
             <li><a href="{{ route('serviceBody.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Body')}}</a></li>
+            <li><a href="{{ route('serviceBody.map') }}"><i class="bi bi-geo-alt"></i>{{ __('messages.Service Bodies Map') }}</a></li>
             <li><a href="{{ route('serviceCommittee.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Committees')}}</a></li>
             <li><a href="{{ route('city.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.City') }}</a></li>
             <li><a href="{{ route('neighborhood.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Neighborhood') }}</a></li>

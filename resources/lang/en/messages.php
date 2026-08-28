@@ -15,6 +15,7 @@ return [
     'Sections' => 'Sections',
     'Section Details' => 'Section Details',
     'Service Body' => 'Service Body',
+    'Service Bodies Map' => 'Service Bodies Map',
     'Manage' => 'Manage',
     'Add' => 'Add',
     'Name' => 'Name',

@@ -107,6 +107,7 @@ Route::group(
 
                 // ServiceBody Routes:
                 Route::get('/serviceBody',[ServiceBodyController::class,'index'])->name('serviceBody.index');
+                Route::get('/serviceBody/map',[\App\Http\Controllers\ServiceBodyMapController::class,'dashboardMap'])->name('serviceBody.map');
                 Route::get('/serviceBody/create',[ServiceBodyController::class,'create'])->name('serviceBody.create');
                 Route::post('/serviceBody',[ServiceBodyController::class,'store'])->name('serviceBody.store');
                 Route::get('/serviceBody/{serviceBody}',[ServiceBodyController::class,'edit'])->name('serviceBody.edit');
@@ -376,6 +377,8 @@ Route::group(
         })->name('frontend.fdsurvey');
 
         Route::get('/committees', [ServiceCommitteeController::class, '__invoke'])->name('frontend.comms');
+        Route::get('/service-bodies/map', [\App\Http\Controllers\ServiceBodyMapController::class, 'index'])->name('frontend.service_bodies.map');
+        Route::get('/api/service-bodies/map-data', [\App\Http\Controllers\ServiceBodyMapController::class, 'apiData'])->name('api.service_bodies.map_data');
 
         Route::get('/contactus', [ContactUsController::class, 'create'])->name('contactus.create');
         Route::post('/contactus', [ContactUsController::class, 'store'])->name('contactus.store');

@@ -15,6 +15,7 @@ return [
     'Sections' => 'الأقسام',
     'Section Details' => 'تفاصيل الأقسام',
     'Service Body' => 'المناطق والمنتديات',
+    'Service Bodies Map' => 'خريطة مناطق الخدمة',
     'Manage' => 'إدارة',
     'Add' => 'إضافة',
     'Name' => 'الاسم',

@@ -79,6 +79,7 @@ import '@kodeglot/vue-calendar/style.css';
 const TransactionsTable = defineAsyncComponent(() => import('./components/TransactionsTable.vue'));
 const GenericDataTable = defineAsyncComponent(() => import('./components/GenericDataTable.vue'));
 const FacebookTargeting = defineAsyncComponent(() => import('./components/FacebookTargeting.vue'));
+const ServiceBodyMap = defineAsyncComponent(() => import('./components/ServiceBodyMap.vue'));
 const CtkDateTimePickerWrapper = defineAsyncComponent(() => import('./components/CtkDateTimePickerWrapper.vue'));
 const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCalendar.vue'));
 const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
@@ -131,6 +132,19 @@ const mountVueApps = () => {
             })
         });
         app.mount(fbEl);
+    }
+
+    const sbMapEl = document.querySelector('[data-vue-app="ServiceBodyMap"]');
+    if (sbMapEl && !sbMapEl.dataset.vueMounted) {
+        sbMapEl.dataset.vueMounted = 'true';
+        const initialData = JSON.parse(sbMapEl.getAttribute('data-initial-data') || '{}');
+
+        const app = createApp({
+            render: () => h(ServiceBodyMap, {
+                initialData
+            })
+        });
+        app.mount(sbMapEl);
     }
 
     const transactionsEl = document.querySelector('[data-vue-app="TransactionsTable"]');

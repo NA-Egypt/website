@@ -80,6 +80,11 @@
                 </a>
               </li>
               <li>
+                <a href="{{ route('frontend.service_bodies.map') }}" class="submenu-item {{ Route::currentRouteName() === 'frontend.service_bodies.map' ? 'active' : '' }}">
+                  <i class="bi bi-geo-alt-fill me-2 text-danger"></i> {{ __('messages.Service Bodies Map') }}
+                </a>
+              </li>
+              <li>
                 <a href="{{ route('frontend.fdsurvey') }}" class="submenu-item {{ Route::currentRouteName() === 'frontend.fdsurvey' ? 'active' : '' }}">
                   <i class="bi bi-file-earmark-bar-graph-fill me-2 text-warning"></i> {{ __('messages.fdsurvey') ?? 'FD Survey' }}
                 </a>
@@ -229,6 +234,11 @@
               <li class="mb-2">
                 <a href="{{ route('frontend.comms') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.comms' ? 'active' : '' }}">
                   {{ __('messages.comms') ?? 'Committees' }}
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="{{ route('frontend.service_bodies.map') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.service_bodies.map' ? 'active' : '' }}">
+                  {{ __('messages.Service Bodies Map') }}
                 </a>
               </li>
               <li class="mb-2">
