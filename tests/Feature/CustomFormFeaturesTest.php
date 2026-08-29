@@ -472,4 +472,132 @@ class CustomFormFeaturesTest extends TestCase
         // Assert field description contains active link
         $response->assertSee('href="https://na-egypt.org/contact"', false);
     }
+
+    public function test_submitting_form_sends_notification_email_to_configured_recipients()
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $user = User::factory()->create();
+
+        $form = CustomForm::create([
+            'user_id' => $user->id,
+            'title' => 'Conference Registration Form',
+            'type' => 'event_registration',
+            'status' => 'published',
+            'settings' => [
+                'emails' => ['lead@example.com', 'admin@example.com'],
+            ],
+        ]);
+
+        $field = CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Full Name',
+            'type' => 'text',
+            'required' => true,
+            'sort_order' => 0,
+        ]);
+
+        $response = $this->post(route('forms.submit.public', $form->slug), [
+            'field_' . $field->id => 'Ahmed Ali',
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('custom_form_submissions', [
+            'custom_form_id' => $form->id,
+        ]);
+
+        \Illuminate\Support\Facades\Mail::assertSent(\Illuminate\Mail\Mailable::class, 0); // Sent via Mail::send callback
+    }
+
+    public function test_notification_email_recipient_normalization_handles_various_delimiters()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('rsc');
+        $this->actingAs($user);
+
+        // Test comma, semicolon, Arabic comma, and space separated emails
+        $response = $this->post(route('forms.store'), [
+            'title' => 'Delimited Emails Test Form',
+            'type' => 'survey',
+            'status' => 'published',
+            'settings' => [
+                'emails' => 'first@example.com; second@example.com، third@example.com',
+            ],
+            'fields' => [
+                [
+                    'label' => 'Feedback',
+                    'type' => 'text',
+                    'required' => '0',
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect(route('forms.index'));
+
+        $form = CustomForm::where('title', 'Delimited Emails Test Form')->first();
+        $this->assertNotNull($form);
+        $this->assertIsArray($form->settings['emails']);
+        $this->assertEquals(['first@example.com', 'second@example.com', 'third@example.com'], $form->settings['emails']);
+    }
+
+    public function test_notification_email_renders_table_and_yes_no_and_dynamic_fields_without_errors()
+    {
+        $user = User::factory()->create();
+
+        $form = CustomForm::create([
+            'user_id' => $user->id,
+            'title' => 'Complex Application Form',
+            'type' => 'service_position_application',
+            'status' => 'published',
+            'settings' => [
+                'emails' => ['recipients@example.com'],
+            ],
+        ]);
+
+        $tableField = CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Service Positions Held',
+            'type' => 'table',
+            'options' => ['columns' => ['Position', 'Year', 'Body']],
+            'required' => false,
+            'sort_order' => 0,
+        ]);
+
+        $yesNoField = CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Clean Time Compliant?',
+            'type' => 'yes_no_textbox',
+            'required' => false,
+            'sort_order' => 1,
+        ]);
+
+        $form->load('fields');
+
+        $submission = CustomFormSubmission::create([
+            'custom_form_id' => $form->id,
+            'user_id' => $user->id,
+            'data' => [
+                $tableField->id => [
+                    ['Literature Chair', '2023', 'Cairo Area'],
+                    ['Secretary', '2024', 'RSC'],
+                ],
+                $yesNoField->id => [
+                    'answer' => 'yes',
+                    'details' => 'Continuous clean time verified.',
+                ],
+            ],
+        ]);
+
+        $html = view('emails.form_submitted', [
+            'form' => $form,
+            'submission' => $submission,
+            'entities' => [],
+        ])->render();
+
+        $this->assertStringContainsString('Complex Application Form', $html);
+        $this->assertStringContainsString('Service Positions Held', $html);
+        $this->assertStringContainsString('Literature Chair', $html);
+        $this->assertStringContainsString('Clean Time Compliant?', $html);
+        $this->assertStringContainsString('Continuous clean time verified.', $html);
+    }
 }

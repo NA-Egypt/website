@@ -180,16 +180,70 @@ class PublicFormController extends Controller
             'data' => $submissionData,
         ]);
 
+        // Fetch dynamic option data if any fields require them for email / display
+        $entities = [];
+        foreach ($form->fields as $field) {
+            if ($field->type === 'groups') {
+                $entities['groups'] = Group::all()->keyBy('id');
+            } elseif ($field->type === 'cities') {
+                $entities['cities'] = City::all()->keyBy('id');
+            } elseif ($field->type === 'neighborhoods') {
+                $entities['neighborhoods'] = Neighborhood::all()->keyBy('id');
+            } elseif ($field->type === 'committees') {
+                $entities['committees'] = ServiceCommittee::all()->keyBy('id');
+            } elseif ($field->type === 'servicebodies') {
+                $entities['servicebodies'] = ServiceBody::all()->keyBy('id');
+            }
+        }
+
+        // Parse and validate notification emails
+        $rawEmails = $form->settings['emails'] ?? [];
+        $recipientEmails = [];
+
+        if (is_string($rawEmails)) {
+            $parts = preg_split('/[\r\n,;،\s]+/', $rawEmails, -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($parts as $part) {
+                $trimmed = trim($part);
+                if (filter_var($trimmed, FILTER_VALIDATE_EMAIL)) {
+                    $recipientEmails[] = $trimmed;
+                }
+            }
+        } elseif (is_array($rawEmails)) {
+            foreach ($rawEmails as $emailItem) {
+                if (is_string($emailItem)) {
+                    $parts = preg_split('/[\r\n,;،\s]+/', $emailItem, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($parts as $part) {
+                        $trimmed = trim($part);
+                        if (filter_var($trimmed, FILTER_VALIDATE_EMAIL)) {
+                            $recipientEmails[] = $trimmed;
+                        }
+                    }
+                }
+            }
+        }
+        $recipientEmails = array_values(array_unique($recipientEmails));
+
         // Send submission notifications if configured
-        $emails = $form->settings['emails'] ?? [];
-        if (!empty($emails) && is_array($emails)) {
+        if (!empty($recipientEmails)) {
             try {
-                \Illuminate\Support\Facades\Mail::send('emails.form_submitted', ['form' => $form, 'submission' => $submission], function ($message) use ($emails, $form) {
-                    $message->to($emails)
-                            ->subject('New Submission for Form: ' . $form->title);
-                });
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Failed to send form submission email: ' . $e->getMessage());
+                \Illuminate\Support\Facades\Mail::send(
+                    'emails.form_submitted',
+                    [
+                        'form' => $form,
+                        'submission' => $submission,
+                        'entities' => $entities,
+                    ],
+                    function ($message) use ($recipientEmails, $form) {
+                        $message->to($recipientEmails)
+                                ->subject('New Submission for Form: ' . $form->title);
+                    }
+                );
+                \Illuminate\Support\Facades\Log::info("Form submission notification email successfully sent for Form [ID: {$form->id}, Title: {$form->title}] to: " . implode(', ', $recipientEmails));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to send form submission email for Form [ID: {$form->id}, Title: {$form->title}]: " . $e->getMessage(), [
+                    'exception' => $e,
+                    'recipients' => $recipientEmails,
+                ]);
             }
         }
 

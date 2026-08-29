@@ -68,14 +68,29 @@ class CustomFormController extends Controller
 
         $settings = $request->input('settings', []);
         if (isset($settings['emails']) && is_string($settings['emails'])) {
-            $emails = array_filter(array_map('trim', explode(',', $settings['emails'])));
+            $parts = preg_split('/[\r\n,;،\s]+/', $settings['emails'], -1, PREG_SPLIT_NO_EMPTY);
             $validatedEmails = [];
-            foreach ($emails as $email) {
+            foreach ($parts as $email) {
+                $email = trim($email);
                 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $validatedEmails[] = $email;
                 }
             }
-            $settings['emails'] = array_slice($validatedEmails, 0, 3);
+            $settings['emails'] = array_slice(array_values(array_unique($validatedEmails)), 0, 3);
+        } elseif (isset($settings['emails']) && is_array($settings['emails'])) {
+            $validatedEmails = [];
+            foreach ($settings['emails'] as $item) {
+                if (is_string($item)) {
+                    $parts = preg_split('/[\r\n,;،\s]+/', $item, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($parts as $email) {
+                        $email = trim($email);
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            $validatedEmails[] = $email;
+                        }
+                    }
+                }
+            }
+            $settings['emails'] = array_slice(array_values(array_unique($validatedEmails)), 0, 3);
         } else {
             $settings['emails'] = [];
         }
@@ -139,14 +154,29 @@ class CustomFormController extends Controller
 
         $settings = $request->input('settings', []);
         if (isset($settings['emails']) && is_string($settings['emails'])) {
-            $emails = array_filter(array_map('trim', explode(',', $settings['emails'])));
+            $parts = preg_split('/[\r\n,;،\s]+/', $settings['emails'], -1, PREG_SPLIT_NO_EMPTY);
             $validatedEmails = [];
-            foreach ($emails as $email) {
+            foreach ($parts as $email) {
+                $email = trim($email);
                 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $validatedEmails[] = $email;
                 }
             }
-            $settings['emails'] = array_slice($validatedEmails, 0, 3);
+            $settings['emails'] = array_slice(array_values(array_unique($validatedEmails)), 0, 3);
+        } elseif (isset($settings['emails']) && is_array($settings['emails'])) {
+            $validatedEmails = [];
+            foreach ($settings['emails'] as $item) {
+                if (is_string($item)) {
+                    $parts = preg_split('/[\r\n,;،\s]+/', $item, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($parts as $email) {
+                        $email = trim($email);
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            $validatedEmails[] = $email;
+                        }
+                    }
+                }
+            }
+            $settings['emails'] = array_slice(array_values(array_unique($validatedEmails)), 0, 3);
         } else {
             $settings['emails'] = [];
         }
