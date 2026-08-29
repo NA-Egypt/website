@@ -612,7 +612,7 @@
     <div class="col-md-8">
       <div class="home-stats-shell">
         <div class="row justify-content-center mt-5">
-          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+          <div class="col-md-6 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
             <a href="https://wa.me/201060933888" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
               <x-fab-whatsapp style="width:20px; height:20px;" />
             </a>
@@ -633,7 +633,7 @@
             </div>
           </div>
 
-          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
+          <div class="col-md-6 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
             <a href="https://wa.me/201503884411" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
               <x-fab-whatsapp style="width:20px; height:20px;" />
             </a>
@@ -649,25 +649,6 @@
             <div class="timing-badge-bottom">
               <x-fas-clock style="width:12px; height:12px; fill: currentColor;" />
               <span>{{ __('messages.leactiming') }}</span>
-            </div>
-          </div>
-
-          <div class="col-md-4 helpline-box mb-3 p-4 d-flex flex-column justify-content-between">
-            <a href="https://wa.me/201003694690" target="_blank" class="whatsapp-float-btn" title="WhatsApp">
-              <x-fab-whatsapp style="width:20px; height:20px;" />
-            </a>
-            <div>
-              <h4><x-fas-headset style="width:16px; height:16px;" />&NonBreakingSpace;{{ __('messages.helpline') }}</h4>
-              <div class="helpline-region mt-2">{{ __('messages.westgiza') }}</div>
-            </div>
-            <div dir="ltr" class="d-flex flex-column gap-2 my-auto py-3">
-              <a class="helpline-num-link" href="tel:+201003694690">
-                <i class="bi bi-telephone-fill"></i> +201003694690
-              </a>
-            </div>
-            <div class="timing-badge-bottom">
-              <x-fas-clock style="width:12px; height:12px; fill: currentColor;" />
-              <span>{{ __('messages.ahramtiming') }}</span>
             </div>
           </div>
         </div>
@@ -779,6 +760,7 @@
             <x-fab-whatsapp style="width:20px; height:20px;" />
           </button>
           <div class="jft-content text-right" dir="rtl" style="position: relative; z-index: 1;">
+            <br>
             {!! $jftContent !!}
           </div>
         </div>

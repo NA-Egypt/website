@@ -146,7 +146,7 @@ class MeetingExportController extends Controller
                 <hr style="height: 0.5px; border: none; background-color: #ccc; margin: 0; padding: 0;">
                 <table style="width: 100%; border: none; font-size: ' . $footerFontSize . '; color: #666; font-family: cairo, sans-serif; margin-top: ' . $footerMarginTop . ';" dir="rtl">
                     <tr>
-                        <td width="55%" style="text-align: right; border: none;"><strong>خطوط المساعدة:</strong> <span dir="ltr">+201006979198</span> / <span dir="ltr">+201060933888</span> (الرئيسي) - <span dir="ltr">+201503884411</span> (الإسكندرية) - <span dir="ltr">+201003694690</span> (أهرام وجيزة)</td>
+                        <td width="55%" style="text-align: right; border: none;"><strong>خطوط المساعدة:</strong> <span dir="ltr">+201006979198</span> / <span dir="ltr">+201060933888</span> (الرئيسي) - <span dir="ltr">+201503884411</span> (الإسكندرية)</td>
                         <td width="15%" style="text-align: center; direction: ltr; border: none;">{PAGENO} / {nbpg}</td>
                         <td width="30%" style="text-align: left; direction: ltr; border: none;">هذا الجدول تم تصديره من موقع زمالة المدمنين المجهولين بمصر https://naegypt.org</td>
                     </tr>

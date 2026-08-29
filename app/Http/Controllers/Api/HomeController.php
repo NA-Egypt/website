@@ -55,14 +55,6 @@ class HomeController extends Controller
                     'hours' => '12 PM - 10 PM',
                     'hours_ar' => '١٢ م - ١٠ م',
                 ],
-                [
-                    'region' => 'Al-Ahram Area',
-                    'region_ar' => 'الأهرام',
-                    'phones' => ['+201003694690'],
-                    'whatsapp' => 'https://wa.me/201003694690',
-                    'hours' => '12 PM - 10 PM',
-                    'hours_ar' => '١٢ م - ١٠ م',
-                ],
             ];
 
             // Official Social links

@@ -20,6 +20,8 @@ class ContactUsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'subject' => 'nullable|string|max:255',
             'message' => 'required|string',
             'g-recaptcha-response' => 'required',
         ], [
@@ -43,12 +45,16 @@ class ContactUsController extends Controller
         ContactUs::create($validated);
 
         // Send email to a specific address
+        $emailSubject = !empty($validated['subject']) ? "Contact Us: {$validated['subject']}" : 'New Contact Us Message';
+        $phoneLine = !empty($validated['phone']) ? "Phone: {$validated['phone']}\n" : '';
+        $subjectLine = !empty($validated['subject']) ? "Subject: {$validated['subject']}\n" : '';
+
         Mail::raw(
-            "Name: {$validated['name']}\nEmail: {$validated['email']}\nMessage: {$validated['message']}",
-            function ($message) {
-                $message->to('info@naegypt.org') // <-- Replace with your email
+            "Name: {$validated['name']}\nEmail: {$validated['email']}\n{$phoneLine}{$subjectLine}Message: {$validated['message']}",
+            function ($message) use ($emailSubject) {
+                $message->to('info@naegypt.org')
                         ->cc('web@naegypt.org')
-                        ->subject('New Contact Us Message');
+                        ->subject($emailSubject);
             }
         );
 

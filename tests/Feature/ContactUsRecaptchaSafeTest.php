@@ -13,14 +13,14 @@ class ContactUsRecaptchaSafeTest extends TestCase
      */
     public function test_contact_form_displays_correctly()
     {
-        $response = $this->get('/contactus');
+        $this->withoutMiddleware([
+            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        ]);
 
-        // Check if it's a redirect or successful response
-        $this->assertTrue(in_array($response->status(), [200, 302]));
-        
-        if ($response->status() === 200) {
-            $response->assertSee('g-recaptcha');
-        }
+        $response = $this->get(route('contactus.create'));
+        $response->assertStatus(200);
+        $response->assertSee('g-recaptcha');
     }
 
     /**
@@ -28,13 +28,16 @@ class ContactUsRecaptchaSafeTest extends TestCase
      */
     public function test_contact_form_has_required_fields()
     {
-        $response = $this->get('/contactus');
-        
-        if ($response->status() === 200) {
-            $response->assertSee('name="name"');
-            $response->assertSee('name="email"');
-            $response->assertSee('name="message"');
-            $response->assertSee('g-recaptcha');
-        }
+        $this->withoutMiddleware([
+            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        ]);
+
+        $response = $this->get(route('contactus.create'));
+        $response->assertStatus(200);
+        $response->assertSee('name="name"', false);
+        $response->assertSee('name="email"', false);
+        $response->assertSee('name="message"', false);
+        $response->assertSee('g-recaptcha', false);
     }
 }

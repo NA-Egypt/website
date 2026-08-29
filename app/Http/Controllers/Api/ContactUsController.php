@@ -25,6 +25,8 @@ class ContactUsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'subject' => 'nullable|string|max:255',
             'message' => 'required|string',
         ]);
         $item = ContactUs::create($validated);
@@ -34,19 +36,24 @@ class ContactUsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ContactUs $contactUs)
+    public function show($id)
     {
+        $contactUs = $id instanceof ContactUs ? $id : ContactUs::findOrFail($id);
         return new ContactUsResource($contactUs);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ContactUs $contactUs)
+    public function update(Request $request, $id)
     {
+        $contactUs = $id instanceof ContactUs ? $id : ContactUs::findOrFail($id);
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'subject' => 'nullable|string|max:255',
             'message' => 'sometimes|required|string',
         ]);
         $contactUs->update($validated);
@@ -56,8 +63,9 @@ class ContactUsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ContactUs $contactUs)
+    public function destroy($id)
     {
+        $contactUs = $id instanceof ContactUs ? $id : ContactUs::findOrFail($id);
         $contactUs->delete();
         return response()->json(null, 204);
     }

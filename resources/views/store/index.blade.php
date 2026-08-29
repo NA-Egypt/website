@@ -785,7 +785,7 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.item_name_ar') }}</label>
-                        <input type="text" name="name" required class="form-control rounded-3" placeholder="e.g. كتاب أساسي">
+                        <input type="text" name="name" required class="form-control rounded-3" placeholder="e.g. النص الأساسي">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">{{ __('messages.item_name_en') }}</label>

@@ -64,8 +64,13 @@ class HomeApiTest extends TestCase
                 ]
             ]);
 
-        $this->assertNotEmpty($response->json('data.helplines'));
+        $helplines = $response->json('data.helplines');
+        $this->assertCount(2, $helplines);
         $this->assertNotEmpty($response->json('data.social_links.whatsapp'));
+
+        // Ensure Al-Ahram area phone is not present
+        $allPhones = collect($helplines)->pluck('phones')->flatten()->toArray();
+        $this->assertNotContains('+201003694690', $allPhones);
     }
 
     public function test_frontpage_alias_endpoint_works(): void
