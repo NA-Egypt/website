@@ -229,7 +229,7 @@
                                         style="height: 38px; min-width: 200px; max-width: 280px; flex: 1 1 200px;"
                                         id="tour-virtual-only">
                                     <x-fas-video style="width:16px; height:16px;"/>
-                                    {{ __('messages.Virtual Meetings Only') ?? 'Virtual Meetings Only' }}
+                                    {{ __('messages.Virtual Meetings Only') ?? 'Virtual Meetings Only' }} ({{ $onlineCount }})
                                 </button>
 
                                 <button type="button" 

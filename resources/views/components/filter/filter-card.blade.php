@@ -355,17 +355,27 @@ $isFirstCardAcrossSections = true;
                             @endphp
                             <div class="meeting-options d-flex align-items-center gap-2 flex-wrap mt-2" @if($isTargetCard) id="tour-card-actions" @endif>
                                 @if($group->location)
+                                    @php
+                                        $isZoomLocation = \Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']) ||
+                                                          ($group instanceof \App\Models\DirectOnlineGroup) ||
+                                                          ($group->group_type && $group->group_type !== 'فعلي');
+                                    @endphp
                                     <a href="{{ $group->location }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
                                     @if(\Illuminate\Support\Str::contains(strtolower($group->location), ['map', 'goo.gl']))
                                         <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
-                                    @elseif(\Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']))
-                                        <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
-                                    @elseif($group instanceof \App\Models\DirectOnlineGroup || $group->group_type !== 'فعلي')
+                                    @elseif($isZoomLocation)
                                         <x-fas-video style="width:12px; height:12px;" class="me-1"/> {{__('messages.zoomlink')}}
                                     @else
                                         <x-fas-map-marker-alt style="width:12px; height:12px;" class="me-1"/> {{__('messages.Map')}}
                                     @endif
                                     </a>
+
+                                    @if($isZoomLocation)
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2.5 d-inline-flex align-items-center gap-1 zoom-card-qr-btn" onclick="window.openZoomQrModal && window.openZoomQrModal('{{ e($group->location) }}', '{{ e(addslashes($shareGroupName)) }}')" style="font-size: 0.8rem; font-weight: 600;" title="{{ __('messages.zoom_meeting_qr') }}">
+                                            <i class="bi bi-qr-code"></i>
+                                            <span>QR</span>
+                                        </button>
+                                    @endif
                                 @endif
 
                                 <a href="https://api.whatsapp.com/send?text={{ rawurlencode($shareText) }}" target="_blank" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;" title="{{ __('messages.ShareLocation') }}">

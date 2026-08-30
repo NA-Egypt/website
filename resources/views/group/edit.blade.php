@@ -64,34 +64,7 @@
                     </div>
                 </div>
 
-                <div class="row g-3 mt-2">
-                    <div class="col-12">
-                        <div class="glass-card p-3 rounded-4 transition-hover d-flex align-items-center justify-content-between" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
-                            <div class="d-flex align-items-center">
-                                <div class="widgets-icons text-white shadow-sm me-3 animate-pulse" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
-                                    <i class="bi bi-broadcast"></i>
-                                </div>
-                                <div>
-                                    <span class="fw-bold text-secondary d-block" style="font-size: 0.85rem;">{{ __('messages.Group Type') ?? 'Group Type' }}</span>
-                                    <span class="badge rounded-pill fw-medium mt-1 animate-fade" id="switcGrouphLabel" style="background-color: rgba(59, 130, 246, 0.1); color: #1d4ed8;">
-                                        {{ old('group_type', $group->group_type ?? 'فعلي') }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="form-check form-switch fs-4 p-0 m-0">
-                                <input type="hidden" name="group_type" value="فعلي">
-                                <input
-                                    name="group_type"
-                                    class="form-check-input ms-0 mt-0"
-                                    type="checkbox"
-                                    id="group-type"
-                                    value="اون لاين"
-                                    {{ old('group_type', $group->group_type ?? 'فعلي') === 'اون لاين' ? 'checked' : '' }}
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" name="group_type" value="فعلي">
             </div>
 
             {{-- SECTION 3: Location Details --}}
@@ -103,7 +76,7 @@
 
                 <div class="row g-3">
                     <div class="col-12">
-                        <x-forms.input id="location" name="location" label="{{ $group->group_type === 'اون لاين' ? 'URL' : __('messages.Locations') }}" value="{{ $group->location }}"/>
+                        <x-forms.input id="location" name="location" label="{{ __('messages.Locations') }}" value="{{ $group->location }}"/>
                     </div>
                 </div>
 
@@ -149,40 +122,6 @@
 
         </form>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const typeSwitch = document.getElementById('group-type');
-            const typeLabel = document.getElementById('switcGrouphLabel');
-            const locationLabel = document.querySelector('label[for="location"]');
-            const addressSection = document.querySelector('.address-fields');
-
-            function updateFormLayout() {
-                if (typeSwitch.checked) {
-                    typeLabel.textContent = 'اون لاين';
-                    if (locationLabel) {
-                        locationLabel.textContent = 'URL';
-                    }
-                    if (addressSection) {
-                        addressSection.style.opacity = '0.4';
-                        addressSection.style.pointerEvents = 'none';
-                    }
-                } else {
-                    typeLabel.textContent = 'فعلي';
-                    if (locationLabel) {
-                        locationLabel.textContent = @json(__('messages.Locations'));
-                    }
-                    if (addressSection) {
-                        addressSection.style.opacity = '1';
-                        addressSection.style.pointerEvents = 'auto';
-                    }
-                }
-            }
-
-            typeSwitch.addEventListener('change', updateFormLayout);
-            updateFormLayout(); // initial call
-        });
-    </script>
 
     <style>
         .transition-hover {

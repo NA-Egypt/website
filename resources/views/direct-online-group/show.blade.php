@@ -78,6 +78,10 @@
                     </a>
                 @endif
             </div>
+
+            @if($directOnlineGroup->location)
+                <x-zoom-qr-card :url="$directOnlineGroup->location" :title="app()->getLocale() === 'ar' ? $directOnlineGroup->ar_name : $directOnlineGroup->en_name" cardClass="mt-4" />
+            @endif
         </div>
 
         {{-- Meetings Section --}}
@@ -108,7 +112,7 @@
                                             {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                                         </p>
                                     </div>
-                                    <div class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: rgba(59, 130, 246, 0.15) !important; color: #2563eb !important; border: 1px solid rgba(59, 130, 246, 0.4) !important;">
+                                    <div class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important;">
                                         @if(app()->getLocale() === 'ar')
                                             {{ __("messages." . $meeting->type) }}
                                         @else
@@ -121,7 +125,7 @@
                                 @if($meeting->topics && $meeting->topics->count() > 0)
                                     <div class="d-flex flex-wrap gap-2 mb-3">
                                         @foreach($meeting->topics as $topic)
-                                            <span class="badge rounded-pill px-3 py-2 fw-medium" style="background-color: rgba(14, 165, 233, 0.15) !important; color: #0284c7 !important; border: 1px solid rgba(14, 165, 233, 0.4) !important;">
+                                            <span class="badge rounded-pill px-3 py-2 fw-medium" style="background-color: #f0fdf4 !important; color: #166534 !important; border: 1px solid #bbf7d0 !important;">
                                                 <i class="bi bi-tag me-1"></i>
                                                 @if(app()->getLocale() === 'ar')
                                                     {{ $topic->ar_name }}

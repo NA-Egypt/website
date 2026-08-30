@@ -32,23 +32,7 @@
                     <x-forms.input name="capacity" label="{{ __('messages.Capacity')}}" type="number"/>
                 </div>
             </div>
-            <div class="row align-items-end mx-1">
-                <div class="form-check form-switch col-md-2">
-                    <input type="hidden" name="group_type" value="فعلي"> <!-- Sends "فعلي" when unchecked -->
-                    <input
-                            name="group_type"
-                            class="form-check-input"
-                            type="checkbox"
-                            id="group-type"
-                            value="اونلاين"
-                    {{ old('group_type', $group->type ?? 'فعلي') === 'اونلاين' ? 'checked' : '' }}
-                    >
-
-                    <label class="form-check-label" for="meeting-type" id="switcGrouphLabel">
-                        {{ old('group_type', $group->type ?? 'فعلي') === 'اونلاين' ? 'اونلاين' : 'فعلي' }}
-                    </label>
-                </div>
-            </div>
+            <input type="hidden" name="group_type" value="فعلي">
             <x-forms.input id="location" name="location" label="{{ __('messages.Locations')}}"/>
             <x-forms.input id="ar_address" name="ar_address" label="{{ __('messages.Arabic Address')}}"/>
             <x-forms.input id="en_address" name="en_address" label="{{ __('messages.English Address')}}"/>

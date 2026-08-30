@@ -38,6 +38,50 @@
     </div>
 </div>
 
+{{-- Zoom Meeting QR Modal --}}
+<div id="zoomQrModal" class="qr-modal">
+    <div class="qr-modal-content" style="max-width: 420px; padding: 24px;">
+        <span class="qr-close-btn zoom-qr-close-btn">&times;</span>
+        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+            <span class="badge rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1 shadow-xs" style="background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; font-size: 0.9rem;">
+                <i class="bi bi-camera-video-fill" style="color: #0284c7;"></i>
+                <span id="zoomQrModalTitle">{{ __('messages.zoom_meeting_qr') }}</span>
+            </span>
+        </div>
+        <p class="qr-modal-subtitle mb-3" style="font-size: 0.85rem;">{{ __('messages.scan_to_join') }}</p>
+        
+        <div class="qr-canvas-wrapper" style="background: white; margin-bottom: 12px; padding: 10px;">
+            <div id="zoomQrCanvasContainer" style="width: 200px; height: 200px; margin: 0 auto; display: flex; align-items: center; justify-content: center;"></div>
+        </div>
+
+        <div class="p-2 px-3 rounded-3 bg-light border mb-3 text-truncate d-flex align-items-center justify-content-between gap-2" style="font-size: 0.8rem; text-align: start;">
+            <span id="zoomQrUrlText" class="text-break text-truncate text-secondary font-monospace" style="direction: ltr;"></span>
+            <button type="button" id="zoomQrModalCopyIcon" class="btn btn-link btn-sm p-0 text-decoration-none text-primary" title="{{ __('messages.copy_zoom_link') }}">
+                <i class="bi bi-clipboard"></i>
+            </button>
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+            <a id="zoomQrJoinBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary rounded-pill py-2 fw-bold d-inline-flex align-items-center justify-content-center gap-1 shadow-sm">
+                <i class="bi bi-box-arrow-up-right"></i>
+                <span>{{ __('messages.join_zoom_meeting') }}</span>
+            </a>
+
+            <div class="d-flex gap-2">
+                <button type="button" id="zoomQrModalCopyBtn" class="btn btn-outline-secondary rounded-pill py-2 flex-grow-1 fw-semibold d-inline-flex align-items-center justify-content-center gap-1" style="font-size: 0.85rem;">
+                    <i class="bi bi-clipboard"></i>
+                    <span id="zoomQrCopyLabel">{{ __('messages.copy_zoom_link') }}</span>
+                </button>
+
+                <button type="button" id="zoomQrModalDownloadBtn" class="btn btn-outline-primary rounded-pill py-2 flex-grow-1 fw-semibold d-inline-flex align-items-center justify-content-center gap-1" style="font-size: 0.85rem;">
+                    <i class="bi bi-download"></i>
+                    <span>{{ __('messages.download_zoom_qr') }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     #scrollToTopBtn {
         position: fixed;
@@ -370,6 +414,133 @@
             link.click();
             document.body.removeChild(link);
         });
+
+        // Zoom Meeting QR Modal Logic
+        const zoomQrModal = document.getElementById('zoomQrModal');
+        const zoomQrCloseBtn = document.querySelector('.zoom-qr-close-btn');
+        const zoomQrContainer = document.getElementById('zoomQrCanvasContainer');
+        const zoomQrTitle = document.getElementById('zoomQrModalTitle');
+        const zoomQrUrlText = document.getElementById('zoomQrUrlText');
+        const zoomQrJoinBtn = document.getElementById('zoomQrJoinBtn');
+        const zoomQrModalCopyBtn = document.getElementById('zoomQrModalCopyBtn');
+        const zoomQrModalCopyIcon = document.getElementById('zoomQrModalCopyIcon');
+        const zoomQrCopyLabel = document.getElementById('zoomQrCopyLabel');
+        const zoomQrModalDownloadBtn = document.getElementById('zoomQrModalDownloadBtn');
+
+        let currentZoomUrl = '';
+        let currentZoomTitle = '';
+
+        function closeZoomModal() {
+            if (!zoomQrModal) return;
+            zoomQrModal.classList.remove('show');
+            setTimeout(() => {
+                zoomQrModal.style.display = 'none';
+            }, 300);
+        }
+
+        if (zoomQrCloseBtn) zoomQrCloseBtn.addEventListener('click', closeZoomModal);
+        window.addEventListener('click', function(event) {
+            if (event.target === zoomQrModal) {
+                closeZoomModal();
+            }
+        });
+
+        window.openZoomQrModal = function(url, title) {
+            if (!zoomQrModal || !zoomQrContainer || !url) return;
+            currentZoomUrl = url;
+            currentZoomTitle = title || 'Zoom Meeting';
+
+            zoomQrTitle.textContent = currentZoomTitle;
+            zoomQrUrlText.textContent = url;
+            zoomQrUrlText.title = url;
+            zoomQrJoinBtn.href = url;
+
+            zoomQrModal.style.display = 'flex';
+            setTimeout(() => {
+                zoomQrModal.classList.add('show');
+            }, 10);
+
+            zoomQrContainer.innerHTML = '';
+            new QRCode(zoomQrContainer, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: '#0b192c',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            setTimeout(() => {
+                const canvas = zoomQrContainer.querySelector('canvas');
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                const logo = new Image();
+                logo.onload = function() {
+                    const logoSize = 48;
+                    const x = (canvas.width - logoSize) / 2;
+                    const y = (canvas.height - logoSize) / 2;
+                    const padding = 4;
+                    const rectSize = logoSize + (padding * 2);
+                    const rectX = x - padding;
+                    const rectY = y - padding;
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    if (ctx.roundRect) {
+                        ctx.roundRect(rectX, rectY, rectSize, rectSize, 6);
+                    } else {
+                        ctx.rect(rectX, rectY, rectSize, rectSize);
+                    }
+                    ctx.fill();
+                    ctx.drawImage(logo, x, y, logoSize, logoSize);
+                };
+                logo.src = "{{ asset('assets/images/na-logo-qr.jpg') }}";
+            }, 100);
+        };
+
+        function copyZoomLink() {
+            if (!currentZoomUrl) return;
+            navigator.clipboard.writeText(currentZoomUrl).then(() => {
+                const originalText = zoomQrCopyLabel ? zoomQrCopyLabel.textContent : '';
+                if (zoomQrCopyLabel) zoomQrCopyLabel.textContent = '{{ __("messages.copied") }}';
+                if (zoomQrModalCopyBtn) {
+                    zoomQrModalCopyBtn.classList.remove('btn-outline-secondary');
+                    zoomQrModalCopyBtn.classList.add('btn-success');
+                    const icon = zoomQrModalCopyBtn.querySelector('i');
+                    if (icon) icon.className = 'bi bi-check-lg';
+                }
+                setTimeout(() => {
+                    if (zoomQrCopyLabel) zoomQrCopyLabel.textContent = originalText;
+                    if (zoomQrModalCopyBtn) {
+                        zoomQrModalCopyBtn.classList.remove('btn-success');
+                        zoomQrModalCopyBtn.classList.add('btn-outline-secondary');
+                        const icon = zoomQrModalCopyBtn.querySelector('i');
+                        if (icon) icon.className = 'bi bi-clipboard';
+                    }
+                }, 2000);
+            }).catch(() => {
+                prompt('Zoom Link:', currentZoomUrl);
+            });
+        }
+
+        if (zoomQrModalCopyBtn) zoomQrModalCopyBtn.addEventListener('click', copyZoomLink);
+        if (zoomQrModalCopyIcon) zoomQrModalCopyIcon.addEventListener('click', copyZoomLink);
+
+        if (zoomQrModalDownloadBtn) {
+            zoomQrModalDownloadBtn.addEventListener('click', function() {
+                const canvas = zoomQrContainer.querySelector('canvas');
+                if (!canvas) return;
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                const slug = (currentZoomTitle ? currentZoomTitle.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g, '-') : 'zoom-meeting').replace(/^-|-$/g, '') || 'zoom-meeting';
+                link.download = slug + '-zoom-qr.png';
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
     });
 </script>
 

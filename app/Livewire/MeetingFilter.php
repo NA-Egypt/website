@@ -291,6 +291,21 @@ class MeetingFilter extends Component
             return \App\Models\Meeting::where('type', 'closed')->notMonthlyRecurrent()->count();
         });
 
+        $onlineCount = \Illuminate\Support\Facades\Cache::remember('meetings_filter_online_count', 3600, function () {
+            return \App\Models\Meeting::where(function ($bigQ) {
+                $bigQ->whereHas('group', function ($q) {
+                    $q->whereIn('group_type', ['اونلاين', 'اون لاين', 'online'])
+                      ->where(function ($sub) {
+                          $sub->whereNull('location')
+                              ->orWhere(function ($sub2) {
+                                  $sub2->where('location', 'not like', '%map%')
+                                       ->where('location', 'not like', '%goo.gl%');
+                              });
+                      });
+                })->orWhereNotNull('direct_online_group_id');
+            })->notMonthlyRecurrent()->count();
+        });
+
         $filters = [
             'day' => $this->day,
             'serviceBody' => $this->serviceBody,
@@ -338,6 +353,7 @@ class MeetingFilter extends Component
             'neighborhoods' => $neighborhoods,
             'openCount' => $openCount,
             'closedCount' => $closedCount,
+            'onlineCount' => $onlineCount,
             'recurrences' => $recurrences,
         ]);
     }
