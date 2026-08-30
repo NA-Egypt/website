@@ -101,15 +101,15 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4">
-                                <label for="group_id" class="form-label fw-semibold text-muted small mb-2">{{ __('messages.Group') ?? 'Group' }}</label>
-                                <select name="group_id" id="group_id" class="form-select bg-light py-2 rounded-3" style="border-color: #e2e8f0; font-size: 0.95rem;">
-                                    <option value="">{{ __('messages.All Groups') ?? 'All Groups' }}</option>
-                                    @foreach($groups as $group)
-                                        <option value="{{ $group->id }}" {{ request('group_id') == $group->id ? 'selected' : '' }}>
-                                            {{ $group->ar_name ?? $group->en_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <x-forms.searchable-select
+                                    name="group_id"
+                                    id="group_id"
+                                    :label="__('messages.Group') ?? 'Group'"
+                                    :options="$groups"
+                                    :value="request('group_id')"
+                                    :emptyOption="__('messages.All Groups') ?? 'All Groups'"
+                                    :placeholder="__('messages.All Groups') ?? 'All Groups'"
+                                />
                             </div>
                             <div class="col-12 col-md-6 col-lg-2">
                                 <label for="start_date" class="form-label fw-semibold text-muted small mb-2">{{ __('messages.Start Date') ?? 'Start Date' }}</label>

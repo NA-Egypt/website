@@ -22,11 +22,11 @@
                             </div>
                             <div class="col-12 col-md-4 col-lg-3">
                                 <label for="service_body_id" class="form-label fw-semibold text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ __('messages.Service Body') ?? 'Service Body' }}</label>
-                                <select name="service_body_id" id="service_body_id" class="form-select rounded-3 select2">
+                                <select name="service_body_id" id="service_body_id" class="form-select rounded-3">
                                     <option value="">{{ __('messages.All Service Bodies') ?? 'All Service Bodies' }}</option>
                                     @foreach($serviceBodies as $sb)
                                         <option value="{{ $sb->id }}" {{ request('service_body_id') == $sb->id ? 'selected' : '' }}>
-                                            {{ $sb->ar_name }}
+                                            {{ app()->getLocale() === 'ar' ? ($sb->ar_name ?? $sb->en_name) : ($sb->en_name ?? $sb->ar_name) }}
                                         </option>
                                     @endforeach
                                 </select>
