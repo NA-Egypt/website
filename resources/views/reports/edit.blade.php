@@ -73,20 +73,22 @@
                     <button type="button" class="btn btn-sm btn-outline-primary" id="addPositionBtn">+ {{ __('messages.Add Position') }}</button>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>{{ __('messages.Position Name') }}</th>
-                                <th>{{ __('messages.Member Name') }}</th>
-                                <th>{{ __('messages.Status') }}</th>
-                                <th>{{ __('messages.Open for Election') }}</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="positionsTableBody">
-                            <!-- Rows will be added here -->
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('messages.Position Name') }}</th>
+                                    <th>{{ __('messages.Member Name') }}</th>
+                                    <th>{{ __('messages.Status') }}</th>
+                                    <th>{{ __('messages.Open for Election') }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionsTableBody">
+                                <!-- Rows will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

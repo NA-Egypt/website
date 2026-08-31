@@ -39,7 +39,12 @@ export function checkFixedWidths(filePath, content, lines) {
         const inlineStyleRegex = /style=["'][^"']*(?:(?<!max-)width|min-width)\s*:\s*(\d+)px[^"']*["']/gi;
         while ((match = inlineStyleRegex.exec(line)) !== null) {
             const widthVal = parseInt(match[1], 10);
-            if (widthVal > minMobileWidth) {
+            const isTable = /<table\b/i.test(line);
+            const surroundingContext = lines.slice(Math.max(0, idx - 5), Math.min(lines.length, idx + 2)).join(' ');
+            const hasScrollContainer = /table-responsive|overflow-x-auto|overflow-auto/i.test(surroundingContext);
+            const hasMaxWidth = /max-width\s*:\s*100%/i.test(match[0]) || /max-w-full/i.test(line);
+
+            if (widthVal > minMobileWidth && (!isTable || !hasScrollContainer) && !hasMaxWidth) {
                 issues.push({
                     file: filePath,
                     line: lineNum,

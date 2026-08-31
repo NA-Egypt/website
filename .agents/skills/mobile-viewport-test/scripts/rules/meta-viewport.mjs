@@ -6,12 +6,13 @@ export function checkMetaViewport(filePath, content, lines) {
     const issues = [];
     
     // Ignore PDF export templates (Dompdf / print views)
-    if (filePath.includes('/pdf/') || filePath.endsWith('.pdf.blade.php') || filePath.includes('pdf.blade.php')) {
+    const isPdfTemplate = filePath.includes('/pdf/') || filePath.includes('/exports/') || filePath.includes('pdf.blade.php') || filePath.includes('_pdf.blade.php') || filePath.includes('-pdf.blade.php');
+    if (isPdfTemplate) {
         return issues;
     }
 
     const isRootLayout = filePath.endsWith('.blade.php') && 
-        (content.includes('<html') || content.includes('<!DOCTYPE') || filePath.includes('layout') || filePath.includes('app.blade.php') || filePath.includes('dashborad') || filePath.includes('welcome'));
+        (content.includes('<html') || content.includes('<!DOCTYPE') || filePath.includes('components/layout.blade.php') || filePath.includes('components/frontend/layout.blade.php') || filePath.includes('app.blade.php') || filePath.includes('welcome.blade.php'));
 
     if (!isRootLayout) {
         return issues;

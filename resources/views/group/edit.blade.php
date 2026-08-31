@@ -108,13 +108,13 @@
 
             {{-- Action Buttons --}}
             <div class="row g-3 mt-4 mb-5">
-                <div class="col-6">
-                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary py-2 px-5 rounded-pill w-100 shadow-sm transition-hover">
+                <div class="col-12 col-sm-6">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary py-2 px-3 rounded-pill w-100 shadow-sm transition-hover">
                         <i class="bi bi-x-circle me-2"></i>{{ __('messages.Cancel') }}
                     </a>
                 </div>
-                <div class="col-6">
-                    <button type="submit" class="btn btn-primary py-2 px-5 rounded-pill w-100 shadow-sm transition-hover" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); border: none;">
+                <div class="col-12 col-sm-6">
+                    <button type="submit" class="btn btn-primary py-2 px-3 rounded-pill w-100 shadow-sm transition-hover" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); border: none;">
                         <i class="bi bi-check-circle me-2"></i>{{ __('messages.Update') }}
                     </button>
                 </div>

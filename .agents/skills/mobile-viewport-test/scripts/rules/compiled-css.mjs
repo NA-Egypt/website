@@ -37,7 +37,11 @@ export function checkCompiledCSS(filePath, content, lines) {
                 const match = trimmed.match(/(?<!max-)(?:width|min-width)\s*:\s*(\d+)px/i);
                 if (match) {
                     const widthVal = parseInt(match[1], 10);
-                    if (widthVal > minMobileWidth) {
+                    // Check if adjacent lines in the same rule define max-width: 100%
+                    const surrounding = lines.slice(Math.max(0, idx - 2), Math.min(lines.length, idx + 3)).join(' ');
+                    const hasMaxWidthFallback = /max-width\s*:\s*100%/i.test(surrounding);
+
+                    if (widthVal > minMobileWidth && !hasMaxWidthFallback) {
                         issues.push({
                             file: filePath,
                             line: lineNum,

@@ -80,44 +80,46 @@
             <div class="card-body p-4">
                 
                 <h6 class="mb-3 fw-bold">{{ __('messages.Positions Status') }}</h6>
-                <table class="table table-bordered table-sm w-100 mb-4 text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>{{ __('messages.Position') }}</th>
-                            <th>{{ __('messages.Member Name') }}</th>
-                            <th>{{ __('messages.Status') }}</th>
-                            <th>{{ __('messages.Election') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if($report->positions_status)
-                            @foreach($report->positions_status as $pos)
-                                <tr>
-                                    <td>{{ $pos['name'] ?? '-' }}</td>
-                                    <td>{{ $pos['member_name'] ?? '-' }}</td>
-                                    <td>
-                                        <span class="badge 
-                                            @if(($pos['status']??'') == 'Present') bg-success 
-                                            @elseif(($pos['status']??'') == 'Absent') bg-danger 
-                                            @elseif(($pos['status']??'') == 'Excused') bg-warning text-dark 
-                                            @else bg-secondary @endif">
-                                            {{ $pos['status'] ?? '-' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if(!empty($pos['election']))
-                                            <span class="text-danger fw-bold">{{ __('messages.Open') }}</span>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr><td colspan="3">{{ __('messages.No positions data') }}</td></tr>
-                        @endif
-                    </tbody>
-                </table>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-sm w-100 text-center mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{ __('messages.Position') }}</th>
+                                <th>{{ __('messages.Member Name') }}</th>
+                                <th>{{ __('messages.Status') }}</th>
+                                <th>{{ __('messages.Election') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($report->positions_status)
+                                @foreach($report->positions_status as $pos)
+                                    <tr>
+                                        <td>{{ $pos['name'] ?? '-' }}</td>
+                                        <td>{{ $pos['member_name'] ?? '-' }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                @if(($pos['status']??'') == 'Present') bg-success 
+                                                @elseif(($pos['status']??'') == 'Absent') bg-danger 
+                                                @elseif(($pos['status']??'') == 'Excused') bg-warning text-dark 
+                                                @else bg-secondary @endif">
+                                                {{ $pos['status'] ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if(!empty($pos['election']))
+                                                <span class="text-danger fw-bold">{{ __('messages.Open') }}</span>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr><td colspan="4">{{ __('messages.No positions data') }}</td></tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
 
                 @if($report->attended_members)
                     <h6 class="mt-4 mb-3 fw-bold">{{ __('messages.Attended Members') }}</h6>

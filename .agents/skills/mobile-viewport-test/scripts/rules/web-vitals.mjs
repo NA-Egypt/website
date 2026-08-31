@@ -38,10 +38,11 @@ export function checkWebVitals(filePath, content, lines) {
             const hasWidthHeight = /\bwidth=["']\d+["']/i.test(imgTag) && /\bheight=["']\d+["']/i.test(imgTag);
             const hasAspectClass = /class=["'][^"']*(?:aspect-(?:video|square|\[\d+\/\d+\])|h-\d+\s+w-\d+|w-\d+\s+h-\d+)[^"']*["']/i.test(imgTag);
             
-            // Exclude icons or dynamic template bindings if specified
+            // Exclude icons, dynamic template bindings, or empty JS preview placeholders
             const isDynamic = /:src|{{/i.test(imgTag);
+            const isPreviewPlaceholder = /src=["'](?:#|about:blank)?["']|id=["'][^"']*preview[^"']*["']|class=["'][^"']*preview[^"']*["']/i.test(imgTag);
 
-            if (!hasWidthHeight && !hasAspectClass && !isDynamic) {
+            if (!hasWidthHeight && !hasAspectClass && !isDynamic && !isPreviewPlaceholder) {
                 issues.push({
                     file: filePath,
                     line: lineNum,

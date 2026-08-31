@@ -1421,6 +1421,7 @@ body[dir="rtl"] {
 }
 
 .chat-sidebar {
+    max-width: 100%;
     width: 340px;
     height: 100%;
     position: absolute;

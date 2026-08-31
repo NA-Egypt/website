@@ -180,65 +180,67 @@
             <i class="bi bi-list-task me-1"></i>Database Changes
           </div>
           <div class="card-body p-0">
-            <table class="table table-sm table-hover mb-0 align-middle small text-center">
-              <thead>
-                <tr class="table-light text-secondary">
-                  <th style="width: 25%;">Field</th>
-                  <th v-if="row.operation === 'update'" style="width: 37.5%;">Original Value</th>
-                  <th v-if="row.operation === 'update'" style="width: 37.5%;">New Value</th>
-                  <th v-else>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template v-if="row.operation === 'create' && row.new_values">
-                  <tr v-for="(val, key) in row.new_values" :key="key">
-                    <td><strong>{{ key }}</strong></td>
-                    <td class="text-success">
-                      <span class="badge bg-success-light text-success me-1">+</span>
-                      <code>{{ formatValue(val) }}</code>
-                    </td>
+            <div class="table-responsive">
+              <table class="table table-sm table-hover mb-0 align-middle small text-center">
+                <thead>
+                  <tr class="table-light text-secondary">
+                    <th style="width: 25%;">Field</th>
+                    <th v-if="row.operation === 'update'" style="width: 37.5%;">Original Value</th>
+                    <th v-if="row.operation === 'update'" style="width: 37.5%;">New Value</th>
+                    <th v-else>Value</th>
                   </tr>
-                </template>
-
-                <template v-else-if="row.operation === 'delete' && row.old_values">
-                  <tr v-for="(val, key) in row.old_values" :key="key">
-                    <td><strong>{{ key }}</strong></td>
-                    <td class="text-danger text-decoration-line-through">
-                      <span class="badge bg-danger-light text-danger me-1">-</span>
-                      <code>{{ formatValue(val) }}</code>
-                    </td>
-                  </tr>
-                </template>
-
-                <template v-else-if="row.operation === 'update' && (row.old_values || row.new_values)">
-                  <tr v-for="(newVal, key) in row.new_values" :key="key">
-                    <td><strong>{{ key }}</strong></td>
-                    <td class="text-danger text-decoration-line-through">
-                      <code>{{ formatValue(row.old_values ? row.old_values[key] : '') }}</code>
-                    </td>
-                    <td class="text-success fw-bold">
-                      <code>{{ formatValue(newVal) }}</code>
-                    </td>
-                  </tr>
-                </template>
-
-                <template v-else>
-                  <template v-if="row.details">
-                    <tr v-for="(val, key) in row.details" :key="key">
+                </thead>
+                <tbody>
+                  <template v-if="row.operation === 'create' && row.new_values">
+                    <tr v-for="(val, key) in row.new_values" :key="key">
                       <td><strong>{{ key }}</strong></td>
-                      <td>
+                      <td class="text-success">
+                        <span class="badge bg-success-light text-success me-1">+</span>
                         <code>{{ formatValue(val) }}</code>
                       </td>
                     </tr>
                   </template>
-                  <tr v-else>
-                    <td :colspan="row.operation === 'update' ? 3 : 2" class="text-center py-2 text-muted">
-                      No details logged.
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
+
+                  <template v-else-if="row.operation === 'delete' && row.old_values">
+                    <tr v-for="(val, key) in row.old_values" :key="key">
+                      <td><strong>{{ key }}</strong></td>
+                      <td class="text-danger text-decoration-line-through">
+                        <span class="badge bg-danger-light text-danger me-1">-</span>
+                        <code>{{ formatValue(val) }}</code>
+                      </td>
+                    </tr>
+                  </template>
+
+                  <template v-else-if="row.operation === 'update' && (row.old_values || row.new_values)">
+                    <tr v-for="(newVal, key) in row.new_values" :key="key">
+                      <td><strong>{{ key }}</strong></td>
+                      <td class="text-danger text-decoration-line-through">
+                        <code>{{ formatValue(row.old_values ? row.old_values[key] : '') }}</code>
+                      </td>
+                      <td class="text-success fw-bold">
+                        <code>{{ formatValue(newVal) }}</code>
+                      </td>
+                    </tr>
+                  </template>
+
+                  <template v-else>
+                    <template v-if="row.details">
+                      <tr v-for="(val, key) in row.details" :key="key">
+                        <td><strong>{{ key }}</strong></td>
+                        <td>
+                          <code>{{ formatValue(val) }}</code>
+                        </td>
+                      </tr>
+                    </template>
+                    <tr v-else>
+                      <td :colspan="row.operation === 'update' ? 3 : 2" class="text-center py-2 text-muted">
+                        No details logged.
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -35,25 +35,25 @@
             <!-- Stats Grid -->
             <div>
               <div class="row g-2 mb-4">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <div class="p-3 border rounded text-center bg-light">
                     <div class="text-muted small mb-1">{{ labels.activeGroups }}</div>
                     <h3 class="fw-bold mb-0 text-dark">{{ stats.activeCount }}</h3>
                   </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <div class="p-3 border rounded text-center bg-light">
                     <div class="text-muted small mb-1">{{ labels.accuracyRate }}</div>
                     <h3 class="fw-bold mb-0 text-success">{{ stats.accuracy }}%</h3>
                   </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <div class="p-3 border rounded text-center bg-light" :class="{ 'bg-warning-subtle': stats.overlapCount > 0 }">
                     <div class="text-muted small mb-1">{{ labels.overlappingAreas }}</div>
                     <h3 class="fw-bold mb-0 text-warning">{{ stats.overlapCount }}</h3>
                   </div>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <div class="p-3 border rounded text-center bg-light">
                     <div class="text-muted small mb-1">{{ labels.needsPreciseLink }}</div>
                     <h3 class="fw-bold mb-0 text-danger">{{ stats.impreciseCount }}</h3>

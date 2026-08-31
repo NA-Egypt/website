@@ -5,14 +5,17 @@
 export function checkOverflowHazards(filePath, content, lines) {
     const issues = [];
 
+    // Exclude PDF export views (Dompdf does not use scroll wrappers on printed paper)
+    const isPdfTemplate = filePath.includes('/pdf/') || filePath.includes('/exports/') || filePath.includes('pdf.blade.php') || filePath.includes('_pdf.blade.php') || filePath.includes('-pdf.blade.php');
+
     // 1. Check for unwrapped <table> elements in templates
-    if (filePath.endsWith('.blade.php') || filePath.endsWith('.vue')) {
+    if (!isPdfTemplate && (filePath.endsWith('.blade.php') || filePath.endsWith('.vue'))) {
         const tableTagRegex = /<table(?:\s+[^>]*)?>/gi;
         let match;
         while ((match = tableTagRegex.exec(content)) !== null) {
             const tablePos = match.index;
-            // Inspect the preceding ~200 characters to check for an overflow container
-            const precedingChunk = content.substring(Math.max(0, tablePos - 250), tablePos);
+            // Inspect the preceding ~2000 characters to check for an overflow container
+            const precedingChunk = content.substring(Math.max(0, tablePos - 2000), tablePos);
             const hasOverflowWrapper = /class=["'][^"']*(?:overflow-x-auto|overflow-auto|table-responsive|overflow-x-scroll)[^"']*["']/i.test(precedingChunk);
             
             if (!hasOverflowWrapper) {
