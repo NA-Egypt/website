@@ -3,6 +3,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "postbuild": "node .agents/skills/mobile-viewport-test/scripts/audit.mjs || true",
+        "test:mobile": "node .agents/skills/mobile-viewport-test/scripts/audit.mjs",
+        "test:mobile:strict": "node .agents/skills/mobile-viewport-test/scripts/audit.mjs --strict",
         "dev": "webpack-dev-server --mode development --env development",
         "development": "mix",
         "watch": "mix watch",

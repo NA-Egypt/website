@@ -32,6 +32,9 @@ import './form-select2.js';
 import './frontend.js';
 import "select2/dist/css/select2.css";
 
+import { initWebVitals } from './web-vitals.js';
+initWebVitals();
+
 // Select2 CSS & Vue3 Select styles
 import 'vue3-select-component/styles';
 

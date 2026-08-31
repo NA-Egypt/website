@@ -1,0 +1,532 @@
+{
+  "timestamp": "2026-08-31T13:24:13.013Z",
+  "scannedFiles": 195,
+  "totalIssues": 65,
+  "summary": {
+    "critical": 4,
+    "warning": 36,
+    "tip": 25
+  },
+  "issues": [
+    {
+      "file": "resources/views/components/forms/normal-button.blade.php",
+      "line": 3,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/dashborad.blade.php",
+      "line": 1,
+      "rule": "VIEWPORT_META_MISSING",
+      "severity": "CRITICAL",
+      "message": "Root HTML template is missing <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">.",
+      "suggestion": "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> inside <head>."
+    },
+    {
+      "file": "resources/views/exports/meetings-day-table-partial.blade.php",
+      "line": 5,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/exports/meetings-pdf.blade.php",
+      "line": 132,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/exports/meetings-pdf.blade.php",
+      "line": 172,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/forms/report_pdf.blade.php",
+      "line": 97,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/forms/show.blade.php",
+      "line": 496,
+      "rule": "INLINE_STYLE_OVERSIZED_WIDTH",
+      "severity": "CRITICAL",
+      "message": "Hardcoded inline width '460px' exceeds minimum mobile viewport (320px).",
+      "suggestion": "Use responsive CSS classes or 'max-width: 100%; width: 460px' to avoid horizontal scrollbars on mobile."
+    },
+    {
+      "file": "resources/views/forms/submission_pdf.blade.php",
+      "line": 134,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/forms/submission_pdf.blade.php",
+      "line": 156,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/forms/submission_pdf.blade.php",
+      "line": 205,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/frontend/events.blade.php",
+      "line": 13,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/frontend/events.blade.php",
+      "line": 19,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/frontend/home.blade.php",
+      "line": 705,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-4' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-4' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/frontend/home.blade.php",
+      "line": 711,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-4' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-4' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/frontend/home.blade.php",
+      "line": 717,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-4' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-4' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/group/edit.blade.php",
+      "line": 111,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/group/edit.blade.php",
+      "line": 116,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/group/show.blade.php",
+      "line": 394,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "resources/views/lit/ledger_pdf.blade.php",
+      "line": 69,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/lit/ledger_pdf.blade.php",
+      "line": 89,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/lit/ledger_pdf.blade.php",
+      "line": 118,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/literature_requests/cart.blade.php",
+      "line": 98,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "resources/views/literature_requests/invoice_pdf.blade.php",
+      "line": 83,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/literature_requests/invoice_pdf.blade.php",
+      "line": 109,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/livewire/meeting-filter.blade.php",
+      "line": 111,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "resources/views/mail/change-request.blade.php",
+      "line": 3,
+      "rule": "VIEWPORT_META_MISSING",
+      "severity": "CRITICAL",
+      "message": "Root HTML template is missing <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">.",
+      "suggestion": "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> inside <head>."
+    },
+    {
+      "file": "resources/views/mail/cooperation-request.blade.php",
+      "line": 3,
+      "rule": "VIEWPORT_META_MISSING",
+      "severity": "CRITICAL",
+      "message": "Root HTML template is missing <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">.",
+      "suggestion": "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> inside <head>."
+    },
+    {
+      "file": "resources/views/pdf/agenda.blade.php",
+      "line": 93,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/pdf/agenda.blade.php",
+      "line": 120,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/pdf/meetings.blade.php",
+      "line": 53,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/reports/archive.blade.php",
+      "line": 126,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/reports/archive.blade.php",
+      "line": 130,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/reports/archive.blade.php",
+      "line": 980,
+      "rule": "CLS_UNSIZED_IMAGE",
+      "severity": "WARNING",
+      "message": "Image element `<img>` lacks explicit width/height attributes or an aspect-ratio bounding box, risking Cumulative Layout Shift (CLS).",
+      "suggestion": "Add `width=\"...\" height=\"...\"` attributes or Tailwind aspect class (e.g. `aspect-video` or `w-full h-auto`) to reserve layout space."
+    },
+    {
+      "file": "resources/views/reports/create.blade.php",
+      "line": 68,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/reports/edit.blade.php",
+      "line": 76,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/reports/pdf.blade.php",
+      "line": 30,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/reports/pdf.blade.php",
+      "line": 72,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/reports/show.blade.php",
+      "line": 83,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/service-body-agendas/archive.blade.php",
+      "line": 122,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/service-body-agendas/archive.blade.php",
+      "line": 126,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/service-body-agendas/archive.blade.php",
+      "line": 974,
+      "rule": "CLS_UNSIZED_IMAGE",
+      "severity": "WARNING",
+      "message": "Image element `<img>` lacks explicit width/height attributes or an aspect-ratio bounding box, risking Cumulative Layout Shift (CLS).",
+      "suggestion": "Add `width=\"...\" height=\"...\"` attributes or Tailwind aspect class (e.g. `aspect-video` or `w-full h-auto`) to reserve layout space."
+    },
+    {
+      "file": "resources/views/service-body-agendas/pdf.blade.php",
+      "line": 30,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/service-body-agendas/show.blade.php",
+      "line": 8,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/service-body-agendas/show.blade.php",
+      "line": 11,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/views/serviceCommittee/create.blade.php",
+      "line": 95,
+      "rule": "CLS_UNSIZED_IMAGE",
+      "severity": "WARNING",
+      "message": "Image element `<img>` lacks explicit width/height attributes or an aspect-ratio bounding box, risking Cumulative Layout Shift (CLS).",
+      "suggestion": "Add `width=\"...\" height=\"...\"` attributes or Tailwind aspect class (e.g. `aspect-video` or `w-full h-auto`) to reserve layout space."
+    },
+    {
+      "file": "resources/views/slips/pdf.blade.php",
+      "line": 81,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/slips/pdf.blade.php",
+      "line": 106,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/slips/pdf.blade.php",
+      "line": 134,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/slips/pdf.blade.php",
+      "line": 165,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/store/index.blade.php",
+      "line": 262,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/store/index.blade.php",
+      "line": 186,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "resources/views/store/pdf.blade.php",
+      "line": 73,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/store/pdf.blade.php",
+      "line": 86,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/store/stocktaking/pdf.blade.php",
+      "line": 72,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/store/stocktaking/pdf.blade.php",
+      "line": 84,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/views/welcome.blade.php",
+      "line": 24,
+      "rule": "CLS_UNSIZED_IMAGE",
+      "severity": "WARNING",
+      "message": "Image element `<img>` lacks explicit width/height attributes or an aspect-ratio bounding box, risking Cumulative Layout Shift (CLS).",
+      "suggestion": "Add `width=\"...\" height=\"...\"` attributes or Tailwind aspect class (e.g. `aspect-video` or `w-full h-auto`) to reserve layout space."
+    },
+    {
+      "file": "resources/js/components/FacebookTargeting.vue",
+      "line": 38,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/js/components/FacebookTargeting.vue",
+      "line": 44,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/js/components/FacebookTargeting.vue",
+      "line": 50,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/js/components/FacebookTargeting.vue",
+      "line": 56,
+      "rule": "BOOTSTRAP_NON_RESPONSIVE_COL",
+      "severity": "TIP",
+      "message": "Bootstrap column 'col-6' may squish content on small mobile viewports.",
+      "suggestion": "Use 'col-12 col-md-6' to stack vertically on mobile screens."
+    },
+    {
+      "file": "resources/js/components/TransactionsTable.vue",
+      "line": 183,
+      "rule": "UNWRAPPED_TABLE_OVERFLOW",
+      "severity": "WARNING",
+      "message": "HTML <table> element found without an overflow-x-auto or responsive container wrapper.",
+      "suggestion": "Wrap the <table> in `<div class=\"w-full overflow-x-auto\"><table>...</table></div>` to prevent page-level horizontal blowouts."
+    },
+    {
+      "file": "resources/css/style.css",
+      "line": 1424,
+      "rule": "CSS_FIXED_MIN_WIDTH",
+      "severity": "WARNING",
+      "message": "Fixed width declaration 'width: 340px' in CSS exceeds 320px mobile viewport limit outside media queries.",
+      "suggestion": "Wrap in '@media (min-width: 640px)' or use 'max-width: 100%' fluid fallback."
+    },
+    {
+      "file": "public/build/assets/app-CKev9STQ.css",
+      "line": 6,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "public/build/assets/core-vendor-BHJtUl81.css",
+      "line": 1,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    },
+    {
+      "file": "public/build/assets/frontend-app-DbUzcJ5B.css",
+      "line": 6,
+      "rule": "FLEX_NOWRAP_OVERFLOW",
+      "severity": "TIP",
+      "message": "'flex-nowrap' without responsive prefixes can cause child elements to overflow narrow viewports.",
+      "suggestion": "Consider using 'flex-wrap sm:flex-nowrap' or 'flex-col sm:flex-row'."
+    }
+  ]
+}
