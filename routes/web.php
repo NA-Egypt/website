@@ -25,6 +25,7 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\ForPublicController;
 use App\Http\Controllers\FacebookTargetingController;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use App\Models\City;
 use App\Models\Group;
 use App\Models\ServiceCommittee;
@@ -334,23 +335,26 @@ Route::group(
 
         // Frontend:
         Route::get('/', function(){
-            $homeStats = [
-                'weekly_meetings' => Meeting::notMonthlyRecurrent()->inPersonOnly()->count(),
-                'groups' => Group::inPersonOnly()->count(),
-                'governorates' => City::count(),
-            ];
+            $homeStats = Cache::remember('frontend_home_stats', 3600, function() {
+                return [
+                    'weekly_meetings' => Meeting::notMonthlyRecurrent()->inPersonOnly()->count(),
+                    'groups' => Group::inPersonOnly()->count(),
+                    'governorates' => City::count(),
+                ];
+            });
 
             $jftFileName = date('j') . '_' . strtolower(date('M')) . '_.html';
-            $jftFilePath = public_path('literature/jft/' . $jftFileName);
-            $jftContent = '';
-            if (file_exists($jftFilePath)) {
-                $html = file_get_contents($jftFilePath);
-                if (preg_match('/<body>(.*?)<\/body>/is', $html, $matches)) {
-                    $jftContent = $matches[1];
-                } else {
-                    $jftContent = $html;
+            $jftContent = Cache::remember('frontend_jft_content_' . $jftFileName, 86400, function() use ($jftFileName) {
+                $jftFilePath = public_path('literature/jft/' . $jftFileName);
+                if (file_exists($jftFilePath)) {
+                    $html = file_get_contents($jftFilePath);
+                    if (preg_match('/<body>(.*?)<\/body>/is', $html, $matches)) {
+                        return $matches[1];
+                    }
+                    return $html;
                 }
-            }
+                return '';
+            });
 
             return view('frontend.home', compact('homeStats', 'jftContent'));
         })->name('frontend.home');
@@ -381,9 +385,9 @@ Route::group(
         })->name('frontend.speakers');
         
         Route::get('/fdsurvey', function () {
-            $groups = Group::all();
-            $serviceBody = ServiceBody::all();
-            $serviceCommittee = ServiceCommittee::all();
+            $groups = Cache::remember('fdsurvey_groups', 3600, fn() => Group::all());
+            $serviceBody = Cache::remember('fdsurvey_service_bodies', 3600, fn() => ServiceBody::all());
+            $serviceCommittee = Cache::remember('fdsurvey_service_committees', 3600, fn() => ServiceCommittee::all());
             return view('frontend.fdsurvey', compact('groups', 'serviceBody', 'serviceCommittee'));
         })->name('frontend.fdsurvey');
 

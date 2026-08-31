@@ -5,12 +5,12 @@
         <div class="glass-card p-4 p-md-5 mb-4 shadow-sm border-0" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px;">
             <!-- Logo Header Area -->
             <div class="row align-items-center mb-4 g-3">
-                <div class="col-6 text-start">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt Logo" style="max-height: 70px; object-fit: contain;">
+                <div class="col-12 col-sm-6 text-start">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt Logo" width="140" height="64" style="max-height: 70px; object-fit: contain;">
                 </div>
-                <div class="col-6 text-end">
+                <div class="col-12 col-sm-6 text-end">
                     @if($agenda->serviceBody && $agenda->serviceBody->logo)
-                        <img src="{{ asset('storage/' . $agenda->serviceBody->logo) }}" alt="Service Body Logo" style="max-height: 70px; object-fit: contain; border-radius: 8px;">
+                        <img src="{{ asset('storage/' . $agenda->serviceBody->logo) }}" alt="Service Body Logo" width="70" height="70" loading="lazy" style="max-height: 70px; object-fit: contain; border-radius: 8px;">
                     @endif
                 </div>
             </div>

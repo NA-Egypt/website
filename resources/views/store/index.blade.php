@@ -183,7 +183,7 @@
 
         {{-- Category Tabs --}}
         <div class="mb-4">
-            <ul class="nav nav-pills flex-nowrap overflow-x-auto p-1 rounded-3 bg-light" id="categoryTabList" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
+            <ul class="nav nav-pills flex-wrap sm:flex-nowrap overflow-x-auto p-1 rounded-3 bg-light" id="categoryTabList" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
                 <li class="nav-item flex-shrink-0" role="presentation">
                     <a href="{{ route('store.index', ['search' => request('search')]) }}" class="nav-link py-2 rounded-2 fw-semibold {{ !request('category') ? 'active bg-primary text-white' : 'text-secondary' }}" style="font-size: 0.9rem;">
                         {{ __('messages.all') }}

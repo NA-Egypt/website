@@ -30,7 +30,7 @@
       
       <!-- Logo (Left side) -->
       <div class="logo bg-white px-3 py-1 rounded-pill shadow-sm d-flex align-items-center justify-content-center">
-        <a href="{{ route('frontend.home') }}" class="d-flex align-items-center">
+        <a href="{{ route('frontend.home') }}" class="d-flex align-items-center" aria-label="NA Egypt Homepage">
           <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img" fetchpriority="high" width="140" height="64">
         </a>
       </div>
@@ -41,8 +41,8 @@
         <ul class="d-flex align-items-center gap-4 m-0 p-0 list-unstyled" style="direction: ltr !important;">
           <!-- Dropdown: Resources -->
           <li class="nav-item-dropdown">
-            <a href="#" class="nav-link-custom dropdown-trigger">
-              {{ __('messages.Resources') }} <i class="bi bi-chevron-down ms-1 small"></i>
+            <a href="#" class="nav-link-custom dropdown-trigger" role="button" aria-haspopup="true" aria-expanded="false" aria-label="{{ __('messages.Resources') }}">
+              {{ __('messages.Resources') }} <i class="bi bi-chevron-down ms-1 small" aria-hidden="true"></i>
             </a>
             <ul class="nav-submenu shadow-lg">
               <li>
@@ -65,8 +65,8 @@
 
           <!-- Dropdown: About NA -->
           <li class="nav-item-dropdown">
-            <a href="#" class="nav-link-custom dropdown-trigger">
-              {{ __('messages.About NA') }} <i class="bi bi-chevron-down ms-1 small"></i>
+            <a href="#" class="nav-link-custom dropdown-trigger" role="button" aria-haspopup="true" aria-expanded="false" aria-label="{{ __('messages.About NA') }}">
+              {{ __('messages.About NA') }} <i class="bi bi-chevron-down ms-1 small" aria-hidden="true"></i>
             </a>
             <ul class="nav-submenu shadow-lg">
               <li>
@@ -117,7 +117,7 @@
       <div class="d-none d-lg-flex align-items-center gap-3">
         <!-- Account Dropdown -->
         <div class="dropdown">
-          <button class="btn btn-sm btn-glass dropdown-toggle d-flex align-items-center gap-2" type="button" id="desktopUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-sm btn-glass dropdown-toggle d-flex align-items-center gap-2 touch-target" type="button" id="desktopUserDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ auth()->check() ? auth()->user()->name : __('messages.Account') }}">
             <x-fas-user style="width:14px; height:14px;"/>
             <span>{{ auth()->check() ? auth()->user()->name : __('messages.Account') }}</span>
           </button>
@@ -172,21 +172,21 @@
 
         <!-- Language Switcher -->
         @if ($localeCode && $properties)
-          <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-glass d-flex align-items-center gap-2">
-            <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="{{ $localeCode }} Flag" width="18" height="12" class="rounded-sm">
+          <a href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}" class="btn btn-sm btn-glass d-flex align-items-center gap-2 touch-target" aria-label="Switch language to {{ $properties['native'] ?? 'other language' }}">
+            <img src="{{ asset('assets/images/flags/'.$localeCode.'.png') }}" alt="" width="18" height="12" class="rounded-sm">
             <span class="small">{{ $properties['native'] }}</span>
           </a>
         @endif
 
         <!-- Contact Us Button -->
-        <a href="{{ route('contactus.create') }}" class="btn btn-sm btn-contact d-flex align-items-center gap-2">
+        <a href="{{ route('contactus.create') }}" class="btn btn-sm btn-contact d-flex align-items-center gap-2 touch-target">
           <x-fas-message style="width:12px; height:12px;"/>
           <span>{{ __('messages.contactus') }}</span>
         </a>
       </div>
 
       <!-- Mobile Toggle Button (Visible on mobile/tablet) -->
-      <button class="btn btn-glass d-lg-none px-3 border-0 me-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavbar" aria-controls="mobileNavbar">
+      <button class="btn btn-glass d-lg-none px-3 border-0 me-0 touch-target" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavbar" aria-controls="mobileNavbar" aria-label="{{ __('messages.Toggle Navigation') ?? 'Toggle navigation menu' }}" aria-expanded="false">
         <i class="bi bi-list fs-2 text-white"></i>
       </button>
 
@@ -198,9 +198,9 @@
 <div class="offcanvas {{ app()->getLocale() === 'ar' ? 'offcanvas-start' : 'offcanvas-end' }} d-lg-none text-white mobile-drawer" tabindex="-1" id="mobileNavbar" aria-labelledby="mobileNavbarLabel">
   <div class="offcanvas-header bg-white py-3 border-bottom border-light-subtle">
     <h5 class="offcanvas-title" id="mobileNavbarLabel">
-      <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img">
+      <img src="{{ asset('assets/images/logo.png') }}" alt="NA Egypt" class="logo-img" width="140" height="64">
     </h5>
-    <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas" aria-label="{{ __('messages.Close') ?? 'Close' }}"></button>
   </div>
   <div class="offcanvas-body d-flex flex-column justify-content-between p-4">
     

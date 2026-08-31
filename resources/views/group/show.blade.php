@@ -391,7 +391,7 @@
                         </div>
                         <div class="modal-body px-4 pt-3 pb-4">
                             {{-- Custom styled tab navs --}}
-                            <ul class="nav nav-pills flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="agendaTabGroup{{ $agenda->id }}" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                            <ul class="nav nav-pills flex-wrap sm:flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="agendaTabGroup{{ $agenda->id }}" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                                 <li class="nav-item flex-shrink-0" role="presentation">
                                     <button class="nav-link active py-2 rounded-2 fw-bold" id="general-tab-group{{ $agenda->id }}" data-bs-toggle="tab" data-bs-target="#general-group{{ $agenda->id }}" type="button" role="tab" aria-controls="general-group{{ $agenda->id }}" aria-selected="true" style="font-size: 0.9rem;">
                                         <i class="bi bi-info-circle-fill me-1"></i> {{ __('messages.group_data') }}

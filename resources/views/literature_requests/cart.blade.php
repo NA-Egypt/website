@@ -95,7 +95,7 @@
                     $itemCategories = $items->pluck('category')->unique();
                 @endphp
                 @if($items->count() > 0)
-                    <ul class="nav nav-pills flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="categoryTabList" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
+                    <ul class="nav nav-pills flex-wrap sm:flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="categoryTabList" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
                         <li class="nav-item flex-shrink-0" role="presentation">
                             <button class="nav-link active py-2 rounded-2 fw-bold category-tab-btn" data-category="all" type="button" style="font-size: 0.9rem;">
                                 {{ __('messages.all') ?? 'All' }}

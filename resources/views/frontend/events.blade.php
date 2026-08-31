@@ -10,13 +10,13 @@
             <!-- View Toggle -->
             <div class="d-flex justify-content-center mb-5">
                 <ul class="nav nav-pills bg-light p-2.5 rounded-pill shadow-sm border border-light w-100" id="eventsViewTab" role="tablist" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" style="max-width: 960px;">
-                    <li class="nav-item col-6" role="presentation">
+                    <li class="nav-item col-12 col-md-6" role="presentation">
                         <button class="nav-link active w-100 rounded-pill py-3 font-semibold transition-all d-flex align-items-center justify-content-center gap-2" id="slider-tab" data-bs-toggle="pill" data-bs-target="#slider-view" type="button" role="tab" aria-controls="slider-view" aria-selected="true" style="font-size: 1.1rem;">
                             <i class="bi bi-view-list fs-4"></i>
                             <span>{{ __('messages.List') }}</span>
                         </button>
                     </li>
-                    <li class="nav-item col-6" role="presentation">
+                    <li class="nav-item col-12 col-md-6" role="presentation">
                         <button class="nav-link w-100 rounded-pill py-3 font-semibold transition-all d-flex align-items-center justify-content-center gap-2" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="false" style="font-size: 1.1rem;">
                             <i class="bi bi-calendar3 fs-4"></i>
                             <span>{{ __('messages.Calendar') }}</span>

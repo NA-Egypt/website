@@ -702,19 +702,19 @@
               
               <!-- Beautiful Modern Stats Display -->
               <div class="row g-2 justify-content-center text-center mt-2">
-                <div class="col-4">
+                <div class="col-12 col-sm-4">
                   <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
                     <div id="years-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
                     <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.years') }}</div>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-12 col-sm-4">
                   <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
                     <div id="months-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
                     <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.months') }}</div>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-12 col-sm-4">
                   <div class="p-3 rounded-4 bg-light border border-light-subtle shadow-sm" style="transition: transform 0.2s ease;">
                     <div id="days-result" class="fs-2 font-weight-bold text-dark" style="font-family: monospace; font-weight: 800; line-height: 1; color: #32557f !important;">0</div>
                     <div class="text-muted mt-1" style="font-size: 0.8rem; font-weight: 600;">{{ __('messages.days') }}</div>
@@ -787,7 +787,7 @@
             <div class="col-lg-5 text-center">
               <div class="position-relative overflow-hidden rounded-4 shadow-lg group-hover-zoom" style="border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(0,0,0,0.2);">
                 <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون - مسار يجمعنا" class="img-fluid w-100 h-auto rounded-4 transition-transform duration-500 hover-scale"
-                  style="max-height: 380px; object-fit: cover;">
+                  width="400" height="380" loading="lazy" decoding="async" style="max-height: 380px; object-fit: cover;">
               </div>
             </div>
 

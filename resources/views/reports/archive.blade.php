@@ -123,11 +123,11 @@
                 <span id="drawer-file-name" class="fw-semibold text-dark text-break fs-6"></span>
             </div>
             <div class="row g-2 mb-3">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-muted small d-block">{{ __('messages.Type') ?? 'Type' }}</span>
                     <span id="drawer-file-type" class="badge bg-secondary"></span>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-muted small d-block">{{ __('messages.Size') ?? 'Size' }}</span>
                     <span id="drawer-file-size" class="fw-medium text-dark"></span>
                 </div>

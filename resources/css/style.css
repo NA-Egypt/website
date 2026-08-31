@@ -2337,3 +2337,29 @@ h3.text-center,
     margin-left: auto !important;
     margin-right: auto !important;
 }
+
+/* Accessibility Focus Rings & Touch Targets (WCAG 2.1 AA) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible,
+[role="button"]:focus-visible {
+    outline: 3px solid #0d6efd !important;
+    outline-offset: 2px !important;
+}
+
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Rendering Performance Utilities (FCP/LCP boost for offscreen sections) */
+.cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px;
+}

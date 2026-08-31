@@ -25,10 +25,12 @@
   <meta name="keywords" content="{{ $pageKeywords }}">
   <meta name="robots" content="index, follow">
 
+  <!-- Preload primary web font for instantaneous FCP/LCP text rendering -->
+  <link rel="preload" href="{{ asset('fonts/95cecf452d3208890088a5b4c19c7ecf.woff2') }}" as="font" type="font/woff2" crossorigin>
+
   <!-- Preconnect resource hints -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://www.googletagmanager.com">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
   <!-- Canonical & Alternate Language Links -->
   <link rel="canonical" href="{{ $currentUrl }}" />
@@ -59,10 +61,13 @@
 
   <!-- Include common styles -->
   @vite(['resources/js/app.js', 'resources/css/frontend-app.css'])
-   <script async defer src="https://www.google.com/recaptcha/api.js"></script>
+  @if(request()->routeIs('contactus.*', 'frontend.fdsurvey'))
+    <script async defer src="https://www.google.com/recaptcha/api.js"></script>
+  @endif
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}?v={{ filemtime(public_path('assets/css/frontend.css')) }}" />
   <script defer src="{{ asset('assets/js/driver.js.iife.js') }}"></script>
-  <link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}" media="print" onload="this.media='all'"/>
+  <noscript><link rel="stylesheet" href="{{ asset('assets/css/driver.css') }}"/></noscript>
   <!-- Include RTL CSS dynamically -->
   @if(($direction ?? 'rtl') === 'rtl')
       <link rel="stylesheet" href="{{ asset('assets/css/rtl.css') }}" />
@@ -160,9 +165,13 @@
   @livewireStyles
 </head>
   <body class="hanken-grotesk {{ $direction ?? 'rtl' }}">
+    <!-- Skip to main content for accessibility / screen readers -->
+    <a href="#main-content" class="btn btn-primary position-absolute p-2 m-2" style="top: -100px; z-index: 99999; transition: top 0.2s;" onfocus="this.style.top='0px'" onblur="this.style.top='-100px'">
+      {{ app()->getLocale() === 'ar' ? 'الانتقال إلى المحتوى الرئيسي' : 'Skip to main content' }}
+    </a>
     <x-frontend.nav-bar />
       <div class="container-fluid px-3 px-md-5" style="max-width: 1280px; display: block !important; flex-direction: unset !important; margin: 0 auto;">
-        <main class="mt-4 w-100" style="min-height: 100vh;">
+        <main id="main-content" class="mt-4 w-100" style="min-height: 100vh;" tabindex="-1">
           {{$slot}}
         </main>
       </div>

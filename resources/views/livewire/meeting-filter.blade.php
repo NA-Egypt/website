@@ -108,7 +108,7 @@
                                     <div class="d-none d-md-flex align-items-center justify-content-start mb-2 gap-2" style="visibility: hidden; height: 19px;">
                                         <label class="m-0 p-0">&nbsp;</label>
                                     </div>
-                                    <div class="d-flex flex-nowrap bg-light p-1 rounded-4 border align-items-center w-100 gap-1">
+                                    <div class="d-flex flex-wrap sm:flex-nowrap bg-light p-1 rounded-4 border align-items-center w-100 gap-1">
                                         <input type="radio" class="btn-check" name="type" id="type-all" value="" wire:model.live="type" {{ $group ? 'disabled' : '' }}>
                                         <label class="btn btn-sm btn-outline-primary border-0 rounded-pill px-2 py-1 fw-bold text-nowrap flex-fill text-center" for="type-all" style="font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;">
                                             {{ __('messages.all') }}
