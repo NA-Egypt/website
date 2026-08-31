@@ -59,7 +59,7 @@ class GroupsRequest extends FormRequest
             'ar_gsr_name.regex' => __('messages.The Arabic name must contain only Arabic letters.'),
             'ar_gsr_name.min' => __('messages.You must insert 3 characters at least'),
             'ar_gsr_name.required' => __('messages.This field is required'),
-            'en_gsr_name.regex' => __('messages.The Arabic name must contain only Arabic letters.'),
+            'en_gsr_name.regex' => __('messages.The English name must contain only English letters.'),
             'en_gsr_name.min' => __('messages.You must insert 3 characters at least'),
             'en_gsr_name.required' => __('messages.This field is required'),
             'user_id.required' => __('messages.This field is required'),
