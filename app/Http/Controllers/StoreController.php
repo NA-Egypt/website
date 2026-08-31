@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InventoryItem;
 use App\Models\InventoryTransaction;
+use App\Services\InventoryLedgerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\MpdfService;
@@ -342,6 +343,14 @@ class StoreController extends Controller implements HasMiddleware
             'notes' => $fields['notes'] ?? null,
         ]);
 
+        app(InventoryLedgerService::class)->createTransferSlip([
+            [
+                'inventory_item_id' => $item->id,
+                'quantity' => $fields['quantity'],
+                'unit_price' => $item->selling_price,
+            ]
+        ], Auth::id(), $fields['notes'] ?? null);
+
         return redirect()->route('store.index')->with('success', __('messages.transfer_success'));
     }
 
@@ -366,6 +375,14 @@ class StoreController extends Controller implements HasMiddleware
             'quantity' => $fields['quantity'],
             'notes' => $fields['notes'] ?? null,
         ]);
+
+        app(InventoryLedgerService::class)->createReturnSlip([
+            [
+                'inventory_item_id' => $item->id,
+                'quantity' => $fields['quantity'],
+                'unit_price' => $item->selling_price,
+            ]
+        ], Auth::id(), $fields['notes'] ?? null);
 
         return redirect()->route('store.index')->with('success', __('messages.return_success'));
     }
@@ -649,6 +666,7 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $processedCount = 0;
+        $slipItems = [];
         foreach ($fields['quantities'] as $itemId => $qty) {
             if ($qty > 0) {
                 $item = InventoryItem::find($itemId);
@@ -662,6 +680,11 @@ class StoreController extends Controller implements HasMiddleware
                         'quantity' => $qty,
                         'notes' => $fields['notes'] ?? null,
                     ]);
+                    $slipItems[] = [
+                        'inventory_item_id' => $item->id,
+                        'quantity' => $qty,
+                        'unit_price' => $item->selling_price,
+                    ];
                     $processedCount++;
                 }
             }
@@ -669,6 +692,10 @@ class StoreController extends Controller implements HasMiddleware
 
         if ($processedCount === 0) {
             return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
+        }
+
+        if (!empty($slipItems)) {
+            app(InventoryLedgerService::class)->createTransferSlip($slipItems, Auth::id(), $fields['notes'] ?? null);
         }
 
         return redirect()->route('store.index')->with('success', __('messages.bulk_operation_success'));
@@ -693,6 +720,7 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $processedCount = 0;
+        $slipItems = [];
         foreach ($fields['quantities'] as $itemId => $qty) {
             if ($qty > 0) {
                 $item = InventoryItem::find($itemId);
@@ -706,6 +734,11 @@ class StoreController extends Controller implements HasMiddleware
                         'quantity' => $qty,
                         'notes' => $fields['notes'] ?? null,
                     ]);
+                    $slipItems[] = [
+                        'inventory_item_id' => $item->id,
+                        'quantity' => $qty,
+                        'unit_price' => $item->selling_price,
+                    ];
                     $processedCount++;
                 }
             }
@@ -713,6 +746,10 @@ class StoreController extends Controller implements HasMiddleware
 
         if ($processedCount === 0) {
             return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
+        }
+
+        if (!empty($slipItems)) {
+            app(InventoryLedgerService::class)->createReturnSlip($slipItems, Auth::id(), $fields['notes'] ?? null);
         }
 
         return redirect()->route('store.index')->with('success', __('messages.bulk_operation_success'));
@@ -742,6 +779,8 @@ class StoreController extends Controller implements HasMiddleware
 
         $batchNotes = $fields['notes'] ?? null;
         $processedCount = 0;
+        $transferSlipItems = [];
+        $returnSlipItems = [];
 
         \DB::beginTransaction();
         try {
@@ -765,6 +804,11 @@ class StoreController extends Controller implements HasMiddleware
                     }
                     $item->decrement('store_quantity', $qty);
                     $item->increment('lit_quantity', $qty);
+                    $transferSlipItems[] = [
+                        'inventory_item_id' => $item->id,
+                        'quantity' => $qty,
+                        'unit_price' => $item->selling_price,
+                    ];
                 } elseif ($type === 'return_from_lit') {
                     if ($item->lit_quantity < $qty) {
                         \DB::rollBack();
@@ -776,6 +820,11 @@ class StoreController extends Controller implements HasMiddleware
                     }
                     $item->decrement('lit_quantity', $qty);
                     $item->increment('store_quantity', $qty);
+                    $returnSlipItems[] = [
+                        'inventory_item_id' => $item->id,
+                        'quantity' => $qty,
+                        'unit_price' => $item->selling_price,
+                    ];
                 }
 
                 InventoryTransaction::create([
@@ -788,6 +837,14 @@ class StoreController extends Controller implements HasMiddleware
 
                 $processedCount++;
             }
+
+            if (!empty($transferSlipItems)) {
+                app(InventoryLedgerService::class)->createTransferSlip($transferSlipItems, Auth::id(), $batchNotes);
+            }
+            if (!empty($returnSlipItems)) {
+                app(InventoryLedgerService::class)->createReturnSlip($returnSlipItems, Auth::id(), $batchNotes);
+            }
+
             \DB::commit();
         } catch (\Exception $e) {
             \DB::rollBack();

@@ -85,6 +85,17 @@ Route::group(
 
             // Lit Inventory Routes:
             Route::get('/lit', [\App\Http\Controllers\LitController::class, 'index'])->name('lit.index');
+            Route::get('/lit/reconciliation', [\App\Http\Controllers\LitReconciliationController::class, 'index'])->name('lit.reconciliation');
+            Route::post('/lit/reconciliation/return', [\App\Http\Controllers\LitReconciliationController::class, 'processReturn'])->name('lit.reconciliation.return');
+            Route::get('/lit/ledger', [\App\Http\Controllers\LitLedgerController::class, 'index'])->name('lit.ledger');
+            Route::get('/lit/ledger/pdf', [\App\Http\Controllers\LitLedgerController::class, 'exportPdf'])->name('lit.ledger.pdf');
+            Route::get('/lit/ledger/csv', [\App\Http\Controllers\LitLedgerController::class, 'exportCsv'])->name('lit.ledger.csv');
+
+            // Inventory Slips Routes:
+            Route::get('/slips', [\App\Http\Controllers\InventorySlipController::class, 'index'])->name('slips.index');
+            Route::get('/slips/{slip}', [\App\Http\Controllers\InventorySlipController::class, 'show'])->name('slips.show');
+            Route::post('/slips/{slip}/acknowledge', [\App\Http\Controllers\InventorySlipController::class, 'acknowledgeReceipt'])->name('slips.acknowledge');
+            Route::get('/slips/{slip}/pdf', [\App\Http\Controllers\InventorySlipController::class, 'exportPdf'])->name('slips.pdf');
 
             // Literature Request Routes:
             Route::get('/literature-requests/cart', [\App\Http\Controllers\LiteratureRequestController::class, 'cart'])->name('literature-requests.cart');

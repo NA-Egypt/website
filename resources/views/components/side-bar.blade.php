@@ -413,6 +413,36 @@
       </li>
       @endif
 
+      {{-- Lit Reconciliation & Return --}}
+      @if(auth()->check() && (auth()->user()->can('view lit inventory') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('super admin')))
+      <li>
+        <a href="{{ route('lit.reconciliation') }}" title="{{ __('messages.reconciliation_and_return') }}">
+          <div class="parent-icon"><i class="bi bi-arrow-left-right"></i></div>
+          <div class="menu-title">{{ __('messages.reconciliation_and_return') }}</div>
+        </a>
+      </li>
+      @endif
+
+      {{-- Inventory Slips (Transfer & Return) --}}
+      @if(auth()->check() && (auth()->user()->can('manage store') || auth()->user()->can('view lit inventory') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User')))
+      <li>
+        <a href="{{ route('slips.index') }}" title="{{ __('messages.inventory_slips') }}">
+          <div class="parent-icon"><i class="bi bi-receipt"></i></div>
+          <div class="menu-title">{{ __('messages.inventory_slips') }}</div>
+        </a>
+      </li>
+      @endif
+
+      {{-- Monthly Inventory & Sales Ledger --}}
+      @if(auth()->check() && (auth()->user()->can('view lit inventory') || auth()->user()->can('manage store') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Committees')))
+      <li>
+        <a href="{{ route('lit.ledger') }}" title="{{ __('messages.monthly_ledger') }}">
+          <div class="parent-icon"><i class="bi bi-journal-text"></i></div>
+          <div class="menu-title">{{ __('messages.monthly_ledger') }}</div>
+        </a>
+      </li>
+      @endif
+
       {{-- Literature Requests Area --}}
       @if(auth()->check())
       @if(auth()->user()->hasRole('gsr'))
