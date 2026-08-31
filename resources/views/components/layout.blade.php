@@ -42,6 +42,16 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     font-family: 'Cairo', sans-serif !important;
   }
 
+  /* Headings & Descender Protection */
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+      line-height: 1.55;
+      overflow: visible;
+      padding-bottom: 2px;
+  }
+  h1, .h1 { line-height: 1.45; padding-bottom: 4px; }
+  h2, .h2 { line-height: 1.5; padding-bottom: 4px; }
+
   .text-gradient {
       background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
       -webkit-background-clip: text !important;
@@ -49,20 +59,50 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
       background-clip: text !important;
       color: transparent !important;
       display: inline-block;
+      line-height: 1.55 !important;
+      padding-top: 2px !important;
+      padding-bottom: 6px !important;
+      overflow: visible;
   }
 
   /* Contrast fallback for dark/colored backgrounds */
   .bg-dark .text-gradient,
   .bg-primary .text-gradient,
+  .bg-success .text-gradient,
+  .bg-danger .text-gradient,
+  .bg-info .text-gradient,
   .card-header .text-gradient,
+  .card-header.bg-primary h1, .card-header.bg-primary h2, .card-header.bg-primary h3,
+  .card-header.bg-primary h4, .card-header.bg-primary h5, .card-header.bg-primary h6,
+  .card-header.bg-dark h1, .card-header.bg-dark h2, .card-header.bg-dark h3,
   .bg-gradient .text-gradient,
   .text-contrast .text-gradient,
+  .text-contrast h1, .text-contrast h2, .text-contrast h3,
+  .modal-header.bg-primary h1, .modal-header.bg-primary h2, .modal-header.bg-primary h3,
+  .modal-header.bg-primary h4, .modal-header.bg-primary h5, .modal-header.bg-primary h6,
   .text-contrast {
       background: none !important;
       -webkit-background-clip: unset !important;
       -webkit-text-fill-color: initial !important;
       background-clip: unset !important;
       color: #ffffff !important;
+  }
+
+  /* Enforce Centering for Page Titles and Headings Globally */
+  .text-center,
+  [dir="rtl"] .text-center,
+  [dir="ltr"] .text-center,
+  .page-title,
+  .hero-title,
+  .section-head,
+  h1.text-center,
+  h2.text-center,
+  h3.text-center,
+  .text-gradient.text-center,
+  .text-gradient.mx-auto {
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
   }
   
   /* Force Neo-Glassmorphism Light Theme globally */

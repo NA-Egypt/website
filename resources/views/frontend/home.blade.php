@@ -238,24 +238,24 @@
     }
 
     .gradient-text {
-      background: -webkit-linear-gradient(#eee, #000487);
+      background: linear-gradient(135deg, #1e3a8a 0%, #00BAF0 100%);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      line-height: 1.55;
+      overflow: visible;
     }
 
     /* Ensure icon inherits the gradient if possible, or force it */
     .gradient-icon {
-      background: -webkit-linear-gradient(#eee, #000487);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #00BAF0;
       display: inline-block;
-      /* Required for transform/gradient sometimes */
     }
 
     .card-title {
-      line-height: normal !important;
+      line-height: 1.55 !important;
+      overflow: visible;
+      padding-bottom: 2px;
     }
 
     @media (max-width: 991px) {
@@ -793,7 +793,7 @@
 
             <!-- Right Content Column -->
             <div class="col-lg-7 text-end" dir="rtl">
-              <h3 class="fw-extrabold mb-1" style="color: #ffffff; font-size: 1.35rem; line-height: 1.4;">
+              <h3 class="fw-extrabold mb-1" style="color: #ffffff; font-size: 1.35rem; line-height: 1.55; overflow: visible; padding-bottom: 2px;">
                 المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين
               </h3>
               <div class="mb-3">

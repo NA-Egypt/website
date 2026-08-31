@@ -2269,3 +2269,70 @@ body[dir="rtl"] {
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
+
+/* Global Heading Typography, Descender Safety & Background Contrast */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    line-height: 1.55;
+    overflow: visible;
+    padding-bottom: 2px;
+}
+
+h1, .h1 {
+    line-height: 1.45;
+    padding-bottom: 4px;
+}
+
+h2, .h2 {
+    line-height: 1.5;
+    padding-bottom: 4px;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #1e3a8a 0%, #00BAF0 100%);
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    display: inline-block;
+    line-height: 1.55 !important;
+    padding-top: 2px !important;
+    padding-bottom: 6px !important;
+    overflow: visible;
+}
+
+/* Background-Aware Contrast & Solid White Fallbacks */
+.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
+.bg-dark .text-gradient,
+.bg-primary h1, .bg-primary h2, .bg-primary h3, .bg-primary h4, .bg-primary h5, .bg-primary h6,
+.bg-primary .text-gradient,
+.card-header.bg-primary h1, .card-header.bg-primary h2, .card-header.bg-primary h3,
+.card-header.bg-dark h1, .card-header.bg-dark h2, .card-header.bg-dark h3,
+.card-header .text-gradient,
+.bg-gradient .text-gradient,
+.text-contrast .text-gradient,
+.text-contrast h1, .text-contrast h2, .text-contrast h3,
+.hero-dark h1, .hero-dark h2, .hero-dark h3,
+.text-contrast {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: initial !important;
+    color: #ffffff !important;
+}
+
+/* Enforce Centering for Page Titles and Headings Globally */
+.text-center,
+[dir="rtl"] .text-center,
+[dir="ltr"] .text-center,
+.page-title,
+.hero-title,
+.section-head,
+h1.text-center,
+h2.text-center,
+h3.text-center,
+.text-gradient.text-center,
+.text-gradient.mx-auto {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}

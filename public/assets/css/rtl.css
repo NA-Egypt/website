@@ -222,3 +222,43 @@
   [dir="rtl"] .admin-link:hover {
     color: #000487; /* Optional: Change to a lighter color when hovering */
   }
+
+  /* RTL Heading Typography & Descender Safety */
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, 
+  [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+  [dir="rtl"] .h1, [dir="rtl"] .h2, [dir="rtl"] .h3, 
+  [dir="rtl"] .h4, [dir="rtl"] .h5, [dir="rtl"] .h6,
+  [dir="rtl"] .title-safe {
+    line-height: 1.6;
+    padding-bottom: 3px;
+    overflow: visible;
+    text-rendering: optimizeLegibility;
+  }
+
+  [dir="rtl"] h1, [dir="rtl"] .h1 {
+    line-height: 1.5;
+    padding-bottom: 5px;
+  }
+
+  [dir="rtl"] .text-gradient {
+    line-height: 1.6 !important;
+    padding-bottom: 6px !important;
+    padding-top: 2px !important;
+  }
+
+  /* Enforce Centering for Page Titles and Headings in RTL */
+  [dir="rtl"] .text-center,
+  [dir="rtl"] .section-head,
+  [dir="rtl"] .page-title,
+  [dir="rtl"] .hero-title,
+  [dir="rtl"] h1.text-center,
+  [dir="rtl"] h2.text-center,
+  [dir="rtl"] h3.text-center,
+  [dir="rtl"] .text-gradient.text-center,
+  [dir="rtl"] .text-gradient.mx-auto {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+

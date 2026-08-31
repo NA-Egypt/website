@@ -587,6 +587,8 @@
             position: relative;
             z-index: 2;
             max-width: 960px;
+            text-align: center !important;
+            margin: 0 auto;
         }
 
         /* Hero Badge */
@@ -619,7 +621,10 @@
             font-size: clamp(1.8rem, 4vw, 2.8rem);
             font-weight: 800;
             margin-bottom: 20px;
-            line-height: 1.45;
+            line-height: 1.55;
+            padding-bottom: 6px;
+            overflow: visible;
+            text-align: center !important;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, #ffffff 30%, #bfdbfe 100%);
             -webkit-background-clip: text;

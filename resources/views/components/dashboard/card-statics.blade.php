@@ -10,7 +10,7 @@
       <div class="d-flex align-items-center justify-content-between">
           <div>
               <p class="mb-1 small fw-bold text-uppercase opacity-75" style="color: var(--text-secondary); letter-spacing: 0.5px;">{{ $name }}</p>
-              <h3 class="my-0 fw-bolder tracking-tight" style="color: var(--text-primary); font-size: 2.1rem; line-height: 1.1;">{{ $qty }}</h3>
+              <h3 class="my-0 fw-bolder tracking-tight" style="color: var(--text-primary); font-size: 2.1rem; line-height: 1.25;">{{ $qty }}</h3>
               @if($description)
                   <p class="mb-0 mt-2 small text-muted" style="font-size: 0.825rem;">{{ $description }}</p>
               @endif
