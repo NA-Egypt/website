@@ -33,3 +33,10 @@ composer.lock
 package-lock.json
 package.json
 .agents/reports/
+public/vendor/livewire/livewire.esm.js
+public/vendor/livewire/livewire.esm.js
+public/vendor/livewire/livewire.esm.js.map
+public/vendor/livewire/livewire.js
+public/vendor/livewire/livewire.min.js
+public/vendor/livewire/livewire.min.js.map
+public/vendor/livewire/manifest.json
