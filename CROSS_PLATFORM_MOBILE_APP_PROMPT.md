@@ -100,7 +100,7 @@ Task: Overhaul, redesign, and connect the Cross-Platform Mobile Application (iOS
   - `neighborhood_name_ar` / `neighborhood_name_en`
   - `formatted_start_time` / `formatted_end_time` / `duration`
   - `type` (Open/Closed), `lang` (Arabic/English), `status` (available/suspended)
-  - `address_ar` / `address_en` / `location_url`
+  - `address_ar` / `address_en` / `location_url` / `meeting_url`
   - `topics` (Array of topic tags) & `options` (Array of feature tags like Wheelchair accessible)
 - Render skeleton shimmer loaders while initial sync is in progress and support pull-to-refresh.
 
