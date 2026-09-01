@@ -193,7 +193,7 @@ class ServiceBodyAgendaController extends Controller
             'is_exceptional' => $request->boolean('is_exceptional'),
         ]);
 
-        return new ServiceBodyAgendaResource($agenda);
+        return (new ServiceBodyAgendaResource($agenda))->response()->setStatusCode(201);
     }
 
     /**

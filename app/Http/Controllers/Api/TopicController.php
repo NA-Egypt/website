@@ -23,7 +23,7 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $item = Topic::create($request->all());
-        return new TopicResource($item);
+        return (new TopicResource($item))->response()->setStatusCode(201);
     }
 
     /**

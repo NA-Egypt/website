@@ -23,7 +23,7 @@ class OptionController extends Controller
     public function store(Request $request)
     {
         $item = Option::create($request->all());
-        return new OptionResource($item);
+        return (new OptionResource($item))->response()->setStatusCode(201);
     }
 
     /**

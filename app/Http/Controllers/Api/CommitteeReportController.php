@@ -23,7 +23,7 @@ class CommitteeReportController extends Controller
     public function store(Request $request)
     {
         $item = CommitteeReport::create($request->all());
-        return new CommitteeReportResource($item);
+        return (new CommitteeReportResource($item))->response()->setStatusCode(201);
     }
 
     /**

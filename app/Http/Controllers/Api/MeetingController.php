@@ -45,13 +45,16 @@ class MeetingController extends Controller
             'options.*'     => 'exists:options,id',
         ]);
 
+        $options = $fields['options'] ?? null;
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
+        unset($fields['options'], $fields['topics']);
+
         $fields['topic_id'] = $topics[0];
 
         $item = Meeting::create($fields);
 
-        if (!empty($fields['options'])) {
-            $item->options()->sync($fields['options']);
+        if (!empty($options)) {
+            $item->options()->sync($options);
         }
 
         $item->topics()->sync($topics);
@@ -93,10 +96,13 @@ class MeetingController extends Controller
             $meeting->topics()->sync($topics);
         }
 
+        $options = $fields['options'] ?? null;
+        unset($fields['options'], $fields['topics']);
+
         $meeting->update($fields);
 
         if ($request->has('options')) {
-            $meeting->options()->sync($fields['options'] ?? []);
+            $meeting->options()->sync($options ?? []);
         }
 
         return new MeetingResource($meeting->load(['group', 'day', 'topics', 'options']));

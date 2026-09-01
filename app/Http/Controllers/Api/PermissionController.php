@@ -23,7 +23,7 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $item = Permission::create($request->all());
-        return new PermissionResource($item);
+        return (new PermissionResource($item))->response()->setStatusCode(201);
     }
 
     /**

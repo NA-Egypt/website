@@ -26,10 +26,23 @@ class CityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'latitude' => 'nullable|numeric',
+            'ar_name'   => 'sometimes|required|string|max:255',
+            'en_name'   => 'sometimes|required|string|max:255',
+            'name'      => 'sometimes|required|string|max:255',
+            'latitude'  => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
+
+        if (isset($validated['name'])) {
+            $validated['ar_name'] = $validated['ar_name'] ?? $validated['name'];
+            $validated['en_name'] = $validated['en_name'] ?? $validated['name'];
+            unset($validated['name']);
+        }
+
+        if (empty($validated['ar_name'])) {
+            $request->validate(['ar_name' => 'required|string|max:255']);
+        }
+
         $item = City::create($validated);
         \Illuminate\Support\Facades\Cache::forget('api_cities_all');
         return (new CityResource($item))->response()->setStatusCode(201);
@@ -49,10 +62,19 @@ class CityController extends Controller
     public function update(Request $request, City $city)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'latitude' => 'nullable|numeric',
+            'ar_name'   => 'sometimes|required|string|max:255',
+            'en_name'   => 'sometimes|required|string|max:255',
+            'name'      => 'sometimes|required|string|max:255',
+            'latitude'  => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
+
+        if (isset($validated['name'])) {
+            $validated['ar_name'] = $validated['ar_name'] ?? $validated['name'];
+            $validated['en_name'] = $validated['en_name'] ?? $validated['name'];
+            unset($validated['name']);
+        }
+
         $city->update($validated);
         \Illuminate\Support\Facades\Cache::forget('api_cities_all');
         return new CityResource($city);

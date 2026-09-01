@@ -17,18 +17,19 @@ class TransactionController extends Controller
         return TransactionResource::collection(Transaction::paginate());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'group_id' => 'required|exists:groups,id',
-            'amount' => 'required|numeric',
-            'type' => 'required|string|max:50',
-            'description' => 'nullable|string',
-            'transaction_date' => 'required|date',
+            'model' => 'required|string|max:255',
+            'operation' => 'required|string|max:50',
+            'details' => 'required|array',
+            'old_values' => 'nullable|array',
+            'new_values' => 'nullable|array',
         ]);
+
+        $validated['user_id'] = $validated['user_id'] ?? auth()->id();
+        $validated['ip_address'] = $request->ip();
+        $validated['user_agent'] = $request->userAgent();
 
         $item = Transaction::create($validated);
         return (new TransactionResource($item))->response()->setStatusCode(201);

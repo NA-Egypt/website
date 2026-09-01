@@ -20,7 +20,6 @@ class Meeting extends Model
         'end_time',
         'notes',
         'type',
-        'options',
         'lang',
         'status',
         'recurrence'

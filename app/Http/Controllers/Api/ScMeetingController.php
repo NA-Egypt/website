@@ -23,7 +23,7 @@ class ScMeetingController extends Controller
     public function store(Request $request)
     {
         $item = ScMeeting::create($request->all());
-        return new ScMeetingResource($item);
+        return (new ScMeetingResource($item))->response()->setStatusCode(201);
     }
 
     /**

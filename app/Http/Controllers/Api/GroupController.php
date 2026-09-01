@@ -24,8 +24,10 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Group::create($request->all());
-        return new GroupResource($item);
+        $fields = $request->all();
+        $fields['user_id'] = $fields['user_id'] ?? auth()->id();
+        $item = Group::create($fields);
+        return (new GroupResource($item))->response()->setStatusCode(201);
     }
 
     /**

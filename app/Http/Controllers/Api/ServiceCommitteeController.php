@@ -37,7 +37,7 @@ class ServiceCommitteeController extends Controller
         }
 
         $item = ServiceCommittee::create($fields);
-        return new ServiceCommitteeResource($item);
+        return (new ServiceCommitteeResource($item))->response()->setStatusCode(201);
     }
 
     /**

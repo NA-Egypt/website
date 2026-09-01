@@ -23,7 +23,7 @@ class DayController extends Controller
     public function store(Request $request)
     {
         $item = Day::create($request->all());
-        return new DayResource($item);
+        return (new DayResource($item))->response()->setStatusCode(201);
     }
 
     /**

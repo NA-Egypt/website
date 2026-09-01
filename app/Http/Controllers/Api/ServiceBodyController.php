@@ -23,7 +23,7 @@ class ServiceBodyController extends Controller
     public function store(Request $request)
     {
         $item = ServiceBody::create($request->all());
-        return new ServiceBodyResource($item);
+        return (new ServiceBodyResource($item))->response()->setStatusCode(201);
     }
 
     /**

@@ -23,7 +23,7 @@ class NewsletterMemberController extends Controller
     public function store(Request $request)
     {
         $item = NewsletterMember::create($request->all());
-        return new NewsletterMemberResource($item);
+        return (new NewsletterMemberResource($item))->response()->setStatusCode(201);
     }
 
     /**

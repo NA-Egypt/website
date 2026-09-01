@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 
@@ -23,7 +23,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $item = Role::create($request->all());
-        return new RoleResource($item);
+        return (new RoleResource($item))->response()->setStatusCode(201);
     }
 
     /**
