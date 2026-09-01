@@ -18,6 +18,15 @@ class MeetingResource extends JsonResource
         $directOnlineGroup = $this->directOnlineGroup;
         $groupOrDirect = $group ?: $directOnlineGroup;
 
+        $resolvedUrl = $this->location_url
+            ?? $this->meeting_url
+            ?? $group?->location
+            ?? $directOnlineGroup?->location
+            ?? $directOnlineGroup?->meeting_url
+            ?? $directOnlineGroup?->zoom_url
+            ?? $directOnlineGroup?->url
+            ?? $directOnlineGroup?->link;
+
         return [
             'id'                     => $this->id,
             'day_id'                 => $this->day_id,
@@ -40,8 +49,8 @@ class MeetingResource extends JsonResource
             'group_type'             => $group?->group_type ?? ($directOnlineGroup ? 'online' : 'in_person'),
             'address_ar'             => $group?->ar_address,
             'address_en'             => $group?->en_address,
-            'location_url'           => $group?->location,
-            'meeting_url'            => $directOnlineGroup?->meeting_url,
+            'location_url'           => $resolvedUrl,
+            'meeting_url'            => $resolvedUrl,
 
             // Geographical metadata
             'neighborhood_id'        => $group?->neighborhood_id,
