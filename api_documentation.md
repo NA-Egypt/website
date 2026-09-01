@@ -1,27 +1,27 @@
 # NA-Egypt API Documentation (v1)
 
-This document provides the complete, authoritative API reference for all backend endpoints available under `/api/v1/` on the NA-Egypt platform.
+This document provides the complete, authoritative REST API reference for all backend endpoints available under `/api/v1/` on the NA-Egypt platform (`naegypt.org` / `egyptna.org`).
 
 ---
 
-## 1. Overview & Base URL
+## 1. Overview & Architecture Conventions
 
-- **Base URL:** `/api/v1` (e.g. `https://naegypt.org/api/v1` or `https://egyptna.org/api/v1`)
-- **Headers:**
+- **Base URL:** `https://naegypt.org/api/v1` (or local `/api/v1`)
+- **Default Headers:**
   - `Accept: application/json`
   - `Content-Type: application/json`
 - **Authentication:** Bearer token via Laravel Sanctum (`Authorization: Bearer <token>`)
-- **API Versioning:** All endpoints are versioned under the `/api/v1/` prefix.
+- **API Versioning:** All endpoints are strictly versioned under the `/api/v1/` prefix in `routes/api.php`.
 - **Response Format:** Standard REST JSON envelopes (`{ "data": ... }` for resources/collections).
 - **HTTP Status Codes:**
-  - `200 OK`: Successful retrieval / update
-  - `201 Created`: Resource successfully created
-  - `204 No Content`: Resource successfully deleted
-  - `400 Bad Request`: Malformed payload or missing required OAuth attributes
-  - `401 Unauthorized`: Missing or invalid authentication token
-  - `403 Forbidden`: Insufficient permissions or role restrictions
-  - `404 Not Found`: Requested resource not found
-  - `422 Unprocessable Content`: Validation failure with field errors
+  - `200 OK`: Successful retrieval (`index()`, `show()`) or update (`update()`).
+  - `201 Created`: Resource successfully created across all `store()` endpoints.
+  - `204 No Content`: Resource successfully deleted (`destroy()`).
+  - `400 Bad Request`: Malformed payload or missing required OAuth attributes.
+  - `401 Unauthorized`: Missing or invalid Bearer authentication token.
+  - `403 Forbidden`: Insufficient permissions or role restrictions.
+  - `404 Not Found`: Requested resource not found.
+  - `422 Unprocessable Content`: Validation failure with field errors dictionary.
 
 ---
 
@@ -112,7 +112,7 @@ Returns all aggregated data required for rendering the homepage in a single roun
         "page_date": "1 سبتمبر",
         "title": "الامتنان اليومي",
         "quote": "أنا ممتن جداً لتَوَصُلي للإيمان.",
-        "quote_source": "منشور رقم 21 - المنعزل",
+        "quote_source": "النص الأساسي - ص.42",
         "content": [
           "إن الإيمان بقوة عظمى يمكن أن يُحدِث كل الفرق عندما تسوء الأمور!...",
           "فالخطوات الاثنتا عشرة تقودنا بروية نحو صحوة روحانية..."
@@ -230,8 +230,8 @@ All resources in this section support public read operations (`GET`), while writ
 
 Provides meeting search and schedule listings with enriched geographical metadata, formatted timing, and prioritized location/meeting URL resolution.
 
-#### Prioritized URL Resolution Logic
-Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved following a prioritized fallback hierarchy:
+#### Prioritized URL Resolution Hierarchy
+Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved following a prioritized fallback chain:
 1. `$meeting->location_url`
 2. `$meeting->meeting_url`
 3. `$group->location`
@@ -340,11 +340,11 @@ Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved f
 #### `GET /api/v1/groups`
 - **Access:** Public
 - **Query Parameters:** `page` (integer), `per_page` (integer, default 15, max 100)
-- **Response (200 OK):** Paginated list of groups.
+- **Response (200 OK):** Paginated collection of groups with relations (`serviceBody`, `neighborhood`, `user`).
 
 #### `GET /api/v1/groups/{id}`
 - **Access:** Public
-- **Response (200 OK):** Details of the group with loaded relationships (`serviceBody`, `neighborhood`, `user`).
+- **Response (200 OK):** Details of the group with loaded relationships.
 
 #### `POST /api/v1/groups` *(Auth Required)*
 - **Body Schema:**
@@ -412,20 +412,7 @@ Rich calendar events supporting date-range recurrence expansion, color coding, a
 - **Response (200 OK):** Single `CalendarEventResource`.
 
 #### `POST /api/v1/calendar-events` *(Auth Required)*
-- **Body Schema:**
-  ```json
-  {
-    "title": "Regional Committee Meeting",
-    "start": "2026-09-01 10:00:00",
-    "end": "2026-09-01 14:00:00",
-    "description": "Monthly meeting notes",
-    "color": "#00698f",
-    "organizer": "Cairo Area",
-    "location": "Community Hall, Cairo",
-    "recurrence": ["monthly", "1st"],
-    "is_featured": true
-  }
-  ```
+- **Body Schema:** `title` (required), `start` (required|date), `end` (required|date|after_or_equal:start), `description`, `color`, `organizer`, `location`, `recurrence` (array), `is_featured` (boolean).
 - **Response (201 Created):** Single `CalendarEventResource`.
 
 #### `PUT /api/v1/calendar-events/{id}` *(Auth Required)*
@@ -443,7 +430,7 @@ Announcements linked to specific service bodies and days of the week.
 - `GET /api/v1/events` *(Public)* -> Paginated or complete list of announcements.
 - `GET /api/v1/events/{id}` *(Public)* -> Single announcement with relations.
 - `POST /api/v1/events` *(Auth Required)* -> Returns `201 Created`.
-  - **Body Schema:** `name` (required|string), `description` (required|string), `date` (required|date), `service_body_id` (required|exists:service_bodies,id), `day_id` (required|exists:days,id)
+  - **Body Schema:** `name` (required|string), `description` (required|string), `date` (required|date), `service_body_id` (required|exists:service_bodies,id), `day_id` (required|exists:days,id).
 - `PUT /api/v1/events/{id}` *(Auth Required)* -> Returns `200 OK`.
 - `DELETE /api/v1/events/{id}` *(Auth Required)* -> Returns `204 No Content`.
 
@@ -456,7 +443,7 @@ Group monthly business meeting and service agenda submissions.
 - `GET /api/v1/agendas` *(Public read)*
 - `GET /api/v1/agendas/{id}` *(Public read)*
 - `POST /api/v1/agendas` *(Auth Required)* -> Returns `201 Created`
-  - **Body Schema:** `group_id` (required|exists:groups,id), `agenda_date` (required|date), `service_position`, `submitter_name`, `meetings_per_week`, `new_comers`, `open_positions`, `next_business_meeting`, `recovery_atmosphere`, `trusted_servants`, `financial_issues`, `other_topics` (array).
+  - **Body Schema:** `group_id` (required|exists:groups,id), `agenda_date` (required|date), `service_position`, `submitter_name`, `meetings_per_week`, `new_comers`, `open_positions`, `next_business_meeting`, `recovery_atmosphere`, `trusted_servants`, `financial_issues`, `other_topics` (array of `{title, content}`).
 - `PUT /api/v1/agendas/{id}` *(Auth Required)* -> Returns `200 OK`.
 - `DELETE /api/v1/agendas/{id}` *(Auth Required)* -> Returns `204 No Content`.
 
@@ -472,9 +459,9 @@ Area and regional monthly agenda reports with voting topics.
 
 - `GET /api/v1/service-body-agendas` *(Public sees released agendas; Auth sees authorized scopes)*
 - `GET /api/v1/service-body-agendas/{id}`
-- `POST /api/v1/service-body-agendas` *(Auth Required)*
-- `PUT /api/v1/service-body-agendas/{id}` *(Auth Required)*
-- `DELETE /api/v1/service-body-agendas/{id}` *(Auth Required)*
+- `POST /api/v1/service-body-agendas` *(Auth Required)* -> Returns `201 Created`
+- `PUT /api/v1/service-body-agendas/{id}` *(Auth Required)* -> Returns `200 OK`
+- `DELETE /api/v1/service-body-agendas/{id}` *(Auth Required)* -> Returns `204 No Content`
 
 ---
 
@@ -482,16 +469,16 @@ Area and regional monthly agenda reports with voting topics.
 
 All lookup endpoints support public `GET` and require `auth:sanctum` for `POST`, `PUT`, `DELETE`:
 
-| Resource Endpoint | GET (Public) | POST/PUT/DELETE (Auth) | Description |
+| Resource Endpoint | GET (Public) | POST/PUT/DELETE (Auth) | Description & Key Fields |
 | :--- | :--- | :--- | :--- |
-| `/api/v1/cities` | List / Detail | Full CRUD | Cities / Governorates (`ar_name`, `en_name`) |
-| `/api/v1/neighborhoods` | List / Detail | Full CRUD | Neighborhoods linked to cities |
-| `/api/v1/days` | List / Detail | Full CRUD | Weekdays lookup (Saturday through Friday) |
-| `/api/v1/topics` | List / Detail | Full CRUD | Meeting topics (Step, Tradition, Concept, etc.) |
-| `/api/v1/options` | List / Detail | Full CRUD | Meeting options/formats (Open, Closed, Men, Women) |
-| `/api/v1/sc-meetings` | List / Detail | Full CRUD | Service Committee schedule meetings |
-| `/api/v1/service-bodies` | List / Detail | Full CRUD | Areas / Service bodies (e.g. Cairo ASC, Alexandria ASC) |
-| `/api/v1/service-committees` | List / Detail | Full CRUD | Subcommittees (PI, H&I, Literature, Web) |
+| `/api/v1/cities` | List / Detail | Full CRUD (`201 Created`) | Cities directory (`ar_name`, `en_name`, `latitude`, `longitude`) |
+| `/api/v1/neighborhoods` | List / Detail | Full CRUD (`201 Created`) | Neighborhoods (`ar_name`, `en_name`, `city_id`, `latitude`, `longitude`) |
+| `/api/v1/days` | List / Detail | Full CRUD (`201 Created`) | Weekdays lookup (`ar_name`, `en_name`) |
+| `/api/v1/topics` | List / Detail | Full CRUD (`201 Created`) | Meeting topics (`ar_name`, `en_name`) |
+| `/api/v1/options` | List / Detail | Full CRUD (`201 Created`) | Meeting options (`ar_name`, `en_name`) |
+| `/api/v1/sc-meetings` | List / Detail | Full CRUD (`201 Created`) | Service Committee meetings (`service_committee_id`, `week_number`, `day_id`, `time`, `notes`) |
+| `/api/v1/service-bodies` | List / Detail | Full CRUD (`201 Created`) | Areas / Service bodies (`ar_name`, `en_name`, `day_id`, `start_time`, `end_time`, `location`) |
+| `/api/v1/service-committees` | List / Detail | Full CRUD (`201 Created`) | Subcommittees (`ar_name`, `en_name`, `ar_address`, `en_address`, `location`) |
 
 ---
 
@@ -500,64 +487,175 @@ All lookup endpoints support public `GET` and require `auth:sanctum` for `POST`,
 These resources require `auth:sanctum` authentication for **all** HTTP methods (`index`, `show`, `store`, `update`, `destroy`):
 
 ### 5.1 Committee Reports (`/api/v1/committee-reports`)
-Periodic PDF / text reports uploaded by subcommittees.
+Periodic sub-committee reports uploaded and reviewed by servants.
 - `GET /api/v1/committee-reports`
-- `POST /api/v1/committee-reports`
+- `POST /api/v1/committee-reports` -> Returns `201 Created`
+  - **Body Schema:** `service_committee_id` (required), `meeting_date` (required|date), `report_date` (required|date), `body` (nullable|string), `status` (`draft|submitted|approved`), `positions_status` (nullable|json).
 - `GET /api/v1/committee-reports/{id}`
-- `PUT /api/v1/committee-reports/{id}`
-- `DELETE /api/v1/committee-reports/{id}`
+- `PUT /api/v1/committee-reports/{id}` -> Returns `200 OK`
+- `DELETE /api/v1/committee-reports/{id}` -> Returns `204 No Content`
 
 ---
 
 ### 5.2 Contact Requests (`/api/v1/contact-requests` and `/api/v1/contact-us`)
 Submissions from contact forms and member support inquiries.
-- `GET /api/v1/contact-requests`
-- `POST /api/v1/contact-requests`
-- `GET /api/v1/contact-requests/{id}`
-- `PUT /api/v1/contact-requests/{id}`
-- `DELETE /api/v1/contact-requests/{id}`
+- `GET /api/v1/contact-requests` / `GET /api/v1/contact-us`
+- `POST /api/v1/contact-us` -> Returns `201 Created`
+  - **Body Schema:** `name` (required|string), `email` (required|email), `phone` (nullable), `subject` (nullable), `message` (required|string).
+- `GET /api/v1/contact-us/{id}`
+- `PUT /api/v1/contact-us/{id}` -> Returns `200 OK`
+- `DELETE /api/v1/contact-us/{id}` -> Returns `204 No Content`
 
 ---
 
 ### 5.3 Newsletter Members (`/api/v1/newsletter-members`)
 Newsletter subscriber management.
 - `GET /api/v1/newsletter-members`
-- `POST /api/v1/newsletter-members`
+- `POST /api/v1/newsletter-members` -> Returns `201 Created`
+  - **Body Schema:** `email` (required|email), `subscribe` (optional|boolean, default true).
 - `GET /api/v1/newsletter-members/{id}`
-- `PUT /api/v1/newsletter-members/{id}`
-- `DELETE /api/v1/newsletter-members/{id}`
+- `PUT /api/v1/newsletter-members/{id}` -> Returns `200 OK`
+- `DELETE /api/v1/newsletter-members/{id}` -> Returns `204 No Content`
 
 ---
 
-### 5.4 Financial Transactions (`/api/v1/transactions`)
-7th tradition contributions, area funds, and expense ledger entries.
-- `GET /api/v1/transactions`
-- `POST /api/v1/transactions`
+### 5.4 Financial & Audit Transactions (`/api/v1/transactions`)
+Audit ledger recording system actions, model changes, and user operations.
+- `GET /api/v1/transactions` -> Paginated ledger entries.
+- `POST /api/v1/transactions` -> Returns `201 Created`
+  - **Body Schema:**
+    ```json
+    {
+      "model": "Group",
+      "operation": "create",
+      "details": { "name": "New Group", "city": "Cairo" },
+      "old_values": null,
+      "new_values": { "id": 1, "name": "New Group" }
+    }
+    ```
 - `GET /api/v1/transactions/{id}`
-- `PUT /api/v1/transactions/{id}`
-- `DELETE /api/v1/transactions/{id}`
+- `PUT /api/v1/transactions/{id}` -> Returns `200 OK`
+- `DELETE /api/v1/transactions/{id}` -> Returns `204 No Content`
 
 ---
 
 ### 5.5 User, Role & Permission Management
 Administrative user management and Spatie RBAC integration.
 - `GET /api/v1/users`
-- `POST /api/v1/users`
+- `POST /api/v1/users` -> Returns `201 Created`
+  - **Body Schema:** `name` (required), `email` (required|email|unique), `password` (nullable|min:8), `service_body_id` (nullable|exists).
 - `GET /api/v1/users/{id}`
-- `PUT /api/v1/users/{id}`
-- `DELETE /api/v1/users/{id}`
-- `GET /api/v1/roles`
-- `GET /api/v1/permissions`
+- `PUT /api/v1/users/{id}` -> Returns `200 OK`
+- `DELETE /api/v1/users/{id}` -> Returns `204 No Content`
+- `GET /api/v1/roles` -> List of Spatie roles (`super admin`, `rsc`, `ServiceBody`).
+- `GET /api/v1/permissions` -> List of Spatie permissions.
 
 ---
 
-## 6. Query Parameters & Global Conventions
+## 6. Universal Client Integration Snippets
 
-- **Pagination:** Standard Laravel pagination parameters `?page=1&per_page=15` (max `per_page=100`).
-- **Filtering:** Model query scopes and parameters as described per endpoint.
-- **Sorting:** `?sort_by=created_at&sort_order=desc`.
-- **Eager Loading:** All listing endpoints automatically eager-load required relations to prevent N+1 queries.
-- **Sanctum Authentication Header:**
-  ```http
-  Authorization: Bearer <your_sanctum_personal_access_token>
-  ```
+### Example cURL Request with Auth:
+```bash
+curl -X GET "https://naegypt.org/api/v1/meetings?city=Cairo&day=Friday" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 1|your_sanctum_token_here"
+```
+
+### TypeScript / JavaScript Request Helper Example:
+```typescript
+interface ApiResponse<T> {
+  data: T;
+}
+
+export class NaEgyptApiClient {
+  private baseUrl: string;
+  private token: string | null = null;
+
+  constructor(baseUrl: string = "https://naegypt.org/api/v1") {
+    this.baseUrl = baseUrl;
+  }
+
+  public setToken(token: string | null) {
+    this.token = token;
+  }
+
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const headers: Record<string, string> = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      ...(this.token ? { "Authorization": `Bearer ${this.token}` } : {}),
+      ...(options.headers as Record<string, string> || {}),
+    };
+
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 204) {
+      return null as unknown as T;
+    }
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP Error ${response.status}`);
+    }
+
+    return data;
+  }
+
+  // Azure Token Exchange
+  public async loginWithAzure(azureAccessToken: string) {
+    const res = await this.request<{ user: any; token: string }>("/auth/azure/login", {
+      method: "POST",
+      body: JSON.stringify({ access_token: azureAccessToken }),
+    });
+    this.setToken(res.token);
+    return res;
+  }
+
+  // Frontpage Composite Data
+  public async getHomeData(date?: string) {
+    const query = date ? `?date=${encodeURIComponent(date)}` : "";
+    return this.request<ApiResponse<any>>(`/home${query}`);
+  }
+
+  // Just For Today Daily Reading
+  public async getJft(date?: string) {
+    const query = date ? `?date=${encodeURIComponent(date)}` : "";
+    return this.request<ApiResponse<any>>(`/jft${query}`);
+  }
+
+  // Platform Stats
+  public async getStats() {
+    return this.request<ApiResponse<any>>("/stats");
+  }
+
+  // Meeting Directory with Filters
+  public async getMeetings(params?: Record<string, string>) {
+    const queryString = params ? "?" + new URLSearchParams(params).toString() : "";
+    return this.request<ApiResponse<any[]>>(`/meetings${queryString}`);
+  }
+}
+```
+
+---
+
+## 7. Automated QA & Testing Suite
+
+All 25 API endpoints are validated by automated PHPUnit feature tests under `tests/Feature/Api/`:
+
+```bash
+# Run all API feature test suites
+php vendor/bin/phpunit tests/Feature/Api/
+```
+
+Test Suites:
+- `AuthApiTest`: Azure AD OAuth login & Sanctum profile verification.
+- `CompositeApiTest`: Aggregated Home, JFT daily reading, and system statistics.
+- `MeetingApiTest`: Prioritized URL resolution fallback, filters, and full resource schema.
+- `DirectoryApiTest`: Groups, Cities, Neighborhoods, Days, Topics, Options, Service Bodies, Service Committees, and SC Meetings.
+- `AgendaApiTest`: Group Agendas and Service Body Agendas release logic.
+- `ProtectedManagementApiTest`: Committee Reports, Contact Requests, Newsletter Members, Transactions, and Users/Roles/Permissions.
+- `CalendarEventApiTest`: Calendar recurrence window expansion and featured events.
+- `EventApiTest`: Announcements and Service Body events.
