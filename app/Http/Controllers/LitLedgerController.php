@@ -19,10 +19,10 @@ class LitLedgerController extends Controller implements HasMiddleware
         ];
     }
 
-    private function authorizeAccess()
+    private function authorizeAccess(): void
     {
         $user = Auth::user();
-        if (!$user->can('view lit inventory') && !$user->can('manage store') && !$user->hasRole('rsc') && !$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Committees')) {
+        if (!$user || (!$user->can('view lit ledger') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager') && !$user->hasRole('rsc') && !$user->hasRole('super admin'))) {
             abort(403, 'Unauthorized');
         }
     }

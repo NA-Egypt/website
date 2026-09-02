@@ -18,15 +18,21 @@ class InventorySlipController extends Controller implements HasMiddleware
         ];
     }
 
+    private function authorizeViewSlips(): void
+    {
+        $user = Auth::user();
+        if (!$user || (!$user->can('view inventory slips') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager') && !$user->hasRole('rsc') && !$user->hasRole('super admin'))) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     /**
      * Slip Archive & Listing
      */
     public function index(Request $request)
     {
+        $this->authorizeViewSlips();
         $user = Auth::user();
-        if (!$user->can('manage store') && !$user->can('view lit inventory') && !$user->hasRole('rsc') && !$user->hasRole('super admin')) {
-            abort(403, 'Unauthorized');
-        }
 
         $query = InventorySlip::with(['issuer', 'receiver', 'items.item']);
 
@@ -55,9 +61,17 @@ class InventorySlipController extends Controller implements HasMiddleware
 
         $slips = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
-        $canAcknowledge = $user->can('view lit inventory') || $user->hasRole('super admin') || $user->hasRole('Lit User');
+        $canAcknowledge = $user->can('acknowledge inventory slips') || $user->hasRole('super admin') || $user->hasRole('Lit User');
 
-        return view('slips.index', compact('slips', 'canAcknowledge'));
+        $stats = [
+            'total_slips' => InventorySlip::count(),
+            'transferred' => InventorySlip::where('type', 'transfer_to_lit')->count(),
+            'returned' => InventorySlip::where('type', 'return_to_store')->count(),
+            'pending_acknowledgment' => InventorySlip::where('type', 'transfer_to_lit')->where('status', 'transferred')->count(),
+            'completed' => InventorySlip::whereIn('status', ['received', 'completed'])->count(),
+        ];
+
+        return view('slips.index', compact('slips', 'canAcknowledge', 'stats'));
     }
 
     /**
@@ -65,14 +79,14 @@ class InventorySlipController extends Controller implements HasMiddleware
      */
     public function show(InventorySlip $slip)
     {
+        $this->authorizeViewSlips();
         $user = Auth::user();
-        if (!$user->can('manage store') && !$user->can('view lit inventory') && !$user->hasRole('rsc') && !$user->hasRole('super admin')) {
-            abort(403, 'Unauthorized');
-        }
 
         $slip->load(['issuer', 'receiver', 'items.item']);
 
-        return view('slips.show', compact('slip'));
+        $canAcknowledge = $user->can('acknowledge inventory slips') || $user->hasRole('super admin') || $user->hasRole('Lit User');
+
+        return view('slips.show', compact('slip', 'canAcknowledge'));
     }
 
     /**
@@ -81,7 +95,7 @@ class InventorySlipController extends Controller implements HasMiddleware
     public function acknowledgeReceipt(Request $request, InventorySlip $slip)
     {
         $user = Auth::user();
-        if (!$user->can('view lit inventory') && !$user->hasRole('super admin') && !$user->hasRole('Lit User')) {
+        if (!$user || (!$user->can('acknowledge inventory slips') && !$user->hasRole('super admin') && !$user->hasRole('Lit User'))) {
             abort(403, 'Unauthorized');
         }
 
@@ -103,10 +117,7 @@ class InventorySlipController extends Controller implements HasMiddleware
      */
     public function exportPdf(InventorySlip $slip)
     {
-        $user = Auth::user();
-        if (!$user->can('manage store') && !$user->can('view lit inventory') && !$user->hasRole('rsc') && !$user->hasRole('super admin')) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorizeViewSlips();
 
         $slip->load(['issuer', 'receiver', 'items.item']);
 

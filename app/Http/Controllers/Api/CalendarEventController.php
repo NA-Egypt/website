@@ -47,6 +47,8 @@ class CalendarEventController extends Controller
      */
     public function store(Request $request)
     {
+        \Illuminate\Support\Facades\Gate::authorize('create', CalendarEvent::class);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'start' => 'required|date',
@@ -82,6 +84,8 @@ class CalendarEventController extends Controller
      */
     public function update(Request $request, CalendarEvent $calendarEvent)
     {
+        \Illuminate\Support\Facades\Gate::authorize('update', $calendarEvent);
+
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'start' => 'sometimes|required|date',
@@ -104,6 +108,8 @@ class CalendarEventController extends Controller
      */
     public function destroy(CalendarEvent $calendarEvent)
     {
+        \Illuminate\Support\Facades\Gate::authorize('delete', $calendarEvent);
+
         $calendarEvent->delete();
         return response()->json(['message' => 'Deleted successfully'], 200);
     }

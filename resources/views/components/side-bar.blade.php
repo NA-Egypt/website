@@ -424,7 +424,7 @@
       @endif
 
       {{-- Inventory Slips (Transfer & Return) --}}
-      @if(auth()->check() && (auth()->user()->can('manage store') || auth()->user()->can('view lit inventory') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User')))
+      @if(auth()->check() && (auth()->user()->can('view inventory slips') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin')))
       <li>
         <a href="{{ route('slips.index') }}" title="{{ __('messages.inventory_slips') }}">
           <div class="parent-icon"><i class="bi bi-receipt"></i></div>
@@ -434,7 +434,7 @@
       @endif
 
       {{-- Monthly Inventory & Sales Ledger --}}
-      @if(auth()->check() && (auth()->user()->can('view lit inventory') || auth()->user()->can('manage store') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Committees')))
+      @if(auth()->check() && (auth()->user()->can('view lit ledger') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin')))
       <li>
         <a href="{{ route('lit.ledger') }}" title="{{ __('messages.monthly_ledger') }}">
           <div class="parent-icon"><i class="bi bi-journal-text"></i></div>

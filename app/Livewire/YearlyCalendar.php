@@ -202,11 +202,12 @@ class YearlyCalendar extends Component
             return false;
         }
         $user = auth()->user();
-        return $user->hasPermissionTo('can_manage_calendar') || 
+        return $user->can('create calendar events') ||
+               $user->can('can_manage_calendar') ||
                $user->hasRole('super admin') ||
+               $user->hasRole('rsc') ||
                $user->hasRole('Committees') ||
-               $user->hasRole('ServiceBody') ||
-               $this->isRsc();
+               $user->hasRole('ServiceBody');
     }
 
     public function render()

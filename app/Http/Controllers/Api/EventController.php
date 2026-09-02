@@ -18,11 +18,21 @@ class EventController extends Controller
         return EventResource::collection($events);
     }
 
+    private function authorizeManageEvents(Request $request): void
+    {
+        $user = $request->user();
+        if (!$user || (!$user->can('create calendar events') && !$user->hasRole('Committees') && !$user->hasRole('ServiceBody') && !$user->hasRole('rsc') && !$user->hasRole('super admin'))) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        $this->authorizeManageEvents($request);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -48,6 +58,8 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
+        $this->authorizeManageEvents($request);
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
@@ -63,8 +75,10 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy(Request $request, Event $event)
     {
+        $this->authorizeManageEvents($request);
+
         $event->delete();
         return response()->noContent();
     }

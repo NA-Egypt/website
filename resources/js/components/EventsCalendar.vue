@@ -42,7 +42,7 @@
             </button>
           </div>
 
-          <button v-if="canManage" @click="openCreateModal()" type="button" class="btn-add-event">
+          <button v-if="canCreate || canManage" @click="openCreateModal()" type="button" class="btn-add-event">
             <svg class="add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
             </svg>
@@ -74,7 +74,7 @@
               <span class="day-number" :class="{ 'today-badge': cell.isToday }">
                 {{ cell.dayNum }}
               </span>
-              <span v-if="canManage" class="cell-add-plus">+</span>
+              <span v-if="canCreate || canManage" class="cell-add-plus">+</span>
             </div>
 
             <div class="cell-events-list">
@@ -234,11 +234,11 @@
         </div>
 
         <div class="modal-footer-actions">
-          <button v-if="canManage" @click="deleteActiveEvent()" type="button" class="btn-delete">
+          <button v-if="canEditActiveEvent" @click="deleteActiveEvent()" type="button" class="btn-delete">
             {{ isRtl ? 'حذف' : 'Delete' }}
           </button>
           
-          <button v-if="canManage" @click="openEditModal(activeEvent)" type="button" class="btn-edit">
+          <button v-if="canEditActiveEvent" @click="openEditModal(activeEvent)" type="button" class="btn-edit">
             {{ isRtl ? 'تعديل' : 'Edit' }}
           </button>
 
@@ -364,6 +364,14 @@ export default {
       type: Boolean,
       default: false
     },
+    canCreate: {
+      type: Boolean,
+      default: false
+    },
+    currentUserId: {
+      type: [Number, String],
+      default: null
+    },
     locale: {
       type: String,
       default: 'ar'
@@ -405,6 +413,14 @@ export default {
     };
   },
   computed: {
+    canEditActiveEvent() {
+      if (!this.activeEvent) return false;
+      if (this.canManage) return true;
+      if (this.canCreate && this.currentUserId && this.activeEvent.user_id && Number(this.activeEvent.user_id) === Number(this.currentUserId)) {
+        return true;
+      }
+      return false;
+    },
     isRtl() {
       return this.locale === 'ar';
     },
@@ -611,7 +627,7 @@ export default {
       this.currentDate = new Date();
     },
     onCellClick(dateStr) {
-      if (!this.canManage) return;
+      if (!this.canCreate && !this.canManage) return;
       this.openCreateModal(dateStr);
     },
     openViewModal(ev) {

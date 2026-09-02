@@ -96,6 +96,8 @@ const mountVueApps = () => {
         const fetchUrl = el.getAttribute('data-fetch-url') || '/web-calendar-events';
         const storeUrl = el.getAttribute('data-store-url') || '/web-calendar-events';
         const canManage = el.hasAttribute('data-can-manage');
+        const canCreate = el.hasAttribute('data-can-create') || canManage;
+        const currentUserId = el.getAttribute('data-user-id') ? parseInt(el.getAttribute('data-user-id'), 10) : null;
         const locale = el.getAttribute('data-locale') || document.documentElement.lang || 'ar';
         const csrfToken = el.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const initialEvents = JSON.parse(el.getAttribute('data-initial-events') || '[]');
@@ -106,6 +108,8 @@ const mountVueApps = () => {
                 fetchUrl,
                 storeUrl,
                 canManage,
+                canCreate,
+                currentUserId,
                 locale,
                 csrfToken
             })

@@ -55,7 +55,10 @@ class FrontendEventController extends Controller
                 'description' => $event->description,
                 'organizer' => $event->organizer,
                 'location' => $event->location,
-                'recurrence' => $event->formatted_recurrence,
+                'recurrence' => $event->recurrence ?? ['once'],
+                'formatted_recurrence' => $event->formatted_recurrence,
+                'is_featured' => (bool)$event->is_featured,
+                'user_id' => $event->user_id,
             ];
         })->toJson();
 
