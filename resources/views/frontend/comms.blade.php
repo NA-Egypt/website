@@ -132,7 +132,7 @@
                     <i class="bi bi-people-fill"></i>
                     <span>{{ __('messages.commsmeetings') }}</span>
                 </div>
-                <h1 class="comms-hero-title mb-2">{{ __('messages.comms_hero_title') }}</h1>
+                <h1 class="comms-hero-title mb-2 text-white">{{ __('messages.comms_hero_title') }}</h1>
                 <p class="comms-hero-subtitle mb-3">{{ __('messages.comms_hero_subtitle') }}</p>
 
                 {{-- Stats Counters --}}
