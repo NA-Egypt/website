@@ -134,7 +134,7 @@
                                 </div>
                                 <div class="text-start">
                                     <h2 class="h5 fw-bold mb-0 text-dark title-safe">{{ __('messages.direct_helplines') }}</h2>
-                                    <small class="text-muted">{{ __('messages.helplines') }}</small>
+                                    <!-- <small class="text-muted">{{ __('messages.helplines') }}</small> -->
                                 </div>
                             </div>
 
@@ -218,7 +218,7 @@
                             </div>
                             <hr class="my-3 opacity-25">
                             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                <span class="small text-muted fw-semibold title-safe">{{ __('messages.EgyptPRCommitteeFacebookPage') }}</span>
+                                <!-- <span class="small text-muted fw-semibold title-safe">{{ __('messages.EgyptPRCommitteeFacebookPage') }}</span> -->
                                 <div class="d-flex gap-2">
                                     <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="Facebook">
                                         <i class="bi bi-facebook"></i>
