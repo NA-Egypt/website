@@ -357,7 +357,7 @@ return [
     'open_in_google_maps' => 'خرائط جوجل',
     'online_meeting_platform' => 'اجتماع عبر الإنترنت',
     'contact_for_link' => 'تواصل لطلب الرابط',
-    'grid_view' => 'عرض البطاقات',
+    'grid_view' => 'بطاقات',
     'timeline_view' => 'جدول زمني',
     'monthly_schedule_timeline' => 'الجدول الزمني لاجتماعات اللجان خلال الشهر',
     'timeline_subtitle' => 'ترتيب زمني تفاعلي لاجتماعات اللجان الخدمية مقسمة حسب أسابيع الشهر لتسهيل المتابعة والمشاركة.',
