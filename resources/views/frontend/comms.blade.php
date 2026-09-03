@@ -214,7 +214,7 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-md-start justify-content-lg-center gap-2">
                         <button type="button" class="btn filter-chip active" data-filter="all">
                             <i class="bi bi-grid-fill me-1"></i>
-                            <span>{{ __('messages.all_committees') }}</span>
+                            <span>{{ __('messages.All') }}</span>
                             <span class="badge rounded-pill ms-1 bg-primary text-white count-all">{{ $totalCount }}</span>
                         </button>
                         <button type="button" class="btn filter-chip" data-filter="in-person">

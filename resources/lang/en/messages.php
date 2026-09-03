@@ -334,7 +334,6 @@ return [
     'comms_hero_subtitle' => 'NA Egypt subcommittees, regular meeting schedules, venues, and contact information.',
     'about_service_committees' => 'What are Service Committees & How to Participate?',
     'about_service_committees_desc' => 'Service committees carry the Narcotics Anonymous message of recovery to the addict who still suffers and the public, through areas such as Public Relations, Hospitals & Institutions, Literature, Fellowship Development, IT, and Translation. All members are welcome to attend regular committee meetings and participate in service.',
-    'all_committees' => 'All Committees',
     'in_person_meetings' => 'In-Person',
     'online_meetings' => 'Online',
     'search_committees_placeholder' => 'Search by committee name, venue, schedule, or email...',
