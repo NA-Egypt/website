@@ -37,6 +37,33 @@ class ContactUsTest extends TestCase
     }
 
     /**
+     * Test staging portal notice and absence of JSON-LD script on egyptna.org
+     */
+    public function test_contact_page_on_egyptna_domain()
+    {
+        $response = $this->get('https://egyptna.org/contactus');
+
+        $response->assertStatus(200);
+        $response->assertSee('egyptna.org is a staging portal for Narcotics Anonymous Egypt. The official public site is hosted at', false);
+        $response->assertSee('naegypt.org');
+        $response->assertDontSee('The website egyptna.org is an authorized, official staging and preview environment');
+        $response->assertDontSee('"url": "https://naegypt.org/contactus"');
+    }
+
+    /**
+     * Test authorized staging notice and presence of JSON-LD script on naegypt.org
+     */
+    public function test_contact_page_on_naegypt_domain()
+    {
+        $response = $this->get('https://naegypt.org/contactus');
+
+        $response->assertStatus(200);
+        $response->assertSeeText('The website egyptna.org is an authorized, official staging and preview environment operated by');
+        $response->assertSee('"url": "https://naegypt.org/contactus"', false);
+        $response->assertDontSee('egyptna.org is a staging portal for Narcotics Anonymous Egypt.');
+    }
+
+    /**
      * Test ContactUs API endpoints with Sanctum authentication.
      */
     public function test_contact_us_api_endpoints()

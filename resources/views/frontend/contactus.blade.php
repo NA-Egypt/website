@@ -2,7 +2,35 @@
     :title="__('messages.contactus_page_title')" 
     :description="__('messages.contactus_subtitle')">
 
+    <x-slot:head>
+        @php
+            $currentHost = request()->getHost();
+            $isNaEgypt = ($currentHost === 'naegypt.org' || str_ends_with($currentHost, '.naegypt.org'));
+        @endphp
+        @if($isNaEgypt)
+        <script type="application/ld+json">
+{
+  "{{ '@' }}context": "https://schema.org",
+  "{{ '@' }}type": "NGO",
+  "name": "Narcotics Anonymous Egypt",
+  "alternateName": "NA Egypt",
+  "url": "https://naegypt.org",
+  "sameAs": [
+    "https://egyptna.org"
+  ],
+  "contactPoint": {
+    "{{ '@' }}type": "ContactPoint",
+    "contactType": "Helplines",
+    "url": "https://naegypt.org/contactus"
+  }
+}
+</script>
+        @endif
+    </x-slot:head>
+
     @php
+        $currentHost = request()->getHost();
+        $isEgyptNa = ($currentHost === 'egyptna.org' || str_ends_with($currentHost, '.egyptna.org'));
         $isArabic = app()->getLocale() === 'ar';
         $pageDir = $isArabic ? 'rtl' : 'ltr';
     @endphp
@@ -203,6 +231,49 @@
                                     </a>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Official Staging & Development Notice Card -->
+                    <div class="card modern-contact-card staging-notice-card border-0 shadow-sm">
+                        <div class="card-body p-4 text-start">
+                            @if($isEgyptNa)
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="card-icon-badge bg-warning-subtle text-warning-emphasis">
+                                        <i class="bi bi-cone-striped"></i>
+                                    </div>
+                                    <div class="text-start">
+                                        <h2 class="h6 fw-bold mb-0 text-dark title-safe">egyptna.org Staging Portal</h2>
+                                        <small class="text-muted">{{ __('messages.staging_portal_subtitle') }}</small>
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-dark small fw-medium" style="line-height: 1.7;" dir="ltr">
+                                    egyptna.org is a staging portal for Narcotics Anonymous Egypt. The official public site is hosted at <a href="https://naegypt.org" class="fw-bold text-primary text-decoration-none">naegypt.org</a>.
+                                </p>
+                                @if($isArabic)
+                                <p class="mb-0 mt-2 text-muted small border-top pt-2" style="line-height: 1.7;" dir="rtl">
+                                    {{ __('messages.staging_portal_desc') }}
+                                </p>
+                                @endif
+                            @else
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="card-icon-badge bg-primary-subtle text-primary">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div class="text-start">
+                                        <h2 class="h6 fw-bold mb-0 text-dark title-safe">Official Staging &amp; Development Notice:</h2>
+                                        <small class="text-muted">{{ __('messages.staging_notice_subtitle') }}</small>
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-muted small" style="line-height: 1.7;" dir="ltr">
+                                    The website <a href="https://egyptna.org" class="fw-bold text-primary text-decoration-none" target="_blank" rel="noopener">egyptna.org</a> is an authorized, official staging and preview environment operated by <strong>Narcotics Anonymous Egypt</strong> (<a href="https://naegypt.org" class="text-primary text-decoration-none" target="_blank" rel="noopener">naegypt.org</a>). Both domains are owned and managed by the same entity.
+                                </p>
+                                @if($isArabic)
+                                <p class="mb-0 mt-2 text-muted small border-top pt-2" style="line-height: 1.7;" dir="rtl">
+                                    {{ __('messages.staging_notice_desc') }}
+                                </p>
+                                @endif
+                            @endif
                         </div>
                     </div>
 
@@ -433,6 +504,7 @@
         [dir="rtl"] .contact-page-wrapper .official-charity-card,
         [dir="rtl"] .contact-page-wrapper .helplines-info-card,
         [dir="rtl"] .contact-page-wrapper .channels-card,
+        [dir="rtl"] .contact-page-wrapper .staging-notice-card,
         [dir="rtl"] .contact-page-wrapper .form-container-card,
         [dir="rtl"] .contact-page-wrapper .charity-entity-info,
         [dir="rtl"] .contact-page-wrapper .address-box,
@@ -472,6 +544,7 @@
         [dir="ltr"] .contact-page-wrapper .official-charity-card,
         [dir="ltr"] .contact-page-wrapper .helplines-info-card,
         [dir="ltr"] .contact-page-wrapper .channels-card,
+        [dir="ltr"] .contact-page-wrapper .staging-notice-card,
         [dir="ltr"] .contact-page-wrapper .form-container-card,
         [dir="ltr"] .contact-page-wrapper .charity-entity-info,
         [dir="ltr"] .contact-page-wrapper .address-box,

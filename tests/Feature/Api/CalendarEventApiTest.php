@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CalendarEventApiTest extends TestCase
@@ -18,7 +19,9 @@ class CalendarEventApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $role = Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
         $this->user = User::factory()->create();
+        $this->user->assignRole($role);
     }
 
     public function test_public_can_list_calendar_events(): void
@@ -119,6 +122,21 @@ class CalendarEventApiTest extends TestCase
 
         $response = $this->postJson('/api/v1/calendar-events', $payload);
         $response->assertStatus(401);
+    }
+
+    public function test_unauthorized_user_cannot_create_calendar_event(): void
+    {
+        $plainUser = User::factory()->create();
+        Sanctum::actingAs($plainUser);
+
+        $payload = [
+            'title' => 'Unauthorized Event',
+            'start' => Carbon::now()->addDays(1)->toIso8601String(),
+            'end' => Carbon::now()->addDays(1)->addHours(2)->toIso8601String(),
+        ];
+
+        $response = $this->postJson('/api/v1/calendar-events', $payload);
+        $response->assertStatus(403);
     }
 
     public function test_authenticated_user_can_create_calendar_event(): void

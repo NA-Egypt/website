@@ -8,6 +8,7 @@ use App\Models\ServiceBody;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class EventApiTest extends TestCase
@@ -16,10 +17,15 @@ class EventApiTest extends TestCase
 
     private Day $day;
     private ServiceBody $serviceBody;
+    private User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $role = Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
+        $this->user = User::factory()->create();
+        $this->user->assignRole($role);
 
         $this->day = Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
         $this->serviceBody = ServiceBody::create([
@@ -103,10 +109,26 @@ class EventApiTest extends TestCase
         $response->assertStatus(401);
     }
 
+    public function test_unauthorized_user_cannot_create_event(): void
+    {
+        $plainUser = User::factory()->create();
+        Sanctum::actingAs($plainUser);
+
+        $payload = [
+            'name' => 'Unauthorized Event',
+            'description' => 'Desc',
+            'date' => '2026-12-01',
+            'service_body_id' => $this->serviceBody->id,
+            'day_id' => $this->day->id,
+        ];
+
+        $response = $this->postJson('/api/v1/events', $payload);
+        $response->assertStatus(403);
+    }
+
     public function test_authenticated_user_can_create_event(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        Sanctum::actingAs($this->user);
 
         $payload = [
             'name' => 'New Regional Event',
@@ -137,8 +159,7 @@ class EventApiTest extends TestCase
 
     public function test_store_validates_required_fields(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        Sanctum::actingAs($this->user);
 
         $response = $this->postJson('/api/v1/events', []);
 
@@ -148,8 +169,7 @@ class EventApiTest extends TestCase
 
     public function test_authenticated_user_can_update_event(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        Sanctum::actingAs($this->user);
 
         $event = Event::create([
             'name' => 'Old Event Name',
@@ -179,8 +199,7 @@ class EventApiTest extends TestCase
 
     public function test_authenticated_user_can_delete_event(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        Sanctum::actingAs($this->user);
 
         $event = Event::create([
             'name' => 'Event To Delete',

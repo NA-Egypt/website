@@ -3,6 +3,7 @@
     'description' => null,
     'keywords' => null,
     'ogImage' => null,
+    'head' => null,
 ])
 @php
     $defaultTitle = __('messages.NA');
@@ -129,6 +130,7 @@
         "availableLanguage": ["Arabic", "English"]
       },
       "sameAs": [
+        "https://egyptna.org",
         "https://www.facebook.com/OfficialNAEgyPage",
         "https://www.instagram.com/narcoticsanonymousegy",
         "https://www.tiktok.com/@narcoticsanonymousegypt"
@@ -162,6 +164,8 @@
   gtag('config', 'AW-17997215871');
   @endif
 </script>
+  {{ $head ?? '' }}
+  @stack('head')
   @livewireStyles
 </head>
   <body class="hanken-grotesk {{ $direction ?? 'rtl' }}">
