@@ -346,7 +346,7 @@ return [
     'copy_meeting_details' => 'نسخ تفاصيل الاجتماع',
     'copy_email' => 'نسخ البريد',
     'add_to_calendar' => 'إضافة للتقويم',
-    'open_map_location' => 'عرض الموقع على الخريطة',
+    'open_map_location' => 'الخريطة',
     'no_committees_found' => 'لم يتم العثور على أي لجان مطابقة للبحث',
     'try_different_search' => 'يرجى تجربة كلمات بحث أخرى أو إلغاء التصفية لإظهار جميع اللجان.',
     'reset_filters' => 'إعادة ضبط البحث',
