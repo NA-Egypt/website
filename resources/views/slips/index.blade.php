@@ -189,6 +189,14 @@
                                         <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1.5 fw-medium">
                                             <i class="bi bi-box-arrow-right me-1"></i>{{ __('messages.slip_type_transfer') }}
                                         </span>
+                                    @elseif($slip->type === 'issue_to_committee')
+                                        <span class="badge bg-teal-subtle text-teal rounded-pill px-3 py-1.5 fw-medium" style="background-color: #ccfbf1; color: #0f766e;">
+                                            <i class="bi bi-diagram-3 me-1"></i>{{ __('messages.issue_to_committee') ?? 'To Committee' }}
+                                        </span>
+                                    @elseif($slip->type === 'return_from_committee')
+                                        <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1.5 fw-medium">
+                                            <i class="bi bi-arrow-return-left me-1"></i>{{ __('messages.return_from_committee') ?? 'From Committee' }}
+                                        </span>
                                     @else
                                         <span class="badge bg-warning-subtle text-dark rounded-pill px-3 py-1.5 fw-medium">
                                             <i class="bi bi-box-arrow-in-left me-1"></i>{{ __('messages.slip_type_return') }}
@@ -227,7 +235,11 @@
                                     </span>
                                 </td>
                                 <td class="text-end fw-bold text-dark font-monospace">
-                                    EGP {{ number_format($slip->total_value, 2) }}
+                                    @if($slip->type === 'issue_to_committee' || $slip->type === 'return_from_committee')
+                                        <span class="badge bg-secondary-subtle text-secondary fw-normal">{{ __('messages.no_invoice') ?? 'No Invoice' }}</span>
+                                    @else
+                                        EGP {{ number_format($slip->total_value, 2) }}
+                                    @endif
                                 </td>
                                 <td class="text-center">
                                     @if($slip->status === 'received' || $slip->status === 'completed')

@@ -119,10 +119,14 @@ class InventorySlipController extends Controller implements HasMiddleware
     {
         $this->authorizeViewSlips();
 
-        $slip->load(['issuer', 'receiver', 'items.item']);
+        $slip->load(['issuer', 'receiver', 'items.item', 'serviceCommittee', 'literatureRequest']);
 
         $mpdf = MpdfService::create();
-        $html = view('slips.pdf', compact('slip'))->render();
+        if ($slip->type === 'issue_to_committee' || $slip->type === 'return_from_committee') {
+            $html = view('committee_literature.slip_pdf', compact('slip'))->render();
+        } else {
+            $html = view('slips.pdf', compact('slip'))->render();
+        }
         $mpdf->WriteHTML($html);
 
         $filename = "slip_{$slip->slip_number}.pdf";

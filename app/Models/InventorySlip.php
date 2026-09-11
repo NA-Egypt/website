@@ -10,6 +10,8 @@ class InventorySlip extends Model
     protected $fillable = [
         'slip_number',
         'type',
+        'service_committee_id',
+        'literature_request_id',
         'status',
         'issued_by',
         'received_by',
@@ -39,12 +41,27 @@ class InventorySlip extends Model
         return $this->belongsTo(User::class, 'received_by');
     }
 
+    public function serviceCommittee()
+    {
+        return $this->belongsTo(ServiceCommittee::class);
+    }
+
+    public function literatureRequest()
+    {
+        return $this->belongsTo(LiteratureRequest::class);
+    }
+
     /**
-     * Generate sequential slip number (e.g., TR-202608-0001, RT-202608-0001)
+     * Generate sequential slip number (e.g., TR-202608-0001, RT-202608-0001, IC-202609-0001, RC-202609-0001)
      */
     public static function generateSlipNumber(string $type): string
     {
-        $prefix = ($type === 'return_to_store') ? 'RT' : 'TR';
+        $prefix = match ($type) {
+            'return_to_store' => 'RT',
+            'issue_to_committee' => 'IC',
+            'return_from_committee' => 'RC',
+            default => 'TR',
+        };
         $yearMonth = Carbon::now()->format('Ym');
         $pattern = "{$prefix}-{$yearMonth}-%";
 

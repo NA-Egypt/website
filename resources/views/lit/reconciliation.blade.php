@@ -125,6 +125,7 @@
                                 <th>{{ __('messages.Category') }}</th>
                                 <th class="text-center">{{ __('messages.received_qty') }} (+)</th>
                                 <th class="text-center">{{ __('messages.sold_qty') }} (-)</th>
+                                <th class="text-center">{{ __('messages.committee_distributed') ?? 'Committees' }} (-)</th>
                                 <th class="text-center">{{ __('messages.counted_lit_qty') }}</th>
                                 <th class="text-center">{{ __('messages.current_lit_stock') }}</th>
                                 <th class="text-center">{{ __('messages.suggested_return') }}</th>
@@ -151,6 +152,11 @@
                                     <td class="text-center">
                                         <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 font-monospace">
                                             -{{ $item['sold_qty'] }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill px-2 py-1 font-monospace" style="background-color: #ccfbf1; color: #0f766e;">
+                                            -{{ $item['committee_distributed_qty'] ?? 0 }}
                                         </span>
                                     </td>
                                     <td class="text-center fw-semibold text-dark">

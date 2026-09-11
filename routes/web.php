@@ -110,6 +110,18 @@ Route::group(
             Route::get('/literature-requests/archive', [\App\Http\Controllers\LiteratureRequestController::class, 'archive'])->name('literature-requests.archive');
             Route::get('/literature-requests/{id}/pdf', [\App\Http\Controllers\LiteratureRequestController::class, 'exportPdf'])->name('literature-requests.pdf');
 
+            // Committee Literature Requests & Non-Invoice Slips Routes:
+            Route::get('/committee-literature', [\App\Http\Controllers\CommitteeLiteratureController::class, 'index'])->name('committee-literature.index');
+            Route::get('/committee-literature/create', [\App\Http\Controllers\CommitteeLiteratureController::class, 'create'])->name('committee-literature.create');
+            Route::post('/committee-literature', [\App\Http\Controllers\CommitteeLiteratureController::class, 'store'])->name('committee-literature.store');
+            Route::get('/committee-literature/{id}', [\App\Http\Controllers\CommitteeLiteratureController::class, 'show'])->name('committee-literature.show');
+            Route::post('/committee-literature/{id}/issue-slip', [\App\Http\Controllers\CommitteeLiteratureController::class, 'issueSlip'])->name('committee-literature.issue-slip');
+            Route::post('/committee-literature/slips/{slipId}/acknowledge', [\App\Http\Controllers\CommitteeLiteratureController::class, 'acknowledgeSlip'])->name('committee-literature.acknowledge');
+            Route::get('/committee-literature/{id}/return', [\App\Http\Controllers\CommitteeLiteratureController::class, 'returnForm'])->name('committee-literature.return');
+            Route::post('/committee-literature/{id}/process-return', [\App\Http\Controllers\CommitteeLiteratureController::class, 'processReturn'])->name('committee-literature.process-return');
+            Route::get('/committee-literature/slips/{slipId}/pdf', [\App\Http\Controllers\CommitteeLiteratureController::class, 'exportSlipPdf'])->name('committee-literature.slip-pdf');
+
+
 //            Route::get('/group/show/{group}', [GroupController::class, 'show'])
 //                ->name('group.show');
 

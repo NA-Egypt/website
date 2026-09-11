@@ -469,6 +469,14 @@
         </a>
       </li>
       @endif
+      @if(auth()->user()->hasRole('Committees') || auth()->user()->hasRole('super admin'))
+      <li>
+        <a href="{{ route('committee-literature.index') }}" title="{{ __('messages.committee_literature_requests') ?? 'Committee Literature Requests' }}">
+          <div class="parent-icon"><i class="bi bi-journal-bookmark"></i></div>
+          <div class="menu-title">{{ __('messages.committee_literature_requests') ?? 'Committee Literature' }}</div>
+        </a>
+      </li>
+      @endif
       @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
       <li>
         <a href="{{ route('literature-requests.archive') }}" title="{{ __('messages.literature_requests_archive') }}">

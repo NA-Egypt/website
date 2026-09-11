@@ -10,7 +10,11 @@
                     {{__('messages.Received Service Body Accumulated Invoices')}}
                 </p>
             </div>
-            <div>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('committee-literature.index') }}" class="btn btn-teal text-white rounded-pill px-3.5 shadow-sm d-inline-flex align-items-center gap-1.5" style="background-color: #0d9488;">
+                    <i class="bi bi-diagram-3"></i>
+                    <span>{{ __('messages.committee_literature_requests') ?? 'Committees Requests & Slips' }}</span>
+                </a>
                 <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                     <i class="bi bi-archive me-1"></i>
                     {{ __('messages.literature_requests_archive') }}

@@ -120,6 +120,10 @@
                             <span class="fw-bold font-monospace text-success">-{{ $lit_summary['sold'] }}</span>
                         </div>
                         <div class="d-flex justify-content-between py-1.5 border-bottom border-light-subtle">
+                            <span class="text-secondary small">{{ __('messages.committee_distributed') ?? 'Committees Distributed' }}</span>
+                            <span class="fw-bold font-monospace" style="color: #0d9488;">-{{ $lit_summary['committee_distributed'] ?? 0 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1.5 border-bottom border-light-subtle">
                             <span class="text-secondary small">{{ __('messages.lit_returned_to_store') }}</span>
                             <span class="fw-bold font-monospace text-warning">-{{ $lit_summary['returned'] }}</span>
                         </div>
@@ -190,7 +194,7 @@
                                     <th rowspan="2" class="align-middle ps-3 py-3">{{ __('messages.Category') }}</th>
                                     <th rowspan="2" class="align-middle text-center py-3">{{ __('messages.items_count') }}</th>
                                     <th colspan="4" class="text-center bg-primary bg-opacity-10 text-primary fw-bold py-2 border-bottom">{{ __('messages.litstore') }}</th>
-                                    <th colspan="4" class="text-center bg-info bg-opacity-10 text-info fw-bold py-2 border-bottom">{{ __('messages.lit_committee') }}</th>
+                                    <th colspan="5" class="text-center bg-info bg-opacity-10 text-info fw-bold py-2 border-bottom">{{ __('messages.lit_committee') }}</th>
                                     <th colspan="2" class="text-center bg-success bg-opacity-10 text-success fw-bold py-2 border-bottom">{{ __('messages.total') }}</th>
                                 </tr>
                                 <tr>
@@ -202,6 +206,7 @@
                                     {{-- Lit --}}
                                     <th class="text-center small py-2">{{ __('messages.received_short') }}</th>
                                     <th class="text-center small py-2">{{ __('messages.sold_short') }}</th>
+                                    <th class="text-center small py-2" style="color: #0d9488;">{{ __('messages.committee_short') ?? 'Comm.' }}</th>
                                     <th class="text-center small py-2">{{ __('messages.returned_short') }}</th>
                                     <th class="text-center small py-2 fw-bold">{{ __('messages.remains_short') }}</th>
                                     {{-- Total --}}
@@ -226,6 +231,7 @@
                                         {{-- Lit --}}
                                         <td class="text-center font-monospace text-primary">+{{ $cat['lit_received'] }}</td>
                                         <td class="text-center font-monospace text-success fw-bold">-{{ $cat['lit_sold'] }}</td>
+                                        <td class="text-center font-monospace" style="color: #0d9488;">-{{ $cat['lit_committee_distributed'] ?? 0 }}</td>
                                         <td class="text-center font-monospace text-warning">-{{ $cat['lit_returned'] }}</td>
                                         <td class="text-center font-monospace fw-bold text-info">{{ $cat['lit_remains'] }}</td>
                                         {{-- Total --}}
@@ -245,6 +251,7 @@
                                     {{-- Lit --}}
                                     <td class="text-center font-monospace text-primary">+{{ $lit_summary['received'] }}</td>
                                     <td class="text-center font-monospace text-success">-{{ $lit_summary['sold'] }}</td>
+                                    <td class="text-center font-monospace" style="color: #0d9488;">-{{ $lit_summary['committee_distributed'] ?? 0 }}</td>
                                     <td class="text-center font-monospace text-warning">-{{ $lit_summary['returned'] }}</td>
                                     <td class="text-center font-monospace text-info">{{ $lit_summary['remains'] }}</td>
                                     {{-- Total --}}
@@ -275,7 +282,7 @@
                                     <th rowspan="2" class="align-middle py-3">{{ __('messages.Category') }}</th>
                                     <th rowspan="2" class="align-middle text-end py-3">{{ __('messages.selling_price') }}</th>
                                     <th colspan="4" class="text-center bg-primary bg-opacity-10 text-primary fw-bold py-2 border-bottom">{{ __('messages.litstore') }}</th>
-                                    <th colspan="4" class="text-center bg-info bg-opacity-10 text-info fw-bold py-2 border-bottom">{{ __('messages.lit_committee') }}</th>
+                                    <th colspan="5" class="text-center bg-info bg-opacity-10 text-info fw-bold py-2 border-bottom">{{ __('messages.lit_committee') }}</th>
                                     <th colspan="2" class="text-center bg-success bg-opacity-10 text-success fw-bold py-2 border-bottom">{{ __('messages.total') }}</th>
                                 </tr>
                                 <tr>
@@ -287,6 +294,7 @@
                                     {{-- Lit --}}
                                     <th class="text-center small py-2">{{ __('messages.received_short') }}</th>
                                     <th class="text-center small py-2">{{ __('messages.sold_short') }}</th>
+                                    <th class="text-center small py-2" style="color: #0d9488;">{{ __('messages.committee_short') ?? 'Comm.' }}</th>
                                     <th class="text-center small py-2">{{ __('messages.returned_short') }}</th>
                                     <th class="text-center small py-2 fw-bold">{{ __('messages.remains_short') }}</th>
                                     {{-- Total --}}
@@ -314,6 +322,7 @@
                                         {{-- Lit --}}
                                         <td class="text-center font-monospace text-primary">{{ $it['lit_received'] ? "+{$it['lit_received']}" : '-' }}</td>
                                         <td class="text-center font-monospace text-success fw-bold">{{ $it['lit_sold'] ? "-{$it['lit_sold']}" : '-' }}</td>
+                                        <td class="text-center font-monospace" style="color: #0d9488;">{{ $it['lit_committee_distributed'] ? "-{$it['lit_committee_distributed']}" : '-' }}</td>
                                         <td class="text-center font-monospace text-warning">{{ $it['lit_returned'] ? "-{$it['lit_returned']}" : '-' }}</td>
                                         <td class="text-center font-monospace fw-bold text-info">{{ $it['lit_remains'] }}</td>
                                         {{-- Total --}}

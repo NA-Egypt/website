@@ -13,9 +13,13 @@
 
         {{-- Group Section  --}}
 
-        {{-- Button of edit service committee details  --}}
-        <div class="mb-3">
+        {{-- Button of edit service committee details & literature requests --}}
+        <div class="mb-3 d-flex flex-wrap gap-2">
             <x-button-a href="{{ route('serviceCommittee.edit', $serviceCommittee->id) }}" color='outline-secondary' name="{{  __('messages.Edit Service Committee') }}" />
+            <a href="{{ route('committee-literature.index', ['committee_id' => $serviceCommittee->id]) }}" class="btn btn-outline-primary d-inline-flex align-items-center gap-1.5 rounded-pill px-3">
+                <i class="bi bi-journal-bookmark"></i>
+                <span>{{ __('messages.committee_literature_requests') ?? 'Literature Requests & Slips' }}</span>
+            </a>
         </div>
         <!-- Arabic Service Committee Name -->
         <div class="info-block">

@@ -125,6 +125,138 @@ class InventoryLedgerService
     }
 
     /**
+     * Create an InventorySlip for issuing literature to a Committee
+     * Quantity-only slip, no prices/invoice. Deducts lit_quantity.
+     */
+    public function createCommitteeIssueSlip(LiteratureRequest $litRequest, array $itemsData, int $userId, ?string $notes = null): ?InventorySlip
+    {
+        if (empty($itemsData)) {
+            return null;
+        }
+
+        $slipNumber = InventorySlip::generateSlipNumber('issue_to_committee');
+        $totalItems = 0;
+
+        $slip = InventorySlip::create([
+            'slip_number' => $slipNumber,
+            'type' => 'issue_to_committee',
+            'service_committee_id' => $litRequest->service_committee_id,
+            'literature_request_id' => $litRequest->id,
+            'status' => 'transferred', // transferred / dispatched to committee
+            'issued_by' => $userId,
+            'total_items_count' => 0,
+            'total_value' => 0.00,
+            'notes' => $notes,
+        ]);
+
+        $committeeName = $litRequest->serviceCommittee ? ($litRequest->serviceCommittee->ar_name ?: $litRequest->serviceCommittee->en_name) : 'Committee';
+
+        foreach ($itemsData as $row) {
+            $qty = (int) ($row['quantity'] ?? 0);
+            if ($qty <= 0) continue;
+
+            $item = InventoryItem::find($row['inventory_item_id']);
+            if (!$item) continue;
+
+            InventorySlipItem::create([
+                'inventory_slip_id' => $slip->id,
+                'inventory_item_id' => $item->id,
+                'quantity' => $qty,
+                'unit_price' => 0.00,
+                'total_price' => 0.00,
+            ]);
+
+            // Deduct strictly from Literature Committee inventory
+            $item->decrement('lit_quantity', $qty);
+
+            // Log inventory transaction
+            InventoryTransaction::create([
+                'inventory_item_id' => $item->id,
+                'user_id' => $userId,
+                'type' => 'issue_to_committee',
+                'quantity' => $qty,
+                'notes' => "Issued to {$committeeName} (Slip #{$slipNumber})",
+            ]);
+
+            $totalItems += $qty;
+        }
+
+        $slip->update([
+            'total_items_count' => $totalItems,
+            'total_value' => 0.00,
+        ]);
+
+        return $slip;
+    }
+
+    /**
+     * Create an InventorySlip for returned remains from a Committee
+     * Quantity-only slip, restores lit_quantity.
+     */
+    public function createCommitteeReturnSlip(LiteratureRequest $litRequest, array $itemsData, int $userId, ?string $notes = null): ?InventorySlip
+    {
+        if (empty($itemsData)) {
+            return null;
+        }
+
+        $slipNumber = InventorySlip::generateSlipNumber('return_from_committee');
+        $totalItems = 0;
+
+        $slip = InventorySlip::create([
+            'slip_number' => $slipNumber,
+            'type' => 'return_from_committee',
+            'service_committee_id' => $litRequest->service_committee_id,
+            'literature_request_id' => $litRequest->id,
+            'status' => 'completed',
+            'issued_by' => $userId,
+            'received_by' => $userId,
+            'received_at' => now(),
+            'total_items_count' => 0,
+            'total_value' => 0.00,
+            'notes' => $notes,
+        ]);
+
+        $committeeName = $litRequest->serviceCommittee ? ($litRequest->serviceCommittee->ar_name ?: $litRequest->serviceCommittee->en_name) : 'Committee';
+
+        foreach ($itemsData as $row) {
+            $qty = (int) ($row['quantity'] ?? 0);
+            if ($qty <= 0) continue;
+
+            $item = InventoryItem::find($row['inventory_item_id']);
+            if (!$item) continue;
+
+            InventorySlipItem::create([
+                'inventory_slip_id' => $slip->id,
+                'inventory_item_id' => $item->id,
+                'quantity' => $qty,
+                'unit_price' => 0.00,
+                'total_price' => 0.00,
+            ]);
+
+            // Restore strictly to Literature Committee inventory
+            $item->increment('lit_quantity', $qty);
+
+            // Log inventory transaction
+            InventoryTransaction::create([
+                'inventory_item_id' => $item->id,
+                'user_id' => $userId,
+                'type' => 'return_from_committee',
+                'quantity' => $qty,
+                'notes' => "Returned by {$committeeName} (Slip #{$slipNumber})",
+            ]);
+
+            $totalItems += $qty;
+        }
+
+        $slip->update([
+            'total_items_count' => $totalItems,
+            'total_value' => 0.00,
+        ]);
+
+        return $slip;
+    }
+
+    /**
      * Get monthly sales aggregated per item from fulfilled literature requests
      */
     public function getMonthlySalesByItem(Carbon $month): array
@@ -194,6 +326,7 @@ class InventoryLedgerService
         $totalReceived = 0;
         $totalSold = 0;
         $totalReturned = 0;
+        $totalCommitteeDistributed = 0;
         $totalCurrentLit = 0;
 
         foreach ($items as $item) {
@@ -212,13 +345,24 @@ class InventoryLedgerService
             // Sold in this month
             $soldQty = (int) ($salesByItem[$item->id] ?? 0);
 
+            // Distributed to Committees in this month (net: issued - returned)
+            $comIssued = (int) InventoryTransaction::where('inventory_item_id', $item->id)
+                ->where('type', 'issue_to_committee')
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->sum('quantity');
+            $comReturned = (int) InventoryTransaction::where('inventory_item_id', $item->id)
+                ->where('type', 'return_from_committee')
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->sum('quantity');
+            $comDistributed = max(0, $comIssued - $comReturned);
+
             // Latest counted quantity (or current lit_quantity if no stocktaking)
             $countedQty = $stocktakingItemsMap[$item->id] ?? $item->lit_quantity;
 
             // System expected calculation for active cycle
-            // Expected = (Current lit quantity) or (Received - Sold)
+            // Expected = (Current lit quantity) or (Received - Sold - Committee Distributed)
             $expectedQty = $item->lit_quantity;
-            $suggestedReturn = max(0, $countedQty - $soldQty);
+            $suggestedReturn = max(0, $countedQty - $soldQty - $comDistributed);
 
             $reconciliationList[] = [
                 'item_id' => $item->id,
@@ -229,6 +373,7 @@ class InventoryLedgerService
                 'selling_price' => (float) $item->selling_price,
                 'received_qty' => $receivedQty,
                 'sold_qty' => $soldQty,
+                'committee_distributed_qty' => $comDistributed,
                 'returned_qty' => $returnedQty,
                 'current_lit_qty' => $item->lit_quantity,
                 'counted_qty' => $countedQty,
@@ -238,6 +383,7 @@ class InventoryLedgerService
 
             $totalReceived += $receivedQty;
             $totalSold += $soldQty;
+            $totalCommitteeDistributed += $comDistributed;
             $totalReturned += $returnedQty;
             $totalCurrentLit += $item->lit_quantity;
         }
@@ -247,6 +393,7 @@ class InventoryLedgerService
             'items' => $reconciliationList,
             'total_received' => $totalReceived,
             'total_sold' => $totalSold,
+            'total_committee_distributed' => $totalCommitteeDistributed,
             'total_returned' => $totalReturned,
             'total_current_lit' => $totalCurrentLit,
             'has_stocktaking' => !empty($stocktakingSession),
@@ -281,6 +428,7 @@ class InventoryLedgerService
 
         $litTotalReceivedQty = 0;
         $litTotalSoldQty = 0;
+        $litTotalCommitteeDistributed = 0;
         $litTotalReturnedQty = 0;
         $litTotalRemainsQty = 0;
         $litTotalSalesValuation = 0.00;
@@ -293,6 +441,10 @@ class InventoryLedgerService
             $transferredToLit = (int) $itemTx->whereIn('type', ['transfer_to_lit', 'transfer'])->sum('quantity');
             $returnedFromLit = (int) $itemTx->where('type', 'return_from_lit')->sum('quantity');
             $soldQty = (int) ($salesByItem[$item->id] ?? 0);
+
+            $comIssued = (int) $itemTx->where('type', 'issue_to_committee')->sum('quantity');
+            $comReturned = (int) $itemTx->where('type', 'return_from_committee')->sum('quantity');
+            $comDistributed = max(0, $comIssued - $comReturned);
 
             $storeRemains = (int) $item->store_quantity;
             $litRemains = (int) $item->lit_quantity;
@@ -318,6 +470,7 @@ class InventoryLedgerService
                 // Lit Comm metrics
                 'lit_received' => $transferredToLit,
                 'lit_sold' => $soldQty,
+                'lit_committee_distributed' => $comDistributed,
                 'lit_returned' => $returnedFromLit,
                 'lit_remains' => $litRemains,
                 'lit_sales_value' => $salesValue,
@@ -342,6 +495,7 @@ class InventoryLedgerService
                     'store_valuation' => 0.00,
                     'lit_received' => 0,
                     'lit_sold' => 0,
+                    'lit_committee_distributed' => 0,
                     'lit_returned' => 0,
                     'lit_remains' => 0,
                     'lit_sales_value' => 0.00,
@@ -359,6 +513,7 @@ class InventoryLedgerService
             $categoriesMap[$cat]['store_valuation'] += $storeValuation;
             $categoriesMap[$cat]['lit_received'] += $transferredToLit;
             $categoriesMap[$cat]['lit_sold'] += $soldQty;
+            $categoriesMap[$cat]['lit_committee_distributed'] += $comDistributed;
             $categoriesMap[$cat]['lit_returned'] += $returnedFromLit;
             $categoriesMap[$cat]['lit_remains'] += $litRemains;
             $categoriesMap[$cat]['lit_sales_value'] += $salesValue;
@@ -375,6 +530,7 @@ class InventoryLedgerService
 
             $litTotalReceivedQty += $transferredToLit;
             $litTotalSoldQty += $soldQty;
+            $litTotalCommitteeDistributed += $comDistributed;
             $litTotalReturnedQty += $returnedFromLit;
             $litTotalRemainsQty += $litRemains;
             $litTotalSalesValuation += $salesValue;
@@ -407,6 +563,7 @@ class InventoryLedgerService
             'lit_summary' => [
                 'received' => $litTotalReceivedQty,
                 'sold' => $litTotalSoldQty,
+                'committee_distributed' => $litTotalCommitteeDistributed,
                 'returned' => $litTotalReturnedQty,
                 'remains' => $litTotalRemainsQty,
                 'sales_valuation' => $litTotalSalesValuation,
