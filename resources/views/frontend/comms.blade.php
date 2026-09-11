@@ -155,6 +155,12 @@
                         <span class="stat-num">{{ $totalCount }}</span>
                         <span class="stat-label">{{ __('messages.total_committees_count') }}</span>
                     </div>
+                    @if(isset($allWorkgroups) && $allWorkgroups->count() > 0)
+                        <div class="comms-stat-pill">
+                            <span class="stat-num">{{ $allWorkgroups->count() }}</span>
+                            <span class="stat-label">{{ __('messages.Workgroups') }}</span>
+                        </div>
+                    @endif
                     <div class="comms-stat-pill">
                         <span class="stat-num">{{ $inPersonCount }}</span>
                         <span class="stat-label">{{ __('messages.in_person_meetings') }}</span>
@@ -201,21 +207,26 @@
                             <i class="bi bi-search text-muted"></i>
                         </span>
                         <input type="text" id="commsSearchInput" class="form-control border-0 shadow-none ps-1" 
-                               placeholder="{{ __('messages.search_committees_placeholder') }}" 
-                               aria-label="Search committees">
+                                placeholder="{{ __('messages.search_committees_placeholder') }}" 
+                                aria-label="Search committees">
                         <button class="btn btn-link text-muted pe-3 d-none" type="button" id="clearSearchBtn" title="Clear">
                             <i class="bi bi-x-circle-fill"></i>
                         </button>
                     </div>
                 </div>
 
-                {{-- Center: Format Filter Chips --}}
+                {{-- Center: Format & Classification Filter Chips --}}
                 <div class="col-12 col-md-7 col-lg-5">
                     <div class="d-flex flex-wrap align-items-center justify-content-md-start justify-content-lg-center gap-2">
                         <button type="button" class="btn filter-chip active" data-filter="all">
                             <i class="bi bi-grid-fill me-1"></i>
                             <span>{{ __('messages.All') }}</span>
                             <span class="badge rounded-pill ms-1 bg-primary text-white count-all">{{ $totalCount }}</span>
+                        </button>
+                        <button type="button" class="btn filter-chip" data-filter="workgroups">
+                            <i class="bi bi-people-fill me-1"></i>
+                            <span>{{ __('messages.Workgroups') }}</span>
+                            <span class="badge rounded-pill ms-1 bg-light text-dark">{{ isset($allWorkgroups) ? $allWorkgroups->count() : 0 }}</span>
                         </button>
                         <button type="button" class="btn filter-chip" data-filter="in-person">
                             <i class="bi bi-geo-alt-fill me-1"></i>
@@ -300,11 +311,32 @@
                         $logoUrl = ($comm->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($comm->logo)) 
                             ? asset('storage/' . $comm->logo) 
                             : null;
+
+                        // Sub-Workgroups for this committee
+                        $hasWorkgroups = $comm->workgroups->isNotEmpty();
+                        $workgroupsList = $comm->workgroups->map(function($wg) use ($isRtl) {
+                            return [
+                                'id' => $wg->id,
+                                'name' => $isRtl ? $wg->ar_name : $wg->en_name,
+                                'subname' => $isRtl ? $wg->en_name : $wg->ar_name,
+                                'type' => $wg->workgroup_type,
+                                'status' => $wg->status,
+                                'schedule' => $wg->notes,
+                                'location' => $wg->location,
+                                'address' => $isRtl ? ($wg->ar_address ?: $wg->en_address) : ($wg->en_address ?: $wg->ar_address),
+                                'chairman_name' => $wg->chairman_name,
+                                'chairman_phone' => $wg->chairman_phone,
+                                'email' => $wg->email,
+                            ];
+                        });
+                        $workgroupsJson = htmlspecialchars(json_encode($workgroupsList), ENT_QUOTES, 'UTF-8');
+                        $workgroupsSearchText = $comm->workgroups->map(fn($w) => ($w->ar_name ?? '') . ' ' . ($w->en_name ?? '') . ' ' . ($w->notes ?? ''))->implode(' ');
                     @endphp
 
                     <div class="col-12 col-md-6 col-lg-4 committee-card-col" 
                          data-format="{{ $isOnline ? 'online' : 'in-person' }}"
-                         data-search="{{ mb_strtolower($name . ' ' . $subName . ' ' . $notes . ' ' . $address . ' ' . $email) }}">
+                         data-has-workgroups="{{ $hasWorkgroups ? 'true' : 'false' }}"
+                         data-search="{{ mb_strtolower($name . ' ' . $subName . ' ' . $notes . ' ' . $address . ' ' . $email . ' ' . $workgroupsSearchText) }}">
                         <div class="card h-100 committee-card {{ $isOnline ? 'card-online' : 'card-inperson' }}" 
                              style="--committee-border: {{ $theme['border'] }}; --committee-glow: {{ $theme['glow'] }};">
                             
@@ -331,7 +363,8 @@
                                          data-desc="{{ $theme['desc'] }}"
                                          data-icon="{{ $theme['icon'] }}"
                                          data-bg="{{ $theme['bg'] }}"
-                                         data-border="{{ $theme['border'] }}">
+                                         data-border="{{ $theme['border'] }}"
+                                         data-workgroups="{{ $workgroupsJson }}">
                                         
                                         <div class="committee-avatar-wrapper" style="border-color: {{ $theme['border'] }}40;">
                                             @if($logoUrl)
@@ -411,6 +444,49 @@
                                         </button>
                                     </div>
                                 @endif
+                                @if($hasWorkgroups)
+                                    <div class="mt-3 pt-3 border-top comms-sub-workgroups-box">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <span class="badge bg-light text-primary border fw-semibold d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-people-fill text-primary"></i>
+                                                <span>{{ __('messages.Sub-Workgroups') }} ({{ $comm->workgroups->count() }})</span>
+                                            </span>
+                                        </div>
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach($comm->workgroups as $wg)
+                                                @php
+                                                    $wgName = $isRtl ? $wg->ar_name : $wg->en_name;
+                                                    $wgNotes = trim($wg->notes ?? '');
+                                                    $wgLocation = trim($wg->location ?? '');
+                                                @endphp
+                                                <div class="p-2 rounded-2 bg-light border-start border-3 border-primary">
+                                                    <div class="d-flex align-items-center justify-content-between gap-1">
+                                                        <span class="fw-bold small text-dark d-flex align-items-center gap-1">
+                                                            <i class="bi bi-diagram-2 text-primary"></i>
+                                                            {{ $wgName }}
+                                                        </span>
+                                                        <span class="badge {{ $wg->workgroup_type === 'permanent' ? 'bg-primary-subtle text-primary border' : 'bg-warning-subtle text-warning-emphasis border' }}" style="font-size: 0.68rem;">
+                                                            {{ $wg->workgroup_type === 'permanent' ? __('messages.Permanent') : __('messages.Temporary') }}
+                                                        </span>
+                                                    </div>
+                                                    @if($wgNotes)
+                                                        <div class="text-muted small mt-1 d-flex align-items-center gap-1" style="font-size: 0.76rem;">
+                                                            <i class="bi bi-clock-history text-muted"></i>
+                                                            <span>{{ $wgNotes }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if($wgLocation && filter_var($wgLocation, FILTER_VALIDATE_URL))
+                                                        <div class="mt-1">
+                                                            <a href="{{ $wgLocation }}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-primary py-0 px-2 rounded-pill shadow-xs" style="font-size: 0.72rem;">
+                                                                <i class="bi bi-camera-video-fill me-1"></i> {{ __('messages.online_meetings') }}
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             {{-- Card Footer Single-Row Actions --}}
@@ -458,6 +534,7 @@
                                                 data-icon="{{ $theme['icon'] }}"
                                                 data-bg="{{ $theme['bg'] }}"
                                                 data-border="{{ $theme['border'] }}"
+                                                data-workgroups="{{ $workgroupsJson }}"
                                                 title="{{ __('messages.view_committee_profile') }}">
                                             <i class="bi bi-info-circle-fill"></i>
                                             <span>{{ __('messages.btn_details') }}</span>
@@ -492,6 +569,7 @@
                                             data-icon="{{ $theme['icon'] }}"
                                             data-bg="{{ $theme['bg'] }}"
                                             data-border="{{ $theme['border'] }}"
+                                            data-workgroups="{{ $workgroupsJson }}"
                                             title="{{ __('messages.view_committee_profile') }}">
                                         <i class="bi bi-info-circle text-primary"></i>
                                     </button>
@@ -848,6 +926,18 @@
                             <span id="drawerChairmanPhone"></span>
                         </a>
                     </div>
+                </div>
+
+                {{-- Sub-Workgroups Box (if any belong to this committee) --}}
+                <div id="drawerWorkgroupsBox" class="mb-3 p-3 rounded-3 bg-light border d-none">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold text-primary mb-0 d-flex align-items-center gap-1.5">
+                            <i class="bi bi-people-fill"></i>
+                            <span>{{ __('messages.Sub-Workgroups') }}</span>
+                        </h6>
+                        <span id="drawerWorkgroupsCount" class="badge bg-primary rounded-pill"></span>
+                    </div>
+                    <div id="drawerWorkgroupsList" class="d-flex flex-column gap-2 mt-2"></div>
                 </div>
 
                 {{-- Official Email Box --}}
@@ -1522,9 +1612,18 @@
 
                 cardCols.forEach(col => {
                     const format = col.getAttribute('data-format');
+                    const hasWorkgroups = col.getAttribute('data-has-workgroups') === 'true';
                     const searchData = col.getAttribute('data-search') || '';
 
-                    const matchesFilter = (currentFilter === 'all') || (format === currentFilter);
+                    let matchesFilter = false;
+                    if (currentFilter === 'all') {
+                        matchesFilter = true;
+                    } else if (currentFilter === 'workgroups') {
+                        matchesFilter = hasWorkgroups;
+                    } else {
+                        matchesFilter = (format === currentFilter);
+                    }
+
                     const matchesSearch = !currentSearchTerm || searchData.includes(currentSearchTerm);
 
                     if (matchesFilter && matchesSearch) {
@@ -1939,6 +2038,71 @@ END:VCALENDAR`;
 
                 if (drawerEmailText) drawerEmailText.textContent = data.email || '—';
 
+                // Sub-Workgroups Rendering
+                const drawerWorkgroupsBox = document.getElementById('drawerWorkgroupsBox');
+                const drawerWorkgroupsList = document.getElementById('drawerWorkgroupsList');
+                const drawerWorkgroupsCount = document.getElementById('drawerWorkgroupsCount');
+
+                let workgroups = [];
+                if (data.workgroups) {
+                    try {
+                        workgroups = typeof data.workgroups === 'string' ? JSON.parse(data.workgroups) : data.workgroups;
+                    } catch (e) {
+                        workgroups = [];
+                    }
+                }
+
+                if (drawerWorkgroupsBox && drawerWorkgroupsList) {
+                    if (workgroups && workgroups.length > 0) {
+                        drawerWorkgroupsBox.classList.remove('d-none');
+                        if (drawerWorkgroupsCount) {
+                            drawerWorkgroupsCount.textContent = workgroups.length;
+                        }
+                        drawerWorkgroupsList.innerHTML = workgroups.map(wg => {
+                            let linkHtml = '';
+                            if (wg.location && (wg.location.startsWith('http://') || wg.location.startsWith('https://'))) {
+                                linkHtml = `<a href="${wg.location}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-primary py-1 px-2.5 rounded-pill d-inline-flex align-items-center gap-1 shadow-xs" style="font-size: 0.75rem;">
+                                    <i class="bi bi-camera-video-fill"></i>
+                                    <span>{{ __('messages.online_meetings') }}</span>
+                                </a>`;
+                            }
+                            const typeBadge = wg.type === 'permanent' 
+                                ? `<span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.72rem;">{{ __('messages.Permanent') }}</span>`
+                                : `<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle" style="font-size: 0.72rem;">{{ __('messages.Temporary') }}</span>`;
+
+                            return `
+                                <div class="p-3 rounded-3 bg-white border shadow-2xs mb-2">
+                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                                        <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                                            <i class="bi bi-diagram-2 text-primary"></i>
+                                            <span>${wg.name}</span>
+                                        </div>
+                                        ${typeBadge}
+                                    </div>
+                                    ${wg.subname ? `<div class="text-muted small mb-2" style="font-size: 0.78rem;">${wg.subname}</div>` : ''}
+                                    <div class="text-secondary small d-flex align-items-start gap-1.5 mb-1.5" style="font-size: 0.82rem;">
+                                        <i class="bi bi-calendar-event text-primary mt-0.5"></i>
+                                        <span>${wg.schedule || '{{ __("messages.As scheduled") ?? "As scheduled" }}'}</span>
+                                    </div>
+                                    ${wg.address ? `
+                                        <div class="text-muted small d-flex align-items-start gap-1.5 mb-2" style="font-size: 0.8rem;">
+                                            <i class="bi bi-geo-alt text-danger mt-0.5"></i>
+                                            <span>${wg.address}</span>
+                                        </div>
+                                    ` : ''}
+                                    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap pt-1 border-top mt-2">
+                                        ${wg.chairman_name ? `<span class="small text-muted"><i class="bi bi-person me-1"></i>${wg.chairman_name}</span>` : '<span></span>'}
+                                        ${linkHtml}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        drawerWorkgroupsBox.classList.add('d-none');
+                        drawerWorkgroupsList.innerHTML = '';
+                    }
+                }
+
                 // Setup Primary Action button
                 if (drawerPrimaryActionBtn) {
                     if (data.format === 'online' && data.locationUrl && (data.locationUrl.startsWith('http://') || data.locationUrl.startsWith('https://'))) {
@@ -1986,14 +2150,17 @@ END:VCALENDAR`;
                 // Drawer Copy Full Details
                 if (drawerCopyDetailsBtn) {
                     drawerCopyDetailsBtn.onclick = function() {
-                        copyMeetingDetailsFormatted(data.name, data.schedule, data.address || data.locationUrl, data.email, data.locationUrl);
+                        const shareText = `${data.name}\n${data.schedule || ''}\n${data.address || data.locationUrl || ''}\n${data.email || ''}`;
+                        navigator.clipboard.writeText(shareText).then(() => {
+                            showToast("{{ __('messages.copied') }}");
+                        });
                     };
                 }
 
-                // Drawer Calendar
+                // Drawer Add to Calendar (.ics)
                 if (drawerCalendarBtn) {
                     drawerCalendarBtn.onclick = function() {
-                        downloadCalendarIcs(data.name, data.schedule, data.address || data.locationUrl);
+                        downloadIcsForCommittee(data);
                     };
                 }
 
@@ -2033,6 +2200,7 @@ END:VCALENDAR`;
                         icon: this.getAttribute('data-icon'),
                         bg: this.getAttribute('data-bg'),
                         border: this.getAttribute('data-border'),
+                        workgroups: this.getAttribute('data-workgroups'),
                     };
                     openDrawer(data);
                 });

@@ -5,6 +5,46 @@
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        @if(!$isRsc && $childWorkgroups->isNotEmpty() && $unembeddedDraftsCount > 0)
+            <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4 shadow-sm border-0">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell-fill fs-4 text-warning"></i>
+                    <div>
+                        <strong>{{ __('messages.Pending Workgroup Reports Notice', ['count' => $unembeddedDraftsCount]) }}</strong>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('committee-reports.index', ['tab' => 'workgroups']) }}" class="btn btn-sm btn-outline-dark fw-bold">
+                        <i class="bi bi-eye"></i> {{ __('messages.Workgroup Drafts') }} ({{ $unembeddedDraftsCount }})
+                    </a>
+                    <a href="{{ route('committee-reports.create') }}" class="btn btn-sm btn-primary fw-bold">
+                        <i class="bi bi-plus-lg"></i> {{ __('messages.Add Report') }}
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        @if(!$isRsc && $childWorkgroups->isNotEmpty())
+            <ul class="nav nav-pills mb-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ $activeTab === 'committee' ? 'active' : '' }}" href="{{ route('committee-reports.index', ['tab' => 'committee']) }}">
+                        <i class="bi bi-building me-1"></i> {{ __('messages.Committee Reports') }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $activeTab === 'workgroups' ? 'active' : '' }}" href="{{ route('committee-reports.index', ['tab' => 'workgroups']) }}">
+                        <i class="bi bi-people me-1"></i> {{ __('messages.Workgroup Drafts') }}
+                        @if($unembeddedDraftsCount > 0)
+                            <span class="badge bg-danger rounded-pill ms-1">{{ $unembeddedDraftsCount }}</span>
+                        @endif
+                    </a>
+                </li>
+            </ul>
+        @endif
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex gap-2">
@@ -17,6 +57,9 @@
             </div>
             
             <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">
+                @if(request('tab'))
+                    <input type="hidden" name="tab" value="{{ request('tab') }}">
+                @endif
                 @if($isRsc)
                     <select name="committee_id" class="form-select me-2" style="width: 200px;">
                         <option value="">{{ __('messages.All Committees') }}</option>
@@ -48,7 +91,7 @@
                                     <input class="form-check-input" type="checkbox" id="selectAllReports">
                                 </div>
                             </th>
-                            @if($isRsc)
+                            @if($isRsc || ($activeTab === 'workgroups'))
                                 <th>{{ __('messages.Committee') }}</th>
                             @endif
                             <th>{{ __('messages.Report Date') }}</th>
@@ -66,7 +109,7 @@
                                         <input class="form-check-input report-checkbox" type="checkbox" name="report_ids[]" value="{{ $report->id }}">
                                     </div>
                                 </td>
-                                @if($isRsc)
+                                @if($isRsc || ($activeTab === 'workgroups'))
                                     <td>{{ $report->serviceCommittee->ar_name ?? '-' }}</td>
                                 @endif
                                 <td>{{ $report->report_date ? \App\Services\DateNumberHelper::translatedFormat($report->report_date, 'Y-m-d') : \App\Services\DateNumberHelper::translatedFormat($report->created_at, 'Y-m-d') }}</td>
@@ -78,7 +121,11 @@
                                 </td>
                                 <td>{{ $report->meeting_day_description }}</td>
                                 <td>
-                                    @if($report->status === 'draft')
+                                    @if($report->isEmbedded())
+                                        <span class="badge bg-info text-dark"><i class="bi bi-link-45deg"></i> {{ __('messages.Embedded in Report') }}</span>
+                                    @elseif($report->serviceCommittee && $report->serviceCommittee->isWorkgroup())
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft for Committee') }}</span>
+                                    @elseif($report->status === 'draft')
                                         <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft') ?? 'Draft' }}</span>
                                     @elseif($report->status === 'approved')
                                         <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> {{ __('messages.Approved') ?? 'Approved & Published' }}</span>
@@ -105,12 +152,14 @@
                                         <a href="{{ route('committee-reports.edit', $report->id) }}" class="btn btn-sm btn-primary me-1">
                                             <i class="bi bi-pencil"></i> {{ __('messages.Edit') }}
                                         </a>
-                                        <form action="{{ route('committee-reports.send', $report->id) }}" method="POST" class="d-inline me-1" onsubmit="return confirm('{{ __('messages.Are you sure you want to approve and send this report to RSC?') }}')">
-                                            @csrf
-                                            <button class="btn btn-sm btn-success">
-                                                <i class="bi bi-check-circle"></i> {{ __('messages.Send to RSC') }}
-                                            </button>
-                                        </form>
+                                        @if(!$report->serviceCommittee || !$report->serviceCommittee->isWorkgroup())
+                                            <form action="{{ route('committee-reports.send', $report->id) }}" method="POST" class="d-inline me-1" onsubmit="return confirm('{{ __('messages.Are you sure you want to approve and send this report to RSC?') }}')">
+                                                @csrf
+                                                <button class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-circle"></i> {{ __('messages.Send to RSC') }}
+                                                </button>
+                                            </form>
+                                        @endif
                                         <form action="{{ route('committee-reports.destroy', $report->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.Are you sure you want to delete this report?') ?? 'Are you sure you want to delete this report?' }}')">
                                             @csrf
                                             @method('DELETE')

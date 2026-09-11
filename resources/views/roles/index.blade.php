@@ -11,7 +11,7 @@
                 @php
                 $columns = [
                     ['field' => 'name', 'title' => __('messages.Role Name'), 'sort' => true],
-                    ['field' => 'permissions', 'title' => __('messages.Permission Name'), 'sort' => false, 'renderType' => 'array', 'fieldPath' => 'permissions', 'arrayKey' => 'name'],
+                    ['field' => 'permissions', 'title' => __('messages.Permission Name'), 'sort' => false, 'renderType' => 'array', 'fieldPath' => 'permissions', 'arrayKey' => 'display_name'],
                     ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
                 ];
                 @endphp

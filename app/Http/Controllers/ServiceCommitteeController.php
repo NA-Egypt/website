@@ -29,7 +29,7 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = ServiceCommittee::query();
+            $query = ServiceCommittee::committeesOnly();
             $ServiceCommittee = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'chairman_name', 'chairman_phone']);
             return response()->json($ServiceCommittee);
         }
@@ -40,9 +40,23 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
 
     public function __invoke()
     {
-        $serviceCommittees = ServiceCommittee::all();
+        $serviceCommittees = ServiceCommittee::committeesOnly()
+            ->with(['workgroups' => function ($q) {
+                $q->active()->orderBy('workgroup_type')->orderBy('ar_name');
+            }])
+            ->get();
 
-        return view('frontend.comms', ['serviceCommittees'=>$serviceCommittees]);
+        $allWorkgroups = ServiceCommittee::workgroupsOnly()
+            ->active()
+            ->with('parent')
+            ->orderBy('workgroup_type')
+            ->orderBy('ar_name')
+            ->get();
+
+        return view('frontend.comms', [
+            'serviceCommittees' => $serviceCommittees,
+            'allWorkgroups' => $allWorkgroups,
+        ]);
     }
 
     /**

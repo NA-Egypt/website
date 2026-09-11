@@ -10,8 +10,9 @@
             <div class="card-body p-4 pt-0">
                 @php
                 $columns = [
-                    ['field' => 'name', 'title' => __('messages.Permission Name'), 'sort' => true],
-                    ['field' => 'description', 'title' => __('messages.Permission Description'), 'sort' => true],
+                    ['field' => 'display_name', 'title' => __('messages.Permission Name'), 'sort' => false],
+                    ['field' => 'name', 'title' => __('messages.Technical Key'), 'sort' => true],
+                    ['field' => 'description', 'title' => __('messages.Permission Description'), 'sort' => false],
                     ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
                 ];
                 @endphp

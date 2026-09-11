@@ -105,7 +105,14 @@
                 <div id="reportSectionsContainer">
                     <!-- Dynamic sections will be added here -->
                 </div>
-                <button type="button" class="btn btn-outline-primary" id="addSectionBtn">+ {{ __('messages.Add Section') ?? 'Add Section' }}</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" id="addSectionBtn">+ {{ __('messages.Add Section') ?? 'Add Section' }}</button>
+                    @if(isset($availableWorkgroupDrafts) && $availableWorkgroupDrafts->isNotEmpty())
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#embedWorkgroupModal">
+                            <i class="bi bi-box-arrow-in-down me-1"></i> {{ __('messages.Embed Workgroup Report') }} ({{ $availableWorkgroupDrafts->count() }})
+                        </button>
+                    @endif
+                </div>
             </div>
 
             <!-- Attachments Section -->
@@ -177,12 +184,63 @@
 
             <div class="d-flex gap-3 mb-5">
                 <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill">
-                    <i class="bi bi-file-earmark"></i> {{ __('messages.Save Draft') ?? 'Save Draft' }}
+                    <i class="bi bi-file-earmark"></i> {{ (isset($isWorkgroup) && $isWorkgroup) ? __('messages.Save Draft for Committee') : (__('messages.Save Draft') ?? 'Save Draft') }}
                 </button>
-                <button type="submit" id="approveSendBtn" class="btn btn-primary btn-lg flex-fill">
-                    <i class="bi bi-check-circle"></i> {{ __('messages.Approve & Send to RSC') ?? 'Approve & Send to RSC' }}
-                </button>
+                @if(!isset($isWorkgroup) || !$isWorkgroup)
+                    <button type="submit" id="approveSendBtn" class="btn btn-primary btn-lg flex-fill">
+                        <i class="bi bi-check-circle"></i> {{ __('messages.Approve & Send to RSC') ?? 'Approve & Send to RSC' }}
+                    </button>
+                @endif
             </div>
+        </form>
+    </div>
+
+    @if(isset($availableWorkgroupDrafts) && $availableWorkgroupDrafts->isNotEmpty())
+        <div class="modal fade" id="embedWorkgroupModal" tabindex="-1" aria-labelledby="embedWorkgroupModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="embedWorkgroupModalLabel">
+                            <i class="bi bi-box-arrow-in-down text-success me-2"></i>{{ __('messages.Embed Workgroup Report') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            {{ __('messages.Select a workgroup report to embed into this committee report. It will be added as an editable section.') ?? 'Select a workgroup report to embed into this committee report. It will be added as an editable section.' }}
+                        </p>
+                        <div class="list-group">
+                            @foreach($availableWorkgroupDrafts as $wgReport)
+                                <div class="list-group-item d-flex justify-content-between align-items-center p-3" id="wgReportItem-{{ $wgReport->id }}">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-primary">
+                                            {{ $wgReport->serviceCommittee->{app()->getLocale() . '_name'} ?? $wgReport->serviceCommittee->ar_name }}
+                                        </h6>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-calendar3 me-1"></i> {{ \App\Services\DateNumberHelper::translatedFormat($wgReport->meeting_date, 'Y-m-d') }}
+                                            @if($wgReport->meeting_day_description)
+                                                - {{ $wgReport->meeting_day_description }}
+                                            @endif
+                                            @if($wgReport->parent_report_id == $report->id)
+                                                <span class="badge bg-info text-dark ms-2">{{ __('messages.Already Embedded') }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm {{ $wgReport->parent_report_id == $report->id ? 'btn-secondary' : 'btn-success' }} px-3 embed-btn" 
+                                            data-report-id="{{ $wgReport->id }}" 
+                                            {{ $wgReport->parent_report_id == $report->id ? 'disabled' : '' }}
+                                            onclick="embedWorkgroupReport({{ $wgReport->id }})">
+                                        <i class="bi {{ $wgReport->parent_report_id == $report->id ? 'bi-check2' : 'bi-plus-lg' }} me-1"></i> 
+                                        {{ $wgReport->parent_report_id == $report->id ? __('messages.Already Embedded') : __('messages.Embed into Report') }}
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
         </form>
     </div>
 
@@ -491,6 +549,65 @@
                     });
                 }
             });
+
+            @if(isset($availableWorkgroupDrafts) && $availableWorkgroupDrafts->isNotEmpty())
+                const availableDrafts = @json($availableWorkgroupDrafts->map(function($r) {
+                    return [
+                        'id' => $r->id,
+                        'wg_name' => $r->serviceCommittee->{app()->getLocale() . '_name'} ?? $r->serviceCommittee->ar_name,
+                        'meeting_date' => $r->meeting_date ? $r->meeting_date->format('Y-m-d') : '',
+                        'meeting_day_description' => $r->meeting_day_description,
+                        'sections' => $r->body_sections,
+                        'positions' => $r->positions_status,
+                        'attended_members' => $r->attended_members,
+                    ];
+                }));
+
+                window.embedWorkgroupReport = function(reportId) {
+                    const report = availableDrafts.find(r => r.id === reportId);
+                    if (!report) return;
+
+                    let hiddenContainer = document.getElementById('embeddedWorkgroupReportsInputs');
+                    if (!hiddenContainer) {
+                        hiddenContainer = document.createElement('div');
+                        hiddenContainer.id = 'embeddedWorkgroupReportsInputs';
+                        document.getElementById('reportForm').appendChild(hiddenContainer);
+                    }
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'embedded_workgroup_report_ids[]';
+                    input.value = reportId;
+                    hiddenContainer.appendChild(input);
+
+                    if (report.sections && report.sections.length > 0) {
+                        report.sections.forEach((sec) => {
+                            const headline = `[${report.wg_name}] ` + (sec.headline || '{{ __('messages.Workgroup Report') }}');
+                            addSectionRow(headline, sec.content || '');
+                        });
+                    } else {
+                        addSectionRow(`[${report.wg_name}] {{ __('messages.Workgroup Report') }}`, '');
+                    }
+
+                    if (report.attended_members) {
+                        const attendedTextarea = document.querySelector('textarea[name="attended_members"]');
+                        if (attendedTextarea) {
+                            const prefix = attendedTextarea.value.trim() ? '\n\n' : '';
+                            attendedTextarea.value += prefix + `[${report.wg_name}]: ` + report.attended_members;
+                        }
+                    }
+
+                    const itemBtn = document.querySelector(`#wgReportItem-${reportId} .embed-btn`);
+                    if (itemBtn) {
+                        itemBtn.disabled = true;
+                        itemBtn.className = 'btn btn-sm btn-secondary px-3';
+                        itemBtn.innerHTML = '<i class="bi bi-check2 me-1"></i> {{ __('messages.Already Embedded') }}';
+                    }
+
+                    const modalEl = document.getElementById('embedWorkgroupModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                };
+            @endif
         });
     </script>
 </x-layout>

@@ -11,6 +11,7 @@ class CommitteeReport extends Model
 
     protected $fillable = [
         'service_committee_id',
+        'parent_report_id',
         'meeting_date',
         'meeting_day_description',
         'body',
@@ -38,6 +39,40 @@ class CommitteeReport extends Model
     public function attachments()
     {
         return $this->hasMany(CommitteeReportAttachment::class);
+    }
+
+    public function parentReport()
+    {
+        return $this->belongsTo(CommitteeReport::class, 'parent_report_id');
+    }
+
+    public function embeddedWorkgroupReports()
+    {
+        return $this->hasMany(CommitteeReport::class, 'parent_report_id');
+    }
+
+    public function isEmbedded(): bool
+    {
+        return $this->status === 'embedded' || !is_null($this->parent_report_id);
+    }
+
+    public function scopeUnembeddedDrafts($query)
+    {
+        return $query->where('status', 'draft')->whereNull('parent_report_id');
+    }
+
+    public function scopeCommitteesOnly($query)
+    {
+        return $query->whereHas('serviceCommittee', function ($q) {
+            $q->whereNull('parent_id');
+        });
+    }
+
+    public function scopeWorkgroupsOnly($query)
+    {
+        return $query->whereHas('serviceCommittee', function ($q) {
+            $q->whereNotNull('parent_id');
+        });
     }
 
     public function getBodySectionsAttribute()

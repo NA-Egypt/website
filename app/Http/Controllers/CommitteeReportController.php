@@ -22,6 +22,13 @@ class CommitteeReportController extends Controller
         $user = Auth::user();
         if (!$user) return null;
         
+        if ($user->hasRole('rsc')) {
+            $rscCommittee = ServiceCommittee::find(83) ?: ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
+            if ($rscCommittee) {
+                return $rscCommittee;
+            }
+        }
+
         return ServiceCommittee::where('user_id', $user->id)
             ->orWhere('email', $user->email)
             ->first();
@@ -39,8 +46,11 @@ class CommitteeReportController extends Controller
     public function index(Request $request)
     {
         $isRsc = $this->isRsc();
-        $query = CommitteeReport::with('serviceCommittee');
+        $query = CommitteeReport::with(['serviceCommittee', 'parentReport', 'embeddedWorkgroupReports']);
         $user = Auth::user();
+        $activeTab = $request->get('tab', 'committee');
+        $childWorkgroups = collect();
+        $unembeddedDraftsCount = 0;
 
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
@@ -57,14 +67,38 @@ class CommitteeReportController extends Controller
             if (!$committee) {
                 abort(403, 'You are not assigned to any Service Committee.');
             }
-            $query->where('service_committee_id', $committee->id);
+
+            $childWorkgroups = $committee->workgroups;
+
+            if ($childWorkgroups->isNotEmpty()) {
+                $unembeddedDraftsCount = CommitteeReport::whereIn('service_committee_id', $childWorkgroups->pluck('id'))
+                    ->unembeddedDrafts()
+                    ->count();
+            }
+
+            if ($committee->isWorkgroup()) {
+                // Strictly a workgroup: sees only their workgroup reports
+                $query->where('service_committee_id', $committee->id);
+            } else {
+                // Parent committee
+                if ($activeTab === 'workgroups' && $childWorkgroups->isNotEmpty()) {
+                    if ($request->has('workgroup_id') && $request->filled('workgroup_id')) {
+                        $query->where('service_committee_id', (int)$request->workgroup_id);
+                    } else {
+                        $query->whereIn('service_committee_id', $childWorkgroups->pluck('id'));
+                    }
+                } else {
+                    $query->where('service_committee_id', $committee->id);
+                }
+            }
         } else {
             // RSC can see both submitted and approved reports in their management dashboard.
             // Super admins can also see draft reports.
             if (Auth::user()->hasRole('super admin')) {
-                $query->whereIn('status', ['draft', 'submitted', 'approved']);
+                $query->whereIn('status', ['draft', 'submitted', 'approved', 'embedded']);
             } else {
-                $query->whereIn('status', ['submitted', 'approved']);
+                // RSC review queue should only show official committee reports (not standalone workgroup drafts)
+                $query->committeesOnly()->whereIn('status', ['submitted', 'approved']);
             }
             
             // RSC Filters
@@ -83,9 +117,9 @@ class CommitteeReportController extends Controller
 
         $reports = $query->latest('meeting_date')->paginate(10);
         
-        $committees = $isRsc ? ServiceCommittee::all() : [];
+        $committees = $isRsc ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
 
-        return view('reports.index', compact('reports', 'isRsc', 'committees'));
+        return view('reports.index', compact('reports', 'isRsc', 'committees', 'childWorkgroups', 'activeTab', 'unembeddedDraftsCount'));
     }
 
     public function create()
@@ -95,12 +129,23 @@ class CommitteeReportController extends Controller
         $committees = [];
 
         if ($isRsc) {
-            $committees = ServiceCommittee::all();
+            $committees = ServiceCommittee::committeesOnly()->orderBy('ar_name')->get();
         } elseif (!$committee) {
             abort(403, 'Only Committee members can create reports.');
         }
 
-        return view('reports.create', compact('committee', 'committees', 'isRsc'));
+        $isWorkgroup = $committee && $committee->isWorkgroup();
+        $childWorkgroups = ($committee && $committee->isCommittee()) ? $committee->workgroups : collect();
+        $availableWorkgroupDrafts = collect();
+        if ($childWorkgroups->isNotEmpty()) {
+            $availableWorkgroupDrafts = CommitteeReport::with(['serviceCommittee', 'attachments'])
+                ->whereIn('service_committee_id', $childWorkgroups->pluck('id'))
+                ->unembeddedDrafts()
+                ->latest('meeting_date')
+                ->get();
+        }
+
+        return view('reports.create', compact('committee', 'committees', 'isRsc', 'isWorkgroup', 'availableWorkgroupDrafts'));
     }
 
     public function store(Request $request)
@@ -129,10 +174,19 @@ class CommitteeReportController extends Controller
             'is_exceptional' => 'nullable|boolean',
             'attended_members' => 'nullable|string',
             'footer' => 'nullable|string|max:1000',
+            'embedded_workgroup_report_ids' => 'nullable|array',
+            'embedded_workgroup_report_ids.*' => 'exists:committee_reports,id',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $committee->id;
+        $targetCommittee = ServiceCommittee::find($committeeId);
         $positionsStatus = $request->positions;
+
+        // Workgroup reports can only be saved as draft (internal to parent committee)
+        $status = $request->status;
+        if ($targetCommittee && $targetCommittee->isWorkgroup()) {
+            $status = 'draft';
+        }
 
         $report = CommitteeReport::create([
             'service_committee_id' => $committeeId,
@@ -140,12 +194,21 @@ class CommitteeReportController extends Controller
             'meeting_day_description' => $request->meeting_day_description,
             'body' => json_encode($request->sections),
             'positions_status' => $positionsStatus,
-            'status' => $request->status,
+            'status' => $status,
             'report_date' => now()->toDateString(),
             'is_exceptional' => $request->boolean('is_exceptional'),
             'attended_members' => $request->attended_members,
             'footer' => $request->footer,
         ]);
+
+        // Link embedded workgroup reports
+        if ($request->filled('embedded_workgroup_report_ids') && is_array($request->embedded_workgroup_report_ids)) {
+            CommitteeReport::whereIn('id', $request->embedded_workgroup_report_ids)
+                ->update([
+                    'parent_report_id' => $report->id,
+                    'status' => 'embedded',
+                ]);
+        }
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -188,6 +251,11 @@ class CommitteeReportController extends Controller
 
         $committee = $this->getServiceCommittee();
         if ($committee && $committee->id === $report->service_committee_id) {
+            return true;
+        }
+
+        // Parent committee user can view child workgroups' reports
+        if ($committee && $committee->workgroups()->where('id', $report->service_committee_id)->exists()) {
             return true;
         }
 
@@ -245,10 +313,26 @@ class CommitteeReportController extends Controller
                 ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
 
-        $committees = $this->isRsc() ? ServiceCommittee::all() : [];
+        $committees = $this->isRsc() ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
         $committee = !$this->isRsc() ? $this->getServiceCommittee() : null;
 
-        return view('reports.edit', compact('report', 'committee', 'committees', 'isRsc'));
+        $isWorkgroup = ($committee && $committee->isWorkgroup()) || ($report->serviceCommittee && $report->serviceCommittee->isWorkgroup());
+        $targetComm = $report->serviceCommittee ?: $committee;
+        $childWorkgroups = ($targetComm && $targetComm->isCommittee()) ? $targetComm->workgroups : collect();
+        $availableWorkgroupDrafts = collect();
+        if ($childWorkgroups->isNotEmpty()) {
+            $availableWorkgroupDrafts = CommitteeReport::with(['serviceCommittee', 'attachments'])
+                ->whereIn('service_committee_id', $childWorkgroups->pluck('id'))
+                ->where(function ($q) use ($report) {
+                    $q->whereNull('parent_report_id')
+                      ->orWhere('parent_report_id', $report->id);
+                })
+                ->whereIn('status', ['draft', 'embedded'])
+                ->latest('meeting_date')
+                ->get();
+        }
+
+        return view('reports.edit', compact('report', 'committee', 'committees', 'isRsc', 'isWorkgroup', 'availableWorkgroupDrafts'));
     }
 
     public function update(Request $request, $id)
@@ -286,11 +370,20 @@ class CommitteeReportController extends Controller
             'is_exceptional' => 'nullable|boolean',
             'attended_members' => 'nullable|string',
             'footer' => 'nullable|string|max:1000',
+            'embedded_workgroup_report_ids' => 'nullable|array',
+            'embedded_workgroup_report_ids.*' => 'exists:committee_reports,id',
         ]);
 
         $committeeId = $isRsc ? $request->service_committee_id : $report->service_committee_id;
+        $targetCommittee = ServiceCommittee::find($committeeId);
         $positionsStatus = $request->positions;
         
+        // Workgroup reports can only be saved as draft
+        $status = $request->status;
+        if ($targetCommittee && $targetCommittee->isWorkgroup()) {
+            $status = 'draft';
+        }
+
         // Check if adding new attachments exceeds the limit
         if ($request->hasFile('attachments')) {
             $validFiles = array_filter($request->file('attachments'), function($file) {
@@ -322,11 +415,20 @@ class CommitteeReportController extends Controller
             'meeting_day_description' => $request->meeting_day_description,
             'body' => json_encode($request->sections),
             'positions_status' => $positionsStatus,
-            'status' => $request->status,
+            'status' => $status,
             'is_exceptional' => $request->boolean('is_exceptional'),
             'attended_members' => $request->attended_members,
             'footer' => $request->footer,
         ]);
+
+        // Link embedded workgroup reports
+        if ($request->filled('embedded_workgroup_report_ids') && is_array($request->embedded_workgroup_report_ids)) {
+            CommitteeReport::whereIn('id', $request->embedded_workgroup_report_ids)
+                ->update([
+                    'parent_report_id' => $report->id,
+                    'status' => 'embedded',
+                ]);
+        }
 
         if ($wasDraft && $report->status === 'submitted') {
             $this->sendNotificationEmail($report);
@@ -466,6 +568,10 @@ class CommitteeReportController extends Controller
         $committee = $this->getServiceCommittee();
         if (!$this->isRsc() && (!$committee || $committee->id !== $report->service_committee_id)) {
             abort(403, 'Unauthorized');
+        }
+
+        if ($report->serviceCommittee && $report->serviceCommittee->isWorkgroup()) {
+            return redirect()->back()->with('error', __('messages.Workgroup reports cannot be submitted directly to RSC'));
         }
 
         if ($report->status !== 'draft') {

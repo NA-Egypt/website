@@ -78,6 +78,33 @@
                 </div>
             </div>
             <div class="card-body p-4">
+                @if($report->embeddedWorkgroupReports && $report->embeddedWorkgroupReports->isNotEmpty())
+                    <div class="p-3 mb-4 rounded-3 border bg-light">
+                        <h6 class="fw-bold text-success mb-2">
+                            <i class="bi bi-link-45deg fs-5 me-1"></i> {{ __('messages.Embedded Workgroup Reports') }}
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach($report->embeddedWorkgroupReports as $embeddedReport)
+                                <a href="{{ route('committee-reports.show', $embeddedReport->id) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-file-earmark-text me-1"></i>
+                                    {{ $embeddedReport->serviceCommittee->{app()->getLocale() . '_name'} ?? $embeddedReport->serviceCommittee->ar_name }}
+                                    ({{ \App\Services\DateNumberHelper::translatedFormat($embeddedReport->meeting_date, 'Y-m-d') }})
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                @if($report->parentReport)
+                    <div class="p-3 mb-4 rounded-3 border border-info bg-light">
+                        <i class="bi bi-info-circle text-info me-1"></i>
+                        <strong>{{ __('messages.Embedded in Report') }}:</strong>
+                        <a href="{{ route('committee-reports.show', $report->parentReport->id) }}" class="fw-bold text-primary">
+                            {{ $report->parentReport->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->parentReport->serviceCommittee->ar_name }}
+                            ({{ \App\Services\DateNumberHelper::translatedFormat($report->parentReport->meeting_date, 'Y-m-d') }})
+                        </a>
+                    </div>
+                @endif
                 
                 <h6 class="mb-3 fw-bold">{{ __('messages.Positions Status') }}</h6>
                 <div class="table-responsive mb-4">

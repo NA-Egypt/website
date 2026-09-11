@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 
 use App\Traits\PaginatesDataTables;
@@ -15,7 +15,38 @@ class PermissionController extends Controller
     {
         if ($request->wantsJson() || $request->ajax()) {
             $query = Permission::query();
-            $permissions = $this->paginateDataTable($query, $request, ['name', 'description']);
+            $search = $request->input('search');
+
+            if (!empty($search)) {
+                $matchedNames = [];
+                $locale = app()->getLocale();
+                $items = trans('permissions.items', [], $locale);
+
+                if (is_array($items)) {
+                    foreach ($items as $permName => $permData) {
+                        if (
+                            (isset($permData['label']) && mb_stripos($permData['label'], $search) !== false) ||
+                            (isset($permData['description']) && mb_stripos($permData['description'], $search) !== false)
+                        ) {
+                            $matchedNames[] = $permName;
+                        }
+                    }
+                }
+
+                $query->where(function ($q) use ($search, $matchedNames) {
+                    $q->where('name', 'like', "%{$search}%");
+                    if (!empty($matchedNames)) {
+                        $q->orWhereIn('name', $matchedNames);
+                    }
+                });
+
+                $reqWithoutSearch = $request->duplicate();
+                $reqWithoutSearch->query->remove('search');
+                $permissions = $this->paginateDataTable($query, $reqWithoutSearch);
+            } else {
+                $permissions = $this->paginateDataTable($query, $request, ['name']);
+            }
+
             return response()->json($permissions);
         }
 

@@ -54,8 +54,13 @@ You are an expert in Laravel, the PHP framework for web artisans.
 - **Testing Frameworks:** Integrate PHPUnit or Pest for comprehensive test suites.
 - **Feature vs. Unit Tests:** Distinguish between lightweight unit tests and comprehensive HTTP/feature tests.
 - **Database Isolation:** Use database transactions (`DatabaseTransactions` trait) or in-memory databases for fast, safe test runs.
+- **Explicit ID Assignment in Tests:** Eloquent `Model::create(['id' => X])` drops `id` unless it is explicitly in `$fillable`. When testing specific primary keys (e.g. Committee 83), instantiate the model, assign `$model->id = X;`, and call `$model->save()`.
 - **Mocking & Faking:** Utilize built-in fakes (`Event::fake()`, `Queue::fake()`, `Mail::fake()`, `Http::fake()`, `Storage::fake()`).
 - **Browser Testing:** Employ Laravel Dusk for end-to-end browser automation when required.
+
+## Blade & Syntax Guardrails
+- **Parenthesized Ternary Expressions:** Never use unparenthesized nested ternaries (`a ? b : c ?: d`), which trigger fatal errors in PHP 8+. Always use `(a ? b : c) ?: d` or `a ? b : (c ?: d)`.
+- **Bilingual Localization:** Never hardcode user-facing strings or flash messages. Always add Arabic and English translation keys to `resources/lang/ar/messages.php` and `resources/lang/en/messages.php`.
 
 ## Best Practices
 - **Skinny Controllers:** Keep controller methods slim; delegate business logic to dedicated Service, Action, or Domain classes.

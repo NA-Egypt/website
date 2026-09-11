@@ -1,39 +1,6 @@
 <x-layout>
     @php
-    $groupedPermissions = [
-        'Service Body Agendas' => [
-            'title_en' => 'Service Body Agendas',
-            'title_ar' => 'جداول أعمال هيئة الخدمة',
-            'permissions' => []
-        ],
-        'Store & Inventory' => [
-            'title_en' => 'Store & Inventory',
-            'title_ar' => 'المخزن والمخزون',
-            'permissions' => []
-        ],
-        'General Calendar' => [
-            'title_en' => 'General Calendar',
-            'title_ar' => 'التقويم العام',
-            'permissions' => []
-        ],
-        'General & Others' => [
-            'title_en' => 'General & Others',
-            'title_ar' => 'صلاحيات عامة وأخرى',
-            'permissions' => []
-        ],
-    ];
-
-    foreach ($permissions as $permission) {
-        if (in_array($permission->name, ['create sb agenda', 'edit sb agenda', 'approve sb agenda', 'delete sb agenda'])) {
-            $groupedPermissions['Service Body Agendas']['permissions'][] = $permission;
-        } elseif (in_array($permission->name, ['manage store', 'view lit inventory'])) {
-            $groupedPermissions['Store & Inventory']['permissions'][] = $permission;
-        } elseif ($permission->name === 'can_manage_calendar') {
-            $groupedPermissions['General Calendar']['permissions'][] = $permission;
-        } else {
-            $groupedPermissions['General & Others']['permissions'][] = $permission;
-        }
-    }
+    $groupedPermissions = \App\Models\Permission::getGrouped($permissions);
     @endphp
 
     <x-backhead>{{ __('messages.Add User') ?? 'Add User' }}</x-backhead>
@@ -105,19 +72,33 @@
 
                     <!-- Direct Permissions section -->
                     <div class="mb-5">
-                        <label class="form-label fw-bold text-primary fs-5 mb-3">{{ __('messages.Direct Permissions') ?? 'Direct Permissions' }}</label>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                            <label class="form-label fw-bold text-primary fs-5 mb-0">{{ __('messages.Direct Permissions') ?? 'Direct Permissions' }}</label>
+                            <div style="min-width: 260px;">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="userPermissionSearch" class="form-control bg-white border-start-0" placeholder="{{ __('messages.Search permissions...') ?? 'Search permissions...' }}">
+                                </div>
+                            </div>
+                        </div>
                         
-                        @foreach ($groupedPermissions as $catName => $category)
+                        @foreach ($groupedPermissions as $catKey => $category)
                             @if (count($category['permissions']) > 0)
-                                <div class="accordion-premium" id="acc_{{ Str::slug($catName) }}">
+                                <div class="accordion-premium user-perm-category" id="acc_{{ Str::slug($catKey) }}">
                                     <div class="accordion-premium-header" onclick="toggleAccordion(this)">
                                         <div class="d-flex align-items-center gap-3">
                                             <span class="chevron-icon"><i class="bi bi-chevron-down"></i></span>
-                                            <span class="fs-6 fw-bold">{{ app()->getLocale() === 'ar' ? $category['title_ar'] : $category['title_en'] }}</span>
+                                            <span class="fs-6 fw-bold d-flex align-items-center gap-2">
+                                                <i class="bi {{ $category['icon'] }} text-primary"></i>
+                                                {{ $category['title'] }}
+                                            </span>
+                                            <span class="badge bg-light text-muted border rounded-pill small px-2 category-counter">
+                                                {{ count($category['permissions']) }}
+                                            </span>
                                         </div>
                                         <div class="form-check form-switch m-0 d-flex align-items-center gap-2" onclick="event.stopPropagation()">
-                                            <input class="form-check-input select-all-category" type="checkbox" id="select_all_{{ Str::slug($catName) }}">
-                                            <label class="form-check-label small text-muted" for="select_all_{{ Str::slug($catName) }}">
+                                            <input class="form-check-input select-all-category" type="checkbox" id="select_all_{{ Str::slug($catKey) }}">
+                                            <label class="form-check-label small text-muted" for="select_all_{{ Str::slug($catKey) }}">
                                                 {{ __('messages.Select All') ?? 'Select All' }}
                                             </label>
                                         </div>
@@ -125,10 +106,20 @@
                                     <div class="accordion-premium-content">
                                         <div class="row g-3">
                                             @foreach ($category['permissions'] as $permission)
-                                                <div class="col-md-6">
-                                                    <div class="p-3 border rounded-3 bg-white d-flex align-items-center justify-content-between shadow-sm">
-                                                        <span class="text-secondary fw-medium">{{ $permission->name }}</span>
-                                                        <label class="form-switch-premium m-0">
+                                                <div class="col-md-6 user-perm-item" data-search="{{ strtolower($permission->display_name . ' ' . $permission->name . ' ' . $permission->description) }}">
+                                                    <div class="p-3 border rounded-3 bg-white d-flex align-items-start justify-content-between shadow-sm h-100 gap-3">
+                                                        <div class="d-flex flex-column gap-1 pe-2">
+                                                            <span class="text-dark fw-semibold fs-6">{{ $permission->display_name }}</span>
+                                                            @if(!empty($permission->description))
+                                                                <span class="text-muted small lh-sm">{{ $permission->description }}</span>
+                                                            @endif
+                                                            <div class="mt-1">
+                                                                <span class="badge bg-light text-secondary border font-monospace py-1 px-2" style="font-size: 0.75rem;">
+                                                                    <i class="bi bi-key-fill me-1 opacity-75"></i>{{ $permission->name }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <label class="form-switch-premium m-0 flex-shrink-0 mt-1">
                                                             <input type="checkbox" class="permission-checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission_{{ $permission->id }}">
                                                             <span class="slider-premium"></span>
                                                         </label>
@@ -140,6 +131,10 @@
                                 </div>
                             @endif
                         @endforeach
+                        <div id="noSearchMatches" class="text-center py-4 text-muted d-none">
+                            <i class="bi bi-search fs-3 d-block mb-2"></i>
+                            <span>{{ __('messages.No permissions match your search') ?? 'No permissions match your search.' }}</span>
+                        </div>
                     </div>
 
                     <div class="d-flex gap-3">
@@ -184,5 +179,52 @@
         });
 
         document.addEventListener('DOMContentLoaded', updateSelectAllStates);
+
+        // Live Search Handler
+        const userPermSearch = document.getElementById('userPermissionSearch');
+        if (userPermSearch) {
+            userPermSearch.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                let totalVisible = 0;
+
+                document.querySelectorAll('.user-perm-category').forEach(category => {
+                    const items = category.querySelectorAll('.user-perm-item');
+                    let categoryVisible = 0;
+
+                    items.forEach(item => {
+                        const searchText = item.getAttribute('data-search') || '';
+                        if (query === '' || searchText.includes(query)) {
+                            item.style.display = '';
+                            categoryVisible++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    if (query !== '') {
+                        if (categoryVisible > 0) {
+                            category.style.display = '';
+                            category.classList.add('open');
+                        } else {
+                            category.style.display = 'none';
+                        }
+                    } else {
+                        category.style.display = '';
+                        category.classList.remove('open');
+                    }
+
+                    totalVisible += categoryVisible;
+                });
+
+                const noMatches = document.getElementById('noSearchMatches');
+                if (noMatches) {
+                    if (query !== '' && totalVisible === 0) {
+                        noMatches.classList.remove('d-none');
+                    } else {
+                        noMatches.classList.add('d-none');
+                    }
+                }
+            });
+        }
     </script>
 </x-layout>

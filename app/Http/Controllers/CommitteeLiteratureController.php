@@ -43,10 +43,10 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             if ($committeeId) {
                 return ServiceCommittee::find($committeeId);
             }
-            return ServiceCommittee::first();
+            return ServiceCommittee::committeesOnly()->first();
         }
 
-        return ServiceCommittee::where('user_id', $user->id)->first();
+        return ServiceCommittee::committeesOnly()->where('user_id', $user->id)->first();
     }
 
     /**

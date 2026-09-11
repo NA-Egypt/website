@@ -43,8 +43,29 @@
 ### 5. Testing & QA
 - **PHPUnit & Pest:** Comprehensive Feature and Unit test coverage.
 - **Database Transactions:** Test isolation via `DatabaseTransactions` trait or in-memory SQLite.
+- **Explicit ID Assignment in Tests:** Eloquent `Model::create(['id' => X])` drops `id` unless it is in `$fillable`. When testing specific primary keys (e.g. Committee 83), instantiate the model, assign `$model->id = X;`, and call `$model->save()`.
 - **Fakes & Mocks:** Utilize `Event::fake()`, `Queue::fake()`, `Mail::fake()`, `Http::fake()`.
 - **Browser Automation:** Dusk for full end-to-end integration tests.
+
+### 6. NA-Egypt Hierarchy, Roles & Scoping Standards
+- **Service Committee & Workgroup Hierarchy:**
+  - Workgroups are sub-entities belonging to a parent Service Committee (`parent_id != null`).
+  - Workgroups have a dedicated `Workgroups` role, distinct from the parent committee's `Committees` role.
+  - Parent committees have full visibility (view, create, edit, delete) over all child workgroups belonging to them.
+  - Workgroup users only have access to view and manage their own assigned workgroup details and meetings.
+  - Physical address fields (`ar_address`, `en_address`) must be nullable/optional for workgroups.
+- **RSC Role (`rsc`) Representation & Scoping:**
+  - Any officer with the `rsc` role (e.g. `RSC@naegypt.org`, `RCP@naegypt.org`, `RVCP@naegypt.org`, `ARSC@naegypt.org`) represents the **Egypt Regional Service Committee** (`id: 83`, `RSC@naegypt.org`).
+  - Workgroup visibility, creation, and management for users with role `rsc` are strictly scoped to workgroups directly under Committee `83` (e.g. IT Workgroup), preserving fellowship committee boundaries unless the user has the `super admin` role.
+  - RSC officers must have access to "My Committee Details" (linking to Committee 83) and "My Workgroups" (listing Committee 83 workgroups) in the navigation sidebar.
+- **Workgroup Reports Embedding Lifecycle:**
+  - Workgroup reports are created in `draft` status for the parent committee to review.
+  - Workgroup reports are not submitted directly to RSC. Instead, the parent committee embeds active draft workgroup reports into their official committee report before submitting to RSC.
+  - Embedded workgroup reports transition to status `embedded` and are linked via `parent_report_id`.
+- **PHP 8 Ternary Expression Guardrail:**
+  - In Blade templates and PHP files, never write unparenthesized nested ternary expressions (e.g., `a ? b : c ?: d`). Always explicitly parenthesize: `(a ? b : c) ?: d` or `a ? b : (c ?: d)`.
+- **Bilingual Localization Invariant:**
+  - Every user-facing string, action button, breadcrumb, and flash message must have corresponding translations added to both `resources/lang/ar/messages.php` and `resources/lang/en/messages.php`.
 
 ## Security Audit Principles & OWASP Guidelines
 

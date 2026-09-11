@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 use App\Models\User;
 use App\Models\ServiceBody;
 use Illuminate\Http\Request;

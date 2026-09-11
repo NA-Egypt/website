@@ -199,6 +199,15 @@ Route::group(
             Route::get('/serviceCommittee/show/{serviceCommittee}',[serviceCommitteeController::class,'show'])->name('serviceCommittee.show');
             Route::delete('/serviceCommittee/{serviceCommittee}',[serviceCommitteeController::class,'destroy'])->name('serviceCommittee.destroy');
 
+            // Workgroups Routes:
+            Route::get('/workgroup', [\App\Http\Controllers\WorkgroupController::class, 'index'])->name('workgroup.index');
+            Route::get('/workgroup/create', [\App\Http\Controllers\WorkgroupController::class, 'create'])->name('workgroup.create');
+            Route::post('/workgroup', [\App\Http\Controllers\WorkgroupController::class, 'store'])->name('workgroup.store');
+            Route::get('/workgroup/{workgroup}', [\App\Http\Controllers\WorkgroupController::class, 'edit'])->name('workgroup.edit');
+            Route::put('/workgroup/{workgroup}', [\App\Http\Controllers\WorkgroupController::class, 'update'])->name('workgroup.update');
+            Route::get('/workgroup/show/{workgroup}', [\App\Http\Controllers\WorkgroupController::class, 'show'])->name('workgroup.show');
+            Route::delete('/workgroup/{workgroup}', [\App\Http\Controllers\WorkgroupController::class, 'destroy'])->name('workgroup.destroy');
+
             // Meeting Routes:
             Route::get('/meeting',[MeetingController::class,'index'])->name('meeting.index');
             Route::get('/meeting/create',[MeetingController::class,'create'])->name('meeting.create');

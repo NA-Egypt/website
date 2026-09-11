@@ -244,6 +244,7 @@
             <li><a href="{{ route('serviceBody.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Body')}}</a></li>
             <li><a href="{{ route('serviceBody.map') }}"><i class="bi bi-geo-alt"></i>{{ __('messages.Service Bodies Map') }}</a></li>
             <li><a href="{{ route('serviceCommittee.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Committees')}}</a></li>
+            <li><a href="{{ route('workgroup.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Workgroups') }}</a></li>
             <li><a href="{{ route('city.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.City') }}</a></li>
             <li><a href="{{ route('neighborhood.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Neighborhood') }}</a></li>
             <li><a href="{{ route('topic.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Topics') }}</a></li>
@@ -272,16 +273,42 @@
 
       <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
 
-      {{-- My Committee Details --}}
-      @if(auth()->check() && auth()->user()->hasRole('Committees'))
+      {{-- My Committee Details & Workgroups --}}
+      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('rsc')))
         @php
-          $myCommittee = \App\Models\ServiceCommittee::where('user_id', auth()->id())->first();
+          $myCommittee = \App\Models\ServiceCommittee::where('user_id', auth()->id())
+              ->orWhere('email', auth()->user()->email)
+              ->first();
+          if (!$myCommittee && auth()->user()->hasRole('rsc')) {
+              $myCommittee = \App\Models\ServiceCommittee::find(83) ?: \App\Models\ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
+          }
         @endphp
         @if($myCommittee)
           <li>
             <a href="{{ route('serviceCommittee.show', $myCommittee->id) }}" title="{{ __('messages.My Committee Details') ?? 'My Committee Details' }}">
               <div class="parent-icon"><i class="bi bi-info-circle-fill"></i></div>
               <div class="menu-title">{{ __('messages.My Committee Details') ?? 'My Committee Details' }}</div>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('workgroup.index') }}" title="{{ __('messages.My Workgroups') }}">
+              <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
+              <div class="menu-title">{{ __('messages.My Workgroups') }}</div>
+            </a>
+          </li>
+        @endif
+      @endif
+
+      {{-- My Workgroup Details (for Workgroup role only) --}}
+      @if(auth()->check() && auth()->user()->hasRole('Workgroups') && !auth()->user()->hasRole('Committees') && !auth()->user()->hasRole('super admin'))
+        @php
+          $myWg = \App\Models\ServiceCommittee::workgroupsOnly()->where('user_id', auth()->id())->first();
+        @endphp
+        @if($myWg)
+          <li>
+            <a href="{{ route('workgroup.show', $myWg->id) }}" title="{{ __('messages.My Workgroup Details') }}">
+              <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
+              <div class="menu-title">{{ __('messages.My Workgroup Details') }}</div>
             </a>
           </li>
         @endif
