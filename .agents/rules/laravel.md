@@ -68,3 +68,4 @@ You are an expert in Laravel, the PHP framework for web artisans.
 - **PSR Standards:** Comply with PSR-12 coding standards and PSR-4 autoloading.
 - **Mass Assignment Security:** Guard all models against mass assignment using explicit `$fillable` definitions.
 - **Query Optimization:** Proactively prevent N+1 query bottlenecks with eager loading (`with([...])`).
+- **Human-Readable Permissions & RBAC:** Decouple technical Spatie permission strings from UI labels using `resources/lang/{locale}/permissions.php` and `App\Models\Permission`. Always render permission selectors using two-line cards (localized label, description subtitle, technical key badge) with real-time search, and centralize category grouping via `App\Models\Permission::getGrouped()`.

@@ -66,6 +66,12 @@
   - In Blade templates and PHP files, never write unparenthesized nested ternary expressions (e.g., `a ? b : c ?: d`). Always explicitly parenthesize: `(a ? b : c) ?: d` or `a ? b : (c ?: d)`.
 - **Bilingual Localization Invariant:**
   - Every user-facing string, action button, breadcrumb, and flash message must have corresponding translations added to both `resources/lang/ar/messages.php` and `resources/lang/en/messages.php`.
+- **Human-Readable Permissions & RBAC Standards:**
+  - **Permission Key Immutability:** Technical Spatie permission identifiers in the database and code checks (`hasPermissionTo(...)`, middleware) must remain stable identifiers and never be altered for UI display purposes.
+  - **Decoupled Localization:** Human-readable names, descriptions, and categories are defined in `resources/lang/{locale}/permissions.php` and accessed via `App\Models\Permission` model accessors (`display_name`, `description`, `category`).
+  - **Two-Line Card UI Standard:** In administration selection forms (User Create/Edit, Role Permission Assignment), permissions must be rendered as two-line cards: bold localized title, explanatory description subtitle, and a subtle monospace technical key badge, accompanied by a live filter matching title, description, and key.
+  - **Centralized Grouping:** Use `App\Models\Permission::getGrouped()` across all views to maintain a single source of truth for categories, icons, and counter badges.
+  - **DataTable Query Safety:** The `permissions` table does not contain virtual columns like `description`; search logic in controllers (`PermissionController`) must translate user search terms against `permissions.items` translation catalogs or query actual schema columns (`name`).
 
 ## Security Audit Principles & OWASP Guidelines
 
