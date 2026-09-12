@@ -189,4 +189,233 @@ class TableRevampEndpointsTest extends TestCase
             'total'
         ]);
     }
+
+    public function test_cities_index_renders_and_returns_json()
+    {
+        $city = City::create(['ar_name' => 'الإسكندرية', 'en_name' => 'Alexandria']);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('city.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertSee('CitiesDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('city.index', [
+            'search' => 'Alexandria'
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'Alexandria']);
+    }
+
+    public function test_neighborhoods_index_renders_and_returns_json()
+    {
+        $city = City::first() ?? City::create(['ar_name' => 'القاهرة', 'en_name' => 'Cairo']);
+        $nh = Neighborhood::create(['ar_name' => 'المعادي', 'en_name' => 'Maadi', 'city_id' => $city->id]);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('neighborhood.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertViewHas('cities');
+        $viewResponse->assertSee('NeighborhoodsDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('neighborhood.index', [
+            'city_id' => $city->id
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'Maadi']);
+    }
+
+    public function test_topics_index_renders_and_returns_json()
+    {
+        $topic = Topic::create(['ar_name' => 'الخطوة الأولى', 'en_name' => 'Step 1']);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('topic.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertSee('TopicsDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('topic.index', [
+            'search' => 'Step 1'
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'Step 1']);
+    }
+
+    public function test_workgroups_index_renders_and_returns_json()
+    {
+        $parent = \App\Models\ServiceCommittee::create([
+            'ar_name' => 'لجنة الخدمة الإقليمية',
+            'en_name' => 'Regional Committee',
+            'email'   => 'rsc@example.com',
+            'user_id' => $this->admin->id,
+        ]);
+
+        $wg = \App\Models\ServiceCommittee::create([
+            'parent_id'      => $parent->id,
+            'ar_name'        => 'مجموعة عمل تكنولوجيا المعلومات',
+            'en_name'        => 'IT Workgroup',
+            'workgroup_type' => 'permanent',
+            'status'         => 'active',
+            'email'          => 'it@example.com',
+            'user_id'        => $this->admin->id,
+        ]);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('workgroup.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertSee('WorkgroupsDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('workgroup.index', [
+            'parent_id' => $parent->id
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'IT Workgroup']);
+    }
+
+    public function test_service_committees_index_renders_and_returns_json()
+    {
+        $committee = \App\Models\ServiceCommittee::create([
+            'ar_name' => 'لجنة الأدب',
+            'en_name' => 'Literature Committee',
+            'email'   => 'lit@example.com',
+            'user_id' => $this->admin->id,
+        ]);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('serviceCommittee.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertSee('ServiceCommitteesDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('serviceCommittee.index', [
+            'search' => 'Literature'
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'Literature Committee']);
+    }
+
+    public function test_service_bodies_index_renders_and_returns_json()
+    {
+        $day = Day::first() ?? Day::create(['ar_name' => 'الأحد', 'en_name' => 'Sunday']);
+        $sb = ServiceBody::create([
+            'ar_name'     => 'هيئة القاهرة',
+            'en_name'     => 'Cairo ASC',
+            'description' => 'Desc',
+            'day_id'      => $day->id,
+            'start_time'  => '10:00',
+            'end_time'    => '12:00',
+            'location'    => 'Cairo',
+        ]);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('serviceBody.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertViewHas('days');
+        $viewResponse->assertSee('ServiceBodiesDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('serviceBody.index', [
+            'day_id' => $day->id
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['en_name' => 'Cairo ASC']);
+    }
+
+    public function test_users_index_renders_and_returns_json()
+    {
+        $viewResponse = $this->actingAs($this->admin)->get(route('users.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertViewHas('roles');
+        $viewResponse->assertSee('UsersDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('users.index', [
+            'search' => $this->admin->email
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['email' => $this->admin->email]);
+    }
+
+    public function test_subscribers_index_renders_and_returns_json()
+    {
+        $sub = \Mydnic\Subscribers\Subscriber::create([
+            'email' => 'subscriber@example.com'
+        ]);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('subscribers.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertSee('SubscribersDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('subscribers.index', [
+            'search' => 'subscriber@example.com'
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['email' => 'subscriber@example.com']);
+    }
+
+    public function test_permissions_index_renders_and_returns_json()
+    {
+        $perm = \App\Models\Permission::firstOrCreate(['name' => 'view_reports', 'guard_name' => 'web']);
+
+        $viewResponse = $this->actingAs($this->admin)->get(route('permissions.index'));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertViewHas('kpiStats');
+        $viewResponse->assertViewHas('categories');
+        $viewResponse->assertSee('PermissionsDataTable');
+
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('permissions.index', [
+            'search' => 'view_reports'
+        ]));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment(['name' => 'view_reports']);
+    }
+
+    public function test_all_revamped_table_views_have_no_untranslated_messages_keys()
+    {
+        $routes = [
+            'meeting.index',
+            'group.index',
+            'direct-online-group.index',
+            'city.index',
+            'neighborhood.index',
+            'topic.index',
+            'workgroup.index',
+            'serviceCommittee.index',
+            'serviceBody.index',
+            'users.index',
+            'subscribers.index',
+            'permissions.index',
+        ];
+
+        foreach (['en', 'ar'] as $locale) {
+            app()->setLocale($locale);
+
+            foreach ($routes as $route) {
+                $response = $this->actingAs($this->admin)->get(route($route));
+                $response->assertStatus(200);
+                $content = $response->getContent();
+
+                $forbiddenKeys = [
+                    'messages.actions',
+                    'messages.edit',
+                    'messages.delete',
+                    'messages.showing',
+                    'messages.to',
+                    'messages.of',
+                    'messages.entries',
+                    'messages.first',
+                    'messages.prev',
+                    'messages.next',
+                    'messages.last',
+                ];
+
+                foreach ($forbiddenKeys as $forbiddenKey) {
+                    $this->assertStringNotContainsString(
+                        $forbiddenKey,
+                        $content,
+                        "Route [{$route}] in [{$locale}] locale unexpectedly contains untranslated string [{$forbiddenKey}]"
+                    );
+                }
+            }
+        }
+    }
 }
+

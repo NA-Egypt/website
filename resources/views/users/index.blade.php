@@ -1,42 +1,60 @@
 <x-layout>
-    <x-backhead>{{__('messages.Users')}}</x-backhead>
-{{--    @if (session('success'))--}}
-{{--        <div>{{ session('success') }}</div>--}}
-{{--    @endif--}}
-{{--    <ul>--}}
-{{--        @foreach ($users as $user)--}}
-{{--            <li>--}}
-{{--                {{ $user->name }} - Roles: {{ $user->roles->pluck('name')->implode(', ') }}--}}
-{{--                <a href="{{ route('users.edit', $user) }}">Edit Roles</a>--}}
-{{--            </li>--}}
-{{--        @endforeach--}}
-{{--    </ul>--}}
-    @php
-    $columns = [
-        ['field' => 'id', 'title' => 'ID', 'sort' => true, 'isUnique' => true, 'hide' => true],
-        ['field' => 'display_name', 'title' => __('messages.Display Name'), 'sort' => true],
-        ['field' => 'email', 'title' => __('messages.Email'), 'sort' => true],
-        ['field' => 'roles', 'title' => __('messages.Roles'), 'sort' => false, 'renderType' => 'array', 'fieldPath' => 'roles', 'arrayKey' => 'name'],
-        ['field' => 'service_body', 'title' => __('messages.Service Body'), 'sort' => true, 'renderType' => 'nested', 'fieldPath' => 'service_body.' . app()->getLocale() . '_name'],
-        ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
-    ];
-    $bulkActions = [
-        ['value' => 'delete', 'label' => __('messages.Delete Selected') ?? 'Delete Selected']
-    ];
-    @endphp
+    <x-backhead>{{ __('messages.Users') }}</x-backhead>
 
-    <div data-vue-app="GenericDataTable"
-         data-fetch-url="{{ route('users.index') }}"
-         data-columns="{{ json_encode($columns) }}"
-         data-create-route="{{ route('users.create') }}"
-         data-create-label="{{ __('messages.Add User') ?? 'Add User' }}"
-         data-bulk-action-route="{{ route('users.bulk_action') }}"
-         data-bulk-actions="{{ json_encode($bulkActions) }}"
-         data-bulk-ids-name="user_ids[]"
-         data-edit-route-template="{{ str_replace('1', '{id}', route('users.edit', ['user' => 1])) }}"
-         data-impersonate-route-template="{{ str_replace('1', '{id}', route('users.impersonate', ['user' => 1])) }}"
-         data-has-impersonate-button="true"
-         data-delete-route-name="users.destroy"
-         data-delete-route-template="{{ str_replace('1', '{id}', route('users.destroy', ['user' => 1])) }}">
+    <div class="container-fluid py-4 px-md-5">
+        @php
+            $labels = [
+                'totalUsers' => __('messages.Total Users'),
+                'verifiedUsers' => __('messages.Verified Users'),
+                'unverifiedUsers' => __('messages.Unverified Users'),
+                'serviceBodyOfficers' => __('messages.Service Body Officers'),
+                'user' => __('messages.User Details'),
+                'assignedRoles' => __('messages.Assigned Roles'),
+                'associatedServiceBody' => __('messages.Associated Service Body'),
+                'status' => __('messages.Status'),
+                'emailVerified' => __('messages.Email Verified'),
+                'emailUnverified' => __('messages.Email Unverified'),
+                'impersonateUser' => __('messages.Impersonate User'),
+                'confirmImpersonate' => __('messages.confirm_impersonate') ?? 'Are you sure you want to impersonate this user?',
+                'searchPlaceholder' => __('messages.Search users by name, email...'),
+                'allRoles' => __('messages.All Roles'),
+                'allVerificationStatuses' => __('messages.All Verification Statuses'),
+                'clearFilters' => __('messages.Clear Filters'),
+                'actions' => __('messages.actions'),
+                'quickView' => __('messages.Quick View'),
+                'userDetails' => __('messages.User Details'),
+                'edit' => __('messages.edit'),
+                'delete' => __('messages.delete'),
+                'close' => __('messages.Close'),
+                'showing' => __('messages.showing'),
+                'to' => __('messages.to'),
+                'of' => __('messages.of'),
+                'entries' => __('messages.entries'),
+                'first' => __('messages.first'),
+                'prev' => __('messages.prev'),
+                'next' => __('messages.next'),
+                'last' => __('messages.Last'),
+                'noRecords' => __('messages.No matching records found'),
+                'tryAdjusting' => __('messages.Try adjusting your search or filters'),
+                'confirmDelete' => __('messages.Confirm Delete User'),
+                'deletedSuccess' => __('messages.user_deleted_success'),
+            ];
+
+            $canImpersonate = auth()->user() && auth()->user()->hasRole('super admin');
+        @endphp
+
+        <div data-vue-app="UsersDataTable"
+             data-fetch-url="{{ route('users.index') }}"
+             data-create-route="{{ route('users.create') }}"
+             data-create-label="{{ __('messages.Add User') }}"
+             data-edit-route-template="{{ route('users.edit', ['user' => '__ID__']) }}"
+             data-delete-route-template="{{ route('users.destroy', ['user' => '__ID__']) }}"
+             data-impersonate-route-template="{{ route('users.impersonate', ['user' => '__ID__']) }}"
+             data-can-impersonate="{{ $canImpersonate ? 'true' : 'false' }}"
+             data-roles="{{ json_encode($roles ?? []) }}"
+             data-kpi-stats="{{ json_encode($kpiStats ?? []) }}"
+             data-labels="{{ json_encode($labels) }}"
+             data-csrf-token="{{ csrf_token() }}">
+        </div>
     </div>
 </x-layout>

@@ -14,8 +14,22 @@ class PermissionController extends Controller
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = Permission::query();
+            $query = Permission::query()->withCount('roles');
             $search = $request->input('search');
+
+            if ($request->filled('category')) {
+                $locale = app()->getLocale();
+                $items = trans('permissions.items', [], $locale);
+                $catNames = [];
+                if (is_array($items)) {
+                    foreach ($items as $permName => $permData) {
+                        if (isset($permData['category']) && $permData['category'] === $request->category) {
+                            $catNames[] = $permName;
+                        }
+                    }
+                }
+                $query->whereIn('name', $catNames);
+            }
 
             if (!empty($search)) {
                 $matchedNames = [];
@@ -50,8 +64,32 @@ class PermissionController extends Controller
             return response()->json($permissions);
         }
 
+        $totalPermissions = Permission::count();
+        $totalRoles = \Spatie\Permission\Models\Role::count();
+        $assignedPermissions = \Illuminate\Support\Facades\DB::table('role_has_permissions')->distinct()->count('permission_id');
+        $locale = app()->getLocale();
+        $categoriesCatalog = trans('permissions.categories', [], $locale);
+        $totalCategories = is_array($categoriesCatalog) ? count($categoriesCatalog) : 0;
+
+        $kpiStats = [
+            'total_permissions' => $totalPermissions,
+            'total_roles' => $totalRoles,
+            'assigned_permissions' => $assignedPermissions,
+            'total_categories' => $totalCategories,
+        ];
+
+        $categories = [];
+        if (is_array($categoriesCatalog)) {
+            foreach ($categoriesCatalog as $key => $cat) {
+                $categories[] = [
+                    'key' => $key,
+                    'title' => is_array($cat) ? ($cat['title'] ?? $key) : $cat,
+                ];
+            }
+        }
+
         $permissions = collect();
-        return view('permissions.index', compact('permissions'));
+        return view('permissions.index', compact('permissions', 'kpiStats', 'categories'));
     }
 
     public function create()
@@ -95,9 +133,16 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy(Request $request, Permission $permission)
     {
         $permission->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.permission_deleted')
+            ]);
+        }
 
         return redirect()->route('permissions.index')
             ->with('success', __('messages.permission_deleted'));

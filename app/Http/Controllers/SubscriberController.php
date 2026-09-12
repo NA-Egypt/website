@@ -14,19 +14,41 @@ class SubscriberController extends Controller
     {
         if ($request->wantsJson() || $request->ajax()) {
             $query = Subscriber::query();
+
+            if ($request->filled('status')) {
+                if ($request->status === 'verified') {
+                    $query->whereNotNull('email_verified_at');
+                } elseif ($request->status === 'unverified') {
+                    $query->whereNull('email_verified_at');
+                }
+            }
+
             $subscribers = $this->paginateDataTable($query, $request, ['email']);
             
             $subscribers->getCollection()->transform(function($s) {
                 $s->status = $s->hasVerifiedEmail() ? __('messages.Verified') : __('messages.Unverified');
-                $s->created_at_formatted = $s->created_at->format('Y-m-d H:i');
+                $s->is_verified = $s->hasVerifiedEmail();
+                $s->created_at_formatted = $s->created_at ? $s->created_at->format('Y-m-d H:i') : '';
                 return $s;
             });
 
             return response()->json($subscribers);
         }
 
+        $totalSubscribers = Subscriber::count();
+        $verifiedSubscribers = Subscriber::whereNotNull('email_verified_at')->count();
+        $unverifiedSubscribers = $totalSubscribers - $verifiedSubscribers;
+        $verificationRate = $totalSubscribers > 0 ? round(($verifiedSubscribers / $totalSubscribers) * 100, 1) . '%' : '0%';
+
+        $kpiStats = [
+            'total_subscribers' => $totalSubscribers,
+            'verified_subscribers' => $verifiedSubscribers,
+            'unverified_subscribers' => $unverifiedSubscribers,
+            'verification_rate' => $verificationRate,
+        ];
+
         $subscribers = collect();
-        return view('subscribers.index', compact('subscribers'));
+        return view('subscribers.index', compact('subscribers', 'kpiStats'));
     }
 
     public function create()
@@ -94,9 +116,16 @@ class SubscriberController extends Controller
         return redirect()->route('subscribers.index')->with('success', $message);
     }
 
-    public function destroy(Subscriber $subscriber)
+    public function destroy(Request $request, Subscriber $subscriber)
     {
         $subscriber->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.Subscriber deleted successfully')
+            ]);
+        }
 
         return redirect()->route('subscribers.index')
             ->with('success', __('messages.Subscriber deleted successfully'));

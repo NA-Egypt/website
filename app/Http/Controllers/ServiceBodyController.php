@@ -18,21 +18,42 @@ class ServiceBodyController extends Controller
     
     public function index(Request $request) {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = ServiceBody::with('day');
+            $query = ServiceBody::with('day')->withCount('groups');
+
+            if ($request->filled('day_id')) {
+                $query->where('day_id', $request->input('day_id'));
+            }
+
             $sb = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'helpline']);
             
-            $sb->getCollection()->transform(function($s) {
-                $s->day_name = $s->day ? (app()->getLocale() === 'ar' ? $s->day->ar_name : $s->day->en_name) : '-';
+            $locale = app()->getLocale();
+            $sb->getCollection()->transform(function($s) use ($locale) {
+                $s->primary_name = $locale === 'ar' ? ($s->ar_name ?: $s->en_name) : ($s->en_name ?: $s->ar_name);
+                $s->secondary_name = $locale === 'ar' ? $s->en_name : $s->ar_name;
+                $s->day_name = $s->day ? ($locale === 'ar' ? $s->day->ar_name : $s->day->en_name) : '-';
                 $s->from_time = $s->formatted_start_time;
                 $s->to_time = $s->formatted_end_time;
+                $s->groups_count = $s->groups_count ?? 0;
+                $s->location_url = $s->location;
                 return $s;
             });
 
             return response()->json($sb);
         }
 
-        $sb = collect();
-        return view('serviceBody.index', ['sb' => $sb]);
+        $kpiStats = [
+            'total_service_bodies' => ServiceBody::count(),
+            'total_groups'         => \App\Models\Group::whereNotNull('service_body_id')->count(),
+            'total_meetings'       => \App\Models\Meeting::whereNotNull('group_id')->count(),
+        ];
+
+        $days = Day::all(['id', 'ar_name', 'en_name']);
+
+        return view('serviceBody.index', [
+            'sb'       => collect(),
+            'kpiStats' => $kpiStats,
+            'days'     => $days
+        ]);
     }
 
     public function create() {
@@ -80,11 +101,14 @@ class ServiceBodyController extends Controller
         
     }
 
-    public function destroy(ServiceBody $serviceBody) {
-        
+    public function destroy(ServiceBody $serviceBody, Request $request) {
         $serviceBody->delete();
 
-        return redirect()->route('serviceBody.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.service_body_deleted_success')]);
+        }
+
+        return redirect()->route('serviceBody.index')->with('success', __('messages.service_body_deleted_success'));
     }
 
     public function agendas(ServiceBody $serviceBody) {

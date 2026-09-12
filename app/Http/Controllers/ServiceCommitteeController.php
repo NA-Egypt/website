@@ -29,13 +29,48 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = ServiceCommittee::committeesOnly();
-            $ServiceCommittee = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'chairman_name', 'chairman_phone']);
-            return response()->json($ServiceCommittee);
+            $query = ServiceCommittee::committeesOnly()->with(['workgroups', 'user'])->withCount('workgroups');
+
+            if ($request->filled('has_workgroups')) {
+                if ($request->input('has_workgroups') === 'yes') {
+                    $query->has('workgroups');
+                } elseif ($request->input('has_workgroups') === 'no') {
+                    $query->doesntHave('workgroups');
+                }
+            }
+
+            $serviceCommittees = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'email', 'chairman_name', 'chairman_phone']);
+
+            $locale = app()->getLocale();
+            $serviceCommittees->getCollection()->transform(function($item) use ($locale) {
+                $item->primary_name = $locale === 'ar' ? ($item->ar_name ?: $item->en_name) : ($item->en_name ?: $item->ar_name);
+                $item->secondary_name = $locale === 'ar' ? $item->en_name : $item->ar_name;
+                $item->workgroups_count = $item->workgroups_count ?? 0;
+                $item->workgroups_list = $item->workgroups ? $item->workgroups->map(function($w) use ($locale) {
+                    return [
+                        'id' => $w->id,
+                        'name' => $locale === 'ar' ? ($w->ar_name ?: $w->en_name) : ($w->en_name ?: $w->ar_name),
+                        'status' => $w->status,
+                        'type' => $w->workgroup_type
+                    ];
+                })->values()->all() : [];
+                return $item;
+            });
+
+            return response()->json($serviceCommittees);
         }
 
-        $ServiceCommittee = collect();
-        return view('serviceCommittee.index', ['ServiceCommittee'=>$ServiceCommittee]);
+        $kpiStats = [
+            'total_committees'  => ServiceCommittee::committeesOnly()->count(),
+            'total_workgroups'  => ServiceCommittee::workgroupsOnly()->count(),
+            'active_committees' => ServiceCommittee::committeesOnly()->active()->count(),
+            'officers_count'    => ServiceCommittee::committeesOnly()->whereNotNull('user_id')->count(),
+        ];
+
+        return view('serviceCommittee.index', [
+            'serviceCommittees' => collect(),
+            'kpiStats'          => $kpiStats
+        ]);
     }
 
     public function __invoke()
@@ -185,10 +220,14 @@ class ServiceCommitteeController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ServiceCommittee $serviceCommittee)
+    public function destroy(ServiceCommittee $serviceCommittee, Request $request)
     {
         $serviceCommittee->delete();
 
-        return redirect()->route('serviceCommittee.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.service_committee_deleted_success')]);
+        }
+
+        return redirect()->route('serviceCommittee.index')->with('success', __('messages.service_committee_deleted_success'));
     }
 }

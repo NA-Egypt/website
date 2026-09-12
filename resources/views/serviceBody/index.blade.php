@@ -1,31 +1,58 @@
 <x-layout>
+    <x-backhead>{{ __('messages.Manage') . ' ' . __('messages.Service Body') }}</x-backhead>
 
-    <x-backhead>{{__('messages.Manage') . ' ' . __('messages.Service Body')}}</x-backhead>
-
-    <div class="container">
-
+    <div class="container-fluid py-4 px-md-5">
         @php
-        $columns = [
-            ['field' => 'ar_name', 'title' => __('messages.Service Body Arabic Name'), 'sort' => true],
-            ['field' => 'day_name', 'title' => __('messages.Day'), 'sort' => true],
-            ['field' => 'from_time', 'title' => __('messages.From'), 'sort' => true],
-            ['field' => 'to_time', 'title' => __('messages.To'), 'sort' => true],
-            ['field' => 'location', 'title' => __('messages.Location'), 'sort' => true],
-            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
-        ];
+            $labels = [
+                'totalServiceBodies' => __('messages.Total Service Bodies'),
+                'hostedGroups' => __('messages.Hosted Groups'),
+                'serviceBodyName' => __('messages.Service Body'),
+                'meetingDayTime' => __('messages.Meeting Day') . ' & ' . __('messages.Meeting Time'),
+                'meetingAddress' => __('messages.Meeting Address'),
+                'allDays' => __('messages.All Days'),
+                'searchPlaceholder' => __('messages.Search service bodies...'),
+                'clearFilters' => __('messages.Clear Filters'),
+                'viewOnMap' => __('messages.View on Google Maps'),
+                'actions' => __('messages.actions'),
+                'quickView' => __('messages.Quick View'),
+                'viewDetails' => __('messages.View Details'),
+                'serviceBodyDetails' => __('messages.Service Body Details'),
+                'edit' => __('messages.edit'),
+                'delete' => __('messages.delete'),
+                'close' => __('messages.Close'),
+                'showing' => __('messages.showing'),
+                'to' => __('messages.to'),
+                'of' => __('messages.of'),
+                'entries' => __('messages.entries'),
+                'first' => __('messages.first'),
+                'prev' => __('messages.prev'),
+                'next' => __('messages.next'),
+                'last' => __('messages.Last'),
+                'noRecords' => __('messages.No matching records found'),
+                'tryAdjusting' => __('messages.Try adjusting your search or filters'),
+                'confirmDelete' => __('messages.Confirm Delete Service Body'),
+                'deletedSuccess' => __('messages.service_body_deleted_success'),
+            ];
+
+            $dayOptions = collect($days ?? [])->map(function($d) {
+                return [
+                    'id' => $d->id,
+                    'name' => app()->getLocale() === 'ar' ? ($d->ar_name ?: $d->en_name) : ($d->en_name ?: $d->ar_name),
+                ];
+            })->values();
         @endphp
 
-        <div data-vue-app="GenericDataTable"
+        <div data-vue-app="ServiceBodiesDataTable"
              data-fetch-url="{{ route('serviceBody.index') }}"
-             data-columns="{{ json_encode($columns) }}"
              data-create-route="{{ route('serviceBody.create') }}"
              data-create-label="{{ __('messages.Add') . ' ' . __('messages.Service Body') }}"
-             data-edit-route-template="{{ str_replace('1', '{id}', route('serviceBody.edit', ['serviceBody' => 1])) }}"
-             data-has-agendas-button
-             data-delete-route-name="serviceBody.destroy"
-             data-delete-route-template="{{ str_replace('1', '{id}', route('serviceBody.destroy', ['serviceBody' => 1])) }}">
+             data-edit-route-template="{{ route('serviceBody.edit', ['serviceBody' => '__ID__']) }}"
+             data-show-route-template="{{ route('serviceBody.agendas', ['serviceBody' => '__ID__']) }}"
+             data-delete-route-template="{{ route('serviceBody.destroy', ['serviceBody' => '__ID__']) }}"
+             data-days="{{ json_encode($dayOptions) }}"
+             data-kpi-stats="{{ json_encode($kpiStats ?? []) }}"
+             data-labels="{{ json_encode($labels) }}"
+             data-csrf-token="{{ csrf_token() }}">
         </div>
-        {{-- {{$serviceBody->links()}} --}}
     </div>
-
 </x-layout>

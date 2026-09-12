@@ -17,13 +17,41 @@ class TopicController extends Controller
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = Topic::query();
+            $query = Topic::withCount('meetings');
+
+            if ($request->filled('has_meetings')) {
+                if ($request->input('has_meetings') === 'yes') {
+                    $query->has('meetings');
+                } elseif ($request->input('has_meetings') === 'no') {
+                    $query->doesntHave('meetings');
+                }
+            }
+
             $topics = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'description']);
+
+            $locale = app()->getLocale();
+            $topics->getCollection()->transform(function($t) use ($locale) {
+                $t->primary_name = $locale === 'ar' ? ($t->ar_name ?: $t->en_name) : ($t->en_name ?: $t->ar_name);
+                $t->secondary_name = $locale === 'ar' ? $t->en_name : $t->ar_name;
+                $t->meetings_count = $t->meetings_count ?? 0;
+                $t->description_text = $t->description;
+                $t->is_business = mb_stripos($t->en_name, 'Business') !== false;
+                return $t;
+            });
+
             return response()->json($topics);
         }
 
-        $topics = collect();
-        return view('topic.index', ['topics'=>$topics]);
+        $kpiStats = [
+            'total_topics'    => Topic::count(),
+            'total_meetings'  => \App\Models\Meeting::whereNotNull('topic_id')->count(),
+            'business_topics' => Topic::where('en_name', 'like', '%Business%')->count(),
+        ];
+
+        return view('topic.index', [
+            'topics'   => collect(),
+            'kpiStats' => $kpiStats
+        ]);
     }
 
     /**
@@ -77,10 +105,14 @@ class TopicController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Topic $topic)
+    public function destroy(Topic $topic, Request $request)
     {
         $topic->delete();
 
-        return redirect()->route('topic.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.topic_deleted_success')]);
+        }
+
+        return redirect()->route('topic.index')->with('success', __('messages.topic_deleted_success'));
     }
 }

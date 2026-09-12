@@ -91,6 +91,15 @@ const RolesDataTable = defineAsyncComponent(() => import('./components/RolesData
 const MeetingsDataTable = defineAsyncComponent(() => import('./components/MeetingsDataTable.vue'));
 const GroupsDataTable = defineAsyncComponent(() => import('./components/GroupsDataTable.vue'));
 const DirectOnlineGroupsDataTable = defineAsyncComponent(() => import('./components/DirectOnlineGroupsDataTable.vue'));
+const CitiesDataTable = defineAsyncComponent(() => import('./components/CitiesDataTable.vue'));
+const NeighborhoodsDataTable = defineAsyncComponent(() => import('./components/NeighborhoodsDataTable.vue'));
+const TopicsDataTable = defineAsyncComponent(() => import('./components/TopicsDataTable.vue'));
+const WorkgroupsDataTable = defineAsyncComponent(() => import('./components/WorkgroupsDataTable.vue'));
+const ServiceCommitteesDataTable = defineAsyncComponent(() => import('./components/ServiceCommitteesDataTable.vue'));
+const ServiceBodiesDataTable = defineAsyncComponent(() => import('./components/ServiceBodiesDataTable.vue'));
+const UsersDataTable = defineAsyncComponent(() => import('./components/UsersDataTable.vue'));
+const SubscribersDataTable = defineAsyncComponent(() => import('./components/SubscribersDataTable.vue'));
+const PermissionsDataTable = defineAsyncComponent(() => import('./components/PermissionsDataTable.vue'));
 
 const mountVueApps = () => {
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
@@ -335,6 +344,271 @@ const mountVueApps = () => {
             })
         });
         app.mount(directOnlineGroupsEl);
+    }
+
+    const citiesEl = document.querySelector('[data-vue-app="CitiesDataTable"]');
+    if (citiesEl && !citiesEl.dataset.vueMounted) {
+        citiesEl.dataset.vueMounted = 'true';
+        const fetchUrl = citiesEl.getAttribute('data-fetch-url') || '';
+        const createRoute = citiesEl.getAttribute('data-create-route') || '';
+        const createLabel = citiesEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = citiesEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = citiesEl.getAttribute('data-delete-route-template') || '';
+        const initialKpiStats = JSON.parse(citiesEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(citiesEl.getAttribute('data-labels') || '{}');
+        const csrfToken = citiesEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(CitiesDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(citiesEl);
+    }
+
+    const neighborhoodsEl = document.querySelector('[data-vue-app="NeighborhoodsDataTable"]');
+    if (neighborhoodsEl && !neighborhoodsEl.dataset.vueMounted) {
+        neighborhoodsEl.dataset.vueMounted = 'true';
+        const fetchUrl = neighborhoodsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = neighborhoodsEl.getAttribute('data-create-route') || '';
+        const createLabel = neighborhoodsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = neighborhoodsEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = neighborhoodsEl.getAttribute('data-delete-route-template') || '';
+        const cities = JSON.parse(neighborhoodsEl.getAttribute('data-cities') || '[]');
+        const initialKpiStats = JSON.parse(neighborhoodsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(neighborhoodsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = neighborhoodsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(NeighborhoodsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                cities,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(neighborhoodsEl);
+    }
+
+    const topicsEl = document.querySelector('[data-vue-app="TopicsDataTable"]');
+    if (topicsEl && !topicsEl.dataset.vueMounted) {
+        topicsEl.dataset.vueMounted = 'true';
+        const fetchUrl = topicsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = topicsEl.getAttribute('data-create-route') || '';
+        const createLabel = topicsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = topicsEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = topicsEl.getAttribute('data-delete-route-template') || '';
+        const initialKpiStats = JSON.parse(topicsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(topicsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = topicsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(TopicsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(topicsEl);
+    }
+
+    const workgroupsEl = document.querySelector('[data-vue-app="WorkgroupsDataTable"]');
+    if (workgroupsEl && !workgroupsEl.dataset.vueMounted) {
+        workgroupsEl.dataset.vueMounted = 'true';
+        const fetchUrl = workgroupsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = workgroupsEl.getAttribute('data-create-route') || '';
+        const createLabel = workgroupsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = workgroupsEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = workgroupsEl.getAttribute('data-delete-route-template') || '';
+        const committees = JSON.parse(workgroupsEl.getAttribute('data-committees') || '[]');
+        const initialKpiStats = JSON.parse(workgroupsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(workgroupsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = workgroupsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(WorkgroupsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                committees,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(workgroupsEl);
+    }
+
+    const serviceCommitteesEl = document.querySelector('[data-vue-app="ServiceCommitteesDataTable"]');
+    if (serviceCommitteesEl && !serviceCommitteesEl.dataset.vueMounted) {
+        serviceCommitteesEl.dataset.vueMounted = 'true';
+        const fetchUrl = serviceCommitteesEl.getAttribute('data-fetch-url') || '';
+        const createRoute = serviceCommitteesEl.getAttribute('data-create-route') || '';
+        const createLabel = serviceCommitteesEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = serviceCommitteesEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = serviceCommitteesEl.getAttribute('data-delete-route-template') || '';
+        const initialKpiStats = JSON.parse(serviceCommitteesEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(serviceCommitteesEl.getAttribute('data-labels') || '{}');
+        const csrfToken = serviceCommitteesEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(ServiceCommitteesDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(serviceCommitteesEl);
+    }
+
+    const serviceBodiesEl = document.querySelector('[data-vue-app="ServiceBodiesDataTable"]');
+    if (serviceBodiesEl && !serviceBodiesEl.dataset.vueMounted) {
+        serviceBodiesEl.dataset.vueMounted = 'true';
+        const fetchUrl = serviceBodiesEl.getAttribute('data-fetch-url') || '';
+        const createRoute = serviceBodiesEl.getAttribute('data-create-route') || '';
+        const createLabel = serviceBodiesEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = serviceBodiesEl.getAttribute('data-edit-route-template') || '';
+        const showRouteTemplate = serviceBodiesEl.getAttribute('data-show-route-template') || '';
+        const deleteRouteTemplate = serviceBodiesEl.getAttribute('data-delete-route-template') || '';
+        const days = JSON.parse(serviceBodiesEl.getAttribute('data-days') || '[]');
+        const initialKpiStats = JSON.parse(serviceBodiesEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(serviceBodiesEl.getAttribute('data-labels') || '{}');
+        const csrfToken = serviceBodiesEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(ServiceBodiesDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                showRouteTemplate,
+                deleteRouteTemplate,
+                days,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(serviceBodiesEl);
+    }
+
+    const usersEl = document.querySelector('[data-vue-app="UsersDataTable"]');
+    if (usersEl && !usersEl.dataset.vueMounted) {
+        usersEl.dataset.vueMounted = 'true';
+        const fetchUrl = usersEl.getAttribute('data-fetch-url') || '';
+        const createRoute = usersEl.getAttribute('data-create-route') || '';
+        const createLabel = usersEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = usersEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = usersEl.getAttribute('data-delete-route-template') || '';
+        const impersonateRouteTemplate = usersEl.getAttribute('data-impersonate-route-template') || '';
+        const canImpersonate = usersEl.getAttribute('data-can-impersonate') === 'true';
+        const roles = JSON.parse(usersEl.getAttribute('data-roles') || '[]');
+        const initialKpiStats = JSON.parse(usersEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(usersEl.getAttribute('data-labels') || '{}');
+        const csrfToken = usersEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(UsersDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                impersonateRouteTemplate,
+                canImpersonate,
+                roles,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(usersEl);
+    }
+
+    const subscribersEl = document.querySelector('[data-vue-app="SubscribersDataTable"]');
+    if (subscribersEl && !subscribersEl.dataset.vueMounted) {
+        subscribersEl.dataset.vueMounted = 'true';
+        const fetchUrl = subscribersEl.getAttribute('data-fetch-url') || '';
+        const createRoute = subscribersEl.getAttribute('data-create-route') || '';
+        const createLabel = subscribersEl.getAttribute('data-create-label') || '';
+        const exportRoute = subscribersEl.getAttribute('data-export-route') || '';
+        const toggleRouteTemplate = subscribersEl.getAttribute('data-toggle-route-template') || '';
+        const deleteRouteTemplate = subscribersEl.getAttribute('data-delete-route-template') || '';
+        const getIdsUrl = subscribersEl.getAttribute('data-get-ids-url') || '';
+        const verifyBatchUrl = subscribersEl.getAttribute('data-verify-batch-url') || '';
+        const initialKpiStats = JSON.parse(subscribersEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(subscribersEl.getAttribute('data-labels') || '{}');
+        const csrfToken = subscribersEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(SubscribersDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                exportRoute,
+                toggleRouteTemplate,
+                deleteRouteTemplate,
+                getIdsUrl,
+                verifyBatchUrl,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(subscribersEl);
+    }
+
+    const permissionsEl = document.querySelector('[data-vue-app="PermissionsDataTable"]');
+    if (permissionsEl && !permissionsEl.dataset.vueMounted) {
+        permissionsEl.dataset.vueMounted = 'true';
+        const fetchUrl = permissionsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = permissionsEl.getAttribute('data-create-route') || '';
+        const createLabel = permissionsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = permissionsEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = permissionsEl.getAttribute('data-delete-route-template') || '';
+        const categories = JSON.parse(permissionsEl.getAttribute('data-categories') || '[]');
+        const initialKpiStats = JSON.parse(permissionsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(permissionsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = permissionsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(PermissionsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                categories,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(permissionsEl);
     }
 
     const datePickerEls = document.querySelectorAll('[data-vue-app="VueCtkDateTimePicker"]');

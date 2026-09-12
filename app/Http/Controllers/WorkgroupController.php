@@ -62,7 +62,7 @@ class WorkgroupController extends Controller implements HasMiddleware
         }
 
         if ($request->wantsJson() || $request->ajax()) {
-            $query = ServiceCommittee::workgroupsOnly()->with(['parent', 'user']);
+            $query = ServiceCommittee::workgroupsOnly()->with(['parent', 'user', 'meetings']);
 
             if (!$isSuperAdmin) {
                 if (!$myCommittee) {
@@ -74,23 +74,54 @@ class WorkgroupController extends Controller implements HasMiddleware
                 $query->where('parent_id', $myCommittee->id);
             }
 
+            if ($request->filled('parent_id')) {
+                $query->where('parent_id', $request->input('parent_id'));
+            }
+
+            if ($request->filled('workgroup_type')) {
+                $query->where('workgroup_type', $request->input('workgroup_type'));
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->input('status'));
+            }
+
             $searchableColumns = ['ar_name', 'en_name', 'email', 'chairman_name', 'notes', 'workgroup_type', 'status'];
             $result = $this->paginateDataTable($query, $request, $searchableColumns);
 
-            // Add formatted parent committee name
-            $isRtl = app()->getLocale() === 'ar';
-            if (isset($result->items)) {
-                foreach ($result->items() as $item) {
-                    $item->parent_name = $item->parent ? ($isRtl ? $item->parent->ar_name : $item->parent->en_name) : '-';
-                }
-            }
+            $locale = app()->getLocale();
+            $result->getCollection()->transform(function($item) use ($locale) {
+                $item->primary_name = $locale === 'ar' ? ($item->ar_name ?: $item->en_name) : ($item->en_name ?: $item->ar_name);
+                $item->secondary_name = $locale === 'ar' ? $item->en_name : $item->ar_name;
+                $item->parent_name = $item->parent ? ($locale === 'ar' ? ($item->parent->ar_name ?: $item->parent->en_name) : ($item->parent->en_name ?: $item->parent->ar_name)) : 'N/A';
+                $item->status_label = $locale === 'ar' ? __('messages.' . $item->status) : ucfirst($item->status);
+                $item->type_label = $locale === 'ar' ? __('messages.' . $item->workgroup_type) : ucfirst($item->workgroup_type);
+                $item->meetings_count = $item->meetings ? $item->meetings->count() : 0;
+                return $item;
+            });
 
             return response()->json($result);
         }
 
+        $baseKpiQuery = ServiceCommittee::workgroupsOnly();
+        if (!$isSuperAdmin && $myCommittee) {
+            $baseKpiQuery->where('parent_id', $myCommittee->id);
+        }
+
+        $kpiStats = [
+            'total_workgroups'        => (clone $baseKpiQuery)->count(),
+            'active_workgroups'       => (clone $baseKpiQuery)->where('status', 'active')->count(),
+            'parent_committees_count' => ServiceCommittee::committeesOnly()->count(),
+            'temporary_workgroups'    => (clone $baseKpiQuery)->where('workgroup_type', 'temporary')->count(),
+        ];
+
+        $committees = $isSuperAdmin ? ServiceCommittee::committeesOnly()->get(['id', 'ar_name', 'en_name']) : ($myCommittee ? collect([$myCommittee]) : collect());
+
         return view('workgroups.index', [
             'isSuperAdmin' => $isSuperAdmin,
-            'myCommittee' => $myCommittee,
+            'myCommittee'  => $myCommittee,
+            'kpiStats'     => $kpiStats,
+            'committees'   => $committees,
         ]);
     }
 

@@ -18,19 +18,40 @@ class CityController extends Controller
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = City::query();
+            $query = City::withCount('neighborhoods')->with('neighborhoods');
+
+            if ($request->filled('has_neighborhoods')) {
+                if ($request->input('has_neighborhoods') === 'yes') {
+                    $query->has('neighborhoods');
+                } elseif ($request->input('has_neighborhoods') === 'no') {
+                    $query->doesntHave('neighborhoods');
+                }
+            }
+
             $cities = $this->paginateDataTable($query, $request, ['ar_name', 'en_name']);
+
+            $locale = app()->getLocale();
+            $cities->getCollection()->transform(function($c) use ($locale) {
+                $c->primary_name = $locale === 'ar' ? ($c->ar_name ?: $c->en_name) : ($c->en_name ?: $c->ar_name);
+                $c->secondary_name = $locale === 'ar' ? $c->en_name : $c->ar_name;
+                $c->neighborhoods_count = $c->neighborhoods_count ?? 0;
+                $c->neighborhoods_list = $c->neighborhoods ? $c->neighborhoods->map(function($n) use ($locale) {
+                    return $locale === 'ar' ? ($n->ar_name ?: $n->en_name) : ($n->en_name ?: $n->ar_name);
+                })->filter()->values()->all() : [];
+                return $c;
+            });
+
             return response()->json($cities);
         }
 
-        $columns = [
-            ['field' => 'ar_name', 'title' => __('messages.City Arabic Name'), 'sort' => true],
-            ['field' => 'en_name', 'title' => __('messages.City English Name'), 'sort' => true],
-            ['field' => 'actions', 'title' => __('messages.Control'), 'sort' => false]
+        $kpiStats = [
+            'total_cities'        => City::count(),
+            'total_neighborhoods' => \App\Models\Neighborhood::count(),
+            'total_groups'        => \App\Models\Group::whereNotNull('neighborhood_id')->count(),
         ];
 
         return view('city.index', [
-            'columns' => $columns
+            'kpiStats' => $kpiStats
         ]);
     }
 
@@ -49,10 +70,9 @@ class CityController extends Controller
     {
         $validatedData = $request->validated();
 
-
         City::create($validatedData);
 
-        return redirect()->route('city.index');
+        return redirect()->route('city.index')->with('success', __('messages.city_created_success'));
     }
 
     /**
@@ -72,16 +92,20 @@ class CityController extends Controller
 
         $city->update($validatedData);
 
-        return redirect()->route('city.index');
+        return redirect()->route('city.index')->with('success', __('messages.city_updated_success'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(City $city)
+    public function destroy(City $city, Request $request)
     {
         $city->delete();
 
-        return redirect()->route('city.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.city_deleted_success')]);
+        }
+
+        return redirect()->route('city.index')->with('success', __('messages.city_deleted_success'));
     }
 }

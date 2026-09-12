@@ -21,12 +21,51 @@ class UserController extends Controller
     {
         if ($request->wantsJson() || $request->ajax()) {
             $query = User::with(['roles', 'serviceBody']);
-            $users = $this->paginateDataTable($query, $request, ['display_name', 'email', 'roles.name']);
+
+            if ($request->filled('role_name')) {
+                $query->whereHas('roles', function($q) use ($request) {
+                    $q->where('name', $request->input('role_name'));
+                });
+            }
+
+            if ($request->filled('is_verified')) {
+                if ($request->input('is_verified') === 'yes') {
+                    $query->whereNotNull('email_verified_at');
+                } elseif ($request->input('is_verified') === 'no') {
+                    $query->whereNull('email_verified_at');
+                }
+            }
+
+            $users = $this->paginateDataTable($query, $request, ['display_name', 'name', 'email', 'roles.name']);
+
+            $locale = app()->getLocale();
+            $users->getCollection()->transform(function($u) use ($locale) {
+                $u->formatted_name = $u->display_name ?: $u->name;
+                $u->is_verified = (bool) $u->email_verified_at;
+                $u->roles_list = $u->roles ? $u->roles->pluck('name')->all() : [];
+                $u->service_body_name = $u->serviceBody ? ($locale === 'ar' ? ($u->serviceBody->ar_name ?: $u->serviceBody->en_name) : ($u->serviceBody->en_name ?: $u->serviceBody->ar_name)) : null;
+                $u->created_at_formatted = $u->created_at ? $u->created_at->format('Y-m-d H:i') : null;
+                $u->is_super_admin = $u->hasRole('super admin');
+                return $u;
+            });
+
             return response()->json($users);
         }
 
-        $users = collect();
-        return view('users.index', compact('users'));
+        $kpiStats = [
+            'total_users'           => User::count(),
+            'verified_users'        => User::whereNotNull('email_verified_at')->count(),
+            'unverified_users'      => User::whereNull('email_verified_at')->count(),
+            'service_body_officers' => User::whereNotNull('service_body_id')->count(),
+        ];
+
+        $roles = Role::all(['id', 'name']);
+
+        return view('users.index', [
+            'users'    => collect(),
+            'kpiStats' => $kpiStats,
+            'roles'    => $roles
+        ]);
     }
 
     public function create()
@@ -96,9 +135,13 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user, Request $request)
     {
         $user->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.user_deleted')]);
+        }
 
         return redirect()->route('users.index')
             ->with('success', __('messages.user_deleted'));

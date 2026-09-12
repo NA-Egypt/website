@@ -18,13 +18,49 @@ class NeighborhoodController extends Controller
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = Neighborhood::with('city');
+            $query = Neighborhood::with('city')->withCount('groups');
+
+            if ($request->filled('city_id')) {
+                $query->where('city_id', $request->input('city_id'));
+            }
+
+            if ($request->filled('has_groups')) {
+                if ($request->input('has_groups') === 'yes') {
+                    $query->has('groups');
+                } elseif ($request->input('has_groups') === 'no') {
+                    $query->doesntHave('groups');
+                }
+            }
+
             $neighborhoods = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'city.ar_name', 'city.en_name']);
+
+            $locale = app()->getLocale();
+            $neighborhoods->getCollection()->transform(function($n) use ($locale) {
+                $n->primary_name = $locale === 'ar' ? ($n->ar_name ?: $n->en_name) : ($n->en_name ?: $n->ar_name);
+                $n->secondary_name = $locale === 'ar' ? $n->en_name : $n->ar_name;
+                $n->city_name = $n->city ? ($locale === 'ar' ? ($n->city->ar_name ?: $n->city->en_name) : ($n->city->en_name ?: $n->city->ar_name)) : 'N/A';
+                $n->city_subname = $n->city ? ($locale === 'ar' ? $n->city->en_name : $n->city->ar_name) : '';
+                $n->groups_count = $n->groups_count ?? 0;
+                $n->coordinates = ($n->latitude && $n->longitude) ? ($n->latitude . ', ' . $n->longitude) : null;
+                return $n;
+            });
+
             return response()->json($neighborhoods);
         }
 
-        $neighborhoods = collect();
-        return view('nieghborhood.index', ['neighborhoods' => $neighborhoods]);
+        $kpiStats = [
+            'total_neighborhoods' => Neighborhood::count(),
+            'total_cities'        => City::count(),
+            'total_groups'        => \App\Models\Group::whereNotNull('neighborhood_id')->count(),
+        ];
+
+        $cities = City::all(['id', 'ar_name', 'en_name']);
+
+        return view('nieghborhood.index', [
+            'neighborhoods' => collect(),
+            'kpiStats'      => $kpiStats,
+            'cities'        => $cities
+        ]);
     }
 
     /**
@@ -102,10 +138,14 @@ class NeighborhoodController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Neighborhood $neighborhood)
+    public function destroy(Neighborhood $neighborhood, Request $request)
     {
         $neighborhood->delete();
 
-        return redirect()->route('neighborhood.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.neighborhood_deleted_success')]);
+        }
+
+        return redirect()->route('neighborhood.index')->with('success', __('messages.neighborhood_deleted_success'));
     }
 }
