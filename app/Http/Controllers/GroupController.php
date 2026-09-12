@@ -42,17 +42,70 @@ class GroupController extends Controller implements HasMiddleware
         }
 
         if ($request->wantsJson() || $request->ajax()) {
-            $query->with(['user', 'serviceBody', 'neighborhood']);
+            $query->with(['user', 'serviceBody', 'neighborhood', 'meetings.day', 'meetings.topic'])->withCount('meetings');
+
+            if ($request->filled('service_body_id')) {
+                $query->where('service_body_id', $request->input('service_body_id'));
+            }
+
+            if ($request->filled('neighborhood_id')) {
+                $query->where('neighborhood_id', $request->input('neighborhood_id'));
+            }
+
+            if ($request->filled('has_meetings')) {
+                if ($request->input('has_meetings') === 'yes') {
+                    $query->has('meetings');
+                } elseif ($request->input('has_meetings') === 'no') {
+                    $query->doesntHave('meetings');
+                }
+            }
+
             $groups = $this->paginateDataTable($query, $request, [
                 'ar_name', 'en_name', 'user.email', 
                 'serviceBody.ar_name', 'serviceBody.en_name', 
                 'neighborhood.ar_name', 'neighborhood.en_name'
             ]);
+
+            $locale = app()->getLocale();
+            $groups->getCollection()->transform(function($g) use ($locale) {
+                $g->primary_name = $locale === 'ar' ? ($g->ar_name ?: $g->en_name) : ($g->en_name ?: $g->ar_name);
+                $g->secondary_name = $locale === 'ar' ? $g->en_name : $g->ar_name;
+                $g->service_body_name = $g->serviceBody ? ($locale === 'ar' ? ($g->serviceBody->ar_name ?: $g->serviceBody->en_name) : ($g->serviceBody->en_name ?: $g->serviceBody->ar_name)) : 'N/A';
+                $g->neighborhood_name = $g->neighborhood ? ($locale === 'ar' ? ($g->neighborhood->ar_name ?: $g->neighborhood->en_name) : ($g->neighborhood->en_name ?: $g->neighborhood->ar_name)) : 'N/A';
+                $g->gsr_name = $locale === 'ar' ? ($g->ar_gsr_name ?: $g->en_gsr_name) : ($g->en_gsr_name ?: $g->ar_gsr_name);
+                $g->gsr_email = $g->user ? $g->user->email : null;
+                $g->address_display = $locale === 'ar' ? ($g->ar_address ?: $g->en_address) : ($g->en_address ?: $g->ar_address);
+                $g->meetings_summary = $g->meetings ? $g->meetings->map(function($m) use ($locale) {
+                    return [
+                        'id' => $m->id,
+                        'day' => $m->day ? ($locale === 'ar' ? $m->day->ar_name : $m->day->en_name) : 'N/A',
+                        'time' => $m->formatted_start_time,
+                        'topic' => $m->topic ? ($locale === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A',
+                        'status' => $m->status
+                    ];
+                }) : [];
+
+                return $g;
+            });
+
             return response()->json($groups);
         }
 
-        $groups = collect();
-        return view('group.index', ['groups' => $groups]);
+        $baseQuery = clone $query;
+        $kpiStats = [
+            'total_groups'         => (clone $baseQuery)->count(),
+            'total_meetings'       => \App\Models\Meeting::whereNotNull('group_id')->count(),
+            'service_bodies_count' => \App\Models\ServiceBody::count(),
+            'active_gsrs_count'    => (clone $baseQuery)->whereNotNull('user_id')->distinct('user_id')->count('user_id'),
+        ];
+
+        $serviceBodies = ServiceBody::all(['id', 'ar_name', 'en_name']);
+
+        return view('group.index', [
+            'groups'         => collect(),
+            'kpiStats'       => $kpiStats,
+            'serviceBodies'  => $serviceBodies
+        ]);
     }
 
     /**
@@ -141,10 +194,14 @@ class GroupController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Group $group)
+    public function destroy(Group $group, Request $request)
     {
         $group->delete();
 
-        return redirect()->route('group.index');
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.group_deleted_success')]);
+        }
+
+        return redirect()->route('group.index')->with('success', __('messages.group_deleted_success'));
     }
 }

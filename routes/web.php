@@ -259,6 +259,12 @@ Route::group(
                 Route::get('/roles/{role}/assign-permissions',
                     [RoleController::class, 'assignPermissions'])
                     ->name('roles.assign-permissions');
+                Route::get('/roles/{role}/details',
+                    [RoleController::class, 'details'])
+                    ->name('roles.details');
+                Route::put('/roles/{role}',
+                    [RoleController::class, 'update'])
+                    ->name('roles.update');
                 Route::post('/roles/{role}/update-permissions',
                     [RoleController::class, 'updatePermissions'])
                     ->name('roles.update-permissions');

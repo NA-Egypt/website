@@ -87,6 +87,10 @@ const CtkDateTimePickerWrapper = defineAsyncComponent(() => import('./components
 const EventsCalendar = defineAsyncComponent(() => import('./components/EventsCalendar.vue'));
 const AnimatedStatCard = defineAsyncComponent(() => import('./components/AnimatedStatCard.vue'));
 const VueSelectWrapper = defineAsyncComponent(() => import('./components/VueSelectWrapper.vue'));
+const RolesDataTable = defineAsyncComponent(() => import('./components/RolesDataTable.vue'));
+const MeetingsDataTable = defineAsyncComponent(() => import('./components/MeetingsDataTable.vue'));
+const GroupsDataTable = defineAsyncComponent(() => import('./components/GroupsDataTable.vue'));
+const DirectOnlineGroupsDataTable = defineAsyncComponent(() => import('./components/DirectOnlineGroupsDataTable.vue'));
 
 const mountVueApps = () => {
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
@@ -212,6 +216,126 @@ const mountVueApps = () => {
         });
         app.mount(el);
     });
+
+    const rolesEl = document.querySelector('[data-vue-app="RolesDataTable"]');
+    if (rolesEl && !rolesEl.dataset.vueMounted) {
+        rolesEl.dataset.vueMounted = 'true';
+        const fetchUrl = rolesEl.getAttribute('data-fetch-url') || '';
+        const createRoute = rolesEl.getAttribute('data-create-route') || '';
+        const assignPermissionsTemplate = rolesEl.getAttribute('data-assign-permissions-template') || '';
+        const detailsRouteTemplate = rolesEl.getAttribute('data-details-route-template') || '';
+        const updateRouteTemplate = rolesEl.getAttribute('data-update-route-template') || '';
+        const deleteRouteTemplate = rolesEl.getAttribute('data-delete-route-template') || '';
+        const initialKpiStats = JSON.parse(rolesEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(rolesEl.getAttribute('data-labels') || '{}');
+        const csrfToken = rolesEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(RolesDataTable, {
+                fetchUrl,
+                createRoute,
+                assignPermissionsTemplate,
+                detailsRouteTemplate,
+                updateRouteTemplate,
+                deleteRouteTemplate,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(rolesEl);
+    }
+
+    const meetingsEl = document.querySelector('[data-vue-app="MeetingsDataTable"]');
+    if (meetingsEl && !meetingsEl.dataset.vueMounted) {
+        meetingsEl.dataset.vueMounted = 'true';
+        const fetchUrl = meetingsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = meetingsEl.getAttribute('data-create-route') || '';
+        const createLabel = meetingsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = meetingsEl.getAttribute('data-edit-route-template') || '';
+        const deleteRouteTemplate = meetingsEl.getAttribute('data-delete-route-template') || '';
+        const days = JSON.parse(meetingsEl.getAttribute('data-days') || '[]');
+        const initialKpiStats = JSON.parse(meetingsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(meetingsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = meetingsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(MeetingsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                deleteRouteTemplate,
+                days,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(meetingsEl);
+    }
+
+    const groupsEl = document.querySelector('[data-vue-app="GroupsDataTable"]');
+    if (groupsEl && !groupsEl.dataset.vueMounted) {
+        groupsEl.dataset.vueMounted = 'true';
+        const fetchUrl = groupsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = groupsEl.getAttribute('data-create-route') || '';
+        const createLabel = groupsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = groupsEl.getAttribute('data-edit-route-template') || '';
+        const showRouteTemplate = groupsEl.getAttribute('data-show-route-template') || '';
+        const meetingsRouteTemplate = groupsEl.getAttribute('data-meetings-route-template') || '';
+        const deleteRouteTemplate = groupsEl.getAttribute('data-delete-route-template') || '';
+        const serviceBodies = JSON.parse(groupsEl.getAttribute('data-service-bodies') || '[]');
+        const initialKpiStats = JSON.parse(groupsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(groupsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = groupsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(GroupsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                showRouteTemplate,
+                meetingsRouteTemplate,
+                deleteRouteTemplate,
+                serviceBodies,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(groupsEl);
+    }
+
+    const directOnlineGroupsEl = document.querySelector('[data-vue-app="DirectOnlineGroupsDataTable"]');
+    if (directOnlineGroupsEl && !directOnlineGroupsEl.dataset.vueMounted) {
+        directOnlineGroupsEl.dataset.vueMounted = 'true';
+        const fetchUrl = directOnlineGroupsEl.getAttribute('data-fetch-url') || '';
+        const createRoute = directOnlineGroupsEl.getAttribute('data-create-route') || '';
+        const createLabel = directOnlineGroupsEl.getAttribute('data-create-label') || '';
+        const editRouteTemplate = directOnlineGroupsEl.getAttribute('data-edit-route-template') || '';
+        const showRouteTemplate = directOnlineGroupsEl.getAttribute('data-show-route-template') || '';
+        const deleteRouteTemplate = directOnlineGroupsEl.getAttribute('data-delete-route-template') || '';
+        const initialKpiStats = JSON.parse(directOnlineGroupsEl.getAttribute('data-kpi-stats') || '{}');
+        const labels = JSON.parse(directOnlineGroupsEl.getAttribute('data-labels') || '{}');
+        const csrfToken = directOnlineGroupsEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(DirectOnlineGroupsDataTable, {
+                fetchUrl,
+                createRoute,
+                createLabel,
+                editRouteTemplate,
+                showRouteTemplate,
+                deleteRouteTemplate,
+                initialKpiStats,
+                labels,
+                csrfToken
+            })
+        });
+        app.mount(directOnlineGroupsEl);
+    }
 
     const datePickerEls = document.querySelectorAll('[data-vue-app="VueCtkDateTimePicker"]');
     datePickerEls.forEach(el => {

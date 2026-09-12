@@ -25,18 +25,38 @@ class MeetingController extends Controller
         Gate::authorize('viewAny', Meeting::class);
 
         if ($request->wantsJson() || $request->ajax()) {
-            $query = Meeting::with(['group', 'directOnlineGroup', 'topic', 'day']);
+            $query = Meeting::with(['group.serviceBody', 'group.neighborhood', 'directOnlineGroup', 'topic', 'day', 'options']);
+
+            if ($request->filled('day_id')) {
+                $query->where('day_id', $request->input('day_id'));
+            }
+
+            if ($request->filled('type')) {
+                if ($request->input('type') === 'in_person') {
+                    $query->whereNotNull('group_id');
+                } elseif ($request->input('type') === 'online') {
+                    $query->whereNotNull('direct_online_group_id');
+                }
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->input('status'));
+            }
+
             $meetings = $this->paginateDataTable($query, $request, [
                 'group.en_name', 'group.ar_name', 
                 'directOnlineGroup.en_name', 'directOnlineGroup.ar_name', 
                 'day.ar_name', 'day.en_name', 'topic.ar_name', 'topic.en_name'
             ]);
 
-            $meetings->getCollection()->transform(function($m) {
-                $m->group_name = $m->groupOrDirect ? (app()->getLocale() === 'ar' ? ($m->groupOrDirect->ar_name ?: $m->groupOrDirect->en_name) : ($m->groupOrDirect->en_name ?: $m->groupOrDirect->ar_name)) : 'N/A';
-                $m->topic_name = $m->topic ? (app()->getLocale() === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A';
+            $locale = app()->getLocale();
+            $meetings->getCollection()->transform(function($m) use ($locale) {
+                $m->group_name = $m->groupOrDirect ? ($locale === 'ar' ? ($m->groupOrDirect->ar_name ?: $m->groupOrDirect->en_name) : ($m->groupOrDirect->en_name ?: $m->groupOrDirect->ar_name)) : 'N/A';
+                $m->group_subname = $m->groupOrDirect ? ($locale === 'ar' ? $m->groupOrDirect->en_name : $m->groupOrDirect->ar_name) : '';
+                $m->group_type = $m->direct_online_group_id ? 'online' : 'in_person';
+                $m->topic_name = $m->topic ? ($locale === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A';
                 
-                $dayStr = app()->getLocale() === 'ar' ? $m->day->ar_name : $m->day->en_name;
+                $dayStr = $locale === 'ar' ? $m->day->ar_name : $m->day->en_name;
                 if (!empty($m->recurrence) && !in_array('weekly', $m->recurrence)) {
                     $m->day_name = $m->formatted_recurrence . ' - ' . $dayStr;
                 } else {
@@ -45,15 +65,33 @@ class MeetingController extends Controller
 
                 $m->from_time = $m->formatted_start_time;
                 $m->to_time = $m->formatted_end_time;
-                $m->status_label = app()->getLocale() === 'ar' ? __('messages.' . $m->status) : $m->status;
+                $m->duration_label = $m->duration;
+                $m->status_label = $locale === 'ar' ? __('messages.' . $m->status) : ucfirst($m->status);
+                $m->options_labels = $m->options ? $m->options->pluck($locale . '_name')->filter()->values()->all() : [];
+                $m->zoom_link = $m->directOnlineGroup ? $m->directOnlineGroup->location : null;
+                $m->location_address = $m->group ? ($locale === 'ar' ? ($m->group->ar_address ?: $m->group->en_address) : ($m->group->en_address ?: $m->group->ar_address)) : null;
+                $m->map_location = $m->group ? $m->group->location : null;
+
                 return $m;
             });
 
             return response()->json($meetings);
         }
 
-        $meetings = collect();
-        return view('meeting.index', ['meetings' => $meetings]);
+        $kpiStats = [
+            'total_meetings'     => Meeting::count(),
+            'in_person_meetings' => Meeting::whereNotNull('group_id')->count(),
+            'online_meetings'    => Meeting::whereNotNull('direct_online_group_id')->count(),
+            'active_meetings'    => Meeting::where('status', 'available')->count(),
+        ];
+
+        $days = Day::all(['id', 'ar_name', 'en_name']);
+
+        return view('meeting.index', [
+            'meetings' => collect(),
+            'kpiStats' => $kpiStats,
+            'days'     => $days
+        ]);
     }
 
     /**
@@ -265,10 +303,14 @@ class MeetingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Meeting $meeting)
+    public function destroy(Meeting $meeting, Request $request)
     {
         Gate::authorize('delete', $meeting);
         $meeting->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.meeting_deleted_success')]);
+        }
 
         if (auth()->user()->hasRole('super admin')) {
             return redirect()->route('meeting.index')->with('success', __('messages.meeting_deleted_success'));
