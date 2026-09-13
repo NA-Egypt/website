@@ -24,9 +24,24 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->all();
-        $fields['user_id'] = $fields['user_id'] ?? auth()->id();
-        $item = Group::create($fields);
+        $validated = $request->validate([
+            'ar_name'         => 'required|string|max:255',
+            'en_name'         => 'nullable|string|max:255',
+            'ar_gsr_name'     => 'nullable|string|max:255',
+            'en_gsr_name'     => 'nullable|string|max:255',
+            'phone'           => 'nullable|string|max:50',
+            'location'        => 'nullable|string',
+            'ar_address'      => 'nullable|string',
+            'en_address'      => 'nullable|string',
+            'group_type'      => 'nullable|string|max:50',
+            'service_body_id' => 'nullable|exists:service_bodies,id',
+            'neighborhood_id' => 'nullable|exists:neighborhoods,id',
+            'capacity'        => 'nullable|integer',
+            'user_id'         => 'nullable|exists:users,id',
+        ]);
+
+        $validated['user_id'] = $validated['user_id'] ?? auth()->id();
+        $item = Group::create($validated);
         return (new GroupResource($item))->response()->setStatusCode(201);
     }
 
@@ -35,7 +50,7 @@ class GroupController extends Controller
      */
     public function show(Group $group)
     {
-        return new GroupResource($group);
+        return new GroupResource($group->load(['serviceBody', 'neighborhood', 'user']));
     }
 
     /**
@@ -43,8 +58,24 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group)
     {
-        $group->update($request->all());
-        return new GroupResource($group);
+        $validated = $request->validate([
+            'ar_name'         => 'sometimes|required|string|max:255',
+            'en_name'         => 'nullable|string|max:255',
+            'ar_gsr_name'     => 'nullable|string|max:255',
+            'en_gsr_name'     => 'nullable|string|max:255',
+            'phone'           => 'nullable|string|max:50',
+            'location'        => 'nullable|string',
+            'ar_address'      => 'nullable|string',
+            'en_address'      => 'nullable|string',
+            'group_type'      => 'nullable|string|max:50',
+            'service_body_id' => 'nullable|exists:service_bodies,id',
+            'neighborhood_id' => 'nullable|exists:neighborhoods,id',
+            'capacity'        => 'nullable|integer',
+            'user_id'         => 'nullable|exists:users,id',
+        ]);
+
+        $group->update($validated);
+        return new GroupResource($group->load(['serviceBody', 'neighborhood', 'user']));
     }
 
     /**
@@ -53,6 +84,6 @@ class GroupController extends Controller
     public function destroy(Group $group)
     {
         $group->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

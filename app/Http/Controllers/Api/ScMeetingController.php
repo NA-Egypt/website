@@ -14,7 +14,7 @@ class ScMeetingController extends Controller
      */
     public function index()
     {
-        return ScMeetingResource::collection(ScMeeting::all());
+        return ScMeetingResource::collection(ScMeeting::with(['serviceCommittee', 'day'])->get());
     }
 
     /**
@@ -22,8 +22,16 @@ class ScMeetingController extends Controller
      */
     public function store(Request $request)
     {
-        $item = ScMeeting::create($request->all());
-        return (new ScMeetingResource($item))->response()->setStatusCode(201);
+        $validated = $request->validate([
+            'service_committee_id' => 'required|exists:service_committees,id',
+            'day_id'               => 'required|exists:days,id',
+            'week_number'          => 'nullable|integer|min:1|max:5',
+            'time'                 => 'required',
+            'notes'                => 'nullable|string',
+        ]);
+
+        $item = ScMeeting::create($validated);
+        return (new ScMeetingResource($item->load(['serviceCommittee', 'day'])))->response()->setStatusCode(201);
     }
 
     /**
@@ -31,7 +39,7 @@ class ScMeetingController extends Controller
      */
     public function show(ScMeeting $scMeeting)
     {
-        return new ScMeetingResource($scMeeting);
+        return new ScMeetingResource($scMeeting->load(['serviceCommittee', 'day']));
     }
 
     /**
@@ -39,8 +47,16 @@ class ScMeetingController extends Controller
      */
     public function update(Request $request, ScMeeting $scMeeting)
     {
-        $scMeeting->update($request->all());
-        return new ScMeetingResource($scMeeting);
+        $validated = $request->validate([
+            'service_committee_id' => 'sometimes|required|exists:service_committees,id',
+            'day_id'               => 'sometimes|required|exists:days,id',
+            'week_number'          => 'nullable|integer|min:1|max:5',
+            'time'                 => 'sometimes|required',
+            'notes'                => 'nullable|string',
+        ]);
+
+        $scMeeting->update($validated);
+        return new ScMeetingResource($scMeeting->load(['serviceCommittee', 'day']));
     }
 
     /**
@@ -49,6 +65,6 @@ class ScMeetingController extends Controller
     public function destroy(ScMeeting $scMeeting)
     {
         $scMeeting->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

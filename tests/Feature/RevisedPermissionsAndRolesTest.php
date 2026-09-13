@@ -223,7 +223,7 @@ class RevisedPermissionsAndRolesTest extends TestCase
         // Super Admin CAN delete any event
         $this->actingAs($this->superAdmin)
             ->deleteJson(route('web-calendar-events.destroy', $event->id))
-            ->assertStatus(200);
+            ->assertStatus(204);
 
         $this->assertDatabaseMissing('calendar_events', ['id' => $event->id]);
     }

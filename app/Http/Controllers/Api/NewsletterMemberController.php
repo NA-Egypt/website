@@ -22,7 +22,12 @@ class NewsletterMemberController extends Controller
      */
     public function store(Request $request)
     {
-        $item = NewsletterMember::create($request->all());
+        $validated = $request->validate([
+            'email'     => 'required|email|max:255',
+            'subscribe' => 'nullable|boolean',
+        ]);
+
+        $item = NewsletterMember::create($validated);
         return (new NewsletterMemberResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +44,12 @@ class NewsletterMemberController extends Controller
      */
     public function update(Request $request, NewsletterMember $newsletterMember)
     {
-        $newsletterMember->update($request->all());
+        $validated = $request->validate([
+            'email'     => 'sometimes|required|email|max:255',
+            'subscribe' => 'nullable|boolean',
+        ]);
+
+        $newsletterMember->update($validated);
         return new NewsletterMemberResource($newsletterMember);
     }
 
@@ -49,6 +59,6 @@ class NewsletterMemberController extends Controller
     public function destroy(NewsletterMember $newsletterMember)
     {
         $newsletterMember->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

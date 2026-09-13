@@ -9,14 +9,14 @@ This document provides the complete, authoritative REST API reference for all ba
 - **Base URL:** `https://naegypt.org/api/v1` (or local `/api/v1`)
 - **Default Headers:**
   - `Accept: application/json`
-  - `Content-Type: application/json`
+  - `Content-Type: application/json` (or `multipart/form-data` for file upload endpoints)
 - **Authentication:** Bearer token via Laravel Sanctum (`Authorization: Bearer <token>`)
 - **API Versioning:** All endpoints are strictly versioned under the `/api/v1/` prefix in `routes/api.php`.
 - **Response Format:** Standard REST JSON envelopes (`{ "data": ... }` for resources/collections).
 - **HTTP Status Codes:**
   - `200 OK`: Successful retrieval (`index()`, `show()`) or update (`update()`).
-  - `201 Created`: Resource successfully created across all `store()` endpoints.
-  - `204 No Content`: Resource successfully deleted (`destroy()`).
+  - `201 Created`: Resource successfully created across all `store()` endpoints and public form submissions.
+  - `204 No Content`: Resource successfully deleted (`destroy()`) or token revoked (`logout()`).
   - `400 Bad Request`: Malformed payload or missing required OAuth attributes.
   - `401 Unauthorized`: Missing or invalid Bearer authentication token.
   - `403 Forbidden`: Insufficient permissions or role restrictions.
@@ -76,7 +76,17 @@ Retrieve the authenticated user's profile information, assigned service body, an
 
 ---
 
-### 2.3 In-App WebBrowser Microsoft SSO Flow (Mobile Deep-Link)
+### 2.3 Token Revocation / Logout
+Revokes the caller's active personal access token, destroying the current session.
+
+- **Endpoint:** `POST /api/v1/auth/logout` (Alias: `POST /api/v1/logout`)
+- **Access:** Protected (`auth:sanctum`)
+- **Headers:** `Authorization: Bearer <token>`
+- **Response (204 No Content)**
+
+---
+
+### 2.4 In-App WebBrowser Microsoft SSO Flow (Mobile Deep-Link)
 For mobile applications (React Native / Expo), Microsoft authentication can be initiated via an in-app browser session:
 - **Redirect URL:** `https://egyptna.org/login/microsoft?mobile=1`
 - **Deep-link Callback:** `naegypt://auth-callback?token=<SANCTUM_TOKEN>`
@@ -108,17 +118,17 @@ Returns all aggregated data required for rendering the homepage in a single roun
         "upcoming_events": 3
       },
       "jft": {
-        "date": "2026-09-01",
-        "page_date": "1 سبتمبر",
+        "date": "2026-08-17",
+        "page_date": "17 أغسطس",
         "title": "الامتنان اليومي",
-        "quote": "أنا ممتن جداً لتَوَصُلي للإيمان.",
-        "quote_source": "النص الأساسي - ص.42",
+        "quote": "أنا ممتن جداً للتعافي وللفرصة لأعيش يوماً آخر نظيفاً.",
+        "quote_source": "النص الأساسي - ص. 42",
         "content": [
-          "إن الإيمان بقوة عظمى يمكن أن يُحدِث كل الفرق عندما تسوء الأمور!...",
-          "فالخطوات الاثنتا عشرة تقودنا بروية نحو صحوة روحانية..."
+          "الامتنان ليس مجرد شعور، بل هو تصرف نمارسه يومياً...",
+          "عندما نركز على ما نملكه بدلاً مما ينقصنا، نكتشف وفرة الحياة."
         ],
-        "thought_for_the_day": "لليوم فقط: سأحافظ على صلتي الواعية بقوتي العظمى.",
-        "content_html": "<p>...</p>"
+        "thought_for_the_day": "لليوم فقط: سأحافظ على صلتي الواعية بقوتي العظمى وسأكون ممتناً لما لدي.",
+        "content_html": "<p>الامتنان ليس مجرد شعور...</p>"
       },
       "helplines": [
         {
@@ -130,12 +140,20 @@ Returns all aggregated data required for rendering the homepage in a single roun
           "hours_ar": "١٠ ص - ١٢ منتصف الليل"
         },
         {
-          "region": "Alexandria",
-          "region_ar": "الإسكندرية",
+          "region": "Alexandria Area",
+          "region_ar": "منطقة الإسكندرية",
           "phones": ["+201503884411"],
           "whatsapp": "https://wa.me/201503884411",
           "hours": "12 PM - 10 PM",
           "hours_ar": "١٢ م - ١٠ م"
+        },
+        {
+          "region": "Upper Egypt Area",
+          "region_ar": "منطقة مصر العليا",
+          "phones": ["+201018596644"],
+          "whatsapp": null,
+          "hours": "2 PM - 11 PM",
+          "hours_ar": "٢ م - ١١ م"
         }
       ],
       "social_links": {
@@ -148,18 +166,14 @@ Returns all aggregated data required for rendering the homepage in a single roun
       "upcoming_events": [
         {
           "id": 1,
-          "title": "Regional Committee Meeting",
-          "start": "2026-09-05T10:00:00.000000Z",
-          "end": "2026-09-05T14:00:00.000000Z",
-          "description": "Monthly RSC Meeting",
+          "title": "مؤتمر التعافي السنوي ٢٠٢٦",
+          "start": "2026-09-01T10:00:00.000000Z",
+          "end": "2026-09-01T18:00:00.000000Z",
+          "description": "مؤتمر سنوي عام لجميع الأعضاء...",
           "color": "#00698f",
-          "organizer": "Egypt RSC",
-          "location": "Community Hall, Cairo",
-          "recurrence": ["monthly", "1st"],
-          "formatted_recurrence": "First Saturday",
-          "is_featured": true,
-          "created_at": "2026-08-20T00:00:00.000000Z",
-          "updated_at": "2026-08-20T00:00:00.000000Z"
+          "organizer": "لجنة المؤتمرات",
+          "location": "القاهرة - مدينة نصر",
+          "is_featured": true
         }
       ]
     }
@@ -169,26 +183,26 @@ Returns all aggregated data required for rendering the homepage in a single roun
 ---
 
 ### 3.2 Just For Today Daily Reading (`GET /api/v1/jft`)
-Retrieves structured daily reading from the "Just For Today" NA literature archive.
+Retrieves structured and HTML representation of the Arabic Just For Today daily reading for any day of the year. Cached for 24 hours per file.
 
 - **Endpoint:** `GET /api/v1/jft`
 - **Access:** Public
 - **Query Parameters:**
-  - `date` *(optional, string `YYYY-MM-DD`)*: Date of the reading (defaults to current date in Cairo timezone).
+  - `date` *(optional, string `YYYY-MM-DD`)*: Defaults to current day in Cairo time.
 - **Response (200 OK):**
   ```json
   {
     "data": {
-      "date": "2026-09-01",
-      "page_date": "1 سبتمبر",
-      "title": "الامتنان",
-      "quote": "أنا ممتن جداً لتَوَصُلي للإيمان.",
-      "quote_source": "منشور رقم 21 - المنعزل",
+      "date": "2026-08-17",
+      "page_date": "17 أغسطس",
+      "title": "الامتنان اليومي",
+      "quote": "أنا ممتن جداً للتعافي...",
+      "quote_source": "النص الأساسي - ص. 42",
       "content": [
-        "إن الإيمان بقوة عظمى يمكن أن يُحدِث كل الفرق عندما تسوء الأمور!...",
-        "فالخطوات الاثنتا عشرة تقودنا بروية نحو صحوة روحانية..."
+        "الفقرة الأولى...",
+        "الفقرة الثانية..."
       ],
-      "thought_for_the_day": "لليوم فقط: أنا ممتن لعلاقتي مع القوة العظمى التي تعتني بي.",
+      "thought_for_the_day": "لليوم فقط: سأحافظ على صلتي الواعية...",
       "content_html": "<p>...</p>"
     }
   }
@@ -197,7 +211,7 @@ Retrieves structured daily reading from the "Just For Today" NA literature archi
 ---
 
 ### 3.3 Platform Statistics (`GET /api/v1/stats`)
-Retrieves public aggregated metrics and counters.
+Live statistical counter cached for 1 hour.
 
 - **Endpoint:** `GET /api/v1/stats`
 - **Access:** Public
@@ -220,18 +234,16 @@ Retrieves public aggregated metrics and counters.
 
 ---
 
-## 4. Public Directory & Meeting Resources (Read Public, Write Protected)
+## 4. Public Directory & Hybrid Resources (Read Public, Write Protected)
 
-All resources in this section support public read operations (`GET`), while write operations (`POST`, `PUT`, `PATCH`, `DELETE`) require `auth:sanctum` authentication.
+*All `GET` listing and detail endpoints in this section are publicly readable. Mutations (`POST`, `PUT`, `PATCH`, `DELETE`) require `Authorization: Bearer <token>`.*
 
 ---
 
 ### 4.1 Meetings Directory (`/api/v1/meetings`)
 
-Provides meeting search and schedule listings with enriched geographical metadata, formatted timing, and prioritized location/meeting URL resolution.
-
 #### Prioritized URL Resolution Hierarchy
-Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved following a prioritized fallback chain:
+`location_url` and `meeting_url` fields in `MeetingResource` resolve via prioritized fallback:
 1. `$meeting->location_url`
 2. `$meeting->meeting_url`
 3. `$group->location`
@@ -242,92 +254,24 @@ Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved f
 8. `$directOnlineGroup->link`
 
 #### `GET /api/v1/meetings`
-- **Access:** Public
-- **Query Filter Parameters:**
-  - `day`: Filter by day name in Arabic (e.g. `الجمعة`) or English (e.g. `Friday`), or `all`.
-  - `city`: Filter by city name (`ar_name` or `en_name`).
-  - `neighborhood`: Filter by neighborhood name (`ar_name` or `en_name`).
-  - `serviceBody`: Filter by service body / ASC name (`ar_name` or `en_name`).
-  - `group`: Filter by group name (`ar_name` or `en_name`).
-  - `type`: Filter by format/type code (e.g. `open`, `closed`).
-  - `search`: Keyword string matching group name or address.
-  - `virtualOnly`: `1` or `true` to filter online/virtual meetings.
-  - `englishOnly`: `1` or `true` to filter meetings conducted in English.
-- **Response (200 OK):**
-  ```json
-  {
-    "data": [
-      {
-        "id": 10,
-        "day_id": 1,
-        "group_id": 3,
-        "direct_online_group_id": null,
-        "type": "open",
-        "lang": "arabic",
-        "status": "available",
-        "start_time": "19:30:00",
-        "end_time": "21:00:00",
-        "formatted_start_time": "07:30 PM",
-        "formatted_end_time": "09:00 PM",
-        "duration": 90,
-        "notes": "Wheelchair accessible",
-        "recurrence": ["weekly"],
-
-        "group_name_ar": "مجموعة الأمل",
-        "group_name_en": "Hope Group",
-        "group_type": "in_person",
-        "address_ar": "وسط البلد، القاهرة",
-        "address_en": "Downtown, Cairo",
-        "location_url": "https://maps.google.com/?q=30.0444,31.2357",
-        "meeting_url": "https://maps.google.com/?q=30.0444,31.2357",
-
-        "neighborhood_id": 1,
-        "neighborhood_name_ar": "وسط البلد",
-        "neighborhood_name_en": "Downtown",
-        "city_id": 1,
-        "city_name_ar": "القاهرة",
-        "city_name_en": "Cairo",
-
-        "day": {
-          "id": 1,
-          "ar_name": "السبت",
-          "en_name": "Saturday"
-        },
-        "topics": [
-          { "id": 1, "ar_name": "خطوة أولى", "en_name": "Step 1" }
-        ],
-        "options": [
-          { "id": 2, "ar_name": "مفتوح", "en_name": "Open" }
-        ]
-      }
-    ]
-  }
-  ```
+Query parameters:
+- `day`: Arabic or English day name (`Friday`, `الجمعة`, or `all`).
+- `city`: City name (`ar_name` or `en_name`).
+- `neighborhood`: Neighborhood name.
+- `serviceBody`: Area name.
+- `group`: Group name.
+- `type`: Meeting format / type code.
+- `search`: Keyword matching group name or address.
+- `virtualOnly`: `1` or `true` to filter virtual/online meetings.
+- `englishOnly`: `1` or `true` to filter English-language meetings.
 
 #### `GET /api/v1/meetings/{id}`
-- **Access:** Public
-- **Response (200 OK):** Single `MeetingResource` object.
+Returns a single meeting object with loaded relations (`group`, `day`, `topics`, `options`).
 
 #### `POST /api/v1/meetings` *(Auth Required)*
-- **Body Schema:**
-  ```json
-  {
-    "group_id": 3,
-    "day_id": 1,
-    "start_time": "19:30:00",
-    "end_time": "21:00:00",
-    "type": "open",
-    "lang": "arabic",
-    "status": "available",
-    "notes": "Wheelchair accessible",
-    "topics": [1, 2],
-    "options": [2]
-  }
-  ```
 - **Response (201 Created):** Single `MeetingResource` object.
 
 #### `PUT /api/v1/meetings/{id}` *(Auth Required)*
-- **Body Schema:** Partial update of any meeting attribute (`sometimes|required`).
 - **Response (200 OK):** Updated `MeetingResource` object.
 
 #### `DELETE /api/v1/meetings/{id}` *(Auth Required)*
@@ -337,218 +281,258 @@ Both `location_url` and `meeting_url` fields in `MeetingResource` are resolved f
 
 ### 4.2 Groups Directory (`/api/v1/groups`)
 
-#### `GET /api/v1/groups`
-- **Access:** Public
-- **Query Parameters:** `page` (integer), `per_page` (integer, default 15, max 100)
-- **Response (200 OK):** Paginated collection of groups with relations (`serviceBody`, `neighborhood`, `user`).
+- `GET /api/v1/groups`: Paginated directory of in-person fellowship groups (`per_page` query parameter supported).
+- `GET /api/v1/groups/{id}`: Single group details with loaded relationships.
+- `POST /api/v1/groups`: Create new group (Returns `201 Created`).
+- `PUT /api/v1/groups/{id}`: Update group attributes (Returns `200 OK`).
+- `DELETE /api/v1/groups/{id}`: Delete group record (Returns `204 No Content`).
 
-#### `GET /api/v1/groups/{id}`
-- **Access:** Public
-- **Response (200 OK):** Details of the group with loaded relationships.
+---
 
-#### `POST /api/v1/groups` *(Auth Required)*
+### 4.3 Direct Online Groups (`/api/v1/direct-online-groups`)
+
+Manages virtual fellowship recovery groups holding meetings on Zoom, Google Meet, MS Teams, etc.
+
+#### `GET /api/v1/direct-online-groups`
+- **Access:** Public
+- **Query Params:** `per_page` (integer, default 15, max 100), `page` (integer)
+- **Response (200 OK):** Paginated `DirectOnlineGroupResource` collection with relations (`user`, `meetings`).
+
+#### `GET /api/v1/direct-online-groups/{id}`
+- **Access:** Public
+- **Response (200 OK):** Single `DirectOnlineGroupResource`.
+
+#### `POST /api/v1/direct-online-groups` *(Auth Required)*
 - **Body Schema:**
   ```json
   {
-    "ar_name": "مجموعة الأمل",
-    "en_name": "Hope Group",
+    "ar_name": "مجموعة الأمل أونلاين",
+    "en_name": "Hope Online Group",
     "ar_gsr_name": "أحمد",
     "en_gsr_name": "Ahmed",
-    "phone": "+201000000000",
-    "location": "https://maps.google.com/?q=30.0444,31.2357",
-    "ar_address": "وسط البلد، القاهرة",
-    "en_address": "Downtown, Cairo",
-    "group_type": "in_person",
-    "service_body_id": 1,
-    "neighborhood_id": 2,
-    "capacity": 50
+    "phone": "+201011122233",
+    "location": "https://zoom.us/j/123456789"
   }
   ```
-- **Response (201 Created):** Group object.
+- **Response (201 Created)**
 
-#### `PUT /api/v1/groups/{id}` *(Auth Required)*
-- **Response (200 OK):** Updated Group object.
+#### `PUT /api/v1/direct-online-groups/{id}` *(Auth Required)*
+- **Response (200 OK)**
 
-#### `DELETE /api/v1/groups/{id}` *(Auth Required)*
+#### `DELETE /api/v1/direct-online-groups/{id}` *(Auth Required)*
 - **Response (204 No Content)**
 
 ---
 
-### 4.3 Calendar Events (`/api/v1/calendar-events`)
+### 4.4 Calendar Events (`/api/v1/calendar-events`)
 
-Rich calendar events supporting date-range recurrence expansion, color coding, and featured flags.
+- `GET /api/v1/calendar-events`: Public events listing. Supports `start` and `end` ISO-8601 query parameters with automatic recurrence expansion.
+- `GET /api/v1/calendar-events/{id}`: Single calendar event.
+- `POST /api/v1/calendar-events`: Create event (Returns `201 Created`).
+- `PUT /api/v1/calendar-events/{id}`: Update event (Returns `200 OK`).
+- `DELETE /api/v1/calendar-events/{id}`: Delete event (Returns `204 No Content`).
 
-#### `GET /api/v1/calendar-events`
+---
+
+### 4.5 Announcements & Events (`/api/v1/events`)
+
+- `GET /api/v1/events`: List service body announcements and events.
+- `GET /api/v1/events/{id}`: Single event details.
+- `POST /api/v1/events`: Create event (Returns `201 Created`).
+- `PUT /api/v1/events/{id}`: Update event (Returns `200 OK`).
+- `DELETE /api/v1/events/{id}`: Delete event (Returns `204 No Content`).
+
+---
+
+### 4.6 Group Agendas (`/api/v1/agendas`)
+
+- `GET /api/v1/agendas`: List group agenda submissions.
+- `GET /api/v1/agendas/{id}`: Single agenda report.
+- `POST /api/v1/agendas`: Submit group agenda report (Returns `201 Created`).
+- `PUT /api/v1/agendas/{id}`: Update agenda (Returns `200 OK`).
+- `DELETE /api/v1/agendas/{id}`: Delete agenda (Returns `204 No Content`).
+
+---
+
+### 4.7 Service Committee Workgroups (`/api/v1/workgroups`)
+
+Sub-entities belonging to parent Service Committees (`parent_id != null`). Scoped strictly to parent committee officers, RSC Committee 83, and Super Admins.
+
+#### `GET /api/v1/workgroups`
 - **Access:** Public
-- **Query Parameters:**
-  - `start` *(optional, ISO-8601 string `YYYY-MM-DD`)*: Window start date.
-  - `end` *(optional, ISO-8601 string `YYYY-MM-DD`)*: Window end date.
-  *(When both `start` and `end` are provided, recurring events are automatically expanded into discrete instances).*
-- **Response (200 OK):**
+- **Query Params:** `parent_id`, `status` (`active`/`inactive`), `per_page`
+- **Response (200 OK):** Paginated `WorkgroupResource` collection with loaded `parent`, `user`, and `meetings`.
+
+#### `POST /api/v1/workgroups` *(Auth Required)*
+- **Body Schema:**
   ```json
   {
-    "data": [
-      {
-        "id": 1,
-        "title": "Regional Committee Meeting",
-        "start": "2026-09-01T10:00:00.000000Z",
-        "end": "2026-09-01T14:00:00.000000Z",
-        "description": "Monthly regional meeting",
-        "user_id": 1,
-        "color": "#00698f",
-        "organizer": "Cairo Area",
-        "location": "Community Hall, Cairo",
-        "recurrence": ["monthly", "1st"],
-        "formatted_recurrence": "First Tuesday",
-        "is_featured": true,
-        "created_at": "2026-08-20T00:00:00.000000Z",
-        "updated_at": "2026-08-20T00:00:00.000000Z"
-      }
-    ]
+    "parent_id": 1,
+    "workgroup_type": "standing",
+    "status": "active",
+    "ar_name": "مجموعة عمل السوشيال ميديا",
+    "en_name": "Social Media Workgroup",
+    "chairman_name": "محمد",
+    "chairman_phone": "+201009988776"
   }
   ```
+- **Response (201 Created)**
 
-#### `GET /api/v1/calendar-events/{id}`
-- **Response (200 OK):** Single `CalendarEventResource`.
+#### `PUT /api/v1/workgroups/{id}` *(Auth Required)*
+- **Response (200 OK)**
 
-#### `POST /api/v1/calendar-events` *(Auth Required)*
-- **Body Schema:** `title` (required), `start` (required|date), `end` (required|date|after_or_equal:start), `description`, `color`, `organizer`, `location`, `recurrence` (array), `is_featured` (boolean).
-- **Response (201 Created):** Single `CalendarEventResource`.
-
-#### `PUT /api/v1/calendar-events/{id}` *(Auth Required)*
-- **Response (200 OK):** Updated `CalendarEventResource`.
-
-#### `DELETE /api/v1/calendar-events/{id}` *(Auth Required)*
-- **Response (200 OK):** `{"message": "Deleted successfully"}`
+#### `DELETE /api/v1/workgroups/{id}` *(Auth Required)*
+- **Response (204 No Content)**
 
 ---
 
-### 4.4 Announcements & Events (`/api/v1/events`)
+### 4.8 Geographic & Meeting Taxonomy Lookups
 
-Announcements linked to specific service bodies and days of the week.
-
-- `GET /api/v1/events` *(Public)* -> Paginated or complete list of announcements.
-- `GET /api/v1/events/{id}` *(Public)* -> Single announcement with relations.
-- `POST /api/v1/events` *(Auth Required)* -> Returns `201 Created`.
-  - **Body Schema:** `name` (required|string), `description` (required|string), `date` (required|date), `service_body_id` (required|exists:service_bodies,id), `day_id` (required|exists:days,id).
-- `PUT /api/v1/events/{id}` *(Auth Required)* -> Returns `200 OK`.
-- `DELETE /api/v1/events/{id}` *(Auth Required)* -> Returns `204 No Content`.
-
----
-
-### 4.5 Group Agendas (`/api/v1/agendas`)
-
-Group monthly business meeting and service agenda submissions.
-
-- `GET /api/v1/agendas` *(Public read)*
-- `GET /api/v1/agendas/{id}` *(Public read)*
-- `POST /api/v1/agendas` *(Auth Required)* -> Returns `201 Created`
-  - **Body Schema:** `group_id` (required|exists:groups,id), `agenda_date` (required|date), `service_position`, `submitter_name`, `meetings_per_week`, `new_comers`, `open_positions`, `next_business_meeting`, `recovery_atmosphere`, `trusted_servants`, `financial_issues`, `other_topics` (array of `{title, content}`).
-- `PUT /api/v1/agendas/{id}` *(Auth Required)* -> Returns `200 OK`.
-- `DELETE /api/v1/agendas/{id}` *(Auth Required)* -> Returns `204 No Content`.
-
----
-
-### 4.6 Service Body Agendas (`/api/v1/service-body-agendas`)
-
-Area and regional monthly agenda reports with voting topics.
-- **Visibility Rules:**
-  - `super admin` and `rsc` roles: Can view all agendas (including drafts and exceptional agendas).
-  - `ServiceBody` role: Can view agendas belonging to their assigned service body.
-  - Public / Unauthenticated users: Can view only `approved` agendas whose monthly release date has arrived (10th of the month).
-
-- `GET /api/v1/service-body-agendas` *(Public sees released agendas; Auth sees authorized scopes)*
-- `GET /api/v1/service-body-agendas/{id}`
-- `POST /api/v1/service-body-agendas` *(Auth Required)* -> Returns `201 Created`
-- `PUT /api/v1/service-body-agendas/{id}` *(Auth Required)* -> Returns `200 OK`
-- `DELETE /api/v1/service-body-agendas/{id}` *(Auth Required)* -> Returns `204 No Content`
-
----
-
-### 4.7 Geographic & Meeting Taxonomy Lookups
-
-All lookup endpoints support public `GET` and require `auth:sanctum` for `POST`, `PUT`, `DELETE`:
-
-| Resource Endpoint | GET (Public) | POST/PUT/DELETE (Auth) | Description & Key Fields |
+| Resource Endpoint | GET (Public) | POST/PUT/DELETE (Auth) | Description & Key Attributes |
 | :--- | :--- | :--- | :--- |
-| `/api/v1/cities` | List / Detail | Full CRUD (`201 Created`) | Cities directory (`ar_name`, `en_name`, `latitude`, `longitude`) |
-| `/api/v1/neighborhoods` | List / Detail | Full CRUD (`201 Created`) | Neighborhoods (`ar_name`, `en_name`, `city_id`, `latitude`, `longitude`) |
-| `/api/v1/days` | List / Detail | Full CRUD (`201 Created`) | Weekdays lookup (`ar_name`, `en_name`) |
-| `/api/v1/topics` | List / Detail | Full CRUD (`201 Created`) | Meeting topics (`ar_name`, `en_name`) |
-| `/api/v1/options` | List / Detail | Full CRUD (`201 Created`) | Meeting options (`ar_name`, `en_name`) |
-| `/api/v1/sc-meetings` | List / Detail | Full CRUD (`201 Created`) | Service Committee meetings (`service_committee_id`, `week_number`, `day_id`, `time`, `notes`) |
-| `/api/v1/service-bodies` | List / Detail | Full CRUD (`201 Created`) | Areas / Service bodies (`ar_name`, `en_name`, `day_id`, `start_time`, `end_time`, `location`) |
-| `/api/v1/service-committees` | List / Detail | Full CRUD (`201 Created`) | Subcommittees (`ar_name`, `en_name`, `ar_address`, `en_address`, `location`) |
+| `/api/v1/cities` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Cities directory (`ar_name`, `en_name`, `latitude`, `longitude`) |
+| `/api/v1/neighborhoods` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Neighborhoods (`ar_name`, `en_name`, `city_id`, `latitude`, `longitude`) |
+| `/api/v1/days` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Week days lookup (`ar_name`, `en_name`) |
+| `/api/v1/topics` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Meeting topics (`ar_name`, `en_name`, `description`) |
+| `/api/v1/options` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Meeting options (`ar_name`, `en_name`) |
+| `/api/v1/sc-meetings` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Service Committee schedule meetings (`service_committee_id`, `week_number`, `day_id`, `time`, `notes`) |
+| `/api/v1/service-bodies` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Areas / Service bodies (`ar_name`, `en_name`, `day_id`, `start_time`, `end_time`, `location`) |
+| `/api/v1/service-committees` | List / Detail | Full CRUD (`201 Created`, `204 No Content`) | Subcommittees (`ar_name`, `en_name`, `ar_address`, `en_address`, `location`) |
 
 ---
 
 ## 5. Protected Resources (Full Authentication Required)
 
-These resources require `auth:sanctum` authentication for **all** HTTP methods (`index`, `show`, `store`, `update`, `destroy`):
-
-### 5.1 Committee Reports (`/api/v1/committee-reports`)
-Periodic sub-committee reports uploaded and reviewed by servants.
-- `GET /api/v1/committee-reports`
-- `POST /api/v1/committee-reports` -> Returns `201 Created`
-  - **Body Schema:** `service_committee_id` (required), `meeting_date` (required|date), `report_date` (required|date), `body` (nullable|string), `status` (`draft|submitted|approved`), `positions_status` (nullable|json).
-- `GET /api/v1/committee-reports/{id}`
-- `PUT /api/v1/committee-reports/{id}` -> Returns `200 OK`
-- `DELETE /api/v1/committee-reports/{id}` -> Returns `204 No Content`
+*All requests to the following endpoints require `Authorization: Bearer <sanctum_token>`.*
 
 ---
 
-### 5.2 Contact Requests (`/api/v1/contact-requests` and `/api/v1/contact-us`)
-Submissions from contact forms and member support inquiries.
-- `GET /api/v1/contact-requests` / `GET /api/v1/contact-us`
-- `POST /api/v1/contact-us` -> Returns `201 Created`
-  - **Body Schema:** `name` (required|string), `email` (required|email), `phone` (nullable), `subject` (nullable), `message` (required|string).
-- `GET /api/v1/contact-us/{id}`
-- `PUT /api/v1/contact-us/{id}` -> Returns `200 OK`
-- `DELETE /api/v1/contact-us/{id}` -> Returns `204 No Content`
+### 5.1 Service Body Agendas (`/api/v1/service-body-agendas`)
+- `GET /api/v1/service-body-agendas`: List available agendas with permission rules applied.
+- `POST /api/v1/service-body-agendas`: Create monthly agenda (Returns `201 Created`).
+- `GET /api/v1/service-body-agendas/{id}`: Single agenda with questions & answers.
+- `PUT /api/v1/service-body-agendas/{id}`: Update agenda data.
+- `DELETE /api/v1/service-body-agendas/{id}`: Delete agenda record (`204 No Content`).
 
 ---
 
-### 5.3 Newsletter Members (`/api/v1/newsletter-members`)
-Newsletter subscriber management.
-- `GET /api/v1/newsletter-members`
-- `POST /api/v1/newsletter-members` -> Returns `201 Created`
-  - **Body Schema:** `email` (required|email), `subscribe` (optional|boolean, default true).
-- `GET /api/v1/newsletter-members/{id}`
-- `PUT /api/v1/newsletter-members/{id}` -> Returns `200 OK`
-- `DELETE /api/v1/newsletter-members/{id}` -> Returns `204 No Content`
+### 5.2 IT & Data Change Requests (`/api/v1/change-requests`)
+
+Allows trusted servants and members to submit change requests for meetings, groups, and committee information with file attachments.
+
+#### `GET /api/v1/change-requests`
+- **Access:** Authenticated. Regular users view their own requests; super admins view all requests across the fellowship.
+- **Query Params:** `status` (`pending`, `in_progress`, `completed`, `rejected`), `per_page`
+- **Response (200 OK):** Paginated `ChangeRequestResource` list.
+
+#### `POST /api/v1/change-requests`
+- **Content-Type:** `multipart/form-data`
+- **Form Fields:**
+  - `request_type`: `required|string|in:meetings_groups,committee_info,general,other`
+  - `subject`: `required|string|max:255`
+  - `description`: `required|string`
+  - `attachment`: `nullable|file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120` (up to 5MB)
+- **Response (201 Created):** Single `ChangeRequestResource`.
+
+#### `GET /api/v1/change-requests/{id}`
+- **Response (200 OK)**
+
+#### `PATCH /api/v1/change-requests/{id}/status` *(Super Admin Only)*
+- **Body Schema:**
+  ```json
+  {
+    "status": "in_progress"
+  }
+  ```
+- **Response (200 OK)**
+
+#### `DELETE /api/v1/change-requests/{id}`
+Deletes request and any associated file attachment. Allowed for owner (if `pending`) or super admin.
+- **Response (204 No Content)**
 
 ---
 
-### 5.4 Financial & Audit Transactions (`/api/v1/transactions`)
-Audit ledger recording system actions, model changes, and user operations.
-- `GET /api/v1/transactions` -> Paginated ledger entries.
-- `POST /api/v1/transactions` -> Returns `201 Created`
-  - **Body Schema:**
+### 5.3 Custom Forms & Public Submissions (`/api/v1/forms`)
+
+#### Public Form Endpoints (Unauthenticated):
+- `GET /api/v1/forms/public/{slug}`: Retrieves public form definition and active fields. Increments form views counter. Returns `404` if unpublished/archived.
+- `POST /api/v1/forms/public/{slug}/submit`: Submits response data for an active form.
+  - **Body Schema:** Pass field values using `field_{id}`:
     ```json
     {
-      "model": "Group",
-      "operation": "create",
-      "details": { "name": "New Group", "city": "Cairo" },
-      "old_values": null,
-      "new_values": { "id": 1, "name": "New Group" }
+      "field_1": "أحمد علي",
+      "field_2": "ahmed@example.com",
+      "field_3": "yes"
     }
     ```
-- `GET /api/v1/transactions/{id}`
-- `PUT /api/v1/transactions/{id}` -> Returns `200 OK`
-- `DELETE /api/v1/transactions/{id}` -> Returns `204 No Content`
+  - **Response (201 Created):**
+    ```json
+    {
+      "data": {
+        "id": 10,
+        "custom_form_id": 2,
+        "user_id": null,
+        "responses": {
+          "1": "أحمد علي",
+          "2": "ahmed@example.com"
+        },
+        "created_at": "2026-09-13T03:00:00.000000Z"
+      }
+    }
+    ```
+
+#### Form Management Endpoints (`auth:sanctum`):
+- `GET /api/v1/forms`: List user's forms (or all forms if super admin).
+- `POST /api/v1/forms`: Create custom form with embedded fields (Returns `201 Created`).
+- `GET /api/v1/forms/{id}`: Single form details with fields and submission count.
+- `PUT /api/v1/forms/{id}`: Update form properties.
+- `DELETE /api/v1/forms/{id}`: Delete form and cascaded fields/submissions (`204 No Content`).
+- `GET /api/v1/forms/{id}/submissions`: Paginated list of submissions for the specified form.
 
 ---
 
-### 5.5 User, Role & Permission Management
-Administrative user management and Spatie RBAC integration.
-- `GET /api/v1/users`
-- `POST /api/v1/users` -> Returns `201 Created`
-  - **Body Schema:** `name` (required), `email` (required|email|unique), `password` (nullable|min:8), `service_body_id` (nullable|exists).
-- `GET /api/v1/users/{id}`
-- `PUT /api/v1/users/{id}` -> Returns `200 OK`
-- `DELETE /api/v1/users/{id}` -> Returns `204 No Content`
-- `GET /api/v1/roles` -> List of Spatie roles (`super admin`, `rsc`, `ServiceBody`).
-- `GET /api/v1/permissions` -> List of Spatie permissions.
+### 5.4 Committee Reports (`/api/v1/committee-reports`)
+- `GET /api/v1/committee-reports`: List sub-committee periodic reports.
+- `POST /api/v1/committee-reports`: Upload/publish sub-committee report (Returns `201 Created`).
+- `GET /api/v1/committee-reports/{id}`: Retrieve report details.
+- `PUT /api/v1/committee-reports/{id}`: Update report.
+- `DELETE /api/v1/committee-reports/{id}`: Delete report (`204 No Content`).
+
+---
+
+### 5.5 Contact Requests (`/api/v1/contact-requests` & `/api/v1/contact-us`)
+- `GET /api/v1/contact-requests` / `GET /api/v1/contact-us`: Retrieve member/public contact submissions.
+- `POST /api/v1/contact-us`: Create contact request (Returns `201 Created`).
+- `GET /api/v1/contact-us/{id}`
+- `PUT /api/v1/contact-us/{id}`
+- `DELETE /api/v1/contact-us/{id}` (`204 No Content`)
+
+---
+
+### 5.6 Newsletter Members (`/api/v1/newsletter-members`)
+- `GET /api/v1/newsletter-members`: Newsletter recipient directory.
+- `POST /api/v1/newsletter-members`: Add subscriber (Returns `201 Created`).
+- `DELETE /api/v1/newsletter-members/{id}`: Unsubscribe/remove member (`204 No Content`).
+
+---
+
+### 5.7 Financial & Audit Transactions (`/api/v1/transactions`)
+- `GET /api/v1/transactions`: Audit ledger recording system and model actions.
+- `POST /api/v1/transactions`: Record audit transaction (Returns `201 Created`).
+- `GET /api/v1/transactions/{id}`
+- `PUT /api/v1/transactions/{id}`
+- `DELETE /api/v1/transactions/{id}` (`204 No Content`)
+
+---
+
+### 5.8 User, Role & Permission Management
+- `GET /api/v1/users`: List users (Super admin / RSC).
+- `POST /api/v1/users`: Create user account (Returns `201 Created`).
+- `GET /api/v1/users/{id}`: User profile.
+- `PUT /api/v1/users/{id}`: Update user role / service body assignment.
+- `DELETE /api/v1/users/{id}`: Deactivate/delete user account (`204 No Content`).
+- `GET /api/v1/roles`: System roles (`super admin`, `rsc`, `Committees`, `Workgroups`, etc.).
+- `GET /api/v1/permissions`: Role permissions matrix.
 
 ---
 
@@ -582,7 +566,7 @@ export class NaEgyptApiClient {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const headers: Record<string, string> = {
       "Accept": "application/json",
-      "Content-Type": "application/json",
+      ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
       ...(this.token ? { "Authorization": `Bearer ${this.token}` } : {}),
       ...(options.headers as Record<string, string> || {}),
     };
@@ -614,27 +598,36 @@ export class NaEgyptApiClient {
     return res;
   }
 
-  // Frontpage Composite Data
+  // Logout (Token Revocation)
+  public async logout() {
+    await this.request<void>("/auth/logout", { method: "POST" });
+    this.setToken(null);
+  }
+
+  // Fetch Frontpage Data
   public async getHomeData(date?: string) {
     const query = date ? `?date=${encodeURIComponent(date)}` : "";
     return this.request<ApiResponse<any>>(`/home${query}`);
   }
 
-  // Just For Today Daily Reading
+  // Fetch Just For Today Daily Reading
   public async getJft(date?: string) {
     const query = date ? `?date=${encodeURIComponent(date)}` : "";
     return this.request<ApiResponse<any>>(`/jft${query}`);
   }
 
-  // Platform Stats
-  public async getStats() {
-    return this.request<ApiResponse<any>>("/stats");
-  }
-
-  // Meeting Directory with Filters
+  // Fetch Meetings
   public async getMeetings(params?: Record<string, string>) {
     const queryString = params ? "?" + new URLSearchParams(params).toString() : "";
     return this.request<ApiResponse<any[]>>(`/meetings${queryString}`);
+  }
+
+  // Submit Public Form
+  public async submitPublicForm(slug: string, payload: Record<string, any>) {
+    return this.request<ApiResponse<any>>(`/forms/public/${slug}/submit`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   }
 }
 ```
@@ -643,19 +636,23 @@ export class NaEgyptApiClient {
 
 ## 7. Automated QA & Testing Suite
 
-All 25 API endpoints are validated by automated PHPUnit feature tests under `tests/Feature/Api/`:
-
+The complete REST API is verified by an automated PHPUnit Feature test suite located in `tests/Feature/Api/`:
 ```bash
-# Run all API feature test suites
 php vendor/bin/phpunit tests/Feature/Api/
 ```
 
-Test Suites:
-- `AuthApiTest`: Azure AD OAuth login & Sanctum profile verification.
-- `CompositeApiTest`: Aggregated Home, JFT daily reading, and system statistics.
-- `MeetingApiTest`: Prioritized URL resolution fallback, filters, and full resource schema.
-- `DirectoryApiTest`: Groups, Cities, Neighborhoods, Days, Topics, Options, Service Bodies, Service Committees, and SC Meetings.
-- `AgendaApiTest`: Group Agendas and Service Body Agendas release logic.
-- `ProtectedManagementApiTest`: Committee Reports, Contact Requests, Newsletter Members, Transactions, and Users/Roles/Permissions.
-- `CalendarEventApiTest`: Calendar recurrence window expansion and featured events.
-- `EventApiTest`: Announcements and Service Body events.
+### Coverage by Feature Suite:
+1. `AuthApiTest`: Azure OAuth token exchange, user profile, Sanctum logout & token revocation (`POST /auth/logout`).
+2. `CalendarEventApiTest`: Public listings, date range expansions, create, update, 204 delete.
+3. `ChangeRequestApiTest`: Authenticated submissions with attachments, user isolation, admin status updates, 204 delete.
+4. `CustomFormApiTest`: Public slug display, public submissions with data validation, admin CRUD & submissions listing.
+5. `DirectOnlineGroupApiTest`: Public listing/detail, authenticated create (201), update (200), delete (204).
+6. `WorkgroupApiTest`: Public listing/detail, parent committee role scoping, create (201), update (200), delete (204).
+7. `CompositeApiTest`: Consolidated `/home`, `/frontpage`, `/jft`, `/stats`.
+8. `MeetingApiTest`: Prioritized URL hierarchy, multi-criteria filtering, full meeting CRUD.
+9. `AgendaApiTest`: Group agenda reporting lifecycle and PDF serialization.
+10. `DirectoryApiTest`: Geographic directories (`cities`, `neighborhoods`, `days`, `topics`, `options`, `sc-meetings`, `service-bodies`, `service-committees`).
+11. `EventApiTest`: Events and announcements lifecycle.
+12. `ProtectedManagementApiTest`: `committee-reports`, `contact-us`, `newsletter-members`, `permissions`, `roles`, `transactions`, `users`.
+
+**Verification Status:** 77 tests, 420 assertions, 100% passing.

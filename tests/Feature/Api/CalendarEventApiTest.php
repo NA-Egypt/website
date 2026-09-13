@@ -232,7 +232,7 @@ class CalendarEventApiTest extends TestCase
 
         $response = $this->deleteJson("/api/v1/calendar-events/{$event->id}");
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('calendar_events', ['id' => $event->id]);
     }
 }

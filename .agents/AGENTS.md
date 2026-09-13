@@ -32,13 +32,19 @@
 1. **API Versioning:** All REST API endpoints must be versioned under `/api/v1/` prefix in `routes/api.php`.
 2. **Mass-Assignment Security:** Do not pass `$request->all()` directly to Eloquent models. Always perform explicit validation using `$request->validate([...])` or custom FormRequest classes.
 3. **HTTP Status Code Consistency:**
-   - Resource creation (`store()`) returns `201 Created`.
+   - Resource creation (`store()`, public form submissions) returns `201 Created`.
    - Read/update operations return `200 OK`.
-   - Resource deletions return `204 No Content`.
+   - Resource deletions and token revocation (`logout()`) return `204 No Content`.
    - Validation failures return `422 Unprocessable Content`.
 4. **Pagination & Query Optimization:** Avoid returning unpaginated `Model::all()` collections for large datasets. Always eager-load relationships (`with(...)`) to prevent N+1 performance bottlenecks.
-5. **Resource Naming:** Use plural nouns for REST endpoints (e.g. `/api/v1/contact-requests`, `/api/v1/calendar-events`).
-6. **API Resources & Auth:** Use Eloquent API Resources for data transformations and Sanctum/Passport for endpoint security.
+5. **Resource Naming:** Use plural nouns for REST endpoints (e.g. `/api/v1/contact-requests`, `/api/v1/calendar-events`, `/api/v1/direct-online-groups`, `/api/v1/workgroups`, `/api/v1/change-requests`, `/api/v1/forms`).
+6. **API Resources & Auth:** Use Eloquent API Resources for data transformations and Sanctum for endpoint security (`auth:sanctum`).
+7. **Session Management:** Token revocation endpoint `POST /api/v1/auth/logout` (and alias `/api/v1/logout`) must delete the current access token (`$request->user()->currentAccessToken()->delete()`) and return `204 No Content`.
+8. **Categorization of Endpoints:**
+   - **Public Content & Composites:** `/home`, `/frontpage`, `/jft`, `/stats`.
+   - **Public Read (Hybrid):** Unauthenticated `index` and `show`, authenticated mutations (`store`, `update`, `destroy`): `agendas`, `calendar-events`, `cities`, `days`, `direct-online-groups`, `events`, `groups`, `meetings`, `neighborhoods`, `options`, `sc-meetings`, `service-bodies`, `service-body-agendas`, `service-committees`, `topics`, `workgroups`.
+   - **Strictly Protected:** All CRUD operations require `auth:sanctum`: `change-requests`, `committee-reports`, `contact-requests`, `contact-us`, `forms`, `newsletter-members`, `permissions`, `roles`, `transactions`, `users`.
+   - **Public Form Submissions:** `GET /forms/public/{slug}` (view active published form) and `POST /forms/public/{slug}/submit` (submit response data returning `201 Created`).
 
 ### 5. Testing & QA
 - **PHPUnit & Pest:** Comprehensive Feature and Unit test coverage.

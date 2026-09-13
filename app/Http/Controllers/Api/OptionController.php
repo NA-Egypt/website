@@ -22,7 +22,12 @@ class OptionController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Option::create($request->all());
+        $validated = $request->validate([
+            'ar_name' => 'required|string|max:255',
+            'en_name' => 'nullable|string|max:255',
+        ]);
+
+        $item = Option::create($validated);
         return (new OptionResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +44,12 @@ class OptionController extends Controller
      */
     public function update(Request $request, Option $option)
     {
-        $option->update($request->all());
+        $validated = $request->validate([
+            'ar_name' => 'sometimes|required|string|max:255',
+            'en_name' => 'nullable|string|max:255',
+        ]);
+
+        $option->update($validated);
         return new OptionResource($option);
     }
 
@@ -49,6 +59,6 @@ class OptionController extends Controller
     public function destroy(Option $option)
     {
         $option->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

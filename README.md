@@ -1,29 +1,59 @@
 # NA-Egypt Website & Administration Portal
 
-Welcome to the NA-Egypt (Narcotics Anonymous Egypt) website and administration portal. This platform hosts the bilingual public website (meeting finder, informational pages, calendar) and the secure management dashboard for service committees, groups, agendas, change requests, and reports, along with a RESTful API.
+Welcome to the NA-Egypt (Narcotics Anonymous Egypt) platform (`naegypt.org` / `egyptna.org`). This repository houses the complete bilingual fellowship portal, combining public service directories, an administrative dashboard, a warehouse and literature inventory suite, a dynamic form builder, and a production-grade RESTful API v1 for mobile and external client integrations.
 
-For a detailed view of the application capabilities, please check the [APPLICATION_FEATURES.md](file:///var/www/html/new/APPLICATION_FEATURES.md).
+---
+
+## 📚 Project Documentation Index
+
+- **[APPLICATION_FEATURES.md](file:///var/www/html/new/APPLICATION_FEATURES.md):** Exhaustive bilingual (English & Arabic) operational and technical guide to all platform features, workflows, and role standards.
+- **[api_documentation.md](file:///var/www/html/new/api_documentation.md):** Complete REST API v1 reference covering all 30 endpoints, JSON schemas, headers, authentication, and TypeScript integration clients.
+- **[CROSS_PLATFORM_MOBILE_APP_PROMPT.md](file:///var/www/html/new/CROSS_PLATFORM_MOBILE_APP_PROMPT.md):** Master specification and AI prompt for building/updating the offline-first React Native (Expo + WatermelonDB) mobile app.
+- **[PERMISSIONS_ROLES.md](file:///var/www/html/new/PERMISSIONS_ROLES.md):** Comprehensive reference on Spatie RBAC roles, permission categories, and scoping invariants.
+- **[RECAPTCHA_SETUP.md](file:///var/www/html/new/RECAPTCHA_SETUP.md):** Google reCAPTCHA v2 configuration instructions for spam prevention.
+
+---
+
+## 🌟 Key Platform Capabilities
+
+- **Bilingual Public Portal (AR / EN):** Native RTL/LTR layout, meeting search engine with prioritized fallback URLs, printable meeting directory wizard, events calendar, literature, and helplines.
+- **Store & Literature Inventory Suite:**
+  - Active stocktaking sessions with real-time discrepancy calculation and automatic adjustment journals.
+  - Middleware-enforced mutation lock (`CheckStoreLocked`) during active audits.
+  - Chronological audit ledger, digital inventory slips with receipt acknowledgement, and multi-stage literature cart approvals (GSR -> Treasurer -> Literature Committee).
+- **Custom Dynamic Form Builder:**
+  - Visual form construction with dynamic field types (text, email, date, yes/no with conditional text, dynamic tables, entity lookups).
+  - Public clean URLs (`/f/{slug}` and `/api/v1/forms/public/{slug}`), view counter, conversion rates, and automated email notifications.
+- **Organizational Hierarchy & Workgroups:**
+  - Clear structural separation between Parent Committees (`parent_id = null`) and Workgroups (`parent_id != null`).
+  - Strict role scoping (Committees, Workgroups, RSC Committee 83, Super Admin).
+  - Embedded workgroup reports workflow feeding into official regional reporting.
+- **IT Change Request System:**
+  - Service update request portal with multipart file uploads (PDF, images, spreadsheets up to 5MB) and ticket tracking.
+- **RESTful API v1:**
+  - 30 production endpoints versioned under `/api/v1/`.
+  - Mass-assignment protection with explicit validation, Sanctum token authentication & revocation (`POST /api/v1/auth/logout`), and 100% automated test coverage.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend Framework:** Laravel ^11.9 (PHP ^8.2)
-- **Frontend Layer:** Livewire ^3.7, Tailwind CSS ^3.4, Bootstrap ^5.3, jQuery ^3.7
-- **Database:** MySQL
+- **Backend Framework:** Laravel ^11.9 (PHP ^8.2 / 8.5 compatible)
+- **Frontend Layer:** Livewire ^3.7, Tailwind CSS ^3.4, Bootstrap ^5.3, Alpine.js, jQuery ^3.7
+- **Database:** MySQL / SQLite (for testing)
 - **Key Dependencies:**
-  - `spatie/laravel-permission`: Role-based access controls
-  - `laravel/socialite` & `socialiteproviders/microsoft-azure`: Secure Azure AD authentication
-  - `laravel/sanctum`: API token validation
-  - `mcamara/laravel-localization`: Bilingual route routing and locales (AR/EN)
-  - `mpdf/mpdf` & `barryvdh/laravel-dompdf`: PDF generation with Arabic font rendering (Amiri, Cairo)
-  - `google/recaptcha`: Form protection against spam
+  - `spatie/laravel-permission`: Role-based access control with localized two-line cards
+  - `laravel/socialite` & `socialiteproviders/microsoft-azure`: Azure AD enterprise SSO
+  - `laravel/sanctum`: Token-based API security
+  - `mcamara/laravel-localization`: Bilingual routing and locale management (AR/EN)
+  - `mpdf/mpdf` & `barryvdh/laravel-dompdf`: PDF generation with native Arabic fonts (Cairo, Amiri)
+  - `google/recaptcha`: Public form spam protection
 
 ---
 
 ## 🔑 Core Environment Settings (`.env`)
 
-To configure the application, duplicate your environment settings and ensure the following keys are populated:
+Configure your `.env` file with the following minimum required settings:
 
 ### 1. Database Connection
 ```env
@@ -36,7 +66,7 @@ DB_PASSWORD=your_database_password
 ```
 
 ### 2. Microsoft Azure AD Authentication
-Used for secure administration logins.
+Used for administrative logins:
 ```env
 AZURE_CLIENT_ID=your_azure_client_id
 AZURE_CLIENT_SECRET=your_azure_client_secret
@@ -46,14 +76,12 @@ ALLOWED_DOMAIN=naegypt.org
 ```
 
 ### 3. Google reCAPTCHA
-Required for protecting contact/submission forms. Refer to [RECAPTCHA_SETUP.md](file:///var/www/html/new/RECAPTCHA_SETUP.md) for full instructions.
 ```env
 RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 ```
 
 ### 4. Mail Settings (SMTP)
-Configured for automated report and change request notifications.
 ```env
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.office365.com
@@ -62,72 +90,57 @@ MAIL_USERNAME=hello@naegypt.org
 MAIL_PASSWORD=your_email_password
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=hello@naegypt.org
-MAIL_FROM_NAME="[Website Contact Form]"
+MAIL_FROM_NAME="NA Egypt"
 ```
 
 ---
 
 ## 🚀 Installation & Local Setup
 
-Follow these steps to set up the project locally:
-
-### 1. Clone & Setup Configuration
-Ensure your PHP CLI worker settings and directory permissions are set up, and configure your `.env` file as described above.
-
-### 2. Install Dependencies
-Install PHP dependencies via Composer and Javascript dependencies via npm:
 ```bash
+# 1. Install PHP & Node dependencies
 composer install
 npm install
-```
 
-### 3. Generate Encryption Key
-```bash
+# 2. Setup environment & encryption key
+cp .env.example .env
 php artisan key:generate
-```
 
-### 4. Database Migrations & Seeders
-Run the database migrations and seed system defaults (e.g., base roles, permissions, cities):
-```bash
+# 3. Database migrations & seeders
 php artisan migrate --seed
-```
 
-### 5. Compile Assets
-Build frontend styles and assets:
-```bash
+# 4. Compile frontend assets
 npm run build
-```
-Or run Vite in development mode:
-```bash
+# Or start Vite in dev mode:
 npm run dev
-```
 
-### 6. Run the Application
-You can run the built-in development server:
-```bash
+# 5. Serve the application
 php artisan serve
-```
-Alternatively, use the configured Composer dev script which spins up the server, queue listener, logs, and Vite concurrently:
-```bash
-composer dev
 ```
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing & Quality Assurance
 
-The project is backed by a PHPUnit test suite validating critical flows like change requests, committee report approvals, and reCAPTCHA integrations.
+The application is thoroughly covered by PHPUnit Feature and Unit test suites:
 
-To execute the test suite, run:
 ```bash
-php artisan test
-```
-To run specific feature tests:
-```bash
-php artisan test tests/Feature/ChangeRequestTest.php
+# Run all tests (260 tests across all application modules)
+php vendor/bin/phpunit
+
+# Run the complete REST API v1 test suite (77 tests, 420 assertions)
+php vendor/bin/phpunit tests/Feature/Api/
+
+# Run individual test suites:
+php vendor/bin/phpunit tests/Feature/Api/MeetingApiTest.php
+php vendor/bin/phpunit tests/Feature/Api/CustomFormApiTest.php
+php vendor/bin/phpunit tests/Feature/Api/DirectOnlineGroupApiTest.php
+php vendor/bin/phpunit tests/Feature/Api/WorkgroupApiTest.php
+php vendor/bin/phpunit tests/Feature/Api/ChangeRequestApiTest.php
+php vendor/bin/phpunit tests/Feature/Api/AuthApiTest.php
 ```
 
 ---
 
 ## 📄 License
-This application is open-sourced software licensed under the [MIT license](file:///var/www/html/new/LICENSE).
+This software is licensed under the [MIT license](file:///var/www/html/new/LICENSE).

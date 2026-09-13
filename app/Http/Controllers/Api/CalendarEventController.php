@@ -111,7 +111,7 @@ class CalendarEventController extends Controller
         \Illuminate\Support\Facades\Gate::authorize('delete', $calendarEvent);
 
         $calendarEvent->delete();
-        return response()->json(['message' => 'Deleted successfully'], 200);
+        return response()->noContent();
     }
 }
 

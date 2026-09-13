@@ -22,7 +22,14 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Role::create($request->all());
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'guard_name' => 'nullable|string|max:255',
+        ]);
+
+        $validated['guard_name'] = $validated['guard_name'] ?? 'web';
+
+        $item = Role::create($validated);
         return (new RoleResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +46,12 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        $role->update($request->all());
+        $validated = $request->validate([
+            'name'       => 'sometimes|required|string|max:255',
+            'guard_name' => 'nullable|string|max:255',
+        ]);
+
+        $role->update($validated);
         return new RoleResource($role);
     }
 
@@ -49,6 +61,6 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

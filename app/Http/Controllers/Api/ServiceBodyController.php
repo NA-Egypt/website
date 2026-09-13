@@ -14,7 +14,7 @@ class ServiceBodyController extends Controller
      */
     public function index()
     {
-        return ServiceBodyResource::collection(ServiceBody::all());
+        return ServiceBodyResource::collection(ServiceBody::with('day')->get());
     }
 
     /**
@@ -22,8 +22,20 @@ class ServiceBodyController extends Controller
      */
     public function store(Request $request)
     {
-        $item = ServiceBody::create($request->all());
-        return (new ServiceBodyResource($item))->response()->setStatusCode(201);
+        $validated = $request->validate([
+            'ar_name'     => 'required|string|max:255',
+            'en_name'     => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'day_id'      => 'nullable|exists:days,id',
+            'date'        => 'nullable|date',
+            'start_time'  => 'nullable',
+            'end_time'    => 'nullable',
+            'location'    => 'nullable|string',
+            'recurrence'  => 'nullable|array',
+        ]);
+
+        $item = ServiceBody::create($validated);
+        return (new ServiceBodyResource($item->load('day')))->response()->setStatusCode(201);
     }
 
     /**
@@ -31,7 +43,7 @@ class ServiceBodyController extends Controller
      */
     public function show(ServiceBody $serviceBody)
     {
-        return new ServiceBodyResource($serviceBody);
+        return new ServiceBodyResource($serviceBody->load('day'));
     }
 
     /**
@@ -39,8 +51,20 @@ class ServiceBodyController extends Controller
      */
     public function update(Request $request, ServiceBody $serviceBody)
     {
-        $serviceBody->update($request->all());
-        return new ServiceBodyResource($serviceBody);
+        $validated = $request->validate([
+            'ar_name'     => 'sometimes|required|string|max:255',
+            'en_name'     => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'day_id'      => 'nullable|exists:days,id',
+            'date'        => 'nullable|date',
+            'start_time'  => 'nullable',
+            'end_time'    => 'nullable',
+            'location'    => 'nullable|string',
+            'recurrence'  => 'nullable|array',
+        ]);
+
+        $serviceBody->update($validated);
+        return new ServiceBodyResource($serviceBody->load('day'));
     }
 
     /**
@@ -49,6 +73,6 @@ class ServiceBodyController extends Controller
     public function destroy(ServiceBody $serviceBody)
     {
         $serviceBody->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

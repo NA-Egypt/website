@@ -107,4 +107,27 @@ class AuthApiTest extends TestCase
             ->assertJsonPath('name', 'Jane Member')
             ->assertJsonPath('email', 'jane.member@naegypt.org');
     }
+
+    public function test_unauthenticated_user_cannot_logout(): void
+    {
+        $response = $this->postJson('/api/v1/auth/logout');
+        $response->assertStatus(401);
+
+        $aliasResponse = $this->postJson('/api/v1/logout');
+        $aliasResponse->assertStatus(401);
+    }
+
+    public function test_authenticated_user_can_logout_and_revoke_token(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('test-token');
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token->plainTextToken)
+            ->postJson('/api/v1/auth/logout');
+
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'id' => $token->accessToken->id,
+        ]);
+    }
 }

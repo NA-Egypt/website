@@ -22,21 +22,34 @@ class ServiceCommitteeController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->all();
-        if (isset($fields['email']) && is_numeric($fields['email'])) {
-            $user = \App\Models\User::find((int)$fields['email']);
+        $validated = $request->validate([
+            'ar_name'        => 'required|string|max:255',
+            'en_name'        => 'nullable|string|max:255',
+            'chairman_name'  => 'nullable|string|max:255',
+            'chairman_phone' => 'nullable|string|max:255',
+            'email'          => 'nullable|string|max:255',
+            'location'       => 'nullable|string',
+            'ar_address'     => 'nullable|string',
+            'en_address'     => 'nullable|string',
+            'notes'          => 'nullable|string',
+            'user_id'        => 'nullable|exists:users,id',
+            'parent_id'      => 'nullable|exists:service_committees,id',
+        ]);
+
+        if (isset($validated['email']) && is_numeric($validated['email'])) {
+            $user = \App\Models\User::find((int)$validated['email']);
             if ($user) {
-                $fields['user_id'] = $user->id;
-                $fields['email'] = $user->email;
+                $validated['user_id'] = $user->id;
+                $validated['email'] = $user->email;
             }
-        } elseif (isset($fields['email'])) {
-            $user = \App\Models\User::where('email', $fields['email'])->first();
+        } elseif (isset($validated['email'])) {
+            $user = \App\Models\User::where('email', $validated['email'])->first();
             if ($user) {
-                $fields['user_id'] = $user->id;
+                $validated['user_id'] = $user->id;
             }
         }
 
-        $item = ServiceCommittee::create($fields);
+        $item = ServiceCommittee::create($validated);
         return (new ServiceCommitteeResource($item))->response()->setStatusCode(201);
     }
 
@@ -53,21 +66,34 @@ class ServiceCommitteeController extends Controller
      */
     public function update(Request $request, ServiceCommittee $serviceCommittee)
     {
-        $fields = $request->all();
-        if (isset($fields['email']) && is_numeric($fields['email'])) {
-            $user = \App\Models\User::find((int)$fields['email']);
+        $validated = $request->validate([
+            'ar_name'        => 'sometimes|required|string|max:255',
+            'en_name'        => 'nullable|string|max:255',
+            'chairman_name'  => 'nullable|string|max:255',
+            'chairman_phone' => 'nullable|string|max:255',
+            'email'          => 'nullable|string|max:255',
+            'location'       => 'nullable|string',
+            'ar_address'     => 'nullable|string',
+            'en_address'     => 'nullable|string',
+            'notes'          => 'nullable|string',
+            'user_id'        => 'nullable|exists:users,id',
+            'parent_id'      => 'nullable|exists:service_committees,id',
+        ]);
+
+        if (isset($validated['email']) && is_numeric($validated['email'])) {
+            $user = \App\Models\User::find((int)$validated['email']);
             if ($user) {
-                $fields['user_id'] = $user->id;
-                $fields['email'] = $user->email;
+                $validated['user_id'] = $user->id;
+                $validated['email'] = $user->email;
             }
-        } elseif (isset($fields['email'])) {
-            $user = \App\Models\User::where('email', $fields['email'])->first();
+        } elseif (isset($validated['email'])) {
+            $user = \App\Models\User::where('email', $validated['email'])->first();
             if ($user) {
-                $fields['user_id'] = $user->id;
+                $validated['user_id'] = $user->id;
             }
         }
 
-        $serviceCommittee->update($fields);
+        $serviceCommittee->update($validated);
         return new ServiceCommitteeResource($serviceCommittee);
     }
 
@@ -77,6 +103,6 @@ class ServiceCommitteeController extends Controller
     public function destroy(ServiceCommittee $serviceCommittee)
     {
         $serviceCommittee->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

@@ -22,7 +22,17 @@ class DayController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Day::create($request->all());
+        $validated = $request->validate([
+            'name'    => 'nullable|string|max:255',
+            'ar_name' => 'nullable|string|max:255',
+            'en_name' => 'nullable|string|max:255',
+        ]);
+
+        if (empty($validated['name']) && empty($validated['ar_name']) && empty($validated['en_name'])) {
+            $request->validate(['name' => 'required|string|max:255']);
+        }
+
+        $item = Day::create($validated);
         return (new DayResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +49,13 @@ class DayController extends Controller
      */
     public function update(Request $request, Day $day)
     {
-        $day->update($request->all());
+        $validated = $request->validate([
+            'name'    => 'nullable|string|max:255',
+            'ar_name' => 'nullable|string|max:255',
+            'en_name' => 'nullable|string|max:255',
+        ]);
+
+        $day->update($validated);
         return new DayResource($day);
     }
 
@@ -49,6 +65,6 @@ class DayController extends Controller
     public function destroy(Day $day)
     {
         $day->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

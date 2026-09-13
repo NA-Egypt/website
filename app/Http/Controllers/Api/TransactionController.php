@@ -20,9 +20,9 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'model' => 'required|string|max:255',
-            'operation' => 'required|string|max:50',
-            'details' => 'required|array',
+            'model'      => 'required|string|max:255',
+            'operation'  => 'required|string|max:50',
+            'details'    => 'required|array',
             'old_values' => 'nullable|array',
             'new_values' => 'nullable|array',
         ]);
@@ -48,7 +48,15 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        $transaction->update($request->all());
+        $validated = $request->validate([
+            'model'      => 'sometimes|required|string|max:255',
+            'operation'  => 'sometimes|required|string|max:50',
+            'details'    => 'sometimes|required|array',
+            'old_values' => 'nullable|array',
+            'new_values' => 'nullable|array',
+        ]);
+
+        $transaction->update($validated);
         return new TransactionResource($transaction);
     }
 
@@ -58,6 +66,6 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

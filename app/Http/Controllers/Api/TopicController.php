@@ -22,7 +22,13 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Topic::create($request->all());
+        $validated = $request->validate([
+            'ar_name'     => 'required|string|max:255',
+            'en_name'     => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $item = Topic::create($validated);
         return (new TopicResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +45,13 @@ class TopicController extends Controller
      */
     public function update(Request $request, Topic $topic)
     {
-        $topic->update($request->all());
+        $validated = $request->validate([
+            'ar_name'     => 'sometimes|required|string|max:255',
+            'en_name'     => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $topic->update($validated);
         return new TopicResource($topic);
     }
 
@@ -49,6 +61,6 @@ class TopicController extends Controller
     public function destroy(Topic $topic)
     {
         $topic->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

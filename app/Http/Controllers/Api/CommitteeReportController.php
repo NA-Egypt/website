@@ -22,7 +22,22 @@ class CommitteeReportController extends Controller
      */
     public function store(Request $request)
     {
-        $item = CommitteeReport::create($request->all());
+        $validated = $request->validate([
+            'service_committee_id'    => 'required|exists:service_committees,id',
+            'parent_report_id'        => 'nullable|exists:committee_reports,id',
+            'meeting_date'            => 'nullable|date',
+            'report_date'             => 'nullable|date',
+            'meeting_day_description' => 'nullable|string',
+            'body'                    => 'nullable|string',
+            'positions_status'        => 'nullable|array',
+            'status'                  => 'nullable|string|in:draft,submitted,approved,returned,embedded',
+            'review_notes'            => 'nullable|string',
+            'is_exceptional'          => 'nullable|boolean',
+            'attended_members'        => 'nullable|string',
+            'footer'                  => 'nullable|string',
+        ]);
+
+        $item = CommitteeReport::create($validated);
         return (new CommitteeReportResource($item))->response()->setStatusCode(201);
     }
 
@@ -42,7 +57,22 @@ class CommitteeReportController extends Controller
      */
     public function update(Request $request, CommitteeReport $committeeReport)
     {
-        $committeeReport->update($request->all());
+        $validated = $request->validate([
+            'service_committee_id'    => 'sometimes|required|exists:service_committees,id',
+            'parent_report_id'        => 'nullable|exists:committee_reports,id',
+            'meeting_date'            => 'nullable|date',
+            'report_date'             => 'nullable|date',
+            'meeting_day_description' => 'nullable|string',
+            'body'                    => 'nullable|string',
+            'positions_status'        => 'nullable|array',
+            'status'                  => 'nullable|string|in:draft,submitted,approved,returned,embedded',
+            'review_notes'            => 'nullable|string',
+            'is_exceptional'          => 'nullable|boolean',
+            'attended_members'        => 'nullable|string',
+            'footer'                  => 'nullable|string',
+        ]);
+
+        $committeeReport->update($validated);
         return new CommitteeReportResource($committeeReport);
     }
 
@@ -52,6 +82,6 @@ class CommitteeReportController extends Controller
     public function destroy(CommitteeReport $committeeReport)
     {
         $committeeReport->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

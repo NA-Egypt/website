@@ -45,4 +45,14 @@ class AzureAuthController extends Controller
             'token' => $token
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+        }
+
+        return response()->noContent();
+    }
 }

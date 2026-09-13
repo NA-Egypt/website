@@ -22,7 +22,14 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        $item = Permission::create($request->all());
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'guard_name' => 'nullable|string|max:255',
+        ]);
+
+        $validated['guard_name'] = $validated['guard_name'] ?? 'web';
+
+        $item = Permission::create($validated);
         return (new PermissionResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,7 +46,12 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
-        $permission->update($request->all());
+        $validated = $request->validate([
+            'name'       => 'sometimes|required|string|max:255',
+            'guard_name' => 'nullable|string|max:255',
+        ]);
+
+        $permission->update($validated);
         return new PermissionResource($permission);
     }
 
@@ -49,6 +61,6 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }
