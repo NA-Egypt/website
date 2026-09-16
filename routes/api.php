@@ -23,6 +23,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/forms/public/{slug}', [\App\Http\Controllers\Api\CustomFormController::class, 'showPublic'])->name('forms.public.show');
     Route::post('/forms/public/{slug}/submit', [\App\Http\Controllers\Api\CustomFormController::class, 'submitPublic'])->name('forms.public.submit');
 
+    // Public Helpline Form Schema & Submission
+    Route::get('/helpline-calls/schema', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'schema'])->name('helpline-calls.schema');
+    Route::post('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'store'])->name('helpline-calls.store');
+    Route::get('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'index'])->middleware('auth:sanctum')->name('helpline-calls.index');
+
     // Sensitive resources requiring authentication for all operations
     $protectedControllers = [
         'change-requests'       => \App\Http\Controllers\Api\ChangeRequestController::class,

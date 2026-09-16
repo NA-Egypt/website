@@ -290,15 +290,35 @@ Route::group(
 
             // Custom Form Builder:
             Route::middleware(['permission:manage own forms'])->group(function () {
-                Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus');
-                Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate');
-                Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset');
-                Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report');
-                Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf');
-                Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf');
-                Route::get('forms/{form}/submissions/{submission}/csv', [CustomFormController::class, 'exportSubmissionCsv'])->name('forms.submissionCsv');
-                Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv');
-                Route::resource('forms', CustomFormController::class);
+                Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus')->where('form', '[0-9]+');
+                Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate')->where('form', '[0-9]+');
+                Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset')->where('form', '[0-9]+');
+                Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report')->where('form', '[0-9]+');
+                Route::get('forms/{form}/report/pdf', [CustomFormController::class, 'exportPdf'])->name('forms.reportPdf')->where('form', '[0-9]+');
+                Route::get('forms/{form}/submissions/{submission}/pdf', [CustomFormController::class, 'exportSubmissionPdf'])->name('forms.submissionPdf')->where('form', '[0-9]+');
+                Route::get('forms/{form}/submissions/{submission}/csv', [CustomFormController::class, 'exportSubmissionCsv'])->name('forms.submissionCsv')->where('form', '[0-9]+');
+                Route::get('forms/{form}/report/csv', [CustomFormController::class, 'exportCsv'])->name('forms.csv')->where('form', '[0-9]+');
+                Route::resource('forms', CustomFormController::class)->where(['form' => '[0-9]+']);
+            });
+
+            // Helpline Calls & Volunteers Management
+            Route::prefix('helpline')->name('helpline.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\HelplineDashboardController::class, 'index'])->name('index');
+                Route::get('/data', [\App\Http\Controllers\HelplineDashboardController::class, 'data'])->name('data');
+                Route::get('/export/excel', [\App\Http\Controllers\HelplineDashboardController::class, 'exportExcel'])->name('export.excel');
+                Route::get('/export/pdf', [\App\Http\Controllers\HelplineDashboardController::class, 'exportPdf'])->name('export.pdf');
+                Route::post('/sync-workgroup', [\App\Http\Controllers\HelplineDashboardController::class, 'syncWorkgroupReport'])->name('sync.workgroup');
+
+                // Call Actions
+                Route::post('/calls/{call}/toggle-discuss', [\App\Http\Controllers\HelplineDashboardController::class, 'toggleDiscuss'])->name('calls.toggle-discuss');
+                Route::delete('/calls/{call}', [\App\Http\Controllers\HelplineDashboardController::class, 'destroyCall'])->name('calls.destroy');
+
+                // Volunteers Management
+                Route::get('/volunteers', [\App\Http\Controllers\HelplineDashboardController::class, 'volunteers'])->name('volunteers');
+                Route::post('/volunteers', [\App\Http\Controllers\HelplineDashboardController::class, 'storeVolunteer'])->name('volunteers.store');
+                Route::put('/volunteers/{id}', [\App\Http\Controllers\HelplineDashboardController::class, 'updateVolunteer'])->name('volunteers.update');
+                Route::post('/volunteers/{id}/toggle', [\App\Http\Controllers\HelplineDashboardController::class, 'toggleVolunteerStatus'])->name('volunteers.toggle');
+                Route::delete('/volunteers/{id}', [\App\Http\Controllers\HelplineDashboardController::class, 'deleteVolunteer'])->name('volunteers.destroy');
             });
 
             // Committee Reports:
@@ -432,9 +452,12 @@ Route::group(
         // Public Custom Forms
         Route::get('/f/{slug}', [PublicFormController::class, 'show'])->name('forms.show.public');
         Route::post('/f/{slug}', [PublicFormController::class, 'submit'])->name('forms.submit.public');
-
     }
 );
+
+// Fixed Public Helpline Form (Clean direct access)
+Route::get('/forms/helpline', [\App\Http\Controllers\HelplinePublicFormController::class, 'show'])->name('forms.helpline.show');
+Route::post('/forms/helpline', [\App\Http\Controllers\HelplinePublicFormController::class, 'submit'])->name('forms.helpline.submit');
 
 Route::get('/sitemap.xml', function () {
     $baseUrl = rtrim(request()->getSchemeAndHttpHost(), '/');

@@ -96,7 +96,9 @@ window.jQuery(function () {
 
 
 	// DataTables Initialization
-	// DataTables Initialization
+	if ($.fn && $.fn.dataTable && $.fn.dataTable.ext) {
+		$.fn.dataTable.ext.errMode = 'none';
+	}
 	var tableSelector = 'table.display, table.data-table, .main-tables';
 
 	var $foundTables = $(tableSelector);

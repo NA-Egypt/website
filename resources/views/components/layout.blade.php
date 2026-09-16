@@ -616,6 +616,9 @@ $hasSidebar = auth()->check();
             // Wait slightly for custom.js to initialize first, since it is also waiting for DOMContentLoaded
             setTimeout(function() {
                 if (window.jQuery && $.fn.dataTable) {
+                    // Suppress alert message popups for table mismatch warnings
+                    $.fn.dataTable.ext.errMode = 'none';
+
                     // Set defaults for any future tables
                     $.extend(true, $.fn.dataTable.defaults, { language: window.dataTablesLanguage });
 

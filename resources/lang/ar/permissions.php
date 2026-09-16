@@ -116,6 +116,11 @@ return [
             'description' => 'إنشاء وتعديل واستعراض الردود على النماذج الخاصة باللجنة التابع لها.',
             'category' => 'forms',
         ],
+        'manage helpline' => [
+            'label' => 'إدارة خطوط المساعدة',
+            'description' => 'عرض وتصدير استجابات مكالمات خط المساعدة، وإدارة قائمة المتطوعين ومزامنة التقارير.',
+            'category' => 'forms',
+        ],
 
         // Legacy / System Role-Named Permissions
         'super admin' => [

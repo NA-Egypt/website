@@ -408,6 +408,33 @@
       </li>
       @endif
 
+      {{-- Helpline Module Area --}}
+      @if(auth()->check() && (auth()->user()->can('manage helpline') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Phoneline') || in_array(auth()->user()->email, ['phone@naegypt.org', 'pr@naegypt.org'])))
+      <li>
+        <a href="javascript:;" class="has-arrow" title="{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}">
+          <div class="parent-icon"><i class="bi bi-telephone-inbound-fill"></i></div>
+          <div class="menu-title">{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}</div>
+        </a>
+        <ul>
+          <li>
+            <a href="{{ route('helpline.index') }}">
+              <i class="bi bi-bar-chart-line"></i> {{ __('messages.Calls Report') ?? 'تقارير المكالمات' }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('helpline.volunteers') }}">
+              <i class="bi bi-people"></i> {{ __('messages.Volunteers') ?? 'إدارة المتطوعين' }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('forms.helpline.show') }}" target="_blank">
+              <i class="bi bi-box-arrow-up-right"></i> {{ __('messages.Public Form') ?? 'النموذج العام' }}
+            </a>
+          </li>
+        </ul>
+      </li>
+      @endif
+
       {{-- Store Area --}}
       @if(auth()->check() && auth()->user()->can('manage store'))
       <li>

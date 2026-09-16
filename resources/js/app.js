@@ -100,6 +100,7 @@ const ServiceBodiesDataTable = defineAsyncComponent(() => import('./components/S
 const UsersDataTable = defineAsyncComponent(() => import('./components/UsersDataTable.vue'));
 const SubscribersDataTable = defineAsyncComponent(() => import('./components/SubscribersDataTable.vue'));
 const PermissionsDataTable = defineAsyncComponent(() => import('./components/PermissionsDataTable.vue'));
+const HelplineResponsesDataTable = defineAsyncComponent(() => import('./components/HelplineResponsesDataTable.vue'));
 
 const mountVueApps = () => {
     const calendarEls = document.querySelectorAll('[data-vue-app="EventsCalendar"]');
@@ -683,6 +684,36 @@ const mountVueApps = () => {
                 onPickerChange: (val) => {
                     el.dispatchEvent(new CustomEvent('picker-change', { detail: val, bubbles: true }));
                 }
+            })
+        });
+        app.mount(el);
+    });
+
+    const helplineEls = document.querySelectorAll('[data-vue-app="HelplineResponsesDataTable"]');
+    helplineEls.forEach(el => {
+        if (el.dataset.vueMounted) return;
+        el.dataset.vueMounted = 'true';
+        const initialData = JSON.parse(el.getAttribute('data-initial-data') || '{}');
+        const initialMetrics = JSON.parse(el.getAttribute('data-initial-metrics') || '{}');
+        const initialCycles = JSON.parse(el.getAttribute('data-initial-cycles') || '{}');
+        const currentCycleKey = el.getAttribute('data-current-cycle-key') || '';
+        const periodLabel = el.getAttribute('data-period-label') || '';
+        const fetchUrl = el.getAttribute('data-fetch-url') || '/helpline/data';
+        const exportExcelRoute = el.getAttribute('data-export-excel-route') || '/helpline/export/excel';
+        const exportPdfRoute = el.getAttribute('data-export-pdf-route') || '/helpline/export/pdf';
+        const csrfToken = el.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        const app = createApp({
+            render: () => h(HelplineResponsesDataTable, {
+                initialData,
+                initialMetrics,
+                initialCycles,
+                currentCycleKey,
+                periodLabel,
+                fetchUrl,
+                exportExcelRoute,
+                exportPdfRoute,
+                csrfToken
             })
         });
         app.mount(el);

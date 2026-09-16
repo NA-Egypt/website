@@ -3,6 +3,10 @@ Disallow: /export-meetings-pdf
 Disallow: /export-meetings-csv
 Disallow: /*/export-meetings-pdf
 Disallow: /*/export-meetings-csv
+Disallow: /forms/helpline
+Disallow: /*/forms/helpline
+Disallow: /helpline
+Disallow: /*/helpline
 
 # Sitemap
 Sitemap: https://naegypt.org/sitemap.xml

@@ -116,6 +116,11 @@ return [
             'description' => 'Create, edit, and review submissions for committee-specific custom forms.',
             'category' => 'forms',
         ],
+        'manage helpline' => [
+            'label' => 'Manage Helplines',
+            'description' => 'View and export helpline call responses, manage volunteers list, and synchronize monthly reports.',
+            'category' => 'forms',
+        ],
 
         // Legacy / System Role-Named Permissions
         'super admin' => [
