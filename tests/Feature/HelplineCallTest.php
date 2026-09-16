@@ -57,6 +57,7 @@ class HelplineCallTest extends TestCase
         $response->assertSee('تسجيل استجابة مكالمة خط المساعدة');
         $response->assertSee('أقل من 5 دقائق');
         $response->assertSee('10:00 AM - 12:00 PM');
+        $response->assertSee('8:00 PM - 10:00 PM');
         // Search engine exclusion checks
         $response->assertSee('name="robots" content="noindex, nofollow', false);
         $this->assertStringContainsString('noindex', $response->headers->get('X-Robots-Tag'));
@@ -139,6 +140,7 @@ class HelplineCallTest extends TestCase
             'volunteers',
             'fields_order',
         ]);
+        $this->assertContains('8:00 PM - 10:00 PM', $response->json('shifts'));
     }
 
     public function test_public_api_submission_endpoint()
@@ -146,7 +148,7 @@ class HelplineCallTest extends TestCase
         $payload = [
             'duration' => 'more_than_5',
             'call_date' => Carbon::today()->format('Y-m-d'),
-            'call_time_shift' => '4:00 PM - 6:00 PM',
+            'call_time_shift' => '8:00 PM - 10:00 PM',
             'caller_type' => 'عضو حالي',
             'referral_source' => 'جدول الاجتماعات',
             'volunteer_name' => 'محمد م.',
@@ -160,7 +162,11 @@ class HelplineCallTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonPath('data.duration', 'more_than_5');
+        $response->assertJsonPath('data.call_time_shift', '8:00 PM - 10:00 PM');
         $response->assertJsonPath('data.is_step_12', true);
+        $this->assertDatabaseHas('helpline_calls', [
+            'call_time_shift' => '8:00 PM - 10:00 PM',
+        ]);
     }
 
     public function test_guest_cannot_access_dashboard()
