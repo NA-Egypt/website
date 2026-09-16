@@ -172,7 +172,7 @@
                     $pct = $reportData['total_calls'] > 0 ? round(($count / $reportData['total_calls']) * 100, 1) : 0;
                 @endphp
                 <tr>
-                    <td>{{ $shift }}</td>
+                    <td style="direction: ltr; text-align: right;"><span dir="ltr">{{ $shift }}</span></td>
                     <td style="text-align: center; font-weight: bold;">{{ $count }}</td>
                     <td style="text-align: center;">{{ $pct }}%</td>
                 </tr>
@@ -245,7 +245,7 @@
                 @foreach($reportData['discuss_calls'] as $dc)
                     <tr>
                         <td>{{ $dc->call_date->format('Y-m-d') }}</td>
-                        <td>{{ $dc->call_time_shift }}</td>
+                        <td style="direction: ltr; text-align: right;"><span dir="ltr">{{ $dc->call_time_shift }}</span></td>
                         <td>{{ $dc->effective_volunteer_name }}</td>
                         <td>{{ $dc->call_brief }}</td>
                     </tr>

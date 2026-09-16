@@ -190,7 +190,7 @@
                 @click="toggleShiftFilter(shiftName)"
               >
                 <div class="d-flex justify-content-between align-items-center small mb-1">
-                  <span class="fw-semibold text-dark">{{ shiftName }}</span>
+                  <span class="fw-semibold text-dark" dir="ltr">{{ shiftName }}</span>
                   <div class="d-flex align-items-center gap-2">
                     <span class="badge rounded-pill bg-white text-dark border px-2">{{ count }} مكالمة</span>
                     <span class="text-muted small" style="width: 38px; text-align: left;">{{ calcPercent(count) }}%</span>
@@ -350,7 +350,7 @@
           </span>
 
           <span v-if="filters.shift" class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 d-flex align-items-center gap-1">
-            <span>الوردية: {{ filters.shift }}</span>
+            <span>الوردية: <span dir="ltr" class="d-inline-block">{{ filters.shift }}</span></span>
             <i class="bi bi-x cursor-pointer fs-6" @click="filters.shift = ''; fetchData(1)"></i>
           </span>
 
@@ -430,7 +430,7 @@
                     <div class="text-muted" style="font-size: 0.75rem;" dir="ltr">{{ formatTime(call.entry_time) }}</div>
                   </td>
                   <td class="small text-nowrap">
-                    <span class="badge rounded-pill bg-light text-dark border px-2 py-1">{{ call.call_time_shift }}</span>
+                    <span class="badge rounded-pill bg-light text-dark border px-2 py-1" dir="ltr">{{ call.call_time_shift }}</span>
                   </td>
                   <td class="fw-bold small text-nowrap">
                     <i class="bi bi-person-circle text-primary me-1"></i>
@@ -524,7 +524,7 @@
                             <li><strong>المتطوع:</strong> {{ call.effective_volunteer_name }}</li>
                             <li><strong>تاريخ المكالمة:</strong> {{ formatDate(call.call_date) }}</li>
                             <li><strong>وقت التسجيل الفعلي:</strong> {{ call.entry_time }}</li>
-                            <li><strong>الوردية:</strong> {{ call.call_time_shift }}</li>
+                            <li><strong>الوردية:</strong> <span dir="ltr" class="d-inline-block">{{ call.call_time_shift }}</span></li>
                             <li><strong>فئة المتصل:</strong> {{ call.effective_caller_type }}</li>
                             <li><strong>مصدر المعرفة:</strong> {{ call.effective_referral_source }}</li>
                             <li><strong>المدة:</strong> {{ call.duration_label }}</li>
