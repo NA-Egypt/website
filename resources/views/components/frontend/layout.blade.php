@@ -62,8 +62,8 @@
 
   <!-- Include common styles -->
   @vite(['resources/js/app.js', 'resources/css/frontend-app.css'])
-  @if(request()->routeIs('contactus.*', 'frontend.fdsurvey'))
-    <script async defer src="https://www.google.com/recaptcha/api.js"></script>
+  @if(request()->routeIs('contactus.*', 'frontend.rd', 'frontend.fdsurvey'))
+    <script async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
   @endif
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}?v={{ filemtime(public_path('assets/css/frontend.css')) }}" />
   <script defer src="{{ asset('assets/js/driver.js.iife.js') }}"></script>

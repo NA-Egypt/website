@@ -20,7 +20,7 @@ class ContactUsRecaptchaSafeTest extends TestCase
 
         $response = $this->get(route('contactus.create'));
         $response->assertStatus(200);
-        $response->assertSee('g-recaptcha');
+        $response->assertSee('cf-turnstile');
     }
 
     /**
@@ -38,6 +38,6 @@ class ContactUsRecaptchaSafeTest extends TestCase
         $response->assertSee('name="name"', false);
         $response->assertSee('name="email"', false);
         $response->assertSee('name="message"', false);
-        $response->assertSee('g-recaptcha', false);
+        $response->assertSee('cf-turnstile', false);
     }
 }

@@ -2260,6 +2260,8 @@ return [
     'Step 12 Transfers' => 'Step 12 Transfers',
     'Cycle reset note' => 'Cycle is calculated monthly and automatically resets at the end of every first Tuesday of the month.',
     'Volunteers note' => 'Active volunteers listed here appear directly as choices on the public form, with an "Other" option always available.',
+    'turnstile_required' => 'Please complete the security verification.',
+    'turnstile_failed' => 'Security verification (Turnstile) failed. Please try again.',
 ];
 
 

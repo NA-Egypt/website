@@ -402,12 +402,12 @@
                                     @enderror
                                 </div>
 
-                                <!-- Google reCAPTCHA -->
+                                <!-- Cloudflare Turnstile -->
                                 <div class="col-12">
-                                    <div class="recaptcha-holder d-flex justify-content-start">
-                                        <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                                    <div class="turnstile-holder d-flex justify-content-start">
+                                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
                                     </div>
-                                    @error('g-recaptcha-response')
+                                    @error('cf-turnstile-response')
                                         <div class="text-danger mt-1 small text-start">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -416,10 +416,7 @@
                                 <div class="col-12 mt-4">
                                     <button type="submit" 
                                             id="submitBtn" 
-                                            class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm g-recaptcha"
-                                            data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" 
-                                            data-callback="onSubmit" 
-                                            data-action="submit">
+                                            class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
                                         <i class="bi bi-send-fill"></i>
                                         <span class="title-safe">{{ __('messages.Send') }}</span>
                                     </button>
@@ -442,14 +439,13 @@
 
     <!-- SweetAlert and Form Scripts -->
     <script>
-        function onSubmit(token) {
+        document.getElementById("contactForm")?.addEventListener('submit', function() {
             const submitBtn = document.getElementById("submitBtn");
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2 ms-2" role="status" aria-hidden="true"></span> {{ __("messages.sending") }}';
             }
-            document.getElementById("contactForm").submit();
-        }
+        });
 
         function copyEmail(btn, emailText) {
             navigator.clipboard.writeText(emailText).then(function() {

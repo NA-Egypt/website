@@ -2,44 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ContactUs;
+use App\Rules\Turnstile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use ReCaptcha\ReCaptcha;
 
 class ContactUsController extends Controller
 {
-        public function create()
+    public function create()
     {
         return view('frontend.contactus');
     }
 
     public function store(Request $request)
     {
-        // Validate form fields including reCAPTCHA
+        // Validate form fields including Cloudflare Turnstile
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:50',
             'subject' => 'nullable|string|max:255',
             'message' => 'required|string',
-            'g-recaptcha-response' => 'required',
+            'cf-turnstile-response' => ['required', new Turnstile],
         ], [
-            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification.',
+            'cf-turnstile-response.required' => __('messages.turnstile_required'),
         ]);
 
-        // Verify reCAPTCHA
-        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
-        $response = $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip());
-
-        if (!$response->isSuccess()) {
-            return redirect()->back()
-                ->withErrors(['g-recaptcha-response' => 'reCAPTCHA verification failed. Please try again.'])
-                ->withInput();
-        }
-
-        // Remove reCAPTCHA response from validated data before storing
-        unset($validated['g-recaptcha-response']);
+        // Remove Turnstile response token from validated data before storing
+        unset($validated['cf-turnstile-response']);
 
         // Store the contact us message in the database
         ContactUs::create($validated);

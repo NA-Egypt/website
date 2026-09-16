@@ -22,11 +22,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @php
-        $recaptchaSiteKey = trim((string)(config('services.recaptcha.site_key') ?: env('RECAPTCHA_SITE_KEY')));
+        $turnstileSiteKey = trim((string)(config('services.turnstile.site_key') ?: env('TURNSTILE_SITE_KEY')));
     @endphp
 
-    @if(!empty($recaptchaSiteKey))
-        <script src="https://www.google.com/recaptcha/api.js?hl=ar" async defer></script>
+    @if(!empty($turnstileSiteKey))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     @endif
 
     <style>
@@ -414,8 +414,8 @@
             transform: none;
         }
 
-        /* Recaptcha Center Box */
-        .recaptcha-wrapper {
+        /* Turnstile Center Box */
+        .turnstile-wrapper, .recaptcha-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -869,11 +869,11 @@
                 @enderror
             </div>
 
-            <!-- reCAPTCHA Spam Prevention Widget -->
-            @if(!empty($recaptchaSiteKey))
-                <div class="recaptcha-wrapper">
-                    <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
-                    @error('g-recaptcha-response')
+            <!-- Cloudflare Turnstile Spam Prevention Widget -->
+            @if(!empty($turnstileSiteKey))
+                <div class="turnstile-wrapper">
+                    <div class="cf-turnstile" data-sitekey="{{ $turnstileSiteKey }}" data-theme="light"></div>
+                    @error('cf-turnstile-response')
                         <div class="error-message mt-2">
                             <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
                             <span>{{ $message }}</span>
@@ -1010,12 +1010,20 @@
             return;
         }
 
-        // Validate reCAPTCHA if present
-        if (typeof grecaptcha !== 'undefined') {
-            const recaptchaResp = grecaptcha.getResponse();
-            const recaptchaWidget = document.querySelector('.g-recaptcha');
-            if (recaptchaWidget && !recaptchaResp) {
-                alert('يرجى تأكيد التحقق الأمني (أنا لست برنامج روبوت) قبل الإرسال.');
+        // Validate Cloudflare Turnstile if present
+        const turnstileWidget = document.querySelector('.cf-turnstile');
+        if (turnstileWidget) {
+            let turnstileToken = '';
+            if (typeof turnstile !== 'undefined') {
+                try {
+                    turnstileToken = turnstile.getResponse();
+                } catch (e) {}
+            }
+            if (!turnstileToken) {
+                turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
+            }
+            if (!turnstileToken) {
+                alert('يرجى تأكيد التحقق الأمني قبل الإرسال.');
                 return;
             }
         }
@@ -1090,8 +1098,8 @@
 
         form.reset();
 
-        if (typeof grecaptcha !== 'undefined') {
-            try { grecaptcha.reset(); } catch (e) {}
+        if (typeof turnstile !== 'undefined') {
+            try { turnstile.reset(); } catch (e) {}
         }
 
         document.getElementById('call_date').value = "{{ $today }}";

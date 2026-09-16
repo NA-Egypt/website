@@ -30,7 +30,8 @@ class HelplinePublicFormController extends Controller
 
         return response()
             ->view('forms.helpline', compact('volunteers', 'shifts', 'callerTypes', 'referralSources', 'today'))
-            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
+            ->header('Permissions-Policy', 'unload=*');
     }
 
     /**
@@ -38,32 +39,16 @@ class HelplinePublicFormController extends Controller
      */
     public function submit(Request $request)
     {
-        // Verify reCAPTCHA if secret key is present in environment/config
-        $recaptchaSecret = config('services.recaptcha.secret_key') ?: env('RECAPTCHA_SECRET_KEY');
-        if (!empty($recaptchaSecret) && !app()->environment('testing')) {
+        // Verify Cloudflare Turnstile if configured
+        $turnstileSecret = config('services.turnstile.secret_key');
+        if (!empty($turnstileSecret) && (!app()->environment('testing') || !empty($request->header('X-Test-Turnstile-Verification')))) {
             $request->validate([
-                'g-recaptcha-response' => 'required',
+                'cf-turnstile-response' => ['required', new \App\Rules\Turnstile],
             ], [
-                'g-recaptcha-response.required' => 'يرجى إكمال التحقق الأمني لمنع الرسائل العشوائية.',
+                'cf-turnstile-response.required' => __('messages.turnstile_required'),
             ]);
-
-            try {
-                $recaptcha = new \ReCaptcha\ReCaptcha($recaptchaSecret);
-                $resp = $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip());
-
-                if (!$resp->isSuccess()) {
-                    if ($request->wantsJson() || $request->ajax()) {
-                        return response()->json([
-                            'message' => 'فشل التحقق الأمني reCAPTCHA. يرجى المحاولة مرة أخرى.',
-                            'errors' => ['g-recaptcha-response' => ['فشل التحقق الأمني reCAPTCHA. يرجى المحاولة مرة أخرى.']]
-                        ], 422);
-                    }
-                    return back()->withErrors(['g-recaptcha-response' => 'فشل التحقق الأمني reCAPTCHA. يرجى المحاولة مرة أخرى.'])->withInput();
-                }
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('reCAPTCHA verification error: ' . $e->getMessage());
-            }
         }
+
 
         $validated = $request->validate([
             'duration' => 'required|in:less_than_5,more_than_5',

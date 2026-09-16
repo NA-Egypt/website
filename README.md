@@ -10,7 +10,7 @@ Welcome to the NA-Egypt (Narcotics Anonymous Egypt) platform (`naegypt.org` / `e
 - **[api_documentation.md](file:///var/www/html/new/api_documentation.md):** Complete REST API v1 reference covering all 30 endpoints, JSON schemas, headers, authentication, and TypeScript integration clients.
 - **[CROSS_PLATFORM_MOBILE_APP_PROMPT.md](file:///var/www/html/new/CROSS_PLATFORM_MOBILE_APP_PROMPT.md):** Master specification and AI prompt for building/updating the offline-first React Native (Expo + WatermelonDB) mobile app.
 - **[PERMISSIONS_ROLES.md](file:///var/www/html/new/PERMISSIONS_ROLES.md):** Comprehensive reference on Spatie RBAC roles, permission categories, and scoping invariants.
-- **[RECAPTCHA_SETUP.md](file:///var/www/html/new/RECAPTCHA_SETUP.md):** Google reCAPTCHA v2 configuration instructions for spam prevention.
+- **[TURNSTILE_SETUP.md](file:///var/www/html/new/TURNSTILE_SETUP.md):** Cloudflare Turnstile configuration instructions for spam prevention.
 
 ---
 
@@ -75,10 +75,10 @@ AZURE_TENANT_ID=your_azure_tenant_id
 ALLOWED_DOMAIN=naegypt.org
 ```
 
-### 3. Google reCAPTCHA
+### 3. Cloudflare Turnstile
 ```env
-RECAPTCHA_SITE_KEY=your_recaptcha_site_key
-RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+TURNSTILE_SITE_KEY=your_turnstile_site_key
+TURNSTILE_SECRET_KEY=your_turnstile_secret_key
 ```
 
 ### 4. Mail Settings (SMTP)

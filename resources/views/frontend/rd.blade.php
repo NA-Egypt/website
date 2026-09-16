@@ -27,25 +27,17 @@
                             @enderror
                         </div>
                         <div class="col-12">
-                            <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                            @error('g-recaptcha-response')
+                            <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
+                            @error('cf-turnstile-response')
                                 <div class="text-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-12">
                             <div class="d-grid">
-                            <button type="submit" class="btn btn-primary g-recaptcha" 
-                            data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" 
-                            data-callback="onSubmit" 
-                            data-action="submit">{{ __('messages.Send') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('messages.Send') }}</button>
                             </div>
                         </div>
                     </form>
-                     <script>
-                        function onSubmit(token) {
-                            document.getElementById("form").submit();
-                        }
-                    </script>
                     @if(session('status') === 'mail-sent')
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
