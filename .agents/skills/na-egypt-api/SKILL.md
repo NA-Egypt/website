@@ -1,6 +1,6 @@
 ---
 name: na-egypt-api
-description: Comprehensive REST API reference, endpoints catalog, and integration guide for NA-Egypt backend services (Authentication, Meetings, Groups, Agendas, Events, Workgroups, Change Requests, Custom Forms, and Service Bodies).
+description: Comprehensive REST API reference, endpoints catalog, and integration guide for NA-Egypt backend services (Authentication, Meetings, Groups, Agendas, Events, Workgroups, Change Requests, Custom Forms, Helpline Calls, and Service Bodies).
 ---
 
 # NA-Egypt Backend REST API Reference & Integration Guide
@@ -414,7 +414,154 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 4.4 Contact Requests (`/api/v1/contact-requests` & `/api/v1/contact-us`)
+### 4.4 Helpline Calls & Volunteer Logging (`/api/v1/helpline-calls`)
+
+Provides schema discovery, public call response logging, and authenticated administrative listing for the fellowship helpline service.
+
+#### `GET /api/v1/helpline-calls/schema`
+- **Access:** Public
+- **Description:** Returns the dynamic form schema, including localized field order, duration options, active shifts (incorporating the `8:00 PM - 10:00 PM` shift), caller types, referral sources, and active volunteer directory.
+- **Response (200 OK):**
+  ```json
+  {
+    "title": "Helpline Call Response Form",
+    "locale": "ar",
+    "shifts": [
+      "10:00 AM - 12:00 PM",
+      "12:00 PM - 2:00 PM",
+      "2:00 PM - 4:00 PM",
+      "4:00 PM - 6:00 PM",
+      "6:00 PM - 8:00 PM",
+      "8:00 PM - 10:00 PM",
+      "10:00 PM - 12:00 AM"
+    ],
+    "caller_types": [
+      "أعضاء محتملة",
+      "عضو محتمل منعزل",
+      "بيانات اجتماعات",
+      "عضو حالي",
+      "معلومات عن الزمالة",
+      "أهالي وأقارب المدمنين",
+      "عضو حالي منعزل",
+      "معلومات عن زمالات أخرى",
+      "مكالمة بالخطأ",
+      "محولة للجنة العلاقات العامة",
+      "أخرى"
+    ],
+    "referral_sources": [
+      "جدول الاجتماعات",
+      "صديق",
+      "الموقع الالكتروني",
+      "ملصقات الزمالة",
+      "عضو حالي",
+      "بحث جوجل",
+      "طبيب",
+      "مكان علاجي",
+      "لجنة المستشفيات",
+      "صانع محتوى",
+      "Yellow Pages",
+      "Facebook",
+      "TikTok",
+      "Instagram",
+      "أخرى"
+    ],
+    "durations": [
+      { "value": "less_than_5", "label": "أقل من 5 دقائق" },
+      { "value": "more_than_5", "label": "أكثر من 5 دقائق" }
+    ],
+    "volunteers": [
+      { "id": 1, "name": "محمد م.", "sort_order": 1 }
+    ],
+    "fields_order": [
+      "duration",
+      "call_date",
+      "call_time_shift",
+      "caller_type",
+      "referral_source",
+      "volunteer_name",
+      "is_step_12",
+      "call_brief",
+      "discuss_in_meeting",
+      "additional_info"
+    ]
+  }
+  ```
+
+#### `POST /api/v1/helpline-calls`
+- **Access:** Public
+- **Headers:** `Content-Type: application/json`, `Accept: application/json`
+- **Body Schema:**
+  - `duration`: `required|in:less_than_5,more_than_5`
+  - `call_date`: `required|date` (Format `YYYY-MM-DD`)
+  - `call_time_shift`: `required|string|max:100` (e.g., `"8:00 PM - 10:00 PM"`)
+  - `caller_type`: `required|string|max:100`
+  - `caller_type_other`: `nullable|string|max:255` (*Required with `422` validation failure if `caller_type === 'أخرى'`*)
+  - `referral_source`: `required|string|max:100`
+  - `referral_source_other`: `nullable|string|max:255` (*Required with `422` validation failure if `referral_source === 'أخرى'`*)
+  - `volunteer_name`: `required|string|max:150`
+  - `volunteer_name_other`: `nullable|string|max:150` (*Required with `422` validation failure if `volunteer_name === 'أخرى'`*)
+  - `is_step_12`: `required|boolean`
+  - `call_brief`: `required|string|min:3`
+  - `discuss_in_meeting`: `required|boolean`
+  - `additional_info`: `nullable|string`
+- **Behavior:**
+  - Automatically associates `volunteer_id` if `volunteer_name` matches an active `HelplineVolunteer` record.
+  - Automatically records `entry_time` with the current timestamp.
+- **Example Payload:**
+  ```json
+  {
+    "duration": "more_than_5",
+    "call_date": "2026-09-17",
+    "call_time_shift": "8:00 PM - 10:00 PM",
+    "caller_type": "عضو حالي",
+    "referral_source": "جدول الاجتماعات",
+    "volunteer_name": "محمد م.",
+    "is_step_12": true,
+    "call_brief": "طلب مساعدة هاتفية لخطوة 12 من عضو حالي.",
+    "discuss_in_meeting": false,
+    "additional_info": "تمت إحالته لأقرب اجتماع حضوري."
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "data": {
+      "id": 1,
+      "duration": "more_than_5",
+      "duration_label": "أكثر من 5 دقائق",
+      "call_date": "2026-09-17",
+      "call_time_shift": "8:00 PM - 10:00 PM",
+      "caller_type": "عضو حالي",
+      "caller_type_other": null,
+      "effective_caller_type": "عضو حالي",
+      "referral_source": "جدول الاجتماعات",
+      "referral_source_other": null,
+      "effective_referral_source": "جدول الاجتماعات",
+      "volunteer_id": 1,
+      "volunteer_name": "محمد م.",
+      "volunteer_name_other": null,
+      "effective_volunteer_name": "محمد م.",
+      "is_step_12": true,
+      "call_brief": "طلب مساعدة هاتفية لخطوة 12 من عضو حالي.",
+      "discuss_in_meeting": false,
+      "additional_info": "تمت إحالته لأقرب اجتماع حضوري.",
+      "entry_time": "2026-09-17T12:00:00.000000Z",
+      "created_at": "2026-09-17T12:00:00.000000Z"
+    }
+  }
+  ```
+
+#### `GET /api/v1/helpline-calls`
+- **Access:** Authenticated (`Authorization: Bearer <sanctum_token>`)
+- **Query Parameters:**
+  - `start_date` *(optional)*: Filter calls recorded on or after `YYYY-MM-DD` (`entry_time >= start_date`)
+  - `end_date` *(optional)*: Filter calls recorded on or before `YYYY-MM-DD` (`entry_time <= end_date`)
+  - `page` *(optional)*: Page number for pagination (25 records per page)
+- **Response (200 OK):** Paginated `HelplineCallResource` collection (`data`, `links`, `meta`).
+
+---
+
+### 4.5 Contact Requests (`/api/v1/contact-requests` & `/api/v1/contact-us`)
 - `GET /api/v1/contact-requests` / `GET /api/v1/contact-us`: Retrieve member/public contact submissions.
 - `POST /api/v1/contact-us`: Create contact request (Returns `201 Created`).
 - `GET /api/v1/contact-us/{id}`
@@ -423,7 +570,7 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 4.5 Audit Transactions (`/api/v1/transactions`)
+### 4.6 Audit Transactions (`/api/v1/transactions`)
 - `GET /api/v1/transactions`: Audit ledger recording system and model actions.
 - `POST /api/v1/transactions`: Record audit transaction (Returns `201 Created`).
 - `GET /api/v1/transactions/{id}`
@@ -432,7 +579,7 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 4.6 Committee Reports (`/api/v1/committee-reports`)
+### 4.7 Committee Reports (`/api/v1/committee-reports`)
 - `GET /api/v1/committee-reports`: List sub-committee periodic reports.
 - `POST /api/v1/committee-reports`: Upload/publish sub-committee report (Returns `201 Created`).
 - `GET /api/v1/committee-reports/{id}`
@@ -441,14 +588,14 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 4.7 Newsletter & Subscribers
+### 4.8 Newsletter & Subscribers
 - `GET /api/v1/newsletter-members` *(Auth)*: Newsletter recipient directory.
 - `POST /api/v1/newsletter-members` *(Auth)*: Add subscriber (Returns `201 Created`).
 - `DELETE /api/v1/newsletter-members/{id}` (`204 No Content`)
 
 ---
 
-### 4.8 User & Role Management
+### 4.9 User & Role Management
 - `GET /api/v1/users`: List users (Super admin / RSC).
 - `POST /api/v1/users`: Create user account (Returns `201 Created`).
 - `GET /api/v1/users/{id}`: User profile.
@@ -464,6 +611,41 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 ```typescript
 interface ApiResponse<T> {
   data: T;
+  links?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+export interface HelplineVolunteerItem {
+  id: number;
+  name: string;
+  sort_order?: number;
+}
+
+export interface HelplineSchemaResponse {
+  title: string;
+  locale: string;
+  shifts: string[];
+  caller_types: string[];
+  referral_sources: string[];
+  durations: Array<{ value: string; label: string }>;
+  volunteers: HelplineVolunteerItem[];
+  fields_order: string[];
+}
+
+export interface HelplineCallPayload {
+  duration: "less_than_5" | "more_than_5";
+  call_date: string; // YYYY-MM-DD
+  call_time_shift: string;
+  caller_type: string;
+  caller_type_other?: string | null;
+  referral_source: string;
+  referral_source_other?: string | null;
+  volunteer_name: string;
+  volunteer_name_other?: string | null;
+  is_step_12: boolean;
+  call_brief: string;
+  discuss_in_meeting: boolean;
+  additional_info?: string | null;
 }
 
 export class NaEgyptApiClient {
@@ -532,6 +714,29 @@ export class NaEgyptApiClient {
       body: JSON.stringify(payload),
     });
   }
+
+  // Get Helpline Form Schema & Active Volunteers
+  public async getHelplineSchema(): Promise<HelplineSchemaResponse> {
+    return this.request<HelplineSchemaResponse>("/helpline-calls/schema");
+  }
+
+  // Submit Helpline Call Response Log
+  public async submitHelplineCall(payload: HelplineCallPayload) {
+    return this.request<ApiResponse<any>>("/helpline-calls", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Get Helpline Calls (Authenticated with Optional Date Filtering)
+  public async getHelplineCalls(params?: { start_date?: string; end_date?: string; page?: number }) {
+    const searchParams = new URLSearchParams();
+    if (params?.start_date) searchParams.append("start_date", params.start_date);
+    if (params?.end_date) searchParams.append("end_date", params.end_date);
+    if (params?.page) searchParams.append("page", params.page.toString());
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
+    return this.request<ApiResponse<any[]>>(`/helpline-calls${query}`);
+  }
 }
 ```
 
@@ -539,8 +744,8 @@ export class NaEgyptApiClient {
 
 ## 6. Automated QA & Testing Reference
 
-Run the comprehensive PHPUnit automated test suite across all 12 API feature test suites:
+Run the comprehensive PHPUnit automated test suite across all 13 API feature test suites:
 ```bash
 php vendor/bin/phpunit tests/Feature/Api/
 ```
-All feature test suites (`AgendaApiTest`, `AuthApiTest`, `CalendarEventApiTest`, `ChangeRequestApiTest`, `CompositeApiTest`, `CustomFormApiTest`, `DirectOnlineGroupApiTest`, `DirectoryApiTest`, `EventApiTest`, `MeetingApiTest`, `ProtectedManagementApiTest`, `WorkgroupApiTest`) validate status codes (200/201/204/401/403/422), mass-assignment validation guards, JSON payloads, filtering, file uploads, and authorization barriers with 100% test passing (77 tests, 420 assertions).
+All feature test suites (`AgendaApiTest`, `AuthApiTest`, `CalendarEventApiTest`, `ChangeRequestApiTest`, `CompositeApiTest`, `CustomFormApiTest`, `DirectOnlineGroupApiTest`, `DirectoryApiTest`, `EventApiTest`, `HelplineCallApiTest`, `MeetingApiTest`, `ProtectedManagementApiTest`, `WorkgroupApiTest`) validate status codes (200/201/204/401/403/422), mass-assignment validation guards, JSON payloads, filtering, file uploads, conditional validation rules, and authorization barriers with 100% test passing (84 tests, 493 assertions).

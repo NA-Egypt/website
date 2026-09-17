@@ -154,6 +154,9 @@ export const appDatabaseSchema = appSchema({
 | `/api/v1/user` | `GET` | `Bearer` | Authenticated user profile and assigned service body. |
 | `/api/v1/change-requests` | `POST` | `Bearer` | Multipart submission for meeting/group change requests with file attachments up to 5MB (`201 Created`). |
 | `/api/v1/workgroups` | `GET` | Public | Service committee workgroups directory. |
+| `/api/v1/helpline-calls/schema` | `GET` | Public | Dynamic helpline call form schema (shifts including `8:00 PM - 10:00 PM`, caller types, referral sources, active volunteers). |
+| `/api/v1/helpline-calls` | `POST` | Public | Submit helpline call response log (`201 Created`). |
+| `/api/v1/helpline-calls` | `GET` | `Bearer` | Paginated helpline call logs with optional date range filters (`start_date`, `end_date`). |
 
 ---
 
@@ -230,7 +233,11 @@ Task: Overhaul, redesign, and connect the Cross-Platform Mobile Application (iOS
    - Form for members to submit meeting changes or committee inquiries with file attachment upload.
    - Saves to local outbox when offline and syncs via multipart POST `/api/v1/change-requests` when connection restores.
 
-6. Profile & Settings Screen:
+6. Helpline Volunteer Call Logging:
+   - Dynamic call response logging form fetching schema (shifts including `8:00 PM - 10:00 PM`, caller types, referral sources, volunteers) from `/api/v1/helpline-calls/schema`.
+   - Submits call logs via `POST /api/v1/helpline-calls` with conditional input validation for 'other' options.
+
+7. Profile & Settings Screen:
    - User profile info, language switcher (Arabic RTL / English LTR), helpline shortcuts, and Sign Out button.
 
 ==================================================

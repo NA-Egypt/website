@@ -491,7 +491,71 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 5.4 Committee Reports (`/api/v1/committee-reports`)
+### 5.4 Helpline Calls & Volunteer Logging (`/api/v1/helpline-calls`)
+
+Manages the public helpline response logging workflow and authenticated administrative reporting.
+
+#### `GET /api/v1/helpline-calls/schema`
+- **Access:** Public
+- **Description:** Returns the form schema configuration: shift time slots (including `8:00 PM - 10:00 PM`), caller types, referral sources, call duration tiers (`less_than_5`, `more_than_5`), active volunteers list, and localized field ordering.
+- **Response (200 OK):**
+  ```json
+  {
+    "title": "Helpline Call Response Form",
+    "locale": "ar",
+    "shifts": [
+      "10:00 AM - 12:00 PM",
+      "12:00 PM - 2:00 PM",
+      "2:00 PM - 4:00 PM",
+      "4:00 PM - 6:00 PM",
+      "6:00 PM - 8:00 PM",
+      "8:00 PM - 10:00 PM",
+      "10:00 PM - 12:00 AM"
+    ],
+    "caller_types": ["أعضاء محتملة", "عضو محتمل منعزل", "بيانات اجتماعات", "عضو حالي", "معلومات عن الزمالة", "أهالي وأقارب المدمنين", "عضو حالي منعزل", "معلومات عن زمالات أخرى", "مكالمة بالخطأ", "محولة للجنة العلاقات العامة", "أخرى"],
+    "referral_sources": ["جدول الاجتماعات", "صديق", "الموقع الالكتروني", "ملصقات الزمالة", "عضو حالي", "بحث جوجل", "طبيب", "مكان علاجي", "لجنة المستشفيات", "صانع محتوى", "Yellow Pages", "Facebook", "TikTok", "Instagram", "أخرى"],
+    "durations": [
+      { "value": "less_than_5", "label": "أقل من 5 دقائق" },
+      { "value": "more_than_5", "label": "أكثر من 5 دقائق" }
+    ],
+    "volunteers": [
+      { "id": 1, "name": "محمد م.", "sort_order": 1 }
+    ],
+    "fields_order": ["duration", "call_date", "call_time_shift", "caller_type", "referral_source", "volunteer_name", "is_step_12", "call_brief", "discuss_in_meeting", "additional_info"]
+  }
+  ```
+
+#### `POST /api/v1/helpline-calls`
+- **Access:** Public
+- **Headers:** `Content-Type: application/json`, `Accept: application/json`
+- **Validation Rules:**
+  - `duration`: `required|in:less_than_5,more_than_5`
+  - `call_date`: `required|date` (`YYYY-MM-DD`)
+  - `call_time_shift`: `required|string|max:100`
+  - `caller_type`: `required|string|max:100`
+  - `caller_type_other`: `nullable|string|max:255` (*Mandatory with 422 if `caller_type === 'أخرى'`*)
+  - `referral_source`: `required|string|max:100`
+  - `referral_source_other`: `nullable|string|max:255` (*Mandatory with 422 if `referral_source === 'أخرى'`*)
+  - `volunteer_name`: `required|string|max:150`
+  - `volunteer_name_other`: `nullable|string|max:150` (*Mandatory with 422 if `volunteer_name === 'أخرى'`*)
+  - `is_step_12`: `required|boolean`
+  - `call_brief`: `required|string|min:3`
+  - `discuss_in_meeting`: `required|boolean`
+  - `additional_info`: `nullable|string`
+- **Behavior:** Automatically resolves `volunteer_id` if `volunteer_name` matches an active volunteer, and sets `entry_time` to current timestamp.
+- **Response (201 Created):** Returns single `HelplineCallResource` wrapped in `{ "data": { ... } }`.
+
+#### `GET /api/v1/helpline-calls`
+- **Access:** Authenticated (`Authorization: Bearer <sanctum_token>`)
+- **Query Params:**
+  - `start_date` *(optional)*: Filter calls on or after date (`YYYY-MM-DD`)
+  - `end_date` *(optional)*: Filter calls on or before date (`YYYY-MM-DD`)
+  - `page` *(optional)*: Page number (25 records per page)
+- **Response (200 OK):** Paginated `HelplineCallResource` collection.
+
+---
+
+### 5.5 Committee Reports (`/api/v1/committee-reports`)
 - `GET /api/v1/committee-reports`: List sub-committee periodic reports.
 - `POST /api/v1/committee-reports`: Upload/publish sub-committee report (Returns `201 Created`).
 - `GET /api/v1/committee-reports/{id}`: Retrieve report details.
@@ -500,7 +564,7 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 5.5 Contact Requests (`/api/v1/contact-requests` & `/api/v1/contact-us`)
+### 5.6 Contact Requests (`/api/v1/contact-requests` & `/api/v1/contact-us`)
 - `GET /api/v1/contact-requests` / `GET /api/v1/contact-us`: Retrieve member/public contact submissions.
 - `POST /api/v1/contact-us`: Create contact request (Returns `201 Created`).
 - `GET /api/v1/contact-us/{id}`
@@ -509,14 +573,14 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 5.6 Newsletter Members (`/api/v1/newsletter-members`)
+### 5.7 Newsletter Members (`/api/v1/newsletter-members`)
 - `GET /api/v1/newsletter-members`: Newsletter recipient directory.
 - `POST /api/v1/newsletter-members`: Add subscriber (Returns `201 Created`).
 - `DELETE /api/v1/newsletter-members/{id}`: Unsubscribe/remove member (`204 No Content`).
 
 ---
 
-### 5.7 Financial & Audit Transactions (`/api/v1/transactions`)
+### 5.8 Financial & Audit Transactions (`/api/v1/transactions`)
 - `GET /api/v1/transactions`: Audit ledger recording system and model actions.
 - `POST /api/v1/transactions`: Record audit transaction (Returns `201 Created`).
 - `GET /api/v1/transactions/{id}`
@@ -525,7 +589,7 @@ Deletes request and any associated file attachment. Allowed for owner (if `pendi
 
 ---
 
-### 5.8 User, Role & Permission Management
+### 5.9 User, Role & Permission Management
 - `GET /api/v1/users`: List users (Super admin / RSC).
 - `POST /api/v1/users`: Create user account (Returns `201 Created`).
 - `GET /api/v1/users/{id}`: User profile.
@@ -629,6 +693,29 @@ export class NaEgyptApiClient {
       body: JSON.stringify(payload),
     });
   }
+
+  // Get Helpline Form Schema & Active Volunteers
+  public async getHelplineSchema() {
+    return this.request<ApiResponse<any>>("/helpline-calls/schema");
+  }
+
+  // Submit Helpline Call Response Log
+  public async submitHelplineCall(payload: Record<string, any>) {
+    return this.request<ApiResponse<any>>("/helpline-calls", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Get Helpline Calls (Authenticated with Optional Date Filtering)
+  public async getHelplineCalls(params?: { start_date?: string; end_date?: string; page?: number }) {
+    const searchParams = new URLSearchParams();
+    if (params?.start_date) searchParams.append("start_date", params.start_date);
+    if (params?.end_date) searchParams.append("end_date", params.end_date);
+    if (params?.page) searchParams.append("page", params.page.toString());
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
+    return this.request<ApiResponse<any[]>>(`/helpline-calls${query}`);
+  }
 }
 ```
 
@@ -653,6 +740,7 @@ php vendor/bin/phpunit tests/Feature/Api/
 9. `AgendaApiTest`: Group agenda reporting lifecycle and PDF serialization.
 10. `DirectoryApiTest`: Geographic directories (`cities`, `neighborhoods`, `days`, `topics`, `options`, `sc-meetings`, `service-bodies`, `service-committees`).
 11. `EventApiTest`: Events and announcements lifecycle.
-12. `ProtectedManagementApiTest`: `committee-reports`, `contact-us`, `newsletter-members`, `permissions`, `roles`, `transactions`, `users`.
+12. `HelplineCallApiTest`: Public schema discovery (shifts including `8:00 PM - 10:00 PM`), public call submissions with conditional validations for "أخرى", volunteer auto-association, authenticated listing with date range filtering.
+13. `ProtectedManagementApiTest`: `committee-reports`, `contact-us`, `newsletter-members`, `permissions`, `roles`, `transactions`, `users`.
 
-**Verification Status:** 77 tests, 420 assertions, 100% passing.
+**Verification Status:** 84 tests, 493 assertions, 100% passing.

@@ -88,16 +88,17 @@ A flexible visual form builder enabling service committees to generate custom su
 - **Committee Periodic Reports:** Sub-committee periodic reporting module with PDF generation, status workflow (`draft`, `submitted`, `approved`, `returned`, `embedded`), and file attachment storage.
 - **Agendas Management:** Group business meeting agenda archiving with bulk PDF generation and Service Body agenda approval pipelines.
 - **IT Change Request System (`/change-requests`):** Form enabling members and trusted servants to request data updates (meetings, groups, committees), attach supporting documents (PDF, images, spreadsheets up to 5MB), and track ticket statuses (`pending`, `in_progress`, `completed`, `rejected`).
+- **Helpline Management & Volunteer Tracking (`/helpline`):** End-to-end helpline call management featuring a public responsive submission form (`/forms/helpline`), active volunteer directory management (`/helpline/volunteers`), administrative datatable with real-time filtering (by date range, shift including `8:00 PM - 10:00 PM`, caller type, referral source, and Step 12 status), dynamic PDF report generator with Arabic typography, and dedicated REST API endpoints (`/api/v1/helpline-calls`).
 - **Facebook Ad Targeting Generator:** Geographic calculation tool generating coordinates, radiuses, and static map previews for social media awareness campaigns.
 
 ---
 
 ## 6. RESTful API v1 (Mobile & External Clients)
 
-- **Architecture:** Complete REST API versioned under `/api/v1/` with 30 production endpoints.
+- **Architecture:** Complete REST API versioned under `/api/v1/` with 33 production endpoints.
 - **Security:** Mass-assignment protection via explicit validation on all mutations, Sanctum personal access token revocation on logout (`POST /api/v1/auth/logout`), and strict HTTP status code invariants (`200`, `201`, `204`, `422`).
-- **Hybrid Endpoints:** Unauthenticated public read access for meetings, groups, direct online groups, calendar events, workgroups, and lookup directories; authenticated write access.
-- **Comprehensive Test Suite:** 100% test passing across 12 PHPUnit API feature test suites (77 tests, 420 assertions).
+- **Hybrid & Public Endpoints:** Unauthenticated public read access for meetings, groups, direct online groups, calendar events, workgroups, lookup directories, and public helpline schema/submissions (`/api/v1/helpline-calls/schema`, `POST /api/v1/helpline-calls`); authenticated administrative access for helpline call listings and sensitive resources.
+- **Comprehensive Test Suite:** 100% test passing across 13 PHPUnit API feature test suites (84 tests, 493 assertions).
 
 ---
 ---
@@ -192,13 +193,14 @@ A flexible visual form builder enabling service committees to generate custom su
 - **تقارير اللجان الدورية:** نظام رفع وتوثيق تقارير اللجان مع إنشاء ملفات PDF، ودورة اعتماد الحالات (`مسودة`، `مقدم`، `معتمد`، `مرتجع`، `مدمج`)، وإرفاق المستندات.
 - **إدارة جداول الأعمال (الأجندات):** أرشفة أجندات اجتماعات عمل المجموعات مع التصدير المجمع إلى PDF، ومسارات اعتماد أجندات هيئات الخدمة.
 - **نظام طلبات التعديل التقنية (`/change-requests`):** نموذج يمكن الأعضاء والخدام من إرسال طلبات تعديل البيانات (اجتماعات، مجموعات، لجان)، مع إرفاق مستندات مساعدة (PDF، صور، جداول بيانات حتى 5 ميجابايت)، ومتابعة حالات التذاكر.
+- **نظام إدارة وتوثيق مكالمات خط المساعدة (`/helpline`):** منظومة متكاملة لخط المساعدة تضم نموذج استجابة عام وسريع (`/forms/helpline`)، وإدارة دليل المتطوعين النشطين (`/helpline/volunteers`)، وجدول بيانات إداري تفاعلي مع فلترة فورية (حسب التواريخ وفترات المناوبة بما فيها مناوبة `8:00 PM - 10:00 PM` ونوع المتصل ومصدر الإحالة وحالة الخطوة 12)، واستخراج تقارير إحصائية دورية بصيغة PDF، مع واجهات برمجة تطبيقات مخصصة (`/api/v1/helpline-calls`).
 - **أداة استهداف إعلانات فيسبوك التوعوية:** أداة حسابية جغرافية تحسب إحداثيات المجموعات ونطاقاتها وتولد معاينة للخرائط الثابتة لحملات التوعية.
 
 ---
 
 ## 6. واجهة برمجة التطبيقات (RESTful API v1)
 
-- **الهندسة البرمجية:** واجهة برمجية كاملة تحت البادئة `/api/v1/` تضم 30 نقطة اتصال للمنظومة.
+- **الهندسة البرمجية:** واجهة برمجية كاملة تحت البادئة `/api/v1/` تضم 33 نقطة اتصال للمنظومة.
 - **الأمان والتحقق:** حماية كاملة من ثغرات التعيين المجمع (Mass Assignment) عبر التحقق الصريح لجميع المدخلات، وإلغاء صلاحية الرموز عند تسجيل الخروج (`POST /api/v1/auth/logout`)، وثبات رموز الحالة HTTP (`200`, `201`, `204`, `422`).
-- **نقاط اتصال هجينة:** قراءة عامة بدون مصادقة للاجتماعات والمجموعات والمجموعات الافتراضية والتقويم ومجموعات العمل؛ مع فرض المصادقة لعمليات الإنشاء والتعديل والحذف.
-- **اختبارات آلية شاملة:** نجاح بنسبة 100% عبر 12 حزمة اختبارات ميزات PHPUnit (77 اختباراً، 420 توكيداً).
+- **نقاط اتصال هجينة وعامة:** قراءة عامة بدون مصادقة للاجتماعات والمجموعات والمجموعات الافتراضية والتقويم ومجموعات العمل والدلائل، بالإضافة إلى استكشاف مخطط وتقديم مكالمات خط المساعدة العامة (`/api/v1/helpline-calls/schema`, `POST /api/v1/helpline-calls`)؛ مع فرض المصادقة لعمليات الإنشاء والتعديل والحذف واستعراض سجلات المكالمات.
+- **اختبارات آلية شاملة:** نجاح بنسبة 100% عبر 13 حزمة اختبارات ميزات PHPUnit (84 اختباراً، 493 توكيداً).
