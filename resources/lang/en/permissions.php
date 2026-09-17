@@ -173,5 +173,11 @@ return [
             'description' => 'Legacy permission for NA helpline and phoneline responders.',
             'category' => 'system',
         ],
+        'view api analytics' => [
+            'label' => 'View API & Mobile Analytics',
+            'description' => 'Monitor mobile app API traffic, endpoint latency, errors, and request logs.',
+            'category' => 'system',
+        ],
     ],
 ];
+

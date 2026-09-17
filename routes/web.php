@@ -283,6 +283,10 @@ Route::group(
                 Route::post('/subscribers/{subscriber}/toggle-verification', [SubscriberController::class, 'toggleVerification'])->name('subscribers.toggle-verification');
                 Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy_admin');
                 Route::get('/subscribers-export', [SubscriberController::class, 'export'])->name('subscribers.export');
+
+                // API & Mobile App Analytics:
+                Route::get('/admin/api-usage', [\App\Http\Controllers\ApiUsageAnalyticsController::class, 'index'])->name('admin.api_usage.index');
+                Route::get('/admin/api-usage/export', [\App\Http\Controllers\ApiUsageAnalyticsController::class, 'exportCsv'])->name('admin.api_usage.export');
             });
 
             // Stop Impersonating Route (Accessible to any authenticated session currently impersonating):

@@ -198,7 +198,7 @@ Task: Overhaul, redesign, and connect the Cross-Platform Mobile Application (iOS
 3. LIVE DATA SYNC & OFFLINE WATERMELONDB
 ==================================================
 - STRICT REQUIREMENT: Zero mock data.
-- API Base URL: `https://egyptna.org/api/v1` with headers `Accept: application/json`.
+- API Base URL: `https://egyptna.org/api/v1` with headers `Accept: application/json`, `X-App-Platform: Platform.OS` (`ios` | `android`), `X-App-Version: Constants.expoConfig?.version || '1.0.0'`, and optional `X-Device-Id` (anonymous UUID) for backend telemetry and analytics.
 - Fetch live data and sync into local WatermelonDB:
   - `/api/v1/home` (Stats, JFT, Helplines)
   - `/api/v1/meetings` & `/api/v1/direct-online-groups`

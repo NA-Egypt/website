@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
+        $middleware->api(append: [
+            \App\Http\Middleware\TrackApiUsage::class,
+        ]);
+
         $middleware->alias([
             /**** OTHER MIDDLEWARE ALIASES ****/
             'localize'                => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,

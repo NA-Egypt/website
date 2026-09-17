@@ -9,5 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('model:prune')->daily();
+Schedule::command('api-logs:aggregate')->dailyAt('00:05');
 Schedule::command('storagebox:cache-archives')->everyThirtyMinutes();
 

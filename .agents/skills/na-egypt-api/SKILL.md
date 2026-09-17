@@ -749,3 +749,27 @@ Run the comprehensive PHPUnit automated test suite across all 13 API feature tes
 php vendor/bin/phpunit tests/Feature/Api/
 ```
 All feature test suites (`AgendaApiTest`, `AuthApiTest`, `CalendarEventApiTest`, `ChangeRequestApiTest`, `CompositeApiTest`, `CustomFormApiTest`, `DirectOnlineGroupApiTest`, `DirectoryApiTest`, `EventApiTest`, `HelplineCallApiTest`, `MeetingApiTest`, `ProtectedManagementApiTest`, `WorkgroupApiTest`) validate status codes (200/201/204/401/403/422), mass-assignment validation guards, JSON payloads, filtering, file uploads, conditional validation rules, and authorization barriers with 100% test passing (84 tests, 493 assertions).
+
+---
+
+## 7. API Telemetry, Mobile Usage Tracking & Super Admin Analytics
+
+All incoming `/api/v1/*` requests are intercepted by `App\Http\Middleware\TrackApiUsage` via a **zero-latency terminating hook (`terminate()`)** executed after the HTTP response has already flushed to the client.
+
+### Telemetry Headers for Mobile Clients
+Mobile apps (React Native / iOS / Android) are recommended to pass the following headers for granular analytics:
+- `X-App-Platform`: `android` | `ios` (normalized; fallback automatically parses User-Agent for iOS, Android, or Web)
+- `X-App-Version`: Current application release version (e.g., `1.0.4`)
+- `X-Device-Id`: Optional anonymous device installation UUID
+
+### Super Admin Analytics Module
+- **Route:** `GET /admin/api-usage` (Protected by `role:super admin` or `permission:view api analytics`).
+- **Features:**
+  - KPI Cards: Total Calls, Mobile Traffic (% and Android vs iOS breakdown), Avg Latency (ms), Error Rate (%).
+  - Visual Charts: Traffic Over Time (interactive line chart), Platform Distribution (doughnut), Top 10 API Endpoints, Status Code breakdown.
+  - Live Request Logs Table: Search, pagination, filter by date preset (Today, 7D, 30D, Custom), and request inspection modal.
+  - CSV Export: `GET /admin/api-usage/export`.
+- **Data Retention:**
+  - `api_logs`: Pruned automatically after 30 days via `model:prune` using `MassPrunable`.
+  - `api_daily_stats`: Permanent daily aggregated counters generated via `php artisan api-logs:aggregate`.
+

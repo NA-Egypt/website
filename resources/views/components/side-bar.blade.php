@@ -213,6 +213,7 @@
             <li> <a href="{{ route('permissions.index') }}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Permissions')}}</a></li>
             <li> <a href="{{route('roles.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Rules')}}</a></li>
             <li> <a href="{{route('subscribers.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Subscribers')}}</a></li>
+            <li> <a href="{{route('admin.api_usage.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.API & Mobile Analytics')}}</a></li>
           </ul>
         </div>
       </li>
