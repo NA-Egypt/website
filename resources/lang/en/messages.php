@@ -854,6 +854,8 @@ return [
     'close' => 'Close',
     'meetings_qr' => 'Page QR Code',
     'Virtual Meetings Only' => 'Virtual Meetings Only',
+    'virtual_meetings_hint_title' => 'Notice Regarding Virtual Meetings',
+    'virtual_meetings_hint' => 'Virtual meetings are not directly affiliated with local Narcotics Anonymous service bodies. Publishing their information in the meeting schedule is provided as a service, whose sole purpose is to help addicts who cannot attend in-person meetings, and to provide every addict seeking recovery the opportunity under any circumstance or from any location.',
     'Basic Information' => 'Basic Information',
     'Contact & Capacity' => 'Contact & Capacity',
     'Location Details' => 'Location Details',

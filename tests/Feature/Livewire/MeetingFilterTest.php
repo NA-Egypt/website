@@ -143,4 +143,25 @@ class MeetingFilterTest extends TestCase
         $this->assertFalse($meetings->contains('id', 320));
         $this->assertTrue($meetings->contains('id', 321));
     }
+
+    public function test_virtual_meetings_filter_displays_hint()
+    {
+        app()->setLocale('ar');
+
+        // Initially virtualOnly is false, hint should not be rendered
+        Livewire::test(MeetingFilter::class)
+            ->assertDontSee('المجموعات الافتراضية لا تتبع الخدمات المحلية')
+            ->call('toggleVirtualOnly')
+            ->assertSet('virtualOnly', true)
+            ->assertSee('المجموعات الافتراضية لا تتبع الخدمات المحلية')
+            ->assertSee(__('messages.virtual_meetings_hint_title'));
+
+        // Test in English
+        app()->setLocale('en');
+
+        Livewire::test(MeetingFilter::class)
+            ->set('virtualOnly', true)
+            ->assertSee('Virtual groups are not directly affiliated')
+            ->assertSee(__('messages.virtual_meetings_hint_title'));
+    }
 }

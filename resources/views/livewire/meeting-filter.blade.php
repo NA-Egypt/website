@@ -250,6 +250,24 @@
                                     {{ __('messages.Group Business Meetings Only') ?? 'Group Business Meetings Only' }}
                                 </button>
                             </div>
+
+                            @if($virtualOnly)
+                                <div class="mt-4 w-100 animate__animated animate__fadeIn" id="virtual-meetings-hint">
+                                    <div class="alert alert-info border-0 shadow-sm rounded-4 mb-0 p-3 p-sm-4 d-flex align-items-start gap-3 text-start" style="background: linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(224, 242, 254, 0.9) 100%); border-inline-start: 4px solid #0284c7 !important; border: 1px solid rgba(186, 230, 253, 0.7);">
+                                        <div class="flex-shrink-0 mt-0.5">
+                                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white shadow-xs" style="width: 32px; height: 32px; background-color: #0284c7;">
+                                                <i class="bi bi-info-circle-fill fs-6"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1" style="font-size: 0.9rem; line-height: 1.6; color: #0c4a6e;">
+                                            <strong class="d-block mb-1 text-primary" style="font-size: 0.95rem;">{{ __('messages.virtual_meetings_hint_title') }}</strong>
+                                            <div class="text-secondary" style="font-size: 0.88rem; line-height: 1.65;">
+                                                {{ __('messages.virtual_meetings_hint') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             
                             <div class="d-flex justify-content-center align-items-center mt-4 pt-3 border-top" id="tour-clear">
                                 <button type="button" wire:click="clearFilters" class="btn btn-danger text-white px-5 rounded-pill fw-bold transition-all hover-scale shadow-sm">
@@ -258,6 +276,24 @@
                             </div>
                         </div>
                     </div>
+
+                    @if($virtualOnly)
+                        <div x-show="!open" class="mt-3 w-100 animate__animated animate__fadeIn" id="virtual-meetings-hint-collapsed">
+                            <div class="alert alert-info border-0 shadow-sm rounded-4 mb-3 p-3 p-sm-4 d-flex align-items-start gap-3 text-start" style="background: linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(224, 242, 254, 0.9) 100%); border-inline-start: 4px solid #0284c7 !important; border: 1px solid rgba(186, 230, 253, 0.7);">
+                                <div class="flex-shrink-0 mt-0.5">
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white shadow-xs" style="width: 32px; height: 32px; background-color: #0284c7;">
+                                        <i class="bi bi-info-circle-fill fs-6"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1" style="font-size: 0.9rem; line-height: 1.6; color: #0c4a6e;">
+                                    <strong class="d-block mb-1 text-primary" style="font-size: 0.95rem;">{{ __('messages.virtual_meetings_hint_title') }}</strong>
+                                    <div class="text-secondary" style="font-size: 0.88rem; line-height: 1.65;">
+                                        {{ __('messages.virtual_meetings_hint') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         @if($meetings->isEmpty())
