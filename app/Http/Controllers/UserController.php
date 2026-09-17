@@ -42,6 +42,8 @@ class UserController extends Controller
             $users->getCollection()->transform(function($u) use ($locale) {
                 $u->formatted_name = $u->display_name ?: $u->name;
                 $u->is_verified = (bool) $u->email_verified_at;
+                $u->last_login_at_formatted = $u->last_login_at ? $u->last_login_at->format('Y-m-d H:i') : null;
+                $u->last_login_human = $u->last_login_at ? $u->last_login_at->diffForHumans() : null;
                 $u->roles_list = $u->roles ? $u->roles->pluck('name')->all() : [];
                 $u->service_body_name = $u->serviceBody ? ($locale === 'ar' ? ($u->serviceBody->ar_name ?: $u->serviceBody->en_name) : ($u->serviceBody->en_name ?: $u->serviceBody->ar_name)) : null;
                 $u->created_at_formatted = $u->created_at ? $u->created_at->format('Y-m-d H:i') : null;
@@ -54,8 +56,8 @@ class UserController extends Controller
 
         $kpiStats = [
             'total_users'           => User::count(),
-            'verified_users'        => User::whereNotNull('email_verified_at')->count(),
-            'unverified_users'      => User::whereNull('email_verified_at')->count(),
+            'active_recently'       => User::where('last_login_at', '>=', now()->subDays(30))->count(),
+            'never_logged_in'       => User::whereNull('last_login_at')->count(),
             'service_body_officers' => User::whereNotNull('service_body_id')->count(),
         ];
 

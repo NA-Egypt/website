@@ -2305,6 +2305,10 @@ return [
     'Success' => 'Success',
     'Errors Only' => 'Errors Only',
     'All Statuses' => 'All Statuses',
+    'Last Login' => 'Last Login',
+    'Active Recently' => 'Active (30d)',
+    'Never Logged In' => 'Never Logged In',
+    'Never' => 'Never',
 ];
 
 

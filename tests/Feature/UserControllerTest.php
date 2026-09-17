@@ -98,4 +98,76 @@ class UserControllerTest extends TestCase
 
         $response->assertRedirect(route('frontend.home'));
     }
+
+    public function test_users_index_returns_last_login_formatted_and_kpi_stats()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+
+        $activeUser = User::factory()->create([
+            'email' => 'active@example.com',
+            'last_login_at' => now()->subDays(2),
+        ]);
+
+        $inactiveUser = User::factory()->create([
+            'email' => 'inactive@example.com',
+            'last_login_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->getJson(route('users.index'));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'name',
+                    'email',
+                    'last_login_at',
+                    'last_login_at_formatted',
+                    'last_login_human',
+                ]
+            ]
+        ]);
+
+        $data = $response->json('data');
+        $activeItem = collect($data)->firstWhere('id', $activeUser->id);
+        $this->assertNotNull($activeItem['last_login_at_formatted']);
+        $this->assertNotNull($activeItem['last_login_human']);
+
+        $inactiveItem = collect($data)->firstWhere('id', $inactiveUser->id);
+        $this->assertNull($inactiveItem['last_login_at_formatted']);
+    }
+
+    public function test_users_index_supports_sorting_by_last_login_at()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('super admin');
+
+        $olderLoginUser = User::factory()->create([
+            'email' => 'older@example.com',
+            'last_login_at' => now()->subDays(10),
+        ]);
+
+        $recentLoginUser = User::factory()->create([
+            'email' => 'recent@example.com',
+            'last_login_at' => now()->subHour(),
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->getJson(route('users.index', ['sort_by' => 'last_login_at', 'sort_dir' => 'desc']));
+
+        $response->assertStatus(200);
+        $data = $response->json('data');
+        $ids = collect($data)->pluck('id')->all();
+
+        // Recent login user must appear before older login user
+        $recentIndex = array_search($recentLoginUser->id, $ids);
+        $olderIndex = array_search($olderLoginUser->id, $ids);
+        $this->assertNotFalse($recentIndex);
+        $this->assertNotFalse($olderIndex);
+        $this->assertLessThan($olderIndex, $recentIndex);
+    }
 }
+

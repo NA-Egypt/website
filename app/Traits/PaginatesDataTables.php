@@ -13,13 +13,13 @@ trait PaginatesDataTables
      */
     protected function paginateDataTable(Builder $query, Request $request, array $searchableColumns = [])
     {
-        $perPage = (int) $request->input('pagesize', 15);
+        $perPage = (int) ($request->input('pagesize') ?: $request->input('per_page', 15));
         if ($perPage < 1 || $perPage > 100) {
             $perPage = 15;
         }
 
-        $sortColumn    = $request->input('sort_column');
-        $sortDirection = $request->input('sort_direction', 'desc') === 'asc' ? 'asc' : 'desc';
+        $sortColumn    = $request->input('sort_column') ?: $request->input('sort_by');
+        $sortDirection = ($request->input('sort_direction') ?: $request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
         $search        = $request->input('search');
 
         // Apply global search across specified columns (and relation columns)

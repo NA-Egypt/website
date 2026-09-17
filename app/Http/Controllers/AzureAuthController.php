@@ -35,6 +35,8 @@ class AzureAuthController extends Controller
             ['name' => $name]
         );
 
+        $user->update(['last_login_at' => now()]);
+
         Auth::login($user);
 
         if (session('mobile_auth_redirect')) {

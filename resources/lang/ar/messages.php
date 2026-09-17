@@ -2310,6 +2310,10 @@ return [
     'Success' => 'الطلبات الناجحة',
     'Errors Only' => 'الأخطاء فقط',
     'All Statuses' => 'جميع الحالات',
+    'Last Login' => 'آخر تسجيل دخول',
+    'Active Recently' => 'نشط مؤخراً',
+    'Never Logged In' => 'لم يسجل دخول',
+    'Never' => 'أبداً',
 ];
 
 

@@ -17,31 +17,31 @@
         </div>
       </div>
 
-      <!-- Verified Users -->
+      <!-- Active Recently (Last 30 Days) -->
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm kpi-card h-100">
           <div class="card-body p-3 d-flex align-items-center gap-3">
             <div class="kpi-icon-wrapper rounded-3 p-3 d-flex align-items-center justify-content-center" style="background-color: rgba(25, 135, 84, 0.12); color: #198754;">
-              <i class="bi bi-patch-check-fill fs-3"></i>
+              <i class="bi bi-clock-history fs-3"></i>
             </div>
             <div>
-              <div class="kpi-label text-muted small fw-medium">{{ labels.verifiedUsers || 'Verified' }}</div>
-              <div class="kpi-value fs-4 fw-bold" style="color: var(--text-primary);">{{ kpiData.verified_users }}</div>
+              <div class="kpi-label text-muted small fw-medium">{{ labels.activeRecently || 'Active Recently' }}</div>
+              <div class="kpi-value fs-4 fw-bold" style="color: var(--text-primary);">{{ kpiData.active_recently }}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Unverified Users -->
+      <!-- Never Logged In -->
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm kpi-card h-100">
           <div class="card-body p-3 d-flex align-items-center gap-3">
             <div class="kpi-icon-wrapper rounded-3 p-3 d-flex align-items-center justify-content-center" style="background-color: rgba(255, 193, 7, 0.15); color: #d39e00;">
-              <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+              <i class="bi bi-hourglass-split fs-3"></i>
             </div>
             <div>
-              <div class="kpi-label text-muted small fw-medium">{{ labels.unverifiedUsers || 'Unverified' }}</div>
-              <div class="kpi-value fs-4 fw-bold" style="color: var(--text-primary);">{{ kpiData.unverified_users }}</div>
+              <div class="kpi-label text-muted small fw-medium">{{ labels.neverLoggedIn || 'Never Logged In' }}</div>
+              <div class="kpi-value fs-4 fw-bold" style="color: var(--text-primary);">{{ kpiData.never_logged_in }}</div>
             </div>
           </div>
         </div>
@@ -100,15 +100,6 @@
             </select>
           </div>
 
-          <!-- Verification Status Filter -->
-          <div class="filter-wrapper">
-            <select v-model="selectedVerified" @change="fetchData" class="form-select form-select-sm filter-select">
-              <option value="">{{ labels.allVerificationStatuses || 'All Statuses' }}</option>
-              <option value="yes">{{ labels.emailVerified || 'Verified' }}</option>
-              <option value="no">{{ labels.emailUnverified || 'Unverified' }}</option>
-            </select>
-          </div>
-
           <!-- Reset Filter Button -->
           <button
             v-if="hasActiveFilters"
@@ -151,8 +142,11 @@
                 <th scope="col" class="py-3" style="min-width: 180px;">
                   {{ labels.associatedServiceBody || 'Service Body' }}
                 </th>
-                <th scope="col" class="py-3 text-center" style="min-width: 130px;">
-                  {{ labels.status || 'Status' }}
+                <th scope="col" class="py-3 text-center" style="min-width: 170px;" @click="setSort('last_login_at')">
+                  <div class="d-flex align-items-center justify-content-center gap-1 cursor-pointer">
+                    <span>{{ labels.lastLogin || 'Last Login' }}</span>
+                    <i class="bi sort-icon" :class="getSortIcon('last_login_at')"></i>
+                  </div>
                 </th>
                 <th scope="col" class="pe-4 py-3 text-end" style="min-width: 160px;">
                   {{ labels.actions || 'Actions' }}
@@ -225,15 +219,20 @@
                   <span v-else class="text-muted small">N/A</span>
                 </td>
 
-                <!-- Verification Status -->
+                <!-- Last Login -->
                 <td class="py-3 text-center">
-                  <span v-if="item.email_verified_at" class="badge rounded-pill bg-success-subtle text-success px-3 py-1-5 fw-semibold">
-                    <i class="bi bi-check-circle me-1"></i>
-                    {{ labels.emailVerified || 'Verified' }}
-                  </span>
-                  <span v-else class="badge rounded-pill bg-warning-subtle text-warning-emphasis px-3 py-1-5 fw-semibold">
-                    <i class="bi bi-hourglass-split me-1"></i>
-                    {{ labels.emailUnverified || 'Unverified' }}
+                  <div v-if="item.last_login_at" class="d-inline-flex flex-column align-items-center">
+                    <span class="badge rounded-pill login-badge px-3 py-1-5 fw-semibold d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-clock-history text-primary"></i>
+                      {{ item.last_login_at_formatted || item.last_login_at }}
+                    </span>
+                    <span v-if="item.last_login_human" class="small text-muted mt-1 login-relative-time">
+                      {{ item.last_login_human }}
+                    </span>
+                  </div>
+                  <span v-else class="badge rounded-pill never-badge px-3 py-1-5 fw-semibold">
+                    <i class="bi bi-dash-circle me-1 opacity-50"></i>
+                    {{ labels.never || 'Never' }}
                   </span>
                 </td>
 
@@ -322,11 +321,12 @@
                       <div class="text-muted small">{{ item.email }}</div>
                     </div>
                   </div>
-                  <span v-if="item.email_verified_at" class="badge rounded-pill bg-success-subtle text-success px-2 py-1 small">
-                    <i class="bi bi-check-circle"></i>
+                  <span v-if="item.last_login_at" class="badge rounded-pill login-badge px-2 py-1 small d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-clock-history"></i>
+                    {{ item.last_login_human || item.last_login_at_formatted }}
                   </span>
-                  <span v-else class="badge rounded-pill bg-warning-subtle text-warning-emphasis px-2 py-1 small">
-                    <i class="bi bi-hourglass-split"></i>
+                  <span v-else class="badge rounded-pill never-badge px-2 py-1 small">
+                    {{ labels.never || 'Never' }}
                   </span>
                 </div>
 
@@ -342,9 +342,16 @@
                   </span>
                 </div>
 
-                <div v-if="item.service_body" class="mb-2 small text-muted">
+                <div v-if="item.service_body" class="mb-1 small text-muted">
                   <i class="bi bi-building me-1 text-primary"></i>
                   {{ isRtl ? (item.service_body.ar_name || item.service_body.en_name) : (item.service_body.en_name || item.service_body.ar_name) }}
+                </div>
+
+                <div class="mb-2 small d-flex align-items-center gap-1 text-muted">
+                  <i class="bi bi-clock-history text-primary"></i>
+                  <span class="fw-medium">{{ labels.lastLogin || 'Last Login' }}:</span>
+                  <span v-if="item.last_login_at" class="fw-semibold text-dark">{{ item.last_login_at_formatted || item.last_login_at }}</span>
+                  <span v-else class="text-muted fst-italic">{{ labels.never || 'Never' }}</span>
                 </div>
 
                 <div class="d-flex align-items-center justify-content-end gap-2 pt-2 border-top mt-2">
@@ -489,18 +496,19 @@
                 </div>
               </div>
 
-              <!-- Verification Status -->
+              <!-- Last Login Date/Time -->
               <div class="col-12 col-md-6">
                 <div class="p-3 rounded-3 detail-info-box h-100">
-                  <div class="small text-muted fw-semibold mb-1">{{ labels.status || 'Verification' }}</div>
+                  <div class="small text-muted fw-semibold mb-1">{{ labels.lastLogin || 'Last Login' }}</div>
                   <div class="mt-1">
-                    <span v-if="selectedItem.email_verified_at" class="badge rounded-pill bg-success-subtle text-success px-3 py-1-5 fw-semibold">
-                      <i class="bi bi-check-circle me-1"></i>
-                      {{ labels.emailVerified || 'Verified' }} ({{ selectedItem.email_verified_at }})
+                    <span v-if="selectedItem.last_login_at" class="badge rounded-pill login-badge px-3 py-1-5 fw-semibold d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-clock-history text-primary"></i>
+                      {{ selectedItem.last_login_at_formatted || selectedItem.last_login_at }}
+                      <span v-if="selectedItem.last_login_human" class="text-muted fw-normal ms-1">({{ selectedItem.last_login_human }})</span>
                     </span>
-                    <span v-else class="badge rounded-pill bg-warning-subtle text-warning-emphasis px-3 py-1-5 fw-semibold">
-                      <i class="bi bi-hourglass-split me-1"></i>
-                      {{ labels.emailUnverified || 'Unverified' }}
+                    <span v-else class="badge rounded-pill never-badge px-3 py-1-5 fw-semibold">
+                      <i class="bi bi-dash-circle me-1 opacity-50"></i>
+                      {{ labels.never || 'Never' }}
                     </span>
                   </div>
                 </div>
@@ -610,8 +618,8 @@ const props = defineProps({
     type: Object,
     default: () => ({
       total_users: 0,
-      verified_users: 0,
-      unverified_users: 0,
+      active_recently: 0,
+      never_logged_in: 0,
       service_body_officers: 0
     })
   },
@@ -641,13 +649,12 @@ const sortDirection = ref('desc');
 // Filters
 const searchQuery = ref('');
 const selectedRole = ref('');
-const selectedVerified = ref('');
 
 // KPIs
 const kpiData = reactive({
   total_users: props.initialKpiStats?.total_users || 0,
-  verified_users: props.initialKpiStats?.verified_users || 0,
-  unverified_users: props.initialKpiStats?.unverified_users || 0,
+  active_recently: props.initialKpiStats?.active_recently || 0,
+  never_logged_in: props.initialKpiStats?.never_logged_in || 0,
   service_body_officers: props.initialKpiStats?.service_body_officers || 0
 });
 
@@ -671,13 +678,12 @@ const clearSearch = () => {
 };
 
 const hasActiveFilters = computed(() => {
-  return searchQuery.value !== '' || selectedRole.value !== '' || selectedVerified.value !== '';
+  return searchQuery.value !== '' || selectedRole.value !== '';
 });
 
 const resetAllFilters = () => {
   searchQuery.value = '';
   selectedRole.value = '';
-  selectedVerified.value = '';
   currentPage.value = 1;
   fetchData();
 };
@@ -701,7 +707,7 @@ const setSort = (column) => {
     sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
   } else {
     sortColumn.value = column;
-    sortDirection.value = 'asc';
+    sortDirection.value = column === 'last_login_at' ? 'desc' : 'asc';
   }
   currentPage.value = 1;
   fetchData();
@@ -737,12 +743,14 @@ const getUserInitials = (name) => {
 
 const getRoleBadgeClass = (roleName) => {
   const r = (roleName || '').toLowerCase();
-  if (r.includes('super admin')) return 'bg-danger-subtle text-danger';
-  if (r.includes('admin')) return 'bg-primary-subtle text-primary';
-  if (r.includes('rsc')) return 'bg-purple-subtle text-indigo' || 'bg-info-subtle text-info';
-  if (r.includes('committee')) return 'bg-success-subtle text-success';
-  if (r.includes('workgroup')) return 'bg-warning-subtle text-warning-emphasis';
-  return 'bg-secondary-subtle text-secondary';
+  if (r.includes('super admin')) return 'role-badge-super-admin';
+  if (r.includes('admin')) return 'role-badge-admin';
+  if (r.includes('rsc')) return 'role-badge-rsc';
+  if (r.includes('committee')) return 'role-badge-committee';
+  if (r.includes('workgroup')) return 'role-badge-workgroup';
+  if (r.includes('gsr')) return 'role-badge-gsr';
+  if (r.includes('servicebody')) return 'role-badge-servicebody';
+  return 'role-badge-default';
 };
 
 const openPreview = (item) => {
@@ -761,8 +769,11 @@ const fetchData = async () => {
     const params = {
       page: currentPage.value,
       per_page: pageSize.value,
+      pagesize: pageSize.value,
       sort_by: sortColumn.value,
-      sort_dir: sortDirection.value
+      sort_column: sortColumn.value,
+      sort_dir: sortDirection.value,
+      sort_direction: sortDirection.value
     };
 
     if (searchQuery.value.trim()) {
@@ -770,9 +781,6 @@ const fetchData = async () => {
     }
     if (selectedRole.value) {
       params.role_name = selectedRole.value;
-    }
-    if (selectedVerified.value) {
-      params.is_verified = selectedVerified.value;
     }
 
     const response = await axios.get(props.fetchUrl, {
@@ -1002,5 +1010,70 @@ onMounted(() => {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* Role Badges with explicit, high-contrast colors (no white text on light backgrounds!) */
+.role-badge-super-admin {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fca5a5 !important;
+}
+
+.role-badge-admin {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border: 1px solid #93c5fd !important;
+}
+
+.role-badge-rsc {
+  background-color: #f3e8ff !important;
+  color: #6b21a8 !important;
+  border: 1px solid #d8b4fe !important;
+}
+
+.role-badge-committee {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #86efac !important;
+}
+
+.role-badge-workgroup {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+}
+
+.role-badge-gsr {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+}
+
+.role-badge-servicebody {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.role-badge-default {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.login-badge {
+  background-color: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.never-badge {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.login-relative-time {
+  font-size: 0.725rem;
 }
 </style>

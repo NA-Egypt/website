@@ -37,6 +37,8 @@ class AzureAuthController extends Controller
             ]
         );
 
+        $user->update(['last_login_at' => now()]);
+
         // Issue Sanctum token
         $token = $user->createToken('mobile-app')->plainTextToken;
 

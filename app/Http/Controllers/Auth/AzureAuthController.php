@@ -43,6 +43,8 @@ class AzureAuthController extends Controller
             ]
         );
 
+        $user->update(['last_login_at' => now()]);
+
         $token = $user->createToken('mobile-app')->plainTextToken;
 
         $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames() : [];
