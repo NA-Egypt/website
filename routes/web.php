@@ -24,6 +24,7 @@ use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\ForPublicController;
 use App\Http\Controllers\FacebookTargetingController;
+use App\Http\Controllers\ApkDownloadController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use App\Models\City;
@@ -456,8 +457,16 @@ Route::group(
         // Public Custom Forms
         Route::get('/f/{slug}', [PublicFormController::class, 'show'])->name('forms.show.public');
         Route::post('/f/{slug}', [PublicFormController::class, 'submit'])->name('forms.submit.public');
+
+        // Pre-release APK Download Link Request
+        Route::post('/apk/request-link', [ApkDownloadController::class, 'requestLink'])
+            ->middleware('throttle:5,1')
+            ->name('apk.request_link');
     }
 );
+
+// Pre-release APK Secret Streaming Download Route
+Route::get('/apk/download/{token}', [ApkDownloadController::class, 'download'])->name('apk.download');
 
 // Fixed Public Helpline Form (Clean direct access)
 Route::get('/forms/helpline', [\App\Http\Controllers\HelplinePublicFormController::class, 'show'])->name('forms.helpline.show');

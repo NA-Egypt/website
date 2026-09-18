@@ -46,4 +46,10 @@ return [
         'site_key' => env('TURNSTILE_SITE_KEY', '1x00000000000000000000AA'),
         'secret_key' => env('TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA'),
     ],
+
+    'apk' => [
+        'release_url' => env('APK_RELEASE_URL', 'https://github.com/NA-Egypt/na-mobile/releases/download/1.1.0/app-release.apk'),
+        'filename' => env('APK_FILENAME', 'na-egypt-1.1.0.apk'),
+        'token_expiry_hours' => (int) env('APK_TOKEN_EXPIRY_HOURS', 24),
+    ],
 ];

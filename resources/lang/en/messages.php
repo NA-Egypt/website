@@ -2309,6 +2309,27 @@ return [
     'Active Recently' => 'Active (30d)',
     'Never Logged In' => 'Never Logged In',
     'Never' => 'Never',
+
+    // Pre-release APK
+    'apk_beta_badge' => 'Pre-release Beta',
+    'apk_download_app' => 'Download Pre-release App (Android)',
+    'apk_hero_pill' => 'NA Egypt Mobile App (Beta)',
+    'apk_modal_title' => 'Download Pre-release App',
+    'apk_modal_subtitle' => 'Pre-release testing is available for @naegypt.org accounts. Enter your email address to receive your direct download link.',
+    'apk_email_label' => 'Email Address (@naegypt.org)',
+    'apk_email_placeholder' => 'name@naegypt.org',
+    'apk_submit_btn' => 'Send Download Link',
+    'apk_sending' => 'Sending & Verifying...',
+    'apk_email_required' => 'Please provide your email address.',
+    'apk_email_invalid' => 'Please provide a valid email address.',
+    'apk_email_domain_restricted' => 'Access is restricted to @naegypt.org email addresses.',
+    'apk_link_sent_success' => 'The download link has been sent to your email! Please check your inbox.',
+    'apk_email_send_failed' => 'Failed to send the email. Please try again shortly.',
+    'apk_expired_link' => 'Sorry, this download link is invalid or has expired (links expire after 24 hours). Please request a new link.',
+    'apk_install_note' => 'Note: This APK package is for Android devices only.',
+    'apk_check_inbox_title' => 'Download Link Sent',
+    'apk_check_inbox_desc' => 'We have delivered your app download link to your email. The link is valid for 24 hours.',
+    'apk_done_btn' => 'Done / Close',
 ];
 
 

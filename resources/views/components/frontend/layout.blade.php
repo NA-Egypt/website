@@ -62,7 +62,7 @@
 
   <!-- Include common styles -->
   @vite(['resources/js/app.js', 'resources/css/frontend-app.css'])
-  @if(request()->routeIs('contactus.*', 'frontend.rd', 'frontend.fdsurvey'))
+  @if(request()->routeIs('contactus.*', 'frontend.rd', 'frontend.fdsurvey', 'frontend.home'))
     <script async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
   @endif
   <link rel="stylesheet" href="{{ asset('assets/css/frontend.css') }}?v={{ filemtime(public_path('assets/css/frontend.css')) }}" />

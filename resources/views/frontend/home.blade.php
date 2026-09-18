@@ -16,7 +16,35 @@
     </div>
   </div>
 
+  <!-- Pre-release APK Hero Pill Banner -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 text-center">
+      <button type="button" class="btn btn-apk-hero shadow-sm rounded-pill px-4 py-2 border-0 d-inline-flex align-items-center gap-2 touch-target" data-bs-toggle="modal" data-bs-target="#apkDownloadModal" aria-label="{{ __('messages.apk_modal_title') }}">
+        <i class="bi bi-android2 text-success fs-4"></i>
+        <span class="fw-semibold text-dark">{{ __('messages.apk_hero_pill') }}</span>
+        <span class="badge bg-primary text-white rounded-pill px-2 py-1 ms-1" style="font-size: 0.72rem; letter-spacing: 0.3px;">{{ __('messages.apk_beta_badge') }}</span>
+        <i class="bi bi-arrow-down-circle text-primary fs-5 ms-1"></i>
+      </button>
+    </div>
+  </div>
+
   <style>
+    .btn-apk-hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+      border: 1px solid rgba(37, 99, 235, 0.22) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.09);
+      cursor: pointer;
+    }
+    .btn-apk-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.18);
+      border-color: rgba(37, 99, 235, 0.45) !important;
+      background: linear-gradient(135deg, #ffffff 0%, #e1efff 100%);
+    }
+    .btn-apk-hero:active {
+      transform: translateY(0);
+    }
     .home-stats-wrap {
       margin: 8px 0 34px;
     }
@@ -1001,6 +1029,266 @@
           autoHeight: true,
         }).mount();
       }
+    });
+  </script>
+
+  <!-- Revamped Pre-release APK Request Modal -->
+  <div class="modal fade" id="apkDownloadModal" tabindex="-1" aria-labelledby="apkDownloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content apk-modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header border-0 text-white apk-modal-header d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="apk-app-badge">
+              <i class="bi bi-android2 text-white fs-2"></i>
+            </div>
+            <div class="text-start">
+              <h5 class="modal-title fw-bold m-0 text-white lh-sm" id="apkDownloadModalLabel">{{ __('messages.apk_modal_title') }}</h5>
+              <span class="badge bg-white-20 text-white rounded-pill mt-1" style="background: rgba(255,255,255,0.22); font-size: 0.72rem; letter-spacing: 0.3px;">{{ __('messages.apk_beta_badge') }} v1.1.0</span>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal" aria-label="{{ __('messages.Close') ?? 'Close' }}"></button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body p-4">
+          <!-- Form View Container -->
+          <div id="apkFormView">
+            <p class="text-muted small mb-3 text-start lh-base">
+              {{ __('messages.apk_modal_subtitle') }}
+            </p>
+
+            <div id="apkAlertError" class="alert alert-danger d-none rounded-3 py-2 px-3 border-0 shadow-sm mb-3" role="alert" style="background-color: #fef2f2; color: #991b1b;">
+              <div class="d-flex align-items-center gap-2 text-start">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-danger flex-shrink-0"></i>
+                <span id="apkErrorMessage" class="small fw-semibold"></span>
+              </div>
+            </div>
+
+            <form id="apkRequestForm" method="POST" action="{{ route('apk.request_link') }}">
+              @csrf
+              <div class="mb-3 text-start">
+                <label for="apkEmailInput" class="form-label fw-semibold small text-dark d-block">{{ __('messages.apk_email_label') }}</label>
+                <div class="input-group apk-input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope fs-5"></i></span>
+                  <input type="email" class="form-control" id="apkEmailInput" name="email" required placeholder="{{ __('messages.apk_email_placeholder') }}" dir="ltr" style="text-align: left;">
+                </div>
+                <div class="form-text text-muted small mt-2 d-flex align-items-center gap-1">
+                  <i class="bi bi-info-circle text-primary"></i>
+                  <span>{{ __('messages.apk_email_domain_restricted') }}</span>
+                </div>
+              </div>
+
+              <!-- Turnstile widget -->
+              @if(!empty(config('services.turnstile.site_key')))
+                <div class="mb-3 d-flex justify-content-center">
+                  <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
+                </div>
+              @endif
+
+              <div class="alert alert-info py-2 px-3 small border-0 rounded-3 mb-3 d-flex align-items-center gap-2 text-start" style="background-color: #f0f9ff; color: #0369a1;">
+                <i class="bi bi-phone flex-shrink-0 fs-5"></i>
+                <span>{{ __('messages.apk_install_note') }}</span>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" id="apkSubmitBtn" class="btn btn-primary py-2 px-4 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                  <span id="apkSubmitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                  <span id="apkSubmitText">{{ __('messages.apk_submit_btn') }}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Dedicated Success View Container -->
+          <div id="apkSuccessView" class="d-none text-center py-4 px-2">
+            <div class="apk-success-icon-wrap mb-3 mx-auto">
+              <i class="bi bi-check-lg fs-1 text-success"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">{{ __('messages.apk_check_inbox_title') }}</h4>
+            <p class="text-muted small mb-4 px-2 lh-base" id="apkSuccessMessage">
+              {{ __('messages.apk_check_inbox_desc') }}
+            </p>
+            <div class="p-3 rounded-3 mb-4 text-start small border" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+              <div class="d-flex align-items-center gap-2 text-dark fw-semibold mb-1">
+                <i class="bi bi-envelope-check text-primary fs-5"></i>
+                <span id="apkSentEmailTarget" class="font-monospace text-primary"></span>
+              </div>
+              <div class="text-muted" style="font-size: 0.8rem;">
+                {{ __('messages.apk_install_note') }}
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-semibold" data-bs-dismiss="modal">
+              {{ __('messages.apk_done_btn') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .apk-modal-content {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(50, 85, 127, 0.08);
+      overflow: hidden;
+    }
+    .apk-modal-header {
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      padding: 22px 24px;
+    }
+    .apk-app-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+    .apk-input-group {
+      border-radius: 12px;
+      transition: all 0.25s ease;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+    .apk-input-group:focus-within {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+    .apk-input-group .form-control {
+      border: none !important;
+      background: transparent !important;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+    }
+    .apk-input-group .form-control:focus {
+      box-shadow: none !important;
+    }
+    .apk-input-group .input-group-text {
+      border: none !important;
+      background: transparent !important;
+      color: #64748b;
+      padding-inline: 14px;
+    }
+    .apk-success-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      border: 2px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.25);
+      animation: apkPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes apkPopIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('apkRequestForm');
+      if (!form) return;
+
+      const modalEl = document.getElementById('apkDownloadModal');
+      const formView = document.getElementById('apkFormView');
+      const successView = document.getElementById('apkSuccessView');
+      const emailInput = document.getElementById('apkEmailInput');
+      const sentEmailTarget = document.getElementById('apkSentEmailTarget');
+      const submitBtn = document.getElementById('apkSubmitBtn');
+      const submitSpinner = document.getElementById('apkSubmitSpinner');
+      const submitText = document.getElementById('apkSubmitText');
+      const alertError = document.getElementById('apkAlertError');
+      const errorMsg = document.getElementById('apkErrorMessage');
+
+      // Reset modal state when closed
+      if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function () {
+          form.reset();
+          alertError.classList.add('d-none');
+          formView.classList.remove('d-none');
+          successView.classList.add('d-none');
+          submitBtn.disabled = false;
+          submitSpinner.classList.add('d-none');
+          submitText.textContent = "{{ __('messages.apk_submit_btn') }}";
+        });
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Hide previous error
+        alertError.classList.add('d-none');
+
+        const email = emailInput.value.trim().toLowerCase();
+        if (!email.endsWith('@naegypt.org')) {
+          errorMsg.textContent = "{{ __('messages.apk_email_domain_restricted') }}";
+          alertError.classList.remove('d-none');
+          return;
+        }
+
+        // Disable button & show spinner
+        submitBtn.disabled = true;
+        submitSpinner.classList.remove('d-none');
+        submitText.textContent = "{{ __('messages.apk_sending') }}";
+
+        const formData = new FormData(form);
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (response.ok && data.success) {
+            // Transition to dedicated Success View
+            if (sentEmailTarget) {
+              sentEmailTarget.textContent = email;
+            }
+            formView.classList.add('d-none');
+            successView.classList.remove('d-none');
+            if (window.turnstile) {
+              window.turnstile.reset();
+            }
+          } else {
+            errorMsg.textContent = data.message || "{{ __('messages.apk_email_send_failed') }}";
+            alertError.classList.remove('d-none');
+            if (window.turnstile) {
+              window.turnstile.reset();
+            }
+          }
+        } catch (err) {
+          errorMsg.textContent = "{{ __('messages.apk_email_send_failed') }}";
+          alertError.classList.remove('d-none');
+          if (window.turnstile) {
+            window.turnstile.reset();
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitSpinner.classList.add('d-none');
+          submitText.textContent = "{{ __('messages.apk_submit_btn') }}";
+        }
+      });
     });
   </script>
 </x-frontend.layout>
