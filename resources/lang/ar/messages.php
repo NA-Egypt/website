@@ -2316,7 +2316,10 @@ return [
     'Never' => 'أبداً',
 
     // Pre-release APK
-    'apk_beta_badge' => 'نسخة تجريبية',
+    'apk_beta_badge' => 'v1.1.0 Beta',
+    'apk_badge_caption' => 'متاح الآن',
+    'apk_badge_title' => 'تطبيق Android',
+    'apk_cta_download' => 'تحميل',
     'apk_download_app' => 'تحميل التطبيق التجريبي (Android)',
     'apk_hero_pill' => 'تطبيق زمالة المدمنين المجهولين (نسخة تجريبية)',
     'apk_modal_title' => 'تحميل النسخة التجريبية للتطبيق',

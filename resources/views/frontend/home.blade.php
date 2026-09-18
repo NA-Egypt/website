@@ -16,34 +16,215 @@
     </div>
   </div>
 
-  <!-- Pre-release APK Hero Pill Banner -->
+  <!-- Pre-release APK Hero Card (Harmonious Light Theme) -->
   <div class="row justify-content-center mb-4">
-    <div class="col-12 text-center">
-      <button type="button" class="btn btn-apk-hero shadow-sm rounded-pill px-4 py-2 border-0 d-inline-flex align-items-center gap-2 touch-target" data-bs-toggle="modal" data-bs-target="#apkDownloadModal" aria-label="{{ __('messages.apk_modal_title') }}">
-        <i class="bi bi-android2 text-success fs-4"></i>
-        <span class="fw-semibold text-dark">{{ __('messages.apk_hero_pill') }}</span>
-        <span class="badge bg-primary text-white rounded-pill px-2 py-1 ms-1" style="font-size: 0.72rem; letter-spacing: 0.3px;">{{ __('messages.apk_beta_badge') }}</span>
-        <i class="bi bi-arrow-down-circle text-primary fs-5 ms-1"></i>
+    <div class="col-12 d-flex justify-content-center">
+      <button type="button" class="btn btn-hero-apk-card shadow-sm border-0 d-inline-flex align-items-center touch-target" data-bs-toggle="modal" data-bs-target="#apkDownloadModal" aria-label="{{ __('messages.apk_modal_title') }}">
+        <!-- Mathematically Centered Android Emblem -->
+        <div class="apk-card-emblem flex-shrink-0">
+          <i class="bi bi-android2 apk-card-icon" aria-hidden="true"></i>
+        </div>
+
+        <!-- Main Info Stack -->
+        <div class="apk-card-info text-start d-flex flex-column justify-content-center">
+          <div class="d-flex align-items-center apk-card-eyebrow">
+            <span class="apk-card-caption fw-bold">{{ __('messages.apk_badge_caption') }}</span>
+            <span class="badge apk-card-version-badge rounded-pill" dir="ltr">{{ __('messages.apk_beta_badge') }}</span>
+          </div>
+          <div class="apk-card-title fw-bold">{{ __('messages.apk_badge_title') }}</div>
+        </div>
+
+        <!-- Prominent Primary Blue Download CTA Chip -->
+        <div class="apk-card-action flex-shrink-0">
+          <span class="apk-card-cta-btn">
+            <span>{{ __('messages.apk_cta_download') }}</span>
+            <i class="bi bi-download apk-card-cta-icon" aria-hidden="true"></i>
+          </span>
+        </div>
       </button>
     </div>
   </div>
 
   <style>
-    .btn-apk-hero {
-      background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-      border: 1px solid rgba(37, 99, 235, 0.22) !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.09);
+    /* Hero APK Card (Harmonious Light Theme) */
+    .btn-hero-apk-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfe 100%);
+      border: 1.5px solid rgba(50, 85, 127, 0.16) !important;
+      border-radius: 16px;
+      padding: 8px 14px;
+      width: 100%;
+      max-width: 395px;
+      height: 60px;
+      box-shadow: 0 6px 18px -4px rgba(50, 85, 127, 0.12), 0 2px 6px -2px rgba(50, 85, 127, 0.06);
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
-    .btn-apk-hero:hover {
+    .btn-hero-apk-card:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+      border-color: rgba(50, 85, 127, 0.38) !important;
       transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.18);
-      border-color: rgba(37, 99, 235, 0.45) !important;
-      background: linear-gradient(135deg, #ffffff 0%, #e1efff 100%);
+      box-shadow: 0 12px 28px -6px rgba(50, 85, 127, 0.20), 0 4px 10px -2px rgba(50, 85, 127, 0.08);
     }
-    .btn-apk-hero:active {
+    .btn-hero-apk-card:active {
+      transform: translateY(0) scale(0.99);
+      box-shadow: 0 4px 12px -2px rgba(50, 85, 127, 0.15);
+    }
+    .apk-card-emblem {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      border: 1.5px solid #a7f3d0;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-inline-end: 12px;
+    }
+    .apk-card-icon {
+      font-size: 1.65rem;
+      line-height: 1 !important;
+      display: block;
+      color: #059669;
+      vertical-align: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
       transform: translateY(0);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .btn-hero-apk-card:hover .apk-card-icon {
+      transform: scale(1.1) rotate(4deg);
+      color: #10b981;
+    }
+    .btn-hero-apk-card:hover .apk-card-emblem {
+      border-color: #34d399;
+      background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.22);
+    }
+    .apk-card-info {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .apk-card-eyebrow {
+      line-height: 1.2;
+      margin-bottom: 2px;
+      gap: 6px;
+    }
+    .apk-card-caption {
+      font-size: 0.68rem;
+      letter-spacing: 0;
+      color: #64748b;
+      white-space: nowrap;
+    }
+    html[lang="en"] .apk-card-caption {
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.65rem;
+    }
+    .apk-card-version-badge {
+      background: rgba(50, 85, 127, 0.08);
+      color: #32557f;
+      border: 1px solid rgba(50, 85, 127, 0.16);
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 1.5px 7px;
+      letter-spacing: 0;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .apk-card-title {
+      font-size: 1.05rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+      color: #1e293b;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+    html[lang="en"] .apk-card-title {
+      letter-spacing: -0.2px;
+      line-height: 1.15;
+    }
+    .apk-card-action {
+      margin-inline-start: 12px;
+    }
+    .apk-card-cta-btn {
+      background: #32557f;
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      letter-spacing: 0;
+      box-shadow: 0 2px 6px rgba(50, 85, 127, 0.22);
+      transition: all 0.25s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1;
+    }
+    .apk-card-cta-icon {
+      font-size: 0.76rem;
+      vertical-align: 0 !important;
+      line-height: 1 !important;
+      display: inline-block;
+      transition: transform 0.25s ease;
+    }
+    .btn-hero-apk-card:hover .apk-card-cta-btn {
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35);
+      color: #ffffff;
+    }
+    .btn-hero-apk-card:hover .apk-card-cta-icon {
+      transform: translateY(2px);
+    }
+
+    /* Responsive Mobile Fine-Tuning */
+    @media (max-width: 576px) {
+      .btn-hero-apk-card {
+        max-width: min(94vw, 360px);
+        height: 54px;
+        padding: 6px 10px;
+        border-radius: 14px;
+      }
+      .apk-card-emblem {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 10px;
+        margin-inline-end: 8px;
+      }
+      .apk-card-icon {
+        font-size: 1.45rem;
+      }
+      .apk-card-eyebrow {
+        gap: 5px;
+        margin-bottom: 2px;
+      }
+      .apk-card-caption {
+        font-size: 0.62rem;
+      }
+      .apk-card-version-badge {
+        font-size: 0.58rem;
+        padding: 1px 5px;
+      }
+      .apk-card-title {
+        font-size: 0.95rem;
+      }
+      .apk-card-action {
+        margin-inline-start: 8px;
+      }
+      .apk-card-cta-btn {
+        font-size: 0.72rem;
+        padding: 5px 10px;
+        gap: 4px;
+      }
+      .apk-card-cta-icon {
+        font-size: 0.7rem;
+      }
     }
     .home-stats-wrap {
       margin: 8px 0 34px;

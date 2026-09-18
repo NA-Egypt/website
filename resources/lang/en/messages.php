@@ -2311,7 +2311,10 @@ return [
     'Never' => 'Never',
 
     // Pre-release APK
-    'apk_beta_badge' => 'Pre-release Beta',
+    'apk_beta_badge' => 'v1.1.0 Beta',
+    'apk_badge_caption' => 'AVAILABLE NOW',
+    'apk_badge_title' => 'Android App',
+    'apk_cta_download' => 'Download',
     'apk_download_app' => 'Download Pre-release App (Android)',
     'apk_hero_pill' => 'NA Egypt Mobile App (Beta)',
     'apk_modal_title' => 'Download Pre-release App',
