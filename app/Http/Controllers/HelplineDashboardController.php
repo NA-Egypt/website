@@ -113,6 +113,8 @@ class HelplineDashboardController extends Controller
                   ->orWhere('caller_type_other', 'like', "%{$search}%")
                   ->orWhere('referral_source', 'like', "%{$search}%")
                   ->orWhere('referral_source_other', 'like', "%{$search}%")
+                  ->orWhere('hospital_name', 'like', "%{$search}%")
+                  ->orWhere('poster_location', 'like', "%{$search}%")
                   ->orWhere('additional_info', 'like', "%{$search}%");
             });
         }
@@ -306,6 +308,8 @@ class HelplineDashboardController extends Controller
                 'الوردية / التوقيت',
                 'فئة المتصل',
                 'مصدر المعرفة بالزمالة',
+                'اسم المستشفى',
+                'مكان الملصق',
                 'اسم المتطوع',
                 'تحويل لخطوة 12',
                 'مناقشة بالاجتماع القادم',
@@ -323,6 +327,8 @@ class HelplineDashboardController extends Controller
                         $call->call_time_shift,
                         $call->effective_caller_type,
                         $call->effective_referral_source,
+                        $call->hospital_name ?: '',
+                        $call->poster_location ?: '',
                         $call->effective_volunteer_name,
                         $call->is_step_12 ? 'نعم' : 'لا',
                         $call->discuss_in_meeting ? 'نعم' : 'لا',

@@ -466,7 +466,8 @@
                   </td>
                   <td class="text-start">
                     <div class="text-truncate small" style="max-width: 320px;" :title="call.call_brief">
-                      {{ call.call_brief }}
+                      <span v-if="call.call_brief">{{ call.call_brief }}</span>
+                      <span v-else class="text-muted fst-italic">بدون ملخص</span>
                     </div>
                   </td>
                   <td @click.stop>
@@ -527,6 +528,8 @@
                             <li><strong>الوردية:</strong> <span dir="ltr" class="d-inline-block">{{ call.call_time_shift }}</span></li>
                             <li><strong>فئة المتصل:</strong> {{ call.effective_caller_type }}</li>
                             <li><strong>مصدر المعرفة:</strong> {{ call.effective_referral_source }}</li>
+                            <li v-if="call.hospital_name"><strong>اسم المستشفى:</strong> {{ call.hospital_name }}</li>
+                            <li v-if="call.poster_location"><strong>مكان الملصق:</strong> {{ call.poster_location }}</li>
                             <li><strong>المدة:</strong> {{ call.duration_label }}</li>
                             <li>
                               <strong>خطوة 12:</strong>
@@ -924,12 +927,12 @@ const copyCallToClipboard = (call) => {
 📅 *التاريخ:* ${formatDate(call.call_date)} (${call.call_time_shift})
 ⏱ *المدة:* ${call.duration === 'less_than_5' ? 'أقل من 5 دقائق' : 'أكثر من 5 دقائق'}
 👥 *فئة المتصل:* ${call.effective_caller_type}
-📍 *المصدر:* ${call.effective_referral_source}
+📍 *المصدر:* ${call.effective_referral_source}${call.hospital_name ? ` (${call.hospital_name})` : ''}${call.poster_location ? ` (${call.poster_location})` : ''}
 ${call.is_step_12 ? '⚠️ *تحويل لخطوة 12:* نعم' : ''}
 ${call.discuss_in_meeting ? '📌 *مطلوب مناقشتها بالاجتماع القادم*' : ''}
 
 📝 *ملخص المكالمة:*
-${call.call_brief}
+${call.call_brief || 'بدون ملخص'}
 ${call.additional_info ? `\n💡 *ملاحظات إضافية:* ${call.additional_info}` : ''}`;
 
   if (navigator.clipboard) {

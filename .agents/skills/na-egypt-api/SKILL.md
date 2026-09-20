@@ -420,7 +420,7 @@ Provides schema discovery, public call response logging, and authenticated admin
 
 #### `GET /api/v1/helpline-calls/schema`
 - **Access:** Public
-- **Description:** Returns the dynamic form schema, including localized field order, duration options, active shifts (incorporating the `8:00 PM - 10:00 PM` shift), caller types, referral sources, and active volunteer directory.
+- **Description:** Returns the dynamic form schema, including localized field order, duration options, active shifts (incorporating the `8:00 PM - 10:00 PM` shift), caller types, referral sources, active volunteer directory, and dynamic conditional validation rules.
 - **Response (200 OK):**
   ```json
   {
@@ -462,7 +462,9 @@ Provides schema discovery, public call response logging, and authenticated admin
       "Yellow Pages",
       "Facebook",
       "TikTok",
+      "ChatGPT",
       "Instagram",
+      "YouTube",
       "أخرى"
     ],
     "durations": [
@@ -477,13 +479,38 @@ Provides schema discovery, public call response logging, and authenticated admin
       "call_date",
       "call_time_shift",
       "caller_type",
+      "caller_type_other",
       "referral_source",
+      "referral_source_other",
+      "hospital_name",
+      "poster_location",
       "volunteer_name",
+      "volunteer_name_other",
       "is_step_12",
       "call_brief",
       "discuss_in_meeting",
       "additional_info"
-    ]
+    ],
+    "conditional_fields": {
+      "call_brief": {
+        "rule": "optional_if",
+        "field": "caller_type",
+        "value": "عضو حالي",
+        "description": "Call brief is optional when caller_type is \"عضو حالي\", required otherwise."
+      },
+      "hospital_name": {
+        "rule": "required_if",
+        "field": "referral_source",
+        "value": "لجنة المستشفيات",
+        "description": "Hospital name is required when referral_source is \"لجنة المستشفيات\"."
+      },
+      "poster_location": {
+        "rule": "required_if",
+        "field": "referral_source",
+        "value": "ملصقات الزمالة",
+        "description": "Poster location is required when referral_source is \"ملصقات الزمالة\"."
+      }
+    }
   }
   ```
 
@@ -498,10 +525,12 @@ Provides schema discovery, public call response logging, and authenticated admin
   - `caller_type_other`: `nullable|string|max:255` (*Required with `422` validation failure if `caller_type === 'أخرى'`*)
   - `referral_source`: `required|string|max:100`
   - `referral_source_other`: `nullable|string|max:255` (*Required with `422` validation failure if `referral_source === 'أخرى'`*)
+  - `hospital_name`: `nullable|string|max:255` (*Required with `422` validation failure if `referral_source === 'لجنة المستشفيات'`*)
+  - `poster_location`: `nullable|string|max:255` (*Required with `422` validation failure if `referral_source === 'ملصقات الزمالة'`*)
   - `volunteer_name`: `required|string|max:150`
   - `volunteer_name_other`: `nullable|string|max:150` (*Required with `422` validation failure if `volunteer_name === 'أخرى'`*)
   - `is_step_12`: `required|boolean`
-  - `call_brief`: `required|string|min:3`
+  - `call_brief`: `required_unless:caller_type,عضو حالي|nullable|string` (*Optional when `caller_type === 'عضو حالي'`, required otherwise*)
   - `discuss_in_meeting`: `required|boolean`
   - `additional_info`: `nullable|string`
 - **Behavior:**
@@ -514,7 +543,8 @@ Provides schema discovery, public call response logging, and authenticated admin
     "call_date": "2026-09-17",
     "call_time_shift": "8:00 PM - 10:00 PM",
     "caller_type": "عضو حالي",
-    "referral_source": "جدول الاجتماعات",
+    "referral_source": "لجنة المستشفيات",
+    "hospital_name": "مستشفى العباسية للصحة النفسية",
     "volunteer_name": "محمد م.",
     "is_step_12": true,
     "call_brief": "طلب مساعدة هاتفية لخطوة 12 من عضو حالي.",
@@ -630,6 +660,12 @@ export interface HelplineSchemaResponse {
   durations: Array<{ value: string; label: string }>;
   volunteers: HelplineVolunteerItem[];
   fields_order: string[];
+  conditional_fields?: Record<string, {
+    rule: string;
+    field: string;
+    value: string;
+    description: string;
+  }>;
 }
 
 export interface HelplineCallPayload {
@@ -640,10 +676,12 @@ export interface HelplineCallPayload {
   caller_type_other?: string | null;
   referral_source: string;
   referral_source_other?: string | null;
+  hospital_name?: string | null;
+  poster_location?: string | null;
   volunteer_name: string;
   volunteer_name_other?: string | null;
   is_step_12: boolean;
-  call_brief: string;
+  call_brief?: string | null;
   discuss_in_meeting: boolean;
   additional_info?: string | null;
 }

@@ -17,6 +17,8 @@ class HelplineCall extends Model
         'caller_type_other',
         'referral_source',
         'referral_source_other',
+        'hospital_name',
+        'poster_location',
         'volunteer_id',
         'volunteer_name',
         'volunteer_name_other',

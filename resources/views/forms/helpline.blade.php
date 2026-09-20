@@ -190,6 +190,18 @@
             font-weight: bold;
         }
 
+        .optional-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-right: 6px;
+        }
+
         .field-description {
             font-size: 0.86rem;
             color: var(--text-muted);
@@ -697,7 +709,7 @@
                 <div class="options-grid">
                     @foreach($callerTypes as $type)
                     <label class="option-card">
-                        <input type="radio" name="caller_type" value="{{ $type }}" required {{ old('caller_type') === $type ? 'checked' : '' }} onchange="handleOtherToggle('caller_type', '{{ $type }}', 'caller_type_other_box')">
+                        <input type="radio" name="caller_type" value="{{ $type }}" required {{ old('caller_type') === $type ? 'checked' : '' }} onchange="handleCallerTypeChange('{{ $type }}')">
                         <span class="option-text">{{ $type }}</span>
                     </label>
                     @endforeach
@@ -729,7 +741,7 @@
                 <div class="options-grid">
                     @foreach($referralSources as $source)
                     <label class="option-card">
-                        <input type="radio" name="referral_source" value="{{ $source }}" required {{ old('referral_source') === $source ? 'checked' : '' }} onchange="handleOtherToggle('referral_source', '{{ $source }}', 'referral_source_other_box')">
+                        <input type="radio" name="referral_source" value="{{ $source }}" required {{ old('referral_source') === $source ? 'checked' : '' }} onchange="handleReferralSourceChange('{{ $source }}')">
                         <span class="option-text">{{ $source }}</span>
                     </label>
                     @endforeach
@@ -737,6 +749,34 @@
                 <div id="referral_source_other_box" class="other-input-container {{ old('referral_source') === 'أخرى' ? 'active' : '' }}">
                     <input type="text" name="referral_source_other" class="form-control" placeholder="يرجى كتابة مصدر المعرفة هنا..." value="{{ old('referral_source_other') }}">
                     @error('referral_source_other')
+                        <div class="error-message">
+                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
+                </div>
+                <!-- Hospital Name Box (when لجنة المستشفيات is selected) -->
+                <div id="hospital_name_box" class="other-input-container {{ old('referral_source') === 'لجنة المستشفيات' ? 'active' : '' }}">
+                    <label class="field-label" style="font-size: 0.95rem; margin-bottom: 6px;" for="hospital_name_input">
+                        اسم المستشفى
+                        <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="hospital_name_input" name="hospital_name" class="form-control" placeholder="يرجى كتابة اسم المستشفى هنا..." value="{{ old('hospital_name') }}" {{ old('referral_source') === 'لجنة المستشفيات' ? 'required' : '' }}>
+                    @error('hospital_name')
+                        <div class="error-message">
+                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
+                </div>
+                <!-- Poster Location Box (when ملصقات الزمالة is selected) -->
+                <div id="poster_location_box" class="other-input-container {{ old('referral_source') === 'ملصقات الزمالة' ? 'active' : '' }}">
+                    <label class="field-label" style="font-size: 0.95rem; margin-bottom: 6px;" for="poster_location_input">
+                        مكان الملصق
+                        <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="poster_location_input" name="poster_location" class="form-control" placeholder="يرجى كتابة مكان تواجد الملصق (الشارع، المنطقة، المعلم)..." value="{{ old('poster_location') }}" {{ old('referral_source') === 'ملصقات الزمالة' ? 'required' : '' }}>
+                    @error('poster_location')
                         <div class="error-message">
                             <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
                             <span>{{ $message }}</span>
@@ -823,10 +863,11 @@
                 <label class="field-label" for="call_brief">
                     <span class="field-badge-number">8</span>
                     نبذة عن المكالمة
-                    <span class="required-star">*</span>
+                    <span class="required-star" id="brief_required_star" style="{{ old('caller_type') === 'عضو حالي' ? 'display: none;' : '' }}">*</span>
+                    <span class="optional-badge" id="brief_optional_badge" style="{{ old('caller_type') === 'عضو حالي' ? 'display: inline-flex;' : 'display: none;' }}">(اختياري)</span>
                 </label>
                 <p class="field-description">سجل ملخصاً واضحاً لما دار في المكالمة وما تم تقديمه للمتصل من معلومات أو مساعدة.</p>
-                <textarea id="call_brief" name="call_brief" class="form-control" rows="4" placeholder="اكتب ملخص المكالمة هنا..." required>{{ old('call_brief') }}</textarea>
+                <textarea id="call_brief" name="call_brief" class="form-control" rows="4" placeholder="اكتب ملخص المكالمة هنا..." {{ old('caller_type') === 'عضو حالي' ? '' : 'required' }}>{{ old('call_brief') }}</textarea>
                 @error('call_brief')
                     <div class="error-message">
                         <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
@@ -951,6 +992,102 @@
         }
     }
 
+    // Dynamic Caller Type Change
+    function handleCallerTypeChange(value) {
+        // Toggle 'Other' input
+        const otherBox = document.getElementById('caller_type_other_box');
+        const otherInput = otherBox ? otherBox.querySelector('input') : null;
+        if (value === 'أخرى') {
+            if (otherBox) otherBox.classList.add('active');
+            if (otherInput) {
+                otherInput.focus();
+                if (window.innerWidth <= 640) {
+                    setTimeout(() => { otherBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+                }
+            }
+        } else {
+            if (otherBox) otherBox.classList.remove('active');
+            if (otherInput) otherInput.value = '';
+        }
+
+        // Toggle call brief optionality for 'عضو حالي'
+        const briefTextarea = document.getElementById('call_brief');
+        const briefStar = document.getElementById('brief_required_star');
+        const briefBadge = document.getElementById('brief_optional_badge');
+
+        if (value === 'عضو حالي') {
+            if (briefTextarea) briefTextarea.removeAttribute('required');
+            if (briefStar) briefStar.style.display = 'none';
+            if (briefBadge) briefBadge.style.display = 'inline-flex';
+        } else {
+            if (briefTextarea) briefTextarea.setAttribute('required', 'required');
+            if (briefStar) briefStar.style.display = 'inline';
+            if (briefBadge) briefBadge.style.display = 'none';
+        }
+    }
+
+    // Dynamic Referral Source Change
+    function handleReferralSourceChange(value) {
+        const otherBox = document.getElementById('referral_source_other_box');
+        const otherInput = otherBox ? otherBox.querySelector('input') : null;
+
+        const hospBox = document.getElementById('hospital_name_box');
+        const hospInput = document.getElementById('hospital_name_input');
+
+        const posterBox = document.getElementById('poster_location_box');
+        const posterInput = document.getElementById('poster_location_input');
+
+        // Other
+        if (value === 'أخرى') {
+            if (otherBox) otherBox.classList.add('active');
+            if (otherInput) {
+                otherInput.focus();
+                if (window.innerWidth <= 640) {
+                    setTimeout(() => { otherBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+                }
+            }
+        } else {
+            if (otherBox) otherBox.classList.remove('active');
+            if (otherInput) otherInput.value = '';
+        }
+
+        // Hospital Name (لجنة المستشفيات)
+        if (value === 'لجنة المستشفيات') {
+            if (hospBox) hospBox.classList.add('active');
+            if (hospInput) {
+                hospInput.setAttribute('required', 'required');
+                hospInput.focus();
+                if (window.innerWidth <= 640) {
+                    setTimeout(() => { hospBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+                }
+            }
+        } else {
+            if (hospBox) hospBox.classList.remove('active');
+            if (hospInput) {
+                hospInput.removeAttribute('required');
+                hospInput.value = '';
+            }
+        }
+
+        // Poster Location (ملصقات الزمالة)
+        if (value === 'ملصقات الزمالة') {
+            if (posterBox) posterBox.classList.add('active');
+            if (posterInput) {
+                posterInput.setAttribute('required', 'required');
+                posterInput.focus();
+                if (window.innerWidth <= 640) {
+                    setTimeout(() => { posterBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+                }
+            }
+        } else {
+            if (posterBox) posterBox.classList.remove('active');
+            if (posterInput) {
+                posterInput.removeAttribute('required');
+                posterInput.value = '';
+            }
+        }
+    }
+
     // Yes/No pill updates
     function updatePillState(group, value) {
         const yesPill = document.getElementById(`pill_${group}_yes`);
@@ -965,7 +1102,7 @@
         }
     }
 
-    // Initialize pill states from existing radio values on page load
+    // Initialize pill states and dynamic fields on page load
     document.addEventListener('DOMContentLoaded', () => {
         const step12Val = document.querySelector('input[name="is_step_12"]:checked')?.value;
         if (step12Val === '1') updatePillState('step12', 'yes');
@@ -974,6 +1111,16 @@
         const meetingVal = document.querySelector('input[name="discuss_in_meeting"]:checked')?.value;
         if (meetingVal === '1') updatePillState('meeting', 'yes');
         else updatePillState('meeting', 'no');
+
+        const checkedCallerType = document.querySelector('input[name="caller_type"]:checked')?.value;
+        if (checkedCallerType) {
+            handleCallerTypeChange(checkedCallerType);
+        }
+
+        const checkedReferralSource = document.querySelector('input[name="referral_source"]:checked')?.value;
+        if (checkedReferralSource) {
+            handleReferralSourceChange(checkedReferralSource);
+        }
 
         @if(session('success_submitted'))
             triggerSuccessCountdown();
@@ -1008,6 +1155,27 @@
             alert('يرجى توضيح كيف عرف المتصل عن الزمالة في خانة أخرى.');
             document.querySelector('input[name="referral_source_other"]').focus();
             return;
+        }
+
+        if (refSource === 'لجنة المستشفيات' && !document.getElementById('hospital_name_input').value.trim()) {
+            alert('يرجى كتابة اسم المستشفى.');
+            document.getElementById('hospital_name_input').focus();
+            return;
+        }
+
+        if (refSource === 'ملصقات الزمالة' && !document.getElementById('poster_location_input').value.trim()) {
+            alert('يرجى كتابة مكان الملصق.');
+            document.getElementById('poster_location_input').focus();
+            return;
+        }
+
+        if (callerType !== 'عضو حالي') {
+            const briefInput = document.getElementById('call_brief');
+            if (!briefInput.value.trim()) {
+                alert('يرجى كتابة نبذة أو ملخص عن المكالمة.');
+                briefInput.focus();
+                return;
+            }
         }
 
         const volunteerName = document.querySelector('input[name="volunteer_name"]:checked')?.value;
@@ -1114,10 +1282,21 @@
         updatePillState('step12', 'no');
         updatePillState('meeting', 'no');
 
+        // Reset call brief optionality state
+        const briefTextarea = document.getElementById('call_brief');
+        const briefStar = document.getElementById('brief_required_star');
+        const briefBadge = document.getElementById('brief_optional_badge');
+        if (briefTextarea) briefTextarea.setAttribute('required', 'required');
+        if (briefStar) briefStar.style.display = 'inline';
+        if (briefBadge) briefBadge.style.display = 'none';
+
         document.querySelectorAll('.other-input-container').forEach(box => {
             box.classList.remove('active');
             const inp = box.querySelector('input');
-            if (inp) inp.value = '';
+            if (inp) {
+                inp.value = '';
+                inp.removeAttribute('required');
+            }
         });
 
         window.scrollTo({ top: 0, behavior: 'smooth' });

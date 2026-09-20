@@ -126,6 +126,91 @@ class HelplineCallTest extends TestCase
         $response->assertSessionHasErrors(['caller_type_other']);
     }
 
+    public function test_public_form_submission_allows_empty_call_brief_for_existing_member()
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'عضو حالي',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => '0',
+            'call_brief' => '',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->postJson('/forms/helpline', $payload);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('helpline_calls', [
+            'caller_type' => 'عضو حالي',
+            'call_brief' => null,
+        ]);
+    }
+
+    public function test_public_form_submission_validates_conditional_hospital_name()
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => '',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => '0',
+            'call_brief' => 'استفسار من مستشفى',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->post('/forms/helpline', $payload);
+        $response->assertSessionHasErrors(['hospital_name']);
+    }
+
+    public function test_public_form_submission_validates_conditional_poster_location()
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'ملصقات الزمالة',
+            'poster_location' => '',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => '0',
+            'call_brief' => 'استفسار عن ملصق',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->post('/forms/helpline', $payload);
+        $response->assertSessionHasErrors(['poster_location']);
+    }
+
+    public function test_public_form_submission_stores_hospital_and_poster_location()
+    {
+        $payload = [
+            'duration' => 'more_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '2:00 PM - 4:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => 'مستشفى الدمرداش',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => '1',
+            'call_brief' => 'مكالمة من عيادة الإدمان بالمستشفى.',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->postJson('/forms/helpline', $payload);
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('helpline_calls', [
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => 'مستشفى الدمرداش',
+        ]);
+    }
+
     public function test_public_api_schema_endpoint()
     {
         $response = $this->getJson('/api/v1/helpline-calls/schema');

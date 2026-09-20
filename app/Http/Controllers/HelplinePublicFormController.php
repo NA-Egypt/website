@@ -58,10 +58,12 @@ class HelplinePublicFormController extends Controller
             'caller_type_other' => 'nullable|string|max:255',
             'referral_source' => 'required|string|max:100',
             'referral_source_other' => 'nullable|string|max:255',
+            'hospital_name' => 'required_if:referral_source,لجنة المستشفيات|nullable|string|max:255',
+            'poster_location' => 'required_if:referral_source,ملصقات الزمالة|nullable|string|max:255',
             'volunteer_name' => 'required|string|max:150',
             'volunteer_name_other' => 'nullable|string|max:150',
             'is_step_12' => 'required|in:0,1,yes,no',
-            'call_brief' => 'required|string|min:3',
+            'call_brief' => 'required_unless:caller_type,عضو حالي|nullable|string',
             'discuss_in_meeting' => 'required|in:0,1,yes,no',
             'additional_info' => 'nullable|string',
         ], [
@@ -70,8 +72,13 @@ class HelplinePublicFormController extends Controller
             'call_time_shift.required' => 'يرجى اختيار الوردية / توقيت المكالمة.',
             'caller_type.required' => 'يرجى اختيار فئة المتصل.',
             'referral_source.required' => 'يرجى تحديد كيف عرف المتصل عن الزمالة.',
+            'hospital_name.required_if' => 'يرجى كتابة اسم المستشفى.',
+            'hospital_name.required' => 'يرجى كتابة اسم المستشفى.',
+            'poster_location.required_if' => 'يرجى كتابة مكان الملصق.',
+            'poster_location.required' => 'يرجى كتابة مكان الملصق.',
             'volunteer_name.required' => 'يرجى اختيار اسم متلقي المكالمة.',
             'call_brief.required' => 'يرجى كتابة نبذة أو ملخص عن المكالمة.',
+            'call_brief.required_unless' => 'يرجى كتابة نبذة أو ملخص عن المكالمة.',
         ]);
 
         // Conditional validation for "Other"
@@ -81,6 +88,14 @@ class HelplinePublicFormController extends Controller
 
         if ($validated['referral_source'] === 'أخرى' && empty($validated['referral_source_other'])) {
             return back()->withErrors(['referral_source_other' => 'يرجى توضيح مصدر المعرفة في خانة أخرى.'])->withInput();
+        }
+
+        if ($validated['referral_source'] === 'لجنة المستشفيات' && empty($validated['hospital_name'])) {
+            return back()->withErrors(['hospital_name' => 'يرجى كتابة اسم المستشفى.'])->withInput();
+        }
+
+        if ($validated['referral_source'] === 'ملصقات الزمالة' && empty($validated['poster_location'])) {
+            return back()->withErrors(['poster_location' => 'يرجى كتابة مكان الملصق.'])->withInput();
         }
 
         if ($validated['volunteer_name'] === 'أخرى' && empty($validated['volunteer_name_other'])) {
@@ -105,11 +120,13 @@ class HelplinePublicFormController extends Controller
             'caller_type_other' => $validated['caller_type_other'] ?? null,
             'referral_source' => $validated['referral_source'],
             'referral_source_other' => $validated['referral_source_other'] ?? null,
+            'hospital_name' => $validated['hospital_name'] ?? null,
+            'poster_location' => $validated['poster_location'] ?? null,
             'volunteer_id' => $volunteerId,
             'volunteer_name' => $validated['volunteer_name'],
             'volunteer_name_other' => $validated['volunteer_name_other'] ?? null,
             'is_step_12' => in_array($validated['is_step_12'], ['1', 1, 'yes', true], true),
-            'call_brief' => $validated['call_brief'],
+            'call_brief' => $validated['call_brief'] ?? null,
             'discuss_in_meeting' => in_array($validated['discuss_in_meeting'], ['1', 1, 'yes', true], true),
             'additional_info' => $validated['additional_info'] ?? null,
             'entry_time' => Carbon::now(),

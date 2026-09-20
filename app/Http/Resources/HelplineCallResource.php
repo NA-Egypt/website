@@ -25,6 +25,8 @@ class HelplineCallResource extends JsonResource
             'effective_caller_type' => $this->effective_caller_type,
             'referral_source' => $this->referral_source,
             'referral_source_other' => $this->referral_source_other,
+            'hospital_name' => $this->hospital_name,
+            'poster_location' => $this->poster_location,
             'effective_referral_source' => $this->effective_referral_source,
             'volunteer_id' => $this->volunteer_id,
             'volunteer_name' => $this->volunteer_name,

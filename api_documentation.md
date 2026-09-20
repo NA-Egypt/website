@@ -497,7 +497,7 @@ Manages the public helpline response logging workflow and authenticated administ
 
 #### `GET /api/v1/helpline-calls/schema`
 - **Access:** Public
-- **Description:** Returns the form schema configuration: shift time slots (including `8:00 PM - 10:00 PM`), caller types, referral sources, call duration tiers (`less_than_5`, `more_than_5`), active volunteers list, and localized field ordering.
+- **Description:** Returns the form schema configuration: shift time slots (including `8:00 PM - 10:00 PM`), caller types, referral sources, call duration tiers (`less_than_5`, `more_than_5`), active volunteers list, localized field ordering, and dynamic conditional field validation rules.
 - **Response (200 OK):**
   ```json
   {
@@ -513,7 +513,7 @@ Manages the public helpline response logging workflow and authenticated administ
       "10:00 PM - 12:00 AM"
     ],
     "caller_types": ["أعضاء محتملة", "عضو محتمل منعزل", "بيانات اجتماعات", "عضو حالي", "معلومات عن الزمالة", "أهالي وأقارب المدمنين", "عضو حالي منعزل", "معلومات عن زمالات أخرى", "مكالمة بالخطأ", "محولة للجنة العلاقات العامة", "أخرى"],
-    "referral_sources": ["جدول الاجتماعات", "صديق", "الموقع الالكتروني", "ملصقات الزمالة", "عضو حالي", "بحث جوجل", "طبيب", "مكان علاجي", "لجنة المستشفيات", "صانع محتوى", "Yellow Pages", "Facebook", "TikTok", "Instagram", "أخرى"],
+    "referral_sources": ["جدول الاجتماعات", "صديق", "الموقع الالكتروني", "ملصقات الزمالة", "عضو حالي", "بحث جوجل", "طبيب", "مكان علاجي", "لجنة المستشفيات", "صانع محتوى", "Yellow Pages", "Facebook", "TikTok", "ChatGPT", "Instagram", "YouTube", "أخرى"],
     "durations": [
       { "value": "less_than_5", "label": "أقل من 5 دقائق" },
       { "value": "more_than_5", "label": "أكثر من 5 دقائق" }
@@ -521,7 +521,43 @@ Manages the public helpline response logging workflow and authenticated administ
     "volunteers": [
       { "id": 1, "name": "محمد م.", "sort_order": 1 }
     ],
-    "fields_order": ["duration", "call_date", "call_time_shift", "caller_type", "referral_source", "volunteer_name", "is_step_12", "call_brief", "discuss_in_meeting", "additional_info"]
+    "fields_order": [
+      "duration",
+      "call_date",
+      "call_time_shift",
+      "caller_type",
+      "caller_type_other",
+      "referral_source",
+      "referral_source_other",
+      "hospital_name",
+      "poster_location",
+      "volunteer_name",
+      "volunteer_name_other",
+      "is_step_12",
+      "call_brief",
+      "discuss_in_meeting",
+      "additional_info"
+    ],
+    "conditional_fields": {
+      "call_brief": {
+        "rule": "optional_if",
+        "field": "caller_type",
+        "value": "عضو حالي",
+        "description": "Call brief is optional when caller_type is \"عضو حالي\", required otherwise."
+      },
+      "hospital_name": {
+        "rule": "required_if",
+        "field": "referral_source",
+        "value": "لجنة المستشفيات",
+        "description": "Hospital name is required when referral_source is \"لجنة المستشفيات\"."
+      },
+      "poster_location": {
+        "rule": "required_if",
+        "field": "referral_source",
+        "value": "ملصقات الزمالة",
+        "description": "Poster location is required when referral_source is \"ملصقات الزمالة\"."
+      }
+    }
   }
   ```
 
@@ -536,10 +572,12 @@ Manages the public helpline response logging workflow and authenticated administ
   - `caller_type_other`: `nullable|string|max:255` (*Mandatory with 422 if `caller_type === 'أخرى'`*)
   - `referral_source`: `required|string|max:100`
   - `referral_source_other`: `nullable|string|max:255` (*Mandatory with 422 if `referral_source === 'أخرى'`*)
+  - `hospital_name`: `nullable|string|max:255` (*Mandatory with 422 if `referral_source === 'لجنة المستشفيات'`*)
+  - `poster_location`: `nullable|string|max:255` (*Mandatory with 422 if `referral_source === 'ملصقات الزمالة'`*)
   - `volunteer_name`: `required|string|max:150`
   - `volunteer_name_other`: `nullable|string|max:150` (*Mandatory with 422 if `volunteer_name === 'أخرى'`*)
   - `is_step_12`: `required|boolean`
-  - `call_brief`: `required|string|min:3`
+  - `call_brief`: `required_unless:caller_type,عضو حالي|nullable|string` (*Optional when `caller_type === 'عضو حالي'`, required otherwise*)
   - `discuss_in_meeting`: `required|boolean`
   - `additional_info`: `nullable|string`
 - **Behavior:** Automatically resolves `volunteer_id` if `volunteer_name` matches an active volunteer, and sets `entry_time` to current timestamp.

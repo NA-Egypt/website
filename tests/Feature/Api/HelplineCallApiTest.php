@@ -43,9 +43,16 @@ class HelplineCallApiTest extends TestCase
                 'durations',
                 'volunteers',
                 'fields_order',
+                'conditional_fields' => [
+                    'call_brief',
+                    'hospital_name',
+                    'poster_location',
+                ],
             ]);
 
         $this->assertContains('8:00 PM - 10:00 PM', $response->json('shifts'));
+        $this->assertContains('hospital_name', $response->json('fields_order'));
+        $this->assertContains('poster_location', $response->json('fields_order'));
         $this->assertCount(1, $response->json('volunteers'));
         $this->assertEquals('أحمد ع.', $response->json('volunteers.0.name'));
     }
@@ -232,5 +239,121 @@ class HelplineCallApiTest extends TestCase
         $filterResponse->assertStatus(200)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.call_brief', 'مكالمة حديثة');
+    }
+
+    public function test_submit_helpline_call_allows_empty_call_brief_when_caller_is_existing_member(): void
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'عضو حالي',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => '',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.caller_type', 'عضو حالي')
+            ->assertJsonPath('data.call_brief', null);
+
+        $this->assertDatabaseHas('helpline_calls', [
+            'caller_type' => 'عضو حالي',
+            'call_brief' => null,
+        ]);
+    }
+
+    public function test_submit_helpline_call_requires_call_brief_when_caller_is_not_existing_member(): void
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => '',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['call_brief']);
+    }
+
+    public function test_submit_helpline_call_requires_hospital_name_when_referral_source_is_hospitals_committee(): void
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => '',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => 'استفسار من مستشفى',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['hospital_name']);
+    }
+
+    public function test_submit_helpline_call_requires_poster_location_when_referral_source_is_fellowship_posters(): void
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'ملصقات الزمالة',
+            'poster_location' => '',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => 'استفسار من ملصق',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['poster_location']);
+    }
+
+    public function test_submit_helpline_call_succeeds_with_hospital_name_and_poster_location(): void
+    {
+        $payload = [
+            'duration' => 'more_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '2:00 PM - 4:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => 'مستشفى المعادي العسكري',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => true,
+            'call_brief' => 'تحويل من مسؤول قسم الإدمان بالمستشفى.',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.referral_source', 'لجنة المستشفيات')
+            ->assertJsonPath('data.hospital_name', 'مستشفى المعادي العسكري')
+            ->assertJsonPath('data.effective_referral_source', 'لجنة المستشفيات');
+
+        $this->assertDatabaseHas('helpline_calls', [
+            'referral_source' => 'لجنة المستشفيات',
+            'hospital_name' => 'مستشفى المعادي العسكري',
+        ]);
     }
 }
