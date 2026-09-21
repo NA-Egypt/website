@@ -48,8 +48,8 @@ return [
     ],
 
     'apk' => [
-        'release_url' => env('APK_RELEASE_URL', 'https://github.com/NA-Egypt/na-mobile/releases/download/1.1.0/app-release.apk'),
-        'filename' => env('APK_FILENAME', 'na-egypt-1.1.0.apk'),
+        'release_url' => env('APK_RELEASE_URL', 'https://github.com/NA-Egypt/na-mobile/releases/download/1.2.0/app-release.apk'),
+        'filename' => env('APK_FILENAME', 'na-egypt-1.2.0.apk'),
         'token_expiry_hours' => (int) env('APK_TOKEN_EXPIRY_HOURS', 24),
     ],
 ];

@@ -29,7 +29,6 @@ class ApkDownloadController extends Controller
                 'string',
                 'email',
                 'max:255',
-                'regex:/^[a-zA-Z0-9._%+-]+@naegypt\.org$/i',
             ],
         ];
 
@@ -40,7 +39,6 @@ class ApkDownloadController extends Controller
         $messages = [
             'email.required' => __('messages.apk_email_required'),
             'email.email' => __('messages.apk_email_invalid'),
-            'email.regex' => __('messages.apk_email_domain_restricted'),
             'cf-turnstile-response.required' => __('messages.turnstile_required'),
         ];
 
@@ -99,7 +97,7 @@ class ApkDownloadController extends Controller
         }
 
         $releaseUrl = config('services.apk.release_url');
-        $filename = config('services.apk.filename', 'na-egypt-1.1.0.apk');
+        $filename = config('services.apk.filename', 'na-egypt-1.2.0.apk');
 
         if (empty($releaseUrl)) {
             Log::critical('APK release URL is not configured in services.apk.release_url');

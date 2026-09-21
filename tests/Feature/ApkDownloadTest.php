@@ -39,7 +39,8 @@ class ApkDownloadTest extends TestCase
         $responseAr->assertSee('apkFormView');
         $responseAr->assertSee('apkSuccessView');
         $responseAr->assertSee('apkRequestForm');
-        $responseAr->assertSee('name@naegypt.org');
+        $responseAr->assertSee('your.email@example.com');
+        $responseAr->assertSee('v1.2.0-Hope');
         // Verify absence of prohibited words in APK modal
         $responseAr->assertDontSee('البريد الإلكتروني الرسمي');
         $responseAr->assertDontSee('رابط التحميل السري');
@@ -52,22 +53,48 @@ class ApkDownloadTest extends TestCase
         $responseEn->assertSee('btn-apk-hero');
         $responseEn->assertSee('apkDownloadModal');
         $responseEn->assertSee('apk-modal-content');
+        $responseEn->assertSee('v1.2.0-Hope');
         // Verify absence of prohibited English words in APK modal context
         $responseEn->assertDontSee('Official Email Address');
         $responseEn->assertDontSee('Secret Download Link');
     }
 
     /**
-     * Test request link rejects empty or non-@naegypt.org email.
+     * Test request link rejects invalid email format.
      */
-    public function test_request_link_validation_rejects_non_naegypt_email(): void
+    public function test_request_link_validation_rejects_invalid_email(): void
     {
         $response = $this->postJson(route('apk.request_link'), [
-            'email' => 'visitor@gmail.com',
+            'email' => 'not-an-email',
         ]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['email']);
+    }
+
+    /**
+     * Test request link succeeds with any valid email (e.g. Gmail, visitor, etc.).
+     */
+    public function test_request_link_succeeds_with_any_valid_email(): void
+    {
+        Mail::fake();
+
+        $email = 'visitor@gmail.com';
+
+        $response = $this->postJson(route('apk.request_link'), [
+            'email' => $email,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('apk_download_requests', [
+            'email' => $email,
+        ]);
+
+        Mail::assertSent(ApkDownloadLinkMail::class, function ($mail) use ($email) {
+            return $mail->hasTo($email) && !empty($mail->downloadUrl);
+        });
     }
 
     /**
@@ -193,7 +220,7 @@ class ApkDownloadTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/vnd.android.package-archive');
-        $response->assertHeader('Content-Disposition', 'attachment; filename="' . config('services.apk.filename', 'na-egypt-1.1.0.apk') . '"');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="' . config('services.apk.filename', 'na-egypt-1.2.0.apk') . '"');
 
         $apkRequest->refresh();
         $this->assertEquals(1, $apkRequest->download_count);

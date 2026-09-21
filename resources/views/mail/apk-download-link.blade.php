@@ -13,7 +13,7 @@
                 <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.5px;">زمالة المدمنين المجهولين - مصر</h1>
                 <p style="margin: 6px 0 0; font-size: 14px; opacity: 0.9;">Narcotics Anonymous Egypt &bull; IT Workgroup</p>
                 <div style="display: inline-block; margin-top: 14px; background-color: rgba(255,255,255,0.18); padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                    نسخة تجريبية &bull; Pre-release APK v1.1.0
+                    تطبيق أندرويد &bull; Android APK v1.2.0-Hope
                 </div>
             </td>
         </tr>
