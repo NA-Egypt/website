@@ -356,4 +356,23 @@ class HelplineCallApiTest extends TestCase
             'hospital_name' => 'مستشفى المعادي العسكري',
         ]);
     }
+
+    public function test_submit_helpline_call_rejects_future_date(): void
+    {
+        $payload = [
+            'duration' => 'more_than_5',
+            'call_date' => Carbon::tomorrow()->format('Y-m-d'),
+            'call_time_shift' => '2:00 PM - 4:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'موقع NA الرسمي',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة بتاريخ مستقبلي',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['call_date']);
+    }
 }

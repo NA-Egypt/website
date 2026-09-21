@@ -433,6 +433,61 @@
             transform: none;
         }
 
+        /* Inline Form Alert Banner */
+        .form-alert-banner {
+            background: #fef2f2;
+            border: 1.5px solid #f87171;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #991b1b;
+            animation: fadeIn 0.25s ease-in-out;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+        }
+
+        .alert-icon-wrapper {
+            background: #fee2e2;
+            color: #dc2626;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .alert-content-wrapper {
+            flex-grow: 1;
+        }
+
+        .alert-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .alert-message {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #7f1d1d;
+            white-space: pre-line;
+        }
+
+        .alert-close-btn {
+            background: transparent;
+            border: none;
+            color: #991b1b;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
         /* Turnstile Center Box */
         .turnstile-wrapper, .recaptcha-wrapper {
             display: flex;
@@ -664,7 +719,7 @@
                     تاريخ المكالمة
                     <span class="required-star">*</span>
                 </label>
-                <input type="date" id="call_date" name="call_date" class="form-control" value="{{ old('call_date', $today) }}" required style="max-width: 260px;">
+                <input type="date" id="call_date" name="call_date" class="form-control" value="{{ old('call_date', $today) }}" max="{{ $today }}" required style="max-width: 260px;">
                 @error('call_date')
                     <div class="error-message">
                         <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
@@ -920,7 +975,13 @@
             <!-- Cloudflare Turnstile Spam Prevention Widget -->
             @if(!empty($turnstileSiteKey))
                 <div class="turnstile-wrapper">
-                    <div class="cf-turnstile" data-sitekey="{{ $turnstileSiteKey }}" data-theme="light"></div>
+                    <div class="cf-turnstile" 
+                         data-sitekey="{{ $turnstileSiteKey }}" 
+                         data-theme="light"
+                         data-refresh-expired="auto"
+                         data-response-field-name="cf-turnstile-response"
+                         data-expired-callback="onTurnstileExpired"
+                         data-error-callback="onTurnstileError"></div>
                     @error('cf-turnstile-response')
                         <div class="error-message mt-2">
                             <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
@@ -929,6 +990,18 @@
                     @enderror
                 </div>
             @endif
+
+            <!-- In-Page Alert Banner (Replaces disruptive window.alert popups) -->
+            <div id="formAlertBanner" class="form-alert-banner" style="display: none;" role="alert">
+                <div class="alert-icon-wrapper">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
+                </div>
+                <div class="alert-content-wrapper">
+                    <div class="alert-title" id="formAlertTitle">تنبيه</div>
+                    <div class="alert-message" id="formAlertMessage"></div>
+                </div>
+                <button type="button" class="alert-close-btn" onclick="hideFormAlert()" aria-label="إغلاق التنبيه">&times;</button>
+            </div>
 
             <!-- Submit Button -->
             <button type="submit" id="submitBtn" class="btn-submit">
@@ -1102,8 +1175,79 @@
         }
     }
 
+    // In-Page Alert helpers (replaces disruptive window.alert)
+    function showFormAlert(message, title = 'تنبيه', focusElement = null) {
+        const banner = document.getElementById('formAlertBanner');
+        const titleEl = document.getElementById('formAlertTitle');
+        const msgEl = document.getElementById('formAlertMessage');
+        if (!banner || !msgEl) return;
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        banner.style.display = 'flex';
+
+        if (focusElement) {
+            focusElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { focusElement.focus(); }, 200);
+        } else {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function hideFormAlert() {
+        const banner = document.getElementById('formAlertBanner');
+        if (banner) banner.style.display = 'none';
+    }
+
+    // Turnstile lifecycle callbacks
+    function onTurnstileExpired() {
+        console.warn('Turnstile token expired. Resetting widget...');
+        if (typeof turnstile !== 'undefined') {
+            try { turnstile.reset(); } catch (e) {}
+        }
+    }
+
+    function onTurnstileError() {
+        console.warn('Turnstile error occurred. Resetting widget...');
+        if (typeof turnstile !== 'undefined') {
+            try { turnstile.reset(); } catch (e) {}
+        }
+    }
+
+    // Background CSRF recovery for expired sessions
+    async function refreshCsrfToken() {
+        try {
+            const resp = await fetch('{{ route("forms.helpline.show") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const text = await resp.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const newToken = doc.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (newToken) {
+                document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', newToken);
+                const tokenInput = document.querySelector('input[name="_token"]');
+                if (tokenInput) tokenInput.value = newToken;
+                return newToken;
+            }
+        } catch (e) {
+            console.error('Failed to refresh CSRF token:', e);
+        }
+        return null;
+    }
+
     // Initialize pill states and dynamic fields on page load
     document.addEventListener('DOMContentLoaded', () => {
+        // Dynamic date bounds: initialize max and value to today's local date
+        const todayLocal = new Date().toLocaleDateString('en-CA');
+        const dateInput = document.getElementById('call_date');
+        if (dateInput) {
+            dateInput.max = todayLocal;
+            if (!dateInput.value) {
+                dateInput.value = todayLocal;
+            }
+        }
+
         const step12Val = document.querySelector('input[name="is_step_12"]:checked')?.value;
         if (step12Val === '1') updatePillState('step12', 'yes');
         else updatePillState('step12', 'no');
@@ -1137,51 +1281,54 @@
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        hideFormAlert();
 
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
         }
 
+        // Validate call date bounds (prevent future dates)
+        const dateInput = document.getElementById('call_date');
+        const todayLocal = new Date().toLocaleDateString('en-CA');
+        if (dateInput && dateInput.value && dateInput.value > todayLocal) {
+            showFormAlert('لا يمكن تسجيل مكالمة بتاريخ مستقبلي.', 'تنبيه في التاريخ', dateInput);
+            return;
+        }
+
         const callerType = document.querySelector('input[name="caller_type"]:checked')?.value;
         if (callerType === 'أخرى' && !document.querySelector('input[name="caller_type_other"]').value.trim()) {
-            alert('يرجى تحديد فئة المتصل في خانة أخرى.');
-            document.querySelector('input[name="caller_type_other"]').focus();
+            showFormAlert('يرجى تحديد فئة المتصل في خانة أخرى.', 'حقل مطلوب', document.querySelector('input[name="caller_type_other"]'));
             return;
         }
 
         const refSource = document.querySelector('input[name="referral_source"]:checked')?.value;
         if (refSource === 'أخرى' && !document.querySelector('input[name="referral_source_other"]').value.trim()) {
-            alert('يرجى توضيح كيف عرف المتصل عن الزمالة في خانة أخرى.');
-            document.querySelector('input[name="referral_source_other"]').focus();
+            showFormAlert('يرجى توضيح كيف عرف المتصل عن الزمالة في خانة أخرى.', 'حقل مطلوب', document.querySelector('input[name="referral_source_other"]'));
             return;
         }
 
         if (refSource === 'لجنة المستشفيات' && !document.getElementById('hospital_name_input').value.trim()) {
-            alert('يرجى كتابة اسم المستشفى.');
-            document.getElementById('hospital_name_input').focus();
+            showFormAlert('يرجى كتابة اسم المستشفى.', 'حقل مطلوب', document.getElementById('hospital_name_input'));
             return;
         }
 
         if (refSource === 'ملصقات الزمالة' && !document.getElementById('poster_location_input').value.trim()) {
-            alert('يرجى كتابة مكان الملصق.');
-            document.getElementById('poster_location_input').focus();
+            showFormAlert('يرجى كتابة مكان الملصق.', 'حقل مطلوب', document.getElementById('poster_location_input'));
             return;
         }
 
         if (callerType !== 'عضو حالي') {
             const briefInput = document.getElementById('call_brief');
             if (!briefInput.value.trim()) {
-                alert('يرجى كتابة نبذة أو ملخص عن المكالمة.');
-                briefInput.focus();
+                showFormAlert('يرجى كتابة نبذة أو ملخص عن المكالمة.', 'حقل مطلوب', briefInput);
                 return;
             }
         }
 
         const volunteerName = document.querySelector('input[name="volunteer_name"]:checked')?.value;
         if (volunteerName === 'أخرى' && !document.querySelector('input[name="volunteer_name_other"]').value.trim()) {
-            alert('يرجى كتابة اسم المتطوع في خانة أخرى.');
-            document.querySelector('input[name="volunteer_name_other"]').focus();
+            showFormAlert('يرجى كتابة اسم المتطوع في خانة أخرى.', 'حقل مطلوب', document.querySelector('input[name="volunteer_name_other"]'));
             return;
         }
 
@@ -1198,7 +1345,7 @@
                 turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
             }
             if (!turnstileToken) {
-                alert('يرجى تأكيد التحقق الأمني قبل الإرسال.');
+                showFormAlert('يرجى تأكيد التحقق الأمني (Turnstile) قبل الإرسال.', 'التحقق الأمني');
                 return;
             }
         }
@@ -1217,9 +1364,23 @@
                 'Accept': 'application/json'
             }
         })
-        .then(response => {
+        .then(async response => {
+            if (response.status === 419) {
+                // CSRF Session mismatch / expired: auto-refresh token
+                await refreshCsrfToken();
+                if (typeof turnstile !== 'undefined') {
+                    try { turnstile.reset(); } catch (e) {}
+                }
+                throw {
+                    status: 419,
+                    message: 'انتهت صلاحية الجلسة وتم تجديدها تلقائياً. يرجى النقر مرة أخرى على زر الحفظ للمتابعة.'
+                };
+            }
+
             if (!response.ok) {
-                return response.json().then(err => { throw err; });
+                const errData = await response.json().catch(() => ({}));
+                errData.status = response.status;
+                throw errData;
             }
             return response.json();
         })
@@ -1227,16 +1388,23 @@
             if (data.success) {
                 triggerSuccessCountdown();
             } else {
-                alert('حدث خطأ أثناء الحفظ.');
+                showFormAlert('حدث خطأ أثناء الحفظ. يرجى مراجعة البيانات والمحاولة مجدداً.', 'خطأ أثناء الحفظ');
             }
         })
         .catch(err => {
             console.error('Submission error:', err);
+            // Always auto-reset Turnstile on failure so volunteer can immediately retry without reloading
+            if (typeof turnstile !== 'undefined') {
+                try { turnstile.reset(); } catch (e) {}
+            }
+
             if (err.errors) {
                 const msg = Object.values(err.errors).flat().join('\n');
-                alert(msg);
+                showFormAlert(msg, 'يرجى مراجعة البيانات المدخلة');
+            } else if (err.message) {
+                showFormAlert(err.message, err.status === 419 ? 'تجديد الجلسة' : 'تنبيه');
             } else {
-                alert('حدث خطأ أثناء الحفظ. يرجى مراجعة البيانات.');
+                showFormAlert('حدث خطأ أثناء الحفظ. يرجى مراجعة البيانات والمحاولة مجدداً.', 'خطأ أثناء الحفظ');
             }
         })
         .finally(() => {
@@ -1271,13 +1439,19 @@
         if (timerInterval) clearInterval(timerInterval);
         overlay.style.display = 'none';
 
+        hideFormAlert();
         form.reset();
 
         if (typeof turnstile !== 'undefined') {
             try { turnstile.reset(); } catch (e) {}
         }
 
-        document.getElementById('call_date').value = "{{ $today }}";
+        const freshToday = new Date().toLocaleDateString('en-CA');
+        const dateInput = document.getElementById('call_date');
+        if (dateInput) {
+            dateInput.value = freshToday;
+            dateInput.max = freshToday;
+        }
 
         updatePillState('step12', 'no');
         updatePillState('meeting', 'no');

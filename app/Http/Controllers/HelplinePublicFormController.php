@@ -31,7 +31,10 @@ class HelplinePublicFormController extends Controller
         return response()
             ->view('forms.helpline', compact('volunteers', 'shifts', 'callerTypes', 'referralSources', 'today'))
             ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
-            ->header('Permissions-Policy', 'unload=*');
+            ->header('Permissions-Policy', 'unload=*')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     /**
@@ -52,7 +55,7 @@ class HelplinePublicFormController extends Controller
 
         $validated = $request->validate([
             'duration' => 'required|in:less_than_5,more_than_5',
-            'call_date' => 'required|date',
+            'call_date' => 'required|date|before_or_equal:today',
             'call_time_shift' => 'required|string|max:100',
             'caller_type' => 'required|string|max:100',
             'caller_type_other' => 'nullable|string|max:255',
@@ -69,6 +72,7 @@ class HelplinePublicFormController extends Controller
         ], [
             'duration.required' => 'يرجى اختيار مدة المكالمة.',
             'call_date.required' => 'يرجى تحديد تاريخ المكالمة.',
+            'call_date.before_or_equal' => 'لا يمكن تسجيل مكالمة بتاريخ مستقبلي.',
             'call_time_shift.required' => 'يرجى اختيار الوردية / توقيت المكالمة.',
             'caller_type.required' => 'يرجى اختيار فئة المتصل.',
             'referral_source.required' => 'يرجى تحديد كيف عرف المتصل عن الزمالة.',

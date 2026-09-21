@@ -139,8 +139,8 @@ class HelplineReportService
                     'is_current' => true,
                 ];
             } elseif ($onlyWithCalls) {
-                $hasCalls = HelplineCall::where('entry_time', '>=', $start)
-                    ->where('entry_time', '<=', $end)
+                $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
+                    ->whereDate('call_date', '<=', $end->toDateString())
                     ->exists();
 
                 if ($hasCalls) {
@@ -176,13 +176,13 @@ class HelplineReportService
     {
         $query = HelplineCall::query();
         if ($start) {
-            $query->where('entry_time', '>=', $start);
+            $query->whereDate('call_date', '>=', $start->toDateString());
         }
         if ($end) {
-            $query->where('entry_time', '<=', $end);
+            $query->whereDate('call_date', '<=', $end->toDateString());
         }
 
-        $calls = $query->with('volunteer')->latest('entry_time')->get();
+        $calls = $query->with('volunteer')->latest('call_date')->latest('id')->get();
         $totalCalls = $calls->count();
 
         // 1. Duration stats

@@ -30,10 +30,10 @@ class HelplineCall extends Model
     ];
 
     protected $casts = [
-        'call_date' => 'date',
+        'call_date' => 'date:Y-m-d',
         'is_step_12' => 'boolean',
         'discuss_in_meeting' => 'boolean',
-        'entry_time' => 'datetime',
+        'entry_time' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected $appends = [
@@ -51,9 +51,9 @@ class HelplineCall extends Model
     public function getEffectiveVolunteerNameAttribute(): string
     {
         if ($this->volunteer_name === 'أخرى' || $this->volunteer_name === 'Other') {
-            return $this->volunteer_name_other ?: $this->volunteer_name;
+            return (string) ($this->volunteer_name_other ?: ($this->volunteer_name ?: ''));
         }
-        return $this->volunteer ? $this->volunteer->name : $this->volunteer_name;
+        return (string) ($this->volunteer ? $this->volunteer->name : ($this->volunteer_name ?: ''));
     }
 
     public function getEffectiveCallerTypeAttribute(): string
@@ -80,10 +80,10 @@ class HelplineCall extends Model
     public function scopeInDateRange($query, $from, $to)
     {
         if ($from) {
-            $query->where('entry_time', '>=', $from);
+            $query->whereDate('call_date', '>=', $from instanceof \Carbon\CarbonInterface ? $from->toDateString() : $from);
         }
         if ($to) {
-            $query->where('entry_time', '<=', $to);
+            $query->whereDate('call_date', '<=', $to instanceof \Carbon\CarbonInterface ? $to->toDateString() : $to);
         }
         return $query;
     }

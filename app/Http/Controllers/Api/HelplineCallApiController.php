@@ -77,7 +77,7 @@ class HelplineCallApiController extends Controller
     {
         $validated = $request->validate([
             'duration' => 'required|in:less_than_5,more_than_5',
-            'call_date' => 'required|date',
+            'call_date' => 'required|date|before_or_equal:today',
             'call_time_shift' => 'required|string|max:100',
             'caller_type' => 'required|string|max:100',
             'caller_type_other' => 'nullable|string|max:255',
@@ -166,13 +166,13 @@ class HelplineCallApiController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = HelplineCall::query()->latest('entry_time');
+        $query = HelplineCall::query()->latest('call_date')->latest('id');
 
         if ($request->filled('start_date')) {
-            $query->where('entry_time', '>=', $request->start_date);
+            $query->whereDate('call_date', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $query->where('entry_time', '<=', $request->end_date);
+            $query->whereDate('call_date', '<=', $request->end_date);
         }
 
         return HelplineCallResource::collection($query->paginate(25));

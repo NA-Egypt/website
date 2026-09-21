@@ -97,10 +97,10 @@ class HelplineDashboardController extends Controller
         $callsQuery = HelplineCall::query()->with('volunteer');
 
         if ($startDate) {
-            $callsQuery->where('entry_time', '>=', $startDate);
+            $callsQuery->whereDate('call_date', '>=', $startDate->toDateString());
         }
         if ($endDate) {
-            $callsQuery->where('entry_time', '<=', $endDate);
+            $callsQuery->whereDate('call_date', '<=', $endDate->toDateString());
         }
 
         if ($request->filled('search')) {
@@ -164,7 +164,7 @@ class HelplineDashboardController extends Controller
 
         // Filterable calls table query
         $callsQuery = $this->buildCallsQuery($request, $startDate, $endDate);
-        $calls = $callsQuery->latest('entry_time')->paginate(20)->withQueryString();
+        $calls = $callsQuery->latest('call_date')->latest('id')->paginate(20)->withQueryString();
 
         $shifts = HelplineReportService::SHIFTS;
         $callerTypes = HelplineReportService::CALLER_TYPES;
@@ -202,7 +202,7 @@ class HelplineDashboardController extends Controller
         $perPage = (int) $request->input('per_page', 20);
         if ($perPage < 5 || $perPage > 100) $perPage = 20;
 
-        $calls = $callsQuery->latest('entry_time')->paginate($perPage);
+        $calls = $callsQuery->latest('call_date')->latest('id')->paginate($perPage);
 
         return response()->json([
             'calls' => $calls,
@@ -245,12 +245,12 @@ class HelplineDashboardController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم حذف سجل المكالمة بنجاح',
+            'message' => 'تم حذف سجل المكالمة بنجاح.',
         ]);
     }
 
     /**
-     * Export calls log to Excel (CSV format with UTF-8 BOM)
+     * Export calls in current filtered period to CSV/Excel
      */
     public function exportExcel(Request $request): StreamedResponse
     {
@@ -278,17 +278,17 @@ class HelplineDashboardController extends Controller
             $endDate = $curr['end'];
         }
 
-        $query = HelplineCall::query()->with('volunteer')->latest('entry_time');
+        $query = HelplineCall::query()->with('volunteer')->latest('call_date')->latest('id');
 
         if ($request->filled('ids')) {
             $ids = is_array($request->input('ids')) ? $request->input('ids') : explode(',', $request->input('ids'));
             $query->whereIn('id', $ids);
         } else {
             if ($startDate) {
-                $query->where('entry_time', '>=', $startDate);
+                $query->whereDate('call_date', '>=', $startDate->toDateString());
             }
             if ($endDate) {
-                $query->where('entry_time', '<=', $endDate);
+                $query->whereDate('call_date', '<=', $endDate->toDateString());
             }
         }
 

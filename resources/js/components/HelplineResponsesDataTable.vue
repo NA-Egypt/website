@@ -758,7 +758,14 @@ const formatDate = (d) => {
 const formatTime = (t) => {
   if (!t) return '-';
   try {
-    const date = new Date(t);
+    const iso = typeof t === 'string' ? t.replace(' ', 'T') : t;
+    const date = new Date(iso);
+    if (isNaN(date.getTime())) {
+      if (typeof t === 'string' && t.length >= 16) {
+        return t.substring(11, 16);
+      }
+      return t;
+    }
     return date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
   } catch (e) {
     return t;

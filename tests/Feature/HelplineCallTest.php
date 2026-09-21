@@ -423,4 +423,67 @@ class HelplineCallTest extends TestCase
         $currentCycle = array_values($cycles)[0];
         $this->assertTrue($currentCycle['is_current']);
     }
+
+    public function test_public_form_rejects_future_call_date()
+    {
+        $volunteer = HelplineVolunteer::create(['name' => 'أحمد ع.', 'is_active' => true]);
+        $futureDate = Carbon::tomorrow()->toDateString();
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => $futureDate,
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => $volunteer->name,
+            'is_step_12' => '0',
+            'call_brief' => 'مكالمة اختبار لتاريخ مستقبلي',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->postJson('/forms/helpline', $payload);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['call_date']);
+    }
+
+    public function test_call_date_serializes_without_utc_day_shifting()
+    {
+        $call = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => '2026-09-21',
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => 'اختبار عدم ترحيل التاريخ في JSON',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::now(),
+        ]);
+
+        $array = $call->toArray();
+        $this->assertEquals('2026-09-21', $array['call_date']);
+    }
+
+    public function test_report_service_filters_by_call_date()
+    {
+        // Call that took place on 2026-08-15 (previous cycle) but entered today
+        $pastCall = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => '2026-08-15',
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة سابقة بتسجيل اليوم',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::now(),
+        ]);
+
+        $service = new HelplineReportService();
+        $reportData = $service->getReportData(Carbon::parse('2026-08-01'), Carbon::parse('2026-08-31'));
+
+        $this->assertGreaterThanOrEqual(1, $reportData['total_calls']);
+        $this->assertTrue($reportData['calls']->pluck('id')->contains($pastCall->id));
+    }
 }
