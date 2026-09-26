@@ -630,6 +630,45 @@
       width: 100% !important;
       height: 100% !important;
     }
+    .info-card-watermark {
+      position: relative !important;
+      overflow: hidden !important;
+      z-index: 1 !important;
+    }
+    .info-card-watermark::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 15px !important;
+      background-image: url('{{ asset('assets/images/na-wordcloud-watermark.png') }}') !important;
+      background-size: contain !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+      opacity: 0.07 !important;
+      pointer-events: none !important;
+      z-index: 0 !important;
+    }
+    .info-card-watermark .card-body {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    .convention-details-box {
+      background: rgba(248, 249, 250, 0.45) !important;
+      backdrop-filter: blur(2px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
+    .convention-slide-logo {
+      width: 120px !important;
+      height: 120px !important;
+      max-width: 100% !important;
+      object-fit: contain !important;
+      transition: width 0.3s ease, height 0.3s ease !important;
+    }
+    @media (min-width: 768px) {
+      .convention-slide-logo {
+        width: 190px !important;
+        height: 190px !important;
+      }
+    }
 
     .calc-box, .stat-card-home {
       position: relative !important;
@@ -816,7 +855,7 @@
         <li class="splide__slide">
           <div class="row justify-content-center">
             <div class="col-md-8">
-              <div class="card h-100 shadow-sm border-0 info-card p-4">
+              <div class="card h-100 shadow-sm border-0 info-card info-card-watermark p-4">
                 <div class="card-body">
                   <img src="{{ asset('assets/images/slide-icon-na.png') }}" alt="NA Logo" class="mb-3"
                     width="80" height="80" loading="lazy" style="width:80px; height:80px; object-fit: contain;">
@@ -831,7 +870,7 @@
         <li class="splide__slide">
           <div class="row justify-content-center">
             <div class="col-md-8">
-              <div class="card h-100 shadow-sm border-0 info-card p-4">
+              <div class="card h-100 shadow-sm border-0 info-card info-card-watermark p-4">
                 <div class="card-body d-flex flex-column align-items-center">
                   <!-- Desktop Image -->
                   <img src="{{ asset('assets/images/we-do-recover.png') }}" alt="{{ __('messages.wedorecover') }}" class="img-fluid rounded mb-3 shadow-sm d-none d-md-block"
@@ -850,26 +889,36 @@
           <div class="row justify-content-center">
             <div class="col-md-8">
               <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block w-100 h-100">
-                <div class="card h-100 shadow-sm border-0 info-card p-4">
-                  <div class="card-body text-center d-flex flex-column align-items-center">
-                    <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded mb-3 shadow-sm"
-                      width="600" height="300" loading="lazy" style="max-height: 300px; object-fit: contain; width: auto; max-width: 100%;">
-                    
-                    <h2 class="card-title font-weight-bold mb-2 gradient-text text-center" style="font-size: 1.25rem;">
-                      {{ __('messages.convention_title') }}
-                      <span class="fs-6 d-block mt-1 font-weight-bold text-muted text-center">{{ __('messages.convention_subtitle') }}</span>
-                    </h2>
-                    <div class="card-text text-muted w-100" style="font-size: 0.9rem; line-height: 1.6;">
-                      <div class="d-flex flex-wrap justify-content-center gap-3 my-2 py-1 bg-light rounded text-center">
-                        <span class="mx-3">
-                          📅 <strong>{{ __('messages.convention_date') }}</strong> {{ __('messages.convention_date_val') }}
-                        </span>
-                        <span class="mx-3">
-                          📍 <strong>{{ __('messages.convention_location') }}</strong> {{ __('messages.convention_location_val') }}
-                        </span>
-                        <span class="mx-3 d-block mt-2 px-3 text-start w-100">
+                <div class="card h-100 shadow-sm border-0 info-card info-card-watermark p-3 p-md-4">
+                  <div class="card-body p-0 d-flex flex-column justify-content-center">
+                    <div class="row g-3 g-md-4 align-items-center">
+                      <!-- Convention Logo Column -->
+                      <div class="col-md-4 text-center">
+                        <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded-4 shadow-sm convention-slide-logo"
+                          width="190" height="190" loading="lazy">
+                      </div>
+                      
+                      <!-- Convention Details Column -->
+                      <div class="col-md-8 text-center text-md-start">
+                        <h2 class="card-title font-weight-bold mb-1 gradient-text" style="font-size: clamp(1.15rem, 2.5vw, 1.35rem); line-height: 1.35;">
+                          {{ __('messages.convention_title') }}
+                        </h2>
+                        <span class="fs-6 d-inline-block font-weight-bold text-muted mb-2">{{ __('messages.convention_subtitle') }}</span>
+                        
+                        <!-- Badges for Date & Location -->
+                        <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2 mb-2.5">
+                          <span class="badge rounded-pill bg-light text-dark border px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5 shadow-2xs text-center" style="font-size: 0.85rem; background: rgba(248, 249, 250, 0.75) !important; white-space: normal; line-height: 1.4;">
+                            <span>📅</span> <strong>{{ __('messages.convention_date') }}</strong> {{ __('messages.convention_date_val') }}
+                          </span>
+                          <span class="badge rounded-pill bg-light text-dark border px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5 shadow-2xs text-center" style="font-size: 0.85rem; background: rgba(248, 249, 250, 0.75) !important; white-space: normal; line-height: 1.4;">
+                            <span>📍</span> <strong>{{ __('messages.convention_location') }}</strong> {{ __('messages.convention_location_val') }}
+                          </span>
+                        </div>
+
+                        <!-- Description text -->
+                        <p class="card-text text-muted mb-0 text-center text-md-start" style="font-size: 0.88rem; line-height: 1.6;">
                           {{ __('messages.convention_desc') }}
-                        </span>
+                        </p>
                       </div>
                     </div>
                   </div>
