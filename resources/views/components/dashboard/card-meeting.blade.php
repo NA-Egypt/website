@@ -32,8 +32,9 @@
                         @endforeach
                     @endif
                 </div>
-                <div class="font-bold text-danger meeting-type" >
-                    {{ __('messages.' . strtolower($meeting->type)) == 'messages.' . strtolower($meeting->type) ? $meeting->type : __('messages.' . strtolower($meeting->type)) }}
+                <div class="font-bold text-danger meeting-type">
+                    @php $typeLower = strtolower((string) $meeting->type); @endphp
+                    {{ __('messages.' . $typeLower) == 'messages.' . $typeLower ? $meeting->type : __('messages.' . $typeLower) }}
                 </div>
             </div>
 

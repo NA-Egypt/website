@@ -61,4 +61,21 @@ class MobileAzureAuthTest extends TestCase
         $this->assertEquals('Servant User', $userData['name']);
         $this->assertEquals('servant@egyptna.org', $userData['email']);
     }
+
+    public function test_handle_callback_for_mobile_handles_oauth_exception_gracefully()
+    {
+        $provider = Mockery::mock('Laravel\Socialite\Contracts\Provider');
+        $provider->shouldReceive('stateless')->andReturnSelf();
+        $provider->shouldReceive('user')->andThrow(new \Exception('AADSTS54005: OAuth2 Authorization code was already redeemed'));
+
+        Socialite::shouldReceive('driver')->with('azure')->andReturn($provider);
+
+        $response = $this->withSession(['mobile_redirect_uri' => 'naegypt://auth-callback'])
+            ->get('/auth/azure/callback');
+
+        $response->assertRedirect();
+        $targetUrl = $response->headers->get('Location');
+        $this->assertStringStartsWith('naegypt://auth-callback?', $targetUrl);
+        $this->assertStringContainsString('error=invalid_grant', $targetUrl);
+    }
 }

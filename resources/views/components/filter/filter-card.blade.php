@@ -383,7 +383,7 @@ $isFirstCardAcrossSections = true;
                                     <span>{{ __('messages.ShareLocation') }}</span>
                                 </a>
 
-                                @if($group instanceof \App\Models\DirectOnlineGroup || \Illuminate\Support\Str::contains(strtolower($group->location), ['zoom', 'meet', 'teams']) || ($group && $group->group_type !== 'فعلي'))
+                                @if($group instanceof \App\Models\DirectOnlineGroup || \Illuminate\Support\Str::contains(strtolower((string) $group->location), ['zoom', 'meet', 'teams']) || ($group && $group->group_type !== 'فعلي'))
                                     <a href="https://wa.me/201060933888" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 d-inline-flex align-items-center" style="font-size: 0.8rem; font-weight: 600;">
                                         <x-fab-whatsapp style="width:12px; height:12px;" class="me-1"/>
                                         <span>{{ __('messages.Helpline') }}</span>

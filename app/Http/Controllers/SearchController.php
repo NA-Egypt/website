@@ -10,8 +10,12 @@ class SearchController extends Controller
 {
     public function city($cityId)
     {
-        // Fetch the city with its neighborhoods and groups
-        $city = City::with('neighborhoods.groups')->findOrFail($cityId);
+        // Fetch the city with its neighborhoods, groups, and required card relations
+        $city = City::with([
+            'neighborhoods.groups.serviceBody',
+            'neighborhoods.groups.neighborhood.city',
+            'neighborhoods.groups.meetings'
+        ])->findOrFail($cityId);
 
         // Flatten the groups from all neighborhoods
         $groups = $city->neighborhoods->flatMap(function ($neighborhood) {
@@ -27,8 +31,13 @@ class SearchController extends Controller
 
     public function groupMeetings($groupId)
     {
-        // Fetch the group with its meetings
-        $group = Group::with('meetings')->findOrFail($groupId);
+        // Fetch the group with its meetings and required relations to eliminate N+1 queries
+        $group = Group::with([
+            'meetings.group',
+            'meetings.day',
+            'meetings.topic',
+            'meetings.options'
+        ])->findOrFail($groupId);
 
         // Get the meetings associated with the group
         $meetings = $group->meetings;

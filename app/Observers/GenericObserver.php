@@ -70,6 +70,11 @@ class GenericObserver
             $details = $oldValues;
         }
 
+        $userId = auth()->id();
+        if ($userId && !\App\Models\User::where('id', $userId)->exists()) {
+            $userId = null;
+        }
+
         Transaction::create([
             'model' => class_basename($model),
             'operation' => $operation,
@@ -79,7 +84,7 @@ class GenericObserver
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'url' => request()->fullUrl(),
-            'user_id' => auth()->id(),
+            'user_id' => $userId,
         ]);
     }
 

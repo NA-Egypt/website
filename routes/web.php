@@ -33,7 +33,9 @@ use App\Models\ServiceCommittee;
 use App\Models\ServiceBody;
 use App\Models\Meeting;
 
-// Mobile Azure Auth Routes:
+// Azure Auth Routes (Web & Mobile):
+Route::get('/login/microsoft', [AzureAuthController::class, 'redirectToAzure'])->name('login.azure');
+Route::get('/login/microsoft/callback', [AzureAuthController::class, 'handleAzureCallback'])->name('login.azure.callback');
 Route::get('/auth/azure/redirect', [\App\Http\Controllers\Auth\AzureAuthController::class, 'redirectForMobile']);
 Route::get('/auth/azure/callback', [\App\Http\Controllers\Auth\AzureAuthController::class, 'handleCallbackForMobile']);
 
@@ -362,9 +364,6 @@ Route::group(
             Route::get('change-requests/{id}/download', [\App\Http\Controllers\ChangeRequestController::class, 'downloadAttachment'])->name('change-requests.download-attachment');
         });
 
-        // Auth:
-        Route::get('/login/microsoft', [AzureAuthController::class, 'redirectToAzure']);
-        Route::get('/login/microsoft/callback', [AzureAuthController::class, 'handleAzureCallback']);
 
         // Logout:
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');

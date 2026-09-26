@@ -342,9 +342,7 @@ return [
     // Defaults to most common ".UTF-8". Set to blank on Windows systems, change to ".utf8" on CentOS and similar.
     'utf8suffix' => env('LARAVELLOCALIZATION_UTF8SUFFIX', '.UTF-8'),
 
-    // URLs which should not be processed, e.g. '/nova', '/nova/*', '/nova-api/*' or specific application URLs
-    // Defaults to []
-    'urlsIgnored' => ['/skipped', '/livewire/update', 'livewire/update', '/livewire', 'livewire', '/livewire/*', 'livewire/*'],
+    'urlsIgnored' => ['/skipped', '/livewire/update', 'livewire/update', '/livewire', 'livewire', '/livewire/*', 'livewire/*', '/login/microsoft', '/login/microsoft/*', '/auth/azure/*'],
 
     'httpMethodsIgnored' => ['POST', 'PUT', 'PATCH', 'DELETE'],
 ];

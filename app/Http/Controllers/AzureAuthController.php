@@ -26,7 +26,23 @@ class AzureAuthController extends Controller
 
     public function handleAzureCallback(Request $request)
     {
-        $azureUser = Socialite::driver('azure')->stateless()->user();
+        // If user is already authenticated (e.g. back button, refreshed callback), take them straight to dashboard
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        try {
+            $azureUser = Socialite::driver('azure')->stateless()->user();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Azure OAuth callback failed: ' . $e->getMessage());
+
+            if (Auth::check()) {
+                return redirect()->route('dashboard');
+            }
+
+            return redirect()->route('frontend.home')->with('error', __('messages.auth_failed_retry'));
+        }
+
         $email = $azureUser->getEmail();
         $name = $azureUser->getName();
 
@@ -35,9 +51,9 @@ class AzureAuthController extends Controller
             ['name' => $name]
         );
 
-        $user->update(['last_login_at' => now()]);
-
         Auth::login($user);
+
+        $user->update(['last_login_at' => now()]);
 
         if (session('mobile_auth_redirect')) {
             session()->forget('mobile_auth_redirect');

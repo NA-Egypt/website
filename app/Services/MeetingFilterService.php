@@ -7,7 +7,7 @@ use App\Models\Meeting;
 
 class MeetingFilterService
 {
-    public function filterMeetings($filters)
+    public function filterMeetings($filters, ?int $perPage = null)
     {
         $query = Meeting::with(['day', 'group.neighborhood.city', 'directOnlineGroup', 'options', 'topics']);
         $locale = app()->getLocale();
@@ -124,6 +124,10 @@ class MeetingFilterService
             $query->whereDoesntHave('topics', function($q) {
                 $q->where('en_name', 'Group Business Meeting');
             });
+        }
+
+        if ($perPage !== null && $perPage > 0) {
+            return $query->paginate($perPage);
         }
 
         return $query->get();

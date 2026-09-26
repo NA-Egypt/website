@@ -30,7 +30,15 @@ class AzureAuthController extends Controller
      */
     public function handleCallbackForMobile(Request $request)
     {
-        $azureUser = Socialite::driver('azure')->stateless()->user();
+        $redirectUri = session('mobile_redirect_uri', 'naegypt://auth-callback');
+        session()->forget('mobile_redirect_uri');
+
+        try {
+            $azureUser = Socialite::driver('azure')->stateless()->user();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Mobile Azure OAuth callback failed: ' . $e->getMessage());
+            return redirect("{$redirectUri}?error=invalid_grant&message=" . urlencode('Authorization code already redeemed or expired. Please try again.'));
+        }
         
         $email = $azureUser->getEmail() ?: ($azureUser->getUser()['mail'] ?? $azureUser->getUser()['userPrincipalName'] ?? 'servant@egyptna.org');
         $name = $azureUser->getName() ?: 'Servant';
@@ -55,9 +63,6 @@ class AzureAuthController extends Controller
             'email' => $user->email,
             'roles' => $roles,
         ]));
-
-        $redirectUri = session('mobile_redirect_uri', 'naegypt://auth-callback');
-        session()->forget('mobile_redirect_uri');
 
         return redirect("{$redirectUri}?token={$token}&user={$userJson}");
     }

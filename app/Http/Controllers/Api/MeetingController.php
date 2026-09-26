@@ -14,12 +14,15 @@ class MeetingController extends Controller
      */
     public function index(Request $request, \App\Services\MeetingFilterService $filterService)
     {
+        $perPage = $request->query('per_page');
+        $perPageInt = ($perPage && is_numeric($perPage) && (int)$perPage > 0) ? (int)$perPage : null;
+
         if ($request->hasAny(['day', 'city', 'serviceBody', 'group', 'neighborhood', 'type', 'search', 'virtualOnly', 'englishOnly'])) {
-            $meetings = $filterService->filterMeetings($request->all());
+            $meetings = $filterService->filterMeetings($request->all(), $perPageInt);
         } else {
-            $meetings = Meeting::with(['group.neighborhood.city', 'directOnlineGroup', 'day', 'topics', 'options'])
-                ->where('status', 'available')
-                ->get();
+            $query = Meeting::with(['group.neighborhood.city', 'directOnlineGroup', 'day', 'topics', 'options'])
+                ->where('status', 'available');
+            $meetings = $perPageInt ? $query->paginate($perPageInt) : $query->get();
         }
 
         return MeetingResource::collection($meetings);

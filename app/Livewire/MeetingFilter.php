@@ -240,22 +240,31 @@ class MeetingFilter extends Component
 
         $field = app()->getLocale() === 'ar' ? 'ar_name' : 'en_name';
 
-        // Base Groups Query
-        $groupsQuery = Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
-        if ($this->city || $this->neighborhood) {
+        // Optimized Groups Query with Redis Caching for default load
+        if (empty($this->city) && empty($this->neighborhood)) {
+            $groups = \Illuminate\Support\Facades\Cache::remember('meetings_filter_base_groups', 3600, function () {
+                return Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
+            });
+        } else {
+            $groupsQuery = Group::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
             if ($this->neighborhood) {
                 $groupsQuery->whereHas('neighborhood', fn($q) => $q->where($field, $this->neighborhood));
             } elseif ($this->city) {
                 $groupsQuery->whereHas('neighborhood.city', fn($q) => $q->where($field, $this->city));
             }
+            $groups = $groupsQuery->get();
         }
-        $groups = $groupsQuery->get();
 
-        $neighborhoodsQuery = Neighborhood::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
-        if ($this->city) {
+        // Optimized Neighborhoods Query with Redis Caching for default load
+        if (empty($this->city)) {
+            $neighborhoods = \Illuminate\Support\Facades\Cache::remember('meetings_filter_base_neighborhoods', 3600, function () {
+                return Neighborhood::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()])->get();
+            });
+        } else {
+            $neighborhoodsQuery = Neighborhood::withCount(['meetings' => fn($q) => $q->notMonthlyRecurrent()]);
             $neighborhoodsQuery->whereHas('city', fn($q) => $q->where($field, $this->city));
+            $neighborhoods = $neighborhoodsQuery->get();
         }
-        $neighborhoods = $neighborhoodsQuery->get();
 
         $cities = \Illuminate\Support\Facades\Cache::remember('meetings_filter_cities', 3600, function () {
             return City::leftJoin('neighborhoods', 'cities.id', '=', 'neighborhoods.city_id')

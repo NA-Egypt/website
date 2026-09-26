@@ -20,6 +20,7 @@
         "owenvoke/blade-fontawesome": "^2.9",
         "phpseclib/phpseclib": "3.0.54",
         "phpunit/phpunit": "11.5.50",
+        "predis/predis": "^3.6",
         "psy/psysh": "0.12.19",
         "setasign/fpdi": "2.6.7",
         "socialiteproviders/microsoft-azure": "^5.2",

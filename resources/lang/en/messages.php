@@ -855,7 +855,7 @@ return [
     'meetings_qr' => 'Page QR Code',
     'Virtual Meetings Only' => 'Virtual Meetings Only',
     'virtual_meetings_hint_title' => 'Notice Regarding Virtual Meetings',
-    'virtual_meetings_hint' => 'Virtual meetings are not directly affiliated with local Narcotics Anonymous service bodies. Publishing their information in the meeting schedule is provided as a service, whose sole purpose is to help addicts who cannot attend in-person meetings, and to provide every addict seeking recovery the opportunity under any circumstance or from any location.',
+    'virtual_meetings_hint' => 'Virtual groups are not directly affiliated with local Narcotics Anonymous service bodies. Publishing their information in the meeting schedule is provided as a service, whose sole purpose is to help addicts who cannot attend in-person meetings, and to provide every addict seeking recovery the opportunity under any circumstance or from any location.',
     'Basic Information' => 'Basic Information',
     'Contact & Capacity' => 'Contact & Capacity',
     'Location Details' => 'Location Details',
@@ -2333,6 +2333,7 @@ return [
     'apk_check_inbox_title' => 'Download Link Sent',
     'apk_check_inbox_desc' => 'We have delivered your app download link to your email. The link is valid for 24 hours.',
     'apk_done_btn' => 'Done / Close',
+    'auth_failed_retry' => 'Login authorization code expired or was already redeemed. Please try logging in again.',
 ];
 
 

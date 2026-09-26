@@ -114,9 +114,20 @@ class ServiceBodyMapController extends Controller
     }
 
     /**
-     * Compile Service Bodies, Groups, and resolved live coordinates
+     * Compile Service Bodies, Groups, and resolved live coordinates (Cached in Redis)
      */
     public function getServiceBodiesMapData()
+    {
+        $locale = app()->getLocale();
+        return \Illuminate\Support\Facades\Cache::remember('service_bodies_map_data_' . $locale, 3600, function () {
+            return $this->computeServiceBodiesMapData();
+        });
+    }
+
+    /**
+     * Compute Service Bodies map data from database and coordinates.
+     */
+    protected function computeServiceBodiesMapData()
     {
         $cached = $this->loadCache();
         $isAr = app()->getLocale() === 'ar';

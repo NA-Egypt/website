@@ -42,7 +42,7 @@ class TrackApiUsage
             // Limit endpoint string length to prevent DB overflow if path is abnormally long
             $endpoint = mb_substr($endpoint, 0, 500);
 
-            ApiLog::create([
+            $logData = [
                 'method' => strtoupper($request->method()),
                 'endpoint' => $endpoint,
                 'route_name' => $routeName ? mb_substr($routeName, 0, 255) : null,
@@ -55,7 +55,9 @@ class TrackApiUsage
                 'user_id' => $userId,
                 'user_agent' => $userAgent ? mb_substr($userAgent, 0, 1000) : null,
                 'created_at' => now(),
-            ]);
+            ];
+
+            \App\Jobs\LogApiUsageJob::dispatch($logData);
         } catch (\Throwable $e) {
             // Silently fail in terminating hook to ensure zero impact on API client
         }
