@@ -32,6 +32,11 @@
                 'tryAdjusting' => __('messages.Try adjusting your search or filters'),
                 'confirmDelete' => __('messages.Confirm Delete City'),
                 'deletedSuccess' => __('messages.city_deleted_success'),
+                'tableView' => __('messages.Table View'),
+                'cityBreakdown' => __('messages.City Breakdown Cards'),
+                'groups' => __('messages.Groups'),
+                'meetings' => __('messages.Meetings'),
+                'viewCityGroups' => __('messages.City Groups'),
             ];
         @endphp
 
@@ -41,6 +46,8 @@
              data-create-label="{{ __('messages.Add') . ' ' . __('messages.City') }}"
              data-edit-route-template="{{ route('city.edit', ['city' => '__ID__']) }}"
              data-delete-route-template="{{ route('city.destroy', ['city' => '__ID__']) }}"
+             data-city-search-route-template="{{ route('searches.city', ['id' => '__ID__']) }}"
+             data-initial-view="{{ request('view') === 'breakdown' ? 'breakdown' : 'table' }}"
              data-kpi-stats="{{ json_encode($kpiStats ?? []) }}"
              data-labels="{{ json_encode($labels) }}"
              data-csrf-token="{{ csrf_token() }}">

@@ -9,23 +9,23 @@
       {{-- total meetings --}}
       <div class="col">
         <a href="{{ route('meeting.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Meetings') }}" qty="{{ $meetings->count() }}" color-theme="success" icon="calendar-week" />
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Meetings') }}" qty="{{ $meetingsCount }}" color-theme="success" icon="calendar-week" />
         </a>
       </div>
       {{-- / total meetings --}}
     
       {{-- total Groups --}}
       <div class="col">
-        <a href="{{ route('group.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Groups') }}" qty="{{ $groups->count() }}" color-theme="primary" icon="people-fill" />
+        <a href="{{ route('group.index', ['view' => 'directory']) }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Groups') }}" qty="{{ $groupsCount }}" color-theme="primary" icon="people-fill" />
         </a>
       </div>
       {{-- / total Groups --}}
 
       {{-- Total Neighborhoods --}}
       <div class="col">
-        <a href="{{ route('neighborhood.index') }}" class="text-decoration-none">
-          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Neighborhoods') }}" qty="{{ $neighborhoods->count() }}" color-theme="warning" icon="geo-alt-fill" />
+        <a href="{{ route('city.index', ['view' => 'breakdown']) }}" class="text-decoration-none">
+          <x-dashboard.card-statics name="{{ __('messages.Total') . ' ' . __('messages.Neighborhoods') }}" qty="{{ $neighborhoodsCount }}" color-theme="warning" icon="geo-alt-fill" />
         </a>
       </div>
       {{-- / Total Neighborhoods --}}
@@ -165,67 +165,6 @@
     </div>
     {{-- / Quick Actions Launcher --}}
 
-    <div class="row g-3 mb-4">
-
-      {{-- Groups --}}
-      <div class="col-12 col-lg-6 d-flex">
-        <div class="glass-card w-100 h-100 p-0" style="display: flex; flex-direction: column;">
-          <x-dashboard.card-header>{{ __('messages.Groups') }}</x-dashboard.card-header>
-          <div class="px-3 pt-3">
-            <div class="position-relative">
-               <input type="search" id="search-input" class="form-control rounded-pill bg-transparent border shadow-none glass-search-input" placeholder="{{ __('messages.Search') }}...">
-               <i class="bi bi-search position-absolute top-50 translate-middle-y end-0 me-3" style="color: var(--text-secondary); pointer-events: none;"></i>
-            </div>
-          </div>
-          <div class="top-sellers-list p-3 mb-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto; overflow-x: hidden; flex-grow: 1;">
-            <x-dashboard.card-group :$groups />
-          </div>
-        </div>
-      </div>
-      {{-- Groups --}}
-
-      <style>
-          .glass-search-input {
-              color: var(--text-primary);
-              border-color: var(--glass-border) !important;
-              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-              padding-inline-end: 2.5rem !important;
-          }
-          .glass-search-input:focus {
-              background: rgba(255, 255, 255, 0.05) !important;
-              border-color: rgba(59, 130, 246, 0.6) !important;
-              box-shadow: 0 0 15px rgba(59, 130, 246, 0.2) !important;
-          }
-          /* Custom scrollbar adjustments for matching glass aesthetic */
-          .neo-scrollbar::-webkit-scrollbar-thumb {
-              background: rgba(59, 130, 246, 0.2) !important;
-              border-radius: 10px;
-              transition: background 0.3s;
-          }
-          .neo-scrollbar::-webkit-scrollbar-thumb:hover {
-              background: rgba(59, 130, 246, 0.4) !important;
-          }
-      </style>
-
-      {{-- List Of Meetings & Groups in Specific City --}}
-      <div class="col-12 col-lg-6 d-flex">
-        <div class="glass-card w-100 h-100 p-0" style="display: flex; flex-direction: column;">
-          <x-dashboard.card-header>{{ app()->getLocale() === 'ar' ? 'الاجتماعات والمجموعات في المدينة' : 'Meetings & Groups in City' }}</x-dashboard.card-header>
-          <div class="card-body p-3 neo-scrollbar" style="max-height: 400px; overflow-y: auto; overflow-x: hidden; flex-grow: 1;">
-            @foreach ($cities as $city)
-              @php
-                $meetingsCount = $city->neighborhoods->sum(fn($neighborhood) => 
-                    $neighborhood->groups->sum(fn($group) => $group->meetings->count()));
-                $groupsCount = $city->neighborhoods->sum(fn($neighborhood) => $neighborhood->groups->count());
-              @endphp
-              <x-dashboard.card-city-stats :$city :$groupsCount :$meetingsCount />
-            @endforeach
-          </div>
-        </div>
-      </div>
-      {{-- List Of Meetings & Groups in Specific City --}}
-
-    </div>
 
     @if (auth()->user()->hasRole('ServiceBody'))
     {{-- ServiceBody Agendas --}}

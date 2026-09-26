@@ -42,7 +42,7 @@ class GroupController extends Controller implements HasMiddleware
         }
 
         if ($request->wantsJson() || $request->ajax()) {
-            $query->with(['user', 'serviceBody', 'neighborhood', 'meetings.day', 'meetings.topic'])->withCount('meetings');
+            $query->with(['user', 'serviceBody', 'neighborhood.city', 'meetings.day', 'meetings.topic'])->withCount('meetings');
 
             if ($request->filled('service_body_id')) {
                 $query->where('service_body_id', $request->input('service_body_id'));
@@ -72,6 +72,8 @@ class GroupController extends Controller implements HasMiddleware
                 $g->secondary_name = $locale === 'ar' ? $g->en_name : $g->ar_name;
                 $g->service_body_name = $g->serviceBody ? ($locale === 'ar' ? ($g->serviceBody->ar_name ?: $g->serviceBody->en_name) : ($g->serviceBody->en_name ?: $g->serviceBody->ar_name)) : 'N/A';
                 $g->neighborhood_name = $g->neighborhood ? ($locale === 'ar' ? ($g->neighborhood->ar_name ?: $g->neighborhood->en_name) : ($g->neighborhood->en_name ?: $g->neighborhood->ar_name)) : 'N/A';
+                $g->city_id = $g->neighborhood && $g->neighborhood->city ? $g->neighborhood->city->id : null;
+                $g->city_name = $g->neighborhood && $g->neighborhood->city ? ($locale === 'ar' ? ($g->neighborhood->city->ar_name ?: $g->neighborhood->city->en_name) : ($g->neighborhood->city->en_name ?: $g->neighborhood->city->ar_name)) : 'N/A';
                 $g->gsr_name = $locale === 'ar' ? ($g->ar_gsr_name ?: $g->en_gsr_name) : ($g->en_gsr_name ?: $g->ar_gsr_name);
                 $g->gsr_email = $g->user ? $g->user->email : null;
                 $g->address_display = $locale === 'ar' ? ($g->ar_address ?: $g->en_address) : ($g->en_address ?: $g->ar_address);

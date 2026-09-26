@@ -2334,6 +2334,16 @@ return [
     'apk_check_inbox_desc' => 'We have delivered your app download link to your email. The link is valid for 24 hours.',
     'apk_done_btn' => 'Done / Close',
     'auth_failed_retry' => 'Login authorization code expired or was already redeemed. Please try logging in again.',
+
+    // Directory & Breakdown Views
+    'Table View' => 'Table View',
+    'Directory Cards' => 'Directory Cards',
+    'City Breakdown Cards' => 'City Breakdown Cards',
+    'View Meetings' => 'View Meetings',
+    'City Groups' => 'City Groups',
+    'Meetings & Groups in City' => 'Meetings & Groups in City',
+    'group_directory_tooltip' => 'Switch to compact cards directory view',
+    'city_breakdown_tooltip' => 'Switch to city breakdown cards view',
 ];
 
 

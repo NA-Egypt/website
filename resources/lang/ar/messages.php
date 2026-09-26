@@ -2249,7 +2249,7 @@ return [
     'Manage Helpline Volunteers' => 'إدارة متطوعي خط المساعدة',
     'Helpline Volunteers Roster' => 'قائمة متطوعي خطوط المساعدة',
     'Add Volunteer' => 'إضافة متطوع جديد',
-    'Back to Dashboard' => 'العودة لتقرير المكالمات',
+    'Back to Dashboard' => 'عودة للرئيسية',
     'Volunteers' => 'إدارة المتطوعين',
     'Public Form' => 'النموذج العام',
     'Open Public Form' => 'فتح النموذج العام',
@@ -2339,6 +2339,16 @@ return [
     'apk_check_inbox_desc' => 'أرسلنا رابط تحميل التطبيق مباشرة إلى بريدك الإلكتروني. الرابط صالح لمدة 24 ساعة.',
     'apk_done_btn' => 'تم / إغلاق',
     'auth_failed_retry' => 'انتهت صلاحية رمز تسجيل الدخول أو تم استخدامه بالفعل، يرجى إعادة المحاولة.',
+
+    // Directory & Breakdown Views
+    'Table View' => 'عرض الجدول',
+    'Directory Cards' => 'بطاقات الدليل',
+    'City Breakdown Cards' => 'بطاقات توزيع المدن',
+    'View Meetings' => 'عرض الاجتماعات',
+    'City Groups' => 'مجموعات المدينة',
+    'Meetings & Groups in City' => 'الاجتماعات والمجموعات في المدينة',
+    'group_directory_tooltip' => 'التبديل إلى عرض بطاقات الدليل السريع',
+    'city_breakdown_tooltip' => 'التبديل إلى عرض بطاقات توزيع المدن',
 ];
 
 

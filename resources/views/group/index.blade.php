@@ -36,6 +36,10 @@
         'deletedSuccess'     => __('messages.group_deleted_success'),
         'noData'             => __('messages.No matching records found'),
         'adjustFilters'      => __('messages.Try adjusting your search or filters'),
+        'tableView'          => __('messages.Table View'),
+        'directoryCards'     => __('messages.Directory Cards'),
+        'viewMeetings'       => __('messages.View Meetings'),
+        'citySearch'         => __('messages.City Groups'),
         'first'              => __('messages.First') ?: 'First',
         'last'               => __('messages.Last') ?: 'Last',
         'prev'               => __('messages.previous') ?: 'Prev',
@@ -51,6 +55,8 @@
              data-edit-route-template="{{ str_replace('1', '{id}', route('group.edit', ['group' => 1])) }}"
              data-show-route-template="{{ str_replace('1', '{id}', route('group.show', ['group' => 1])) }}"
              data-meetings-route-template="{{ str_replace('1', '{id}', route('searches.meeting', ['id' => 1])) }}"
+             data-city-search-route-template="{{ str_replace('1', '{id}', route('searches.city', ['id' => 1])) }}"
+             data-initial-view="{{ request('view') === 'directory' ? 'directory' : 'table' }}"
              data-delete-route-template="{{ str_replace('1', '{id}', route('group.destroy', ['group' => 1])) }}"
              data-service-bodies="{{ json_encode($serviceBodies ?? []) }}"
              data-kpi-stats="{{ json_encode($kpiStats ?? ['total_groups' => 0, 'total_meetings' => 0, 'service_bodies_count' => 0, 'active_gsrs_count' => 0]) }}"

@@ -96,8 +96,32 @@
           </button>
         </div>
 
-        <!-- Create Button -->
+        <!-- Create Button & View Switcher -->
         <div class="d-flex align-items-center gap-2">
+          <!-- View Switcher -->
+          <div class="btn-group btn-group-sm shadow-sm" role="group">
+            <button
+              type="button"
+              class="btn"
+              :class="viewMode === 'table' ? 'btn-primary' : 'btn-outline-secondary'"
+              @click="setViewMode('table')"
+              :title="labels.tableView || 'Table View'"
+            >
+              <i class="bi bi-table me-1"></i>
+              <span class="d-none d-sm-inline">{{ labels.tableView || 'Table View' }}</span>
+            </button>
+            <button
+              type="button"
+              class="btn"
+              :class="viewMode === 'breakdown' ? 'btn-primary' : 'btn-outline-secondary'"
+              @click="setViewMode('breakdown')"
+              :title="labels.cityBreakdown || 'City Breakdown Cards'"
+            >
+              <i class="bi bi-grid-fill me-1"></i>
+              <span class="d-none d-sm-inline">{{ labels.cityBreakdown || 'City Breakdown Cards' }}</span>
+            </button>
+          </div>
+
           <a v-if="createRoute" :href="createRoute" class="btn btn-primary btn-sm px-3 d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
             <i class="bi bi-plus-lg"></i>
             {{ createLabel }}
@@ -106,11 +130,12 @@
       </div>
     </div>
 
-    <!-- Main Table / Mobile Card View -->
+    <!-- Main Table / Mobile Card View / City Breakdown View -->
     <div class="card border-0 shadow-lg glass-card main-table-card">
       <div class="card-body p-0">
-        <!-- Desktop Table View -->
-        <div class="table-responsive d-none d-md-block">
+        <template v-if="viewMode === 'table'">
+          <!-- Desktop Table View -->
+          <div class="table-responsive d-none d-md-block">
           <table class="table table-hover align-middle mb-0 custom-datatable">
             <thead>
               <tr class="table-header-row">
@@ -298,6 +323,122 @@
             </div>
           </div>
         </div>
+        </template>
+
+        <!-- City Breakdown Cards View -->
+        <div v-else-if="viewMode === 'breakdown'" class="p-3 p-md-4">
+          <!-- Loading State -->
+          <div v-if="loading" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            <div v-for="n in 6" :key="'city-skeleton-' + n" class="col">
+              <div class="card h-100 border p-3 rounded-4 placeholder-glow" style="background: rgba(255, 255, 255, 0.03);">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <span class="placeholder rounded-circle" style="width: 44px; height: 44px;"></span>
+                  <div class="flex-grow-1">
+                    <span class="placeholder col-8 py-2 rounded mb-1"></span>
+                    <span class="placeholder col-5 py-1 rounded"></span>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <span class="placeholder col-5 py-2 rounded"></span>
+                  <span class="placeholder col-5 py-2 rounded"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="rows.length === 0" class="text-center py-5 text-muted">
+            <div class="d-flex flex-column align-items-center gap-2">
+              <i class="bi bi-inbox fs-1 text-secondary opacity-50"></i>
+              <div class="fw-semibold">{{ labels.noRecords || 'No matching records found' }}</div>
+              <div class="small">{{ labels.tryAdjusting || 'Try adjusting your search or filters' }}</div>
+            </div>
+          </div>
+
+          <!-- City Breakdown Cards Grid -->
+          <div v-else class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            <div v-for="city in rows" :key="'city-card-' + city.id" class="col">
+              <div class="card h-100 rounded-4 city-breakdown-card p-3 shadow-sm d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="rounded-circle d-flex align-items-center justify-content-center city-icon-badge shadow-sm" style="width: 44px; height: 44px;">
+                        <i class="bi bi-building fs-5"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-0 fw-bold">
+                          <a
+                            v-if="citySearchRouteTemplate"
+                            :href="getCitySearchUrl(city.id)"
+                            class="text-decoration-none city-card-title"
+                            :title="labels.viewCityGroups || 'View City Groups'"
+                          >
+                            {{ isRtl ? (city.ar_name || city.en_name) : (city.en_name || city.ar_name) }}
+                          </a>
+                          <span v-else class="city-card-title">
+                            {{ isRtl ? (city.ar_name || city.en_name) : (city.en_name || city.ar_name) }}
+                          </span>
+                        </h6>
+                        <small v-if="city.secondary_name" class="text-muted d-block" style="font-size: 0.78rem;">
+                          {{ city.secondary_name }}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Statistics Badges -->
+                  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 small d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-people-fill"></i>
+                      <strong class="mx-1">{{ city.groups_count ?? 0 }}</strong>
+                      <span>{{ labels.groups || 'Groups' }}</span>
+                    </span>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 small d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-calendar-week"></i>
+                      <strong class="mx-1">{{ city.meetings_count ?? 0 }}</strong>
+                      <span>{{ labels.meetings || 'Meetings' }}</span>
+                    </span>
+                    <span class="badge bg-info-subtle text-info rounded-pill px-3 py-2 small d-inline-flex align-items-center gap-1">
+                      <i class="bi bi-geo-alt"></i>
+                      <strong class="mx-1">{{ city.neighborhoods_count ?? 0 }}</strong>
+                      <span>{{ labels.linkedNeighborhoods || 'Neighborhoods' }}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Footer with actions -->
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-2">
+                  <a
+                    v-if="citySearchRouteTemplate"
+                    :href="getCitySearchUrl(city.id)"
+                    class="btn btn-sm btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                  >
+                    <i class="bi bi-search"></i>
+                    <span>{{ labels.viewCityGroups || 'Groups' }}</span>
+                  </a>
+                  <div class="d-flex align-items-center gap-1">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-info rounded-pill px-2 py-1"
+                      @click="openPreview(city)"
+                      :title="labels.quickView || 'Quick View'"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <a
+                      v-if="editRouteTemplate && city.id"
+                      :href="getEditUrl(city.id)"
+                      class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
+                      :title="labels.edit || 'Edit'"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Footer & Pagination -->
         <div class="card-footer bg-transparent border-top py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
@@ -467,6 +608,14 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  citySearchRouteTemplate: {
+    type: String,
+    default: ''
+  },
+  initialView: {
+    type: String,
+    default: 'table'
+  },
   initialKpiStats: {
     type: Object,
     default: () => ({
@@ -508,6 +657,25 @@ const kpiData = reactive({
   total_neighborhoods: props.initialKpiStats?.total_neighborhoods || 0,
   total_groups: props.initialKpiStats?.total_groups || 0
 });
+
+// View Mode State
+const viewMode = ref(props.initialView === 'breakdown' ? 'breakdown' : 'table');
+
+const setViewMode = (mode) => {
+  viewMode.value = mode;
+  const url = new URL(window.location.href);
+  if (mode === 'breakdown') {
+    url.searchParams.set('view', 'breakdown');
+  } else {
+    url.searchParams.delete('view');
+  }
+  window.history.replaceState({}, '', url.toString());
+};
+
+const getCitySearchUrl = (id) => {
+  if (!props.citySearchRouteTemplate || !id) return '#';
+  return props.citySearchRouteTemplate.replace('__ID__', id).replace('{id}', id);
+};
 
 // Modal state
 const showModal = ref(false);
@@ -794,5 +962,34 @@ onMounted(() => {
 }
 .cursor-pointer {
   cursor: pointer;
+}
+
+.city-breakdown-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border, rgba(0, 0, 0, 0.12)) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.city-breakdown-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12) !important;
+}
+
+.city-card-title {
+  color: var(--text-primary);
+  transition: color 0.2s;
+}
+
+.city-breakdown-card:hover .city-card-title {
+  color: #3b82f6;
+}
+
+.city-icon-badge {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.25);
 }
 </style>

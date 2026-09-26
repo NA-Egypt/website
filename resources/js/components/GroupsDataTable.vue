@@ -121,8 +121,32 @@
           </button>
         </div>
 
-        <!-- Create Button -->
+        <!-- Create Button & View Switcher -->
         <div class="d-flex align-items-center gap-2">
+          <!-- View Switcher -->
+          <div class="btn-group btn-group-sm shadow-sm" role="group">
+            <button
+              type="button"
+              class="btn"
+              :class="viewMode === 'table' ? 'btn-primary' : 'btn-outline-secondary'"
+              @click="setViewMode('table')"
+              :title="labels.tableView || 'Table View'"
+            >
+              <i class="bi bi-table me-1"></i>
+              <span class="d-none d-sm-inline">{{ labels.tableView || 'Table View' }}</span>
+            </button>
+            <button
+              type="button"
+              class="btn"
+              :class="viewMode === 'directory' ? 'btn-primary' : 'btn-outline-secondary'"
+              @click="setViewMode('directory')"
+              :title="labels.directoryCards || 'Directory Cards'"
+            >
+              <i class="bi bi-grid-fill me-1"></i>
+              <span class="d-none d-sm-inline">{{ labels.directoryCards || 'Directory Cards' }}</span>
+            </button>
+          </div>
+
           <a v-if="createRoute" :href="createRoute" class="btn btn-primary btn-sm px-3 d-inline-flex align-items-center gap-2 fw-semibold shadow-sm">
             <i class="bi bi-plus-lg"></i>
             {{ labels.createLabel }}
@@ -131,11 +155,12 @@
       </div>
     </div>
 
-    <!-- Main Table / Mobile Card View -->
+    <!-- Main Table / Mobile Card View / Directory Cards View -->
     <div class="card border-0 shadow-lg glass-card main-table-card">
       <div class="card-body p-0">
-        <!-- Desktop Table View -->
-        <div class="table-responsive d-none d-md-block">
+        <template v-if="viewMode === 'table'">
+          <!-- Desktop Table View -->
+          <div class="table-responsive d-none d-md-block">
           <table class="table table-hover align-middle mb-0 custom-datatable">
             <thead>
               <tr class="table-header-row">
@@ -330,7 +355,7 @@
         </div>
 
         <!-- Mobile Card View (< 768px) -->
-        <div class="d-md-none p-3 d-flex flex-column gap-3">
+        <div v-if="viewMode === 'table'" class="d-md-none p-3 d-flex flex-column gap-3">
           <!-- Loading Skeleton -->
           <div v-if="loading" v-for="n in 3" :key="'mob-skeleton-' + n" class="card border rounded-3 p-3 shadow-sm">
             <div class="placeholder-glow">
@@ -418,6 +443,118 @@
                 <i class="bi bi-trash"></i>
                 {{ labels.delete }}
               </button>
+            </div>
+          </div>
+        </div>
+        </template>
+
+        <!-- Directory Cards View -->
+        <div v-else-if="viewMode === 'directory'" class="p-3 p-md-4">
+          <!-- Loading Skeleton -->
+          <div v-if="loading" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            <div v-for="n in 6" :key="'dir-skeleton-' + n" class="col">
+              <div class="card h-100 border p-3 rounded-4 placeholder-glow" style="background: rgba(255, 255, 255, 0.03);">
+                <span class="placeholder col-7 mb-2 py-2 rounded"></span>
+                <span class="placeholder col-4 mb-3 py-1 rounded"></span>
+                <div class="d-flex justify-content-between align-items-center mt-auto">
+                  <span class="placeholder col-3 py-2 rounded"></span>
+                  <span class="placeholder col-3 py-2 rounded"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="rows.length === 0" class="text-center py-5">
+            <div class="empty-state-wrapper py-4">
+              <i class="bi bi-buildings fs-1 text-muted opacity-50 mb-2"></i>
+              <h6 class="fw-semibold text-muted">{{ labels.noData }}</h6>
+              <p class="small text-muted mb-3">{{ labels.adjustFilters }}</p>
+              <button v-if="hasActiveFilters" type="button" class="btn btn-outline-primary btn-sm" @click="resetAllFilters">
+                {{ labels.clearFilters }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div v-else class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+            <div v-for="item in rows" :key="'dir-card-' + item.id" class="col">
+              <div class="card h-100 rounded-4 directory-group-card p-3 d-flex flex-column justify-content-between shadow-sm">
+                <div>
+                  <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                    <h6 class="mb-0 fw-bold">
+                      <a
+                        v-if="meetingsRouteTemplate"
+                        :href="getMeetingsUrl(item.id)"
+                        class="text-decoration-none group-dir-title"
+                        :title="labels.viewMeetings || 'View Meetings'"
+                      >
+                        {{ item.primary_name }}
+                      </a>
+                      <span v-else class="group-dir-title">{{ item.primary_name }}</span>
+                    </h6>
+                    <span v-if="item.city_name && item.city_name !== 'N/A'" class="badge rounded-pill group-city-badge">
+                      <a
+                        v-if="citySearchRouteTemplate && item.city_id"
+                        :href="getCitySearchUrl(item.city_id)"
+                        class="text-decoration-none"
+                        style="color: inherit;"
+                      >
+                        <i class="bi bi-geo-alt-fill me-1"></i>{{ item.city_name }}
+                      </a>
+                      <span v-else>
+                        <i class="bi bi-geo-alt-fill me-1"></i>{{ item.city_name }}
+                      </span>
+                    </span>
+                  </div>
+
+                  <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                    <span v-if="item.neighborhood_name && item.neighborhood_name !== 'N/A'" class="badge bg-light text-secondary border px-2 py-1 small">
+                      <i class="bi bi-pin-map me-1 text-danger"></i>{{ item.neighborhood_name }}
+                    </span>
+                    <span class="badge rounded-pill bg-purple-subtle text-purple px-2 py-1 small">
+                      <i class="bi bi-diagram-3 me-1"></i>{{ item.service_body_name }}
+                    </span>
+                  </div>
+
+                  <div v-if="item.gsr_name" class="small text-muted mb-2">
+                    <i class="bi bi-person me-1"></i>{{ item.gsr_name }}
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between pt-2 border-top mt-2">
+                  <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 small d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-calendar-event"></i>
+                    {{ item.meetings_count }} {{ labels.meetings }}
+                  </span>
+                  <div class="d-flex align-items-center gap-1">
+                    <a
+                      v-if="meetingsRouteTemplate"
+                      :href="getMeetingsUrl(item.id)"
+                      class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1"
+                      :title="labels.viewMeetings || 'View Meetings'"
+                    >
+                      <i class="bi bi-calendar-week"></i>
+                    </a>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-info rounded-pill px-2 py-1"
+                      @click="openDetails(item)"
+                      :title="labels.quickView || 'Quick View'"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <a
+                      v-if="editRouteTemplate && item.id"
+                      :href="getEditUrl(item.id)"
+                      class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
+                      :title="labels.edit || 'Edit'"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -687,6 +824,14 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  citySearchRouteTemplate: {
+    type: String,
+    default: ''
+  },
+  initialView: {
+    type: String,
+    default: 'table'
+  },
   deleteRouteTemplate: {
     type: String,
     default: ''
@@ -739,6 +884,25 @@ const kpiData = reactive({
   service_bodies_count: props.initialKpiStats?.service_bodies_count || 0,
   active_gsrs_count: props.initialKpiStats?.active_gsrs_count || 0
 });
+
+// View Mode State
+const viewMode = ref(props.initialView === 'directory' ? 'directory' : 'table');
+
+const setViewMode = (mode) => {
+  viewMode.value = mode;
+  const url = new URL(window.location.href);
+  if (mode === 'directory') {
+    url.searchParams.set('view', 'directory');
+  } else {
+    url.searchParams.delete('view');
+  }
+  window.history.replaceState({}, '', url.toString());
+};
+
+const getCitySearchUrl = (cityId) => {
+  if (!props.citySearchRouteTemplate || !cityId) return '#';
+  return props.citySearchRouteTemplate.replace('{id}', cityId);
+};
 
 // Modal state
 const showModal = ref(false);
@@ -1121,5 +1285,36 @@ onMounted(() => {
 .mobile-item-card {
   background: var(--glass-bg, #ffffff);
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.directory-group-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.directory-group-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12) !important;
+}
+
+.group-dir-title {
+  color: var(--text-primary);
+  transition: color 0.2s;
+}
+
+.directory-group-card:hover .group-dir-title {
+  color: #3b82f6;
+}
+
+.group-city-badge {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  font-size: 0.72rem;
+  font-weight: 500;
 }
 </style>

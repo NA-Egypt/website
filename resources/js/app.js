@@ -294,6 +294,8 @@ const mountVueApps = () => {
         const editRouteTemplate = groupsEl.getAttribute('data-edit-route-template') || '';
         const showRouteTemplate = groupsEl.getAttribute('data-show-route-template') || '';
         const meetingsRouteTemplate = groupsEl.getAttribute('data-meetings-route-template') || '';
+        const citySearchRouteTemplate = groupsEl.getAttribute('data-city-search-route-template') || '';
+        const initialView = groupsEl.getAttribute('data-initial-view') || 'table';
         const deleteRouteTemplate = groupsEl.getAttribute('data-delete-route-template') || '';
         const serviceBodies = JSON.parse(groupsEl.getAttribute('data-service-bodies') || '[]');
         const initialKpiStats = JSON.parse(groupsEl.getAttribute('data-kpi-stats') || '{}');
@@ -308,6 +310,8 @@ const mountVueApps = () => {
                 editRouteTemplate,
                 showRouteTemplate,
                 meetingsRouteTemplate,
+                citySearchRouteTemplate,
+                initialView,
                 deleteRouteTemplate,
                 serviceBodies,
                 initialKpiStats,
@@ -355,6 +359,8 @@ const mountVueApps = () => {
         const createLabel = citiesEl.getAttribute('data-create-label') || '';
         const editRouteTemplate = citiesEl.getAttribute('data-edit-route-template') || '';
         const deleteRouteTemplate = citiesEl.getAttribute('data-delete-route-template') || '';
+        const citySearchRouteTemplate = citiesEl.getAttribute('data-city-search-route-template') || '';
+        const initialView = citiesEl.getAttribute('data-initial-view') || 'table';
         const initialKpiStats = JSON.parse(citiesEl.getAttribute('data-kpi-stats') || '{}');
         const labels = JSON.parse(citiesEl.getAttribute('data-labels') || '{}');
         const csrfToken = citiesEl.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
@@ -366,6 +372,8 @@ const mountVueApps = () => {
                 createLabel,
                 editRouteTemplate,
                 deleteRouteTemplate,
+                citySearchRouteTemplate,
+                initialView,
                 initialKpiStats,
                 labels,
                 csrfToken

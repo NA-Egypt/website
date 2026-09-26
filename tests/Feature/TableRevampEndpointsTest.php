@@ -417,5 +417,57 @@ class TableRevampEndpointsTest extends TestCase
             }
         }
     }
+
+    public function test_dashboard_renders_without_boxes_and_links_to_directory_views(): void
+    {
+        $response = $this->actingAs($this->admin)->get(route('dashboard'));
+        $response->assertStatus(200);
+
+        // Verify the two heavy boxes were removed
+        $response->assertDontSee('glass-search-input');
+        $response->assertDontSee('top-sellers-list');
+
+        // Verify new links to directory and breakdown
+        $response->assertSee(route('group.index', ['view' => 'directory']));
+        $response->assertSee(route('city.index', ['view' => 'breakdown']));
+    }
+
+    public function test_groups_index_supports_directory_view_and_provides_city_relations(): void
+    {
+        $this->createDummyGroup();
+
+        $response = $this->actingAs($this->admin)->get(route('group.index', ['view' => 'directory']));
+        $response->assertStatus(200);
+        $response->assertSee('data-initial-view="directory"', false);
+        $response->assertSee('data-city-search-route-template', false);
+
+        // Verify JSON response includes city_id and city_name
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('group.index'));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'primary_name', 'city_id', 'city_name', 'meetings_count']
+            ]
+        ]);
+    }
+
+    public function test_cities_index_supports_breakdown_view_and_provides_counts(): void
+    {
+        $this->createDummyGroup();
+
+        $response = $this->actingAs($this->admin)->get(route('city.index', ['view' => 'breakdown']));
+        $response->assertStatus(200);
+        $response->assertSee('data-initial-view="breakdown"', false);
+        $response->assertSee('data-city-search-route-template', false);
+
+        // Verify JSON response includes groups_count and meetings_count
+        $jsonResponse = $this->actingAs($this->admin)->getJson(route('city.index'));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'ar_name', 'en_name', 'neighborhoods_count', 'groups_count', 'meetings_count']
+            ]
+        ]);
+    }
 }
 

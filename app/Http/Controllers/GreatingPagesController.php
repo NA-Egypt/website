@@ -93,11 +93,6 @@ class GreatingPagesController extends Controller
         }
         $customFormsCount = $customFormsQuery->count();
 
-        $meetings = Meeting::inPersonOnly()->get();
-        $serviceBodies = ServiceBody::all();
-        $cities = City::with('neighborhoods.groups')->get();
-        $neighborhoods = Neighborhood::all();
-        $groups = Group::inPersonOnly()->get();
         $showUsersCard = false;
         $usersCount = 0;
         if ($user) {
@@ -114,26 +109,23 @@ class GreatingPagesController extends Controller
         if ($user && $user->hasRole('ServiceBody') && $user->service_body_id) {
             $sbId = $user->service_body_id;
             
-            $groups = Group::inPersonOnly()->where('service_body_id', $sbId)->get();
-            $groupIds = $groups->pluck('id')->toArray();
+            $groupsCount = Group::inPersonOnly()->where('service_body_id', $sbId)->count();
             
-            $meetings = Meeting::inPersonOnly()->whereHas('group', function($q) use ($sbId) {
+            $meetingsCount = Meeting::inPersonOnly()->whereHas('group', function($q) use ($sbId) {
                 $q->where('service_body_id', $sbId);
-            })->get();
-            
-            $cities = City::with(['neighborhoods.groups' => function($q) use ($sbId) {
-                $q->where('service_body_id', $sbId);
-            }])->whereHas('neighborhoods.groups', function($q) use ($sbId) {
-                $q->where('service_body_id', $sbId);
-            })->get();
+            })->count();
 
-            $neighborhoods = Neighborhood::whereHas('groups', function($q) use ($sbId) {
+            $neighborhoodsCount = Neighborhood::whereHas('groups', function($q) use ($sbId) {
                 $q->where('service_body_id', $sbId);
-            })->get();
+            })->count();
 
             if ($user->serviceBody) {
                 $agendas = $user->serviceBody->agendas()->orderBy('agenda_date', 'desc')->get();
             }
+        } else {
+            $meetingsCount = Meeting::inPersonOnly()->count();
+            $groupsCount = Group::inPersonOnly()->count();
+            $neighborhoodsCount = Neighborhood::count();
         }
 
         // transactions:
@@ -173,13 +165,10 @@ class GreatingPagesController extends Controller
         }
 
         return view('dashborad', [
-
-            'meetings'          => $meetings,
+            'meetingsCount'     => $meetingsCount,
+            'groupsCount'       => $groupsCount,
+            'neighborhoodsCount'=> $neighborhoodsCount,
             'subscribersCount'  => $subscribersCount,
-            'serviceBodies'     => $serviceBodies,
-            'cities'            => $cities,
-            'neighborhoods'     => $neighborhoods,
-            'groups'            => $groups,
             'usersCount'        => $usersCount,
             'transactions'      => $transactions,
             'agendas'           => $agendas,

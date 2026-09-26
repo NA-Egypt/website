@@ -18,7 +18,7 @@ class CityController extends Controller
     public function index(Request $request)
     {
         if ($request->wantsJson() || $request->ajax()) {
-            $query = City::withCount('neighborhoods')->with('neighborhoods');
+            $query = City::withCount('neighborhoods')->with(['neighborhoods.groups.meetings']);
 
             if ($request->filled('has_neighborhoods')) {
                 if ($request->input('has_neighborhoods') === 'yes') {
@@ -35,6 +35,8 @@ class CityController extends Controller
                 $c->primary_name = $locale === 'ar' ? ($c->ar_name ?: $c->en_name) : ($c->en_name ?: $c->ar_name);
                 $c->secondary_name = $locale === 'ar' ? $c->en_name : $c->ar_name;
                 $c->neighborhoods_count = $c->neighborhoods_count ?? 0;
+                $c->groups_count = $c->neighborhoods->sum(fn($n) => $n->groups->count());
+                $c->meetings_count = $c->neighborhoods->sum(fn($n) => $n->groups->sum(fn($g) => $g->meetings->count()));
                 $c->neighborhoods_list = $c->neighborhoods ? $c->neighborhoods->map(function($n) use ($locale) {
                     return $locale === 'ar' ? ($n->ar_name ?: $n->en_name) : ($n->en_name ?: $n->ar_name);
                 })->filter()->values()->all() : [];
