@@ -551,17 +551,20 @@
             });
 
             @if(isset($availableWorkgroupDrafts) && $availableWorkgroupDrafts->isNotEmpty())
-                const availableDrafts = @json($availableWorkgroupDrafts->map(function($r) {
-                    return [
-                        'id' => $r->id,
-                        'wg_name' => $r->serviceCommittee->{app()->getLocale() . '_name'} ?? $r->serviceCommittee->ar_name,
-                        'meeting_date' => $r->meeting_date ? $r->meeting_date->format('Y-m-d') : '',
-                        'meeting_day_description' => $r->meeting_day_description,
-                        'sections' => $r->body_sections,
-                        'positions' => $r->positions_status,
-                        'attended_members' => $r->attended_members,
-                    ];
-                }));
+                @php
+                    $draftsData = $availableWorkgroupDrafts->map(function($r) {
+                        return [
+                            'id' => $r->id,
+                            'wg_name' => $r->serviceCommittee->{app()->getLocale() . '_name'} ?? $r->serviceCommittee->ar_name,
+                            'meeting_date' => $r->meeting_date ? $r->meeting_date->format('Y-m-d') : '',
+                            'meeting_day_description' => $r->meeting_day_description,
+                            'sections' => $r->body_sections,
+                            'positions' => $r->positions_status,
+                            'attended_members' => $r->attended_members,
+                        ];
+                    })->values();
+                @endphp
+                const availableDrafts = @json($draftsData);
 
                 window.embedWorkgroupReport = function(reportId) {
                     const report = availableDrafts.find(r => r.id === reportId);
