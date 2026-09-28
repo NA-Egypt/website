@@ -290,6 +290,13 @@ Route::group(
                 // API & Mobile App Analytics:
                 Route::get('/admin/api-usage', [\App\Http\Controllers\ApiUsageAnalyticsController::class, 'index'])->name('admin.api_usage.index');
                 Route::get('/admin/api-usage/export', [\App\Http\Controllers\ApiUsageAnalyticsController::class, 'exportCsv'])->name('admin.api_usage.export');
+
+                // APK Download Requests:
+                Route::get('/admin/apk-requests', [\App\Http\Controllers\Admin\ApkRequestController::class, 'index'])->name('admin.apk_requests.index');
+                Route::get('/admin/apk-requests/export', [\App\Http\Controllers\Admin\ApkRequestController::class, 'exportCsv'])->name('admin.apk_requests.export');
+                Route::post('/admin/apk-requests/{apkRequest}/resend', [\App\Http\Controllers\Admin\ApkRequestController::class, 'resend'])->name('admin.apk_requests.resend');
+                Route::delete('/admin/apk-requests/{apkRequest}', [\App\Http\Controllers\Admin\ApkRequestController::class, 'destroy'])->name('admin.apk_requests.destroy');
+                Route::post('/admin/apk-requests/bulk-delete', [\App\Http\Controllers\Admin\ApkRequestController::class, 'bulkDestroy'])->name('admin.apk_requests.bulk_destroy');
             });
 
             // Stop Impersonating Route (Accessible to any authenticated session currently impersonating):

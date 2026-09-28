@@ -214,6 +214,7 @@
             <li> <a href="{{route('roles.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Rules')}}</a></li>
             <li> <a href="{{route('subscribers.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Subscribers')}}</a></li>
             <li> <a href="{{route('admin.api_usage.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.API & Mobile Analytics')}}</a></li>
+            <li> <a href="{{route('admin.apk_requests.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.apk_download_requests')}}</a></li>
           </ul>
         </div>
       </li>
