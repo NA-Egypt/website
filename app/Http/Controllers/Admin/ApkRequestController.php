@@ -72,7 +72,7 @@ class ApkRequestController extends Controller
         ]);
 
         try {
-            Mail::to($apkRequest->email)->send(new ApkDownloadLinkMail($apkRequest));
+            Mail::to($apkRequest->email)->queue(new ApkDownloadLinkMail($apkRequest));
         } catch (\Throwable $e) {
             Log::error('Failed to resend APK download email from admin: ' . $e->getMessage(), [
                 'request_id' => $apkRequest->id,
@@ -163,7 +163,14 @@ class ApkRequestController extends Controller
                 'Last Downloaded At',
             ]);
 
-            $query->latest('id')->chunk(200, function ($requests) use ($handle) {
+            $sanitizeCell = static function ($val) {
+                if (is_string($val) && isset($val[0]) && in_array($val[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+                    return "'" . $val;
+                }
+                return $val;
+            };
+
+            $query->latest('id')->chunk(200, function ($requests) use ($handle, $sanitizeCell) {
                 foreach ($requests as $item) {
                     $itemStatus = 'Pending';
                     if ($item->download_count > 0) {
@@ -174,11 +181,11 @@ class ApkRequestController extends Controller
 
                     fputcsv($handle, [
                         $item->id,
-                        $item->email,
+                        $sanitizeCell($item->email),
                         $item->download_count,
                         $itemStatus,
-                        $item->ip_address ?? '',
-                        $item->user_agent ?? '',
+                        $sanitizeCell($item->ip_address ?? ''),
+                        $sanitizeCell($item->user_agent ?? ''),
                         $item->created_at ? $item->created_at->toDateTimeString() : '',
                         $item->expires_at ? $item->expires_at->toDateTimeString() : '',
                         $item->last_downloaded_at ? $item->last_downloaded_at->toDateTimeString() : '',

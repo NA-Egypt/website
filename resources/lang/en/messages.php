@@ -2340,6 +2340,7 @@ return [
     'apk_check_inbox_title' => 'Download Link Sent',
     'apk_check_inbox_desc' => 'We have delivered your app download link to your email. The link is valid for 24 hours.',
     'apk_done_btn' => 'Done / Close',
+    'apk_too_many_requests' => 'Too many download requests for this email. Please check your inbox or try again later.',
     'auth_failed_retry' => 'Login authorization code expired or was already redeemed. Please try logging in again.',
 
     // Directory & Breakdown Views

@@ -40,3 +40,6 @@ public/vendor/livewire/livewire.js
 public/vendor/livewire/livewire.min.js
 public/vendor/livewire/livewire.min.js.map
 public/vendor/livewire/manifest.json
+.agents/skills/overview/scripts/__pycache__/session_analyzer.cpython-312.pyc
+.agents/skills/overview/scripts/__pycache__/git_context_parser.cpython-312.pyc
+.agents/skills/overview/scripts/__pycache__/recap_generator.cpython-312.pyc

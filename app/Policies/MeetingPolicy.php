@@ -9,7 +9,7 @@ class MeetingPolicy
 {
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('rsc');
     }
 
     public function create(User $user): bool
