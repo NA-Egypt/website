@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -54,6 +55,46 @@ class ApkDownloadController extends Controller
 
         $validated = $validator->validated();
         $email = strtolower(trim($validated['email']));
+
+        // Rate limit per email: max 3 requests per hour
+        $emailThrottleKey = 'apk-request-email:' . sha1($email);
+        if (RateLimiter::tooManyAttempts($emailThrottleKey, 3)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('messages.apk_too_many_requests'),
+            ], 429);
+        }
+
+        // Deduplication: If an active unexpired request was issued in the last 15 minutes, resend the existing token
+        $recentActive = ApkDownloadRequest::where('email', $email)
+            ->where('expires_at', '>', now())
+            ->where('created_at', '>=', now()->subMinutes(15))
+            ->latest('id')
+            ->first();
+
+        if ($recentActive) {
+            try {
+                Mail::to($recentActive->email)->queue(new ApkDownloadLinkMail($recentActive));
+            } catch (\Throwable $e) {
+                Log::error('Failed to resend recent APK download email: ' . $e->getMessage(), [
+                    'email' => $email,
+                    'token' => $recentActive->token,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => __('messages.apk_email_send_failed'),
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.apk_link_sent_success'),
+            ], 200);
+        }
+
+        RateLimiter::hit($emailThrottleKey, 3600);
+
         $token = Str::random(64);
         $expiryHours = (int) config('services.apk.token_expiry_hours', 24);
 
@@ -61,12 +102,12 @@ class ApkDownloadController extends Controller
             'email' => $email,
             'token' => $token,
             'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
+            'user_agent' => Str::limit($request->userAgent() ?? '', 500),
             'expires_at' => now()->addHours($expiryHours),
         ]);
 
         try {
-            Mail::to($apkRequest->email)->send(new ApkDownloadLinkMail($apkRequest));
+            Mail::to($apkRequest->email)->queue(new ApkDownloadLinkMail($apkRequest));
         } catch (\Throwable $e) {
             Log::error('Failed to send APK download email: ' . $e->getMessage(), [
                 'email' => $email,
@@ -104,9 +145,6 @@ class ApkDownloadController extends Controller
             abort(500, 'APK distribution is temporarily unavailable.');
         }
 
-        // Record download metric
-        $apkRequest->recordDownload();
-
         try {
             $upstreamResponse = \Illuminate\Support\Facades\Http::withHeaders([
                 'User-Agent' => 'NA-Egypt-Portal-Proxy/1.0',
@@ -120,6 +158,9 @@ class ApkDownloadController extends Controller
             if (!$upstreamResponse->successful()) {
                 throw new \Exception('Upstream HTTP error: ' . $upstreamResponse->status());
             }
+
+            // Record download metric only once upstream connection is established successfully
+            $apkRequest->recordDownload();
 
             $psrResponse = $upstreamResponse->toPsrResponse();
             $body = $psrResponse->getBody();

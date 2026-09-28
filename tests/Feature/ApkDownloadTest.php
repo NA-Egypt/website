@@ -92,7 +92,7 @@ class ApkDownloadTest extends TestCase
             'email' => $email,
         ]);
 
-        Mail::assertSent(ApkDownloadLinkMail::class, function ($mail) use ($email) {
+        Mail::assertQueued(ApkDownloadLinkMail::class, function ($mail) use ($email) {
             return $mail->hasTo($email) && !empty($mail->downloadUrl);
         });
     }
@@ -164,18 +164,21 @@ class ApkDownloadTest extends TestCase
             'email' => $email,
         ]);
 
-        Mail::assertSent(ApkDownloadLinkMail::class, function ($mail) use ($email) {
+        Mail::assertQueued(ApkDownloadLinkMail::class, function ($mail) use ($email) {
             return $mail->hasTo($email) && !empty($mail->downloadUrl);
         });
     }
 
     /**
-     * Test download aborts 403 when token does not exist.
+     * Test download aborts 404 on malformed token and 403 on non-existent valid 64-char token.
      */
     public function test_download_fails_when_token_not_found(): void
     {
-        $response = $this->get(route('apk.download', ['token' => 'nonexistent_token_123']));
-        $response->assertStatus(403);
+        $responseMalformed = $this->get('/apk/download/short_token');
+        $responseMalformed->assertStatus(404);
+
+        $responseNotFound = $this->get(route('apk.download', ['token' => Str::random(64)]));
+        $responseNotFound->assertStatus(403);
     }
 
     /**
@@ -225,5 +228,63 @@ class ApkDownloadTest extends TestCase
         $apkRequest->refresh();
         $this->assertEquals(1, $apkRequest->download_count);
         $this->assertNotNull($apkRequest->last_downloaded_at);
+    }
+
+    /**
+     * Test request link deduplicates and resends existing active token if created < 15 min ago.
+     */
+    public function test_request_link_deduplicates_within_cooldown(): void
+    {
+        Mail::fake();
+
+        $email = 'dedup@example.com';
+        $originalToken = Str::random(64);
+
+        ApkDownloadRequest::create([
+            'email' => $email,
+            'token' => $originalToken,
+            'expires_at' => now()->addHours(24),
+            'created_at' => now()->subMinutes(5),
+        ]);
+
+        $this->assertEquals(1, ApkDownloadRequest::where('email', $email)->count());
+
+        $response = $this->postJson(route('apk.request_link'), [
+            'email' => $email,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+
+        // Still only 1 record (deduplicated)
+        $this->assertEquals(1, ApkDownloadRequest::where('email', $email)->count());
+        Mail::assertQueued(ApkDownloadLinkMail::class, function ($mail) use ($originalToken) {
+            return $mail->apkRequest->token === $originalToken;
+        });
+    }
+
+    /**
+     * Test download does not increment count if upstream connection fails.
+     */
+    public function test_download_does_not_increment_count_on_upstream_failure(): void
+    {
+        $token = Str::random(64);
+        $apkRequest = ApkDownloadRequest::create([
+            'email' => 'failure.test@naegypt.org',
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'download_count' => 0,
+        ]);
+
+        Http::fake([
+            config('services.apk.release_url') => Http::response('Server Error', 500),
+        ]);
+
+        $response = $this->get(route('apk.download', ['token' => $token]));
+        $response->assertStatus(502);
+
+        $apkRequest->refresh();
+        $this->assertEquals(0, $apkRequest->download_count);
+        $this->assertNull($apkRequest->last_downloaded_at);
     }
 }

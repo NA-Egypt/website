@@ -4,12 +4,13 @@ namespace App\Mail;
 
 use App\Models\ApkDownloadRequest;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApkDownloadLinkMail extends Mailable
+class ApkDownloadLinkMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

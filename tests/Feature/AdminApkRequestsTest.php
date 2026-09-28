@@ -187,7 +187,7 @@ class AdminApkRequestsTest extends TestCase
         $this->assertNotEquals($originalToken, $request->token);
         $this->assertTrue($request->expires_at->isFuture());
 
-        Mail::assertSent(ApkDownloadLinkMail::class, function ($mail) use ($request) {
+        Mail::assertQueued(ApkDownloadLinkMail::class, function ($mail) use ($request) {
             return $mail->apkRequest->id === $request->id && $mail->hasTo('requester@test.com');
         });
     }
@@ -243,14 +243,15 @@ class AdminApkRequestsTest extends TestCase
     }
 
     /**
-     * Super Admin can export requests to CSV.
+     * Super Admin can export requests to CSV with formula injection sanitization.
      */
-    public function test_super_admin_can_export_csv(): void
+    public function test_super_admin_can_export_csv_with_formula_sanitization(): void
     {
         ApkDownloadRequest::create([
-            'email' => 'export-test@test.com',
+            'email' => '=cmd|calc@test.com',
             'token' => Str::random(64),
             'ip_address' => '8.8.8.8',
+            'user_agent' => '=SUM(1+1)',
             'expires_at' => now()->addHours(24),
             'download_count' => 3,
         ]);
@@ -262,7 +263,8 @@ class AdminApkRequestsTest extends TestCase
         $this->assertStringContainsString('attachment; filename=', $response->headers->get('content-disposition'));
 
         $content = $response->streamedContent();
-        $this->assertStringContainsString('export-test@test.com', $content);
+        $this->assertStringContainsString("'=cmd|calc@test.com", $content);
+        $this->assertStringContainsString("'=SUM(1+1)", $content);
         $this->assertStringContainsString('8.8.8.8', $content);
         $this->assertStringContainsString('Downloaded', $content);
     }
