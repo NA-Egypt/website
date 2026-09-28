@@ -185,6 +185,22 @@
     background: rgba(0, 0, 0, 0.04) !important;
     color: #2563eb !important;
 }
+
+/* Category Labels Styling */
+.sidebar-wrapper .navigation li.menu-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary, #94a3b8) !important;
+    opacity: 0.75;
+    padding: 14px 16px 4px 16px;
+    margin-top: 4px;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li.menu-label {
+    letter-spacing: 0px;
+    padding: 14px 16px 4px 16px;
+}
 </style>
 
 <aside class="sidebar-wrapper" data-simplebar="true">
@@ -200,187 +216,95 @@
     <!--navigation-->
     <ul class="navigation mt-1" id="menu">
 
-      {{-- Admin Area --}}
-      @can('is-super-admin')
-      <li>
-        <a href="#menuAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuAdmin" title="{{ __('messages.Admin Settings') }}">
-          <div class="parent-icon"><i class="bi bi-gear-fill admin-icon"></i></div>
-          <div class="menu-title">{{ __('messages.Admin Settings')}}</div>
-        </a>
-        <div class="collapse" id="menuAdmin">
-          <ul>
-            <li> <a href="{{route('users.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Users List')}}</a></li>
-            <li> <a href="{{ route('permissions.index') }}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Permissions')}}</a></li>
-            <li> <a href="{{route('roles.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Rules')}}</a></li>
-            <li> <a href="{{route('subscribers.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.Subscribers')}}</a></li>
-            <li> <a href="{{route('admin.api_usage.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.API & Mobile Analytics')}}</a></li>
-            <li> <a href="{{route('admin.apk_requests.index')}}"><i class="bi bi-arrow-right-short"></i>{{__('messages.apk_download_requests')}}</a></li>
-          </ul>
-        </div>
-      </li>
-      @endcan
-      {{-- / Admin Area --}}
-
-      {{-- Facebook Targeting Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Committees')))
-      <li>
-        <a href="{{ route('facebook-targeting.index') }}" title="{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}">
-          <div class="parent-icon"><i class="bi bi-facebook"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</div>
-        </a>
-      </li>
-      @endif
-
-      <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
-
-      {{-- Sections Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr') || auth()->user()->hasRole('rsc')))
-      <li>
-        <a href="#menuSections" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuSections" title="{{ __('messages.Section Details') }}">
-          <div class="parent-icon"><i class="bi bi-grid"></i></div>
-          <div class="menu-title">{{ __('messages.Section Details')}}</div>
-        </a>
-        <div class="collapse" id="menuSections">
-          <ul>
-            @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))
-            <li><a href="{{ route('serviceBody.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Body')}}</a></li>
-            <li><a href="{{ route('serviceBody.map') }}"><i class="bi bi-geo-alt"></i>{{ __('messages.Service Bodies Map') }}</a></li>
-            <li><a href="{{ route('serviceCommittee.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Committees')}}</a></li>
-            <li><a href="{{ route('workgroup.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Workgroups') }}</a></li>
-            <li><a href="{{ route('city.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.City') }}</a></li>
-            <li><a href="{{ route('neighborhood.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Neighborhood') }}</a></li>
-            <li><a href="{{ route('topic.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Topics') }}</a></li>
-            @endif
-            <li><a href="{{ route('group.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Groups') }}</a></li>
-            @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('rsc'))
-            <li><a href="{{ route('direct-online-group.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.legend_online') }} ({{ __('messages.Direct') ?? 'Direct' }})</a></li>
-            <li><a href="{{ route('meeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Meetings') }}</a></li>
-            @endif
-          </ul>
-        </div>
-      </li>
-      @endif
-      {{-- /Sections Area --}}
-
-      {{-- Transactions Area --}}
-      @can('is-super-admin')
-      <li>
-        <a href="{{ route('transactions.index') }}" title="{{ __('messages.Logs Details') }}">
-          <div class="parent-icon"><i class="bi bi-receipt-cutoff"></i></div>
-          <div class="menu-title">{{ __('messages.Logs Details') }}</div>
-        </a>
-      </li>
-      @endcan
-      {{-- /Transactions Area --}}
-
-      <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
-
-      {{-- My Committee Details & Workgroups --}}
-      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('rsc')))
-        @php
-          $myCommittee = \App\Models\ServiceCommittee::where('user_id', auth()->id())
-              ->orWhere('email', auth()->user()->email)
-              ->first();
-          if (!$myCommittee && auth()->user()->hasRole('rsc')) {
-              $myCommittee = \App\Models\ServiceCommittee::find(83) ?: \App\Models\ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
-          }
-        @endphp
-        @if($myCommittee)
-          <li>
-            <a href="{{ route('serviceCommittee.show', $myCommittee->id) }}" title="{{ __('messages.My Committee Details') ?? 'My Committee Details' }}">
-              <div class="parent-icon"><i class="bi bi-info-circle-fill"></i></div>
-              <div class="menu-title">{{ __('messages.My Committee Details') ?? 'My Committee Details' }}</div>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('workgroup.index') }}" title="{{ __('messages.My Workgroups') }}">
-              <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
-              <div class="menu-title">{{ __('messages.My Workgroups') }}</div>
-            </a>
-          </li>
-        @endif
-      @endif
-
-      {{-- My Workgroup Details (for Workgroup role only) --}}
-      @if(auth()->check() && auth()->user()->hasRole('Workgroups') && !auth()->user()->hasRole('Committees') && !auth()->user()->hasRole('super admin'))
-        @php
-          $myWg = \App\Models\ServiceCommittee::workgroupsOnly()->where('user_id', auth()->id())->first();
-        @endphp
-        @if($myWg)
-          <li>
-            <a href="{{ route('workgroup.show', $myWg->id) }}" title="{{ __('messages.My Workgroup Details') }}">
-              <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
-              <div class="menu-title">{{ __('messages.My Workgroup Details') }}</div>
-            </a>
-          </li>
-        @endif
-      @endif
-
-      {{-- Reports Area --}}
-      @if(auth()->check() && !auth()->user()->hasRole('Store Manager'))
-      <li>
-        <a href="{{ route('committee-reports.index') }}" title="{{ __('messages.Committee Reports') }}">
-          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
-          <div class="menu-title">{{ __('messages.Committee Reports') }}</div>
-        </a>
-      </li>
-      @endif
-      @if(auth()->check())
-      <li>
-        <a href="{{ route('committee-reports.archive') }}" title="{{ __('messages.Reports Archive') ?? 'Reports Archive' }}">
-          <div class="parent-icon"><i class="bi bi-archive-fill"></i></div>
-          <div class="menu-title">{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</div>
-        </a>
-      </li>
-      @endif
-      {{-- /Reports Area --}}
-
-      <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
-
-      {{-- Agendas Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc')))
-      <li>
-        <a href="{{ route('groups-agendas.archive') }}" title="{{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}">
-          <div class="parent-icon"><i class="bi bi-journals"></i></div>
-          <div class="menu-title">{{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}</div>
-        </a>
-      </li>
-      @endif
-
-      {{-- Service Body Agendas Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('rsc')))
       @php
-        $user = auth()->user();
-        $agendaTitle = __('messages.Service Body Agendas') ?? 'Service Body Agendas';
-        if ($user && $user->hasRole('ServiceBody') && $user->service_body_id) {
-            $sb = \App\Models\ServiceBody::find($user->service_body_id);
-            if ($sb) {
-                if (app()->getLocale() === 'ar') {
-                    $agendaTitle = 'أجندات ' . $sb->ar_name;
-                } else {
-                    $agendaTitle = 'Agendas of ' . ($sb->en_name ?: $sb->ar_name);
-                }
+        $currentUser = auth()->user();
+        $isSuperAdmin = $currentUser && $currentUser->hasRole('super admin');
+        $isCommittees = $currentUser && $currentUser->hasRole('Committees');
+        $isRsc = $currentUser && $currentUser->hasRole('rsc');
+        $isWorkgroups = $currentUser && $currentUser->hasRole('Workgroups');
+        $isGsr = $currentUser && $currentUser->hasRole('gsr');
+        $isStoreManager = $currentUser && $currentUser->hasRole('Store Manager');
+        $isServiceBody = $currentUser && $currentUser->hasRole('ServiceBody');
+
+        // My Committee & Workgroup Resolution
+        $myCommittee = null;
+        if ($currentUser && ($isCommittees || $isRsc)) {
+            $myCommittee = \App\Models\ServiceCommittee::where('user_id', $currentUser->id)
+                ->orWhere('email', $currentUser->email)
+                ->first();
+            if (!$myCommittee && $isRsc) {
+                $myCommittee = \App\Models\ServiceCommittee::find(83) ?: \App\Models\ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
             }
         }
+
+        $myWg = null;
+        if ($currentUser && $isWorkgroups && !$isCommittees && !$isSuperAdmin) {
+            $myWg = \App\Models\ServiceCommittee::workgroupsOnly()->where('user_id', $currentUser->id)->first();
+        }
+
+        $hasMyWorkspace = $myCommittee || $myWg || ($currentUser && !$isStoreManager);
+
+        // Fellowship & Structure Conditions
+        $hasFellowshipMeetings = $currentUser && ($isSuperAdmin || $isServiceBody || $isGsr || $isRsc);
+        $hasFellowshipStructure = $currentUser && ($isSuperAdmin || $isRsc);
+        $hasFellowshipSection = $hasFellowshipMeetings || $hasFellowshipStructure;
+
+        // Reports & Agendas Conditions
+        $canSeeAgendas = $currentUser && ($isSuperAdmin || $isServiceBody || $isRsc);
+        $canSeeReports = $currentUser && !$isStoreManager;
+        $hasReportsAndAgendas = $currentUser && ($canSeeReports || $canSeeAgendas);
+
+        // Literature & Store Conditions
+        $canStore = $currentUser && $currentUser->can('manage store');
+        $canLitView = $currentUser && $currentUser->can('view lit inventory');
+        $canReconcile = $currentUser && ($canLitView || $currentUser->hasRole('Lit User') || $isSuperAdmin);
+        $canSlips = $currentUser && ($currentUser->can('view inventory slips') || $currentUser->hasRole('Lit User') || $isStoreManager || $isRsc || $isSuperAdmin);
+        $canLedger = $currentUser && ($currentUser->can('view lit ledger') || $currentUser->hasRole('Lit User') || $isStoreManager || $isRsc || $isSuperAdmin);
+        $canTreasurer = $currentUser && ($currentUser->hasRole('Treasurer') || $isServiceBody || $isSuperAdmin);
+        $canLitRequests = $currentUser && ($isSuperAdmin || $currentUser->hasRole('Lit User'));
+        $canCommitteeLit = $currentUser && ($isCommittees || $isSuperAdmin);
+        $canArchiveLit = $currentUser && ($isSuperAdmin || $currentUser->hasRole('Lit User') || $currentUser->hasRole('Treasurer') || $isServiceBody || $isGsr);
+        $hasLitOrStore = $isGsr || $canStore || $canLitView || $canReconcile || $canSlips || $canLedger || $canTreasurer || $canLitRequests || $canCommitteeLit || $canArchiveLit;
+
+        // Services & Tools Conditions
+        $canHelpline = $currentUser && ($currentUser->can('manage helpline') || $isSuperAdmin || $currentUser->hasRole('Phoneline') || in_array($currentUser->email, ['phone@naegypt.org', 'pr@naegypt.org']));
+        $canForms = $currentUser && $currentUser->can('manage own forms');
+        $canChangeRequests = $currentUser && ($isCommittees || $isServiceBody || $isSuperAdmin);
+        $canFacebook = $currentUser && ($isSuperAdmin || $isCommittees);
+        $hasServices = $canHelpline || $canForms || $canChangeRequests || $canFacebook;
       @endphp
+
+      {{-- ======================================================== --}}
+      {{-- 1. MY WORKSPACE                                          --}}
+      {{-- ======================================================== --}}
+      @if($hasMyWorkspace)
+      <li class="menu-label">{{ __('messages.My Workspace') }}</li>
+
+      @if($myCommittee)
       <li>
-        <a href="{{ route('service-body-agendas.index') }}" title="{{ $agendaTitle }}">
-          <div class="parent-icon"><i class="bi bi-file-earmark-medical"></i></div>
-          <div class="menu-title">{{ $agendaTitle }}</div>
+        <a href="{{ route('serviceCommittee.show', $myCommittee->id) }}" title="{{ __('messages.My Committee Details') ?? 'My Committee Details' }}">
+          <div class="parent-icon"><i class="bi bi-info-circle-fill"></i></div>
+          <div class="menu-title">{{ __('messages.My Committee Details') ?? 'My Committee Details' }}</div>
         </a>
       </li>
       <li>
-        <a href="{{ route('service-body-agendas.archive') }}" title="{{ __('messages.Service Body Agendas Archive') ?? 'Service Body Agendas Archive' }}">
-          <div class="parent-icon"><i class="bi bi-archive-fill"></i></div>
-          <div class="menu-title">{{ __('messages.Service Body Agendas Archive') ?? 'Service Body Agendas Archive' }}</div>
+        <a href="{{ route('workgroup.index') }}" title="{{ __('messages.My Workgroups') }}">
+          <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="menu-title">{{ __('messages.My Workgroups') }}</div>
         </a>
       </li>
       @endif
 
-      <li class="menu-divider"><hr class="my-1 opacity-10" style="border-color: var(--glass-border);"></li>
+      @if($myWg)
+      <li>
+        <a href="{{ route('workgroup.show', $myWg->id) }}" title="{{ __('messages.My Workgroup Details') }}">
+          <div class="parent-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="menu-title">{{ __('messages.My Workgroup Details') }}</div>
+        </a>
+      </li>
+      @endif
 
-      {{-- Calendar Area --}}
-      @if(auth()->check() && !auth()->user()->hasRole('Store Manager'))
+      @if($currentUser && !$isStoreManager)
       <li>
         <a href="{{ route('calendar.index') }}" title="{{ __('messages.Yearly Calendar') }}">
           <div class="parent-icon"><i class="bi bi-calendar-check"></i></div>
@@ -388,20 +312,191 @@
         </a>
       </li>
       @endif
-      {{-- /Calendar Area --}}
+      @endif
 
-      {{-- IT Change Requests Area --}}
-      @if(auth()->check() && (auth()->user()->hasRole('Committees') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin')))
+      {{-- ======================================================== --}}
+      {{-- 2. FELLOWSHIP & MEETINGS                                 --}}
+      {{-- ======================================================== --}}
+      @if($hasFellowshipSection)
+      <li class="menu-label">{{ __('messages.Meetings & Groups') }}</li>
+
+      {{-- Meetings & Groups Menu --}}
+      @if($hasFellowshipMeetings)
       <li>
-        <a href="{{ route('change-requests.index') }}" title="{{ __('messages.IT Change Requests') }}">
-          <div class="parent-icon"><i class="bi bi-cpu-fill"></i></div>
-          <div class="menu-title">{{ __('messages.IT Change Requests') }}</div>
+        <a href="#menuMeetings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuMeetings" title="{{ __('messages.Meetings & Groups') }}">
+          <div class="parent-icon"><i class="bi bi-calendar3-event"></i></div>
+          <div class="menu-title">{{ __('messages.Meetings & Groups') }}</div>
+        </a>
+        <div class="collapse" id="menuMeetings">
+          <ul>
+            <li><a href="{{ route('group.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Groups') }}</a></li>
+            @if($isSuperAdmin || $isRsc)
+            <li><a href="{{ route('direct-online-group.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.legend_online') }} ({{ __('messages.Direct') ?? 'Direct' }})</a></li>
+            <li><a href="{{ route('meeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Meetings') }}</a></li>
+            <li><a href="{{ route('serviceBody.map') }}"><i class="bi bi-geo-alt"></i>{{ __('messages.Service Bodies Map') }}</a></li>
+            @endif
+          </ul>
+        </div>
+      </li>
+      @endif
+
+      {{-- Fellowship Structure Menu --}}
+      @if($hasFellowshipStructure)
+      <li>
+        <a href="#menuStructure" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuStructure" title="{{ __('messages.Fellowship Structure') }}">
+          <div class="parent-icon"><i class="bi bi-diagram-3-fill"></i></div>
+          <div class="menu-title">{{ __('messages.Fellowship Structure') }}</div>
+        </a>
+        <div class="collapse" id="menuStructure">
+          <ul>
+            <li><a href="{{ route('serviceBody.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Body') }}</a></li>
+            <li><a href="{{ route('serviceCommittee.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Committees') }}</a></li>
+            <li><a href="{{ route('workgroup.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Workgroups') }}</a></li>
+            <li><a href="{{ route('city.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.City') }}</a></li>
+            <li><a href="{{ route('neighborhood.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Neighborhood') }}</a></li>
+            <li><a href="{{ route('topic.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Topics') }}</a></li>
+          </ul>
+        </div>
+      </li>
+      @endif
+      @endif
+
+      {{-- ======================================================== --}}
+      {{-- 3. REPORTS & AGENDAS                                     --}}
+      {{-- ======================================================== --}}
+      @if($hasReportsAndAgendas)
+      <li class="menu-label">{{ __('messages.Reports & Agendas') }}</li>
+      <li>
+        <a href="#menuReportsAgendas" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuReportsAgendas" title="{{ __('messages.Reports & Agendas') }}">
+          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
+          <div class="menu-title">{{ __('messages.Reports & Agendas') }}</div>
+        </a>
+        <div class="collapse" id="menuReportsAgendas">
+          <ul>
+            @if($canSeeReports)
+            <li><a href="{{ route('committee-reports.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Committee Reports') }}</a></li>
+            @endif
+            @if($currentUser)
+            <li><a href="{{ route('committee-reports.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</a></li>
+            @endif
+
+            @if($canSeeAgendas)
+              @php
+                $agendaTitle = __('messages.Service Body Agendas') ?? 'Service Body Agendas';
+                if ($currentUser->hasRole('ServiceBody') && $currentUser->service_body_id) {
+                    $sb = \App\Models\ServiceBody::find($currentUser->service_body_id);
+                    if ($sb) {
+                        if (app()->getLocale() === 'ar') {
+                            $agendaTitle = 'أجندات ' . $sb->ar_name;
+                        } else {
+                            $agendaTitle = 'Agendas of ' . (($sb->en_name) ?: $sb->ar_name);
+                        }
+                    }
+                }
+              @endphp
+              <li><a href="{{ route('service-body-agendas.index') }}"><i class="bi bi-arrow-right-short"></i>{{ $agendaTitle }}</a></li>
+              <li><a href="{{ route('service-body-agendas.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Service Body Agendas Archive') ?? 'Service Body Agendas Archive' }}</a></li>
+              <li><a href="{{ route('groups-agendas.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Agendas Archive') ?? 'Agendas Archive' }}</a></li>
+            @endif
+          </ul>
+        </div>
+      </li>
+      @endif
+
+      {{-- ======================================================== --}}
+      {{-- 4. LITERATURE & STORE                                    --}}
+      {{-- ======================================================== --}}
+      @if($hasLitOrStore)
+      <li class="menu-label">{{ __('messages.Literature & Store') }}</li>
+
+      {{-- Special 1-click Cart visibility for GSRs --}}
+      @if($isGsr)
+      <li>
+        <a href="{{ route('literature-requests.cart') }}" title="{{ __('messages.Literature Request') }}">
+          <div class="parent-icon"><i class="bi bi-cart3"></i></div>
+          <div class="menu-title">{{ __('messages.Literature Request') }}</div>
         </a>
       </li>
       @endif
 
-      {{-- Forms Builder Area --}}
-      @if(auth()->check() && auth()->user()->can('manage own forms'))
+      <li>
+        <a href="#menuLiteratureStore" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuLiteratureStore" title="{{ __('messages.Literature & Store') }}">
+          <div class="parent-icon"><i class="bi bi-box-seam"></i></div>
+          <div class="menu-title">{{ __('messages.Literature & Store') }}</div>
+        </a>
+        <div class="collapse" id="menuLiteratureStore">
+          <ul>
+            {{-- Store Inventory & Warehouse Management --}}
+            @if($canStore)
+            <li><a href="{{ route('store.index') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'مخزون المستودع' : 'Store Inventory' }}</a></li>
+            <li><a href="{{ route('store.reports') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'تقارير المستودع' : 'Store Reports' }}</a></li>
+            <li><a href="{{ route('store.stocktaking.index') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'الجرد الفعلي' : 'Stocktaking' }}</a></li>
+            @endif
+
+            {{-- Lit Read-only Inventory --}}
+            @if($canLitView && !$canStore)
+            <li><a href="{{ route('lit.index') }}"><i class="bi bi-arrow-right-short"></i>{{ app()->getLocale() === 'ar' ? 'مخزون المطبوعات' : 'Lit Inventory' }}</a></li>
+            @endif
+
+            {{-- Inventory Slips & Reconciliation --}}
+            @if($canSlips)
+            <li><a href="{{ route('slips.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.inventory_slips') }}</a></li>
+            @endif
+
+            @if($canReconcile)
+            <li><a href="{{ route('lit.reconciliation') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.reconciliation_and_return') }}</a></li>
+            @endif
+
+            @if($canLedger)
+            <li><a href="{{ route('lit.ledger') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.monthly_ledger') }}</a></li>
+            @endif
+
+            {{-- Literature Requests / Orders / Dashboards --}}
+            @if($canTreasurer)
+            <li><a href="{{ route('literature-requests.treasurer') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Treasurer Dashboard') }}</a></li>
+            @endif
+
+            @if($canLitRequests)
+            <li><a href="{{ route('literature-requests.committee') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Literature Requests') }}</a></li>
+            @endif
+
+            @if($canCommitteeLit)
+            <li><a href="{{ route('committee-literature.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.committee_literature_requests') ?? 'Committee Literature' }}</a></li>
+            @endif
+
+            @if($canArchiveLit)
+            <li><a href="{{ route('literature-requests.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.literature_requests_archive') }}</a></li>
+            @endif
+          </ul>
+        </div>
+      </li>
+      @endif
+
+      {{-- ======================================================== --}}
+      {{-- 5. SERVICES & TOOLS                                      --}}
+      {{-- ======================================================== --}}
+      @if($hasServices)
+      <li class="menu-label">{{ __('messages.Services & Tools') }}</li>
+
+      {{-- Helpline Module --}}
+      @if($canHelpline)
+      <li>
+        <a href="#menuHelpline" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuHelpline" title="{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}">
+          <div class="parent-icon"><i class="bi bi-telephone-inbound-fill"></i></div>
+          <div class="menu-title">{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}</div>
+        </a>
+        <div class="collapse" id="menuHelpline">
+          <ul>
+            <li><a href="{{ route('helpline.index') }}"><i class="bi bi-bar-chart-line"></i> {{ __('messages.Calls Report') ?? 'تقارير المكالمات' }}</a></li>
+            <li><a href="{{ route('helpline.volunteers') }}"><i class="bi bi-people"></i> {{ __('messages.Volunteers') ?? 'إدارة المتطوعين' }}</a></li>
+            <li><a href="{{ route('forms.helpline.show') }}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> {{ __('messages.Public Form') ?? 'النموذج العام' }}</a></li>
+          </ul>
+        </div>
+      </li>
+      @endif
+
+      {{-- Forms Builder --}}
+      @if($canForms)
       <li>
         <a href="{{ route('forms.index') }}" title="{{ __('messages.Manage Forms') ?? 'Manage Forms' }}">
           <div class="parent-icon"><i class="bi bi-input-cursor-text"></i></div>
@@ -410,138 +505,50 @@
       </li>
       @endif
 
-      {{-- Helpline Module Area --}}
-      @if(auth()->check() && (auth()->user()->can('manage helpline') || auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Phoneline') || in_array(auth()->user()->email, ['phone@naegypt.org', 'pr@naegypt.org'])))
+      {{-- IT Change Requests --}}
+      @if($canChangeRequests)
       <li>
-        <a href="javascript:;" class="has-arrow" title="{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}">
-          <div class="parent-icon"><i class="bi bi-telephone-inbound-fill"></i></div>
-          <div class="menu-title">{{ __('messages.Helpline') ?? 'خطوط المساعدة' }}</div>
-        </a>
-        <ul>
-          <li>
-            <a href="{{ route('helpline.index') }}">
-              <i class="bi bi-bar-chart-line"></i> {{ __('messages.Calls Report') ?? 'تقارير المكالمات' }}
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('helpline.volunteers') }}">
-              <i class="bi bi-people"></i> {{ __('messages.Volunteers') ?? 'إدارة المتطوعين' }}
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('forms.helpline.show') }}" target="_blank">
-              <i class="bi bi-box-arrow-up-right"></i> {{ __('messages.Public Form') ?? 'النموذج العام' }}
-            </a>
-          </li>
-        </ul>
-      </li>
-      @endif
-
-      {{-- Store Area --}}
-      @if(auth()->check() && auth()->user()->can('manage store'))
-      <li>
-        <a href="{{ route('store.index') }}" title="{{ app()->getLocale() === 'ar' ? 'مخزون المستودع' : 'Store Inventory' }}">
-          <div class="parent-icon"><i class="bi bi-box-seam"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'مخزون المستودع' : 'Store Inventory' }}</div>
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('store.reports') }}" title="{{ app()->getLocale() === 'ar' ? 'تقارير المستودع' : 'Store Reports' }}">
-          <div class="parent-icon"><i class="bi bi-bar-chart-line"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'تقارير المستودع' : 'Store Reports' }}</div>
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('store.stocktaking.index') }}" title="{{ app()->getLocale() === 'ar' ? 'الجرد الفعلي' : 'Stocktaking' }}">
-          <div class="parent-icon"><i class="bi bi-clipboard-check"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'الجرد الفعلي' : 'Stocktaking' }}</div>
+        <a href="{{ route('change-requests.index') }}" title="{{ __('messages.IT Change Requests') }}">
+          <div class="parent-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div class="menu-title">{{ __('messages.IT Change Requests') }}</div>
         </a>
       </li>
       @endif
 
-      {{-- Lit read-only Area --}}
-      @if(auth()->check() && auth()->user()->can('view lit inventory') && !auth()->user()->can('manage store'))
+      {{-- Facebook Targeting --}}
+      @if($canFacebook)
       <li>
-        <a href="{{ route('lit.index') }}" title="{{ app()->getLocale() === 'ar' ? 'مخزون المطبوعات' : 'Lit Inventory' }}">
-          <div class="parent-icon"><i class="bi bi-book"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'مخزون المطبوعات' : 'Lit Inventory' }}</div>
+        <a href="{{ route('facebook-targeting.index') }}" title="{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}">
+          <div class="parent-icon"><i class="bi bi-facebook"></i></div>
+          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</div>
         </a>
       </li>
+      @endif
       @endif
 
-      {{-- Lit Reconciliation & Return --}}
-      @if(auth()->check() && (auth()->user()->can('view lit inventory') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('super admin')))
+      {{-- ======================================================== --}}
+      {{-- 6. SYSTEM ADMINISTRATION                                 --}}
+      {{-- ======================================================== --}}
+      @can('is-super-admin')
+      <li class="menu-label">{{ __('messages.System Administration') }}</li>
       <li>
-        <a href="{{ route('lit.reconciliation') }}" title="{{ __('messages.reconciliation_and_return') }}">
-          <div class="parent-icon"><i class="bi bi-arrow-left-right"></i></div>
-          <div class="menu-title">{{ __('messages.reconciliation_and_return') }}</div>
+        <a href="#menuAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuAdmin" title="{{ __('messages.Admin Settings') }}">
+          <div class="parent-icon"><i class="bi bi-gear-fill admin-icon"></i></div>
+          <div class="menu-title">{{ __('messages.Admin Settings') }}</div>
         </a>
+        <div class="collapse" id="menuAdmin">
+          <ul>
+            <li><a href="{{ route('users.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Users List') }}</a></li>
+            <li><a href="{{ route('permissions.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Permissions') }}</a></li>
+            <li><a href="{{ route('roles.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Rules') }}</a></li>
+            <li><a href="{{ route('subscribers.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Subscribers') }}</a></li>
+            <li><a href="{{ route('transactions.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Logs Details') }}</a></li>
+            <li><a href="{{ route('admin.api_usage.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.API & Mobile Analytics') }}</a></li>
+            <li><a href="{{ route('admin.apk_requests.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.apk_download_requests') }}</a></li>
+          </ul>
+        </div>
       </li>
-      @endif
-
-      {{-- Inventory Slips (Transfer & Return) --}}
-      @if(auth()->check() && (auth()->user()->can('view inventory slips') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin')))
-      <li>
-        <a href="{{ route('slips.index') }}" title="{{ __('messages.inventory_slips') }}">
-          <div class="parent-icon"><i class="bi bi-receipt"></i></div>
-          <div class="menu-title">{{ __('messages.inventory_slips') }}</div>
-        </a>
-      </li>
-      @endif
-
-      {{-- Monthly Inventory & Sales Ledger --}}
-      @if(auth()->check() && (auth()->user()->can('view lit ledger') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Store Manager') || auth()->user()->hasRole('rsc') || auth()->user()->hasRole('super admin')))
-      <li>
-        <a href="{{ route('lit.ledger') }}" title="{{ __('messages.monthly_ledger') }}">
-          <div class="parent-icon"><i class="bi bi-journal-text"></i></div>
-          <div class="menu-title">{{ __('messages.monthly_ledger') }}</div>
-        </a>
-      </li>
-      @endif
-
-      {{-- Literature Requests Area --}}
-      @if(auth()->check())
-      @if(auth()->user()->hasRole('gsr'))
-      <li>
-        <a href="{{ route('literature-requests.cart') }}" title="{{ __('messages.Literature Request') }}">
-          <div class="parent-icon"><i class="bi bi-cart"></i></div>
-          <div class="menu-title">{{ __('messages.Literature Request') }}</div>
-        </a>
-      </li>
-      @endif
-      @if(auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin'))
-      <li>
-        <a href="{{ route('literature-requests.treasurer') }}" title="{{ __('messages.Treasurer Dashboard') }}">
-          <div class="parent-icon"><i class="bi bi-wallet2"></i></div>
-          <div class="menu-title">{{ __('messages.Treasurer Dashboard') }}</div>
-        </a>
-      </li>
-      @endif
-      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User'))
-      <li>
-        <a href="{{ route('literature-requests.committee') }}" title="{{ __('messages.Literature Requests') }}">
-          <div class="parent-icon"><i class="bi bi-file-earmark-spreadsheet"></i></div>
-          <div class="menu-title">{{ __('messages.Literature Requests') }}</div>
-        </a>
-      </li>
-      @endif
-      @if(auth()->user()->hasRole('Committees') || auth()->user()->hasRole('super admin'))
-      <li>
-        <a href="{{ route('committee-literature.index') }}" title="{{ __('messages.committee_literature_requests') ?? 'Committee Literature Requests' }}">
-          <div class="parent-icon"><i class="bi bi-journal-bookmark"></i></div>
-          <div class="menu-title">{{ __('messages.committee_literature_requests') ?? 'Committee Literature' }}</div>
-        </a>
-      </li>
-      @endif
-      @if(auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('gsr'))
-      <li>
-        <a href="{{ route('literature-requests.archive') }}" title="{{ __('messages.literature_requests_archive') }}">
-          <div class="parent-icon"><i class="bi bi-archive"></i></div>
-          <div class="menu-title">{{ __('messages.literature_requests_archive') }}</div>
-        </a>
-      </li>
-      @endif
-      @endif
+      @endcan
 
     </ul>
     <!--end navigation-->
