@@ -88,7 +88,7 @@ CREATE TABLE `api_daily_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `api_daily_stats_date_platform_unique` (`date`,`platform`),
   KEY `api_daily_stats_date_index` (`date`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_daily_stats` WRITE;
@@ -114,7 +114,9 @@ INSERT INTO `api_daily_stats` VALUES
 (18,'2026-09-26','all',127,127,0,0,36.22,4,0,'{\"\\/api\\/v1\\/home\":21,\"\\/api\\/v1\\/events\":13,\"\\/api\\/v1\\/calendar-events\":13,\"\\/api\\/v1\\/cities\":9,\"\\/api\\/v1\\/meetings\":9,\"\\/api\\/v1\\/days\":9,\"\\/api\\/v1\\/options\":9,\"\\/api\\/v1\\/topics\":9,\"\\/api\\/v1\\/groups\":9,\"\\/api\\/v1\\/neighborhoods\":9}','2026-09-26 21:05:01','2026-09-26 21:05:01'),
 (19,'2026-09-26','android',127,127,0,0,36.22,4,0,'{\"\\/api\\/v1\\/home\":21,\"\\/api\\/v1\\/events\":13,\"\\/api\\/v1\\/calendar-events\":13,\"\\/api\\/v1\\/cities\":9,\"\\/api\\/v1\\/meetings\":9,\"\\/api\\/v1\\/days\":9,\"\\/api\\/v1\\/options\":9,\"\\/api\\/v1\\/topics\":9,\"\\/api\\/v1\\/groups\":9,\"\\/api\\/v1\\/neighborhoods\":9}','2026-09-26 21:05:01','2026-09-26 21:05:01'),
 (20,'2026-09-27','all',211,211,0,0,37.47,4,0,'{\"\\/api\\/v1\\/home\":34,\"\\/api\\/v1\\/events\":20,\"\\/api\\/v1\\/calendar-events\":20,\"\\/api\\/v1\\/options\":16,\"\\/api\\/v1\\/days\":16,\"\\/api\\/v1\\/topics\":16,\"\\/api\\/v1\\/groups\":16,\"\\/api\\/v1\\/neighborhoods\":16,\"\\/api\\/v1\\/cities\":16,\"\\/api\\/v1\\/meetings\":16}','2026-09-27 21:05:01','2026-09-27 21:05:01'),
-(21,'2026-09-27','android',211,211,0,0,37.47,4,0,'{\"\\/api\\/v1\\/home\":34,\"\\/api\\/v1\\/events\":20,\"\\/api\\/v1\\/calendar-events\":20,\"\\/api\\/v1\\/options\":16,\"\\/api\\/v1\\/days\":16,\"\\/api\\/v1\\/topics\":16,\"\\/api\\/v1\\/groups\":16,\"\\/api\\/v1\\/neighborhoods\":16,\"\\/api\\/v1\\/cities\":16,\"\\/api\\/v1\\/meetings\":16}','2026-09-27 21:05:01','2026-09-27 21:05:01');
+(21,'2026-09-27','android',211,211,0,0,37.47,4,0,'{\"\\/api\\/v1\\/home\":34,\"\\/api\\/v1\\/events\":20,\"\\/api\\/v1\\/calendar-events\":20,\"\\/api\\/v1\\/options\":16,\"\\/api\\/v1\\/days\":16,\"\\/api\\/v1\\/topics\":16,\"\\/api\\/v1\\/groups\":16,\"\\/api\\/v1\\/neighborhoods\":16,\"\\/api\\/v1\\/cities\":16,\"\\/api\\/v1\\/meetings\":16}','2026-09-27 21:05:01','2026-09-27 21:05:01'),
+(22,'2026-09-28','all',189,189,0,0,34.9,5,0,'{\"\\/api\\/v1\\/home\":31,\"\\/api\\/v1\\/calendar-events\":19,\"\\/api\\/v1\\/events\":18,\"\\/api\\/v1\\/stats\":15,\"\\/api\\/v1\\/days\":14,\"\\/api\\/v1\\/cities\":14,\"\\/api\\/v1\\/topics\":14,\"\\/api\\/v1\\/groups\":13,\"\\/api\\/v1\\/neighborhoods\":13,\"\\/api\\/v1\\/meetings\":13}','2026-09-28 21:05:01','2026-09-28 21:05:01'),
+(23,'2026-09-28','android',189,189,0,0,34.9,5,0,'{\"\\/api\\/v1\\/home\":31,\"\\/api\\/v1\\/calendar-events\":19,\"\\/api\\/v1\\/events\":18,\"\\/api\\/v1\\/stats\":15,\"\\/api\\/v1\\/days\":14,\"\\/api\\/v1\\/cities\":14,\"\\/api\\/v1\\/topics\":14,\"\\/api\\/v1\\/groups\":13,\"\\/api\\/v1\\/neighborhoods\":13,\"\\/api\\/v1\\/meetings\":13}','2026-09-28 21:05:01','2026-09-28 21:05:01');
 /*!40000 ALTER TABLE `api_daily_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_logs`;
@@ -141,7 +143,7 @@ CREATE TABLE `api_logs` (
   KEY `api_logs_endpoint_created_at_index` (`endpoint`,`created_at`),
   KEY `api_logs_created_at_index` (`created_at`),
   CONSTRAINT `api_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=1454 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1643 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_logs` WRITE;
@@ -1599,7 +1601,196 @@ INSERT INTO `api_logs` VALUES
 (1450,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'70.32.142.218',NULL,'okhttp/4.9.2','2026-09-27 18:39:46'),
 (1451,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'70.32.142.218',NULL,'okhttp/4.9.2','2026-09-27 18:39:46'),
 (1452,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'70.32.142.218',NULL,'okhttp/4.9.2','2026-09-27 18:39:46'),
-(1453,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'70.32.142.218',NULL,'okhttp/4.9.2','2026-09-27 18:39:46');
+(1453,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'70.32.142.218',NULL,'okhttp/4.9.2','2026-09-27 18:39:46'),
+(1454,'GET','/api/v1/home','api.v1.home',200,13,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:29'),
+(1455,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:29'),
+(1456,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:29'),
+(1457,'GET','/api/v1/jft','api.v1.jft',200,9,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:30'),
+(1458,'GET','/api/v1/cities','api.v1.cities.index',200,11,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:30'),
+(1459,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:30'),
+(1460,'GET','/api/v1/groups','api.v1.groups.index',200,136,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:30'),
+(1461,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:30'),
+(1462,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,55,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:31'),
+(1463,'GET','/api/v1/meetings','api.v1.meetings.index',200,111,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:31'),
+(1464,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:32'),
+(1465,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:40'),
+(1466,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:40'),
+(1467,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:45'),
+(1468,'GET','/api/v1/meetings','api.v1.meetings.index',200,125,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:51'),
+(1469,'GET','/api/v1/groups','api.v1.groups.index',200,134,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:51'),
+(1470,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:55'),
+(1471,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:17:57'),
+(1472,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:07'),
+(1473,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:11'),
+(1474,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:18'),
+(1475,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:18'),
+(1476,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:26'),
+(1477,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:28'),
+(1478,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:18:28'),
+(1479,'GET','/api/v1/cities','api.v1.cities.index',200,21,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1480,'GET','/api/v1/events','api.v1.events.index',200,21,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1481,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,36,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1482,'GET','/api/v1/meetings','api.v1.meetings.index',200,148,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1483,'GET','/api/v1/groups','api.v1.groups.index',200,161,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1484,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1485,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1486,'GET','/api/v1/options','api.v1.options.index',200,11,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:14'),
+(1487,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:29'),
+(1488,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:29'),
+(1489,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'41.33.41.30',NULL,'okhttp/4.9.2','2026-09-28 12:19:30'),
+(1490,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1491,'GET','/api/v1/home','api.v1.home',200,26,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1492,'GET','/api/v1/home','api.v1.home',200,31,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1493,'GET','/api/v1/stats','api.v1.stats',200,29,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1494,'GET','/api/v1/meetings','api.v1.meetings.index',200,114,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1495,'GET','/api/v1/cities','api.v1.cities.index',200,8,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1496,'GET','/api/v1/groups','api.v1.groups.index',200,135,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1497,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1498,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:08'),
+(1499,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:09'),
+(1500,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:09'),
+(1501,'GET','/api/v1/days','api.v1.days.index',200,11,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:09'),
+(1502,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:09'),
+(1503,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:09'),
+(1504,'GET','/api/v1/events','api.v1.events.index',200,15,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1505,'GET','/api/v1/cities','api.v1.cities.index',200,24,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1506,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,35,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1507,'GET','/api/v1/meetings','api.v1.meetings.index',200,168,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1508,'GET','/api/v1/groups','api.v1.groups.index',200,152,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1509,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,55,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1510,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1511,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:11'),
+(1512,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:12'),
+(1513,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:12'),
+(1514,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:12'),
+(1515,'GET','/api/v1/cities','api.v1.cities.index',200,13,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:27'),
+(1516,'GET','/api/v1/events','api.v1.events.index',200,16,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:27'),
+(1517,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,30,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:27'),
+(1518,'GET','/api/v1/meetings','api.v1.meetings.index',200,152,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1519,'GET','/api/v1/groups','api.v1.groups.index',200,155,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1520,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,55,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1521,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1522,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1523,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1524,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:28'),
+(1525,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'102.41.115.133',NULL,'okhttp/4.9.2','2026-09-28 13:06:29'),
+(1526,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:44'),
+(1527,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:44'),
+(1528,'GET','/api/v1/meetings','api.v1.meetings.index',200,113,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:44'),
+(1529,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:47'),
+(1530,'GET','/api/v1/events','api.v1.events.index',200,9,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:52'),
+(1531,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:56'),
+(1532,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:06:58'),
+(1533,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:07:09'),
+(1534,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:07:52'),
+(1535,'GET','/api/v1/service-bodies','api.v1.service-bodies.index',200,11,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:07:56'),
+(1536,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:08:05'),
+(1537,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:08:10'),
+(1538,'GET','/api/v1/days','api.v1.days.index',200,11,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:08:25'),
+(1539,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:16'),
+(1540,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:20'),
+(1541,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:25'),
+(1542,'GET','/api/v1/groups','api.v1.groups.index',200,133,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:29'),
+(1543,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:31'),
+(1544,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:32'),
+(1545,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:33'),
+(1546,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:36'),
+(1547,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:38'),
+(1548,'GET','/api/v1/events','api.v1.events.index',200,9,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:39'),
+(1549,'GET','/api/v1/cities','api.v1.cities.index',200,8,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:39'),
+(1550,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:09:50'),
+(1551,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:14:11'),
+(1552,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'122.2.214.11',NULL,'okhttp/4.9.2','2026-09-28 13:14:11'),
+(1553,'GET','/api/v1/cities','api.v1.cities.index',200,19,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1554,'GET','/api/v1/events','api.v1.events.index',200,24,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1555,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,34,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1556,'GET','/api/v1/groups','api.v1.groups.index',200,142,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1557,'GET','/api/v1/meetings','api.v1.meetings.index',200,148,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1558,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1559,'GET','/api/v1/options','api.v1.options.index',200,12,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1560,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,63,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:57'),
+(1561,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:58'),
+(1562,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:58'),
+(1563,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'81.10.49.40',NULL,'okhttp/4.9.2','2026-09-28 15:27:58'),
+(1564,'GET','/api/v1/home','api.v1.home',200,28,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1565,'GET','/api/v1/jft','api.v1.jft',200,21,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1566,'GET','/api/v1/home','api.v1.home',200,30,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1567,'GET','/api/v1/stats','api.v1.stats',200,28,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1568,'GET','/api/v1/meetings','api.v1.meetings.index',200,127,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1569,'GET','/api/v1/cities','api.v1.cities.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1570,'GET','/api/v1/groups','api.v1.groups.index',200,158,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1571,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1572,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:00'),
+(1573,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,67,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:01'),
+(1574,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:01'),
+(1575,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:01'),
+(1576,'GET','/api/v1/topics','api.v1.topics.index',200,14,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:01'),
+(1577,'GET','/api/v1/days','api.v1.days.index',200,16,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:01'),
+(1578,'GET','/api/v1/helpline-calls/schema','api.v1.helpline-calls.schema',200,10,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:18:05'),
+(1579,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,26,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 19:19:20'),
+(1580,'GET','/api/v1/stats','api.v1.stats',200,18,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1581,'GET','/api/v1/home','api.v1.home',200,24,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1582,'GET','/api/v1/home','api.v1.home',200,25,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1583,'GET','/api/v1/meetings','api.v1.meetings.index',200,126,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1584,'GET','/api/v1/jft','api.v1.jft',200,19,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1585,'GET','/api/v1/cities','api.v1.cities.index',200,17,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1586,'GET','/api/v1/events','api.v1.events.index',200,15,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1587,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,24,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1588,'GET','/api/v1/groups','api.v1.groups.index',200,155,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:56'),
+(1589,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:57'),
+(1590,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:57'),
+(1591,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:57'),
+(1592,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:57'),
+(1593,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:05:57'),
+(1594,'GET','/api/v1/cities','api.v1.cities.index',200,10,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1595,'GET','/api/v1/groups','api.v1.groups.index',200,135,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:08'),
+(1596,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1597,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1598,'GET','/api/v1/meetings','api.v1.meetings.index',200,120,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1599,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1600,'GET','/api/v1/topics','api.v1.topics.index',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1601,'GET','/api/v1/days','api.v1.days.index',200,15,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1602,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:09'),
+(1603,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:10'),
+(1604,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:10'),
+(1605,'GET','/api/v1/events','api.v1.events.index',200,15,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1606,'GET','/api/v1/cities','api.v1.cities.index',200,20,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1607,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,34,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1608,'GET','/api/v1/meetings','api.v1.meetings.index',200,153,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1609,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1610,'GET','/api/v1/groups','api.v1.groups.index',200,172,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1611,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1612,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:41'),
+(1613,'GET','/api/v1/days','api.v1.days.index',200,11,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:42'),
+(1614,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:42'),
+(1615,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:42'),
+(1616,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:50'),
+(1617,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:50'),
+(1618,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:50'),
+(1619,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:50'),
+(1620,'GET','/api/v1/events','api.v1.events.index',200,14,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1621,'GET','/api/v1/cities','api.v1.cities.index',200,23,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1622,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,36,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1623,'GET','/api/v1/meetings','api.v1.meetings.index',200,169,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1624,'GET','/api/v1/groups','api.v1.groups.index',200,141,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1625,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1626,'GET','/api/v1/options','api.v1.options.index',200,12,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1627,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:52'),
+(1628,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1629,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1630,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,55,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1631,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1632,'GET','/api/v1/home','api.v1.home',200,16,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1633,'GET','/api/v1/events','api.v1.events.index',200,13,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1634,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,82,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1635,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:06:53'),
+(1636,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:08:59'),
+(1637,'GET','/api/v1/helpline-calls/schema','api.v1.helpline-calls.schema',200,8,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:09:37'),
+(1638,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,18,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:18'),
+(1639,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
+(1640,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
+(1641,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
+(1642,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26');
 /*!40000 ALTER TABLE `api_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `apk_download_requests`;
@@ -1620,7 +1811,7 @@ CREATE TABLE `apk_download_requests` (
   UNIQUE KEY `apk_download_requests_token_unique` (`token`),
   KEY `apk_download_requests_email_index` (`email`),
   KEY `apk_download_requests_expires_at_index` (`expires_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `apk_download_requests` WRITE;
@@ -1665,7 +1856,10 @@ INSERT INTO `apk_download_requests` VALUES
 (37,'al3fasi1973@gmail.com','m6BYjCfXmWlFmeYUbqG6azyG8c7CQV7QNKOpeaEzevq8XRYVu5t1yVuuMBdjkga7','104.23.200.153','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-27 18:39:55',2,'2026-09-26 18:41:15','2026-09-26 18:39:55','2026-09-26 18:41:15'),
 (38,'yahialdeeb96@gmail.com','rb4AutuIyFjZjemaK1Nlr7gKIMz60CQFIr9qZynNx6715BZAsRg7JgxRZ6aTrM0z','172.68.234.155','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-28 00:26:53',5,'2026-09-27 00:39:55','2026-09-27 00:26:53','2026-09-27 00:39:55'),
 (39,'ahmedabogrio@gmail.com','eMD2OO4UkBzfJPQwZJAutrCk4cswU2EdyVNZUTjzeBXfZHuHLWVNKr47m6yOFiub','154.184.95.81','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-28 12:41:25',0,NULL,'2026-09-27 12:41:25','2026-09-27 12:41:25'),
-(40,'poika_mohamed@yahoo.com','MY62r53Cs3WbU4mPygsWAU5Cer14hFSuM23A93zE5i0VoGOEaXXO1yDFsfDiGcAZ','156.206.97.193','Mozilla/5.0 (Linux; Android 7.0; Infinix X559C) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36','2026-09-28 20:06:36',0,NULL,'2026-09-27 20:06:36','2026-09-27 20:06:36');
+(40,'poika_mohamed@yahoo.com','MY62r53Cs3WbU4mPygsWAU5Cer14hFSuM23A93zE5i0VoGOEaXXO1yDFsfDiGcAZ','156.206.97.193','Mozilla/5.0 (Linux; Android 7.0; Infinix X559C) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36','2026-09-28 20:06:36',0,NULL,'2026-09-27 20:06:36','2026-09-27 20:06:36'),
+(41,'aeismail2015@gmail.com','r5S4UFfvxh6Qa0XvumuYM46ud2IeA4FjEw5rGB4TFa5Q3VfiCEZDAJJo6DaqXpUh','162.159.122.117','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36','2026-09-29 19:38:49',0,NULL,'2026-09-28 19:38:49','2026-09-28 19:38:49'),
+(42,'aielsaid2024@gmail.com','HhLwVRjb155wIVfMeAKPieMNNJNMhvnLQTRg6ayEcV4Tgw7wNgGnnDaAIw6tChzH','172.70.108.164','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36','2026-09-29 19:41:32',1,'2026-09-28 19:49:16','2026-09-28 19:41:32','2026-09-28 19:49:16'),
+(43,'mohamedalsayd11122@gmail.com','v131S6aUkBr5FDcVRXDsIon8lLNIZliiqkhfNVx68QOEY7OzwPXzaXacixElT9Wp','162.159.122.116','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-29 21:00:31',0,NULL,'2026-09-28 21:00:31','2026-09-28 21:00:31');
 /*!40000 ALTER TABLE `apk_download_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `cache`;
@@ -1854,26 +2048,26 @@ INSERT INTO `calendar_events` VALUES
 (14,'اجتماع لجنة الدعم والتطوير','2026-05-02 19:30:00','2026-05-02 22:00:00','اجتماع عمل لجنة الدعم والتطوير',184,'#3788d8','2026-05-11 10:38:06','2026-05-11 10:38:06','لجنة الدعم والتطوير','مقر الجمعية بالمقطم','[\"once\"]',0),
 (15,'اجتماع لجنة خدمة الاقليم','2026-07-17 15:00:00','2026-07-17 22:00:00',NULL,184,'#570000','2026-05-11 10:40:25','2026-07-29 09:31:08','لجنة خدمة إقليم مصر','الجامعة العمالية بمدينة نصر','[\"3rd\"]',0),
 (16,'اجتماع لجنة العلاقات العامة','2026-05-03 19:30:00','2026-05-03 21:30:00','اجتماع لجنة العلاقات العامة ',184,'#0030c2','2026-05-11 15:47:53','2026-05-11 15:47:53','لجنة العلاقات العامة','مقر الجمعية بالمقطم','[\"once\"]',0),
-(17,'اجتماع مجموعة خطوط الهاتف','2026-07-07 21:00:00','2026-07-07 23:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#28a745','2026-05-11 15:50:19','2026-07-29 09:29:39','لجنة العلاقات العامة','زووم','[\"1st\"]',0),
+(17,'اجتماع مجموعة خطوط الهاتف','2026-09-01 21:00:00','2026-09-01 23:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#28a745','2026-05-11 15:50:19','2026-09-28 03:43:56','لجنة العلاقات العامة','https://us02web.zoom.us/j/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1','[\"1st\"]',0),
 (18,'اجتماع مجموعة السوشيال ميديا','2026-05-10 21:00:00','2026-05-10 22:00:00','اجتماع مجموعة السوشيال ميديا',184,'#3788d8','2026-05-11 15:52:05','2026-05-11 15:52:05','لجنة العلاقات العامة','زووم','[\"once\"]',0),
 (19,'اجتماع مجموعة العلاقات الخارجية','2026-05-24 21:00:00','2026-05-24 22:00:00','اجتماع مجموعة العلاقات الخارجية',184,'#d10000','2026-05-11 15:54:18','2026-05-11 15:54:18','لجنة العلاقات العامة','زووم','[\"once\"]',0),
-(20,'اجتماع عمل لجنة الترجمة','2026-08-01 20:00:00','2026-08-01 21:30:00',NULL,184,'#087500','2026-05-11 16:04:34','2026-07-29 09:32:14','لجنة الترجمة','زووم','[\"1st\"]',0),
+(20,'اجتماع عمل لجنة الترجمة','2026-10-03 20:00:00','2026-10-03 21:30:00',NULL,184,'#087500','2026-05-11 16:04:34','2026-09-28 03:46:29','لجنة الترجمة','https://us06web.zoom.us/j/3991041880?pwd=scgJbdf0PtFib69OIy4VJL5i3Bhaej.1&omn=94722422307','[\"1st\"]',0),
 (21,'اجتماع لجنة الأدبيات للتوزيع','2026-07-31 18:30:00','2026-07-31 20:00:00','اجتماع تسليم الأدبيات',184,'#0019d6','2026-05-11 16:12:07','2026-07-29 09:12:12','لجنة الأدبيات','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"last\"]',0),
 (22,'اجتماع عمل لجنة الأدبيات','2026-07-06 19:30:00','2026-07-06 21:00:00','اجتماع لجنة الأدبيات الإداري',184,'#0019d6','2026-05-11 16:13:42','2026-07-29 09:11:54','لجنة الأدبيات','مقر الجمعية بالمقطم','[\"1st\"]',0),
 (53,'نحن بالفعل نتعافى - المؤتمر الثاني لمنتدى دعم مجموعات شمال شرق القاهرة','2026-06-26 13:00:00','2026-06-26 23:00:00','نحن بالفعل نتعافى\nالمؤتمر الثاني واحتفالية منتدى دعم مجموعات شمال شرق القاهرة',349,'#d73737','2026-05-20 15:29:15','2026-06-06 06:26:22','منتدى دعم مجموعات شمال شرق القاهرة','الجامعة العمالية بمدينة نصر','[\"once\"]',1),
 (153,'GSRs & RCMs يوم تعليمي','2026-06-12 15:00:00','2026-06-12 21:00:00','يوم تعليمي لممثلي المجموعات ومندوبي المناطق والمنتديات',184,'#0016bd','2026-06-06 05:03:36','2026-06-09 05:20:34','لجنة الدعم والتطوير','الجامعة العمالية بمدينة نصر','[\"once\"]',1),
 (154,'مسار يجمعنا – المؤتمر السنوي الثلاثون – مصر 2026','2026-10-09 10:00:00','2026-10-10 23:00:00','يُعد المؤتمر السنوي فرصة مميزة لاجتماع الأعضاء والأصدقاء في أجواء من التعافي والخدمة والوحدة، من خلال برنامج متنوع يضم الاجتماعات، المشاركات، الأنشطة، والفعاليات التي تعكس رسالة الزمالة وروحها.\n\nتستمر الاستعدادات للمؤتمر من خلال فرق الخدمة المختلفة لضمان تقديم حدث يليق بهذه المناسبة المميزة،\n\nنتطلع إلى لقائكم جميعًا في المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين في مصر، في حدث يجمعنا على طريق التعافي والخدمة والوحدة.',184,'#0061c2','2026-06-06 05:13:30','2026-07-29 09:38:37','إقليم مصر','الجامعة الأمريكية بميدان التحرير','[\"once\"]',1),
-(169,'اجتماع مجموعة السوشيال ميديا','2026-07-12 20:00:00','2026-07-12 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#0062ff','2026-07-07 02:40:41','2026-07-29 09:19:14','لجنة العلاقات العامة','زووم','[\"2nd\"]',0),
+(169,'اجتماع مجموعة السوشيال ميديا','2026-09-13 20:00:00','2026-09-13 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#0062ff','2026-07-07 02:40:41','2026-09-28 03:43:31','لجنة العلاقات العامة','https://us02web.zoom.us/j/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1','[\"2nd\"]',0),
 (170,'اجتماع لجنة الدعم والتطوير','2026-07-04 19:30:00','2026-07-04 21:30:00',NULL,184,'#00698f','2026-07-29 08:31:42','2026-07-29 08:31:42','لجنة الدعم والتطوير','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"1st\"]',0),
 (171,'اجتماع لجنة الدعم والتطوير','2026-07-18 19:30:00','2026-07-18 21:30:00',NULL,184,'#00698f','2026-07-29 08:32:32','2026-07-29 08:32:32','لجنة الدعم والتطوير','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"3rd\"]',0),
-(172,'اجتماع مجموعة المنعزلين','2026-07-25 21:00:00','2026-07-25 22:00:00','مجموعة عمل منبثقة من لجنة الدعم والتطوير',184,'#dc3545','2026-07-29 08:39:36','2026-07-29 09:31:52','لجنة الدعم والتطوير','زووم','[\"4th\"]',0),
+(172,'اجتماع مجموعة المنعزلين','2026-09-26 21:00:00','2026-09-26 22:00:00','مجموعة عمل منبثقة من لجنة الدعم والتطوير',184,'#dc3545','2026-07-29 08:39:36','2026-09-28 03:44:32','لجنة الدعم والتطوير','https://us02web.zoom.us/j/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1','[\"4th\"]',0),
 (173,'اجتماع لجنة الأنشطة','2026-07-11 20:00:00','2026-07-11 22:00:00',NULL,184,'#fd7e14','2026-07-29 08:44:23','2026-07-29 08:44:23','لجنة الأنشطة','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"2nd\"]',0),
 (174,'اجتماع لجنة الأنشطة','2026-07-25 20:00:00','2026-07-25 22:00:00',NULL,184,'#fd7e14','2026-07-29 08:45:14','2026-07-29 08:45:14','لجنة الأنشطة','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"4th\"]',0),
 (175,'اجتماع لجنة العلاقات العامة','2026-07-05 19:30:00','2026-07-05 21:30:00',NULL,184,'#17a2b8','2026-07-29 08:50:32','2026-07-29 08:50:32','لجنة العلاقات العامة','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"1st\"]',0),
 (176,'اجتماع لجنة العلاقات العامة','2026-07-19 19:30:00','2026-07-19 21:30:00',NULL,184,'#17a2b8','2026-07-29 08:54:10','2026-07-29 08:54:10','لجنة العلاقات العامة','9460 شارع  الشهيد كريم  بنونه – من شارع  9 – المقطم.','[\"3rd\"]',0),
-(177,'اجتماع مجموعة خطوط الهاتف','2026-07-21 21:00:00','2026-07-21 23:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#28a745','2026-07-29 08:57:49','2026-07-29 09:29:51','لجنة العلاقات العامة','زووم','[\"3rd\"]',0),
-(178,'اجتماع مجموعة العلاقات الخارجية','2026-07-08 21:00:00','2026-07-08 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#6f42c1','2026-07-29 09:01:32','2026-07-29 09:30:08','لجنة العلاقات العامة','زووم','[\"2nd\"]',0),
-(179,'اجتماع مجموعة العلاقات الخارجية','2026-07-22 21:00:00','2026-07-22 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#6f42c1','2026-07-29 09:03:12','2026-07-29 09:29:58','لجنة العلاقات العامة','زووم','[\"4th\"]',0),
+(177,'اجتماع مجموعة خطوط الهاتف','2026-09-15 21:00:00','2026-09-15 23:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#28a745','2026-07-29 08:57:49','2026-09-28 03:44:03','لجنة العلاقات العامة','https://us02web.zoom.us/j/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1','[\"3rd\"]',0),
+(178,'اجتماع مجموعة العلاقات الخارجية','2026-09-09 21:00:00','2026-09-09 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#6f42c1','2026-07-29 09:01:32','2026-09-28 03:42:33','لجنة العلاقات العامة','https://us02web.zoom.us/j/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1','[\"2nd\"]',0),
+(179,'اجتماع مجموعة العلاقات الخارجية','2026-09-23 21:00:00','2026-09-23 22:00:00','مجموعة عمل منبثقة من لجنة العلاقات العامة',184,'#6f42c1','2026-07-29 09:03:12','2026-09-28 03:42:43','لجنة العلاقات العامة','https://us02web.zoom.us/j/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1','[\"4th\"]',0),
 (180,'ملتقي مجموعات جنوب سيناء','2026-09-24 09:00:00','2026-09-28 10:00:00','تواجد لجنة الدعم والتطوير في منطقة جنوب سيناء ودعمها لمجموعات المنطقة',193,'#00698f','2026-09-18 12:26:29','2026-09-18 12:26:29','لجنة الدعم والتطوير','جنوب سيناء','[\"once\"]',1);
 /*!40000 ALTER TABLE `calendar_events` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -2962,7 +3156,7 @@ CREATE TABLE `helpline_calls` (
   KEY `helpline_calls_caller_type_index` (`caller_type`),
   KEY `helpline_calls_referral_source_index` (`referral_source`),
   CONSTRAINT `helpline_calls_volunteer_id_foreign` FOREIGN KEY (`volunteer_id`) REFERENCES `helpline_volunteers` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `helpline_calls` WRITE;
@@ -3061,7 +3255,11 @@ INSERT INTO `helpline_calls` VALUES
 (94,'less_than_5','2026-09-27','4:00 PM - 6:00 PM','أهالي وأقارب المدمنين',NULL,'TikTok',NULL,NULL,NULL,7,'هيثم',NULL,0,'اخو عضو محتمل بيتصل عشان يساعد اخوه يحضر ، رحيت بيه و عرفته بينا و طلبت منه يخلي اخوه يكلمنا و احنا نقدمله المساعدة و عرفته ااقرب اجتماعات ليه',0,NULL,'2026-09-27 14:26:32','2026-09-27 14:26:32','2026-09-27 14:26:32'),
 (95,'less_than_5','2026-09-27','4:00 PM - 6:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,7,'هيثم',NULL,0,'عضو محتمل بيتصل عشان ياخد موجه و هو جوا مكان علاجي ، رحبت بيه و عرفته اننا مجموعة من المدمنين المتعافين بنساعد بعض عن طريق برنامج ال١٢ خطوة و حضور الاجتماعات و اننا ملناش رسوم اشتراك ولا مستحقات و اننا مش مستشفى ولا مصحة ولا مركز سحب السموم و اننا بناخد الموجه و دايرة ثقتنا من داخل اوض الاجتماعت و عرفته لما يطلع بالسلامة يكبمنا على نفس الرقم دا واحما هنسلعده يحضر اجتماع',0,NULL,'2026-09-27 14:29:22','2026-09-27 14:29:22','2026-09-27 14:29:22'),
 (96,'less_than_5','2026-09-27','4:00 PM - 6:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,7,'هيثم',NULL,0,'عضوة محتملة بتتصل عشان لسة طالعة من مكان علاجي و عايزة تحضر اجتماع، رحبت بيها وعرفتها ما هو برنامج زمالة المدمنين المجهولين و عرفتها ااقرب اجتماع ليها يوم الاحد',0,NULL,'2026-09-27 15:00:39','2026-09-27 15:00:39','2026-09-27 15:00:39'),
-(97,'less_than_5','2026-09-27','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'YouTube',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو أول مرة يكلمنا عرفته بينا وبطريقتنا وبمطلب العضوية وأننا غير منتسبين واديته بيانات طنطا الامل والعيش ممتنعا',0,NULL,'2026-09-27 17:27:23','2026-09-27 17:27:23','2026-09-27 17:27:23');
+(97,'less_than_5','2026-09-27','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'YouTube',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو أول مرة يكلمنا عرفته بينا وبطريقتنا وبمطلب العضوية وأننا غير منتسبين واديته بيانات طنطا الامل والعيش ممتنعا',0,NULL,'2026-09-27 17:27:23','2026-09-27 17:27:23','2026-09-27 17:27:23'),
+(98,'less_than_5','2026-09-28','2:00 PM - 4:00 PM','عضو حالي',NULL,'Facebook',NULL,NULL,NULL,6,'هاني ج',NULL,0,'تم التوجيه لمجموعة حدائق القبة اليوم الاثنين',0,NULL,'2026-09-28 11:46:14','2026-09-28 11:46:14','2026-09-28 11:46:14'),
+(99,'less_than_5','2026-09-28','10:00 PM - 12:00 AM','أعضاء محتملة',NULL,'لجنة المستشفيات',NULL,'مستشفي النفسيه بور سعيد',NULL,5,'عبد الرحمن ي',NULL,0,'عضو محتمل بيسأل علي اجتماعات بور سعيد رحبت بيه وعرفته بينا ووجهته علي المجموعه',0,NULL,'2026-09-28 19:19:20','2026-09-28 19:19:20','2026-09-28 19:19:20'),
+(100,'less_than_5','2026-09-28','10:00 PM - 12:00 AM','عضو حالي',NULL,'جدول الاجتماعات',NULL,NULL,NULL,5,'عبد الرحمن ي',NULL,0,'عضو بيسأل علي اجتماعات حدايق القبه والخط قطع',0,NULL,'2026-09-28 20:11:18','2026-09-28 20:11:18','2026-09-28 20:11:18'),
+(101,'less_than_5','2026-09-28','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو محتمل كان فاكرنا رقم مركز العزيمة عرفته بينا وبطريقتنا وأننا غير منتسبين وبمطلب العضوية وخد بيانات الغردقة',0,NULL,'2026-09-28 20:17:53','2026-09-28 20:17:53','2026-09-28 20:17:53');
 /*!40000 ALTER TABLE `helpline_calls` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `helpline_volunteers`;
@@ -4642,13 +4840,20 @@ INSERT INTO `model_has_permissions` VALUES
 (16,'App\\Models\\User',418),
 (22,'App\\Models\\User',398),
 (22,'App\\Models\\User',418),
+(22,'App\\Models\\User',420),
 (22,'App\\Models\\User',423),
+(22,'App\\Models\\User',425),
+(22,'App\\Models\\User',430),
 (25,'App\\Models\\User',398),
 (25,'App\\Models\\User',418),
+(25,'App\\Models\\User',425),
 (26,'App\\Models\\User',398),
 (26,'App\\Models\\User',418),
+(26,'App\\Models\\User',425),
+(27,'App\\Models\\User',425),
 (28,'App\\Models\\User',398),
-(28,'App\\Models\\User',418);
+(28,'App\\Models\\User',418),
+(28,'App\\Models\\User',425);
 /*!40000 ALTER TABLE `model_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `model_has_roles`;
@@ -4759,7 +4964,6 @@ INSERT INTO `model_has_roles` VALUES
 (3,'App\\Models\\User',225),
 (3,'App\\Models\\User',340),
 (3,'App\\Models\\User',413),
-(3,'App\\Models\\User',420),
 (3,'App\\Models\\User',423),
 (69,'App\\Models\\User',181),
 (69,'App\\Models\\User',185),
@@ -4772,6 +4976,7 @@ INSERT INTO `model_has_roles` VALUES
 (69,'App\\Models\\User',406),
 (69,'App\\Models\\User',407),
 (69,'App\\Models\\User',418),
+(69,'App\\Models\\User',425),
 (69,'App\\Models\\User',426),
 (69,'App\\Models\\User',427),
 (70,'App\\Models\\User',424),
@@ -4783,7 +4988,9 @@ INSERT INTO `model_has_roles` VALUES
 (75,'App\\Models\\User',417),
 (76,'App\\Models\\User',192),
 (78,'App\\Models\\User',225),
-(78,'App\\Models\\User',424);
+(78,'App\\Models\\User',420),
+(78,'App\\Models\\User',424),
+(78,'App\\Models\\User',430);
 /*!40000 ALTER TABLE `model_has_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `neighborhoods`;
@@ -5279,7 +5486,7 @@ CREATE TABLE `service_committees` (
   KEY `service_committees_parent_id_foreign` (`parent_id`),
   CONSTRAINT `service_committees_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `service_committees` (`id`) ON DELETE SET NULL,
   CONSTRAINT `service_committees_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `service_committees` WRITE;
@@ -5293,7 +5500,9 @@ INSERT INTO `service_committees` VALUES
 (6,NULL,NULL,'active',NULL,NULL,'لجنة الأنشطة','Activities Committee','شارع كريم بنونه - مقطم','Mokattam','عادل',NULL,'activity@naegypt.org','https://maps.google.com/?q=30.001537,31.316307','تاني و رابع سبت الساعة ٨ م',NULL,NULL,NULL,'2025-08-07 20:00:08','2026-07-12 09:42:03',195),
 (8,83,'permanent','active',NULL,NULL,'مجموعة تقنية المعلومات','Information Technology Workgroup','أونلاين','Online','جمال ص','01287144442','web@naegypt.org','Online','أونلاين','logos/sU4pKsBGNmZBN8kIIPhVHzhzmaLAhhnBfEEfXhpZ.png','اللهم امنحنا المعرفة لنكتب بما تمليه علينا أحكامك الإلهية واغرس فينا بصيرة بأهدافك واجعلنا خدمًا لإرادتك وهب لنا من لدنك إنكاراً للذات ليصبح ما نقوم به من صنعك لا من صنعنا كي لا يموت مدمن من أهوال الإدمان في أي مكان... آمين',NULL,'2026-06-11 22:24:59','2026-07-12 09:46:16',225),
 (83,NULL,NULL,'active',NULL,NULL,'لجنة خدمة إقليم مصر','Egypt Regional Service Committee','الجامعة العمالية','Workers University','محمد ف','01222722722','RSC@naegypt.org',NULL,'ثالث جمعة من الشهر الزوجي الساعة ٣ ظهرًا',NULL,NULL,NULL,'2026-06-14 15:47:27','2026-07-12 09:45:03',408),
-(84,1,'permanent','active',NULL,NULL,'مجموعة خطوط المساعدة','Helplines Workgroup',NULL,NULL,NULL,NULL,'phone@naegypt.org',NULL,'أول وثالث ثلاثاء الساعة ٩م',NULL,NULL,NULL,'2026-09-16 04:15:19','2026-09-16 04:15:19',424);
+(84,1,'permanent','active',NULL,NULL,'مجموعة خطوط المساعدة','Helplines Workgroup',NULL,NULL,NULL,NULL,'phone@naegypt.org','https://us02web.zoom.us/j/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1','أول وثالث ثلاثاء الساعة ٩م','logos/6ZqJmW3kdbEVougUorKW3uUy2tIOhMAAblXjKKbb.png',NULL,NULL,'2026-09-16 04:15:19','2026-09-28 01:53:00',424),
+(85,2,'permanent','active',NULL,NULL,'مجموعة المنعزلين','Loners Workgroup',NULL,NULL,NULL,NULL,'loner@naegypt.org','https://us02web.zoom.us/j/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1','آخر سبت من كل شهر الساعة ٩',NULL,NULL,NULL,'2026-09-28 01:49:47','2026-09-28 01:52:04',430),
+(86,1,'permanent','active',NULL,NULL,'مجموعة السوشيال ميديا','Social Media Workgroup',NULL,NULL,NULL,NULL,'smedia@naegypt.org','https://us02web.zoom.us/j/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1',NULL,NULL,NULL,NULL,'2026-09-28 02:01:53','2026-09-28 02:01:53',420);
 /*!40000 ALTER TABLE `service_committees` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `sessions`;
@@ -7040,7 +7249,7 @@ CREATE TABLE `transactions` (
   KEY `transactions_user_id_foreign` (`user_id`),
   CONSTRAINT `transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `transactions_chk_1` CHECK (json_valid(`details`))
-) ENGINE=InnoDB AUTO_INCREMENT=2276 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2299 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `transactions` WRITE;
@@ -8941,7 +9150,30 @@ INSERT INTO `transactions` VALUES
 (2272,'User','update','{\"last_login_at\":\"2026-09-26 23:37:34\"}','{\"last_login_at\":\"2026-09-26 15:09:27\"}','{\"last_login_at\":\"2026-09-26 23:37:34\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAA36evVxcneWd4q4b6hO7l0iaq7ehHt-xLqMmY8TXV8vNiyToDigWIgcOMjjMb1Bsc7x3JftXACrtNV0RoIBqICvU2HN9QNoSlXYyaSNjTM5Mmkg5aA5R-yw8prJoM7aH1Ixfx1suOppxAed8E22dOzQ_Z1B_I4BZ2CeRC-ehKyGb0L76BiOgtt6ZiOd_BCUIOTsfj8VeKhRZcoUVz6rSm8fEnH4vfX6mOt7BVL93FYoaDeqWuRqJfhPu_KLaFMlf3BFGPwhJNw9vZvKUITsLoRXsgU8dN3d-3cdIn65gtEf463u5i0cVpzMAyyPp2A-FhwtyYMtd0GkXU8kaWsH4lLo3Uz7_Vcb4UtzslCTiVvZHfEWFyMmFqm3MyjKE7Ag79RdWbkRGK9G4iqYZgrO-vlbkWI09C9BQeyEFetTdx76hxnX6Fh1YpTiTDVe7e8ndt4nVgNyzU8gHZk_b-uLXaAhDmScW4uolZICGTZD3BhgZX8LwDYzk56NbsFSZoJe4UjtNW7DtTlIAD5WpKl_CFqesiCIB_RNPMxQOWgHrD4O1Dya7FS33jFLtCqypSUn1lZ-Wx_Y_mG59HLcv7ep94z9H61YBi215tXFw8jwRzd1luFTWNdAxbx0FTrVJBrGzmVU4M5XEvh3x1xqEU5wE-6blpFocGLEmDFIBUqNtL55ayCVPgansZzGL1LUS1tg2QTJqQjbJPiK0QC4ugmSiJC8OMbKDW_Djs7d-naXDl1CTue1H9hBeMYFF9fMjSiMQCsu39fEUa2h5fk0tE8crUZEUt2MgMdVbIu1VVkZZbNuZTWIFkKUJ2KKLwrog2BkCh-GNj3pMIN9cUgBWqFccB0CdFZcsxDR1xyZ3gxaISIrI6MOzHr-3An3G1oE0tu5M6MCvrnvX93ll4ciGBhsYBK6VMUpjobM62f6_VkCcJ6V4dYMz_mM1eLtCKDck6nZiWFhJRjrfz22Zy8ELTKBch1TtUgyDOHlNnlTFOcAnWW6ao3z2JwErBDZtBkjyIts-t33GGPPiGX-kTA09Ng6Eb8cKtsDXas1jdW_EuV3-5yn6Fb0iKRqd5LizWO2-IGVTCPyK3_skUSShPWZG2_1K8VubRxZHloQ0pCkUKxA33VqvzTDzMMovllE-5tMYGZFgkpbNC0qOJx5iJ_sqF7_GEgJEeotBWXU4V8VpEPxS2szcYbXzb3j6rJnECYuwA&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',NULL,'2026-09-26 20:37:34','2026-09-26 20:37:34'),
 (2273,'User','update','{\"last_login_at\":\"2026-09-27 02:20:15\"}','{\"last_login_at\":\"2026-09-26 23:37:34\"}','{\"last_login_at\":\"2026-09-27 02:20:15\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAM3_6lZbg5lIv6NuGqlRws0UayuVEPBT5SWsmlZzMFCAINTU9bDM1uAXW9Ep6bYiuQWExBkThwkkMpVnbnWMHrY3ovmRn5YIKD88Y0ovc-jte86K2fXguuoeYQ_T8az6YP00Jkhu1UOII06DY9f_i9a2e3dwnW7r90TtCRgZ4Zmyq5ae2Zle8sTr7ZzWOt9yyDTugzZdPuHaZ2HGdJDItmH5qd1zxB2ZdXyA4oY1RWLVFqPWUAtr7iCwWLMAXSkHGAoP1rby7jY3XZ1bcvbCtge7lFLq7Riw015YldcF0wJsyc-hMfKE-0H80xaXIhKB_IDN_TSjXTK5xoalDPdQLglvGqNwwxVbcjL2qR1P9RTZ4qdgQNFRPGuRnL7HYO-hAOXKdIJRe5rQhL5cMEr7AXKgIQYD69viRzIRQhI9KabsiDOwnyHX9X0ZvvGiKXTZ7-XLw6ArVhVC6yFwv6AKDImU1dIUBx-DLCkrNQ7DXIH-KThpViX30XDrKUPZwAolvr_1j_7GO7xf9HKANfxg95G_5bReKe2xKw-t7yzLlMYt8UPqZiOoVFXcC1DUJbmbJFO-XVzXNSDgDJxcQ7H4yI0-kpZmhivu2on6jSuPEVkLDSaPhDpvdrrtx-fGaHCh3wgwRx17ZINP03pkNHgYAfpae2c50LaWMpTClRkDZKn9COdZL7bvwYyp1-8Mh_IdCQtWQ8AxIs53gCOZkS9XmZeeBHSMgf5AFwuo_7xgetnw8ANpGeb8I99rkhr38b-duDHQHiTnT7G5khUQwws7SOsa-KPo4d3_-hsadUDdtrsyFfUWi8JJNtQbLTLtzh8aKKbdj9B8Zvn6OvvYndSbk0jWVmZanEtSeJ3_e_9UTx1cKGpelG8VoTuedhrG0urgB1yi39IvWcqvUC0LrE1k96t0myMCMTGIrV50VDUbIpcehjIsQYVR0M0r8lpHhCskzLK4KjmK0h99ueHZj3xShCHxPOuz09uY5T4LnEY_oCiT0E88qWcefP8ypKpL25GcJMA2DCqJ0fNGoOq0q2AN85L0FEu4xSHPtlzNVrgrvW2mGEmZuI7AvdtP6Wz49x00fJTLLtzsITIjfOfajL_j6BjnuybKF04iLITq0sXxrwAfHqsn6lEuLVJt-6Dn3v6V7ftynL-YqeuNYyjVsjUAOlA233mHT3gJDEUI9VHnCWd1Y6mkgKHI-CXLIP5j&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-26 23:20:15','2026-09-26 23:20:15'),
 (2274,'User','update','{\"last_login_at\":\"2026-09-27 22:10:53\"}','{\"last_login_at\":\"2026-09-27 02:20:15\"}','{\"last_login_at\":\"2026-09-27 22:10:53\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAGuC0E2WO77nAZ2espqJQvmL_V6ZvaBxfS7aaJrr8Ut5vvZ1U7c0v-40klM_nSrWYOBtcgdcYSj6foq7w8ASxnRmM7vbjpWjA7KcPOHIPo6w3TlJAZXXTjMaeoUdeD3OAUkmGjOXwpRwdAA7ZE-hHJAbYoIgpcP0bv8aj0iyHXLBuLiGwDeTdvObuKc6l58mP-cEySXGipbZmCxNHL88r33nfsk0EUEaDpxrl0L-8Q6C4ok0VtBfd_fi3ur5T_OqpeWdUaJcIAy2ZLfpaeyx6TEHDGido_REMgY1H4KG-0UqyuM83VB9HcgcLAWz5Mt7Ak1H0uttnLMTCNqn5KhPk80k7Mnutv-S2XhrJAnldY-dfutm_qV3QFd_0LLuqAmUG8m7kQXKIfasyDbPH_uqRE2tLyfWBajjt_FxBg8GSRTHC5qyR_5MI1uUglLnc4u8hg175I7R6NmU69OieOa9zNIBnTLgbu6Wlq9hMH5y1NuJTyD0juYQxgiBNkAuGNpLwh7x6PkP_e3PEijIPLmUn4xH6UN8bhj9WKORlHNs1txRA3jWaw_1f0Fdq0tPJCDKJhtMJCdOux7rSTSsnvFL9EfftuNHkVt0hiIC1lAe91j11hUYvRu880qmijDXKlct6Da5PsWouTbGQaBjqO2dEjMhbVW4EoFfG-VPNvVoPbpZVkyRimwMuplp75G-RabqCBOYjCeB7v-ZTCSKVOlJsffuf5wraO9hjn02VJ4oQGns3MQBVo-nhbaI9dWf4uI5CjWWlurMrXQ_WD59dHk1ozD64KO86R2S-gGrIpfLkjAKpKEBRcanz8ImmQXxPMgMW8sg56lFW2y2s-zmcfsPmaYBy1DM5RkcAmkfVSK_b0vZNcJU1Jwuf5OSZGvNXjlSl5IzDPtsliMNlvlu25sJGicqkUxa9-volWKDH6OYaos-hxgUXcHG5pC69nYBAbnLzC6muqAhdb4kAvXvBjJfSoIBSCyNboKaS2Xb5j321YK_HTkMSz9fuU5fl_Kjie-tKD1-WPj_-MP6VbtdUEbIb4iYn2onXcXTyrnEXwrwBPXF62Ke4d_KstrGgQ-xVljhTCvqW2oslwjcK7QgsPL_d0VGGvF_Yl8ERbxZYV8Lr_4IbVPxlafudWp14d8ZmXzkb3z6tMLTgERxOvAfkmqDjc5GEgjgInR7C3aFRO4TG7LO1uW8wnCv_HWj3R6yzMQ&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-27 19:10:53','2026-09-27 19:10:53'),
-(2275,'User','update','{\"last_login_at\":\"2026-09-27 23:19:03\"}','{\"last_login_at\":null}','{\"last_login_at\":\"2026-09-27 23:19:03\"}','154.191.35.103','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAGeCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAANNonjAX1LOJ4cHhJyrUDUKx6_e-2FJpSw2i8YrfGoc3pwGClhuaB_RP6Stxd51lU2gqoWNndCEMKSr-e6JYjELTgnn4Ye7zHv4k7ioTkDtnC39LOwtphrO4HVQtbWct5oBkoap7JI0xp2O8GIdYMnmQ3aHuPB9qMCtUXkrVKvjJN3yQiNIddd9TL7F7iJxqVe1YBWKbHfZab-E-zAGNZaFv6v0SFabjevmPWiqVPDfJNO0oEd-p9tZ1SrUeKp_GNT56aepuWqdUGaBcm_TVqznvaqTyZvxD6TjllUj_goONCexpZdPYiphUXh8xSyD5RFarLU8pxM-jQk6ZQfCbfglvsGaAIyXL8concMYzxc8D4h85CQNmEn7cQEwP7ylNhb0mFe2FQHpmjjk4aLq2633z38oGN30-PjxQEvrH_ym6HsAKdoPIb0L_CuSPW_T1SqOvUEr9pevTYNK5oHnYcxAvaZiQLq6C28eUV9d53Z16zwcQi2WsY_rS-kCn0RbStGGVY1ZHPKdynTEgK3pVfQRfgL1xbOl-5GpXZjPSTU81alxf59AUA74HORm3gAo_0E173LCdY3eMKKojxELVFyJR8q88eDhv0AC-uTxaQXatCFL1xFTqUhLMVlQVc51zu6nVIpZAmQuM98wqNrzOUuWgxUkoUec86v-hubjSLDfQCKR8swP3IFMEya1BU1Guh_0aRwLZsxgMEWrKCGKuBlfyELwNncFxIlF_x7HNPU4IUYQ9KWhWLNzdUYkpvxWn-AZfIn31rO4srRsjyyO661Hh37WOc9u6-5dlMfgoj6uL_Ty-Y7qLsoHcCb7RXE5xouz0f2Yv4YVuHlkUs1QsMK1EYnPZNUX767ojEs2_B0eSFRLRn_DibBRl5JotxKiyuJe1cba4j0Bn15puFWZV47f6xXXgTQLbRW9P5oCxDz59E-UA-Xvxv3T2pfxuyppB5nRscp6Eed6zvgfK10p5BNrk2vUx1o51hdkdtaL7b54jPjpwlTYA77pjsveFlqCs9SmVITB3Gqbk2zsxBGhQwGnXEeR8Xfr38Ne6QxT1iMwawq41Lg7PLDUpH_SJr1fmaOYuoErqPLEkvqyMQ9FevnT4bxCh7HWC0z3lDzgi_SNmHSg-BzGP_nuQjq-YxZWe1kMKqxChh9MpphCEFFsVQMFaAkwsm4vzKFETGN-cg00j27ZKgr8OfNt3tH1WBg16380cqGvGH5Q4h8PiYsDK&session_state=005e548a-dfe8-9cd8-28f1-61e7d53d19cd',60,'2026-09-27 20:19:03','2026-09-27 20:19:03');
+(2275,'User','update','{\"last_login_at\":\"2026-09-27 23:19:03\"}','{\"last_login_at\":null}','{\"last_login_at\":\"2026-09-27 23:19:03\"}','154.191.35.103','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAGeCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAANNonjAX1LOJ4cHhJyrUDUKx6_e-2FJpSw2i8YrfGoc3pwGClhuaB_RP6Stxd51lU2gqoWNndCEMKSr-e6JYjELTgnn4Ye7zHv4k7ioTkDtnC39LOwtphrO4HVQtbWct5oBkoap7JI0xp2O8GIdYMnmQ3aHuPB9qMCtUXkrVKvjJN3yQiNIddd9TL7F7iJxqVe1YBWKbHfZab-E-zAGNZaFv6v0SFabjevmPWiqVPDfJNO0oEd-p9tZ1SrUeKp_GNT56aepuWqdUGaBcm_TVqznvaqTyZvxD6TjllUj_goONCexpZdPYiphUXh8xSyD5RFarLU8pxM-jQk6ZQfCbfglvsGaAIyXL8concMYzxc8D4h85CQNmEn7cQEwP7ylNhb0mFe2FQHpmjjk4aLq2633z38oGN30-PjxQEvrH_ym6HsAKdoPIb0L_CuSPW_T1SqOvUEr9pevTYNK5oHnYcxAvaZiQLq6C28eUV9d53Z16zwcQi2WsY_rS-kCn0RbStGGVY1ZHPKdynTEgK3pVfQRfgL1xbOl-5GpXZjPSTU81alxf59AUA74HORm3gAo_0E173LCdY3eMKKojxELVFyJR8q88eDhv0AC-uTxaQXatCFL1xFTqUhLMVlQVc51zu6nVIpZAmQuM98wqNrzOUuWgxUkoUec86v-hubjSLDfQCKR8swP3IFMEya1BU1Guh_0aRwLZsxgMEWrKCGKuBlfyELwNncFxIlF_x7HNPU4IUYQ9KWhWLNzdUYkpvxWn-AZfIn31rO4srRsjyyO661Hh37WOc9u6-5dlMfgoj6uL_Ty-Y7qLsoHcCb7RXE5xouz0f2Yv4YVuHlkUs1QsMK1EYnPZNUX767ojEs2_B0eSFRLRn_DibBRl5JotxKiyuJe1cba4j0Bn15puFWZV47f6xXXgTQLbRW9P5oCxDz59E-UA-Xvxv3T2pfxuyppB5nRscp6Eed6zvgfK10p5BNrk2vUx1o51hdkdtaL7b54jPjpwlTYA77pjsveFlqCs9SmVITB3Gqbk2zsxBGhQwGnXEeR8Xfr38Ne6QxT1iMwawq41Lg7PLDUpH_SJr1fmaOYuoErqPLEkvqyMQ9FevnT4bxCh7HWC0z3lDzgi_SNmHSg-BzGP_nuQjq-YxZWe1kMKqxChh9MpphCEFFsVQMFaAkwsm4vzKFETGN-cg00j27ZKgr8OfNt3tH1WBg16380cqGvGH5Q4h8PiYsDK&session_state=005e548a-dfe8-9cd8-28f1-61e7d53d19cd',60,'2026-09-27 20:19:03','2026-09-27 20:19:03'),
+(2276,'User','update','{\"last_login_at\":\"2026-09-28 03:29:57\"}','{\"last_login_at\":\"2026-09-27 22:10:53\"}','{\"last_login_at\":\"2026-09-28 03:29:57\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAPYHB_7PTklnj5TgexCI5e5_W2R0KztUenYyJH7xgPlVeHn06UK-9W_KTJV0w-hCNMoUy-Odkc_Ryk3fPY1JyU0M2f61jmhh8SHRu9Xiyk9HBTpZYs-oIt2ZnXoxMp1OrvO-50I-7J7-MbWM7Fc0ib_9Ngd7-KZFAPzEc3jsf0WguKhlgXzZIHOwGZicCmXwVFcPCNMgLKUX6mdGk9cK-UrUdOEVP8MpyfFxmmGOvk7OQER6Vh_-RJ4uzer_bhbMbPSNNfqnw9eFioMiyTcIJqad0YhfQmJJ9tDo_qog_8wF7a4tu0jyAbn0ePWgyCFaOANcd0CAVnw0dLalI7kLU51xED9-s_E6jsStJyS6KeKteWSKkkd04OAsiFDB0kJfKHmB7orgva6ThLMZFQX3o1PCOwYzAmLGG8TR4gRfM4c-LRVJbjRSMbDG9KmWB6Ztl31e6NfR1TE2iu8GlQ_eHAIXm_o0UbsDdCmDy8luYK-SaKIqbeRzesWTLKHeUzPZelR7-JPPtNMTaZX1IgspIxrAdJ3XUL4tqrc12mZKb6ggj6DuR9ZDtxVbYoWoW1gqhB63mXEleRHddV5QHmVodKpATQKveqIHNM9EOFDUadMTty7oZtOr_YerRr1FFYZmoOaXf6DhIHjMPmL3T1IBFDBFg--BFMlsIfa9fpTinF9sgsYA94nHJPV1FOezXWIVy26yjfsHhEvGRW162cFIy9QqdRr7jitVBjQJgEoo5o2MfKNGhRdO-4yqaCMPY5bCaYls0D0Ganvll3FqD9rPX3F1GWf5Clwtl_HkvvDytsuSVUeROLMv4ybfBdhMIw_9D8nagLSsP3m5w5qS3kI76XN6J6BQ9mOE-H9oRIOWQtP4fke1DKwu93yzGZhpjSq56f9p4rITW6nLqifI3_-q_W9MHps4Lh68tzDbILdJSAqvSADCCALJ6g9E3GNNo3yBXsokJAiTxFpKMrfulj4eIFqODSRIBp0i0OzxsQPJC_CHd6ZchDxKitP3T1THGzuXNkhXy88D0NNRM6crwMazSgwW4h79nIhRmvywtR2tZK8Ux7vh53dUatZKvYPO0ZykuQrPZ9NKRYQ3rR4esNikVI6en0leDQyhdL0Rs_pWXTaUC3vP0eqj0XX6qFIc6Ai_uIEeIrNbXeMOr02m51aHr2Jt00D2o-239mpW_vvDq5fUDRfJCostkUxqVHGmzQ&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-28 00:29:57','2026-09-28 00:29:57'),
+(2277,'User','delete','{\"id\":402,\"name\":\"Test Laravel\",\"display_name\":null,\"email\":\"testLaravel@naegypt.org\",\"email_verified_at\":null,\"last_login_at\":null,\"type\":null,\"created_at\":\"2026-06-13 13:11:35\",\"updated_at\":\"2026-06-13 13:11:35\",\"service_body_id\":null}','{\"id\":402,\"name\":\"Test Laravel\",\"display_name\":null,\"email\":\"testLaravel@naegypt.org\",\"email_verified_at\":null,\"last_login_at\":null,\"type\":null,\"created_at\":\"2026-06-13 13:11:35\",\"updated_at\":\"2026-06-13 13:11:35\",\"service_body_id\":null}',NULL,'197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/users/402',184,'2026-09-28 00:32:39','2026-09-28 00:32:39'),
+(2278,'User','update','{\"name\":\"newcities.rcm\",\"display_name\":\"\\u0639\\u0636\\u0648 \\u0627\\u0644\\u0625\\u0642\\u0644\\u064a\\u0645 \\u0645\\u0646\\u0637\\u0642\\u0629 \\u0627\\u0644\\u0645\\u062f\\u0646 \\u0627\\u0644\\u062c\\u062f\\u064a\\u062f\\u0629\",\"service_body_id\":\"20\"}','{\"name\":\"RCM \\u0627\\u0644\\u0645\\u062f\\u0646 \\u0627\\u0644\\u062c\\u062f\\u064a\\u062f\\u0629\",\"display_name\":null,\"service_body_id\":null}','{\"name\":\"newcities.rcm\",\"display_name\":\"\\u0639\\u0636\\u0648 \\u0627\\u0644\\u0625\\u0642\\u0644\\u064a\\u0645 \\u0645\\u0646\\u0637\\u0642\\u0629 \\u0627\\u0644\\u0645\\u062f\\u0646 \\u0627\\u0644\\u062c\\u062f\\u064a\\u062f\\u0629\",\"service_body_id\":\"20\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/users/425',184,'2026-09-28 00:38:36','2026-09-28 00:38:36'),
+(2279,'User','create','{\"name\":\"loner\",\"display_name\":\"\\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"email\":\"loner@naegypt.org\",\"type\":\"manual\",\"service_body_id\":null,\"updated_at\":\"2026-09-28 04:28:57\",\"created_at\":\"2026-09-28 04:28:57\",\"id\":430}',NULL,'{\"name\":\"loner\",\"display_name\":\"\\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"email\":\"loner@naegypt.org\",\"type\":\"manual\",\"service_body_id\":null,\"updated_at\":\"2026-09-28 04:28:57\",\"created_at\":\"2026-09-28 04:28:57\",\"id\":430}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/users',184,'2026-09-28 01:28:57','2026-09-28 01:28:57'),
+(2280,'ServiceCommittee','create','{\"parent_id\":\"2\",\"workgroup_type\":\"permanent\",\"status\":\"active\",\"start_date\":null,\"end_date\":null,\"ar_name\":\"\\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"en_name\":\"Loners\",\"email\":\"loner@naegypt.org\",\"chairman_name\":null,\"chairman_phone\":null,\"notes\":\"\\u0622\\u062e\\u0631 \\u0633\\u0628\\u062a \\u0645\\u0646 \\u0643\\u0644 \\u0634\\u0647\\u0631 \\u0627\\u0644\\u0633\\u0627\\u0639\\u0629 \\u0669\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1\",\"ar_address\":\"\\u0632\\u0648\\u0648\\u0645\",\"en_address\":\"Zoom\",\"default_footer\":null,\"user_id\":430,\"updated_at\":\"2026-09-28 04:49:47\",\"created_at\":\"2026-09-28 04:49:47\",\"id\":85}',NULL,'{\"parent_id\":\"2\",\"workgroup_type\":\"permanent\",\"status\":\"active\",\"start_date\":null,\"end_date\":null,\"ar_name\":\"\\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"en_name\":\"Loners\",\"email\":\"loner@naegypt.org\",\"chairman_name\":null,\"chairman_phone\":null,\"notes\":\"\\u0622\\u062e\\u0631 \\u0633\\u0628\\u062a \\u0645\\u0646 \\u0643\\u0644 \\u0634\\u0647\\u0631 \\u0627\\u0644\\u0633\\u0627\\u0639\\u0629 \\u0669\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1\",\"ar_address\":\"\\u0632\\u0648\\u0648\\u0645\",\"en_address\":\"Zoom\",\"default_footer\":null,\"user_id\":430,\"updated_at\":\"2026-09-28 04:49:47\",\"created_at\":\"2026-09-28 04:49:47\",\"id\":85}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup',184,'2026-09-28 01:49:47','2026-09-28 01:49:47'),
+(2281,'ServiceCommittee','update','{\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','{\"location\":null}','{\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup/84',184,'2026-09-28 01:50:33','2026-09-28 01:50:33'),
+(2282,'ServiceCommittee','update','{\"ar_address\":null,\"en_address\":null}','{\"ar_address\":\"\\u0632\\u0648\\u0648\\u0645\",\"en_address\":\"Zoom\"}','{\"ar_address\":null,\"en_address\":null}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup/85',184,'2026-09-28 01:50:43','2026-09-28 01:50:43'),
+(2283,'ServiceCommittee','update','{\"ar_name\":\"\\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"en_name\":\"Loners Workgroup\"}','{\"ar_name\":\"\\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"en_name\":\"Loners\"}','{\"ar_name\":\"\\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u0627\\u0644\\u0645\\u0646\\u0639\\u0632\\u0644\\u064a\\u0646\",\"en_name\":\"Loners Workgroup\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup/85',184,'2026-09-28 01:52:04','2026-09-28 01:52:04'),
+(2284,'ServiceCommittee','update','{\"logo\":\"logos\\/6ZqJmW3kdbEVougUorKW3uUy2tIOhMAAblXjKKbb.png\"}','{\"logo\":null}','{\"logo\":\"logos\\/6ZqJmW3kdbEVougUorKW3uUy2tIOhMAAblXjKKbb.png\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup/84',184,'2026-09-28 01:53:00','2026-09-28 01:53:00'),
+(2285,'ServiceCommittee','create','{\"parent_id\":\"1\",\"workgroup_type\":\"permanent\",\"status\":\"active\",\"start_date\":null,\"end_date\":null,\"ar_name\":\"\\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u0627\\u0644\\u0633\\u0648\\u0634\\u064a\\u0627\\u0644 \\u0645\\u064a\\u062f\\u064a\\u0627\",\"en_name\":\"Social Media Workgroup\",\"email\":\"smedia@naegypt.org\",\"chairman_name\":null,\"chairman_phone\":null,\"notes\":null,\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1\",\"ar_address\":null,\"en_address\":null,\"default_footer\":null,\"user_id\":420,\"updated_at\":\"2026-09-28 05:01:53\",\"created_at\":\"2026-09-28 05:01:53\",\"id\":86}',NULL,'{\"parent_id\":\"1\",\"workgroup_type\":\"permanent\",\"status\":\"active\",\"start_date\":null,\"end_date\":null,\"ar_name\":\"\\u0645\\u062c\\u0645\\u0648\\u0639\\u0629 \\u0627\\u0644\\u0633\\u0648\\u0634\\u064a\\u0627\\u0644 \\u0645\\u064a\\u062f\\u064a\\u0627\",\"en_name\":\"Social Media Workgroup\",\"email\":\"smedia@naegypt.org\",\"chairman_name\":null,\"chairman_phone\":null,\"notes\":null,\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1\",\"ar_address\":null,\"en_address\":null,\"default_footer\":null,\"user_id\":420,\"updated_at\":\"2026-09-28 05:01:53\",\"created_at\":\"2026-09-28 05:01:53\",\"id\":86}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/workgroup',184,'2026-09-28 02:01:53','2026-09-28 02:01:53'),
+(2286,'CalendarEvent','update','{\"start\":\"2026-09-09 21:00:00\",\"end\":\"2026-09-09 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1\"}','{\"start\":\"2026-07-08 21:00:00\",\"end\":\"2026-07-08 22:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-09 21:00:00\",\"end\":\"2026-09-09 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/178',184,'2026-09-28 03:42:33','2026-09-28 03:42:33'),
+(2287,'CalendarEvent','update','{\"start\":\"2026-09-23 21:00:00\",\"end\":\"2026-09-23 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1\"}','{\"start\":\"2026-07-22 21:00:00\",\"end\":\"2026-07-22 22:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-23 21:00:00\",\"end\":\"2026-09-23 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81804770213?pwd=6VAG70L8CUEdEZAyVgpjkvMPTjTggh.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/179',184,'2026-09-28 03:42:43','2026-09-28 03:42:43'),
+(2288,'CalendarEvent','update','{\"start\":\"2026-09-13 20:00:00\",\"end\":\"2026-09-13 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1\"}','{\"start\":\"2026-07-12 20:00:00\",\"end\":\"2026-07-12 22:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-13 20:00:00\",\"end\":\"2026-09-13 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/83301997709?pwd=bFB0ogFacxZNEkx9bLJpDyyEQ2P6FZ.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/169',184,'2026-09-28 03:43:31','2026-09-28 03:43:31'),
+(2289,'CalendarEvent','update','{\"start\":\"2026-09-01 21:00:00\",\"end\":\"2026-09-01 23:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','{\"start\":\"2026-07-07 21:00:00\",\"end\":\"2026-07-07 23:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-01 21:00:00\",\"end\":\"2026-09-01 23:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/17',184,'2026-09-28 03:43:56','2026-09-28 03:43:56'),
+(2290,'CalendarEvent','update','{\"start\":\"2026-09-15 21:00:00\",\"end\":\"2026-09-15 23:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','{\"start\":\"2026-07-21 21:00:00\",\"end\":\"2026-07-21 23:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-15 21:00:00\",\"end\":\"2026-09-15 23:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/81037293677?pwd=gkNb4DdVpJ34HIMkvVeWa4WLdLOUqm.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/177',184,'2026-09-28 03:44:03','2026-09-28 03:44:03'),
+(2291,'CalendarEvent','update','{\"start\":\"2026-09-26 21:00:00\",\"end\":\"2026-09-26 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1\"}','{\"start\":\"2026-07-25 21:00:00\",\"end\":\"2026-07-25 22:00:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-09-26 21:00:00\",\"end\":\"2026-09-26 22:00:00\",\"location\":\"https:\\/\\/us02web.zoom.us\\/j\\/86265956346?pwd=KuBa1JP12uyqse3bpXobV9xNafjaoW.1\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/172',184,'2026-09-28 03:44:32','2026-09-28 03:44:32'),
+(2292,'CalendarEvent','update','{\"start\":\"2026-10-03 20:00:00\",\"end\":\"2026-10-03 21:30:00\",\"location\":\"https:\\/\\/us06web.zoom.us\\/j\\/3991041880?pwd=scgJbdf0PtFib69OIy4VJL5i3Bhaej.1&omn=94722422307\"}','{\"start\":\"2026-08-01 20:00:00\",\"end\":\"2026-08-01 21:30:00\",\"location\":\"\\u0632\\u0648\\u0648\\u0645\"}','{\"start\":\"2026-10-03 20:00:00\",\"end\":\"2026-10-03 21:30:00\",\"location\":\"https:\\/\\/us06web.zoom.us\\/j\\/3991041880?pwd=scgJbdf0PtFib69OIy4VJL5i3Bhaej.1&omn=94722422307\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0','https://naegypt.org/ar/web-calendar-events/20',184,'2026-09-28 03:46:29','2026-09-28 03:46:29'),
+(2293,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'3.221.188.146','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/605.1.15','https://naegypt.org/en/export-meetings-pdf',NULL,'2026-09-28 13:49:01','2026-09-28 13:49:01'),
+(2294,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'3.221.90.192','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/605.1.15','https://naegypt.org/en/export-meetings-pdf',NULL,'2026-09-28 13:54:21','2026-09-28 13:54:21'),
+(2295,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'3.228.213.183','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/605.1.15','https://naegypt.org/en/export-meetings-pdf',NULL,'2026-09-28 13:56:53','2026-09-28 13:56:53'),
+(2296,'User','update','{\"last_login_at\":\"2026-09-28 19:34:35\"}','{\"last_login_at\":null}','{\"last_login_at\":\"2026-09-28 19:34:35\"}','196.156.69.234','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAACCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAAbTFnaQ9LSbO0G2zYjiLi5Q6KTmPlm81AaotXZ3WJAXOdJOHDTkU3hud3cX6aSuKjzRmiAh7qEQDXGH2jIy6mXi_7tVSetG0QiMwsCVCg3MNz9wf933UK-oOcoMLqTCDWOVy7TLWZMGSi6z10RnwwhZqq30uE-M04Rq76Ue9al0_3ycmRw2xQbEqB6n0h95mcW8X0cLo7mXfLSXI8uAwQ0AEcMx1KkxW6MjsUOXD8myZzt9b73SG-g9v2jH2DVMxD35tW8O7p9oXX-t-v4lvqpQZYzZRpGqFeRVjhFu9NW2g8NRjDbWth7q3WvJrsIuy8tCjJi04Q2tsyem12mVgUFkqTo23S3hqJUs1ZpDZnz9dzq23P-bIUXo91Ni4YTBWo6wctLefzp_DY40PO_brnZIfWSiYpsvSjjHoEfsNuD0bAXLSSLqHgDRsxAk31QzRmeplPvw3ZIday1hFzritG7kXyNVZI4ArgKzdTCXcST81SX864IDwstdpAvD3j_2mz8oGTkx_CsLmQfTsTTM_DRjKpwqxW-dscH8w0xxsOr_vLQGm7MKMqa9dVjcwLlzMMrDkv16Hxre9cbwZcSeNKatplnlt0oD1KKEoEJzxnCu0osQu4g4w-f3Os8A95AIzFV_FOlPjX8kGWicSnf0G5fUOETPkRU70OBdzaPav7cNTi2-eI8lkXTJPwMDXzCFl7wty3pC_V7_Vh9WOCayIQqZYTHj-aL2igy3J29O__TXJANFUAz3Eq_HXlm1fKRfl9pG_JUVJFcPiJ-yeJGI1iM26B4ayDy32VDqdTcVufTOOTNhzNqLi66wWJHPM6ye0scQru5RZ0tblKHU3oNc6Tt3iTBVH_Nl_D9s1lU3MhwsDr1YGXa-w8PQBBo0DMesjXzTsVnP8n29pTuXKYHbbQp0-KMcrX8s4mjt52F9kPQ0ARGsYh_4B8TjuZPpRGTQulBjCK0G6X8awg7wAGkljKwrjCpdeBLQ9iiXkLmo-F8s9OwvcaxrypcR1Szqpcrl_dupVnh3Ks5NhFTGrTROtrYy77yQCYVIZYMeo2auU-9t5DXBvttO7hFnR6FlGE4jjf_TXeho3JP0EDxXR4SQWX_VhAO0uHM25KTJVFAmGn7uXOVoorAKyo_Kqp-UlNNNHC_oQZwuXK0CaLxbadSJKyCa_W9A&session_state=008da1ea-d85c-78d4-c3b9-520f46ce8f52',182,'2026-09-28 16:34:35','2026-09-28 16:34:35'),
+(2297,'User','update','{\"last_login_at\":\"2026-09-28 20:28:37\"}','{\"last_login_at\":\"2026-09-28 19:34:35\"}','{\"last_login_at\":\"2026-09-28 20:28:37\"}','196.156.69.234','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAKKCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAImyFM6l7IMtyrJOTIcHT2v6ermYTQZI_w7PKhu53F1c5tRf-zyq3Wj2F1dn0PAQIgRCJ770HZjG0LCkAymiXLospbKkNUzJS4wwb-Hj-t0tjZVPqb1mJiGzJyi1R8YIuRsZ8rTiIegR8i7okyDqGTBtEHLUafpVoRKAqOZXcFhhgrHbJzsyFv7ESVLtxtQUHntGwYEO5L0OJgiXYc8on6B6dIDyO_Np4hHoe0OYIj4EENL0cscqIEzrVWTi6RJ90PNEI2oW0tR74X9s2c6jwx5QsbiG78HdJXhNNCojqGighzMFgvLRn_o8F-1iEydT9HOiank1HyIZ8LvOqLukT0ycPaSLnecFDURfuWvWwJyE2JiaAriHa9HU7Jc3geRzsI8Y-QwhSgwa9PFXxiIE7D-tGEswjqu9vlbqJntK8vyT7Shq1HxP6dJa_XDalk1wT-14cZK7FUbGCxGcSvqzH0VtrL92pY4xeYY823Io8Fow_V4yF0Q4iGZdd_1fW0Z4-7gc7MPQMbCliOofI-Cx35g696mfBIK1ETOe0sqhnHWJ-sOChs9XCwEteNNaeHLpJoBu9VJiRiMdsBpu0SK5018F-pnKDuLhJruIQffiVvugqVItpRi-7gO4dzQK00BV4v5-Gg8JqsLe3FhA4VFznKDLnUbvSGTwDRicpLsZJ7_HDcIkq84dFuT30cOg1iKWIyrP7vm-CoTXz920gwKZR7mSGQ8b-uiYp_B4yy3QEOV6ZiywjxLDKSrfuYPf_z44k5_-5BdCbKS5JivJ4ToHcVpg04YeSA941yYqhkBl_Gj7NNipeEBvI2YYTbG9QUACRmVyK4PgAMALgLCtjm-FGP22QThTeX4XpTBwje1PWUnPM1MpVVWXN4A6M3wT-5DAm4L_z1JxfG8eelB2RVrBFlgyyJU_cF6nJ1x4wjMJC8YjsgJjsBjNj5P-VHSwR9bj8Qh703tiWdTlZwVrEcyvxy-Ypm1_j0jxd3W7eXFoMDy_UoGPVdfHYglXD_ta7QhguD1y6GAG-6EIx3FuA4ntVqyRxPoFWI7mDj5-RDvNbsQOn3FK6FiSNplL-iW9AjAB2zyXwGFSIUIsjenmDHjiZ5vu26Vg5-AtTJ_L7DdvZ2ZcnaW_GsHDCnvnLfImTmlp72IiB85zxED4EYHPdpF8ahvacsYvlVZ1EgS-dS-OqywIWrb4ZbAevRCvFBsn7VyNczHBgBTVxwoPqWZrV0uWUxEekM3yqWzyrhg-Cd0dJgUNbAzgOgY&session_state=008da1ea-c869-d66e-7154-7f0dc0e6fcbc',182,'2026-09-28 17:28:37','2026-09-28 17:28:37'),
+(2298,'User','update','{\"last_login_at\":\"2026-09-28 21:54:32\"}','{\"last_login_at\":\"2026-09-28 03:29:57\"}','{\"last_login_at\":\"2026-09-28 21:54:32\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAHxvmOui3r1uwQrdIiYWsR9mhnFrQbnalSydzAGTqV8n8LeblCJKzEtL7u1o5UMtNUK1PMbtALKULr3EqVGohdVm2yW7kTvMP1ctH6QV1fYm0pr4cRkKpMsMymSpykmLSkUOASd_J7xdMbjmHG62Aa30UJj-CsYMYaUpaSwCAh4rkGtZZfnJYDSvO3Nhnz12jvYqd5p6rdolfLJ0nojEnpOsC5KWvxWnbnnAnZT6MX3Am9lKuZVvwuIpX_10wAJ53vib6zQSrhlCMyx36jATLvJZ1WoBRb7gno3cCr3Cp5fdTydXehYw9YCe1uUl_E3bbQpmK-xqQVSlpX55hTE9dbE2MAAq1vuv5S_8YZrA2ccMp4xMaxC7tG1VNfdK2HIncWVa8fg7H9ZgqFfYEGnNQMjeVRD2mU45icD4SMzdfpEWRGHRZmUkau9ERbWgcXIikbu3q5IAexpaC3-6mqnglPZgLlftsP_w_Le9qgJNsG-UUzIKMebl_PHC8ycMN75DvE3LtLwy39hnlsFod_fePB5jC-3lI85Lz2Yi-BjZHZgFeaQNAdIQDJC7bw9CW0P1N_g2Zi7AbMYShEyqQEfsL_kfKQmt9ej1DBmjOvXUudWjUQcQVFkxe8Dbz0sxlq1oHPIR3L9TIt6pR-n5R1HGrNA4L9Zc3EmJpaoJzoxjGyctW598asMERN0_JRjKy5HXMub9HObrPfUzBTvr-hkXHPiIZN0E-A622dv1uJyVeWdQdh5kYXrC5LTDi7KEpZRtEdkKe5wKiY0qwxE3Q71PbRlzz_pG686RqJHKN9wczUFREUb1xT9d6UPckEoTpKSAs9zVZXRUIDQjf_Ak-jw917ETnAeqCWPquCfsb8vs3Q-e9dejSbh_8orBqDx6zX1TsOEPGJbdzT8Ru0zjSN9NF3vTJuSXYteIURBJ2Ian71NzA84iCUwmYAM5qrWue1iejREd4XKbUPm5eJwia57VCcJGJwBck8nPuX-nMdBP7Px7DH3Xj9MSpMPw_1eF24rx0ja9CaKd4rdwOZmtc0dvm8EQ_grNPs8lAHE-xYGJGIOmYA8AmQseVVkiUNL9lbSAth8QXBIj3882FRag2M6hfGqbsChmaENrNyNmP8Sz2l36okn6k_eGOHiKq9l0r7cANiKDVpLtoMI3rTf9gLw823bnNJvp0zIvvvPvRFJ1FylGMug8ja5SLa7hoyEAJA&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-28 18:54:32','2026-09-28 18:54:32');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `users`;
@@ -8964,7 +9196,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_email_unique` (`email`),
   KEY `users_service_body_id_foreign` (`service_body_id`),
   CONSTRAINT `users_service_body_id_foreign` FOREIGN KEY (`service_body_id`) REFERENCES `service_bodies` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=430 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=431 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `users` WRITE;
@@ -9035,9 +9267,9 @@ INSERT INTO `users` VALUES
 (179,'saint-cathrine','مجموعة سانت كاترين','saint-cathrine@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:26:46',2),
 (180,'neveralone','مجموعة لست وحدك','neveralone@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:25:18',6),
 (181,'uegsf.rcm','RCM منتدى الصعيد','uegsf.rcm@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-07 08:07:40','2026-06-15 09:22:46',9),
-(182,'web-admin','Ahmed S','web-admin@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-07 08:19:01','2026-06-14 15:15:41',NULL),
+(182,'web-admin','Ahmed S','web-admin@naegypt.org',NULL,'2026-09-28 17:28:37',NULL,NULL,NULL,'2025-07-07 08:19:01','2026-09-28 17:28:37',NULL),
 (183,'admin','Gamal S','admin@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-14 15:14:59',NULL),
-(184,'websiteadmin','Hani G','websiteadmin@naegypt.org',NULL,'2026-09-27 19:10:53',NULL,NULL,NULL,'2025-07-07 22:58:56','2026-09-27 19:10:53',NULL),
+(184,'websiteadmin','Hani G','websiteadmin@naegypt.org',NULL,'2026-09-28 18:54:32',NULL,NULL,NULL,'2025-07-07 22:58:56','2026-09-28 18:54:32',NULL),
 (185,'wcgsf.fac','ميسر غرب القاهرة','wcgsf.fac@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-11 19:19:03','2026-06-14 15:36:48',7),
 (186,'pr','لجنة العلاقات العامة','pr@naegypt.org',NULL,'2026-09-22 13:27:33',NULL,NULL,NULL,'2025-07-16 13:36:03','2026-09-22 13:27:33',NULL),
 (187,'rcm-wcgsf','RCM غرب القاهرة','rcm-wcgsf@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-18 20:24:04','2026-06-14 15:37:55',7),
@@ -9060,7 +9292,6 @@ INSERT INTO `users` VALUES
 (399,'el_zafran','مجموعة المنصورة ٣','el_zafran@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-06-12 17:08:41','2026-09-20 23:30:35',21),
 (400,'canal.chair','رئيس منطقة القناة','canal.chair@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2026-06-12 18:38:52','2026-06-14 15:17:48',NULL),
 (401,'canal.rcm','RCM منطقة القناة','canal.rcm@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2026-06-12 18:49:53','2026-06-14 15:17:24',11),
-(402,'Test Laravel',NULL,'testLaravel@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2026-06-13 10:11:35','2026-06-13 10:11:35',NULL),
 (403,'sidi-beshr','مجموعة سيدي بشر','sidi-beshr@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-06-14 14:40:15','2026-06-14 14:40:15',3),
 (404,'aw.rcm','RCM منطقة الوحدة','aw.rcm@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-06-14 14:45:31','2026-06-14 14:45:31',6),
 (405,'gizgsf.RCM','RCM منتدى الجيزة','gizgsf.RCM@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-06-14 14:46:43','2026-06-14 14:46:43',10),
@@ -9082,11 +9313,12 @@ INSERT INTO `users` VALUES
 (422,'shubra-elkhayma','مجموعة شبرا الخيمة','shubra-elkhayma@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-08-08 13:25:24','2026-08-08 13:25:36',7),
 (423,'nec.gs','اللجنة الفرعية لدعم مجموعات شمال شرق','nec.gs@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2026-08-22 14:57:45','2026-08-30 20:44:52',NULL),
 (424,'phone','مجموعة خطوط المساعدة','phone@naegypt.org',NULL,'2026-09-18 09:39:56',NULL,NULL,NULL,'2026-08-29 19:44:05','2026-09-18 09:39:56',NULL),
-(425,'RCM المدن الجديدة',NULL,'newcities.rcm@naegypt.org',NULL,'2026-09-18 09:46:40',NULL,'$2y$12$/eYDTxJmJj8VmgmrMUiHCehabaV3rpylNRwPjLzeEGiPDc2QAGEBG',NULL,'2026-09-18 09:46:40','2026-09-18 09:46:40',NULL),
+(425,'newcities.rcm','عضو الإقليم منطقة المدن الجديدة','newcities.rcm@naegypt.org',NULL,'2026-09-18 09:46:40',NULL,'$2y$12$/eYDTxJmJj8VmgmrMUiHCehabaV3rpylNRwPjLzeEGiPDc2QAGEBG',NULL,'2026-09-18 09:46:40','2026-09-28 00:38:36',20),
 (426,'alresala.sec','سكرتير منطقة الرسالة','alresala.sec@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-20 23:27:53','2026-09-20 23:27:53',21),
 (427,'alresala.rcm','RCM منطقة الرسالة','alresala.rcm@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-20 23:28:57','2026-09-20 23:28:57',21),
 (428,'FD-Support',NULL,'Fd-support@naegypt.org',NULL,'2026-09-22 09:29:06',NULL,NULL,NULL,'2026-09-22 09:29:06','2026-09-22 09:29:06',NULL),
-(429,'elshrouk','مجموعة الشروق','elshrouk@naegypt.org',NULL,'2026-09-23 17:18:24','manual',NULL,NULL,'2026-09-23 15:24:36','2026-09-23 17:18:24',20);
+(429,'elshrouk','مجموعة الشروق','elshrouk@naegypt.org',NULL,'2026-09-23 17:18:24','manual',NULL,NULL,'2026-09-23 15:24:36','2026-09-23 17:18:24',20),
+(430,'loner','المنعزلين','loner@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-28 01:28:57','2026-09-28 01:28:57',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
