@@ -268,10 +268,11 @@
 
         // Services & Tools Conditions
         $canHelpline = $currentUser && ($currentUser->can('manage helpline') || $isSuperAdmin || $currentUser->hasRole('Phoneline') || in_array($currentUser->email, ['phone@naegypt.org', 'pr@naegypt.org']));
+        $canWhatsApp = $currentUser && ($currentUser->can('view whatsapp chats') || $currentUser->can('manage whatsapp') || $isSuperAdmin || $currentUser->hasRole('Phoneline') || in_array($currentUser->email, ['phone@naegypt.org', 'pr@naegypt.org']));
         $canForms = $currentUser && $currentUser->can('manage own forms');
         $canChangeRequests = $currentUser && ($isCommittees || $isServiceBody || $isSuperAdmin);
         $canFacebook = $currentUser && ($isSuperAdmin || $isCommittees);
-        $hasServices = $canHelpline || $canForms || $canChangeRequests || $canFacebook;
+        $hasServices = $canHelpline || $canForms || $canChangeRequests || $canFacebook || $canWhatsApp;
       @endphp
 
       {{-- ======================================================== --}}
@@ -490,6 +491,27 @@
             <li><a href="{{ route('helpline.index') }}"><i class="bi bi-bar-chart-line"></i> {{ __('messages.Calls Report') ?? 'تقارير المكالمات' }}</a></li>
             <li><a href="{{ route('helpline.volunteers') }}"><i class="bi bi-people"></i> {{ __('messages.Volunteers') ?? 'إدارة المتطوعين' }}</a></li>
             <li><a href="{{ route('forms.helpline.show') }}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> {{ __('messages.Public Form') ?? 'النموذج العام' }}</a></li>
+          </ul>
+        </div>
+      </li>
+      @endif
+
+      {{-- WhatsApp Automation Module --}}
+      @if($canWhatsApp)
+      <li>
+        <a href="#menuWhatsApp" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuWhatsApp" title="{{ __('messages.whatsapp_title') }}">
+          <div class="parent-icon"><i class="bi bi-whatsapp"></i></div>
+          <div class="menu-title">{{ __('messages.whatsapp_title') }}</div>
+        </a>
+        <div class="collapse" id="menuWhatsApp">
+          <ul>
+            <li><a href="{{ route('whatsapp.inbox') }}"><i class="bi bi-chat-dots-fill"></i> {{ __('messages.whatsapp_inbox') }}</a></li>
+            <li><a href="{{ route('whatsapp.reports.index') }}"><i class="bi bi-graph-up"></i> {{ __('messages.whatsapp_reports') }}</a></li>
+            @if($currentUser && ($currentUser->can('manage whatsapp') || $isSuperAdmin))
+            <li><a href="{{ route('whatsapp.subscribers.index') }}"><i class="bi bi-people-fill"></i> {{ __('messages.whatsapp_subscribers') }}</a></li>
+            <li><a href="{{ route('whatsapp.device.status') }}"><i class="bi bi-qr-code-scan"></i> {{ __('messages.whatsapp_device') }}</a></li>
+            @endif
+            <li><a href="{{ route('whatsapp.docs') }}"><i class="bi bi-book-half"></i> {{ __('messages.whatsapp_docs') }}</a></li>
           </ul>
         </div>
       </li>

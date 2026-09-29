@@ -26,6 +26,10 @@ return [
             'title' => 'General & Others',
             'icon' => 'bi-gear-fill',
         ],
+        'whatsapp' => [
+            'title' => 'WhatsApp Automation & Communication',
+            'icon' => 'bi-whatsapp',
+        ],
     ],
 
     'items' => [
@@ -177,6 +181,21 @@ return [
             'label' => 'View API & Mobile Analytics',
             'description' => 'Monitor mobile app API traffic, endpoint latency, errors, and request logs.',
             'category' => 'system',
+        ],
+        'manage whatsapp' => [
+            'label' => 'Manage WhatsApp Service & Device',
+            'description' => 'Configure WhatsApp connection, scan QR code pairing, restart session, and manage broadcast subscribers.',
+            'category' => 'whatsapp',
+        ],
+        'view whatsapp chats' => [
+            'label' => 'View WhatsApp Conversations & Reports',
+            'description' => 'Inspect real-time WhatsApp incoming/outgoing messages, analytics, and telemetry reports.',
+            'category' => 'whatsapp',
+        ],
+        'reply whatsapp messages' => [
+            'label' => 'Reply to WhatsApp Messages as Volunteer',
+            'description' => 'Participate in live agent takeover, respond to user inquiries from the admin inbox, and assist callers.',
+            'category' => 'whatsapp',
         ],
     ],
 ];

@@ -28,6 +28,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'store'])->name('helpline-calls.store');
     Route::get('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'index'])->middleware('auth:sanctum')->name('helpline-calls.index');
 
+    // WhatsApp Microservice Inbound Webhook
+    Route::post('/whatsapp/webhook', [\App\Http\Controllers\Api\WhatsAppWebhookController::class, 'handle'])->name('whatsapp.webhook');
+
     // Sensitive resources requiring authentication for all operations
     $protectedControllers = [
         'change-requests'       => \App\Http\Controllers\Api\ChangeRequestController::class,

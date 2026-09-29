@@ -1,0 +1,16 @@
+services:
+  whatsapp:
+    image: ghcr.io/aldinokemal/go-whatsapp-web-multidevice:latest
+    container_name: naegypt_whatsapp
+    restart: unless-stopped
+    ports:
+      # Bind strictly to local loopback interface for host security
+      - "127.0.0.1:3000:3000"
+    environment:
+      - PORT=3000
+      - WHATSAPP_AUTO_DOWNLOAD_MEDIA=false
+      - WHATSAPP_BASIC_AUTH_USERNAME=naegypt
+      - WHATSAPP_BASIC_AUTH_PASSWORD=${WHATSAPP_API_KEY:-secret_whatsapp_token_change_me}
+      - WHATSAPP_WEBHOOK_URL=${WHATSAPP_WEBHOOK_URL:-https://naegypt.org/api/v1/whatsapp/webhook}
+    volumes:
+      - ./storage/app/whatsapp-data:/app/storages

@@ -339,6 +339,35 @@ Route::group(
                 Route::delete('/volunteers/{id}', [\App\Http\Controllers\HelplineDashboardController::class, 'deleteVolunteer'])->name('volunteers.destroy');
             });
 
+            // WhatsApp Automation & Communication Module
+            Route::prefix('whatsapp')->name('whatsapp.')->group(function () {
+                // Device & Connection Status + Broadcasts
+                Route::group(['middleware' => ['permission:manage whatsapp']], function () {
+                    Route::get('/device', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'status'])->name('device.status');
+                    Route::get('/device/qr', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'qr'])->name('device.qr');
+                    Route::post('/device/reconnect', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'reconnect'])->name('device.reconnect');
+                    Route::post('/device/logout', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'logout'])->name('device.logout');
+                    Route::post('/device/test', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'testMessage'])->name('device.test');
+
+                    Route::get('/subscribers', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'index'])->name('subscribers.index');
+                    Route::post('/subscribers/broadcast', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'triggerBroadcast'])->name('subscribers.broadcast');
+                });
+
+                // Live Chat Inbox & Reports
+                Route::group(['middleware' => ['permission:view whatsapp chats']], function () {
+                    Route::get('/inbox', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'index'])->name('inbox');
+                    Route::get('/inbox/{conversation}/messages', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'messages'])->name('inbox.messages');
+                    Route::post('/inbox/{conversation}/send', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'send'])->name('inbox.send');
+                    Route::post('/inbox/{conversation}/toggle-live-agent', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'toggleLiveAgent'])->name('inbox.toggle-live-agent');
+
+                    Route::get('/reports', [\App\Http\Controllers\Admin\WhatsAppReportController::class, 'index'])->name('reports.index');
+                    Route::get('/reports/export', [\App\Http\Controllers\Admin\WhatsAppReportController::class, 'export'])->name('reports.export');
+                });
+
+                // User Manual & Technical Documentation
+                Route::get('/docs', [\App\Http\Controllers\Admin\WhatsAppDocsController::class, 'index'])->name('docs');
+            });
+
             // Committee Reports:
             Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
             Route::get('committee-reports/storagebox/download', [\App\Http\Controllers\CommitteeReportController::class, 'downloadStorageboxFile'])->name('committee-reports.downloadStorageboxFile');

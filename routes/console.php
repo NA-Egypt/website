@@ -11,4 +11,5 @@ Artisan::command('inspire', function () {
 Schedule::command('model:prune')->daily();
 Schedule::command('api-logs:aggregate')->dailyAt('00:05');
 Schedule::command('storagebox:cache-archives')->everyThirtyMinutes();
+Schedule::command('whatsapp:broadcast-jft')->dailyAt('07:00')->timezone('Africa/Cairo')->withoutOverlapping();
 
