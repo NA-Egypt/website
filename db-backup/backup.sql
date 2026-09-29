@@ -88,7 +88,7 @@ CREATE TABLE `api_daily_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `api_daily_stats_date_platform_unique` (`date`,`platform`),
   KEY `api_daily_stats_date_index` (`date`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_daily_stats` WRITE;
@@ -116,7 +116,10 @@ INSERT INTO `api_daily_stats` VALUES
 (20,'2026-09-27','all',211,211,0,0,37.47,4,0,'{\"\\/api\\/v1\\/home\":34,\"\\/api\\/v1\\/events\":20,\"\\/api\\/v1\\/calendar-events\":20,\"\\/api\\/v1\\/options\":16,\"\\/api\\/v1\\/days\":16,\"\\/api\\/v1\\/topics\":16,\"\\/api\\/v1\\/groups\":16,\"\\/api\\/v1\\/neighborhoods\":16,\"\\/api\\/v1\\/cities\":16,\"\\/api\\/v1\\/meetings\":16}','2026-09-27 21:05:01','2026-09-27 21:05:01'),
 (21,'2026-09-27','android',211,211,0,0,37.47,4,0,'{\"\\/api\\/v1\\/home\":34,\"\\/api\\/v1\\/events\":20,\"\\/api\\/v1\\/calendar-events\":20,\"\\/api\\/v1\\/options\":16,\"\\/api\\/v1\\/days\":16,\"\\/api\\/v1\\/topics\":16,\"\\/api\\/v1\\/groups\":16,\"\\/api\\/v1\\/neighborhoods\":16,\"\\/api\\/v1\\/cities\":16,\"\\/api\\/v1\\/meetings\":16}','2026-09-27 21:05:01','2026-09-27 21:05:01'),
 (22,'2026-09-28','all',189,189,0,0,34.9,5,0,'{\"\\/api\\/v1\\/home\":31,\"\\/api\\/v1\\/calendar-events\":19,\"\\/api\\/v1\\/events\":18,\"\\/api\\/v1\\/stats\":15,\"\\/api\\/v1\\/days\":14,\"\\/api\\/v1\\/cities\":14,\"\\/api\\/v1\\/topics\":14,\"\\/api\\/v1\\/groups\":13,\"\\/api\\/v1\\/neighborhoods\":13,\"\\/api\\/v1\\/meetings\":13}','2026-09-28 21:05:01','2026-09-28 21:05:01'),
-(23,'2026-09-28','android',189,189,0,0,34.9,5,0,'{\"\\/api\\/v1\\/home\":31,\"\\/api\\/v1\\/calendar-events\":19,\"\\/api\\/v1\\/events\":18,\"\\/api\\/v1\\/stats\":15,\"\\/api\\/v1\\/days\":14,\"\\/api\\/v1\\/cities\":14,\"\\/api\\/v1\\/topics\":14,\"\\/api\\/v1\\/groups\":13,\"\\/api\\/v1\\/neighborhoods\":13,\"\\/api\\/v1\\/meetings\":13}','2026-09-28 21:05:01','2026-09-28 21:05:01');
+(23,'2026-09-28','android',189,189,0,0,34.9,5,0,'{\"\\/api\\/v1\\/home\":31,\"\\/api\\/v1\\/calendar-events\":19,\"\\/api\\/v1\\/events\":18,\"\\/api\\/v1\\/stats\":15,\"\\/api\\/v1\\/days\":14,\"\\/api\\/v1\\/cities\":14,\"\\/api\\/v1\\/topics\":14,\"\\/api\\/v1\\/groups\":13,\"\\/api\\/v1\\/neighborhoods\":13,\"\\/api\\/v1\\/meetings\":13}','2026-09-28 21:05:01','2026-09-28 21:05:01'),
+(24,'2026-09-29','all',261,261,0,0,36.85,8,0,'{\"\\/api\\/v1\\/home\":47,\"\\/api\\/v1\\/events\":23,\"\\/api\\/v1\\/calendar-events\":23,\"\\/api\\/v1\\/neighborhoods\":19,\"\\/api\\/v1\\/cities\":19,\"\\/api\\/v1\\/meetings\":19,\"\\/api\\/v1\\/days\":19,\"\\/api\\/v1\\/options\":19,\"\\/api\\/v1\\/topics\":19,\"\\/api\\/v1\\/stats\":19}','2026-09-29 21:05:01','2026-09-29 21:05:01'),
+(25,'2026-09-29','android',259,259,0,0,37.08,7,0,'{\"\\/api\\/v1\\/home\":47,\"\\/api\\/v1\\/events\":23,\"\\/api\\/v1\\/calendar-events\":23,\"\\/api\\/v1\\/groups\":19,\"\\/api\\/v1\\/neighborhoods\":19,\"\\/api\\/v1\\/cities\":19,\"\\/api\\/v1\\/meetings\":19,\"\\/api\\/v1\\/days\":19,\"\\/api\\/v1\\/options\":19,\"\\/api\\/v1\\/topics\":19}','2026-09-29 21:05:01','2026-09-29 21:05:01'),
+(26,'2026-09-29','other',2,2,0,0,7.5,1,0,'{\"\\/api\\/v1\\/whatsapp\\/webhook\":2}','2026-09-29 21:05:01','2026-09-29 21:05:01');
 /*!40000 ALTER TABLE `api_daily_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_logs`;
@@ -143,7 +146,7 @@ CREATE TABLE `api_logs` (
   KEY `api_logs_endpoint_created_at_index` (`endpoint`,`created_at`),
   KEY `api_logs_created_at_index` (`created_at`),
   CONSTRAINT `api_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=1643 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1927 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_logs` WRITE;
@@ -1790,7 +1793,291 @@ INSERT INTO `api_logs` VALUES
 (1639,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
 (1640,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
 (1641,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
-(1642,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26');
+(1642,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'156.216.69.168',NULL,'okhttp/4.9.2','2026-09-28 20:11:26'),
+(1643,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,8,'other',NULL,NULL,'127.0.0.1',NULL,'curl/8.5.0','2026-09-29 00:41:28'),
+(1644,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,7,'other',NULL,NULL,'127.0.0.1',NULL,'curl/8.5.0','2026-09-29 01:55:04'),
+(1645,'GET','/api/v1/stats','api.v1.stats',200,21,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1646,'GET','/api/v1/jft','api.v1.jft',200,21,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1647,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1648,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1649,'GET','/api/v1/meetings','api.v1.meetings.index',200,133,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1650,'GET','/api/v1/cities','api.v1.cities.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1651,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1652,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,21,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1653,'GET','/api/v1/groups','api.v1.groups.index',200,141,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:30'),
+(1654,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:31'),
+(1655,'GET','/api/v1/topics','api.v1.topics.index',200,13,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:31'),
+(1656,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:31'),
+(1657,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:31'),
+(1658,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:31'),
+(1659,'GET','/api/v1/cities','api.v1.cities.index',200,30,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:33'),
+(1660,'GET','/api/v1/events','api.v1.events.index',200,13,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:33'),
+(1661,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,20,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:33'),
+(1662,'GET','/api/v1/meetings','api.v1.meetings.index',200,146,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:33'),
+(1663,'GET','/api/v1/groups','api.v1.groups.index',200,156,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:33'),
+(1664,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1665,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1666,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,75,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1667,'GET','/api/v1/days','api.v1.days.index',200,12,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1668,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1669,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:48:34'),
+(1670,'GET','/api/v1/events','api.v1.events.index',200,17,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1671,'GET','/api/v1/cities','api.v1.cities.index',200,27,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1672,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,35,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1673,'GET','/api/v1/meetings','api.v1.meetings.index',200,130,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1674,'GET','/api/v1/groups','api.v1.groups.index',200,161,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1675,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1676,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1677,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1678,'GET','/api/v1/days','api.v1.days.index',200,11,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1679,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1680,'GET','/api/v1/stats','api.v1.stats',200,5,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:05'),
+(1681,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:07'),
+(1682,'GET','/api/v1/events','api.v1.events.index',200,14,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1683,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,22,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1684,'GET','/api/v1/meetings','api.v1.meetings.index',200,155,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1685,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,67,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1686,'GET','/api/v1/groups','api.v1.groups.index',200,169,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1687,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1688,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1689,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1690,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1691,'GET','/api/v1/stats','api.v1.stats',200,5,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:08'),
+(1692,'GET','/api/v1/cities','api.v1.cities.index',200,23,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1693,'GET','/api/v1/events','api.v1.events.index',200,15,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1694,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,28,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1695,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1696,'GET','/api/v1/groups','api.v1.groups.index',200,191,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1697,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1698,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,61,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1699,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1700,'GET','/api/v1/days','api.v1.days.index',200,18,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1701,'GET','/api/v1/home','api.v1.home',200,5,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:33'),
+(1702,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1703,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1704,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,56,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1705,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1706,'GET','/api/v1/events','api.v1.events.index',200,14,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1707,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,72,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:34'),
+(1708,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:43'),
+(1709,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:43'),
+(1710,'GET','/api/v1/jft','api.v1.jft',200,14,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:43'),
+(1711,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:43'),
+(1712,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:52:54'),
+(1713,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:53:35'),
+(1714,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'154.135.246.217',NULL,'okhttp/4.9.2','2026-09-29 03:55:23'),
+(1715,'GET','/api/v1/jft','api.v1.jft',200,14,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1716,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1717,'GET','/api/v1/stats','api.v1.stats',200,13,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1718,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1719,'GET','/api/v1/meetings','api.v1.meetings.index',200,122,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1720,'GET','/api/v1/cities','api.v1.cities.index',200,16,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1721,'GET','/api/v1/events','api.v1.events.index',200,17,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1722,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,21,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1723,'GET','/api/v1/groups','api.v1.groups.index',200,142,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:32'),
+(1724,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:33'),
+(1725,'GET','/api/v1/home','api.v1.home',200,21,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:33'),
+(1726,'GET','/api/v1/topics','api.v1.topics.index',200,22,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:33'),
+(1727,'GET','/api/v1/options','api.v1.options.index',200,17,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:33'),
+(1728,'GET','/api/v1/days','api.v1.days.index',200,12,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:33'),
+(1729,'GET','/api/v1/jft','api.v1.jft',200,9,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 11:58:36'),
+(1730,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:23'),
+(1731,'GET','/api/v1/jft','api.v1.jft',200,6,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:23'),
+(1732,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:23'),
+(1733,'GET','/api/v1/stats','api.v1.stats',200,11,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:23'),
+(1734,'GET','/api/v1/meetings','api.v1.meetings.index',200,114,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:23'),
+(1735,'GET','/api/v1/events','api.v1.events.index',200,16,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1736,'GET','/api/v1/cities','api.v1.cities.index',200,20,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1737,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,23,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1738,'GET','/api/v1/groups','api.v1.groups.index',200,154,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1739,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,59,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1740,'GET','/api/v1/home','api.v1.home',200,13,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1741,'GET','/api/v1/options','api.v1.options.index',200,14,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1742,'GET','/api/v1/topics','api.v1.topics.index',200,15,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1743,'GET','/api/v1/days','api.v1.days.index',200,15,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:24'),
+(1744,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'196.150.191.213',NULL,'okhttp/4.9.2','2026-09-29 12:01:29'),
+(1745,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1746,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1747,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1748,'GET','/api/v1/jft','api.v1.jft',200,14,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1749,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1750,'GET','/api/v1/cities','api.v1.cities.index',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:36'),
+(1751,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1752,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1753,'GET','/api/v1/groups','api.v1.groups.index',200,143,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1754,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1755,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1756,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1757,'GET','/api/v1/days','api.v1.days.index',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1758,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:37'),
+(1759,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:43'),
+(1760,'GET','/api/v1/jft','api.v1.jft',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:43'),
+(1761,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:43'),
+(1762,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:49:43'),
+(1763,'GET','/api/v1/cities','api.v1.cities.index',200,18,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:55'),
+(1764,'GET','/api/v1/events','api.v1.events.index',200,18,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:55'),
+(1765,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,29,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:55'),
+(1766,'GET','/api/v1/meetings','api.v1.meetings.index',200,126,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:55'),
+(1767,'GET','/api/v1/groups','api.v1.groups.index',200,144,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:55'),
+(1768,'GET','/api/v1/topics','api.v1.topics.index',200,17,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:56'),
+(1769,'GET','/api/v1/options','api.v1.options.index',200,11,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:56'),
+(1770,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:56'),
+(1771,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:56'),
+(1772,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:57'),
+(1773,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 12:50:57'),
+(1774,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1775,'GET','/api/v1/jft','api.v1.jft',200,11,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1776,'GET','/api/v1/home','api.v1.home',200,15,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1777,'GET','/api/v1/home','api.v1.home',200,19,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1778,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1779,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1780,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1781,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1782,'GET','/api/v1/groups','api.v1.groups.index',200,164,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1783,'GET','/api/v1/topics','api.v1.topics.index',200,11,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:01'),
+(1784,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:02'),
+(1785,'GET','/api/v1/days','api.v1.days.index',200,7,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:02'),
+(1786,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:02'),
+(1787,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:02'),
+(1788,'GET','/api/v1/meetings','api.v1.meetings.index',200,111,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1789,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1790,'GET','/api/v1/events','api.v1.events.index',200,11,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1791,'GET','/api/v1/cities','api.v1.cities.index',200,15,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1792,'GET','/api/v1/groups','api.v1.groups.index',200,136,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1793,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1794,'GET','/api/v1/days','api.v1.days.index',200,7,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1795,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1796,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1797,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1798,'GET','/api/v1/stats','api.v1.stats',200,5,'android',NULL,NULL,'154.191.233.236',NULL,'okhttp/4.9.2','2026-09-29 14:59:09'),
+(1799,'GET','/api/v1/stats','api.v1.stats',200,16,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:22'),
+(1800,'GET','/api/v1/home','api.v1.home',200,17,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:22'),
+(1801,'GET','/api/v1/jft','api.v1.jft',200,20,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:22'),
+(1802,'GET','/api/v1/home','api.v1.home',200,18,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:22'),
+(1803,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:22'),
+(1804,'GET','/api/v1/groups','api.v1.groups.index',200,152,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:23'),
+(1805,'GET','/api/v1/cities','api.v1.cities.index',200,13,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:23'),
+(1806,'GET','/api/v1/events','api.v1.events.index',200,10,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:23'),
+(1807,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,21,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:23'),
+(1808,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,68,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:23'),
+(1809,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:24'),
+(1810,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:24'),
+(1811,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:24'),
+(1812,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:24'),
+(1813,'GET','/api/v1/groups','api.v1.groups.index',200,132,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:48'),
+(1814,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:48'),
+(1815,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:48'),
+(1816,'GET','/api/v1/cities','api.v1.cities.index',200,15,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:48'),
+(1817,'GET','/api/v1/meetings','api.v1.meetings.index',200,120,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:48'),
+(1818,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,63,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:49'),
+(1819,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:49'),
+(1820,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:49'),
+(1821,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:49'),
+(1822,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:50'),
+(1823,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:05:50'),
+(1824,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1825,'GET','/api/v1/events','api.v1.events.index',200,15,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1826,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,29,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1827,'GET','/api/v1/meetings','api.v1.meetings.index',200,125,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1828,'GET','/api/v1/groups','api.v1.groups.index',200,151,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1829,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,56,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1830,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:53'),
+(1831,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:54'),
+(1832,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:54'),
+(1833,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1834,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1835,'GET','/api/v1/events','api.v1.events.index',200,9,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1836,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1837,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1838,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1839,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'196.150.57.66',NULL,'okhttp/4.9.2','2026-09-29 15:06:55'),
+(1840,'GET','/api/v1/jft','api.v1.jft',200,17,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:38'),
+(1841,'GET','/api/v1/home','api.v1.home',200,26,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:38'),
+(1842,'GET','/api/v1/stats','api.v1.stats',200,20,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:38'),
+(1843,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:38'),
+(1844,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:38'),
+(1845,'GET','/api/v1/cities','api.v1.cities.index',200,10,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1846,'GET','/api/v1/groups','api.v1.groups.index',200,142,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1847,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1848,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1849,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1850,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1851,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1852,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:39'),
+(1853,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1854,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1855,'GET','/api/v1/cities','api.v1.cities.index',200,15,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1856,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,28,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1857,'GET','/api/v1/meetings','api.v1.meetings.index',200,206,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1858,'GET','/api/v1/options','api.v1.options.index',200,21,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1859,'GET','/api/v1/topics','api.v1.topics.index',200,19,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1860,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,147,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1861,'GET','/api/v1/groups','api.v1.groups.index',200,257,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:40'),
+(1862,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:41'),
+(1863,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:41'),
+(1864,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'196.157.65.149',NULL,'okhttp/4.9.2','2026-09-29 16:27:41'),
+(1865,'GET','/api/v1/jft','api.v1.jft',200,15,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1866,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1867,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1868,'GET','/api/v1/meetings','api.v1.meetings.index',200,123,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1869,'GET','/api/v1/cities','api.v1.cities.index',200,14,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1870,'GET','/api/v1/stats','api.v1.stats',200,16,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1871,'GET','/api/v1/groups','api.v1.groups.index',200,167,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1872,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,24,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:06'),
+(1873,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:07'),
+(1874,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:07'),
+(1875,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:07'),
+(1876,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:08'),
+(1877,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:08'),
+(1878,'GET','/api/v1/days','api.v1.days.index',200,13,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:08'),
+(1879,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1880,'GET','/api/v1/events','api.v1.events.index',200,10,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1881,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,40,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1882,'GET','/api/v1/groups','api.v1.groups.index',200,164,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1883,'GET','/api/v1/meetings','api.v1.meetings.index',200,170,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1884,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1885,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,90,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1886,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:11'),
+(1887,'GET','/api/v1/days','api.v1.days.index',200,11,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:12'),
+(1888,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:12'),
+(1889,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'154.179.112.164',NULL,'okhttp/4.9.2','2026-09-29 16:42:12'),
+(1890,'GET','/api/v1/stats','api.v1.stats',200,21,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1891,'GET','/api/v1/home','api.v1.home',200,27,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1892,'GET','/api/v1/jft','api.v1.jft',200,22,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1893,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1894,'GET','/api/v1/meetings','api.v1.meetings.index',200,126,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1895,'GET','/api/v1/groups','api.v1.groups.index',200,133,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1896,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1897,'GET','/api/v1/events','api.v1.events.index',200,11,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1898,'GET','/api/v1/cities','api.v1.cities.index',200,13,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:43'),
+(1899,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:44'),
+(1900,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:44'),
+(1901,'GET','/api/v1/home','api.v1.home',200,5,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:44'),
+(1902,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:44'),
+(1903,'GET','/api/v1/topics','api.v1.topics.index',200,12,'android',NULL,NULL,'156.205.253.244',NULL,'okhttp/4.9.2','2026-09-29 17:11:44'),
+(1904,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1905,'GET','/api/v1/stats','api.v1.stats',200,21,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1906,'GET','/api/v1/jft','api.v1.jft',200,17,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1907,'GET','/api/v1/home','api.v1.home',200,19,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1908,'GET','/api/v1/meetings','api.v1.meetings.index',200,133,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1909,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1910,'GET','/api/v1/groups','api.v1.groups.index',200,158,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1911,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1912,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,14,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1913,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,61,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:02'),
+(1914,'GET','/api/v1/topics','api.v1.topics.index',200,15,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:03'),
+(1915,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:03'),
+(1916,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:03'),
+(1917,'GET','/api/v1/days','api.v1.days.index',200,14,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:03'),
+(1918,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:16'),
+(1919,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:17'),
+(1920,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:17'),
+(1921,'GET','/api/v1/jft','api.v1.jft',200,7,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:17'),
+(1922,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:19'),
+(1923,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:19'),
+(1924,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:19'),
+(1925,'GET','/api/v1/jft','api.v1.jft',200,7,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:19'),
+(1926,'GET','/api/v1/jft','api.v1.jft',200,7,'android',NULL,NULL,'196.153.37.187',NULL,'okhttp/4.9.2','2026-09-29 21:04:40');
 /*!40000 ALTER TABLE `api_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `apk_download_requests`;
@@ -1811,7 +2098,7 @@ CREATE TABLE `apk_download_requests` (
   UNIQUE KEY `apk_download_requests_token_unique` (`token`),
   KEY `apk_download_requests_email_index` (`email`),
   KEY `apk_download_requests_expires_at_index` (`expires_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `apk_download_requests` WRITE;
@@ -1859,7 +2146,11 @@ INSERT INTO `apk_download_requests` VALUES
 (40,'poika_mohamed@yahoo.com','MY62r53Cs3WbU4mPygsWAU5Cer14hFSuM23A93zE5i0VoGOEaXXO1yDFsfDiGcAZ','156.206.97.193','Mozilla/5.0 (Linux; Android 7.0; Infinix X559C) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36','2026-09-28 20:06:36',0,NULL,'2026-09-27 20:06:36','2026-09-27 20:06:36'),
 (41,'aeismail2015@gmail.com','r5S4UFfvxh6Qa0XvumuYM46ud2IeA4FjEw5rGB4TFa5Q3VfiCEZDAJJo6DaqXpUh','162.159.122.117','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36','2026-09-29 19:38:49',0,NULL,'2026-09-28 19:38:49','2026-09-28 19:38:49'),
 (42,'aielsaid2024@gmail.com','HhLwVRjb155wIVfMeAKPieMNNJNMhvnLQTRg6ayEcV4Tgw7wNgGnnDaAIw6tChzH','172.70.108.164','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36','2026-09-29 19:41:32',1,'2026-09-28 19:49:16','2026-09-28 19:41:32','2026-09-28 19:49:16'),
-(43,'mohamedalsayd11122@gmail.com','v131S6aUkBr5FDcVRXDsIon8lLNIZliiqkhfNVx68QOEY7OzwPXzaXacixElT9Wp','162.159.122.116','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-29 21:00:31',0,NULL,'2026-09-28 21:00:31','2026-09-28 21:00:31');
+(43,'mohamedalsayd11122@gmail.com','v131S6aUkBr5FDcVRXDsIon8lLNIZliiqkhfNVx68QOEY7OzwPXzaXacixElT9Wp','162.159.122.116','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-29 21:00:31',0,NULL,'2026-09-28 21:00:31','2026-09-28 21:00:31'),
+(44,'mohsenfareedsharaf@gmail.com','FEYr5NSmnpWyG4ICEnubdmE6zqyJiAf2ayC562KBbtGL967lsoR8ZruLzwrUYHie','154.135.246.217','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36','2026-09-30 03:39:14',1,'2026-09-29 03:39:37','2026-09-29 03:39:14','2026-09-29 03:39:37'),
+(45,'ayae16661@gmail.com','7JG7IPVZiD4YwbbPphUWs2rOhuwOhHgLUyuSCtwJ3YUcrnuLwcmqlCqquJMObMuR','172.70.216.52','Mozilla/5.0 (Linux; Android 13; itel A665L Build/TP1A.220624.014) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/154.0.8037.52 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/580.0.0.51.74;IABMV/1;]','2026-09-30 12:25:58',5,'2026-09-29 15:03:30','2026-09-29 12:25:58','2026-09-29 15:03:30'),
+(46,'achetto305@gmail.com','kJwkMBFlFCl9ZAVKAjXkrqgoX9yUkSyVqKmCnG8yXFAaUgtsGH6vVC0oiAmxC18F','172.70.108.164','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-30 12:26:54',1,'2026-09-29 12:27:23','2026-09-29 12:26:54','2026-09-29 12:27:23'),
+(47,'frindz90@yahoo.com','zFCt6tN6HQI42NW1sh5xoNWrYgOlOjHpYXScPMnvplGORwRhvrs3QxBWtfDTn3lq','156.205.253.244','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','2026-09-30 12:46:23',4,'2026-09-29 12:49:11','2026-09-29 12:46:23','2026-09-29 12:49:11');
 /*!40000 ALTER TABLE `apk_download_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `cache`;
@@ -2212,7 +2503,7 @@ CREATE TABLE `contact_us` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=457 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=458 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `contact_us` WRITE;
@@ -2673,7 +2964,8 @@ INSERT INTO `contact_us` VALUES
 (453,'VincentFauLp','vincentgorte@gmail.com','81181427454','????????? ??????? ??????????','Attentive and engaging communication with beautiful women. Completely reciprocal and anonymous. Invaluable experience communicating with the opposite sex. \r\n[url=https://bit.ly/4xxUqID][b]You can try right now![/b][/url]','2026-09-12 11:44:35','2026-09-12 11:44:35'),
 (454,'BrianFueni','rushbramble@spinbetters.org','17831107464','General Inquiry','Greetings! I recently found a really useful site and figured I\'d share it here. Feel free to explore — [url=https://willowjuniper.site/]helpful link[/url]. Would love your feedback https://willowjuniper.site/','2026-09-12 20:52:11','2026-09-12 20:52:11'),
 (455,'StaceySar','stac.e.y.d.r.a.g.i.ls@gmail.com','84111978554','?????? ???? ?????? (PR)','Are you [u]afraid[/u] to admit? \r\n[b]Return[/b] your wild sexual pleasure [b]like in youth[/b]! \r\n[url=https://bit.ly/4ghsyBo]Right now![/url]','2026-09-14 05:10:18','2026-09-14 05:10:18'),
-(456,'محمد','dodgeali43@gmail.com','01100869498','استفسار عام','كيف يمكنني الانضمام الي مدمني الجنس المجهولين والاعتماد علي الله وعليكم في برنامج تطبيقي وتعليمي يرشدني الي التعافي من هذه العادة شكرا','2026-09-20 19:01:48','2026-09-20 19:01:48');
+(456,'محمد','dodgeali43@gmail.com','01100869498','استفسار عام','كيف يمكنني الانضمام الي مدمني الجنس المجهولين والاعتماد علي الله وعليكم في برنامج تطبيقي وتعليمي يرشدني الي التعافي من هذه العادة شكرا','2026-09-20 19:01:48','2026-09-20 19:01:48'),
+(457,'Hanna','hannabass1984@gmail.com','+380966328750','Meetings & Groups Information','As-salamu alaykum wa rahmatullahi wa barakatuh,Dear sisters,My name is Hanna , and I am an addict. I am 42 years old. By the Mercy of Allah, I converted to Islam 23 years ago, and today my husband, our 5 children, and I are all practicing Muslims.I am reaching out to you because I desperately need your help and support in my recovery. Some time ago, I lived in Cairo for three years. I studied Arabic at the Fajr Center near the last metro station (Aher Metro) and lived near Mustafa النحاس (Mustafa Nahas) street. I miss those places so much, and I still remember the taste of your wonderful local bread (Eish) with tahini mixed with black honey (Asal Aswad). I am so incredibly happy to have found NA in Misr!Unfortunately, back then I couldn\'t master the language completely. I have tried attending NA meetings in Ukraine with non-Muslims many times, but I just couldn\'t stay there — I didn\'t feel at home. Now, I feel a deep inner desire to recover specifically among Muslim sisters, in an environment where I feel safe and spiritually connected.Could you please help me join your online women\'s meetings? Since my Arabic is limited, would it be okay if I just attend, listen silently, and absorb the atmosphere of the group for the first period of time?I would be deeply grateful for your guidance and for allowing me to be a part of your circle.Thank you, and may peace be upon you.','2026-09-29 01:57:28','2026-09-29 01:57:28');
 /*!40000 ALTER TABLE `contact_us` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `custom_form_fields`;
@@ -3156,7 +3448,7 @@ CREATE TABLE `helpline_calls` (
   KEY `helpline_calls_caller_type_index` (`caller_type`),
   KEY `helpline_calls_referral_source_index` (`referral_source`),
   CONSTRAINT `helpline_calls_volunteer_id_foreign` FOREIGN KEY (`volunteer_id`) REFERENCES `helpline_volunteers` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `helpline_calls` WRITE;
@@ -3259,7 +3551,14 @@ INSERT INTO `helpline_calls` VALUES
 (98,'less_than_5','2026-09-28','2:00 PM - 4:00 PM','عضو حالي',NULL,'Facebook',NULL,NULL,NULL,6,'هاني ج',NULL,0,'تم التوجيه لمجموعة حدائق القبة اليوم الاثنين',0,NULL,'2026-09-28 11:46:14','2026-09-28 11:46:14','2026-09-28 11:46:14'),
 (99,'less_than_5','2026-09-28','10:00 PM - 12:00 AM','أعضاء محتملة',NULL,'لجنة المستشفيات',NULL,'مستشفي النفسيه بور سعيد',NULL,5,'عبد الرحمن ي',NULL,0,'عضو محتمل بيسأل علي اجتماعات بور سعيد رحبت بيه وعرفته بينا ووجهته علي المجموعه',0,NULL,'2026-09-28 19:19:20','2026-09-28 19:19:20','2026-09-28 19:19:20'),
 (100,'less_than_5','2026-09-28','10:00 PM - 12:00 AM','عضو حالي',NULL,'جدول الاجتماعات',NULL,NULL,NULL,5,'عبد الرحمن ي',NULL,0,'عضو بيسأل علي اجتماعات حدايق القبه والخط قطع',0,NULL,'2026-09-28 20:11:18','2026-09-28 20:11:18','2026-09-28 20:11:18'),
-(101,'less_than_5','2026-09-28','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو محتمل كان فاكرنا رقم مركز العزيمة عرفته بينا وبطريقتنا وأننا غير منتسبين وبمطلب العضوية وخد بيانات الغردقة',0,NULL,'2026-09-28 20:17:53','2026-09-28 20:17:53','2026-09-28 20:17:53');
+(101,'less_than_5','2026-09-28','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو محتمل كان فاكرنا رقم مركز العزيمة عرفته بينا وبطريقتنا وأننا غير منتسبين وبمطلب العضوية وخد بيانات الغردقة',0,NULL,'2026-09-28 20:17:53','2026-09-28 20:17:53','2026-09-28 20:17:53'),
+(102,'less_than_5','2026-09-29','2:00 PM - 4:00 PM','أعضاء محتملة',NULL,'ChatGPT',NULL,NULL,NULL,6,'هاني ج',NULL,0,'تم التوجيه لمجموعة اكتوبر اليوم الثلاثاء',0,NULL,'2026-09-29 11:36:54','2026-09-29 11:36:54','2026-09-29 11:36:54'),
+(103,'less_than_5','2026-09-29','4:00 PM - 6:00 PM','بيانات اجتماعات',NULL,'بحث جوجل',NULL,NULL,NULL,7,'هيثم',NULL,0,'اجتماع قنا',0,NULL,'2026-09-29 14:43:04','2026-09-29 14:43:04','2026-09-29 14:43:04'),
+(104,'less_than_5','2026-09-28','8:00 PM - 10:00 PM','أعضاء محتملة',NULL,'ChatGPT',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو محتمل اول مرة يكلمنا عايز يحضر في أكتوبر عرفته بينا وبطريقتنا وبمطلب العضوية',0,NULL,'2026-09-29 18:06:44','2026-09-29 18:06:44','2026-09-29 18:06:44'),
+(105,'less_than_5','2026-09-29','12:00 PM - 2:00 PM','بيانات اجتماعات',NULL,'عضو حالي',NULL,NULL,NULL,2,'محمد ر',NULL,0,'مواعيد وعناوين',0,NULL,'2026-09-29 19:28:14','2026-09-29 19:28:14','2026-09-29 19:28:14'),
+(106,'less_than_5','2026-09-28','12:00 PM - 2:00 PM','بيانات اجتماعات',NULL,'عضو حالي',NULL,NULL,NULL,2,'محمد ر',NULL,0,'مواعيد وعناوين',0,NULL,'2026-09-29 19:28:56','2026-09-29 19:28:56','2026-09-29 19:28:56'),
+(107,'less_than_5','2026-09-29','8:00 PM - 10:00 PM','عضو حالي',NULL,'عضو حالي',NULL,NULL,NULL,3,'إيهاب',NULL,0,'عضو حالي بيسأل عن اسعار تذاكر الكونفينشن',0,NULL,'2026-09-29 19:36:21','2026-09-29 19:36:21','2026-09-29 19:36:21'),
+(108,'more_than_5','2026-09-29','8:00 PM - 10:00 PM','أهالي وأقارب المدمنين',NULL,'Facebook',NULL,NULL,NULL,3,'إيهاب',NULL,0,'ام لمدمن بيعاني بتسأل لو احنا مصحة عرفتها بينا وبطريقتنا وبمطلب العضوية وأننا غير منتسبين واقترحت عليها تشجعه يكلمنا أو توضحله طريقتنا زي ما وضحتلها',0,NULL,'2026-09-29 19:37:44','2026-09-29 19:37:44','2026-09-29 19:37:44');
 /*!40000 ALTER TABLE `helpline_calls` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `helpline_volunteers`;
@@ -4694,7 +4993,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `migrations` WRITE;
@@ -4813,7 +5112,8 @@ INSERT INTO `migrations` VALUES
 (112,'2026_09_18_033636_create_apk_download_requests_table',40),
 (113,'2026_09_21_000001_add_hospital_and_poster_to_helpline_calls_table',41),
 (114,'2026_09_27_000001_add_performance_indexes_to_meetings_and_groups',42),
-(115,'2026_09_27_000002_add_topic_and_meeting_topic_indexes',42);
+(115,'2026_09_27_000002_add_topic_and_meeting_topic_indexes',42),
+(116,'2026_09_29_100000_create_whatsapp_tables',43);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `model_has_permissions`;
@@ -4853,7 +5153,10 @@ INSERT INTO `model_has_permissions` VALUES
 (27,'App\\Models\\User',425),
 (28,'App\\Models\\User',398),
 (28,'App\\Models\\User',418),
-(28,'App\\Models\\User',425);
+(28,'App\\Models\\User',425),
+(38,'App\\Models\\User',424),
+(39,'App\\Models\\User',424),
+(40,'App\\Models\\User',424);
 /*!40000 ALTER TABLE `model_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `model_has_roles`;
@@ -5175,7 +5478,7 @@ CREATE TABLE `permissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `permissions` WRITE;
@@ -5207,7 +5510,10 @@ INSERT INTO `permissions` VALUES
 (34,'view lit ledger','web','2026-09-02 17:40:34','2026-09-02 17:40:34'),
 (35,'create calendar events','web','2026-09-02 17:40:34','2026-09-02 17:40:34'),
 (36,'manage calendar events','web','2026-09-02 17:40:34','2026-09-02 17:40:34'),
-(37,'view api analytics','web','2026-09-17 13:46:21','2026-09-17 13:46:21');
+(37,'view api analytics','web','2026-09-17 13:46:21','2026-09-17 13:46:21'),
+(38,'manage whatsapp','web','2026-09-29 00:18:17','2026-09-29 00:18:17'),
+(39,'view whatsapp chats','web','2026-09-29 00:18:17','2026-09-29 00:18:17'),
+(40,'reply whatsapp messages','web','2026-09-29 00:18:17','2026-09-29 00:18:17');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `personal_access_tokens`;
@@ -5306,7 +5612,12 @@ INSERT INTO `role_has_permissions` VALUES
 (35,76),
 (36,1),
 (36,72),
-(37,1);
+(37,1),
+(38,1),
+(39,1),
+(39,70),
+(40,1),
+(40,70);
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `roles`;
@@ -5809,7 +6120,7 @@ CREATE TABLE `subscribers` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `subscribers_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=1371 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1372 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `subscribers` WRITE;
@@ -7182,7 +7493,8 @@ INSERT INTO `subscribers` VALUES
 (1367,'z.u.ko.wu.y.o.r.e1.9.4@gmail.com','2026-09-24 21:03:22','2026-09-24 21:14:41',NULL,'2026-09-24 21:14:41'),
 (1368,'asmaa25jan@gmail.com','2026-09-25 12:46:19','2026-09-26 20:48:48',NULL,'2026-09-26 20:48:48'),
 (1369,'Abdelhadykhaleel477@gmail.com','2026-09-25 19:51:08','2026-09-26 20:48:48',NULL,'2026-09-26 20:48:48'),
-(1370,'elsayedahmed7404@gmail.com','2026-09-26 03:04:00','2026-09-26 20:48:48',NULL,'2026-09-26 20:48:48');
+(1370,'elsayedahmed7404@gmail.com','2026-09-26 03:04:00','2026-09-26 20:48:48',NULL,'2026-09-26 20:48:48'),
+(1371,'ayae16661@gmail.com','2026-09-29 12:28:04','2026-09-29 12:28:04',NULL,NULL);
 /*!40000 ALTER TABLE `subscribers` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `topics`;
@@ -7249,7 +7561,7 @@ CREATE TABLE `transactions` (
   KEY `transactions_user_id_foreign` (`user_id`),
   CONSTRAINT `transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `transactions_chk_1` CHECK (json_valid(`details`))
-) ENGINE=InnoDB AUTO_INCREMENT=2299 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2303 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `transactions` WRITE;
@@ -9173,7 +9485,11 @@ INSERT INTO `transactions` VALUES
 (2295,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'3.228.213.183','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/605.1.15','https://naegypt.org/en/export-meetings-pdf',NULL,'2026-09-28 13:56:53','2026-09-28 13:56:53'),
 (2296,'User','update','{\"last_login_at\":\"2026-09-28 19:34:35\"}','{\"last_login_at\":null}','{\"last_login_at\":\"2026-09-28 19:34:35\"}','196.156.69.234','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAACCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAAbTFnaQ9LSbO0G2zYjiLi5Q6KTmPlm81AaotXZ3WJAXOdJOHDTkU3hud3cX6aSuKjzRmiAh7qEQDXGH2jIy6mXi_7tVSetG0QiMwsCVCg3MNz9wf933UK-oOcoMLqTCDWOVy7TLWZMGSi6z10RnwwhZqq30uE-M04Rq76Ue9al0_3ycmRw2xQbEqB6n0h95mcW8X0cLo7mXfLSXI8uAwQ0AEcMx1KkxW6MjsUOXD8myZzt9b73SG-g9v2jH2DVMxD35tW8O7p9oXX-t-v4lvqpQZYzZRpGqFeRVjhFu9NW2g8NRjDbWth7q3WvJrsIuy8tCjJi04Q2tsyem12mVgUFkqTo23S3hqJUs1ZpDZnz9dzq23P-bIUXo91Ni4YTBWo6wctLefzp_DY40PO_brnZIfWSiYpsvSjjHoEfsNuD0bAXLSSLqHgDRsxAk31QzRmeplPvw3ZIday1hFzritG7kXyNVZI4ArgKzdTCXcST81SX864IDwstdpAvD3j_2mz8oGTkx_CsLmQfTsTTM_DRjKpwqxW-dscH8w0xxsOr_vLQGm7MKMqa9dVjcwLlzMMrDkv16Hxre9cbwZcSeNKatplnlt0oD1KKEoEJzxnCu0osQu4g4w-f3Os8A95AIzFV_FOlPjX8kGWicSnf0G5fUOETPkRU70OBdzaPav7cNTi2-eI8lkXTJPwMDXzCFl7wty3pC_V7_Vh9WOCayIQqZYTHj-aL2igy3J29O__TXJANFUAz3Eq_HXlm1fKRfl9pG_JUVJFcPiJ-yeJGI1iM26B4ayDy32VDqdTcVufTOOTNhzNqLi66wWJHPM6ye0scQru5RZ0tblKHU3oNc6Tt3iTBVH_Nl_D9s1lU3MhwsDr1YGXa-w8PQBBo0DMesjXzTsVnP8n29pTuXKYHbbQp0-KMcrX8s4mjt52F9kPQ0ARGsYh_4B8TjuZPpRGTQulBjCK0G6X8awg7wAGkljKwrjCpdeBLQ9iiXkLmo-F8s9OwvcaxrypcR1Szqpcrl_dupVnh3Ks5NhFTGrTROtrYy77yQCYVIZYMeo2auU-9t5DXBvttO7hFnR6FlGE4jjf_TXeho3JP0EDxXR4SQWX_VhAO0uHM25KTJVFAmGn7uXOVoorAKyo_Kqp-UlNNNHC_oQZwuXK0CaLxbadSJKyCa_W9A&session_state=008da1ea-d85c-78d4-c3b9-520f46ce8f52',182,'2026-09-28 16:34:35','2026-09-28 16:34:35'),
 (2297,'User','update','{\"last_login_at\":\"2026-09-28 20:28:37\"}','{\"last_login_at\":\"2026-09-28 19:34:35\"}','{\"last_login_at\":\"2026-09-28 20:28:37\"}','196.156.69.234','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAKKCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAImyFM6l7IMtyrJOTIcHT2v6ermYTQZI_w7PKhu53F1c5tRf-zyq3Wj2F1dn0PAQIgRCJ770HZjG0LCkAymiXLospbKkNUzJS4wwb-Hj-t0tjZVPqb1mJiGzJyi1R8YIuRsZ8rTiIegR8i7okyDqGTBtEHLUafpVoRKAqOZXcFhhgrHbJzsyFv7ESVLtxtQUHntGwYEO5L0OJgiXYc8on6B6dIDyO_Np4hHoe0OYIj4EENL0cscqIEzrVWTi6RJ90PNEI2oW0tR74X9s2c6jwx5QsbiG78HdJXhNNCojqGighzMFgvLRn_o8F-1iEydT9HOiank1HyIZ8LvOqLukT0ycPaSLnecFDURfuWvWwJyE2JiaAriHa9HU7Jc3geRzsI8Y-QwhSgwa9PFXxiIE7D-tGEswjqu9vlbqJntK8vyT7Shq1HxP6dJa_XDalk1wT-14cZK7FUbGCxGcSvqzH0VtrL92pY4xeYY823Io8Fow_V4yF0Q4iGZdd_1fW0Z4-7gc7MPQMbCliOofI-Cx35g696mfBIK1ETOe0sqhnHWJ-sOChs9XCwEteNNaeHLpJoBu9VJiRiMdsBpu0SK5018F-pnKDuLhJruIQffiVvugqVItpRi-7gO4dzQK00BV4v5-Gg8JqsLe3FhA4VFznKDLnUbvSGTwDRicpLsZJ7_HDcIkq84dFuT30cOg1iKWIyrP7vm-CoTXz920gwKZR7mSGQ8b-uiYp_B4yy3QEOV6ZiywjxLDKSrfuYPf_z44k5_-5BdCbKS5JivJ4ToHcVpg04YeSA941yYqhkBl_Gj7NNipeEBvI2YYTbG9QUACRmVyK4PgAMALgLCtjm-FGP22QThTeX4XpTBwje1PWUnPM1MpVVWXN4A6M3wT-5DAm4L_z1JxfG8eelB2RVrBFlgyyJU_cF6nJ1x4wjMJC8YjsgJjsBjNj5P-VHSwR9bj8Qh703tiWdTlZwVrEcyvxy-Ypm1_j0jxd3W7eXFoMDy_UoGPVdfHYglXD_ta7QhguD1y6GAG-6EIx3FuA4ntVqyRxPoFWI7mDj5-RDvNbsQOn3FK6FiSNplL-iW9AjAB2zyXwGFSIUIsjenmDHjiZ5vu26Vg5-AtTJ_L7DdvZ2ZcnaW_GsHDCnvnLfImTmlp72IiB85zxED4EYHPdpF8ahvacsYvlVZ1EgS-dS-OqywIWrb4ZbAevRCvFBsn7VyNczHBgBTVxwoPqWZrV0uWUxEekM3yqWzyrhg-Cd0dJgUNbAzgOgY&session_state=008da1ea-c869-d66e-7154-7f0dc0e6fcbc',182,'2026-09-28 17:28:37','2026-09-28 17:28:37'),
-(2298,'User','update','{\"last_login_at\":\"2026-09-28 21:54:32\"}','{\"last_login_at\":\"2026-09-28 03:29:57\"}','{\"last_login_at\":\"2026-09-28 21:54:32\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAHxvmOui3r1uwQrdIiYWsR9mhnFrQbnalSydzAGTqV8n8LeblCJKzEtL7u1o5UMtNUK1PMbtALKULr3EqVGohdVm2yW7kTvMP1ctH6QV1fYm0pr4cRkKpMsMymSpykmLSkUOASd_J7xdMbjmHG62Aa30UJj-CsYMYaUpaSwCAh4rkGtZZfnJYDSvO3Nhnz12jvYqd5p6rdolfLJ0nojEnpOsC5KWvxWnbnnAnZT6MX3Am9lKuZVvwuIpX_10wAJ53vib6zQSrhlCMyx36jATLvJZ1WoBRb7gno3cCr3Cp5fdTydXehYw9YCe1uUl_E3bbQpmK-xqQVSlpX55hTE9dbE2MAAq1vuv5S_8YZrA2ccMp4xMaxC7tG1VNfdK2HIncWVa8fg7H9ZgqFfYEGnNQMjeVRD2mU45icD4SMzdfpEWRGHRZmUkau9ERbWgcXIikbu3q5IAexpaC3-6mqnglPZgLlftsP_w_Le9qgJNsG-UUzIKMebl_PHC8ycMN75DvE3LtLwy39hnlsFod_fePB5jC-3lI85Lz2Yi-BjZHZgFeaQNAdIQDJC7bw9CW0P1N_g2Zi7AbMYShEyqQEfsL_kfKQmt9ej1DBmjOvXUudWjUQcQVFkxe8Dbz0sxlq1oHPIR3L9TIt6pR-n5R1HGrNA4L9Zc3EmJpaoJzoxjGyctW598asMERN0_JRjKy5HXMub9HObrPfUzBTvr-hkXHPiIZN0E-A622dv1uJyVeWdQdh5kYXrC5LTDi7KEpZRtEdkKe5wKiY0qwxE3Q71PbRlzz_pG686RqJHKN9wczUFREUb1xT9d6UPckEoTpKSAs9zVZXRUIDQjf_Ak-jw917ETnAeqCWPquCfsb8vs3Q-e9dejSbh_8orBqDx6zX1TsOEPGJbdzT8Ru0zjSN9NF3vTJuSXYteIURBJ2Ian71NzA84iCUwmYAM5qrWue1iejREd4XKbUPm5eJwia57VCcJGJwBck8nPuX-nMdBP7Px7DH3Xj9MSpMPw_1eF24rx0ja9CaKd4rdwOZmtc0dvm8EQ_grNPs8lAHE-xYGJGIOmYA8AmQseVVkiUNL9lbSAth8QXBIj3882FRag2M6hfGqbsChmaENrNyNmP8Sz2l36okn6k_eGOHiKq9l0r7cANiKDVpLtoMI3rTf9gLw823bnNJvp0zIvvvPvRFJ1FylGMug8ja5SLa7hoyEAJA&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-28 18:54:32','2026-09-28 18:54:32');
+(2298,'User','update','{\"last_login_at\":\"2026-09-28 21:54:32\"}','{\"last_login_at\":\"2026-09-28 03:29:57\"}','{\"last_login_at\":\"2026-09-28 21:54:32\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAHxvmOui3r1uwQrdIiYWsR9mhnFrQbnalSydzAGTqV8n8LeblCJKzEtL7u1o5UMtNUK1PMbtALKULr3EqVGohdVm2yW7kTvMP1ctH6QV1fYm0pr4cRkKpMsMymSpykmLSkUOASd_J7xdMbjmHG62Aa30UJj-CsYMYaUpaSwCAh4rkGtZZfnJYDSvO3Nhnz12jvYqd5p6rdolfLJ0nojEnpOsC5KWvxWnbnnAnZT6MX3Am9lKuZVvwuIpX_10wAJ53vib6zQSrhlCMyx36jATLvJZ1WoBRb7gno3cCr3Cp5fdTydXehYw9YCe1uUl_E3bbQpmK-xqQVSlpX55hTE9dbE2MAAq1vuv5S_8YZrA2ccMp4xMaxC7tG1VNfdK2HIncWVa8fg7H9ZgqFfYEGnNQMjeVRD2mU45icD4SMzdfpEWRGHRZmUkau9ERbWgcXIikbu3q5IAexpaC3-6mqnglPZgLlftsP_w_Le9qgJNsG-UUzIKMebl_PHC8ycMN75DvE3LtLwy39hnlsFod_fePB5jC-3lI85Lz2Yi-BjZHZgFeaQNAdIQDJC7bw9CW0P1N_g2Zi7AbMYShEyqQEfsL_kfKQmt9ej1DBmjOvXUudWjUQcQVFkxe8Dbz0sxlq1oHPIR3L9TIt6pR-n5R1HGrNA4L9Zc3EmJpaoJzoxjGyctW598asMERN0_JRjKy5HXMub9HObrPfUzBTvr-hkXHPiIZN0E-A622dv1uJyVeWdQdh5kYXrC5LTDi7KEpZRtEdkKe5wKiY0qwxE3Q71PbRlzz_pG686RqJHKN9wczUFREUb1xT9d6UPckEoTpKSAs9zVZXRUIDQjf_Ak-jw917ETnAeqCWPquCfsb8vs3Q-e9dejSbh_8orBqDx6zX1TsOEPGJbdzT8Ru0zjSN9NF3vTJuSXYteIURBJ2Ian71NzA84iCUwmYAM5qrWue1iejREd4XKbUPm5eJwia57VCcJGJwBck8nPuX-nMdBP7Px7DH3Xj9MSpMPw_1eF24rx0ja9CaKd4rdwOZmtc0dvm8EQ_grNPs8lAHE-xYGJGIOmYA8AmQseVVkiUNL9lbSAth8QXBIj3882FRag2M6hfGqbsChmaENrNyNmP8Sz2l36okn6k_eGOHiKq9l0r7cANiKDVpLtoMI3rTf9gLw823bnNJvp0zIvvvPvRFJ1FylGMug8ja5SLa7hoyEAJA&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-28 18:54:32','2026-09-28 18:54:32'),
+(2299,'User','update','{\"last_login_at\":\"2026-09-29 03:23:58\"}','{\"last_login_at\":\"2026-09-28 21:54:32\"}','{\"last_login_at\":\"2026-09-29 03:23:58\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAANoGQr7p1Zxf0C9UBdpLoGdbjP64y0jByQrrMOUsetISS58UURae_wWEy-phsI80iJyfKA2QjTwBdn4qFh8ihUKKVJdjFCDYP2dOO4pc_L7Py-MNXqOcN4fNTQskcfSjH_YIGej793SAZLLIXitd1RkKzJiCkXAwjWjbwDM0M8JF5dVgq4f9WHVcmrgWFBfkvHDQ6Ln-Z2QN5mPbQnZHqIOlK4MzZOzF4zTBVmkyJr1cTJSmklljacKfsQzuYWE8Eqs0mR0kajwmP6Px0454jaeMTAKWWAbI5g1zcle0aYL5BxjrajhyG_JHaSmcScFcHW1NDrAAHt-zvv5FNx5oeMLn0pVCewKYoA74nRTOWA5xO9FrPOWRBAl1nTdFSzprQxbzwC0qyR2B8yujixt8lix5PlRuOEIjmq69a8a3MAnNxgy5CPrDvQR8BvBoYqXb9wSSbZSuJB7wWl48rlJLM41WQmadbU_2mrVl7wC1-aqiLuwPjgjp3ihHEHSTH5WWd2iU70Y4EGbbfv4xkOF7Ntf0bUVjIJbQLRlRktOMcxyqfLxEC-ZKk9K0CcL8On_E1AdQpEsHGr7UiOgncCfUJuurw5ICUpGCfZRNdXDVozBTZNzAcbIE4O7osaeTNDYGa50QQwZGcJ7ALGuaEt-Qz_Hxx802Sl7oEJbxU7l9b7BTP18p5h_WpbHbIrkJIIXuwgsSxgIuaeGZ3bDoTM0oNr1XPXO0um4D7_TJYbax62WBt2vmoHn6PE0OKv5ykLKvbzNUpVgF5U548YCFOjp4UKJ1xOA42WMRupjj4OqWVqlm_duQA_yQXlY5jQdEW58vb0POygSiE573T8rOcsq5qMEFti6oXRAvdRMAUlZF6pbscyZSjaX3gkFabyEnvZ7LT-MSND8Fg-bx1eoj27yyIj2lmSgG4ohKsIgDyGYagSNYv3sV58WQDlIjqImiaraC-oHOOfQNUppmDmF518cBkXq21NPj6PPUWkOfJTGwx4SDxJXJylGzwIKWj021hEaF_pU6unmqs80tfZIlrsADfjRk_g7euvqPonQg9rpjOrHqIUJ0qQo5cT08-iIDOyIZnKFh0qoCZjlxZ1W3QsWxAHnY6leBLLHtbkhSWtAqvs1zjamsXTVY76JTWwd5AFxTZDyZk35wWtSdkjEAU97KCdexwCpXNelpz1za_Pz9BfFrqAfj-_-OmD1GoQPHZQ&session_state=008d53ca-0813-8598-1055-ffffbbdd55d2',184,'2026-09-29 00:23:58','2026-09-29 00:23:58'),
+(2300,'User','update','{\"last_login_at\":\"2026-09-29 08:03:24\"}','{\"last_login_at\":\"2026-09-29 03:23:58\"}','{\"last_login_at\":\"2026-09-29 08:03:24\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAA4gOzdWu_vWa343AmT67cu4_j-hPDNnPqKFI1DKCh3sgV22gcjOyMEScQeKNoe5z5955IriOrXd2yvdew0zguxod0ItsV65ABzko_n5HHSiWiGf6JFxjWc_m4pY9Tjz169mso1tZFbsVb42zYhPh95_XNXGzsO1GWP6M5xUzjmt5DDNWAh_kopUUXaYiInn27Qqg6-vAPodXp1Y7WM4-721-RWCgIODB_B4WAP5MwXnWINGKrlnS__2DxAD-BrADtfbFg7fIKRwVDTPk2g3FVCJY16-Fd1O3xG34ZREPdzJU4STVaBpo8kX9dXUP7GlZ7glzxsPaAjTj_SOlfNy1x4IdV7Q1Ak4AcHw2r4_80TU-48FgcY9Hj6gZnWaP48LrJIQaAq6DidRvYCtyfWJL_VMOIlMVN0EGXl-btcDx25NbT8JnPdkLemJDhzHSxj1J8I1HXIwaHEv1Wz0cXuWnBJ6MlLEqO_aHq7hq5r7TYWWL1Za2rhoy31HaNWiDhhnn8rAm9ojlcVIWXPiBg7Z3wfFgOEmtCn8l8n7w9CKggLre8i4EX-AcJ1ilp5E1xcgfjUJqrFP7yoP8phnPxN16Hu396pc1z_QFqrlVGDx1GXBQLqHC6CACoj5_XQiSS9b4xShFj7xGruxSFhrOFX3wlDnbJLRLIib3plNsN_KFSA96Aa6bKqfrVCLui3B00oGe6OAmPbeR2buoFxUMU4GhtZxX4a2dj2Xp6zK_dVbW0XBdDDAk6Ex8H3M8Y7o18UbgcPmDng6w8JSHXF4nrme7hXc8jyTzmKjkAaWR5P96Zzlu5cmVWNKi-z02uecNeGjK82SxGFMB4Kw3Mjmbo9_UOz3QW3rCzMiHDDQp6CZ1QCXklYmcPDpbrPyrW-WjeaZD6A0ikBR57z07qd60QvVQT2NW0W6g9OKTsUBW4svofTHMGpwbeI1-eZDSFiYgLfUxOZHLn9HJB1KF2KX1SZnXS0d7R5EWo-zlUacSJwl3ihnGDnwbaVW63mX80Z-pewcUFAQ44Hffbglw8dAEnpjRKM4ThqMN_NYm_Iubzyh2lHAu7A6QU_rcZG2PG0G54YCePkqtzUIMjt8uOG6jY28VOJZ0b4AjOCOJ_hPa27deIXDye9dUe7FYCiTDZF8p1VOojnBkuGv55gnmKo4lzg6vaBMfKamTNexmIHzGhISl7PbBOvUpyjdnjUfeF4&session_state=008dc8fa-8b39-6cf7-fcd6-d24632925761',184,'2026-09-29 05:03:24','2026-09-29 05:03:24'),
+(2301,'User','update','{\"last_login_at\":\"2026-09-29 14:38:43\"}','{\"last_login_at\":\"2026-09-29 08:03:24\"}','{\"last_login_at\":\"2026-09-29 14:38:43\"}','197.39.157.46','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaVAKiCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAADxa2cY4Q5MdCCO2qeS0CJfupjMOKbJTEEW3-yIsjAcbe_WP3JZ95V0lFGs-gXtMoIblAbyC0Qh1nURlIokwBzKXbWp03rgVJqqcPaQ3tTnsPVUlqEkIr1ys_uEnRKNaBiO9zcnUkgdNPJdRTDyoM-ElOIMyEH6YyDheweKgfADIdotSjMnppHxcXXBkSK7XNpwDT2am4FW7juKS-mVtXePFWl-f3RyogBZavY1MWaanoCBoDwOGvpxOX9h-t6VnT5WGRvCWps277MS9QuyHTZ2MQROGrDy3loTAswkvn8mOdmv6eMfNl712pTnnVEKVd6w_IclLJ42IypMlUXy5J2jGX16sTyGOUxKhL7o5GvEmpUh3STV8fgAu-To96tpgzHiSTuz3GmkIzFr1y_MSWK6hamYzyfke9Xa3bmvOWweI4uduXUwKZSConmEApByowGHYlQ9xHeEeTwfMc39g0IxqdeZtRINNPBHgrrQNlO3JA5FqbCDc_iy46cpGgshV0JTsql3cc3ncpzv66ddXyxT21d01VfEnxj26rkZRPjMV9443NwlN8uyEaoToArYY_zbA7zIOivpXA0V6xh_XW5dYnanHLPGq-P4mBOS5QBLuzW0Rf4JPu5itCIAhky3ZNp2GVI4hWWU08PS0fDg82XmRyIE7LnleTGUqG64by9oqfGpVrG5LthzBK3hFTyaPerWnP06lwu3UCGPMJL6ZxwiVOLLAormlkenL1uI0fHJdDygVh0UmtOz41ENsBm7F6p1qULYcvJl1EXCt0b7z1sufy2iv4stDJyxdPenx6GXftfXlIjyXUxwNYwLQK__KCzEth_DEeLX7usCceGBJSe7UdeyoByFrXL6wcgp3Xz6-fxD-fiWItUC2bKtfxXN5opEF1-c9jf7dSh7DnP082Pxs7qET6-rhXjDKJEo8J7oxn-v5NHQcCmVcEyL2_FokYQrKKJM-6wsq44tsUbe_cibvIAy9X9L2hJpU32tIX_HOztJH7eTXdC58sD2Q_X23rr7bq54SERkxR2yVZYtF7Gf3UXK2twZw1ljCxqNpWFHWkDKwauhJFBmIsPOgfFF30jbOSDNSaLTBa4xOfDRfqnES8hC18aHFNqTr8XhZlkaZf5t2VBi9MbfzbH7xo_UWoP4tZguFsCb0EF279qQEm1zzgkF8uq4AFpE8RFXPkDfznUlps2Ra0VZD_mwHkqY&session_state=008dc8fa-8b39-6cf7-fcd6-d24632925761',184,'2026-09-29 11:38:43','2026-09-29 11:38:43'),
+(2302,'User','update','{\"last_login_at\":\"2026-09-29 22:25:55\"}','{\"last_login_at\":\"2026-09-18 12:39:56\"}','{\"last_login_at\":\"2026-09-29 22:25:55\"}','196.151.57.97','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAACCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAGGwH-f8KJdtiNR2Wjliauc7b46xPjDRXuvuosnhQxHHU0COFM4dV_F7030DQaonq681TX6seb3pxQOj_gO1v0y8SQCglMjYt8-Oa0g8L_g1KtDnex6GFcERoSON6S1_8irU767FIdMKepTxnwA-YTy2NJaCWfhsGqBpU65SVPEOHB0Q3gJdvOxD8RU3hJPVHZWSA7SvvkdAAXe8gvue4IzJlQ1sie_sgHbkOCg_PcEBAvwCS-5SkaEUVZ7mvrDiLkdKVFj2NT0UFwXV5tu-qSNkU19-JgaT_IUQrGtl-6PTRA77Zd2-MOMplsqkDYviQCSMBUH4phATwJPJ6uCaXKJQEQkXQVyaO3tks9JN2-4xxbj25Qj9YaBqsrKdxK32NX-Rko5dCJ8_UaoPgvtLEPCMuq-BXvoqOpAnQ1p8M1g8CgmUge5ySiQtScZ1w6AFULL5v9WjqRkoZ1hkZiRofVBgZBtseUAqgJgUQ3EZiB1U72XHyMR8B3wNKze3y1vNcLCHnugnluYnbPQsgQTEVTGkeSYVYUDcybVgXJIL2P6UCx8YRbDLjgPM9WpGHpW0loidwAVf252GyvZiJ7PuXyTu-QyfdXeETko4MDUPi_pL8Z7S78dVcEHAxoEeuc8QTKif2KrCKOIXiZNHNmLDsDY_YT6ElSF5jPQm6jYzR6IgOqaJBH1pICrBNlyPgc1NDKK0pkJ66flRx1dHG6d-9U9qd0KmV7BPXBtNgEIhqm3lUVlL8gs2mmUTxl6YuHxStp32dxPB4n7rc9cTltQc2cgUtEDZt1muDUglVeox8Tar5vjU2Sfh0mkGtKBr4-hk79aVQ6xZrd_kZyBI_73wvmMnZN7BXHh8NxEdqYzX8spZLE95d-NqEW_GoZVcj7m7Y96Khs7vdF9uJ3aqIONk5xnUnAxZHKgPXyP2OU1JkVy0piD08qSZejwiaVRFLEi5BeL3coQT91ifLf1APmXM4VEm76AhBprPBE5UVlMD7uogSo5ffges4Jci5T-L1NwnS5ZFyFwJb2v7b5HhbOL32kG3JMmuYF74mHncS8GAHE5uzZOhF-uQUSUgicGZ0LYDsd_R8jMYEwFKte-JIHHXISVdNurex8J-Q9Q6Kd7QtPHBaaRqw38laZkSqIfoACKln_uSHYanspiWUc3YQx5AdJi5d44yqtffQjie9LVybcJxm6R4i3pz&session_state=008dc8fa-cd87-5c85-e19d-88c8770746a8',424,'2026-09-29 19:25:55','2026-09-29 19:25:55');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `users`;
@@ -9269,7 +9585,7 @@ INSERT INTO `users` VALUES
 (181,'uegsf.rcm','RCM منتدى الصعيد','uegsf.rcm@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-07 08:07:40','2026-06-15 09:22:46',9),
 (182,'web-admin','Ahmed S','web-admin@naegypt.org',NULL,'2026-09-28 17:28:37',NULL,NULL,NULL,'2025-07-07 08:19:01','2026-09-28 17:28:37',NULL),
 (183,'admin','Gamal S','admin@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-14 15:14:59',NULL),
-(184,'websiteadmin','Hani G','websiteadmin@naegypt.org',NULL,'2026-09-28 18:54:32',NULL,NULL,NULL,'2025-07-07 22:58:56','2026-09-28 18:54:32',NULL),
+(184,'websiteadmin','Hani G','websiteadmin@naegypt.org',NULL,'2026-09-29 11:38:43',NULL,NULL,NULL,'2025-07-07 22:58:56','2026-09-29 11:38:43',NULL),
 (185,'wcgsf.fac','ميسر غرب القاهرة','wcgsf.fac@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-11 19:19:03','2026-06-14 15:36:48',7),
 (186,'pr','لجنة العلاقات العامة','pr@naegypt.org',NULL,'2026-09-22 13:27:33',NULL,NULL,NULL,'2025-07-16 13:36:03','2026-09-22 13:27:33',NULL),
 (187,'rcm-wcgsf','RCM غرب القاهرة','rcm-wcgsf@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-18 20:24:04','2026-06-14 15:37:55',7),
@@ -9312,7 +9628,7 @@ INSERT INTO `users` VALUES
 (421,'qena','مجموعة قنا','qena@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-08-03 10:48:19','2026-08-03 10:48:19',9),
 (422,'shubra-elkhayma','مجموعة شبرا الخيمة','shubra-elkhayma@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-08-08 13:25:24','2026-08-08 13:25:36',7),
 (423,'nec.gs','اللجنة الفرعية لدعم مجموعات شمال شرق','nec.gs@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2026-08-22 14:57:45','2026-08-30 20:44:52',NULL),
-(424,'phone','مجموعة خطوط المساعدة','phone@naegypt.org',NULL,'2026-09-18 09:39:56',NULL,NULL,NULL,'2026-08-29 19:44:05','2026-09-18 09:39:56',NULL),
+(424,'phone','مجموعة خطوط المساعدة','phone@naegypt.org',NULL,'2026-09-29 19:25:55',NULL,NULL,NULL,'2026-08-29 19:44:05','2026-09-29 19:25:55',NULL),
 (425,'newcities.rcm','عضو الإقليم منطقة المدن الجديدة','newcities.rcm@naegypt.org',NULL,'2026-09-18 09:46:40',NULL,'$2y$12$/eYDTxJmJj8VmgmrMUiHCehabaV3rpylNRwPjLzeEGiPDc2QAGEBG',NULL,'2026-09-18 09:46:40','2026-09-28 00:38:36',20),
 (426,'alresala.sec','سكرتير منطقة الرسالة','alresala.sec@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-20 23:27:53','2026-09-20 23:27:53',21),
 (427,'alresala.rcm','RCM منطقة الرسالة','alresala.rcm@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-20 23:28:57','2026-09-20 23:28:57',21),
@@ -9320,6 +9636,138 @@ INSERT INTO `users` VALUES
 (429,'elshrouk','مجموعة الشروق','elshrouk@naegypt.org',NULL,'2026-09-23 17:18:24','manual',NULL,NULL,'2026-09-23 15:24:36','2026-09-23 17:18:24',20),
 (430,'loner','المنعزلين','loner@naegypt.org',NULL,NULL,'manual',NULL,NULL,'2026-09-28 01:28:57','2026-09-28 01:28:57',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `whatsapp_broadcast_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `whatsapp_broadcast_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel` varchar(255) NOT NULL DEFAULT 'jft',
+  `title` varchar(255) NOT NULL,
+  `total_recipients` int(10) unsigned NOT NULL DEFAULT 0,
+  `successful_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `failed_count` int(10) unsigned NOT NULL DEFAULT 0,
+  `is_dev_broadcast` tinyint(1) NOT NULL DEFAULT 0,
+  `dispatched_by` bigint(20) unsigned DEFAULT NULL,
+  `completed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `whatsapp_broadcast_logs_dispatched_by_foreign` (`dispatched_by`),
+  KEY `whatsapp_broadcast_logs_channel_index` (`channel`),
+  KEY `whatsapp_broadcast_logs_is_dev_broadcast_index` (`is_dev_broadcast`),
+  CONSTRAINT `whatsapp_broadcast_logs_dispatched_by_foreign` FOREIGN KEY (`dispatched_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `whatsapp_broadcast_logs` WRITE;
+/*!40000 ALTER TABLE `whatsapp_broadcast_logs` DISABLE KEYS */;
+INSERT INTO `whatsapp_broadcast_logs` VALUES
+(1,'jft','Just For Today - 29 سبتمبر',0,0,0,0,NULL,'2026-09-29 00:31:26','2026-09-29 00:31:26','2026-09-29 00:31:26'),
+(2,'jft','Just For Today - 29 سبتمبر',0,0,0,0,NULL,'2026-09-29 04:02:40','2026-09-29 04:02:40','2026-09-29 04:02:40');
+/*!40000 ALTER TABLE `whatsapp_broadcast_logs` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `whatsapp_conversations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `whatsapp_conversations` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `jid` varchar(255) NOT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `is_live_agent_mode` tinyint(1) NOT NULL DEFAULT 0,
+  `live_agent_until` timestamp NULL DEFAULT NULL,
+  `last_assigned_user_id` bigint(20) unsigned DEFAULT NULL,
+  `current_step` varchar(255) DEFAULT NULL,
+  `step_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`step_data`)),
+  `is_dev_test` tinyint(1) NOT NULL DEFAULT 0,
+  `last_interaction_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `whatsapp_conversations_jid_unique` (`jid`),
+  KEY `whatsapp_conversations_last_assigned_user_id_foreign` (`last_assigned_user_id`),
+  KEY `whatsapp_conversations_phone_index` (`phone`),
+  KEY `whatsapp_conversations_is_live_agent_mode_index` (`is_live_agent_mode`),
+  KEY `whatsapp_conversations_live_agent_until_index` (`live_agent_until`),
+  KEY `whatsapp_conversations_current_step_index` (`current_step`),
+  KEY `whatsapp_conversations_is_dev_test_index` (`is_dev_test`),
+  KEY `whatsapp_conversations_last_interaction_at_index` (`last_interaction_at`),
+  CONSTRAINT `whatsapp_conversations_last_assigned_user_id_foreign` FOREIGN KEY (`last_assigned_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `whatsapp_conversations` WRITE;
+/*!40000 ALTER TABLE `whatsapp_conversations` DISABLE KEYS */;
+INSERT INTO `whatsapp_conversations` VALUES
+(1,'@s.whatsapp.net','',NULL,0,NULL,NULL,NULL,NULL,0,'2026-09-29 00:41:30','2026-09-29 00:41:30','2026-09-29 00:41:30');
+/*!40000 ALTER TABLE `whatsapp_conversations` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `whatsapp_messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `whatsapp_messages` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `conversation_id` bigint(20) unsigned NOT NULL,
+  `message_id` varchar(255) DEFAULT NULL,
+  `direction` enum('incoming','outgoing') NOT NULL,
+  `sender_type` enum('user','bot','agent') NOT NULL DEFAULT 'user',
+  `category` varchar(255) DEFAULT NULL,
+  `message_type` varchar(255) NOT NULL DEFAULT 'text',
+  `body` text DEFAULT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'received',
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `raw_payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`raw_payload`)),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `whatsapp_messages_conversation_id_foreign` (`conversation_id`),
+  KEY `whatsapp_messages_user_id_foreign` (`user_id`),
+  KEY `whatsapp_messages_message_id_index` (`message_id`),
+  KEY `whatsapp_messages_direction_index` (`direction`),
+  KEY `whatsapp_messages_sender_type_index` (`sender_type`),
+  KEY `whatsapp_messages_category_index` (`category`),
+  KEY `whatsapp_messages_message_type_index` (`message_type`),
+  KEY `whatsapp_messages_status_index` (`status`),
+  CONSTRAINT `whatsapp_messages_conversation_id_foreign` FOREIGN KEY (`conversation_id`) REFERENCES `whatsapp_conversations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `whatsapp_messages_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `whatsapp_messages` WRITE;
+/*!40000 ALTER TABLE `whatsapp_messages` DISABLE KEYS */;
+INSERT INTO `whatsapp_messages` VALUES
+(1,1,NULL,'incoming','user',NULL,'text','','received',NULL,'{\"sender\":\"test\"}','2026-09-29 00:41:30','2026-09-29 00:41:30'),
+(2,1,NULL,'outgoing','bot','menu','text','أهلاً بك في خدمة واتساب زمالة المدمنين المجهولين - مصر 🇪🇬\nWelcome to Narcotics Anonymous Egypt WhatsApp Service\n\nالرجاء اختيار رقم الخدمة أو إرسال الكلمة المطلوبة:\n1️⃣ *قراءة فقط لليوم* (Just For Today)\n2️⃣ *البحث عن اجتماعات التعافي* (Find Meetings)\n3️⃣ *أرقام خط المساعدة والتواصل* (Helpline Numbers)\n4️⃣ *الفعاليات والمؤتمرات القادمة* (Upcoming Events)\n5️⃣ *النماذج الإلكترونية وطلب المطبوعات* (Forms & Literature)\n6️⃣ *وسائل التواصل الاجتماعي والموقع* (Social Media & Website)\n7️⃣ *الاشتراك في قراءة فقط لليوم يومياً* (Daily JFT Broadcast)\n0️⃣ *التحدث مع متطوع من خط المساعدة* (Talk to Volunteer)\n\n🌐 موقعنا الرسمي: https://naegypt.org','failed',NULL,'{\"success\":false,\"error\":\"cURL error 7: Failed to connect to 127.0.0.1 port 3000 after 0 ms: Couldn\'t connect to server (see https:\\/\\/curl.se\\/libcurl\\/c\\/libcurl-errors.html) for http:\\/\\/127.0.0.1:3000\\/send\\/message\"}','2026-09-29 00:41:30','2026-09-29 00:41:30');
+/*!40000 ALTER TABLE `whatsapp_messages` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `whatsapp_subscribers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `whatsapp_subscribers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `jid` varchar(255) NOT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `channel` varchar(255) NOT NULL DEFAULT 'jft',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `is_dev_subscriber` tinyint(1) NOT NULL DEFAULT 0,
+  `subscribed_at` timestamp NULL DEFAULT NULL,
+  `unsubscribed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `whatsapp_subscribers_jid_unique` (`jid`),
+  KEY `whatsapp_subscribers_phone_index` (`phone`),
+  KEY `whatsapp_subscribers_channel_index` (`channel`),
+  KEY `whatsapp_subscribers_is_active_index` (`is_active`),
+  KEY `whatsapp_subscribers_is_dev_subscriber_index` (`is_dev_subscriber`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `whatsapp_subscribers` WRITE;
+/*!40000 ALTER TABLE `whatsapp_subscribers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `whatsapp_subscribers` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
