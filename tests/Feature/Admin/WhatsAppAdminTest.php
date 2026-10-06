@@ -121,4 +121,59 @@ class WhatsAppAdminTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
     }
+
+    public function test_super_admin_can_download_educational_sample_csv(): void
+    {
+        $response = $this->actingAs($this->superAdmin)->get(route('whatsapp.subscribers.sample-csv'));
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+        $this->assertStringContainsString('phone,name,message', $response->getContent());
+    }
+
+    public function test_super_admin_can_dispatch_bulk_csv_campaign(): void
+    {
+        \Illuminate\Support\Facades\Queue::fake();
+
+        $csvContent = "phone,name,message\n+201011112222,Ahmed,مرحبا بك\n01122223333,Mohamed,أهلاً وسهلاً\n";
+        $file = \Illuminate\Http\UploadedFile::fake()->createWithContent('contacts.csv', $csvContent);
+
+        $response = $this->actingAs($this->superAdmin)->post(route('whatsapp.subscribers.bulk-csv'), [
+            'csv_file' => $file,
+            'device_id' => 'default',
+            'send_mode' => 'custom_per_row',
+            'anti_ban_profile' => 'safe',
+            'append_optout' => '1',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('whatsapp_broadcast_logs', [
+            'channel' => 'bulk_csv',
+            'status' => 'processing',
+            'total_recipients' => 2,
+        ]);
+
+        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\SendWhatsAppBulkCsvBroadcast::class);
+    }
+
+    public function test_device_check_returns_json_status(): void
+    {
+        $mockClient = Mockery::mock(WhatsAppClient::class);
+        $mockClient->shouldReceive('getDeviceStatus')->with('default')->andReturn([
+            'success' => true,
+            'connected' => true,
+            'status' => 'CONNECTED',
+            'device_id' => 'default',
+            'data' => ['results' => ['jid' => '201551590069@s.whatsapp.net']],
+        ]);
+        $this->app->instance(WhatsAppClient::class, $mockClient);
+
+        $response = $this->actingAs($this->superAdmin)->get(route('whatsapp.device.check', ['device_id' => 'default']));
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'connected' => true,
+            'status' => 'CONNECTED',
+        ]);
+    }
 }
+

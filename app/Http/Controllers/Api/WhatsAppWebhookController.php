@@ -26,12 +26,42 @@ class WhatsAppWebhookController extends Controller
 
         $payload = $request->all();
 
-        // Ensure payload has basic message data
+        // Ensure payload has basic data
         if (empty($payload)) {
             return response()->json(['status' => 'ignored', 'message' => 'Empty payload'], 200);
         }
 
-        // We offload parsing and response to background queue to ensure fast < 50ms webhook return
+        $event = $payload['event'] ?? 'message';
+
+        // 1. Handle delivery/read receipts (message.ack)
+        if ($event === 'message.ack') {
+            $inner = $payload['payload'] ?? $payload['data'] ?? $payload;
+            $msgId = $inner['id'] ?? $inner['message_id'] ?? null;
+            $ackStatus = $inner['status'] ?? null;
+
+            if ($msgId && $ackStatus) {
+                $statusMap = [
+                    1 => 'sent',
+                    2 => 'delivered',
+                    3 => 'read',
+                    4 => 'played',
+                ];
+                $newStatus = $statusMap[$ackStatus] ?? null;
+
+                if ($newStatus) {
+                    \App\Models\WhatsAppMessage::where('message_id', $msgId)->update(['status' => $newStatus]);
+                }
+            }
+
+            return response()->json(['status' => 'acknowledged', 'event' => 'message.ack'], 200);
+        }
+
+        // 2. Ignore non-message noisy events (e.g., presence pulses, chat notifications)
+        if ($event !== 'message') {
+            return response()->json(['status' => 'ignored', 'event' => $event], 200);
+        }
+
+        // 3. Dispatch message processing to queue (< 50ms webhook response)
         ProcessIncomingWhatsAppMessage::dispatch($payload);
 
         return response()->json([

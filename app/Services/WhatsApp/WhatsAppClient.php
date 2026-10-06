@@ -26,25 +26,116 @@ class WhatsAppClient
     /**
      * Build an authenticated HTTP client instance.
      */
-    protected function client()
+    protected function client(?string $deviceId = null)
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         return Http::timeout($this->timeout)
             ->withBasicAuth('naegypt', $this->apiKey)
-            ->withHeader('X-Device-Id', $this->deviceId)
+            ->withHeader('X-Device-Id', $targetDevice)
             ->acceptJson();
+    }
+
+    /**
+     * List all registered devices in the microservice.
+     */
+    public function listDevices(): array
+    {
+        try {
+            $response = $this->client()->get("{$this->baseUrl}/devices");
+            if ($response->successful()) {
+                $json = $response->json();
+                return [
+                    'success' => true,
+                    'devices' => $json['results'] ?? [],
+                ];
+            }
+
+            return [
+                'success' => false,
+                'devices' => [],
+                'error' => $response->body(),
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('[WhatsAppClient] listDevices failed: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'devices' => [],
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Create a new device slot in the microservice registry.
+     */
+    public function createDevice(string $deviceId): array
+    {
+        try {
+            $cleanId = preg_replace('/[^a-zA-Z0-9_-]/', '', trim($deviceId));
+            if (empty($cleanId)) {
+                return ['success' => false, 'error' => 'Invalid device ID.'];
+            }
+
+            $response = $this->client($cleanId)->post("{$this->baseUrl}/devices", [
+                'device_id' => $cleanId,
+            ]);
+
+            if ($response->successful()) {
+                // Ensure webhook is configured on the new device
+                $webhookUrl = config('whatsapp.webhook_url');
+                if (!empty($webhookUrl)) {
+                    $this->client($cleanId)->patch("{$this->baseUrl}/devices/{$cleanId}/webhook", [
+                        'webhook_url' => $webhookUrl,
+                    ]);
+                }
+
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->body(),
+            ];
+        } catch (\Throwable $e) {
+            Log::error('[WhatsAppClient] createDevice exception: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Remove / delete a device slot from the microservice.
+     */
+    public function deleteDevice(string $deviceId): bool
+    {
+        try {
+            $response = $this->client($deviceId)->delete("{$this->baseUrl}/devices/{$deviceId}");
+            return $response->successful();
+        } catch (\Throwable $e) {
+            Log::error('[WhatsAppClient] deleteDevice exception: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
      * Ensure the target WhatsApp device exists in the microservice registry.
      */
-    public function ensureDeviceExists(): bool
+    public function ensureDeviceExists(?string $deviceId = null): bool
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         try {
-            $statusCheck = $this->client()->get("{$this->baseUrl}/devices/{$this->deviceId}/status");
+            $statusCheck = $this->client($targetDevice)->get("{$this->baseUrl}/devices/{$targetDevice}/status");
             if (!$statusCheck->successful()) {
                 // Create device slot if not found
-                $create = $this->client()->post("{$this->baseUrl}/devices", [
-                    'device_id' => $this->deviceId,
+                $create = $this->client($targetDevice)->post("{$this->baseUrl}/devices", [
+                    'device_id' => $targetDevice,
                 ]);
 
                 if (!$create->successful()) {
@@ -55,7 +146,7 @@ class WhatsAppClient
             // Sync webhook callback URL to device
             $webhookUrl = config('whatsapp.webhook_url');
             if (!empty($webhookUrl)) {
-                $this->client()->patch("{$this->baseUrl}/devices/{$this->deviceId}/webhook", [
+                $this->client($targetDevice)->patch("{$this->baseUrl}/devices/{$targetDevice}/webhook", [
                     'webhook_url' => $webhookUrl,
                 ]);
             }
@@ -118,11 +209,13 @@ class WhatsAppClient
     /**
      * Get paired devices and connection health.
      */
-    public function getDeviceStatus(): array
+    public function getDeviceStatus(?string $deviceId = null): array
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         try {
-            $this->ensureDeviceExists();
-            $response = $this->client()->get("{$this->baseUrl}/devices/{$this->deviceId}/status");
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->get("{$this->baseUrl}/devices/{$targetDevice}/status");
             if ($response->successful()) {
                 $json = $response->json();
                 $results = $json['results'] ?? [];
@@ -154,11 +247,23 @@ class WhatsAppClient
     /**
      * Get QR code for login / pairing.
      */
-    public function getLoginQrCode(): ?array
+    public function getLoginQrCode(?string $deviceId = null): ?array
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         try {
-            $this->ensureDeviceExists();
-            $response = $this->client()->get("{$this->baseUrl}/devices/{$this->deviceId}/login");
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->get("{$this->baseUrl}/devices/{$targetDevice}/login");
+            
+            // Check if device is already logged in
+            if ($response->status() === 400 && str_contains($response->body(), 'ALREADY_LOGGED_IN')) {
+                return [
+                    'success' => false,
+                    'already_logged_in' => true,
+                    'message' => 'Device is already paired and logged in to WhatsApp.',
+                ];
+            }
+
             if ($response->successful()) {
                 $json = $response->json();
                 $qrLink = $json['results']['qr_link'] ?? null;
@@ -200,11 +305,13 @@ class WhatsAppClient
     /**
      * Trigger session reconnect.
      */
-    public function reconnectDevice(): bool
+    public function reconnectDevice(?string $deviceId = null): bool
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         try {
-            $this->ensureDeviceExists();
-            $response = $this->client()->post("{$this->baseUrl}/devices/{$this->deviceId}/reconnect");
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->post("{$this->baseUrl}/devices/{$targetDevice}/reconnect");
             return $response->successful();
         } catch (\Throwable $e) {
             Log::error('[WhatsAppClient] reconnectDevice failed: ' . $e->getMessage());
@@ -215,11 +322,13 @@ class WhatsAppClient
     /**
      * Disconnect / logout WhatsApp device session.
      */
-    public function logoutDevice(): bool
+    public function logoutDevice(?string $deviceId = null): bool
     {
+        $targetDevice = $deviceId ?: $this->deviceId;
+
         try {
-            $this->ensureDeviceExists();
-            $response = $this->client()->post("{$this->baseUrl}/devices/{$this->deviceId}/logout");
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->post("{$this->baseUrl}/devices/{$targetDevice}/logout");
             return $response->successful();
         } catch (\Throwable $e) {
             Log::error('[WhatsAppClient] logoutDevice failed: ' . $e->getMessage());
@@ -230,7 +339,7 @@ class WhatsAppClient
     /**
      * Send a text message to a WhatsApp user or group.
      */
-    public function sendTextMessage(string $phoneOrJid, string $message): array
+    public function sendTextMessage(string $phoneOrJid, string $message, ?string $deviceId = null): array
     {
         if (!$this->isRecipientAllowed($phoneOrJid)) {
             return [
@@ -241,9 +350,10 @@ class WhatsAppClient
         }
 
         $phone = $this->normalizePhone($phoneOrJid);
+        $targetDevice = $deviceId ?: $this->deviceId;
 
         try {
-            $response = $this->client()->post("{$this->baseUrl}/send/message", [
+            $response = $this->client($targetDevice)->post("{$this->baseUrl}/send/message", [
                 'phone' => $phone,
                 'message' => $message,
             ]);

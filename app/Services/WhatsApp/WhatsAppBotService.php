@@ -30,18 +30,30 @@ class WhatsAppBotService
      */
     public function handleIncomingMessage(array $payload): void
     {
-        $senderJid = $payload['sender'] ?? $payload['from'] ?? $payload['phone'] ?? null;
-        $body = trim((string) ($payload['message'] ?? $payload['text'] ?? $payload['body'] ?? ''));
-        $messageId = $payload['message_id'] ?? $payload['id'] ?? null;
-        $pushName = $payload['name'] ?? $payload['push_name'] ?? null;
+        // Unwrap nested 'payload' or 'data' if present in the Go microservice payload
+        $inner = (isset($payload['payload']) && is_array($payload['payload']))
+            ? $payload['payload']
+            : ((isset($payload['data']) && is_array($payload['data'])) ? $payload['data'] : $payload);
 
-        if (empty($senderJid)) {
-            Log::warning('[WhatsAppBot] Ignored webhook payload without sender: ' . json_encode($payload));
+        $isFromMe = !empty($inner['is_from_me']) || !empty($inner['from_me']) || !empty($payload['is_from_me']) || !empty($payload['from_me']);
+
+        $senderJid = $inner['sender'] ?? $inner['from'] ?? $inner['phone'] ?? $payload['sender'] ?? $payload['from'] ?? $payload['phone'] ?? null;
+        $chatJid = $inner['chat'] ?? $inner['to'] ?? $inner['remote_jid'] ?? $payload['chat'] ?? $payload['to'] ?? null;
+
+        // If the message is outgoing from our phone, the contact is in chatJid or senderJid
+        $targetJid = ($isFromMe && !empty($chatJid)) ? $chatJid : ($senderJid ?: $chatJid);
+
+        $body = trim((string) ($inner['message'] ?? $inner['text'] ?? $inner['body'] ?? $payload['message'] ?? $payload['text'] ?? $payload['body'] ?? ''));
+        $messageId = $inner['message_id'] ?? $inner['id'] ?? $payload['message_id'] ?? $payload['id'] ?? null;
+        $pushName = $inner['name'] ?? $inner['push_name'] ?? $payload['name'] ?? $payload['push_name'] ?? null;
+
+        if (empty($targetJid)) {
+            Log::warning('[WhatsAppBot] Ignored webhook payload without sender/target: ' . json_encode($payload));
             return;
         }
 
-        $phone = $this->client->normalizePhone($senderJid);
-        $formattedJid = $this->client->formatJid($senderJid);
+        $phone = $this->client->normalizePhone($targetJid);
+        $formattedJid = $this->client->formatJid($targetJid);
 
         $isDevTest = (bool) config('whatsapp.dev_mode', false);
 
@@ -62,6 +74,38 @@ class WhatsAppBotService
             'phone' => $phone ?: $conversation->phone,
             'last_interaction_at' => Carbon::now(),
         ]);
+
+        // If the message is sent from our paired phone directly by a human volunteer
+        if ($isFromMe) {
+            // If already logged by Laravel bot/inbox, ignore duplicate echo
+            if ($messageId && WhatsAppMessage::where('message_id', $messageId)->exists()) {
+                return;
+            }
+
+            WhatsAppMessage::create([
+                'conversation_id' => $conversation->id,
+                'message_id' => $messageId,
+                'direction' => 'outgoing',
+                'sender_type' => 'agent',
+                'category' => 'phone_reply',
+                'message_type' => 'text',
+                'body' => $body,
+                'status' => 'sent',
+                'raw_payload' => $payload,
+            ]);
+
+            // Automatically pause the bot (Live Agent active for 30 minutes)
+            $conversation->enableLiveAgent();
+            $conversation->update(['last_interaction_at' => Carbon::now()]);
+
+            Log::info("[WhatsAppBot] Recorded volunteer message from phone to {$phone}; Live Agent active.");
+            return;
+        }
+
+        // Avoid logging duplicate incoming message
+        if ($messageId && WhatsAppMessage::where('message_id', $messageId)->exists()) {
+            return;
+        }
 
         // Record incoming message in database
         WhatsAppMessage::create([

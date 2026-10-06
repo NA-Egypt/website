@@ -178,4 +178,70 @@ class WhatsAppBotTest extends TestCase
         $sub->refresh();
         $this->assertFalse($sub->is_active);
     }
+
+    public function test_bot_handles_nested_microservice_payload_structure(): void
+    {
+        $bot = $this->app->make(WhatsAppBotService::class);
+
+        $payload = [
+            'event' => 'message',
+            'device_id' => 'default',
+            'payload' => [
+                'id' => 'WAGO_NESTED_12345',
+                'from' => '201099998888@s.whatsapp.net',
+                'push_name' => 'Ahmed NA',
+                'body' => 'jft',
+                'is_from_me' => false,
+            ],
+        ];
+
+        $bot->handleIncomingMessage($payload);
+
+        $conv = WhatsAppConversation::where('jid', '201099998888@s.whatsapp.net')->first();
+        $this->assertNotNull($conv);
+        $this->assertEquals('Ahmed NA', $conv->name);
+
+        $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('direction', 'outgoing')
+            ->where('category', 'jft')
+            ->first();
+
+        $this->assertNotNull($outgoing);
+        $this->assertStringContainsString('فقط لليوم', $outgoing->body);
+    }
+
+    public function test_volunteer_reply_from_phone_activates_live_agent_and_suppresses_bot(): void
+    {
+        $bot = $this->app->make(WhatsAppBotService::class);
+
+        $payload = [
+            'event' => 'message',
+            'device_id' => 'default',
+            'payload' => [
+                'id' => 'PHONE_VOLUNTEER_MSG_99',
+                'from' => '201551590069@s.whatsapp.net',
+                'chat' => '201012345678@s.whatsapp.net',
+                'body' => 'أهلاً بك، معك متطوع خط المساعدة. كيف أساعدك؟',
+                'is_from_me' => true,
+            ],
+        ];
+
+        $bot->handleIncomingMessage($payload);
+
+        $conv = WhatsAppConversation::where('jid', '201012345678@s.whatsapp.net')->first();
+        $this->assertNotNull($conv);
+        $this->assertTrue($conv->isLiveAgentActive());
+
+        $msg = WhatsAppMessage::where('message_id', 'PHONE_VOLUNTEER_MSG_99')->first();
+        $this->assertNotNull($msg);
+        $this->assertEquals('outgoing', $msg->direction);
+        $this->assertEquals('agent', $msg->sender_type);
+        $this->assertEquals('phone_reply', $msg->category);
+
+        // Verify bot did NOT send any automated reply to this volunteer message
+        $botReplies = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('sender_type', 'bot')
+            ->count();
+        $this->assertEquals(0, $botReplies);
+    }
 }

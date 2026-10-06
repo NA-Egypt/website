@@ -344,12 +344,19 @@ Route::group(
                 // Device & Connection Status + Broadcasts
                 Route::group(['middleware' => ['permission:manage whatsapp']], function () {
                     Route::get('/device', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'status'])->name('device.status');
+                    Route::post('/device', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'store'])->name('device.store');
+                    Route::delete('/device/{deviceId}', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'destroy'])->name('device.destroy');
                     Route::get('/device/qr', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'qr'])->name('device.qr');
+                    Route::get('/device/check', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'check'])->name('device.check');
                     Route::post('/device/reconnect', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'reconnect'])->name('device.reconnect');
                     Route::post('/device/logout', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'logout'])->name('device.logout');
                     Route::post('/device/test', [\App\Http\Controllers\Admin\WhatsAppDeviceController::class, 'testMessage'])->name('device.test');
 
                     Route::get('/subscribers', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'index'])->name('subscribers.index');
+                    Route::get('/subscribers/sample-csv', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'sampleCsv'])->name('subscribers.sample-csv');
+                    Route::post('/subscribers/bulk-csv', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'bulkCsv'])->name('subscribers.bulk-csv');
+                    Route::get('/broadcasts/{broadcast}/progress', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'broadcastProgress'])->name('broadcasts.progress');
+                    Route::post('/broadcasts/{broadcast}/cancel', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'cancelBroadcast'])->name('broadcasts.cancel');
                     Route::post('/subscribers/broadcast', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'triggerBroadcast'])->name('subscribers.broadcast');
                 });
 

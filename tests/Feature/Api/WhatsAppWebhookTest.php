@@ -62,4 +62,52 @@ class WhatsAppWebhookTest extends TestCase
         ]);
         $responseCorrect->assertStatus(200);
     }
+
+    public function test_webhook_handles_message_ack_without_queueing_job(): void
+    {
+        Queue::fake();
+
+        $payload = [
+            'event' => 'message.ack',
+            'device_id' => 'default',
+            'payload' => [
+                'id' => 'MSG_ACK_12345',
+                'status' => 3, // read
+            ],
+        ];
+
+        $response = $this->postJson(route('api.v1.whatsapp.webhook'), $payload);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'acknowledged',
+                'event' => 'message.ack',
+            ]);
+
+        Queue::assertNotPushed(ProcessIncomingWhatsAppMessage::class);
+    }
+
+    public function test_webhook_ignores_presence_events_without_queueing(): void
+    {
+        Queue::fake();
+
+        $payload = [
+            'event' => 'presence',
+            'device_id' => 'default',
+            'payload' => [
+                'from' => '201006979198@s.whatsapp.net',
+                'presence' => 'available',
+            ],
+        ];
+
+        $response = $this->postJson(route('api.v1.whatsapp.webhook'), $payload);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'ignored',
+                'event' => 'presence',
+            ]);
+
+        Queue::assertNotPushed(ProcessIncomingWhatsAppMessage::class);
+    }
 }

@@ -3,9 +3,8 @@ services:
     image: ghcr.io/aldinokemal/go-whatsapp-web-multidevice:latest
     container_name: naegypt_whatsapp
     restart: unless-stopped
-    ports:
-      # Bind strictly to local loopback interface for host security
-      - "127.0.0.1:3000:3000"
+    network_mode: "host"
+    command: ["rest", "--host=127.0.0.1", "--port=3000"]
     environment:
       - PORT=3000
       - WHATSAPP_AUTO_DOWNLOAD_MEDIA=false

@@ -14,18 +14,23 @@ class WhatsAppBroadcastLog extends Model
 
     protected $fillable = [
         'channel',
+        'device_id',
         'title',
         'total_recipients',
         'successful_count',
         'failed_count',
+        'status',
+        'anti_ban_profile',
         'is_dev_broadcast',
         'dispatched_by',
         'completed_at',
+        'metadata',
     ];
 
     protected $casts = [
         'is_dev_broadcast' => 'boolean',
         'completed_at' => 'datetime',
+        'metadata' => 'array',
     ];
 
     /**
