@@ -19,6 +19,7 @@ class WhatsAppBotService
 {
     protected WhatsAppClient $client;
     protected JftService $jftService;
+    protected ?string $activeSessionId = null;
 
     public function __construct(WhatsAppClient $client, JftService $jftService)
     {
@@ -35,6 +36,8 @@ class WhatsAppBotService
         $inner = (isset($payload['payload']) && is_array($payload['payload']))
             ? $payload['payload']
             : ((isset($payload['data']) && is_array($payload['data'])) ? $payload['data'] : $payload);
+
+        $this->activeSessionId = $payload['session_id'] ?? $inner['session_id'] ?? null;
 
         $isFromMe = !empty($inner['is_from_me']) || !empty($inner['from_me']) || !empty($payload['is_from_me']) || !empty($payload['from_me']);
 
@@ -732,7 +735,8 @@ class WhatsAppBotService
      */
     protected function replyAndLog(WhatsAppConversation $conversation, string $text, string $category, ?string $deviceId = null): void
     {
-        $response = $this->client->sendTextMessage($conversation->jid, $text, $deviceId);
+        $targetDevice = $deviceId ?: ($this->activeSessionId ?: config('whatsapp.device_id', 'default'));
+        $response = $this->client->sendTextMessage($conversation->jid, $text, $targetDevice);
 
         WhatsAppMessage::create([
             'conversation_id' => $conversation->id,
