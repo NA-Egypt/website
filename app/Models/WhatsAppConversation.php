@@ -25,6 +25,7 @@ class WhatsAppConversation extends Model
         'step_data',
         'is_dev_test',
         'last_interaction_at',
+        'notes',
     ];
 
     protected $casts = [
@@ -41,6 +42,22 @@ class WhatsAppConversation extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(WhatsAppMessage::class, 'conversation_id');
+    }
+
+    /**
+     * Get the latest message for this conversation.
+     */
+    public function latestMessage(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(WhatsAppMessage::class, 'conversation_id')->latestOfMany();
+    }
+
+    /**
+     * Get the subscriber profile if this contact is subscribed.
+     */
+    public function subscriber(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(WhatsAppSubscriber::class, 'jid', 'jid');
     }
 
     /**

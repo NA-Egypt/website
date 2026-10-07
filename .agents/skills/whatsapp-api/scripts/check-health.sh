@@ -43,8 +43,13 @@ else
 fi
 
 # 4. Device Registry & Status Check
-echo -n "Checking device 'default' status... "
-DEVICE_STATUS=$(curl -s http://127.0.0.1:3000/devices/default/status || echo "{}")
+ACTIVE_DEVICE=${1:-$(grep -E '^WHATSAPP_DEVICE_ID=' /var/www/new/.env 2>/dev/null | cut -d'=' -f2 | tr -d ' "\r' || echo "default")}
+if [ -z "$ACTIVE_DEVICE" ]; then
+    ACTIVE_DEVICE="default"
+fi
+
+echo -n "Checking device '${ACTIVE_DEVICE}' status... "
+DEVICE_STATUS=$(curl -s http://127.0.0.1:3000/devices/${ACTIVE_DEVICE}/status || echo "{}")
 IS_CONNECTED=$(echo "$DEVICE_STATUS" | grep -o '"is_connected":true' || true)
 IS_LOGGED_IN=$(echo "$DEVICE_STATUS" | grep -o '"is_logged_in":true' || true)
 
@@ -57,13 +62,13 @@ fi
 
 # 5. Device Webhook Registration Check
 echo -n "Checking device webhook destination... "
-WEBHOOK_RES=$(curl -s http://127.0.0.1:3000/devices/default/webhook || echo "{}")
+WEBHOOK_RES=$(curl -s http://127.0.0.1:3000/devices/${ACTIVE_DEVICE}/webhook || echo "{}")
 WEBHOOK_URL=$(echo "$WEBHOOK_RES" | grep -o '"webhook_url":"[^"]*"' | cut -d'"' -f4 || echo "")
 
 if [ -n "$WEBHOOK_URL" ]; then
     echo -e "${GREEN}[OK] Webhook configured: $WEBHOOK_URL${NC}"
 else
-    echo -e "${YELLOW}[WARN] No webhook URL configured on device default${NC}"
+    echo -e "${YELLOW}[WARN] No webhook URL configured on device ${ACTIVE_DEVICE}${NC}"
 fi
 
 echo -e "\n${BLUE}All health checks finished.${NC}"

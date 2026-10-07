@@ -56,22 +56,29 @@
 
         {{-- Real-Time Live Campaign Progress Tracker Card --}}
         @php
-            $activeBroadcast = $broadcastLogs->firstWhere('status', 'processing');
+            $activeBroadcast = $broadcastLogs->first(fn($b) => in_array($b->status, ['processing', 'paused']));
         @endphp
         <div id="liveCampaignTracker" class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" 
              style="background: var(--card-bg, #ffffff); {{ $activeBroadcast ? '' : 'display: none;' }}"
              data-active-id="{{ $activeBroadcast->id ?? '' }}">
-            <div class="card-header border-0 bg-primary-subtle py-3 px-4 d-flex justify-content-between align-items-center">
+            <div class="card-header border-0 bg-primary-subtle py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="spinner-grow spinner-grow-sm text-primary" role="status"></span>
+                    <span class="spinner-grow spinner-grow-sm text-primary" id="liveTrackerSpinner" role="status" style="{{ ($activeBroadcast && $activeBroadcast->status === 'paused') ? 'display: none;' : '' }}"></span>
                     <h6 class="fw-bold mb-0 text-primary">
                         <i class="bi bi-broadcast me-1"></i>{{ __('messages.whatsapp_campaign_progress') }}
-                        <span class="badge bg-primary rounded-pill ms-2" id="liveTrackerBadge">{{ __('messages.whatsapp_realtime_badge') }}</span>
+                        <span class="badge {{ ($activeBroadcast && $activeBroadcast->status === 'paused') ? 'bg-warning text-dark' : 'bg-primary' }} rounded-pill ms-2" id="liveTrackerBadge">
+                            {{ ($activeBroadcast && $activeBroadcast->status === 'paused') ? __('messages.whatsapp_paused') : __('messages.whatsapp_realtime_badge') }}
+                        </span>
                     </h6>
                 </div>
-                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm" id="btnCancelCampaign">
-                    <i class="bi bi-stop-circle me-1"></i>{{ __('messages.whatsapp_cancel_broadcast') }}
-                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" id="btnResumeCampaign" style="{{ ($activeBroadcast && $activeBroadcast->status === 'paused') ? '' : 'display: none;' }}">
+                        <i class="bi bi-play-circle me-1"></i>{{ __('messages.whatsapp_resume_broadcast') }}
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm" id="btnCancelCampaign">
+                        <i class="bi bi-stop-circle me-1"></i>{{ __('messages.whatsapp_cancel_broadcast') }}
+                    </button>
+                </div>
             </div>
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -86,37 +93,52 @@
 
                 {{-- Counters Row --}}
                 <div class="row g-2 text-center mb-3">
-                    <div class="col-3">
+                    <div class="col">
                         <div class="p-2 rounded-3 bg-light">
-                            <span class="text-muted d-block small" style="font-size: 0.75rem;">{{ __('Total') }}</span>
+                            <span class="text-muted d-block small" style="font-size: 0.72rem;">{{ __('Total') }}</span>
                             <strong class="font-monospace fs-6" id="liveTotalCount">0</strong>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col">
                         <div class="p-2 rounded-3 bg-success-subtle text-success">
-                            <span class="d-block small" style="font-size: 0.75rem;">{{ __('Sent') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Sent') }}</span>
                             <strong class="font-monospace fs-6" id="liveSentCount">0</strong>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col">
                         <div class="p-2 rounded-3 bg-danger-subtle text-danger">
-                            <span class="d-block small" style="font-size: 0.75rem;">{{ __('Failed') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Failed') }}</span>
                             <strong class="font-monospace fs-6" id="liveFailedCount">0</strong>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col">
+                        <div class="p-2 rounded-3 bg-info-subtle text-info">
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('messages.whatsapp_skipped') }}</span>
+                            <strong class="font-monospace fs-6" id="liveSkippedCount">0</strong>
+                        </div>
+                    </div>
+                    <div class="col">
                         <div class="p-2 rounded-3 bg-light text-muted">
-                            <span class="d-block small" style="font-size: 0.75rem;">{{ __('Remaining') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Remaining') }}</span>
                             <strong class="font-monospace fs-6" id="liveRemainingCount">0</strong>
                         </div>
                     </div>
                 </div>
 
-                {{-- Streaming Activity Log Window --}}
-                <h6 class="fw-bold small text-muted mb-2">
-                    <i class="bi bi-terminal me-1"></i>{{ __('messages.whatsapp_live_progress_logs') }}
-                </h6>
-                <div id="liveLogWindow" class="p-3 rounded-4 font-monospace bg-dark text-light small overflow-y-auto" style="height: 140px; font-size: 0.78rem; line-height: 1.5;">
+                {{-- Streaming Activity Log Window with Controls --}}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold small text-muted mb-0">
+                        <i class="bi bi-terminal me-1"></i>{{ __('messages.whatsapp_live_progress_logs') }}
+                        <span class="badge bg-secondary font-monospace ms-1" id="liveLogCountBadge">0</span>
+                    </h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 rounded-pill" id="btnScrollLogBottom" title="Scroll to bottom" style="font-size: 0.72rem;">
+                            <i class="bi bi-arrow-down me-1"></i>{{ __('messages.sLast') ?? 'Bottom' }}
+                        </button>
+                    </div>
+                </div>
+                <div id="liveLogWindow" class="p-3 rounded-4 font-monospace bg-dark text-light small overflow-y-auto shadow-inner" 
+                     style="height: 240px; max-height: 450px; resize: vertical; font-size: 0.8rem; line-height: 1.6;">
                     <div class="text-secondary">Waiting for activity logs...</div>
                 </div>
             </div>
@@ -420,7 +442,8 @@
                                         <div class="col-md-6">
                                             <label class="form-label small fw-semibold mb-1">{{ __('messages.whatsapp_antiban_profile') }}</label>
                                             <select name="anti_ban_profile" class="form-select form-select-sm rounded-3">
-                                                <option value="safe" selected>{{ __('messages.whatsapp_antiban_safe') }}</option>
+                                                <option value="warmup" selected>{{ __('messages.whatsapp_antiban_warmup') }}</option>
+                                                <option value="safe">{{ __('messages.whatsapp_antiban_safe') }}</option>
                                                 <option value="ultra_safe">{{ __('messages.whatsapp_antiban_ultra_safe') }}</option>
                                                 <option value="fast">{{ __('messages.whatsapp_antiban_fast') }}</option>
                                             </select>
@@ -439,6 +462,21 @@
                                                 </label>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Exclusion of Recently Messaged Contacts (Prevents Duplicates) --}}
+                            <div class="col-12">
+                                <div class="card border rounded-4 p-3 bg-light-subtle">
+                                    <div class="form-check form-switch mb-0">
+                                        <input class="form-check-input" type="checkbox" name="exclude_recent" value="1" id="excludeRecentSwitch" checked>
+                                        <label class="form-check-label fw-bold small text-dark" for="excludeRecentSwitch">
+                                            <i class="bi bi-shield-check text-success me-1"></i>{{ __('messages.whatsapp_exclude_recent') }}
+                                        </label>
+                                        <span class="d-block text-muted small mt-1" style="font-size: 0.78rem;">
+                                            {{ __('messages.whatsapp_exclude_recent_desc') }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -590,6 +628,16 @@
                 liveTracker.style.display = 'block';
                 clearInterval(trackerInterval);
 
+                const logWin = document.getElementById('liveLogWindow');
+                let userScrolledUp = false;
+
+                if (logWin) {
+                    logWin.addEventListener('scroll', function () {
+                        const distFromBottom = logWin.scrollHeight - logWin.scrollTop - logWin.clientHeight;
+                        userScrolledUp = (distFromBottom > 60);
+                    });
+                }
+
                 trackerInterval = setInterval(() => {
                     fetch(`{{ url('/whatsapp/broadcasts') }}/${id}/progress`)
                         .then(res => res.json())
@@ -599,28 +647,115 @@
                             document.getElementById('liveTotalCount').textContent = data.total;
                             document.getElementById('liveSentCount').textContent = data.successful;
                             document.getElementById('liveFailedCount').textContent = data.failed;
-                            document.getElementById('liveRemainingCount').textContent = Math.max(0, data.total - (data.successful + data.failed));
+                            document.getElementById('liveSkippedCount').textContent = data.skipped || 0;
+                            document.getElementById('liveRemainingCount').textContent = Math.max(0, data.total - (data.successful + data.failed + (data.skipped || 0)));
+
+                            const spinner = document.getElementById('liveTrackerSpinner');
+                            const badge = document.getElementById('liveTrackerBadge');
+                            const btnResume = document.getElementById('btnResumeCampaign');
+
+                            if (data.status === 'paused') {
+                                if (spinner) spinner.style.display = 'none';
+                                if (btnResume) btnResume.style.display = 'inline-flex';
+                                if (badge) {
+                                    badge.className = 'badge bg-warning text-dark rounded-pill ms-2';
+                                    badge.textContent = '{{ __("messages.whatsapp_paused") }}';
+                                }
+                            } else if (data.status === 'processing') {
+                                if (spinner) spinner.style.display = 'inline-block';
+                                if (btnResume) btnResume.style.display = 'none';
+                                if (badge) {
+                                    badge.className = 'badge bg-primary rounded-pill ms-2';
+                                    badge.textContent = '{{ __("messages.whatsapp_realtime_badge") }}';
+                                }
+                            }
 
                             // Update logs
                             if (data.logs && data.logs.length > 0) {
-                                const logWin = document.getElementById('liveLogWindow');
-                                logWin.innerHTML = data.logs.map(l => `<div>${l}</div>`).join('');
-                                logWin.scrollTop = logWin.scrollHeight;
+                                if (logWin) {
+                                    logWin.innerHTML = data.logs.map(l => `<div class="mb-1">${escapeLog(l)}</div>`).join('');
+                                    const countBadge = document.getElementById('liveLogCountBadge');
+                                    if (countBadge) countBadge.textContent = data.logs.length;
+
+                                    if (!userScrolledUp) {
+                                        logWin.scrollTop = logWin.scrollHeight;
+                                    }
+                                }
                             }
 
                             if (data.is_finished) {
                                 clearInterval(trackerInterval);
-                                document.getElementById('liveProgressBar').className = 'progress-bar bg-success';
-                                document.getElementById('liveTrackerBadge').className = 'badge bg-success rounded-pill ms-2';
-                                document.getElementById('liveTrackerBadge').textContent = 'Completed';
+                                if (spinner) spinner.style.display = 'none';
+                                if (btnResume) btnResume.style.display = 'none';
+
+                                if (data.status === 'completed') {
+                                    document.getElementById('liveProgressBar').className = 'progress-bar bg-success';
+                                    badge.className = 'badge bg-success rounded-pill ms-2';
+                                    badge.textContent = 'Completed';
+                                } else if (data.status === 'cancelled') {
+                                    document.getElementById('liveProgressBar').className = 'progress-bar bg-secondary';
+                                    badge.className = 'badge bg-secondary rounded-pill ms-2';
+                                    badge.textContent = 'Cancelled';
+                                } else {
+                                    document.getElementById('liveProgressBar').className = 'progress-bar bg-danger';
+                                    badge.className = 'badge bg-danger rounded-pill ms-2';
+                                    badge.textContent = 'Failed';
+                                }
                             }
                         })
                         .catch(() => {});
                 }, 2500);
             }
 
+            function escapeLog(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            // Scroll to bottom button
+            const btnScroll = document.getElementById('btnScrollLogBottom');
+            if (btnScroll) {
+                btnScroll.addEventListener('click', function () {
+                    const logWin = document.getElementById('liveLogWindow');
+                    if (logWin) {
+                        logWin.scrollTop = logWin.scrollHeight;
+                    }
+                });
+            }
+
             if (currentBroadcastId) {
                 startTrackerPolling(currentBroadcastId);
+            }
+
+            // Resume Campaign handler
+            const btnResume = document.getElementById('btnResumeCampaign');
+            if (btnResume) {
+                btnResume.addEventListener('click', function () {
+                    if (!currentBroadcastId) return;
+                    btnResume.disabled = true;
+
+                    fetch(`{{ url('/whatsapp/broadcasts') }}/${currentBroadcastId}/resume`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success) {
+                            btnResume.style.display = 'none';
+                            startTrackerPolling(currentBroadcastId);
+                        } else {
+                            alert(data.error || 'Failed to resume broadcast. Please verify that a WhatsApp device is active.');
+                        }
+                    })
+                    .catch(() => {
+                        alert('Error communicating with server.');
+                    })
+                    .finally(() => {
+                        btnResume.disabled = false;
+                    });
+                });
             }
 
             // Cancel Campaign handler

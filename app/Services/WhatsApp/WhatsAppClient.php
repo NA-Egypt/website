@@ -11,6 +11,7 @@ class WhatsAppClient
     protected string $apiKey;
     protected int $timeout;
     protected bool $devMode;
+    protected array $devWhitelist = [];
     protected string $deviceId;
 
     public function __construct()

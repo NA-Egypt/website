@@ -7,7 +7,10 @@ use App\Jobs\SendWhatsAppBroadcast;
 use App\Jobs\SendWhatsAppBulkCsvBroadcast;
 use App\Models\WhatsAppBroadcastLog;
 use App\Models\WhatsAppSubscriber;
+use App\Models\WhatsAppConversation;
+use App\Models\WhatsAppMessage;
 use App\Services\WhatsApp\WhatsAppClient;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -105,7 +108,7 @@ class WhatsAppSubscriberController extends Controller
             'send_mode' => 'required|in:template_to_all,custom_per_row',
             'default_message' => 'nullable|string|max:4000',
             'device_id' => 'nullable|string',
-            'anti_ban_profile' => 'required|in:ultra_safe,safe,fast',
+            'anti_ban_profile' => 'required|in:warmup,ultra_safe,safe,fast',
             'enable_cooldown' => 'nullable|boolean',
             'append_optout' => 'nullable|boolean',
         ]);
@@ -145,8 +148,30 @@ class WhatsAppSubscriberController extends Controller
             return back()->with('error', __('messages.whatsapp_csv_missing_phone_column'));
         }
 
+        // Filter out contacts who already received a bulk message recently if enabled
+        $excludeRecent = $request->boolean('exclude_recent', true);
+        $excludeHours = (int) $request->input('exclude_hours', 48);
+        $recentlySentPhones = [];
+
+        if ($excludeRecent) {
+            $recentlySentConvs = WhatsAppMessage::where('category', 'bulk_csv')
+                ->where('status', 'sent')
+                ->where('created_at', '>=', Carbon::now()->subHours($excludeHours))
+                ->pluck('conversation_id')
+                ->unique();
+
+            if ($recentlySentConvs->isNotEmpty()) {
+                $recentlySentPhones = WhatsAppConversation::whereIn('id', $recentlySentConvs)
+                    ->pluck('phone')
+                    ->map(fn($p) => $client->normalizePhone($p))
+                    ->flip()
+                    ->toArray();
+            }
+        }
+
         $recipients = [];
         $seenPhones = [];
+        $skippedCount = 0;
 
         while (($row = fgetcsv($handle)) !== false) {
             if (empty(array_filter($row))) {
@@ -160,11 +185,17 @@ class WhatsAppSubscriberController extends Controller
                 continue;
             }
 
-            // Deduplication
+            // Deduplication within the CSV file
             if (isset($seenPhones[$phone])) {
                 continue;
             }
             $seenPhones[$phone] = true;
+
+            // Exclude if already sent in the last 48 hours
+            if ($excludeRecent && isset($recentlySentPhones[$phone])) {
+                $skippedCount++;
+                continue;
+            }
 
             $name = isset($headerMap['name']) ? trim($row[$headerMap['name']] ?? '') : '';
             $message = isset($headerMap['message']) ? trim($row[$headerMap['message']] ?? '') : '';
@@ -178,6 +209,9 @@ class WhatsAppSubscriberController extends Controller
         fclose($handle);
 
         if (empty($recipients)) {
+            if ($skippedCount > 0) {
+                return back()->with('error', __('messages.whatsapp_csv_all_already_sent', ['count' => $skippedCount]));
+            }
             return back()->with('error', __('messages.whatsapp_csv_no_valid_recipients'));
         }
 
@@ -185,6 +219,13 @@ class WhatsAppSubscriberController extends Controller
         $antiBanProfile = $validated['anti_ban_profile'];
         $enableCooldown = $request->boolean('enable_cooldown', true);
         $appendOptout = $request->boolean('append_optout', false);
+
+        $initLogMsg = "[00:00:00] Initialized campaign for " . count($recipients) . " recipients";
+        if ($skippedCount > 0) {
+            $initLogMsg .= " (automatically excluded {$skippedCount} contacts who already received this campaign in past {$excludeHours}h).";
+        } else {
+            $initLogMsg .= ".";
+        }
 
         // Record Broadcast Log
         $log = WhatsAppBroadcastLog::create([
@@ -199,11 +240,17 @@ class WhatsAppSubscriberController extends Controller
             'is_dev_broadcast' => (bool) config('whatsapp.dev_mode', false),
             'dispatched_by' => auth()->id(),
             'metadata' => [
+                'recipients' => $recipients,
+                'current_index' => 0,
+                'cooldown_counter' => 0,
+                'skipped_count' => $skippedCount,
+                'exclude_recent' => $excludeRecent,
                 'send_mode' => $validated['send_mode'],
                 'default_message' => $validated['default_message'] ?? null,
                 'enable_cooldown' => $enableCooldown,
                 'append_optout' => $appendOptout,
-                'logs' => ["[00:00:00] Initialized bulk campaign for " . count($recipients) . " recipients."],
+                'device_id' => $deviceId,
+                'logs' => [$initLogMsg],
             ],
         ]);
 
@@ -218,17 +265,23 @@ class WhatsAppSubscriberController extends Controller
             $deviceId
         );
 
+        $flashMsg = __('messages.whatsapp_bulk_dispatched_successfully');
+        if ($skippedCount > 0) {
+            $flashMsg .= " (" . __('messages.whatsapp_excluded_already_sent_notice', ['count' => $skippedCount]) . ")";
+        }
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'broadcast_id' => $log->id,
                 'total' => count($recipients),
-                'message' => __('messages.whatsapp_bulk_dispatched_successfully'),
+                'skipped' => $skippedCount,
+                'message' => $flashMsg,
             ]);
         }
 
         return redirect()->route('whatsapp.subscribers.index')
-            ->with('success', __('messages.whatsapp_bulk_dispatched_successfully'))
+            ->with('success', $flashMsg)
             ->with('active_broadcast_id', $log->id);
     }
 
@@ -248,8 +301,10 @@ class WhatsAppSubscriberController extends Controller
             'total' => $broadcast->total_recipients,
             'successful' => $broadcast->successful_count,
             'failed' => $broadcast->failed_count,
+            'skipped' => $metadata['skipped_count'] ?? 0,
             'percent' => $percent,
             'logs' => $metadata['logs'] ?? [],
+            'is_paused' => $broadcast->status === 'paused',
             'is_finished' => in_array($broadcast->status, ['completed', 'failed', 'cancelled']),
         ]);
     }
@@ -259,7 +314,7 @@ class WhatsAppSubscriberController extends Controller
      */
     public function cancelBroadcast(WhatsAppBroadcastLog $broadcast): JsonResponse|RedirectResponse
     {
-        if ($broadcast->status === 'processing') {
+        if (in_array($broadcast->status, ['processing', 'paused'])) {
             $broadcast->update(['status' => 'cancelled']);
         }
 
@@ -268,6 +323,42 @@ class WhatsAppSubscriberController extends Controller
         }
 
         return back()->with('success', __('messages.whatsapp_broadcast_cancelled'));
+    }
+
+    /**
+     * Resume a paused bulk broadcast.
+     */
+    public function resumeBroadcast(WhatsAppBroadcastLog $broadcast, WhatsAppClient $client): JsonResponse|RedirectResponse
+    {
+        if ($broadcast->status !== 'paused') {
+            return back()->with('error', __('messages.whatsapp_broadcast_not_paused'));
+        }
+
+        $deviceId = $broadcast->device_id ?: config('whatsapp.device_id', 'default');
+        $status = $client->getDeviceStatus($deviceId);
+
+        if (!($status['connected'] ?? false)) {
+            return back()->with('error', __('messages.whatsapp_cannot_resume_device_disconnected'));
+        }
+
+        $meta = $broadcast->metadata ?? [];
+        $timeStr = Carbon::now()->format('H:i:s');
+        $meta['logs'] = $meta['logs'] ?? [];
+        $meta['logs'][] = "[{$timeStr}] ▶️ Campaign resumed by administrator using device '{$deviceId}'.";
+        $meta['logs'] = array_slice($meta['logs'], -200);
+
+        $broadcast->update([
+            'status' => 'processing',
+            'metadata' => $meta,
+        ]);
+
+        SendWhatsAppBulkCsvBroadcast::dispatch($broadcast->id);
+
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true, 'status' => 'processing']);
+        }
+
+        return back()->with('success', __('messages.whatsapp_broadcast_resumed'));
     }
 
     /**

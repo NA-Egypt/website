@@ -698,6 +698,7 @@ $hasSidebar = auth()->check();
             });
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

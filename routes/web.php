@@ -357,15 +357,20 @@ Route::group(
                     Route::post('/subscribers/bulk-csv', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'bulkCsv'])->name('subscribers.bulk-csv');
                     Route::get('/broadcasts/{broadcast}/progress', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'broadcastProgress'])->name('broadcasts.progress');
                     Route::post('/broadcasts/{broadcast}/cancel', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'cancelBroadcast'])->name('broadcasts.cancel');
+                    Route::post('/broadcasts/{broadcast}/resume', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'resumeBroadcast'])->name('broadcasts.resume');
                     Route::post('/subscribers/broadcast', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'triggerBroadcast'])->name('subscribers.broadcast');
                 });
 
                 // Live Chat Inbox & Reports
                 Route::group(['middleware' => ['permission:view whatsapp chats']], function () {
                     Route::get('/inbox', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'index'])->name('inbox');
+                    Route::get('/inbox/conversations', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'conversations'])->name('inbox.conversations');
                     Route::get('/inbox/{conversation}/messages', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'messages'])->name('inbox.messages');
                     Route::post('/inbox/{conversation}/send', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'send'])->name('inbox.send');
                     Route::post('/inbox/{conversation}/toggle-live-agent', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'toggleLiveAgent'])->name('inbox.toggle-live-agent');
+                    Route::post('/inbox/{conversation}/read', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'markRead'])->name('inbox.read');
+                    Route::post('/inbox/{conversation}/notes', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'updateNotes'])->name('inbox.notes');
+                    Route::post('/inbox/{conversation}/toggle-subscription', [\App\Http\Controllers\Admin\WhatsAppInboxController::class, 'toggleSubscription'])->name('inbox.toggle-subscription');
 
                     Route::get('/reports', [\App\Http\Controllers\Admin\WhatsAppReportController::class, 'index'])->name('reports.index');
                     Route::get('/reports/export', [\App\Http\Controllers\Admin\WhatsAppReportController::class, 'export'])->name('reports.export');

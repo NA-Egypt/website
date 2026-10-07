@@ -24,6 +24,12 @@
 - **Artisan Console:** Custom commands for CLI and scheduled background tasks.
 - **Validation:** Explicit Form Requests or `$request->validate()`.
 - **Queues & Jobs:** Asynchronous job processing (Redis/database) for heavy operations.
+- **Long-Running Bulk Queue & Rate-Limiting Architecture:**
+  - Never run a multi-hour iterative sending loop inside a single monolithic queued job (`ShouldQueue`).
+  - Monolithic loops conflict with Redis `retry_after` and worker `--timeout`, causing Redis to re-release the in-progress job to a second worker and blasting duplicate messages.
+  - Always use a **Chained Single-Step Pipeline**: each queued job processes exactly one recipient in < 1s, sets `public $tries = 1`, and schedules the subsequent recipient via `self::dispatch($logId)->delay(now()->addSeconds($delay))`.
+  - Store execution state (`current_index`, `recipients`, `cooldown_counter`) atomically in database metadata.
+  - Implement an **Automatic Disconnection Circuit-Breaker**: if the external provider returns disconnected or invalid client (e.g. `INVALID_WA_CLI`), immediately transition the campaign to `paused` status rather than looping through hundreds of failures.
 - **Events & Listeners:** Decouple domain side-effects using Events/Listeners.
 - **Task Scheduling & Storage:** Scheduled cron tasks via Scheduler; file abstraction via `Storage` facade.
 - **Caching:** Cache expensive queries/computations via Redis/Memcached.
@@ -72,6 +78,10 @@
   - In Blade templates and PHP files, never write unparenthesized nested ternary expressions (e.g., `a ? b : c ?: d`). Always explicitly parenthesize: `(a ? b : c) ?: d` or `a ? b : (c ?: d)`.
 - **Bilingual Localization Invariant:**
   - Every user-facing string, action button, breadcrumb, and flash message must have corresponding translations added to both `resources/lang/ar/messages.php` and `resources/lang/en/messages.php`.
+- **Blade Localization Catalog Collision Guardrail:**
+  - In Blade templates and string helpers, never call `__('messages')` without a specific sub-key.
+  - Because `'messages'` matches the primary language catalog file (`resources/lang/{locale}/messages.php`), `__('messages')` resolves to the entire PHP array, causing a fatal `TypeError: htmlspecialchars(): Argument #1 ($string) must be of type string, array given`.
+  - Always specify explicit translation keys (e.g. `__('messages.whatsapp_msg_count')` or `__('messages.messages')`).
 - **Human-Readable Permissions & RBAC Standards:**
   - **Permission Key Immutability:** Technical Spatie permission identifiers in the database and code checks (`hasPermissionTo(...)`, middleware) must remain stable identifiers and never be altered for UI display purposes.
   - **Decoupled Localization:** Human-readable names, descriptions, and categories are defined in `resources/lang/{locale}/permissions.php` and accessed via `App\Models\Permission` model accessors (`display_name`, `description`, `category`).

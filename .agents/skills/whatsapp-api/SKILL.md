@@ -148,14 +148,42 @@ To prevent accidental broadcasts or testing messages to real fellowship members 
 
 ---
 
-## 6. Daily JFT Broadcast Scheduling & Anti-Ban Throttling
+## 6. Broadcast Scheduling & Anti-Ban Architecture
 
+### Daily JFT Broadcast
 - **Artisan Command:** `php artisan whatsapp:broadcast-jft`
 - **Scheduler:** Daily at 07:00 Cairo time (`Africa/Cairo`) in `routes/console.php`.
 - **Anti-Ban Throttling (`SendWhatsAppBroadcast`):**
   - Iterates through active `WhatsAppSubscriber` records.
   - Applies a randomized jitter delay between 2 and 5 seconds (`config('whatsapp.broadcast_delay_min_seconds')` to `max`) between each message.
   - Logs transmission metrics to `whatsapp_broadcast_logs`.
+
+### Bulk CSV Campaigns & The Chained Single-Recipient Pipeline (`SendWhatsAppBulkCsvBroadcast`)
+- **Queue Trap Avoidance (Redis `retry_after: 90s`):**
+  Never use a single long-running loop inside `ShouldQueue`. In Redis, jobs taking longer than `retry_after` (default 90s) are marked abandoned and reassigned to other workers, causing duplicate message blasts and account restrictions.
+- **Chained Single-Step Pipeline Pattern:**
+  1. The job processes exactly **one recipient** per execution (`$tries = 1`, `$timeout = 60s`).
+  2. Increments `current_index` atomically and persists progress into `whatsapp_broadcast_logs.metadata`.
+  3. Calculates a randomized jitter delay:
+     `$delay = random_int($delayMin, $delayMax);`
+     If the batch reaches a cooldown interval (e.g. every 20 messages), adds an extended pause (e.g. 60–120s).
+  4. Dispatches the next step via Redis delayed queue:
+     `self::dispatch($this->logId)->delay(now()->addSeconds($delay));`
+- **Automatic Disconnection Circuit-Breaker:**
+  If the microservice responds with a disconnection error (e.g., `INVALID_WA_CLI` or `WhatsApp client not logged in`):
+  - Mark `whatsapp_broadcast_logs.status = 'paused'`.
+  - Record the error in `metadata['last_error']`.
+  - Abort subsequent job dispatching immediately to prevent spamming disconnected sockets.
+  - Resume anytime via `POST /whatsapp/broadcasts/{id}/resume`.
+- **48-Hour Deduplication & Exclusion Filter:**
+  To prevent re-messaging contacts when recovering from a failure or running successive campaigns, filter recipients against recent successful outbound messages:
+  ```php
+  $recentPhones = WhatsAppMessage::where('direction', 'outgoing')
+      ->where('created_at', '>=', now()->subHours(48))
+      ->pluck('phone')
+      ->flip();
+  $filtered = array_filter($recipients, fn($r) => !isset($recentPhones[$r['phone']]));
+  ```
 
 ---
 
