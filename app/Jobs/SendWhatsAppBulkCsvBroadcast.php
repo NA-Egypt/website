@@ -41,7 +41,8 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
         string $antiBanProfile = 'safe',
         bool $enableCooldown = true,
         bool $appendOptout = false,
-        ?string $deviceId = null
+        ?string $deviceId = null,
+        ?int $sessionCap = null
     ) {
         $this->broadcastLogId = $broadcastLogId;
 
@@ -58,6 +59,14 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
                     $meta['enable_cooldown'] = $enableCooldown;
                     $meta['append_optout'] = $appendOptout;
                     $meta['device_id'] = $deviceId;
+                    $meta['session_cap'] = $sessionCap ?? match ($antiBanProfile) {
+                        'warmup' => 20,
+                        'ultra_safe' => 35,
+                        'safe' => 60,
+                        default => 100,
+                    };
+                    $meta['session_sent_count'] = 0;
+                    $meta['unregistered_count'] = 0;
                     $meta['current_index'] = 0;
                     $meta['cooldown_counter'] = 0;
                     $log->update(['metadata' => $meta]);
@@ -100,6 +109,29 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
                 'metadata' => $meta,
             ]);
             Log::info("[BulkCsvBroadcast] Broadcast #{$log->id} completed successfully.");
+            return;
+        }
+
+        // Session Safety Cap Guardrail: Prevent WhatsApp 24h restrictions by pacing campaigns in batches
+        $sessionCap = (int) ($meta['session_cap'] ?? match ($meta['anti_ban_profile'] ?? 'safe') {
+            'warmup' => 20,
+            'ultra_safe' => 35,
+            'safe' => 60,
+            default => 100,
+        });
+        $sessionSentCount = (int) ($meta['session_sent_count'] ?? 0);
+
+        if ($sessionCap > 0 && $sessionSentCount >= $sessionCap) {
+            $timeStr = Carbon::now()->format('H:i:s');
+            $meta['logs'] = $meta['logs'] ?? [];
+            $meta['logs'][] = "[{$timeStr}] 🛑 Safety Session Limit Reached: {$sessionSentCount}/{$sessionCap} messages sent in this batch. Campaign automatically PAUSED to protect account from 24h restrictions. You can resume safely after a rest period.";
+            $meta['logs'] = array_slice($meta['logs'], -200);
+
+            $log->update([
+                'status' => 'paused',
+                'metadata' => $meta,
+            ]);
+            Log::info("[BulkCsvBroadcast] Broadcast #{$log->id} paused: Session cap ({$sessionCap}) reached.");
             return;
         }
 
@@ -153,6 +185,21 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
             return;
         }
 
+        // Pre-flight check: Verify if number is registered on WhatsApp to prevent INVALID_JID ban trigger
+        $userCheck = $client->checkUser($phone, $deviceId);
+        if (($userCheck['success'] ?? false) && ($userCheck['is_on_whatsapp'] === false)) {
+            $meta['logs'] = $meta['logs'] ?? [];
+            $meta['logs'][] = "[{$timeStr}] #{$stepNum}/{$total} ⏭️ Skipped {$phone} ({$name}) - Number is NOT registered on WhatsApp (prevented INVALID_JID ban trigger)";
+            $meta['unregistered_count'] = ($meta['unregistered_count'] ?? 0) + 1;
+            $meta['current_index'] = $currentIndex + 1;
+            $meta['logs'] = array_slice($meta['logs'], -200);
+            $log->update(['metadata' => $meta]);
+
+            // Dispatch next recipient after 1 second without waiting full delay
+            self::dispatch($log->id)->delay(Carbon::now()->addSeconds(1));
+            return;
+        }
+
         // Prepare message text
         $sendMode = $meta['send_mode'] ?? 'template_to_all';
         $defaultMsg = $meta['default_message'] ?? '';
@@ -168,12 +215,23 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
             $text
         );
 
+        // Render Spintax dynamic variation {phrase1|phrase2} for non-fingerprinted messaging
+        $text = $client->renderSpintax($text);
+
         if (!empty($meta['append_optout'])) {
             $text .= "\n\n(للإلغاء أرسل: قف)";
         }
 
+        // Realistic human typing simulation ("typing..." presence)
+        $client->sendChatPresence($phone, 'start', $deviceId);
+        $typingPauseSeconds = min(5, max(2, (int) round(mb_strlen($text) / 60)));
+        sleep($typingPauseSeconds);
+
         // Send message via client
         $res = $client->sendTextMessage($phone, $text, $deviceId);
+
+        // Stop typing presence
+        $client->sendChatPresence($phone, 'stop', $deviceId);
 
         // Check if device disconnected during dispatch
         $errorMsg = $res['error'] ?? '';
@@ -221,6 +279,8 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
             ]);
 
             $log->increment('successful_count');
+            $sessionSentCount++;
+            $meta['session_sent_count'] = $sessionSentCount;
             $statusNote = ($res['dev_skipped'] ?? false) ? '(Dev mode simulated)' : 'Delivered';
             $meta['logs'][] = "[{$timeStr}] #{$stepNum}/{$total} ✅ Sent to {$phone} ({$name}) - {$statusNote}";
         } else {
@@ -250,10 +310,10 @@ class SendWhatsAppBulkCsvBroadcast implements ShouldQueue
         // Calculate anti-ban delay for next contact
         $profile = $meta['anti_ban_profile'] ?? 'safe';
         [$minDelay, $maxDelay, $cooldownThreshold, $cooldownSeconds] = match ($profile) {
-            'warmup' => [5, 10, 15, 120],
-            'ultra_safe' => [15, 30, 20, 90],
-            'fast' => [4, 8, 30, 45],
-            default => [8, 15, 25, 60],
+            'warmup' => [60, 120, 10, 360],    // Conservative 1-2m jitter, 6m break after 10 messages
+            'ultra_safe' => [45, 90, 15, 300],  // Strict 45-90s jitter, 5m break after 15 messages
+            'fast' => [6, 12, 30, 45],          // Fast for opted-in lists
+            default => [20, 40, 20, 120],       // Safe: 20-40s jitter, 2m break after 20 messages
         };
         $delay = rand($minDelay, $maxDelay);
 

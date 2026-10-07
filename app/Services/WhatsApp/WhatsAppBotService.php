@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\Day;
 use App\Models\DirectOnlineGroup;
 use App\Models\Meeting;
+use App\Models\WhatsAppBroadcastLog;
 use App\Models\WhatsAppConversation;
 use App\Models\WhatsAppMessage;
 use App\Models\WhatsAppSubscriber;
@@ -126,11 +127,13 @@ class WhatsAppBotService
             return;
         }
 
-        $lowerBody = mb_strtolower($body);
+        $normalizedBody = $this->normalizeArabicIndicDigits($body);
+        $lowerBody = mb_strtolower(trim($normalizedBody));
 
         // 1. Check for command to resume bot mode from live agent takeover
         if (in_array($lowerBody, ['إنهاء المحادثة', 'انهاء المحادثة', 'انهاء', 'إنهاء', 'bot', 'الروبوت', 'خروج'])) {
             $conversation->disableLiveAgent();
+            $conversation->update(['current_step' => null, 'step_data' => null]);
             $this->replyAndLog(
                 $conversation,
                 "تم إعادة تفعيل الرد الآلي بنجاح 🤖\nشكراً لتواصلك مع زمالة المدمنين المجهولين في مصر.\n\n" . $this->getMainMenuText(),
@@ -145,7 +148,13 @@ class WhatsAppBotService
             return;
         }
 
-        // 3. Check for Live Agent Request
+        // 3. Handle Active Multi-Step Flow (HIGHEST PRIORITY before keyword routing)
+        if ($conversation->current_step === 'awaiting_city') {
+            $this->handleMeetingCitySelection($conversation, $lowerBody);
+            return;
+        }
+
+        // 4. Check for Live Agent Request
         if (in_array($lowerBody, ['0', 'متطوع', 'تحدث مع متطوع', 'تحدث مع شخص', 'agent', 'volunteer', 'مساعدة'])) {
             $conversation->enableLiveAgent();
             $this->replyAndLog(
@@ -156,7 +165,7 @@ class WhatsAppBotService
             return;
         }
 
-        // 4. Check for Broadcast Subscription commands
+        // 5. Check for Broadcast Subscription commands
         if (in_array($lowerBody, ['7', 'اشتراك', 'اشتراك يومي', 'subscribe', 'اشتراك فقط لليوم'])) {
             WhatsAppSubscriber::updateOrCreate(
                 ['jid' => $formattedJid],
@@ -196,12 +205,6 @@ class WhatsAppBotService
             return;
         }
 
-        // 5. Handle Multi-Step City Selection for Meetings
-        if ($conversation->current_step === 'awaiting_city') {
-            $this->handleMeetingCitySelection($conversation, $lowerBody);
-            return;
-        }
-
         // 6. Direct Keyword / Numeric Option Triggers
         if (in_array($lowerBody, ['1', 'jft', 'فقط لليوم', 'قراءة اليوم', 'قراءه اليوم', 'today'])) {
             $this->handleJftReading($conversation);
@@ -233,6 +236,15 @@ class WhatsAppBotService
             return;
         }
 
+        // 7. Option 9: Convention Invitation Retrieval (مسار يجمعنا)
+        if (in_array($lowerBody, [
+            '9', 'دعوة', 'دعوه', 'دعوة المؤتمر', 'دعوه المؤتمر', 'دعوتي', 'دعوتى',
+            'تذكرة', 'تذكره', 'تذكرتي', 'تذكرتى', 'ticket', 'مؤتمر', 'المؤتمر', 'مسار يجمعنا'
+        ])) {
+            $this->handleCampaign11InvitationLookup($conversation);
+            return;
+        }
+
         // Default: Show main interactive menu
         $conversation->update(['current_step' => null, 'step_data' => null]);
         $this->replyAndLog($conversation, $this->getMainMenuText(), 'menu');
@@ -243,18 +255,25 @@ class WhatsAppBotService
      */
     protected function getMainMenuText(): string
     {
-        return "أهلاً بك في خدمة واتساب زمالة المدمنين المجهولين - مصر 🇪🇬\n"
-            . "Welcome to Narcotics Anonymous Egypt WhatsApp Service\n\n"
+        $menu = "أهلاً بك في واتساب زمالة المدمنين المجهولين - مصر 🇪🇬\n"
+            . "Welcome to NA Egypt WhatsApp Service\n\n"
             . "الرجاء اختيار رقم الخدمة أو إرسال الكلمة المطلوبة:\n"
-            . "1️⃣ *قراءة فقط لليوم* (Just For Today)\n"
+            . "1️⃣ *قراءة لليوم فقط* (Just For Today)\n"
             . "2️⃣ *البحث عن اجتماعات التعافي* (Find Meetings)\n"
-            . "3️⃣ *أرقام خط المساعدة والتواصل* (Helpline Numbers)\n"
-            . "4️⃣ *الفعاليات والمؤتمرات القادمة* (Upcoming Events)\n"
-            . "5️⃣ *النماذج الإلكترونية وطلب المطبوعات* (Forms & Literature)\n"
-            . "6️⃣ *وسائل التواصل الاجتماعي والموقع* (Social Media & Website)\n"
-            . "7️⃣ *الاشتراك في قراءة فقط لليوم يومياً* (Daily JFT Broadcast)\n"
-            . "0️⃣ *التحدث مع متطوع من خط المساعدة* (Talk to Volunteer)\n\n"
+            . "3️⃣ *أرقام خط المساعدة* (Helpline Numbers)\n"
+            . "4️⃣ *الفعاليات والمؤتمرات* (Upcoming Events)\n"
+            . "5️⃣ *النماذج الإلكترونية وطلب الأدبيات* (Forms & Literature)\n"
+            . "6️⃣ *وسائل التواصل والموقع الرسمي* (Social Media & Website)\n"
+            . "7️⃣ *الاشتراك في رسائل لليوم فقط يومياً* (Daily JFT Broadcast)\n";
+
+        if ($this->isCampaign11LookupActive()) {
+            $menu .= "9️⃣ *استلام دعوة المؤتمر (مسار يجمعنا)* (Get Conference Invitation)\n";
+        }
+
+        $menu .= "0️⃣ *التحدث مع متطوع خط المساعدة* (Talk to Volunteer)\n\n"
             . "🌐 موقعنا الرسمي: https://naegypt.org";
+
+        return $menu;
     }
 
     /**
@@ -264,7 +283,7 @@ class WhatsAppBotService
     {
         try {
             $reading = $this->jftService->getReading();
-            $title = !empty($reading['title']) ? $reading['title'] : 'فقط لليوم';
+            $title = !empty($reading['title']) ? $reading['title'] : 'لليوم فقط';
             $pageDate = !empty($reading['page_date']) ? $reading['page_date'] : Carbon::now('Africa/Cairo')->translatedFormat('j F');
             $thought = $reading['thought'] ?? ($reading['thought_for_the_day'] ?? '');
             $quote = $reading['quote'] ?? '';
@@ -279,7 +298,7 @@ class WhatsAppBotService
             $cleanContent = trim(preg_replace("/\n{3,}/", "\n\n", $cleanContent));
 
             if (empty($cleanContent)) {
-                $cleanContent = "يمكنك متابعة قراءة فقط لليوم كاملة عبر موقعنا الرسمي.";
+                $cleanContent = "يمكنك متابعة قراءة لليوم فقط كاملة عبر موقعنا الرسمي.";
             }
 
             // Truncate cleanly for WhatsApp if very long
@@ -287,7 +306,7 @@ class WhatsAppBotService
                 $cleanContent = mb_substr($cleanContent, 0, 1500) . "...\n\n(لقراءة النص كاملاً يرجى زيارة موقعنا)";
             }
 
-            $message = "📖 *فقط لليوم - {$pageDate}*\n\n"
+            $message = "📖 *لليوم فقط - {$pageDate}*\n\n"
                 . "📌 *{$title}*\n\n";
 
             if ($quote) {
@@ -299,7 +318,7 @@ class WhatsAppBotService
 
             if ($thought) {
                 $cleanThought = strip_tags($thought);
-                $message .= "✨ *تذكرة اليوم:* {$cleanThought}\n\n";
+                $message .= "✨ *لليوم فقط:* {$cleanThought}\n\n";
             }
 
             $message .= "🔗 للقراءة كاملة على الموقع: https://naegypt.org/jft";
@@ -309,7 +328,7 @@ class WhatsAppBotService
             Log::error('[WhatsAppBot] Error fetching JFT: ' . $e->getMessage());
             $this->replyAndLog(
                 $conversation,
-                "📖 يمكنك متابعة قراءة فقط لليوم عبر موقعنا الرسمي:\nhttps://naegypt.org/jft",
+                "📖 يمكنك متابعة قراءة لليوم فقط عبر موقعنا الرسمي:\nhttps://naegypt.org/jft",
                 'jft'
             );
         }
@@ -323,14 +342,14 @@ class WhatsAppBotService
         $conversation->update(['current_step' => 'awaiting_city']);
 
         $message = "🔍 *البحث عن اجتماعات التعافي اليوم*\n\n"
-            . "الرجاء اختيار رقم المحافظة أو النوع:\n"
+            . "الرجاء اختيار رقم المحافظة أو نوع الاجتماع:\n"
             . "1️⃣ القاهرة (Cairo)\n"
             . "2️⃣ الجيزة (Giza)\n"
             . "3️⃣ الإسكندرية (Alexandria)\n"
-            . "4️⃣ اجتماعات أونلاين عبر الإنترنت (Online Meetings)\n"
+            . "4️⃣ اجتماعات عبر الإنترنت (Online Meetings)\n"
             . "5️⃣ باقي المحافظات (Other Governorates)\n"
             . "0️⃣ رجوع للقائمة الرئيسية\n\n"
-            . "🔗 دليل الاجتماعات الكامل على الموقع: https://naegypt.org/meetings";
+            . "🔗 دليل الاجتماعات الكامل: https://naegypt.org/meetings";
 
         $this->replyAndLog($conversation, $message, 'meetings');
     }
@@ -340,18 +359,19 @@ class WhatsAppBotService
      */
     protected function handleMeetingCitySelection(WhatsAppConversation $conversation, string $input): void
     {
-        if ($input === '0' || $input === 'رجوع') {
-            $conversation->update(['current_step' => null]);
+        if ($input === '0' || $input === 'رجوع' || $input === 'خروج' || $input === 'انهاء' || $input === 'إنهاء') {
+            $conversation->update(['current_step' => null, 'step_data' => null]);
             $this->replyAndLog($conversation, $this->getMainMenuText(), 'menu');
             return;
         }
 
         $todayName = Carbon::now('Africa/Cairo')->format('l'); // Monday, Tuesday...
-        $day = Day::where('name', $todayName)->first();
+        $day = Day::where('en_name', $todayName)->first();
         $dayId = $day ? $day->id : null;
 
         $targetCityName = null;
         $isOnline = false;
+        $isOther = false;
 
         if ($input === '1' || str_contains($input, 'قاهرة') || str_contains($input, 'cairo')) {
             $targetCityName = 'القاهرة';
@@ -361,9 +381,11 @@ class WhatsAppBotService
             $targetCityName = 'الإسكندرية';
         } elseif ($input === '4' || str_contains($input, 'اونلاين') || str_contains($input, 'أونلاين') || str_contains($input, 'online')) {
             $isOnline = true;
+        } elseif ($input === '5' || str_contains($input, 'باقي') || str_contains($input, 'محافظات') || str_contains($input, 'other')) {
+            $isOther = true;
         }
 
-        $conversation->update(['current_step' => null]);
+        $conversation->update(['current_step' => null, 'step_data' => null]);
 
         if ($isOnline) {
             $this->handleOnlineMeetings($conversation, $dayId);
@@ -382,12 +404,19 @@ class WhatsAppBotService
                 $q->where('ar_name', 'like', "%{$targetCityName}%")
                     ->orWhere('en_name', 'like', "%{$targetCityName}%");
             });
+        } elseif ($isOther) {
+            $query->whereHas('group.neighborhood.city', function ($q) {
+                $q->where('ar_name', 'not like', '%القاهرة%')
+                    ->where('ar_name', 'not like', '%الجيزة%')
+                    ->where('ar_name', 'not like', '%الإسكندرية%')
+                    ->where('ar_name', 'not like', '%اسكندرية%');
+            });
         }
 
         $meetings = $query->take(8)->get();
 
         if ($meetings->isEmpty()) {
-            $cityNameLabel = $targetCityName ?: 'المحافظة المختارة';
+            $cityNameLabel = $targetCityName ?: ($isOther ? 'باقي المحافظات' : 'المحافظة المختارة');
             $this->replyAndLog(
                 $conversation,
                 "لم يتم العثور على اجتماعات مسجلة اليوم في {$cityNameLabel}.\n\nيمكنك البحث في دليل الاجتماعات المحدث بالكامل عبر الرابط:\nhttps://naegypt.org/meetings",
@@ -396,8 +425,8 @@ class WhatsAppBotService
             return;
         }
 
-        $cityNameLabel = $targetCityName ?: 'الاجتماعات اليومية';
-        $message = "📍 *اجتماعات اليوم في {$cityNameLabel}*\n\n";
+        $cityNameLabel = $targetCityName ?: ($isOther ? 'باقي المحافظات' : 'الاجتماعات اليومية');
+        $message = "📍 *اجتماعات التعافي اليوم في {$cityNameLabel}*\n\n";
 
         foreach ($meetings as $idx => $m) {
             $num = $idx + 1;
@@ -406,7 +435,7 @@ class WhatsAppBotService
             $time = $m->start_time ? substr($m->start_time, 0, 5) : '';
             $address = $m->group ? ($m->group->ar_address ?: $m->group->en_address ?: $m->group->location) : '';
 
-            $message .= "{$num}️⃣ *{$groupName}* ({$neighborhood})\n";
+            $message .= "{$num}️⃣ *مجموعة {$groupName}* ({$neighborhood})\n";
             $message .= "⏰ الميعاد: {$time}\n";
             if ($address) {
                 $message .= "🏢 العنوان: {$address}\n";
@@ -417,7 +446,7 @@ class WhatsAppBotService
             $message .= "───────────────\n";
         }
 
-        $message .= "\n🔗 لمشاهدة جميع الاجتماعات والخريطة التفاعلية:\nhttps://naegypt.org/meetings";
+        $message .= "\n🔗 لدليل الاجتماعات الكامل والخريطة التفاعلية:\nhttps://naegypt.org/meetings";
 
         $this->replyAndLog($conversation, $message, 'meetings');
     }
@@ -470,14 +499,14 @@ class WhatsAppBotService
      */
     protected function handleHelplineInfo(WhatsAppConversation $conversation): void
     {
-        $message = "📞 *أرقام خط المساعدة لزمالة المدمنين المجهولين في مصر*\n"
-            . "سرية تامة - متاح للمساعدة والرد على استفساراتكم:\n\n"
-            . "👨 *خط مساعدة الرجال (Men Helpline):*\n"
+        $message = "📞 *أرقام خط المساعدة لزمالة المدمنين المجهولين - مصر*\n"
+            . "متاح للمساعدة والرد على جميع الاستفسارات:\n\n"
+            . "📞 *خطوط المساعدة (Regional Helplines):*\n"
             . "📱 +201006979198\n"
             . "📱 +201060933888\n\n"
-            . "👩 *خط مساعدة السيدات (Women Helpline):*\n"
+            . "📞 *خط مساعدة الاسكندرية (Alexandria Helpline):*\n"
             . "📱 +201503884411\n\n"
-            . "💬 يمكنك أيضاً طلب التحدث مع أحد المتطوعين عبر واتساب الآن بإرسال كلمة: *متطوع*\n\n"
+            . "💬 للتحدث مع أحد متطوعي الخدمة عبر واتساب الآن، أرسل رقم: *0* أو كلمة: *متطوع*\n\n"
             . "🔗 صفحة التواصل بالموقع: https://naegypt.org/contactus";
 
         $this->replyAndLog($conversation, $message, 'helpline');
@@ -558,11 +587,152 @@ class WhatsAppBotService
     }
 
     /**
+     * Check if the convention invitation lookup (Option 9) window is currently active.
+     */
+    public function isCampaign11LookupActive(): bool
+    {
+        $expiresAt = config('whatsapp.convention_lookup_expires_at', '2026-10-10 23:59:59');
+        try {
+            return Carbon::now('Africa/Cairo')->lessThanOrEqualTo(Carbon::parse($expiresAt, 'Africa/Cairo'));
+        } catch (\Throwable $e) {
+            return true;
+        }
+    }
+
+    /**
+     * Handle on-demand retrieval of convention invitation for Campaign #11 / attendee dataset.
+     */
+    protected function handleCampaign11InvitationLookup(WhatsAppConversation $conversation): void
+    {
+        if (!$this->isCampaign11LookupActive()) {
+            $this->replyAndLog(
+                $conversation,
+                "انتهت فترة الاستلام الآلي لدعوات المؤتمر عبر خدمة الرد الآلي 🕊️\n\nللحصول على المساعدة بخصوص دعوة مؤتمر \"مسار يجمعنا\"، يرجى إرسال رقم (0) للتواصل مع أحد متطوعي الخدمة، أو زيارة موقعنا: https://naegypt.org",
+                'campaign_11_invitation'
+            );
+            return;
+        }
+
+        $logId = (int) config('whatsapp.campaign_11_log_id', 11);
+
+        // Prefer active convention_attendees dataset, otherwise fallback to configured Campaign 11
+        $log = WhatsAppBroadcastLog::where('channel', 'convention_attendees')->latest()->first()
+            ?: WhatsAppBroadcastLog::find($logId);
+
+        if (!$log || empty($log->metadata['recipients'])) {
+            Log::warning("[WhatsAppBot] Convention attendee campaign #{$logId} has no recipients data.");
+            $this->replyAndLog(
+                $conversation,
+                "عفواً، قاعدة بيانات دعوات المؤتمر غير متاحة حالياً، يرجى إرسال رقم (0) للتواصل مع متطوع من فريق التنظيم 🤝",
+                'campaign_11_invitation'
+            );
+            return;
+        }
+
+        $recipients = $log->metadata['recipients'];
+        $recipient = $this->findCampaignRecipientByPhone($conversation->phone ?: $conversation->jid, $recipients);
+
+        if (!$recipient) {
+            $userDisplayPhone = $conversation->phone ?: $this->client->normalizePhone($conversation->jid);
+            $notFoundMsg = "عفواً، لم نتمكن من العثور على دعوة مؤتمر مسجلة مرتبطة بهذا الرقم ({$userDisplayPhone}) 🔍\n\n"
+                . "📌 يرجى التأكد من مراسلتنا من نفس رقم الهاتف المسجل به في المؤتمر، أو إرسال رقم *0* للتحدث مع أحد متطوعي الخدمة لمساعدتك.\n\n"
+                . "🌐 رابط موقع المؤتمر: https://egypt30convention.org";
+
+            $this->replyAndLog($conversation, $notFoundMsg, 'campaign_11_invitation_not_found');
+            return;
+        }
+
+        $attendeeName = !empty($recipient['name']) ? $recipient['name'] : 'عضو الزمالة العزيز';
+        $messageText = trim($recipient['message'] ?? '');
+
+        // Replace placeholders {name}, {phone}, {الاسم}, {الهاتف}
+        $messageText = str_replace(
+            ['{name}', '{phone}', '{الاسم}', '{الهاتف}'],
+            [$attendeeName, $recipient['phone'] ?? '', $attendeeName, $recipient['phone'] ?? ''],
+            $messageText
+        );
+
+        if (empty($messageText)) {
+            $messageText = "أهلاً بك {$attendeeName} 🌸\nتم تأكيد تسجيلك في مؤتمر \"مسار يجمعنا\".\nوجودك يكمل الصورة.. معًا يصبح للمسار معنى.";
+        }
+
+        $this->replyAndLog($conversation, $messageText, 'campaign_11_invitation');
+
+        // Track claimed invitation in campaign metadata
+        try {
+            $meta = $log->metadata ?? [];
+            $meta['claimed_invitations'] = $meta['claimed_invitations'] ?? [];
+            $claimedKey = $this->client->normalizePhone($recipient['phone'] ?? $conversation->phone);
+            $meta['claimed_invitations'][$claimedKey] = Carbon::now()->toIso8601String();
+            $log->update(['metadata' => $meta]);
+        } catch (\Throwable $e) {
+            Log::warning("[WhatsAppBot] Failed to update claimed_invitations metadata: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cross-reference a user phone or JID against convention attendees with zero-exception tolerance.
+     */
+    public function findCampaignRecipientByPhone(string $userPhoneOrJid, array $recipients): ?array
+    {
+        $userPhone = $this->client->normalizePhone($userPhoneOrJid);
+        if (empty($userPhone)) {
+            return null;
+        }
+
+        // Strip leading country code or zero for Egyptian mobile suffix (e.g. '20' or '0')
+        $userEgSuffix = preg_replace('/^(20|0)/', '', $userPhone);
+
+        // 1. Exact normalized digits match
+        foreach ($recipients as $recipient) {
+            $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
+            if ($recPhone === $userPhone) {
+                return $recipient;
+            }
+        }
+
+        // 2. Egyptian 10-digit mobile core match (e.g. 10xxxxxxxx, 11xxxxxxxx, 12xxxxxxxx, 15xxxxxxxx)
+        if (strlen($userEgSuffix) >= 9) {
+            foreach ($recipients as $recipient) {
+                $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
+                $recEgSuffix = preg_replace('/^(20|0)/', '', $recPhone);
+                if (!empty($recEgSuffix) && $recEgSuffix === $userEgSuffix) {
+                    return $recipient;
+                }
+            }
+        }
+
+        // 3. Right-aligned digit suffix match for minimum 8 digits
+        $minSuffixLen = min(9, strlen($userPhone));
+        if ($minSuffixLen >= 8) {
+            $userTail = substr($userPhone, -$minSuffixLen);
+            foreach ($recipients as $recipient) {
+                $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
+                if (strlen($recPhone) >= $minSuffixLen && substr($recPhone, -$minSuffixLen) === $userTail) {
+                    return $recipient;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalize Eastern Arabic-Indic numerals (٠-٩) to standard ASCII digits (0-9).
+     */
+    public function normalizeArabicIndicDigits(string $str): string
+    {
+        $arabicIndic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        $standard = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        return str_replace($arabicIndic, $standard, $str);
+    }
+
+    /**
      * Send response via WhatsAppClient and log outbound message in database.
      */
-    protected function replyAndLog(WhatsAppConversation $conversation, string $text, string $category): void
+    protected function replyAndLog(WhatsAppConversation $conversation, string $text, string $category, ?string $deviceId = null): void
     {
-        $response = $this->client->sendTextMessage($conversation->jid, $text);
+        $response = $this->client->sendTextMessage($conversation->jid, $text, $deviceId);
 
         WhatsAppMessage::create([
             'conversation_id' => $conversation->id,

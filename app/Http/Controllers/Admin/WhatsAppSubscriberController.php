@@ -63,7 +63,10 @@ class WhatsAppSubscriberController extends Controller
 
         $isDev = config('whatsapp.dev_mode', false) || (request()->getHost() === 'egyptna.org' || str_ends_with(request()->getHost(), '.egyptna.org'));
 
-        return view('whatsapp.subscribers', compact('subscribers', 'broadcastLogs', 'stats', 'devices', 'activeDeviceId', 'isDev'));
+        $conventionAttendeesLog = WhatsAppBroadcastLog::where('channel', 'convention_attendees')->latest()->first()
+            ?: WhatsAppBroadcastLog::find((int) config('whatsapp.campaign_11_log_id', 11));
+
+        return view('whatsapp.subscribers', compact('subscribers', 'broadcastLogs', 'stats', 'devices', 'activeDeviceId', 'isDev', 'conventionAttendeesLog'));
     }
 
     /**
@@ -109,6 +112,7 @@ class WhatsAppSubscriberController extends Controller
             'default_message' => 'nullable|string|max:4000',
             'device_id' => 'nullable|string',
             'anti_ban_profile' => 'required|in:warmup,ultra_safe,safe,fast',
+            'session_cap' => 'nullable|integer|min:5|max:500',
             'enable_cooldown' => 'nullable|boolean',
             'append_optout' => 'nullable|boolean',
         ]);
@@ -217,10 +221,18 @@ class WhatsAppSubscriberController extends Controller
 
         $deviceId = $validated['device_id'] ?: config('whatsapp.device_id', 'default');
         $antiBanProfile = $validated['anti_ban_profile'];
+        $sessionCap = $request->filled('session_cap')
+            ? (int) $request->input('session_cap')
+            : match ($antiBanProfile) {
+                'warmup' => 20,
+                'ultra_safe' => 35,
+                'safe' => 60,
+                default => 100,
+            };
         $enableCooldown = $request->boolean('enable_cooldown', true);
         $appendOptout = $request->boolean('append_optout', false);
 
-        $initLogMsg = "[00:00:00] Initialized campaign for " . count($recipients) . " recipients";
+        $initLogMsg = "[00:00:00] Initialized campaign for " . count($recipients) . " recipients (safety batch cap: {$sessionCap})";
         if ($skippedCount > 0) {
             $initLogMsg .= " (automatically excluded {$skippedCount} contacts who already received this campaign in past {$excludeHours}h).";
         } else {
@@ -243,6 +255,9 @@ class WhatsAppSubscriberController extends Controller
                 'recipients' => $recipients,
                 'current_index' => 0,
                 'cooldown_counter' => 0,
+                'session_cap' => $sessionCap,
+                'session_sent_count' => 0,
+                'unregistered_count' => 0,
                 'skipped_count' => $skippedCount,
                 'exclude_recent' => $excludeRecent,
                 'send_mode' => $validated['send_mode'],
@@ -262,7 +277,8 @@ class WhatsAppSubscriberController extends Controller
             $antiBanProfile,
             $enableCooldown,
             $appendOptout,
-            $deviceId
+            $deviceId,
+            $sessionCap
         );
 
         $flashMsg = __('messages.whatsapp_bulk_dispatched_successfully');
@@ -297,6 +313,7 @@ class WhatsAppSubscriberController extends Controller
 
         return response()->json([
             'id' => $broadcast->id,
+            'title' => $broadcast->title ?: ('Bulk Campaign #' . $broadcast->id),
             'status' => $broadcast->status,
             'total' => $broadcast->total_recipients,
             'successful' => $broadcast->successful_count,
@@ -331,31 +348,63 @@ class WhatsAppSubscriberController extends Controller
     public function resumeBroadcast(WhatsAppBroadcastLog $broadcast, WhatsAppClient $client): JsonResponse|RedirectResponse
     {
         if ($broadcast->status !== 'paused') {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => __('messages.whatsapp_broadcast_not_paused'),
+                ], 422);
+            }
             return back()->with('error', __('messages.whatsapp_broadcast_not_paused'));
         }
 
         $deviceId = $broadcast->device_id ?: config('whatsapp.device_id', 'default');
         $status = $client->getDeviceStatus($deviceId);
 
+        // If the original device is disconnected, automatically fallback to any currently logged-in device
         if (!($status['connected'] ?? false)) {
-            return back()->with('error', __('messages.whatsapp_cannot_resume_device_disconnected'));
+            $devicesList = $client->listDevices();
+            $connectedFallback = null;
+            foreach ($devicesList['devices'] ?? [] as $dev) {
+                if (($dev['state'] ?? '') === 'logged_in') {
+                    $connectedFallback = $dev['id'];
+                    break;
+                }
+            }
+
+            if ($connectedFallback) {
+                $deviceId = $connectedFallback;
+                $broadcast->update(['device_id' => $deviceId]);
+                $status = ['connected' => true];
+            } else {
+                if (request()->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => __('messages.whatsapp_cannot_resume_device_disconnected'),
+                    ], 422);
+                }
+                return back()->with('error', __('messages.whatsapp_cannot_resume_device_disconnected'));
+            }
         }
 
         $meta = $broadcast->metadata ?? [];
+        $meta['session_sent_count'] = 0;
+        $meta['device_id'] = $deviceId;
+        $sessionCap = (int) ($meta['session_cap'] ?? 35);
         $timeStr = Carbon::now()->format('H:i:s');
         $meta['logs'] = $meta['logs'] ?? [];
-        $meta['logs'][] = "[{$timeStr}] ▶️ Campaign resumed by administrator using device '{$deviceId}'.";
+        $meta['logs'][] = "[{$timeStr}] ▶️ Campaign resumed by administrator using device '{$deviceId}'. Starting fresh safety batch (up to {$sessionCap} messages).";
         $meta['logs'] = array_slice($meta['logs'], -200);
 
         $broadcast->update([
             'status' => 'processing',
+            'device_id' => $deviceId,
             'metadata' => $meta,
         ]);
 
         SendWhatsAppBulkCsvBroadcast::dispatch($broadcast->id);
 
         if (request()->wantsJson()) {
-            return response()->json(['success' => true, 'status' => 'processing']);
+            return response()->json(['success' => true, 'status' => 'processing', 'device_id' => $deviceId]);
         }
 
         return back()->with('success', __('messages.whatsapp_broadcast_resumed'));
@@ -381,5 +430,141 @@ class WhatsAppSubscriberController extends Controller
 
         return redirect()->route('whatsapp.subscribers.index')
             ->with('success', __('messages.whatsapp_broadcast_queued'));
+    }
+
+    /**
+     * Upload / Update the Convention Attendees CSV dataset for on-demand WhatsApp Bot retrieval (Option 9).
+     * This creates or updates a convention_attendees broadcast record without triggering outbound blast jobs.
+     */
+    public function uploadConventionAttendeesCsv(Request $request, WhatsAppClient $client): JsonResponse|RedirectResponse
+    {
+        $validated = $request->validate([
+            'csv_file' => 'required|file|max:10240',
+            'title' => 'nullable|string|max:255',
+        ]);
+
+        $file = $request->file('csv_file');
+        $handle = fopen($file->getRealPath(), 'r');
+        if ($handle === false) {
+            return back()->with('error', __('messages.whatsapp_csv_file_read_error'));
+        }
+
+        // BOM removal
+        $bom = fread($handle, 3);
+        if ($bom !== "\xEF\xBB\xBF") {
+            rewind($handle);
+        }
+
+        $header = fgetcsv($handle);
+        if (!$header) {
+            fclose($handle);
+            return back()->with('error', __('messages.whatsapp_csv_empty_or_invalid'));
+        }
+
+        // Detect column indices
+        $headerMap = [];
+        foreach ($header as $idx => $col) {
+            $clean = mb_strtolower(trim((string) $col));
+            $clean = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $clean);
+
+            if (in_array($clean, ['phone', 'mobile', 'telephone', 'هاتف', 'الهاتف', 'موبايل', 'رقم الهاتف', 'رقم الموبايل', 'الجوال', 'رقم'])) {
+                $headerMap['phone'] = $idx;
+            } elseif (in_array($clean, ['name', 'الاسم', 'اسم', 'contact_name', 'full_name'])) {
+                $headerMap['name'] = $idx;
+            } elseif (in_array($clean, ['message', 'الرسالة', 'نص الرسالة', 'msg', 'text', 'content', 'دعوة', 'الدعوة'])) {
+                $headerMap['message'] = $idx;
+            }
+        }
+
+        if (!isset($headerMap['phone'])) {
+            fclose($handle);
+            return back()->with('error', __('messages.whatsapp_csv_missing_phone_column'));
+        }
+
+        $recipients = [];
+        $seenPhones = [];
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (empty(array_filter($row))) {
+                continue;
+            }
+
+            $rawPhone = $row[$headerMap['phone']] ?? '';
+            $phone = $client->normalizePhone($rawPhone);
+
+            if (empty($phone) || strlen($phone) < 8) {
+                continue;
+            }
+
+            // Deduplication within the CSV
+            if (isset($seenPhones[$phone])) {
+                continue;
+            }
+            $seenPhones[$phone] = true;
+
+            $name = isset($headerMap['name']) ? trim($row[$headerMap['name']] ?? '') : '';
+            $message = isset($headerMap['message']) ? trim($row[$headerMap['message']] ?? '') : '';
+
+            $recipients[] = [
+                'phone' => $phone,
+                'name' => $name,
+                'message' => $message,
+            ];
+        }
+        fclose($handle);
+
+        if (empty($recipients)) {
+            return back()->with('error', __('messages.whatsapp_csv_no_valid_recipients'));
+        }
+
+        $title = !empty($validated['title']) ? $validated['title'] : 'كشف حضور مؤتمر مسار يجمعنا (' . count($recipients) . ' مشارك)';
+
+        // Find existing convention_attendees log or create new one
+        $log = WhatsAppBroadcastLog::where('channel', 'convention_attendees')->latest()->first();
+
+        if ($log) {
+            $meta = $log->metadata ?? [];
+            $meta['recipients'] = $recipients;
+            $meta['uploaded_at'] = Carbon::now()->toIso8601String();
+            $meta['file_name'] = $file->getClientOriginalName();
+            $log->update([
+                'title' => $title,
+                'total_recipients' => count($recipients),
+                'status' => 'completed',
+                'metadata' => $meta,
+            ]);
+        } else {
+            $log = WhatsAppBroadcastLog::create([
+                'channel' => 'convention_attendees',
+                'device_id' => config('whatsapp.device_id', 'default'),
+                'title' => $title,
+                'total_recipients' => count($recipients),
+                'successful_count' => 0,
+                'failed_count' => 0,
+                'status' => 'completed',
+                'anti_ban_profile' => 'safe',
+                'is_dev_broadcast' => (bool) config('whatsapp.dev_mode', false),
+                'dispatched_by' => auth()->id(),
+                'metadata' => [
+                    'recipients' => $recipients,
+                    'uploaded_at' => Carbon::now()->toIso8601String(),
+                    'file_name' => $file->getClientOriginalName(),
+                    'claimed_invitations' => [],
+                ],
+            ]);
+        }
+
+        $msg = __('messages.whatsapp_convention_attendees_uploaded_success', ['count' => count($recipients)]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'total' => count($recipients),
+                'log_id' => $log->id,
+                'message' => $msg,
+            ]);
+        }
+
+        return redirect()->route('whatsapp.subscribers.index')->with('success', $msg);
     }
 }

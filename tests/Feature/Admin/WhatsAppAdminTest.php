@@ -282,6 +282,36 @@ class WhatsAppAdminTest extends TestCase
         \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\SendWhatsAppBulkCsvBroadcast::class);
     }
 
+    public function test_bulk_csv_accepts_ultra_safe_profile_and_custom_session_cap(): void
+    {
+        \Illuminate\Support\Facades\Queue::fake();
+
+        $csvContent = "phone,name,message\n+201011112222,Ahmed,مرحبا بك\n";
+        $file = \Illuminate\Http\UploadedFile::fake()->createWithContent('contacts.csv', $csvContent);
+
+        $response = $this->actingAs($this->superAdmin)->post(route('whatsapp.subscribers.bulk-csv'), [
+            'csv_file' => $file,
+            'device_id' => 'ss',
+            'send_mode' => 'custom_per_row',
+            'anti_ban_profile' => 'ultra_safe',
+            'session_cap' => 35,
+            'enable_cooldown' => '1',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('whatsapp_broadcast_logs', [
+            'device_id' => 'ss',
+            'status' => 'processing',
+            'anti_ban_profile' => 'ultra_safe',
+        ]);
+
+        $log = \App\Models\WhatsAppBroadcastLog::where('device_id', 'ss')->latest()->first();
+        $this->assertEquals(35, $log->metadata['session_cap']);
+        $this->assertEquals(0, $log->metadata['session_sent_count']);
+
+        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\SendWhatsAppBulkCsvBroadcast::class);
+    }
+
     public function test_inbox_conversations_api_returns_json_list(): void
     {
         WhatsAppConversation::create([

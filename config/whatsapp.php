@@ -105,4 +105,12 @@ return [
     */
     'dev_mode' => (bool) env('WHATSAPP_DEV_MODE', false),
     'dev_whitelist' => array_filter(array_map('trim', explode(',', env('WHATSAPP_DEV_WHITELIST', '')))),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Convention Invitation Lookup (Option 9 / 3-Day Window)
+    |--------------------------------------------------------------------------
+    */
+    'campaign_11_log_id' => (int) env('WHATSAPP_CAMPAIGN_11_LOG_ID', 11),
+    'convention_lookup_expires_at' => env('WHATSAPP_CONVENTION_EXPIRES_AT', '2026-10-10 23:59:59'),
 ];

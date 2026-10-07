@@ -289,12 +289,34 @@
 
 /* Buttons */
 
-.btn i {
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
     vertical-align: middle;
-    font-size: 1.rem;
-    margin-top: -1em;
-    margin-bottom: -1em;
-    margin-left: 5px;
+}
+
+.btn i,
+.btn svg,
+.btn .spinner-border,
+.btn .spinner-grow {
+    vertical-align: middle;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: 0;
+    margin-right: 0;
+    line-height: 1;
+    font-size: inherit;
+    flex-shrink: 0;
+}
+
+.btn:has(> i:only-child),
+.btn:has(> svg:only-child),
+.btn-icon,
+.btn-icon-action {
+    gap: 0;
+    justify-content: center;
 }
 
 .btn-white {

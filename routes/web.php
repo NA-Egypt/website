@@ -358,6 +358,7 @@ Route::group(
                     Route::get('/broadcasts/{broadcast}/progress', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'broadcastProgress'])->name('broadcasts.progress');
                     Route::post('/broadcasts/{broadcast}/cancel', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'cancelBroadcast'])->name('broadcasts.cancel');
                     Route::post('/broadcasts/{broadcast}/resume', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'resumeBroadcast'])->name('broadcasts.resume');
+                    Route::post('/convention-attendees/upload', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'uploadConventionAttendeesCsv'])->name('convention-attendees.upload');
                     Route::post('/subscribers/broadcast', [\App\Http\Controllers\Admin\WhatsAppSubscriberController::class, 'triggerBroadcast'])->name('subscribers.broadcast');
                 });
 

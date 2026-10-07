@@ -2111,12 +2111,6 @@ body[dir="rtl"] {
         max-width: 300px;
     }
 
-    .btn {
-        margin: 0 auto;
-        display: block;
-        max-width: 200px;
-    }
-
     /* Mobile meeting cards */
     .meeting-item,
     .meeting-item-suspended {
@@ -2190,12 +2184,6 @@ body[dir="rtl"] {
     .form-control {
         max-width: 250px;
         font-size: 0.9rem;
-    }
-
-    .btn {
-        max-width: 180px;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
     }
 
     /* Compact search */

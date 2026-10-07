@@ -513,6 +513,56 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   body.is-toggling .page-content {
       transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), margin 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
+
+  /* Global Button & Icon Standardization (RTL & LTR) */
+  .btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.375rem !important;
+      vertical-align: middle;
+  }
+
+  .btn i,
+  .btn svg,
+  .btn .spinner-border,
+  .btn .spinner-grow {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      line-height: 1 !important;
+      vertical-align: middle !important;
+      font-size: inherit;
+      flex-shrink: 0 !important;
+  }
+
+  /* Neutralize one-sided margins when gap is in effect */
+  .btn > i.me-1, .btn > i.me-2, .btn > i.me-3,
+  .btn > i.ms-1, .btn > i.ms-2, .btn > i.ms-3,
+  [dir="rtl"] .btn > i.me-1, [dir="rtl"] .btn > i.me-2,
+  [dir="rtl"] .btn > i.ms-1, [dir="rtl"] .btn > i.ms-2 {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+  }
+
+  /* Icon-Only Buttons (Table actions, pagination arrows, circular tools) */
+  .btn:has(> i:only-child),
+  .btn:has(> svg:only-child),
+  .btn-icon-action,
+  .btn-icon {
+      gap: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+  }
+
+  .btn-icon-action {
+      width: 32px;
+      height: 32px;
+      padding: 0 !important;
+      border-radius: 8px;
+      flex-shrink: 0;
+  }
   </style>
 
   <title>{{__('messages.NA')}}</title>

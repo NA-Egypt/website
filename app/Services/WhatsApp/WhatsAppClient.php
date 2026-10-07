@@ -423,4 +423,82 @@ class WhatsAppClient
             ];
         }
     }
+
+    /**
+     * Check if a phone number is registered on WhatsApp.
+     */
+    public function checkUser(string $phoneOrJid, ?string $deviceId = null): array
+    {
+        $phone = $this->normalizePhone($phoneOrJid);
+        $targetDevice = $deviceId ?: $this->deviceId;
+
+        try {
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->get("{$this->baseUrl}/user/check", [
+                'phone' => $phone,
+            ]);
+
+            if ($response->successful()) {
+                $json = $response->json();
+                $isOnWhatsApp = (bool) ($json['results']['is_on_whatsapp'] ?? false);
+                return [
+                    'success' => true,
+                    'is_on_whatsapp' => $isOnWhatsApp,
+                    'data' => $json,
+                ];
+            }
+
+            return [
+                'success' => false,
+                'is_on_whatsapp' => false,
+                'status' => $response->status(),
+                'error' => $response->body(),
+            ];
+        } catch (\Throwable $e) {
+            Log::warning("[WhatsAppClient] checkUser failed for {$phone}: " . $e->getMessage());
+            // If the check request itself fails unexpectedly, fail-open to avoid halting broadcasts
+            return [
+                'success' => false,
+                'is_on_whatsapp' => true,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Send chat presence (typing... / stop typing) to mimic real user behavior.
+     */
+    public function sendChatPresence(string $phoneOrJid, string $action = 'start', ?string $deviceId = null): bool
+    {
+        $phone = $this->normalizePhone($phoneOrJid);
+        $targetDevice = $deviceId ?: $this->deviceId;
+
+        try {
+            $this->ensureDeviceExists($targetDevice);
+            $response = $this->client($targetDevice)->post("{$this->baseUrl}/send/chat-presence", [
+                'phone' => $phone,
+                'action' => in_array($action, ['start', 'stop']) ? $action : 'start',
+            ]);
+
+            return $response->successful();
+        } catch (\Throwable $e) {
+            Log::warning("[WhatsAppClient] sendChatPresence failed for {$phone}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Parse Spintax syntax {phrase 1|phrase 2|phrase 3} into a random variation.
+     */
+    public function renderSpintax(string $text): string
+    {
+        $pattern = '/\{([^{}]+)\}/';
+        while (preg_match($pattern, $text)) {
+            $text = preg_replace_callback($pattern, function ($matches) {
+                $options = explode('|', $matches[1]);
+                return $options[array_rand($options)];
+            }, $text);
+        }
+        return $text;
+    }
 }
