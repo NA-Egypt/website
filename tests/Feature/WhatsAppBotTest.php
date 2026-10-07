@@ -65,7 +65,7 @@ class WhatsAppBotTest extends TestCase
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('فقط لليوم', $outgoing->body);
+        $this->assertStringContainsString('لليوم فقط', $outgoing->body);
     }
 
     public function test_meetings_two_step_city_selection(): void
@@ -207,7 +207,7 @@ class WhatsAppBotTest extends TestCase
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('فقط لليوم', $outgoing->body);
+        $this->assertStringContainsString('لليوم فقط', $outgoing->body);
     }
 
     public function test_volunteer_reply_from_phone_activates_live_agent_and_suppresses_bot(): void

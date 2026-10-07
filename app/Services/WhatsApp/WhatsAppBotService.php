@@ -136,7 +136,7 @@ class WhatsAppBotService
             $conversation->update(['current_step' => null, 'step_data' => null]);
             $this->replyAndLog(
                 $conversation,
-                "تم إعادة تفعيل الرد الآلي بنجاح 🤖\nشكراً لتواصلك مع زمالة المدمنين المجهولين في مصر.\n\n" . $this->getMainMenuText(),
+                "تم إعادة تفعيل الرد الآلي بنجاح 🤖\nشكراً لتواصلك مع زمالة المدمنين المجهولين - مصر.\n\n" . $this->getMainMenuText(),
                 'menu'
             );
             return;
@@ -159,14 +159,14 @@ class WhatsAppBotService
             $conversation->enableLiveAgent();
             $this->replyAndLog(
                 $conversation,
-                "تم تحويل محادثتك إلى أحد متطوعي خط المساعدة 🤝\n\nسيتواصل معك متطوع في أقرب وقت ممكن بمشيئة الله.\n(للعودة إلى الرد الآلي في أي وقت، أرسل كلمة: *انهاء*)",
+                "تم تحويل محادثتك إلى أحد متطوعي خدمة خط المساعدة 🤝\n\nسيتواصل معك متطوع في أقرب وقت ممكن بسرية تامة لمساعدتك في التعافي.\n(للعودة إلى الرد الآلي في أي وقت، أرسل كلمة: *انهاء*)",
                 'helpline'
             );
             return;
         }
 
         // 5. Check for Broadcast Subscription commands
-        if (in_array($lowerBody, ['7', 'اشتراك', 'اشتراك يومي', 'subscribe', 'اشتراك فقط لليوم'])) {
+        if (in_array($lowerBody, ['7', 'اشتراك', 'اشتراك يومي', 'subscribe', 'اشتراك لليوم فقط', 'اشتراك فقط لليوم'])) {
             WhatsAppSubscriber::updateOrCreate(
                 ['jid' => $formattedJid],
                 [
@@ -182,7 +182,7 @@ class WhatsAppBotService
 
             $this->replyAndLog(
                 $conversation,
-                "تم اشتراكك بنجاح في خدمة رسائل \"فقط لليوم\" اليومية 🌅\n\nستصلك القراءة اليومية كل صباح في تمام الساعة 7:00 بتوقيت القاهرة.\n(لإلغاء الاشتراك في أي وقت، أرسل: *الغاء الاشتراك*)",
+                "تم اشتراكك بنجاح في خدمة رسائل \"لليوم فقط\" اليومية 🌅\n\nستصلك القراءة اليومية كل صباح في تمام الساعة 7:00 بتوقيت القاهرة.\n(لإلغاء الاشتراك في أي وقت، أرسل: *الغاء الاشتراك*)",
                 'subscription'
             );
             return;
@@ -199,7 +199,7 @@ class WhatsAppBotService
 
             $this->replyAndLog(
                 $conversation,
-                "تم إلغاء اشتراكك من خدمة الرسائل اليومية بنجاح 🕊️\nيمكنك إعادة الاشتراك في أي وقت بإرسال كلمة: *اشتراك*",
+                "تم إلغاء اشتراكك من خدمة رسائل \"لليوم فقط\" بنجاح 🕊️\n\nيمكنك إعادة الاشتراك في أي وقت بإرسال كلمة: *اشتراك* أو رقم *7*.",
                 'subscription'
             );
             return;
@@ -525,13 +525,13 @@ class WhatsAppBotService
         if ($events->isEmpty()) {
             $this->replyAndLog(
                 $conversation,
-                "📅 لا توجد فعاليات قادمة مسجلة حالياً.\nيمكنك متابعة جدول الفعاليات والمؤتمرات عبر الموقع:\nhttps://naegypt.org/events",
+                "📅 لا توجد فعاليات أو مؤتمرات قادمة مسجلة حالياً.\n\n🔗 يمكنك دائماً متابعة جدول الفعاليات والمؤتمرات المحدث عبر الموقع الرسمي:\nhttps://naegypt.org/events",
                 'events'
             );
             return;
         }
 
-        $message = "🎉 *الفعاليات والمؤتمرات القادمة لزمالة NA مصر:*\n\n";
+        $message = "🎉 *الفعاليات والمؤتمرات القادمة لزمالة المدمنين المجهولين - مصر:*\n\n";
         foreach ($events as $idx => $ev) {
             $num = $idx + 1;
             $startStr = $ev->start ? $ev->start->translatedFormat('j F Y - h:i A') : '';
@@ -546,7 +546,7 @@ class WhatsAppBotService
             $message .= "───────────────\n";
         }
 
-        $message .= "\n🔗 تفاصيل الفعاليات كاملة: https://naegypt.org/events";
+        $message .= "\n🔗 لمتابعة تفاصيل جدول الفعاليات والمؤتمرات بالكامل عبر الموقع:\nhttps://naegypt.org/events";
         $this->replyAndLog($conversation, $message, 'events');
     }
 
@@ -555,14 +555,14 @@ class WhatsAppBotService
      */
     protected function handleFormsInfo(WhatsAppConversation $conversation): void
     {
-        $message = "📋 *النماذج الإلكترونية وطلب المطبوعات:*\n\n"
+        $message = "📋 *النماذج الإلكترونية وطلب المطبوعات لزمالة المدمنين المجهولين - مصر:*\n\n"
             . "1️⃣ *طلب التعاون مع الزمالة (للمؤسسات والجهات الطبية والإعلامية):*\n"
             . "🔗 https://naegypt.org/cooperation\n\n"
-            . "2️⃣ *استمارة طلب الأدبيات والمطبوعات للمجموعات واللجان:*\n"
+            . "2️⃣ *استمارة طلب الأدبيات والمطبوعات (للمجموعات واللجان الخدمية):*\n"
             . "🔗 https://naegypt.org/literature-requests/create\n\n"
             . "3️⃣ *قراءة وتحميل الأدبيات المعتمدة مجاناً:*\n"
             . "🔗 https://naegypt.org/literature\n\n"
-            . "4️⃣ *استمارة اتصل بنا العامة:*\n"
+            . "4️⃣ *استمارة التواصل العامة (اتصل بنا):*\n"
             . "🔗 https://naegypt.org/contactus";
 
         $this->replyAndLog($conversation, $message, 'forms');
@@ -607,7 +607,7 @@ class WhatsAppBotService
         if (!$this->isCampaign11LookupActive()) {
             $this->replyAndLog(
                 $conversation,
-                "انتهت فترة الاستلام الآلي لدعوات المؤتمر عبر خدمة الرد الآلي 🕊️\n\nللحصول على المساعدة بخصوص دعوة مؤتمر \"مسار يجمعنا\"، يرجى إرسال رقم (0) للتواصل مع أحد متطوعي الخدمة، أو زيارة موقعنا: https://naegypt.org",
+                "انتهت فترة الاستلام الآلي لدعوات المؤتمر عبر خدمة الرد الآلي 🕊️\n\nللحصول على المساعدة بخصوص دعوة مؤتمر \"مسار يجمعنا\"، يرجى إرسال رقم (0) للتواصل مع أحد متطوعي الخدمة، أو زيارة موقعنا الرسمي: https://naegypt.org",
                 'campaign_11_invitation'
             );
             return;
@@ -635,7 +635,7 @@ class WhatsAppBotService
         if (!$recipient) {
             $userDisplayPhone = $conversation->phone ?: $this->client->normalizePhone($conversation->jid);
             $notFoundMsg = "عفواً، لم نتمكن من العثور على دعوة مؤتمر مسجلة مرتبطة بهذا الرقم ({$userDisplayPhone}) 🔍\n\n"
-                . "📌 يرجى التأكد من مراسلتنا من نفس رقم الهاتف المسجل به في المؤتمر، أو إرسال رقم *0* للتحدث مع أحد متطوعي الخدمة لمساعدتك.\n\n"
+                . "📌 يرجى التأكد من مراسلتنا من نفس رقم الهاتف المسجل به في استمارة المؤتمر، أو إرسال رقم *0* للتحدث مع أحد متطوعي الخدمة لمساعدتك.\n\n"
                 . "🌐 رابط موقع المؤتمر: https://egypt30convention.org";
 
             $this->replyAndLog($conversation, $notFoundMsg, 'campaign_11_invitation_not_found');

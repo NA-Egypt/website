@@ -313,7 +313,7 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('أهلاً بك في خدمة واتساب', $outgoing->body);
+        $this->assertStringContainsString('زمالة المدمنين المجهولين', $outgoing->body);
     }
 
     public function test_admin_upload_convention_attendees_csv_updates_dataset(): void

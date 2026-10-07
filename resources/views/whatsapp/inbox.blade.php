@@ -507,49 +507,49 @@
                         <div class="row g-2" id="cannedList">
                             <div class="col-md-6 canned-card" data-title="ترحيب رسمي">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned" 
-                                     data-text="أهلاً بك يا صديقي في خط مساعدة زمالة المدمنين المجهولين بمصر 🇪🇬 كيف يمكنني مساعدتك؟">
+                                     data-text="مرحباً بك في خط المساعدة لزمالة المدمنين المجهولين - مصر 🇪🇬 كيف يمكننا مساعدتك اليوم؟">
                                     <h6 class="fw-bold mb-1 text-primary">👋 ترحيب رسمي</h6>
-                                    <p class="text-muted small mb-0 text-truncate">أهلاً بك يا صديقي في خط مساعدة زمالة المدمنين المجهولين بمصر...</p>
+                                    <p class="text-muted small mb-0 text-truncate">مرحباً بك في خط المساعدة لزمالة المدمنين المجهولين - مصر...</p>
                                 </div>
                             </div>
 
                             <div class="col-md-6 canned-card" data-title="جدول الاجتماعات">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned"
-                                     data-text="يمكنك العثور على أقرب اجتماع تعافي لك في مصر وجدول المواعيد المحدث عبر الرابط:&#10;https://naegypt.org/meetings">
+                                     data-text="يمكنك العثور على مواعيد وأماكن اجتماعات التعافي في كافة محافظات مصر واجتماعات الأونلاين عبر الدليل المحدث:&#10;https://naegypt.org/meetings">
                                     <h6 class="fw-bold mb-1 text-primary">📍 جدول الاجتماعات</h6>
-                                    <p class="text-muted small mb-0 text-truncate">يمكنك العثور على أقرب اجتماع تعافي لك في مصر...</p>
+                                    <p class="text-muted small mb-0 text-truncate">يمكنك العثور على مواعيد وأماكن اجتماعات التعافي في كافة محافظات مصر...</p>
                                 </div>
                             </div>
 
                             <div class="col-md-6 canned-card" data-title="خط المساعدة الهاتفي">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned"
-                                     data-text="أرقام هواتف خط المساعدة المباشر لزمالة المدمنين المجهولين بمصر:&#10;📞 01119565544&#10;📞 01221444490&#10;📞 01004445585&#10;المتطوعون متاحون للإجابة على استفساراتك بسرية تامة.">
+                                     data-text="أرقام هواتف خط المساعدة المباشر لزمالة المدمنين المجهولين - مصر:&#10;📞 +201006979198&#10;📞 +201060933888&#10;📞 +201503884411 (خط مساعدة الإسكندرية)&#10;&#10;المتطوعون متاحون للإجابة على استفساراتك بسرية تامة لمساعدتك في التعافي.">
                                     <h6 class="fw-bold mb-1 text-primary">📞 أرقام خط المساعدة</h6>
-                                    <p class="text-muted small mb-0 text-truncate">أرقام هواتف خط المساعدة المباشر لزمالة المدمنين المجهولين بمصر...</p>
+                                    <p class="text-muted small mb-0 text-truncate">أرقام هواتف خط المساعدة المباشر لزمالة المدمنين المجهولين - مصر...</p>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 canned-card" data-title="قراءة فقط لليوم">
+                            <div class="col-md-6 canned-card" data-title="قراءة لليوم فقط">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned"
-                                     data-text="تأمل اليوم من كتاب 'فقط لليوم' متاح يومياً عبر موقع الزمالة:&#10;https://naegypt.org/jft&#10;كما يمكنك الاشتراك في الرسائل اليومية عبر الواتساب.">
-                                    <h6 class="fw-bold mb-1 text-primary">🌅 فقط لليوم</h6>
-                                    <p class="text-muted small mb-0 text-truncate">تأمل اليوم من كتاب 'فقط لليوم' متاح يومياً عبر موقع الزمالة...</p>
+                                     data-text="تأمل اليوم من كتاب 'لليوم فقط' متاح يومياً عبر موقع الزمالة:&#10;https://naegypt.org/jft&#10;&#10;كما يمكنك الاشتراك في استلام قراءة لليوم فقط يومياً عبر الواتساب بإرسال رقم: 7">
+                                    <h6 class="fw-bold mb-1 text-primary">🌅 لليوم فقط</h6>
+                                    <p class="text-muted small mb-0 text-truncate">تأمل اليوم من كتاب 'لليوم فقط' متاح يومياً عبر موقع الزمالة...</p>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 canned-card" data-title="ختام تشجيعي">
+                            <div class="col-md-6 canned-card" data-title="ختام وتشجيع">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned"
-                                     data-text="شكراً لتواصلك معنا يا صديقي. تذكر أنك لست وحدك أبداً، والتعافي ممكن يوماً بيوم. نتمنى لك دوام الصحة والسلام الداخلي. ✨">
-                                    <h6 class="fw-bold mb-1 text-primary">✨ ختام تشجيعي</h6>
-                                    <p class="text-muted small mb-0 text-truncate">شكراً لتواصلك معنا يا صديقي. تذكر أنك لست وحدك أبداً...</p>
+                                     data-text="شكراً لتواصلك معنا مع تمنياتنا بدوام التعافي. تذكر دائماً أنك لست وحدك، وأن التعافي ممكن يوماً بيوم. دمتم في تعافٍ وسلام. ✨">
+                                    <h6 class="fw-bold mb-1 text-primary">✨ ختام وتشجيع</h6>
+                                    <p class="text-muted small mb-0 text-truncate">شكراً لتواصلك معنا مع تمنياتنا بدوام التعافي. تذكر دائماً أنك لست وحدك...</p>
                                 </div>
                             </div>
 
-                            <div class="col-md-6 canned-card" data-title="تأكيد تاريخ التبطيل">
+                            <div class="col-md-6 canned-card" data-title="تأكيد تاريخ الامتناع">
                                 <div class="p-3 border rounded-3 h-100 bg-white shadow-xs cursor-pointer btn-select-canned"
-                                     data-text="شكراً لتوضيحك يا صديقي! تم تدوين تاريخ تبطيلك بنجاح في سجلاتنا. نتمنى لك دوام التعافي والحرية يوماً بيوم. 💪">
-                                    <h6 class="fw-bold mb-1 text-primary">🗓️ تأكيد تاريخ التبطيل</h6>
-                                    <p class="text-muted small mb-0 text-truncate">شكراً لتوضيحك يا صديقي! تم تدوين تاريخ تبطيلك بنجاح...</p>
+                                     data-text="شكراً لتوضيحك! تم تدوين تاريخ امتناعك بنجاح في سجلاتنا. نتمنى لك دوام التعافي يوماً بيوم. 💪">
+                                    <h6 class="fw-bold mb-1 text-primary">🗓️ تأكيد تاريخ الامتناع</h6>
+                                    <p class="text-muted small mb-0 text-truncate">شكراً لتوضيحك! تم تدوين تاريخ امتناعك بنجاح في سجلاتنا...</p>
                                 </div>
                             </div>
                         </div>
