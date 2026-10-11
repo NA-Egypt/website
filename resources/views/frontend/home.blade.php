@@ -651,24 +651,7 @@
       position: relative !important;
       z-index: 1 !important;
     }
-    .convention-details-box {
-      background: rgba(248, 249, 250, 0.45) !important;
-      backdrop-filter: blur(2px) !important;
-      border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    }
-    .convention-slide-logo {
-      width: 120px !important;
-      height: 120px !important;
-      max-width: 100% !important;
-      object-fit: contain !important;
-      transition: width 0.3s ease, height 0.3s ease !important;
-    }
-    @media (min-width: 768px) {
-      .convention-slide-logo {
-        width: 190px !important;
-        height: 190px !important;
-      }
-    }
+
 
     .calc-box, .stat-card-home {
       position: relative !important;
@@ -881,49 +864,6 @@
                   <p class="card-text text-muted mt-2 text-start w-100">{{ __('messages.wedorecovertxt') }}</p>
                 </div>
               </div>
-            </div>
-          </div>
-        </li>
-        <!-- Slide 3 -->
-        <li class="splide__slide">
-          <div class="row justify-content-center">
-            <div class="col-md-8">
-              <a href="{{ route('frontend.events') }}" class="text-decoration-none text-dark d-block w-100 h-100">
-                <div class="card h-100 shadow-sm border-0 info-card info-card-watermark p-3 p-md-4">
-                  <div class="card-body p-0 d-flex flex-column justify-content-center">
-                    <div class="row g-3 g-md-4 align-items-center">
-                      <!-- Convention Logo Column -->
-                      <div class="col-md-4 text-center">
-                        <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="{{ __('messages.convention_title') }}" class="img-fluid rounded-4 shadow-sm convention-slide-logo"
-                          width="190" height="190" loading="lazy">
-                      </div>
-                      
-                      <!-- Convention Details Column -->
-                      <div class="col-md-8 text-center text-md-start">
-                        <h2 class="card-title font-weight-bold mb-1 gradient-text" style="font-size: clamp(1.15rem, 2.5vw, 1.35rem); line-height: 1.35;">
-                          {{ __('messages.convention_title') }}
-                        </h2>
-                        <span class="fs-6 d-inline-block font-weight-bold text-muted mb-2">{{ __('messages.convention_subtitle') }}</span>
-                        
-                        <!-- Badges for Date & Location -->
-                        <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2 mb-2.5">
-                          <span class="badge rounded-pill bg-light text-dark border px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5 shadow-2xs text-center" style="font-size: 0.85rem; background: rgba(248, 249, 250, 0.75) !important; white-space: normal; line-height: 1.4;">
-                            <span>📅</span> <strong>{{ __('messages.convention_date') }}</strong> {{ __('messages.convention_date_val') }}
-                          </span>
-                          <span class="badge rounded-pill bg-light text-dark border px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5 shadow-2xs text-center" style="font-size: 0.85rem; background: rgba(248, 249, 250, 0.75) !important; white-space: normal; line-height: 1.4;">
-                            <span>📍</span> <strong>{{ __('messages.convention_location') }}</strong> {{ __('messages.convention_location_val') }}
-                          </span>
-                        </div>
-
-                        <!-- Description text -->
-                        <p class="card-text text-muted mb-0 text-center text-md-start" style="font-size: 0.88rem; line-height: 1.6;">
-                          {{ __('messages.convention_desc') }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
             </div>
           </div>
         </li>
