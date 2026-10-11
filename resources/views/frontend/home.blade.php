@@ -1092,94 +1092,43 @@
   </div>
   @endif
 
-  <!-- Convention Popup Modal -->
+  <!-- Android Application Promo Popup Modal -->
   <div class="modal fade" id="conventionModal" tabindex="-1" aria-labelledby="conventionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
-      <div class="modal-content border-0 shadow-2xl overflow-hidden" style="border-radius: 28px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc;">
-        <div class="modal-header border-0 pb-0 pt-3 px-4 position-relative" style="z-index: 10; min-height: 56px;">
-          <div class="d-flex align-items-center gap-2" style="position: absolute; top: 16px; right: 16px; left: auto !important; z-index: 30; direction: rtl;">
-            <button type="button" class="btn-close btn-close-white shadow-none opacity-75 hover-opacity-100" data-bs-dismiss="modal" aria-label="Close" style="background-color: rgba(255, 255, 255, 0.15); padding: 0.65rem; border-radius: 50%;"></button>
-            <span class="badge rounded-pill px-3 py-2 fw-bold" style="background: linear-gradient(90deg, #0284c7, #0d9488); color: #fff; font-size: 0.8rem; letter-spacing: 0.5px;">
-              ✨ المؤتمر السنوي 30
-            </span>
-          </div>
-        </div>
-        <div class="modal-body p-4 pt-4">
-          <div class="row align-items-center g-4">
-            <!-- Left Poster Column -->
-            <div class="col-lg-5 text-center">
-              <div class="position-relative overflow-hidden rounded-4 shadow-lg group-hover-zoom" style="border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(0,0,0,0.2);">
-                <img src="{{ asset('assets/images/conference-30.jpg') }}" alt="المؤتمر السنوي الثلاثون - مسار يجمعنا" class="img-fluid w-100 h-auto rounded-4 transition-transform duration-500 hover-scale"
-                  width="400" height="380" loading="lazy" decoding="async" style="max-height: 380px; object-fit: cover;">
-              </div>
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+      <div class="modal-content border-0 shadow-2xl overflow-hidden p-3 p-sm-4 position-relative" style="border-radius: 26px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc;">
+        <!-- Close Button -->
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 shadow-none opacity-75 hover-opacity-100" data-bs-dismiss="modal" aria-label="Close" style="background-color: rgba(255, 255, 255, 0.15); padding: 0.55rem; border-radius: 50%; z-index: 10;"></button>
+
+        <div class="modal-body p-0 pt-2 d-flex justify-content-center">
+          <button type="button" class="btn btn-hero-apk-card btn-apk-hero shadow-sm border-0 d-inline-flex align-items-center touch-target position-relative overflow-hidden w-100 m-0" onclick="openApkModalFromPromo()" aria-label="{{ __('messages.apk_modal_title') }}">
+            <!-- Subtle Interactive Shimmer -->
+            <span class="apk-card-shimmer" aria-hidden="true"></span>
+
+            <!-- Glowing Android Emblem with Pulse Aura -->
+            <div class="apk-card-emblem flex-shrink-0 position-relative">
+              <span class="apk-emblem-pulse" aria-hidden="true"></span>
+              <i class="bi bi-android2 apk-card-icon" aria-hidden="true"></i>
             </div>
 
-            <!-- Right Content Column -->
-            <div class="col-lg-7 text-end" dir="rtl">
-              <h3 class="fw-extrabold mb-1" style="color: #ffffff; font-size: 1.35rem; line-height: 1.55; overflow: visible; padding-bottom: 2px;">
-                المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين
-              </h3>
-              <div class="mb-3">
-                <span class="badge px-3 py-1.5 rounded-pill fw-bold text-white mt-1" style="background: rgba(14, 165, 233, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8 !important;">
-                  مسار يجمعنا • A PATH THAT UNITES US
-                </span>
+            <!-- Main Info Stack -->
+            <div class="apk-card-info text-start d-flex flex-column justify-content-center">
+              <div class="d-flex align-items-center flex-wrap apk-card-eyebrow">
+                <span class="apk-live-dot" aria-hidden="true"></span>
+                <span class="apk-card-caption fw-bold">{{ __('messages.apk_badge_caption') }}</span>
+                <span class="badge apk-card-version-badge rounded-pill" dir="ltr">{{ __('messages.apk_beta_badge') }}</span>
+                <span class="badge apk-card-format-badge rounded-pill">APK</span>
               </div>
-
-              <!-- Live Countdown Timer -->
-              <div class="mb-3 p-3 rounded-4" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
-                <div class="text-center small text-uppercase text-slate-400 mb-2 fw-semibold" style="letter-spacing: 1px; color: #94a3b8; font-size: 0.75rem;">
-                  ⏳ المتبقي على انطلاق المؤتمر
-                </div>
-                <div class="d-flex justify-content-center align-items-center gap-2 dir-ltr" id="conventionCountdown">
-                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <div class="fw-bold text-cyan-400 fs-5" id="cd-days" style="color: #38bdf8;">00</div>
-                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">أيام</div>
-                  </div>
-                  <span class="fw-bold text-slate-500">:</span>
-                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <div class="fw-bold text-cyan-400 fs-5" id="cd-hours" style="color: #38bdf8;">00</div>
-                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">ساعات</div>
-                  </div>
-                  <span class="fw-bold text-slate-500">:</span>
-                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <div class="fw-bold text-cyan-400 fs-5" id="cd-minutes" style="color: #38bdf8;">00</div>
-                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">دقائق</div>
-                  </div>
-                  <span class="fw-bold text-slate-500">:</span>
-                  <div class="text-center bg-slate-800 px-2 py-1 rounded-3 min-w-50" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <div class="fw-bold text-cyan-400 fs-5" id="cd-seconds" style="color: #38bdf8;">00</div>
-                    <div class="text-muted" style="font-size: 0.65rem; color: #94a3b8 !important;">ثواني</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Event Details Info -->
-              <div class="d-flex flex-column gap-2 mb-3 fs-6" style="color: #cbd5e1; font-size: 0.88rem;">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="fs-5">📅</span>
-                  <span><strong>التاريخ:</strong> 9 - 10 أكتوبر 2026 (الجمعة والسبت)</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="fs-5">📍</span>
-                  <span><strong>المكان:</strong> الجامعة الأمريكية بالقاهرة - ميدان التحرير</span>
-                </div>
-              </div>
-
-              <!-- Buttons Row -->
-              <div class="d-flex flex-wrap gap-2 pt-2 justify-content-end align-items-center">
-                <button type="button" class="btn px-4 py-2 fw-bold rounded-3 d-inline-flex align-items-center gap-2 shadow-sm transition-all" 
-                  onclick="shareConventionModal()"
-                  style="background: #25D366; color: #ffffff; border: none; font-size: 0.9rem;">
-                  <x-fab-whatsapp style="width: 18px; height: 18px; fill: currentColor;" />
-                  مشاركة عبر واتساب
-                </button>
-
-                <button type="button" class="btn btn-outline-light px-4 py-2 fw-semibold rounded-3" data-bs-dismiss="modal" style="font-size: 0.9rem; border-color: rgba(255,255,255,0.2);">
-                  إغلاق
-                </button>
-              </div>
+              <div class="apk-card-title fw-bold">{{ __('messages.apk_badge_title') }}</div>
             </div>
-          </div>
+
+            <!-- High-Contrast Interactive CTA Button -->
+            <div class="apk-card-action flex-shrink-0">
+              <span class="apk-card-cta-btn">
+                <span>{{ __('messages.apk_cta_download') }}</span>
+                <i class="bi bi-arrow-down-circle-fill apk-card-cta-icon" aria-hidden="true"></i>
+              </span>
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -1251,62 +1200,41 @@
       window.open(whatsappUrl, '_blank');
     }
 
-    function shareConventionModal() {
-      const title = 'المؤتمر السنوي الثلاثون لزمالة المدمنين المجهولين مصر 2026 (مسار يجمعنا)';
-      const details = '📅 9-10 أكتوبر 2026 | 📍 الجامعة الأمريكية بالقاهرة - ميدان التحرير';
-      const url = 'https://egypt30convention.org';
-      const message = `${title}\n${details}\n\nللمزيد من التفاصيل والمعلومات:\n${url}`;
-      
-      const whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(message);
-      window.open(whatsappUrl, '_blank');
-    }
-
-    function initConventionCountdown() {
-      const targetDate = new Date('2026-10-09T09:00:00+02:00').getTime();
-
-      function updateTimer() {
-        const now = new Date().getTime();
-        const difference = targetDate - now;
-
-        if (difference <= 0) {
-          return;
+    function openApkModalFromPromo() {
+      const promoModalEl = document.getElementById('conventionModal');
+      const promoModal = window.bootstrap?.Modal?.getInstance(promoModalEl);
+      if (promoModal) {
+        promoModal.hide();
+        promoModalEl.addEventListener('hidden.bs.modal', function onHidden() {
+          promoModalEl.removeEventListener('hidden.bs.modal', onHidden);
+          const apkModalEl = document.getElementById('apkDownloadModal');
+          if (apkModalEl && window.bootstrap) {
+            const apkModal = window.bootstrap.Modal.getOrCreateInstance(apkModalEl);
+            apkModal.show();
+          }
+        }, { once: true });
+      } else {
+        const apkModalEl = document.getElementById('apkDownloadModal');
+        if (apkModalEl && window.bootstrap) {
+          const apkModal = window.bootstrap.Modal.getOrCreateInstance(apkModalEl);
+          apkModal.show();
         }
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        const elDays = document.getElementById('cd-days');
-        const elHours = document.getElementById('cd-hours');
-        const elMinutes = document.getElementById('cd-minutes');
-        const elSeconds = document.getElementById('cd-seconds');
-
-        if (elDays) elDays.textContent = String(days).padStart(2, '0');
-        if (elHours) elHours.textContent = String(hours).padStart(2, '0');
-        if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
-        if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
       }
-
-      updateTimer();
-      setInterval(updateTimer, 1000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      initConventionCountdown();
-
-      var conventionShown = false;
+      var promoShown = false;
       try {
-        conventionShown = sessionStorage.getItem('convention_popup_shown') === 'true';
+        promoShown = sessionStorage.getItem('app_promo_popup_shown') === 'true';
       } catch(e) {}
 
-      if (!conventionShown) {
-        const conventionModalEl = document.getElementById('conventionModal');
-        if (conventionModalEl && window.bootstrap) {
-          const myModal = new window.bootstrap.Modal(conventionModalEl);
+      if (!promoShown) {
+        const promoModalEl = document.getElementById('conventionModal');
+        if (promoModalEl && window.bootstrap) {
+          const myModal = new window.bootstrap.Modal(promoModalEl);
           myModal.show();
           try {
-            sessionStorage.setItem('convention_popup_shown', 'true');
+            sessionStorage.setItem('app_promo_popup_shown', 'true');
           } catch(e) {}
         }
       }

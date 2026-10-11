@@ -1540,6 +1540,12 @@ return [
     'convention_location' => 'Location:',
     'convention_location_val' => 'The American University in Cairo - Tahrir',
     'convention_desc' => 'The annual convention is a special opportunity for members and friends to gather in an atmosphere of recovery, service, and unity, through a diverse program including meetings, sharings, activities, and events reflecting the fellowship\'s message and spirit. Preparations for the convention continue through various service teams to ensure an event worthy of this special occasion. We look forward to seeing you all at the 30th Annual Convention of Narcotics Anonymous in Egypt, in an event that brings us together on the path of recovery, service, and unity.',
+    'convention_translation_badge' => '✨ 30th Convention - Live Interpretation',
+    'convention_arabic_translation_title' => 'Live Arabic Interpretation',
+    'convention_arabic_translation_desc' => 'Zoom link for live Arabic interpretation during the 30th Annual Convention sessions.',
+    'join_via_zoom' => 'Join via Zoom',
+    'zoom_link_1' => 'Link 1',
+    'zoom_link_2' => 'Link 2',
 
     // Subscribers Management:
     'Subscribers' => 'Subscribers',
