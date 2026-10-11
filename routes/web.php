@@ -460,7 +460,25 @@ Route::group(
                 return '';
             });
 
-            return view('frontend.home', compact('homeStats', 'jftContent'));
+            $cities = Cache::remember('frontend_cities_list', 86400, function() {
+                return City::select('id', 'ar_name', 'en_name')->orderBy('ar_name')->get();
+            });
+
+            $days = Cache::remember('frontend_days_list', 86400, function() {
+                return \App\Models\Day::select('id', 'ar_name', 'en_name')->get();
+            });
+
+            $previewMeetings = Cache::remember('frontend_preview_meetings', 1800, function() {
+                return Meeting::with(['day', 'group.neighborhood.city', 'directOnlineGroup'])
+                    ->take(12)
+                    ->get();
+            });
+
+            $announcements = Cache::remember('frontend_home_announcements', 1800, function() {
+                return \App\Models\CalendarEvent::orderBy('start', 'desc')->take(3)->get();
+            });
+
+            return view('frontend.home', compact('homeStats', 'jftContent', 'cities', 'days', 'previewMeetings', 'announcements'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){

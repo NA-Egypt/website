@@ -29,7 +29,10 @@
   <!-- Preload primary web font for instantaneous FCP/LCP text rendering -->
   <link rel="preload" href="{{ asset('fonts/95cecf452d3208890088a5b4c19c7ecf.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-  <!-- Preconnect resource hints -->
+  <!-- Preconnect resource hints & Cairo Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://www.googletagmanager.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
@@ -180,6 +183,7 @@
         </main>
       </div>
     <x-frontend.footer />
+    <x-frontend.emergency-bar />
     @livewireScripts
     <script>
         // Patch Livewire's update URI to include locale prefix.
