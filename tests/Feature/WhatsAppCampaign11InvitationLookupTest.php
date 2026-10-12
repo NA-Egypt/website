@@ -54,26 +54,8 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
         Day::create(['id' => 7, 'en_name' => 'Friday', 'ar_name' => 'الجمعة']);
     }
 
-    public function test_registered_attendee_sending_9_receives_personalized_invitation(): void
+    public function test_sending_9_falls_back_to_main_menu(): void
     {
-        // Setup Campaign 11
-        $log = new WhatsAppBroadcastLog();
-        $log->id = 11;
-        $log->channel = 'bulk_csv';
-        $log->title = 'Campaign #11 Test';
-        $log->total_recipients = 1;
-        $log->status = 'paused';
-        $log->metadata = [
-            'recipients' => [
-                [
-                    'phone' => '201066693306',
-                    'name' => 'محمد فتحي',
-                    'message' => "دعوتك لمؤتمر مسار يجمعنا {name}\nكود التذكرة: EVT-WEB1GJ-BYHL\nرابط التذكرة: https://egypt30convention.org/ar/ticket/EVT-WEB1GJ-BYHL",
-                ],
-            ],
-        ];
-        $log->save();
-
         $bot = $this->app->make(WhatsAppBotService::class);
 
         $bot->handleIncomingMessage([
@@ -87,36 +69,20 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
 
         $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
             ->where('direction', 'outgoing')
-            ->where('category', 'campaign_11_invitation')
+            ->where('category', 'menu')
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('محمد فتحي', $outgoing->body);
-        $this->assertStringContainsString('EVT-WEB1GJ-BYHL', $outgoing->body);
+        $this->assertStringContainsString('أهلاً بك في واتساب زمالة المدمنين المجهولين', $outgoing->body);
+        $this->assertStringNotContainsString('9️⃣', $outgoing->body);
+        $this->assertStringNotContainsString('مسار يجمعنا', $outgoing->body);
     }
 
-    public function test_eastern_arabic_numeral_9_triggers_invitation(): void
+    public function test_eastern_arabic_numeral_9_and_convention_keywords_fall_back_to_main_menu(): void
     {
-        $log = new WhatsAppBroadcastLog();
-        $log->id = 11;
-        $log->channel = 'bulk_csv';
-        $log->title = 'Campaign #11 Test';
-        $log->total_recipients = 1;
-        $log->status = 'paused';
-        $log->metadata = [
-            'recipients' => [
-                [
-                    'phone' => '201005855853',
-                    'name' => 'سوني',
-                    'message' => "دعوتك لمؤتمر مسار يجمعنا {name}\nكود التذكرة: EVT-AFZUVO-MJOM",
-                ],
-            ],
-        ];
-        $log->save();
-
         $bot = $this->app->make(WhatsAppBotService::class);
 
-        // User sends Arabic Eastern numeral '٩'
+        // Sending Eastern Arabic numeral ٩
         $bot->handleIncomingMessage([
             'sender' => '201005855853@s.whatsapp.net',
             'phone' => '201005855853',
@@ -126,83 +92,28 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
         $conv = WhatsAppConversation::where('phone', '201005855853')->first();
         $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
             ->where('direction', 'outgoing')
-            ->where('category', 'campaign_11_invitation')
+            ->where('category', 'menu')
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('سوني', $outgoing->body);
-        $this->assertStringContainsString('EVT-AFZUVO-MJOM', $outgoing->body);
-    }
+        $this->assertStringContainsString('أهلاً بك في واتساب زمالة المدمنين المجهولين', $outgoing->body);
+        $this->assertStringNotContainsString('9️⃣', $outgoing->body);
 
-    public function test_egyptian_phone_variations_match_seamlessly(): void
-    {
-        $log = new WhatsAppBroadcastLog();
-        $log->id = 11;
-        $log->channel = 'bulk_csv';
-        $log->title = 'Campaign #11 Test';
-        $log->total_recipients = 1;
-        $log->status = 'paused';
-        $log->metadata = [
-            'recipients' => [
-                // CSV has 010...
-                [
-                    'phone' => '01030076077',
-                    'name' => 'عمرو م',
-                    'message' => "دعوتك لمؤتمر مسار يجمعنا {name}\nكود: EVT-JWTPPD",
-                ],
-            ],
-        ];
-        $log->save();
-
-        $bot = $this->app->make(WhatsAppBotService::class);
-
-        // User contacts with international format 2010...
+        // Sending convention keyword 'دعوة'
         $bot->handleIncomingMessage([
             'sender' => '201030076077@s.whatsapp.net',
             'phone' => '201030076077',
             'message' => 'دعوة',
         ]);
 
-        $conv = WhatsAppConversation::where('phone', '201030076077')->first();
-        $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
-            ->where('category', 'campaign_11_invitation')
+        $conv2 = WhatsAppConversation::where('phone', '201030076077')->first();
+        $outgoing2 = WhatsAppMessage::where('conversation_id', $conv2->id)
+            ->where('direction', 'outgoing')
+            ->where('category', 'menu')
             ->first();
 
-        $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('عمرو م', $outgoing->body);
-    }
-
-    public function test_unlisted_phone_receives_courteous_not_found_message(): void
-    {
-        $log = new WhatsAppBroadcastLog();
-        $log->id = 11;
-        $log->channel = 'bulk_csv';
-        $log->title = 'Campaign #11 Test';
-        $log->total_recipients = 1;
-        $log->status = 'paused';
-        $log->metadata = [
-            'recipients' => [
-                ['phone' => '201011111111', 'name' => 'عضو', 'message' => 'دعوة'],
-            ],
-        ];
-        $log->save();
-
-        $bot = $this->app->make(WhatsAppBotService::class);
-
-        // User not in CSV
-        $bot->handleIncomingMessage([
-            'sender' => '201099999999@s.whatsapp.net',
-            'phone' => '201099999999',
-            'message' => '9',
-        ]);
-
-        $conv = WhatsAppConversation::where('phone', '201099999999')->first();
-        $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
-            ->where('category', 'campaign_11_invitation_not_found')
-            ->first();
-
-        $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('لم نتمكن من العثور على دعوة مؤتمر مسجلة', $outgoing->body);
+        $this->assertNotNull($outgoing2);
+        $this->assertStringContainsString('أهلاً بك في واتساب زمالة المدمنين المجهولين', $outgoing2->body);
     }
 
     public function test_second_level_auto_reply_queries_meetings_without_sql_crash(): void
@@ -345,7 +256,7 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
         $this->assertEquals(1, $log->total_recipients);
         $this->assertEquals('completed', $log->status);
 
-        // Now test that Option 9 immediately uses this new dataset
+        // Now test that sending 9 returns main menu since Option 9 is removed
         $bot = $this->app->make(WhatsAppBotService::class);
         $bot->handleIncomingMessage([
             'sender' => '201288889999@s.whatsapp.net',
@@ -355,11 +266,11 @@ class WhatsAppCampaign11InvitationLookupTest extends TestCase
 
         $conv = WhatsAppConversation::where('phone', '201288889999')->first();
         $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
-            ->where('category', 'campaign_11_invitation')
+            ->where('category', 'menu')
             ->first();
 
         $this->assertNotNull($outgoing);
-        $this->assertStringContainsString('أحمد جديد', $outgoing->body);
-        $this->assertStringContainsString('EVT-NEW999', $outgoing->body);
+        $this->assertStringContainsString('أهلاً بك في واتساب زمالة المدمنين المجهولين', $outgoing->body);
+        $this->assertStringNotContainsString('9️⃣', $outgoing->body);
     }
 }
