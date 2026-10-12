@@ -239,15 +239,6 @@ class WhatsAppBotService
             return;
         }
 
-        // 7. Option 9: Convention Invitation Retrieval (مسار يجمعنا)
-        if (in_array($lowerBody, [
-            '9', 'دعوة', 'دعوه', 'دعوة المؤتمر', 'دعوه المؤتمر', 'دعوتي', 'دعوتى',
-            'تذكرة', 'تذكره', 'تذكرتي', 'تذكرتى', 'ticket', 'مؤتمر', 'المؤتمر', 'مسار يجمعنا'
-        ])) {
-            $this->handleCampaign11InvitationLookup($conversation);
-            return;
-        }
-
         // Default: Show main interactive menu
         $conversation->update(['current_step' => null, 'step_data' => null]);
         $this->replyAndLog($conversation, $this->getMainMenuText(), 'menu');
@@ -268,10 +259,6 @@ class WhatsAppBotService
             . "5️⃣ *النماذج الإلكترونية وطلب الأدبيات* (Forms & Literature)\n"
             . "6️⃣ *وسائل التواصل والموقع الرسمي* (Social Media & Website)\n"
             . "7️⃣ *الاشتراك في رسائل لليوم فقط يومياً* (Daily JFT Broadcast)\n";
-
-        if ($this->isCampaign11LookupActive()) {
-            $menu .= "9️⃣ *استلام دعوة المؤتمر (مسار يجمعنا)* (Get Conference Invitation)\n";
-        }
 
         $menu .= "0️⃣ *التحدث مع متطوع خط المساعدة* (Talk to Volunteer)\n\n"
             . "🌐 موقعنا الرسمي: https://naegypt.org";
@@ -587,137 +574,6 @@ class WhatsAppBotService
             . "info@naegypt.org";
 
         $this->replyAndLog($conversation, $message, 'social');
-    }
-
-    /**
-     * Check if the convention invitation lookup (Option 9) window is currently active.
-     */
-    public function isCampaign11LookupActive(): bool
-    {
-        $expiresAt = config('whatsapp.convention_lookup_expires_at', '2026-10-10 23:59:59');
-        try {
-            return Carbon::now('Africa/Cairo')->lessThanOrEqualTo(Carbon::parse($expiresAt, 'Africa/Cairo'));
-        } catch (\Throwable $e) {
-            return true;
-        }
-    }
-
-    /**
-     * Handle on-demand retrieval of convention invitation for Campaign #11 / attendee dataset.
-     */
-    protected function handleCampaign11InvitationLookup(WhatsAppConversation $conversation): void
-    {
-        if (!$this->isCampaign11LookupActive()) {
-            $this->replyAndLog(
-                $conversation,
-                "انتهت فترة الاستلام الآلي لدعوات المؤتمر عبر خدمة الرد الآلي 🕊️\n\nللحصول على المساعدة بخصوص دعوة مؤتمر \"مسار يجمعنا\"، يرجى إرسال رقم (0) للتواصل مع أحد متطوعي الخدمة، أو زيارة موقعنا الرسمي: https://naegypt.org",
-                'campaign_11_invitation'
-            );
-            return;
-        }
-
-        $logId = (int) config('whatsapp.campaign_11_log_id', 11);
-
-        // Prefer active convention_attendees dataset, otherwise fallback to configured Campaign 11
-        $log = WhatsAppBroadcastLog::where('channel', 'convention_attendees')->latest()->first()
-            ?: WhatsAppBroadcastLog::find($logId);
-
-        if (!$log || empty($log->metadata['recipients'])) {
-            Log::warning("[WhatsAppBot] Convention attendee campaign #{$logId} has no recipients data.");
-            $this->replyAndLog(
-                $conversation,
-                "عفواً، قاعدة بيانات دعوات المؤتمر غير متاحة حالياً، يرجى إرسال رقم (0) للتواصل مع متطوع من فريق التنظيم 🤝",
-                'campaign_11_invitation'
-            );
-            return;
-        }
-
-        $recipients = $log->metadata['recipients'];
-        $recipient = $this->findCampaignRecipientByPhone($conversation->phone ?: $conversation->jid, $recipients);
-
-        if (!$recipient) {
-            $userDisplayPhone = $conversation->phone ?: $this->client->normalizePhone($conversation->jid);
-            $notFoundMsg = "عفواً، لم نتمكن من العثور على دعوة مؤتمر مسجلة مرتبطة بهذا الرقم ({$userDisplayPhone}) 🔍\n\n"
-                . "📌 يرجى التأكد من مراسلتنا من نفس رقم الهاتف المسجل به في استمارة المؤتمر، أو إرسال رقم *0* للتحدث مع أحد متطوعي الخدمة لمساعدتك.\n\n"
-                . "🌐 رابط موقع المؤتمر: https://egypt30convention.org";
-
-            $this->replyAndLog($conversation, $notFoundMsg, 'campaign_11_invitation_not_found');
-            return;
-        }
-
-        $attendeeName = !empty($recipient['name']) ? $recipient['name'] : 'عضو الزمالة العزيز';
-        $messageText = trim($recipient['message'] ?? '');
-
-        // Replace placeholders {name}, {phone}, {الاسم}, {الهاتف}
-        $messageText = str_replace(
-            ['{name}', '{phone}', '{الاسم}', '{الهاتف}'],
-            [$attendeeName, $recipient['phone'] ?? '', $attendeeName, $recipient['phone'] ?? ''],
-            $messageText
-        );
-
-        if (empty($messageText)) {
-            $messageText = "أهلاً بك {$attendeeName} 🌸\nتم تأكيد تسجيلك في مؤتمر \"مسار يجمعنا\".\nوجودك يكمل الصورة.. معًا يصبح للمسار معنى.";
-        }
-
-        $this->replyAndLog($conversation, $messageText, 'campaign_11_invitation');
-
-        // Track claimed invitation in campaign metadata
-        try {
-            $meta = $log->metadata ?? [];
-            $meta['claimed_invitations'] = $meta['claimed_invitations'] ?? [];
-            $claimedKey = $this->client->normalizePhone($recipient['phone'] ?? $conversation->phone);
-            $meta['claimed_invitations'][$claimedKey] = Carbon::now()->toIso8601String();
-            $log->update(['metadata' => $meta]);
-        } catch (\Throwable $e) {
-            Log::warning("[WhatsAppBot] Failed to update claimed_invitations metadata: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Cross-reference a user phone or JID against convention attendees with zero-exception tolerance.
-     */
-    public function findCampaignRecipientByPhone(string $userPhoneOrJid, array $recipients): ?array
-    {
-        $userPhone = $this->client->normalizePhone($userPhoneOrJid);
-        if (empty($userPhone)) {
-            return null;
-        }
-
-        // Strip leading country code or zero for Egyptian mobile suffix (e.g. '20' or '0')
-        $userEgSuffix = preg_replace('/^(20|0)/', '', $userPhone);
-
-        // 1. Exact normalized digits match
-        foreach ($recipients as $recipient) {
-            $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
-            if ($recPhone === $userPhone) {
-                return $recipient;
-            }
-        }
-
-        // 2. Egyptian 10-digit mobile core match (e.g. 10xxxxxxxx, 11xxxxxxxx, 12xxxxxxxx, 15xxxxxxxx)
-        if (strlen($userEgSuffix) >= 9) {
-            foreach ($recipients as $recipient) {
-                $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
-                $recEgSuffix = preg_replace('/^(20|0)/', '', $recPhone);
-                if (!empty($recEgSuffix) && $recEgSuffix === $userEgSuffix) {
-                    return $recipient;
-                }
-            }
-        }
-
-        // 3. Right-aligned digit suffix match for minimum 8 digits
-        $minSuffixLen = min(9, strlen($userPhone));
-        if ($minSuffixLen >= 8) {
-            $userTail = substr($userPhone, -$minSuffixLen);
-            foreach ($recipients as $recipient) {
-                $recPhone = $this->client->normalizePhone($recipient['phone'] ?? '');
-                if (strlen($recPhone) >= $minSuffixLen && substr($recPhone, -$minSuffixLen) === $userTail) {
-                    return $recipient;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

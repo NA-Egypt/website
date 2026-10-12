@@ -13,7 +13,7 @@
                 </p>
             </div>
             <div class="d-flex flex-wrap align-items-center gap-2">
-                {{-- Convention Attendees CSV (Option 9) Button --}}
+                {{-- Convention Attendees CSV Button --}}
                 <button type="button" class="btn btn-warning text-dark rounded-pill px-3 shadow-sm d-flex align-items-center gap-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#conventionAttendeesModal">
                     <i class="bi bi-ticket-perforated-fill fs-6"></i>
                     <span>{{ __('messages.whatsapp_convention_attendees_title') }}</span>
@@ -637,7 +637,7 @@
         </div>
     </div>
 
-    {{-- Dedicated Modal: Upload Convention Attendees CSV (Option 9 On-Demand) --}}
+    {{-- Dedicated Modal: Upload Convention Attendees CSV --}}
     <div class="modal fade" id="conventionAttendeesModal" tabindex="-1" aria-labelledby="conventionAttendeesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content rounded-4 border-0 shadow">
@@ -670,7 +670,7 @@
                                     </div>
                                 </div>
                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
-                                    <i class="bi bi-robot me-1"></i>{{ __('Option 9 Active in Bot') }}
+                                    <i class="bi bi-card-checklist me-1"></i>{{ __('Roster Uploaded') }}
                                 </span>
                             </div>
                         </div>
@@ -682,7 +682,7 @@
                             </div>
                             <ul class="mb-0 ps-3">
                                 <li>{{ __('Uploading this file DOES NOT blast messages to attendees (zero outbound restrictions).') }}</li>
-                                <li>{{ __('When any registered attendee sends 9 (or ٩) to the bot, they receive their invitation with their custom link and code instantly.') }}</li>
+                                <li>{{ __('Saves verified attendees list for event registration records and admin roster reference.') }}</li>
                                 <li>{{ __('Supports CSV columns:') }} <code>phone</code> ({{ __('required') }}), <code>name</code>, <code>message</code>.</li>
                             </ul>
                         </div>

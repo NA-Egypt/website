@@ -433,7 +433,7 @@ class WhatsAppSubscriberController extends Controller
     }
 
     /**
-     * Upload / Update the Convention Attendees CSV dataset for on-demand WhatsApp Bot retrieval (Option 9).
+     * Upload / Update the Convention Attendees CSV dataset for event roster tracking.
      * This creates or updates a convention_attendees broadcast record without triggering outbound blast jobs.
      */
     public function uploadConventionAttendeesCsv(Request $request, WhatsAppClient $client): JsonResponse|RedirectResponse
