@@ -25,6 +25,7 @@
           <h1>لجنة خدمة الإقليم</h1>
           <span>دليل الخطوط الإرشادية - مصر</span>
         </div>
+        <button id="sidebar-close-btn" class="sidebar-close-btn" title="إغلاق القائمة" aria-label="إغلاق القائمة">✕</button>
       </div>
 
       <div class="sidebar-search-box">
@@ -40,29 +41,67 @@
       </nav>
     </aside>
 
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
     <!-- Main Content Area -->
     <main class="main-wrapper">
       
       <!-- Top Sticky Header -->
       <header class="top-header">
         <div class="header-left">
-          <button id="menu-toggle-btn" class="menu-toggle-btn" title="القائمة">☰ الفهرس</button>
+          <button id="menu-toggle-btn" class="menu-toggle-btn" title="القائمة" aria-label="فتح الفهرس">
+            <span class="menu-icon">☰</span>
+            <span class="menu-label">الفهرس</span>
+          </button>
           <div class="breadcrumbs">
-            <span>الخطوط الإرشادية</span> &gt; 
+            <span class="breadcrumb-root">الخطوط الإرشادية</span>
+            <span class="breadcrumb-separator">&gt;</span> 
             <span class="current" id="breadcrumb-current">الغلاف</span>
           </div>
         </div>
 
         <div class="header-right">
-          <button id="font-decrease-btn" class="header-btn" title="تصغير الخط">A-</button>
-          <button id="font-increase-btn" class="header-btn" title="تكبير الخط">A+</button>
-          <button id="theme-toggle-btn" class="header-btn" title="تبديل المظهر">🌙 الوضع الداكن</button>
-          <button id="copy-link-btn" class="header-btn" title="نسخ رابط المقطع">🔗 مشاركة</button>
-          <button id="print-doc-btn" class="header-btn" title="طباعة">🖨️ طباعة</button>
+          <!-- Mobile search trigger button -->
+          <button id="mobile-search-btn" class="header-btn mobile-search-btn" title="البحث الذكي" aria-label="البحث الذكي">🔍 <span class="btn-text">بحث</span></button>
+          <button id="font-decrease-btn" class="header-btn desktop-only-btn" title="تصغير الخط">A-</button>
+          <button id="font-increase-btn" class="header-btn desktop-only-btn" title="تكبير الخط">A+</button>
+          <button id="theme-toggle-btn" class="header-btn" title="تبديل المظهر">
+            <span id="theme-btn-text">🌙 الوضع الداكن</span>
+          </button>
+          <button id="copy-link-btn" class="header-btn desktop-only-btn" title="نسخ رابط المقطع">🔗 مشاركة</button>
+          <button id="print-doc-btn" class="header-btn desktop-only-btn" title="طباعة">🖨️ طباعة</button>
         </div>
       </header>
 
-      <!-- Search Results Overlay Pane -->
+      <!-- Mobile Search Modal Overlay -->
+      <div id="mobile-search-modal" class="mobile-search-modal" role="dialog" aria-modal="true" aria-label="البحث الذكي">
+        <div class="mobile-search-content">
+          <div class="mobile-search-header">
+            <div class="search-input-wrapper mobile-search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="mobile-search-input" placeholder="ابحث في الدليل والمفاهيم وقواعد روبرت..." autocomplete="off">
+              <button id="mobile-clear-search-btn" class="clear-search-btn" title="مسح">✕</button>
+            </div>
+            <button id="close-search-modal-btn" class="close-search-modal-btn" title="إغلاق البحث" aria-label="إغلاق البحث">✕</button>
+          </div>
+          
+          <div class="search-filter-pills mobile-search-filter-pills">
+            <button class="filter-pill active" data-category="all">الكل</button>
+            <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
+            <button class="filter-pill" data-category="إداريو الإقليم">إداريو الإقليم</button>
+            <button class="filter-pill" data-category="اللجان الفرعية">اللجان الفرعية</button>
+            <button class="filter-pill" data-category="الإجراءات التنظيمية">الإجراءات التنظيمية</button>
+            <button class="filter-pill" data-category="المفاهيم الاثني عشر">المفاهيم الاثني عشر</button>
+            <button class="filter-pill" data-category="القواعد البرلمانية وروبرت">قواعد روبرت</button>
+          </div>
+
+          <div class="mobile-search-results-stats" id="mobile-search-stats"></div>
+          <div id="mobile-search-results-list" class="mobile-search-results-list"></div>
+        </div>
+      </div>
+
+      <!-- Search Results Overlay Pane (Desktop) -->
       <div class="content-container">
         
         <div id="search-results-pane" class="search-results-pane">
@@ -89,6 +128,34 @@
         </div>
 
       </div>
+
+      <!-- Mobile Floating Bottom Action Bar -->
+      <nav class="mobile-bottom-bar" id="mobile-bottom-bar" aria-label="شريط أدوات القراءة">
+        <button id="bottom-menu-btn" class="bottom-bar-btn" title="الفهرس" aria-label="فتح الفهرس">
+          <span class="btn-icon">📑</span>
+          <span class="btn-label">الفهرس</span>
+        </button>
+        <button id="bottom-search-btn" class="bottom-bar-btn" title="بحث" aria-label="البحث الذكي">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-label">بحث</span>
+        </button>
+        <div class="font-size-group">
+          <button id="bottom-font-decrease" class="bottom-bar-btn icon-only" title="تصغير الخط" aria-label="تصغير الخط">
+            <span class="btn-icon">A-</span>
+          </button>
+          <button id="bottom-font-increase" class="bottom-bar-btn icon-only" title="تكبير الخط" aria-label="تكبير الخط">
+            <span class="btn-icon">A+</span>
+          </button>
+        </div>
+        <button id="bottom-share-btn" class="bottom-bar-btn" title="مشاركة" aria-label="نسخ رابط المقطع">
+          <span class="btn-icon">🔗</span>
+          <span class="btn-label">مشاركة</span>
+        </button>
+        <button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
+          <span class="btn-icon">↑</span>
+          <span class="btn-label">للأعلى</span>
+        </button>
+      </nav>
 
     </main>
 
