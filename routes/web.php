@@ -544,9 +544,18 @@ Route::group(
                         }
                     }
 
-                    $startTime = $m->start_time ? substr($m->start_time, 0, 5) : '19:00';
-                    $startTimeObj = \Carbon\Carbon::createFromFormat('H:i', $startTime);
-                    $timeFormatted = $startTimeObj ? $startTimeObj->format('h:i A') : $startTime;
+                    $startTime = '19:00';
+                    $timeFormatted = '07:00 PM';
+                    if (!empty($m->start_time)) {
+                        try {
+                            $parsedTime = \Carbon\Carbon::parse($m->start_time);
+                            $startTime = $parsedTime->format('H:i');
+                            $timeFormatted = $parsedTime->format('h:i A');
+                        } catch (\Throwable $e) {
+                            $startTime = '19:00';
+                            $timeFormatted = (string)$m->start_time;
+                        }
+                    }
 
                     return [
                         'id' => $m->id,

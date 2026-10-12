@@ -2761,6 +2761,13 @@ return [
     'format_open' => 'مفتوح',
     'format_closed' => 'مغلق',
     'copy_zoom_password' => 'كلمة السر: :pwd',
+    'today' => 'اليوم',
+    'Tomorrow' => 'غداً',
+    'yesterday' => 'أمس',
+    'now' => 'الآن',
+    'whatsapp_csv_file_read_error' => 'تعذر قراءة ملف CSV',
+    'whatsapp_csv_empty_or_invalid' => 'ملف CSV فارغ أو غير صالح',
+    'No fields added yet. Click ' => 'لم تتم إضافة حقول بعد. انقر ',
 ];
 
 

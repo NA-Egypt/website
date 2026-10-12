@@ -2757,6 +2757,13 @@ return [
     'format_open' => 'Open',
     'format_closed' => 'Closed',
     'copy_zoom_password' => 'Passcode: :pwd',
+    'today' => 'Today',
+    'Tomorrow' => 'Tomorrow',
+    'yesterday' => 'Yesterday',
+    'now' => 'Now',
+    'whatsapp_csv_file_read_error' => 'Failed to read CSV file',
+    'whatsapp_csv_empty_or_invalid' => 'CSV file is empty or invalid',
+    'No fields added yet. Click ' => 'No fields added yet. Click ',
 ];
 
 
