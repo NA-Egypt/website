@@ -159,7 +159,9 @@
   <x-frontend.quick-meeting-finder 
       :cities="$cities" 
       :days="$days" 
-      :previewMeetings="$previewMeetings" />
+      :previewMeetings="$previewMeetings"
+      :locations="$locations ?? []"
+      :allMeetingsJson="$allMeetingsJson ?? []" />
 
   <!-- ======================================================================
        SECTION 3: "Just For Today" (لليوم فقط) Daily Reflection Card

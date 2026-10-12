@@ -474,11 +474,110 @@ Route::group(
                     ->get();
             });
 
+            $locations = Cache::remember('frontend_autocomplete_locations', 86400, function() {
+                $cities = City::select('id', 'ar_name', 'en_name', 'latitude', 'longitude')
+                    ->orderBy('ar_name')
+                    ->get()
+                    ->map(fn($c) => [
+                        'id' => 'city_' . $c->id,
+                        'ar_name' => $c->ar_name,
+                        'en_name' => $c->en_name ?: $c->ar_name,
+                        'type' => 'governorate',
+                        'city_name' => $c->ar_name,
+                        'lat' => (float)$c->latitude,
+                        'lng' => (float)$c->longitude,
+                    ]);
+
+                $neighborhoods = \App\Models\Neighborhood::with('city')
+                    ->select('id', 'ar_name', 'en_name', 'city_id', 'latitude', 'longitude')
+                    ->orderBy('ar_name')
+                    ->get()
+                    ->map(fn($n) => [
+                        'id' => 'neigh_' . $n->id,
+                        'ar_name' => $n->ar_name,
+                        'en_name' => $n->en_name ?: $n->ar_name,
+                        'type' => 'district',
+                        'city_name' => $n->city?->ar_name ?? '',
+                        'lat' => (float)($n->latitude ?: ($n->city?->latitude ?: 0)),
+                        'lng' => (float)($n->longitude ?: ($n->city?->longitude ?: 0)),
+                    ]);
+
+                return $cities->concat($neighborhoods)->values();
+            });
+
+            $allMeetingsJson = Cache::remember('frontend_all_meetings_json', 1800, function() {
+                return Meeting::with([
+                    'day',
+                    'group.neighborhood.city',
+                    'directOnlineGroup',
+                    'options',
+                    'topics'
+                ])->notMonthlyRecurrent()->get()->map(function($m) {
+                    $isOnline = !empty($m->direct_online_group_id);
+                    $group = $isOnline ? $m->directOnlineGroup : $m->group;
+                    $city = $isOnline ? null : $group?->neighborhood?->city;
+                    $neighborhood = $isOnline ? null : $group?->neighborhood;
+                    
+                    $lat = null;
+                    $lng = null;
+                    if (!$isOnline) {
+                        $lat = (float)($neighborhood?->latitude ?: ($city?->latitude ?: null));
+                        $lng = (float)($neighborhood?->longitude ?: ($city?->longitude ?: null));
+                    }
+                    
+                    $tags = [];
+                    if ($m->type === 'open') $tags[] = 'مفتوح';
+                    elseif ($m->type === 'closed') $tags[] = 'مغلق';
+                    foreach ($m->topics as $top) {
+                        $tags[] = $top->ar_name;
+                    }
+                    foreach ($m->options as $opt) {
+                        $tags[] = $opt->ar_name;
+                    }
+
+                    $mapUrl = null;
+                    if (!$isOnline) {
+                        if (!empty($group?->location) && (str_contains($group->location, 'http://') || str_contains($group->location, 'https://'))) {
+                            $mapUrl = $group->location;
+                        } elseif ($lat && $lng) {
+                            $mapUrl = "https://www.google.com/maps/search/?api=1&query={$lat},{$lng}";
+                        }
+                    }
+
+                    $startTime = $m->start_time ? substr($m->start_time, 0, 5) : '19:00';
+                    $startTimeObj = \Carbon\Carbon::createFromFormat('H:i', $startTime);
+                    $timeFormatted = $startTimeObj ? $startTimeObj->format('h:i A') : $startTime;
+
+                    return [
+                        'id' => $m->id,
+                        'name' => $group?->ar_name ?? 'اجتماع زمالة',
+                        'name_en' => $group?->en_name ?: ($group?->ar_name ?? 'NA Meeting'),
+                        'is_online' => $isOnline,
+                        'day_id' => $m->day_id,
+                        'day_ar' => $m->day?->ar_name ?? '',
+                        'day_en' => $m->day?->en_name ?? '',
+                        'start_time' => $startTime,
+                        'time_fmt' => $timeFormatted,
+                        'city_ar' => $isOnline ? 'أونلاين (زووم)' : ($city?->ar_name ?? 'مصر'),
+                        'city_en' => $isOnline ? 'Online (Zoom)' : ($city?->en_name ?? 'Egypt'),
+                        'neighborhood_ar' => $neighborhood?->ar_name ?? '',
+                        'neighborhood_en' => $neighborhood?->en_name ?? '',
+                        'address' => $isOnline ? 'عبر تطبيق زووم' : ($group?->ar_address ?: ($group?->en_address ?: 'العنوان متاح بالدليل')),
+                        'map_url' => $mapUrl,
+                        'zoom_url' => $isOnline ? $group?->location : null,
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'type' => $m->type,
+                        'tags' => array_slice(array_unique($tags), 0, 4),
+                    ];
+                });
+            });
+
             $announcements = Cache::remember('frontend_home_announcements', 1800, function() {
                 return \App\Models\CalendarEvent::orderBy('start', 'desc')->take(3)->get();
             });
 
-            return view('frontend.home', compact('homeStats', 'jftContent', 'cities', 'days', 'previewMeetings', 'announcements'));
+            return view('frontend.home', compact('homeStats', 'jftContent', 'cities', 'days', 'previewMeetings', 'announcements', 'locations', 'allMeetingsJson'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){

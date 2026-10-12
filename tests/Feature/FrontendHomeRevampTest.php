@@ -103,4 +103,67 @@ class FrontendHomeRevampTest extends TestCase
         $response->assertSee('naEmergencyActionBar');
         $response->assertSee('+20 100 697 9198');
     }
+
+    /**
+     * Test the interactive Meeting Finder component elements, filters, dataset, and compassionate fallback.
+     */
+    public function test_homepage_meeting_finder_interactive_components_and_dataset(): void
+    {
+        $this->withoutMiddleware([
+            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+            \Mcamara\LaravelLocalization\Middleware\LocalizationRedirect::class,
+        ]);
+
+        app()->setLocale('ar');
+        $response = $this->get(route('frontend.home'));
+
+        $response->assertStatus(200);
+
+        // View data assertions
+        $response->assertViewHas('locations');
+        $response->assertViewHas('allMeetingsJson');
+
+        // Smart Upcoming Highlight Card
+        $response->assertSee('smartUpcomingCardWrap');
+        $response->assertSee('أقرب اجتماع يبدأ قريباً');
+        $response->assertSee('upcomingCountdownBadge');
+
+        // Location Search Autocomplete & Quick Chips
+        $response->assertSee('meetingFinderLocationInput');
+        $response->assertSee('meetingFinderLocationDropdown');
+        $response->assertSee('القاهرة');
+        $response->assertSee('الجيزة');
+        $response->assertSee('الإسكندرية');
+        $response->assertSee('المعادي');
+        $response->assertSee('مدينة نصر');
+        $response->assertSee('المهندسين');
+        $response->assertSee('مصر الجديدة');
+        $response->assertSee('مدينة 6 أكتوبر');
+        $response->assertSee('المنصورة');
+        $response->assertSee('طنطا');
+        $response->assertSee('أسيوط');
+
+        // Day of Week & Time Slot Filters
+        $response->assertSee('meetingFinderDaySelect');
+        $response->assertSee('meetingFinderTimeSlotSelect');
+        $response->assertSee('فترة الاجتماع');
+        $response->assertSee('صباحاً');
+        $response->assertSee('ظهراً');
+        $response->assertSee('مساءً');
+        $response->assertSee('ليلاً');
+
+        // Format Toggle
+        $response->assertSee('fmtBtnAll');
+        $response->assertSee('fmtBtnInPerson');
+        $response->assertSee('fmtBtnOnline');
+
+        // Geolocation Proximity Sort
+        $response->assertSee('meetingFinderGeoBtn');
+        $response->assertSee('استخدم موقعي الحالي');
+
+        // Compassionate Fallback
+        $response->assertSee('noMeetingFoundMsg');
+        $response->assertSee('لم يتم العثور على اجتماعات في هذا النطاق، لكن هناك اجتماعات أونلاين متاحة على مدار الساعة');
+        $response->assertSee('عرض اجتماعات أونلاين الآن');
+    }
 }
