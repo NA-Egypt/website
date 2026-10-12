@@ -803,11 +803,16 @@ select:focus-visible {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
+.na-emergency-desktop-bar {
+  width: 100%;
+}
+
 .na-emergency-dial-chips {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .na-dial-chip {
@@ -822,13 +827,118 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
 .na-dial-chip:hover {
   background: var(--na-teal-600);
   border-color: var(--na-teal-500);
+  transform: translateY(-1px);
+}
+
+.na-dial-chip-wa {
+  background: rgba(37, 211, 102, 0.2) !important;
+  border-color: rgba(37, 211, 102, 0.45) !important;
+}
+
+.na-dial-chip-wa:hover {
+  background: #25d366 !important;
+  border-color: #25d366 !important;
+  color: #ffffff !important;
+}
+
+.na-dial-chip-wa:hover i {
+  color: #ffffff !important;
+}
+
+/* Mobile Quick Action Bar (Under 768px: single touch-friendly bar, zero overlap) */
+.na-emergency-mobile-bar {
+  width: 100%;
+  padding: 6px 4px;
+  gap: 6px;
+  align-items: center;
+}
+
+.na-mobile-status-badge {
+  padding: 4px 8px;
+  font-size: 0.74rem;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.na-mobile-zoom-btn {
+  background: var(--na-teal-600);
+  color: #ffffff !important;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.4);
+  flex-shrink: 0;
+}
+
+.na-mobile-actions-deck {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.na-mobile-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 11px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.na-mobile-btn-call {
+  background: var(--na-teal-600);
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.35);
+}
+
+.na-mobile-btn-call:hover, .na-mobile-btn-call:active {
+  background: var(--na-teal-700);
+  transform: translateY(-1px);
+}
+
+.na-mobile-btn-wa {
+  background: #25d366;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35);
+}
+
+.na-mobile-btn-wa:hover, .na-mobile-btn-wa:active {
+  background: #1eb855;
+  transform: translateY(-1px);
+}
+
+.na-mobile-btn-lines {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.na-mobile-btn-lines:hover, .na-mobile-btn-lines:active {
+  background: rgba(255, 255, 255, 0.22);
   transform: translateY(-1px);
 }
 
@@ -861,7 +971,7 @@ select:focus-visible {
 }
 
 .na-emergency-drawer-sheet.open {
-  max-height: 480px;
+  max-height: 520px;
   padding: 1.5rem 1rem;
 }
 
@@ -895,21 +1005,6 @@ select:focus-visible {
    ========================================================================== */
 
 @media (max-width: 768px) {
-  .na-emergency-main-bar {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 8px 12px;
-  }
-
-  .na-dial-chip {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .na-emergency-status-badge {
-    font-size: 0.78rem;
-  }
-
   .na-tripath-deck {
     grid-template-columns: 1fr;
   }
