@@ -166,7 +166,7 @@
   <!-- ======================================================================
        SECTION 3: "Just For Today" (لليوم فقط) Daily Reflection Card
        ====================================================================== -->
-  <x-frontend.jft-card :jftContent="$jftContent" />
+  <x-frontend.jft-card :jftContent="$jftContent" :jftReading="$jftReading ?? null" />
 
   <!-- ======================================================================
        SECTION 4: Clean-Time Calculator & Keytag Milestones Journey

@@ -447,18 +447,10 @@ Route::group(
                 ];
             });
 
-            $jftFileName = date('j') . '_' . strtolower(date('M')) . '_.html';
-            $jftContent = Cache::remember('frontend_jft_content_' . $jftFileName, 86400, function() use ($jftFileName) {
-                $jftFilePath = public_path('literature/jft/' . $jftFileName);
-                if (file_exists($jftFilePath)) {
-                    $html = file_get_contents($jftFilePath);
-                    if (preg_match('/<body>(.*?)<\/body>/is', $html, $matches)) {
-                        return $matches[1];
-                    }
-                    return $html;
-                }
-                return '';
+            $jftReading = Cache::remember('frontend_jft_reading_' . date('Y_m_d'), 86400, function() {
+                return app(\App\Services\JftService::class)->getReading();
             });
+            $jftContent = $jftReading['content_html'] ?? '';
 
             $cities = Cache::remember('frontend_cities_list', 86400, function() {
                 return City::select('id', 'ar_name', 'en_name')->orderBy('ar_name')->get();
@@ -586,7 +578,7 @@ Route::group(
                 return \App\Models\CalendarEvent::orderBy('start', 'desc')->take(3)->get();
             });
 
-            return view('frontend.home', compact('homeStats', 'jftContent', 'cities', 'days', 'previewMeetings', 'announcements', 'locations', 'allMeetingsJson'));
+            return view('frontend.home', compact('homeStats', 'jftContent', 'jftReading', 'cities', 'days', 'previewMeetings', 'announcements', 'locations', 'allMeetingsJson'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){

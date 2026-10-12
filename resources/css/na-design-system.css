@@ -439,65 +439,448 @@ select:focus-visible {
    ========================================================================== */
 
 .na-jft-container {
-  background: linear-gradient(135deg, #ffffff 0%, #f4fbfb 100%);
-  border: 1.5px solid rgba(14, 131, 136, 0.2);
+  background: #ffffff;
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(14, 131, 136, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.02) 0%, transparent 40%);
+  border: 1px solid rgba(14, 131, 136, 0.16);
   border-radius: 24px;
-  padding: 2.5rem;
+  padding: 2.25rem;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--na-shadow-md);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(14, 131, 136, 0.04);
+  transition: all 0.3s ease;
 }
 
 .na-jft-watermark {
   position: absolute;
   inset-inline-end: -40px;
   bottom: -40px;
-  width: 240px;
-  height: 240px;
-  opacity: 0.04;
+  width: 260px;
+  height: 260px;
+  opacity: 0.035;
   pointer-events: none;
   color: var(--na-navy-800);
 }
 
-.na-jft-content-box {
-  line-height: 1.85;
-  font-size: 1.08rem;
-  color: var(--na-text-main);
-  max-height: 280px;
-  overflow-y: auto;
-  padding-inline-end: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--na-teal-500) transparent;
+.jft-toolbar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.na-jft-content-box::-webkit-scrollbar {
-  width: 6px;
-}
-.na-jft-content-box::-webkit-scrollbar-thumb {
-  background-color: var(--na-teal-500);
-  border-radius: 6px;
-}
-
-.na-whatsapp-share-btn {
-  background: #25d366;
-  color: #ffffff !important;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-weight: 700;
-  font-size: 0.95rem;
+.jft-badge-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+  gap: 6px;
+  background: rgba(14, 131, 136, 0.1);
+  color: var(--na-teal-700);
+  border: 1px solid rgba(14, 131, 136, 0.2);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
-.na-whatsapp-share-btn:hover {
-  background: #1eb855;
-  transform: translateY(-2px);
+.jft-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* History Navigator (Quick Arrows & Calendar) */
+.jft-history-deck {
+  display: inline-flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 3px 5px;
+  gap: 4px;
+}
+
+.jft-nav-btn {
+  background: transparent;
+  border: none;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.jft-nav-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.jft-today-pill {
+  background: var(--na-teal-600) !important;
   color: #ffffff !important;
+  font-weight: 700;
+}
+
+.jft-today-pill:hover {
+  background: var(--na-teal-700) !important;
+}
+
+.jft-calendar-picker-label {
+  position: relative;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.jft-calendar-picker-label:hover {
+  border-color: var(--na-teal-500);
+}
+
+.jft-native-date-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+/* Font Size Controls */
+.jft-font-controls {
+  display: inline-flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 2px 4px;
+  gap: 2px;
+}
+
+.jft-tool-btn {
+  background: transparent;
+  border: none;
+  color: #475569;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jft-tool-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.jft-share-btn {
+  background: linear-gradient(135deg, var(--na-teal-600) 0%, var(--na-teal-700) 100%);
+  color: #ffffff !important;
+  border: none;
+  border-radius: 9999px;
+  padding: 7px 16px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(14, 131, 136, 0.25);
+  transition: all 0.2s ease;
+}
+
+.jft-share-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(14, 131, 136, 0.35);
+}
+
+/* Audio Player Bar */
+.jft-audio-bar {
+  background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
+  border: 1.5px solid rgba(14, 131, 136, 0.18);
+  border-radius: 18px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.jft-audio-play-btn {
+  background: var(--na-teal-600);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.3);
+}
+
+.jft-audio-play-btn:hover {
+  background: var(--na-teal-700);
+}
+
+.jft-audio-stop-btn {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jft-audio-stop-btn:hover {
+  background: #dc2626;
+}
+
+.jft-audio-track {
+  width: 100%;
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 9999px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.jft-audio-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--na-teal-500), var(--na-teal-600));
+  border-radius: 9999px;
+  transition: width 0.25s linear;
+}
+
+.jft-speed-pill {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 9999px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jft-speed-pill:hover {
+  background: #f1f5f9;
+  border-color: var(--na-teal-500);
+}
+
+/* Reading Surface Architecture */
+.jft-reading-card-surface {
+  --jft-font-size: 1.15rem;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1.5rem 0.5rem;
+}
+
+.jft-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+}
+
+.jft-divider {
+  width: 60px;
+  height: 3.5px;
+  background: linear-gradient(90deg, var(--na-teal-400), var(--na-teal-600));
+  border-radius: 9999px;
+  margin-top: 10px;
+}
+
+/* Quote Card */
+.jft-quote-card {
+  background: #f8fafc;
+  border-inline-start: 4px solid var(--na-teal-600);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.jft-quote-icon {
+  font-size: 2.2rem;
+  color: var(--na-teal-600);
+  line-height: 1;
+}
+
+.jft-quote-body {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: #1e293b;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.jft-quote-source-badge {
+  background: rgba(14, 131, 136, 0.12);
+  color: var(--na-teal-800);
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Body Paragraphs */
+.jft-body-paragraphs {
+  font-size: var(--jft-font-size);
+  line-height: 1.95;
+  color: #334155;
+  text-align: justify;
+}
+
+.jft-paragraph {
+  margin-bottom: 1.35rem;
+  transition: background-color 0.3s ease, padding 0.3s ease;
+  border-radius: 8px;
+}
+
+.jft-paragraph.jft-speaking-active {
+  background: rgba(14, 131, 136, 0.1);
+  padding: 6px 12px;
+  color: #0f172a;
+}
+
+/* Affirmation Card ("لليوم فقط: ...") */
+.jft-affirmation-card {
+  background: linear-gradient(135deg, rgba(14, 131, 136, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+  border: 1.5px solid rgba(14, 131, 136, 0.24);
+  border-radius: 18px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 4px 16px rgba(14, 131, 136, 0.08);
+  margin-top: 2rem;
+}
+
+.jft-affirmation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: var(--na-teal-700);
+  border: 1px solid rgba(14, 131, 136, 0.25);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.jft-affirmation-text {
+  font-size: calc(var(--jft-font-size) * 1.05);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.85;
+}
+
+/* Share Modal */
+.jft-share-modal-content {
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+}
+
+.jft-share-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--na-teal-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jft-snippet-preview {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+/* Print Stylesheet */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+
+  header, footer, nav, #naEmergencyActionBar, .d-print-none, .jft-toolbar-wrapper, .jft-audio-bar, .modal {
+    display: none !important;
+  }
+
+  #jftSection {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .na-jft-container {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .jft-reading-card-surface {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .jft-body-paragraphs {
+    color: #000000 !important;
+    font-size: 12pt !important;
+    line-height: 1.8 !important;
+  }
+
+  .jft-quote-card {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    border-inline-start: 4px solid #000000 !important;
+    page-break-inside: avoid;
+  }
+
+  .jft-affirmation-card {
+    background: #ffffff !important;
+    border: 1.5px solid #000000 !important;
+    page-break-inside: avoid;
+  }
 }
 
 /* ==========================================================================
