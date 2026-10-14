@@ -196,4 +196,69 @@ class ApkDownloadController extends Controller
             abort(502, 'Unable to stream APK package. Please try again shortly.');
         }
     }
+
+    /**
+     * Direct and transparent APK package download (no email, no token required).
+     */
+    public function directDownload(Request $request): \Symfony\Component\HttpFoundation\Response
+    {
+        $releaseUrl = config('services.apk.release_url');
+        $filename = 'naegypt-v1.2.0-hope.apk';
+
+        if (empty($releaseUrl)) {
+            Log::critical('APK release URL is not configured in services.apk.release_url');
+            abort(500, 'APK distribution is temporarily unavailable.');
+        }
+
+        try {
+            $localApkPath = storage_path('app/apk/' . $filename);
+            if (file_exists($localApkPath)) {
+                return response()->download($localApkPath, $filename, [
+                    'Content-Type' => 'application/vnd.android.package-archive',
+                ]);
+            }
+
+            $upstreamResponse = \Illuminate\Support\Facades\Http::withHeaders([
+                'User-Agent' => 'NA-Egypt-Portal-DirectProxy/1.0',
+                'Accept' => 'application/octet-stream',
+            ])->withOptions([
+                'timeout' => 120,
+                'stream' => true,
+                'allow_redirects' => true,
+            ])->get($releaseUrl);
+
+            if ($upstreamResponse->successful()) {
+                $psrResponse = $upstreamResponse->toPsrResponse();
+                $body = $psrResponse->getBody();
+                $contentLength = $psrResponse->getHeaderLine('Content-Length');
+
+                $headers = [
+                    'Content-Type' => 'application/vnd.android.package-archive',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                    'Pragma' => 'no-cache',
+                    'Expires' => '0',
+                ];
+
+                if (!empty($contentLength)) {
+                    $headers['Content-Length'] = $contentLength;
+                }
+
+                return response()->stream(function () use ($body) {
+                    while (!$body->eof()) {
+                        echo $body->read(1024 * 64);
+                        if (ob_get_level() > 0) {
+                            ob_flush();
+                        }
+                        flush();
+                    }
+                }, 200, $headers);
+            }
+
+            return redirect()->away($releaseUrl);
+        } catch (\Throwable $e) {
+            Log::warning('Direct APK stream fallback to release URL: ' . $e->getMessage());
+            return redirect()->away($releaseUrl);
+        }
+    }
 }

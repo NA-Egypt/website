@@ -183,9 +183,9 @@
        with full literature, committees, and anonymity info
        ====================================================================== --}}
 
-  <!-- Pre-release APK Request Modal -->
+  <!-- Direct & Transparent Android APK Hub Modal -->
   <div class="modal fade" id="apkDownloadModal" tabindex="-1" aria-labelledby="apkDownloadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content apk-modal-content">
         <div class="modal-header border-0 text-white apk-modal-header d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center gap-3">
@@ -193,58 +193,59 @@
               <i class="bi bi-android2 text-white fs-2"></i>
             </div>
             <div class="text-start">
-              <h5 class="modal-title fw-bold m-0 text-white lh-sm" id="apkDownloadModalLabel">{{ __('messages.apk_modal_title') }}</h5>
-              <span class="badge bg-white-20 text-white rounded-pill mt-1" style="background: rgba(255,255,255,0.22); font-size: 0.72rem;">{{ __('messages.apk_beta_badge') }}</span>
+              <h5 class="modal-title fw-bold m-0 text-white lh-sm" id="apkDownloadModalLabel">{{ __('messages.apk_hub_title') }}</h5>
+              <span class="badge bg-white-20 text-white rounded-pill mt-1" style="background: rgba(255,255,255,0.22); font-size: 0.72rem;">v1.2.0-Hope</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill mt-1" style="font-size: 0.72rem;">APK Direct</span>
             </div>
           </div>
           <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal" aria-label="{{ __('messages.Close') ?? 'Close' }}"></button>
         </div>
 
-        <div class="modal-body p-4">
-          <div id="apkFormView">
-            <p class="text-muted small mb-3 text-start lh-base">
-              {{ __('messages.apk_modal_subtitle') }}
-            </p>
+        <div class="modal-body p-3 p-md-4">
+          <!-- Direct & Transparent Android APK Hub Component -->
+          <x-frontend.apk-download-hub :isModal="true" />
 
-            <div id="apkAlertError" class="alert alert-danger d-none rounded-3 py-2 px-3 border-0 shadow-sm mb-3" role="alert" style="background-color: #fef2f2; color: #991b1b;">
-              <div class="d-flex align-items-center gap-2 text-start">
-                <i class="bi bi-exclamation-triangle-fill fs-5 text-danger flex-shrink-0"></i>
-                <span id="apkErrorMessage" class="small fw-semibold"></span>
+          <!-- Optional Email Link Fallback (Collapsed by default, zero friction) -->
+          <div class="pt-3 border-top border-light-subtle text-center">
+            <button class="btn btn-link btn-sm text-decoration-none text-muted p-0 x-small" type="button" data-bs-toggle="collapse" data-bs-target="#apkFormView" aria-expanded="false" aria-controls="apkFormView">
+              <i class="bi bi-envelope-at me-1"></i>
+              <span>{{ app()->getLocale() === 'ar' ? 'هل تفضل استلام رابط التنزيل عبر البريد الإلكتروني؟' : 'Prefer receiving the download link via email?' }}</span>
+            </button>
+
+            <div class="collapse mt-3 text-start" id="apkFormView">
+              <div class="p-3 rounded-3 bg-light border">
+                <div id="apkAlertError" class="alert alert-danger d-none rounded-3 py-2 px-3 border-0 shadow-sm mb-3" role="alert" style="background-color: #fef2f2; color: #991b1b;">
+                  <div class="d-flex align-items-center gap-2 text-start">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 text-danger flex-shrink-0"></i>
+                    <span id="apkErrorMessage" class="small fw-semibold"></span>
+                  </div>
+                </div>
+
+                <form id="apkRequestForm" method="POST" action="{{ route('apk.request_link') }}">
+                  @csrf
+                  <div class="mb-3 text-start">
+                    <label for="apkEmailInput" class="form-label fw-semibold small text-dark d-block">{{ __('messages.apk_email_label') }}</label>
+                    <div class="input-group apk-input-group">
+                      <span class="input-group-text"><i class="bi bi-envelope fs-5"></i></span>
+                      <input type="email" class="form-control" id="apkEmailInput" name="email" placeholder="your.email@example.com" dir="ltr" style="text-align: left;">
+                    </div>
+                  </div>
+
+                  @if(!empty(config('services.turnstile.site_key')))
+                    <div class="mb-3 d-flex justify-content-center">
+                      <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
+                    </div>
+                  @endif
+
+                  <div class="d-grid">
+                    <button type="submit" id="apkSubmitBtn" class="btn btn-outline-primary py-2 px-4 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2">
+                      <span id="apkSubmitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                      <span id="apkSubmitText">{{ __('messages.apk_submit_btn') }}</span>
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-
-            <form id="apkRequestForm" method="POST" action="{{ route('apk.request_link') }}">
-              @csrf
-              <div class="mb-3 text-start">
-                <label for="apkEmailInput" class="form-label fw-semibold small text-dark d-block">{{ __('messages.apk_email_label') }}</label>
-                <div class="input-group apk-input-group">
-                  <span class="input-group-text"><i class="bi bi-envelope fs-5"></i></span>
-                  <input type="email" class="form-control" id="apkEmailInput" name="email" required placeholder="{{ __('messages.apk_email_placeholder') }}" dir="ltr" style="text-align: left;">
-                </div>
-                <div class="form-text text-muted small mt-2 d-flex align-items-center gap-1">
-                  <i class="bi bi-info-circle text-primary"></i>
-                  <span>{{ __('messages.apk_email_domain_restricted') }}</span>
-                </div>
-              </div>
-
-              @if(!empty(config('services.turnstile.site_key')))
-                <div class="mb-3 d-flex justify-content-center">
-                  <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
-                </div>
-              @endif
-
-              <div class="alert alert-info py-2 px-3 small border-0 rounded-3 mb-3 d-flex align-items-center gap-2 text-start" style="background-color: #f0f9ff; color: #0369a1;">
-                <i class="bi bi-phone flex-shrink-0 fs-5"></i>
-                <span>{{ __('messages.apk_install_note') }}</span>
-              </div>
-
-              <div class="d-grid mt-4">
-                <button type="submit" id="apkSubmitBtn" class="btn btn-primary py-2 px-4 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
-                  <span id="apkSubmitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                  <span id="apkSubmitText">{{ __('messages.apk_submit_btn') }}</span>
-                </button>
-              </div>
-            </form>
           </div>
 
           <div id="apkSuccessView" class="d-none text-center py-4 px-2">

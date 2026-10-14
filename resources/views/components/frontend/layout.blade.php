@@ -60,6 +60,14 @@
 
   <link rel="icon" href="{{ asset('assets/images/na-logo32.webp') }}" type="image/webp" />
 
+  <!-- PWA Web App Manifest & Mobile Theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1B2A4A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NA Egypt">
+  <link rel="apple-touch-icon" href="{{ asset('assets/images/icons/icon-192.png') }}">
+
   <!-- LCP Image Preload Hint -->
   <link rel="preload" as="image" href="{{ asset('assets/images/logo.png') }}" fetchpriority="high" type="image/png" />
 
@@ -184,6 +192,7 @@
       </div>
     <x-frontend.footer />
     <x-frontend.emergency-bar />
+    <x-frontend.pwa-install-banner />
     @livewireScripts
     <script>
         // Patch Livewire's update URI to include locale prefix.
@@ -195,6 +204,17 @@
                 el.setAttribute('data-update-uri', '/{{ app()->getLocale() }}/livewire/update');
             }
         })();
+
+        // Register Progressive Web App (PWA) Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    // Service worker registered
+                }).catch(function(err) {
+                    console.warn('[PWA] ServiceWorker registration error:', err);
+                });
+            });
+        }
     </script>
   </body>
 </html>

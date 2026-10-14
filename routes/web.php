@@ -597,6 +597,10 @@ Route::group(
             return view('frontend.cleantime');
         })->name('frontend.cleantime');
 
+        Route::get('/app', function(){
+            return view('frontend.downloads');
+        })->name('frontend.app');
+
         Route::get('/events', [\App\Http\Controllers\FrontendEventController::class, 'index'])->name('frontend.events');
         Route::get('/web-calendar-events', [\App\Http\Controllers\Api\CalendarEventController::class, 'index'])->name('web-calendar-events.index');
 
@@ -639,11 +643,15 @@ Route::group(
     }
 );
 
-// Pre-release APK Secret Streaming Download Route
+// Pre-release APK Secret Streaming Download Route (Legacy token-based)
 Route::get('/apk/download/{token}', [ApkDownloadController::class, 'download'])
     ->where('token', '[a-zA-Z0-9]{64}')
     ->middleware('throttle:15,1')
     ->name('apk.download');
+
+// Direct & Transparent Android APK Hub Routes (No personal data, immediate download)
+Route::get('/apk/direct-download', [ApkDownloadController::class, 'directDownload'])->name('apk.direct_download');
+Route::get('/apk/naegypt-v1.2.0-hope.apk', [ApkDownloadController::class, 'directDownload'])->name('apk.direct_download.file');
 
 // Fixed Public Helpline Form (Clean direct access)
 Route::get('/forms/helpline', [\App\Http\Controllers\HelplinePublicFormController::class, 'show'])->name('forms.helpline.show');

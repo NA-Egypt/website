@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>وضع عدم الاتصال | زمالة المدمنين المجهولين - مصر</title>
+  <meta name="theme-color" content="#1B2A4A">
+  <link rel="icon" href="/assets/images/icons/icon-192.png" type="image/png">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    body {
+      background-color: #0F172A;
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .offline-card {
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      border: 1.5px solid #334155;
+      border-radius: 24px;
+      padding: 32px 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+    .emblem-wrap {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: rgba(14, 131, 136, 0.15);
+      border: 2px solid #0E8388;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .emblem-wrap svg {
+      width: 44px;
+      height: 44px;
+      fill: #2DD4BF;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+    }
+    .lead {
+      color: #94A3B8;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .emergency-box {
+      background: rgba(220, 38, 38, 0.12);
+      border: 1.5px solid rgba(220, 38, 38, 0.35);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: right;
+    }
+    .emergency-box h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #FCA5A5;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #DC2626;
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .phone-btn:hover {
+      background: #B91C1C;
+    }
+    .jft-offline {
+      background: rgba(14, 131, 136, 0.1);
+      border: 1px solid rgba(14, 131, 136, 0.25);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: right;
+    }
+    .jft-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #2DD4BF;
+      margin-bottom: 6px;
+    }
+    .jft-text {
+      font-size: 0.82rem;
+      color: #CBD5E1;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .retry-btn {
+      background: #0E8388;
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .retry-btn:hover {
+      background: #0C696E;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="emblem-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>
+    </div>
+
+    <h1>أنت غير متصل بالإنترنت</h1>
+    <p class="lead">
+      لا تقلق، التعافي يستمر لليوم فقط. يمكنك دائماً الاتصال الفوري بخطوط المساعدة أو مراجعة التأمل اليومي.
+    </p>
+
+    <div class="emergency-box">
+      <h2>
+        <span>📞</span>
+        <span>خط المساعدة المباشر (متاح 24/7):</span>
+      </h2>
+      <a href="tel:+201060933888" class="phone-btn">
+        <span>اتصال بخط المساعدة</span>
+        <span dir="ltr">01060933888</span>
+      </a>
+      <a href="tel:+201006979198" class="phone-btn" style="background: #475569; margin-top: 6px; font-size: 1rem;">
+        <span>خط الطوارئ الإضافي</span>
+        <span dir="ltr">01006979198</span>
+      </a>
+    </div>
+
+    <div class="jft-offline">
+      <div class="jft-title">لليوم فقط:</div>
+      <div class="jft-text">
+        "لليوم فقط، سأمتلك الثقة بأنني لست مضطراً للتعاطي ثانيةً، وأن زمالة المدمنين المجهولين ستظل دائماً سندي وأملي."
+      </div>
+    </div>
+
+    <button type="button" class="retry-btn" onclick="window.location.reload()">
+      إعادة المحاولة والاتصال
+    </button>
+  </div>
+</body>
+</html>
