@@ -88,7 +88,7 @@ CREATE TABLE `api_daily_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `api_daily_stats_date_platform_unique` (`date`,`platform`),
   KEY `api_daily_stats_date_index` (`date`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_daily_stats` WRITE;
@@ -152,7 +152,10 @@ INSERT INTO `api_daily_stats` VALUES
 (56,'2026-10-11','other',221,221,0,0,6.16,1,0,'{\"\\/api\\/v1\\/whatsapp\\/webhook\":221}','2026-10-11 21:05:01','2026-10-11 21:05:01'),
 (57,'2026-10-12','all',374,374,0,0,37.52,11,0,'{\"\\/api\\/v1\\/home\":60,\"\\/api\\/v1\\/events\":32,\"\\/api\\/v1\\/calendar-events\":32,\"\\/api\\/v1\\/groups\":27,\"\\/api\\/v1\\/neighborhoods\":27,\"\\/api\\/v1\\/cities\":27,\"\\/api\\/v1\\/days\":27,\"\\/api\\/v1\\/meetings\":27,\"\\/api\\/v1\\/topics\":27,\"\\/api\\/v1\\/options\":27}','2026-10-12 21:05:01','2026-10-12 21:05:01'),
 (58,'2026-10-12','android',367,367,0,0,38.12,10,0,'{\"\\/api\\/v1\\/home\":60,\"\\/api\\/v1\\/calendar-events\":32,\"\\/api\\/v1\\/events\":32,\"\\/api\\/v1\\/groups\":27,\"\\/api\\/v1\\/neighborhoods\":27,\"\\/api\\/v1\\/cities\":27,\"\\/api\\/v1\\/days\":27,\"\\/api\\/v1\\/meetings\":27,\"\\/api\\/v1\\/topics\":27,\"\\/api\\/v1\\/options\":27}','2026-10-12 21:05:01','2026-10-12 21:05:01'),
-(59,'2026-10-12','other',7,7,0,0,6.43,1,0,'{\"\\/api\\/v1\\/whatsapp\\/webhook\":7}','2026-10-12 21:05:01','2026-10-12 21:05:01');
+(59,'2026-10-12','other',7,7,0,0,6.43,1,0,'{\"\\/api\\/v1\\/whatsapp\\/webhook\":7}','2026-10-12 21:05:01','2026-10-12 21:05:01'),
+(60,'2026-10-13','all',376,376,0,0,35.65,15,0,'{\"\\/api\\/v1\\/home\":59,\"\\/api\\/v1\\/calendar-events\":33,\"\\/api\\/v1\\/events\":32,\"\\/api\\/v1\\/cities\":29,\"\\/api\\/v1\\/days\":29,\"\\/api\\/v1\\/options\":29,\"\\/api\\/v1\\/topics\":29,\"\\/api\\/v1\\/groups\":28,\"\\/api\\/v1\\/stats\":28,\"\\/api\\/v1\\/neighborhoods\":28}','2026-10-13 21:05:01','2026-10-13 21:05:01'),
+(61,'2026-10-13','android',371,371,0,0,36.05,14,0,'{\"\\/api\\/v1\\/home\":59,\"\\/api\\/v1\\/calendar-events\":33,\"\\/api\\/v1\\/events\":32,\"\\/api\\/v1\\/cities\":29,\"\\/api\\/v1\\/days\":29,\"\\/api\\/v1\\/options\":29,\"\\/api\\/v1\\/topics\":29,\"\\/api\\/v1\\/groups\":28,\"\\/api\\/v1\\/stats\":28,\"\\/api\\/v1\\/neighborhoods\":28}','2026-10-13 21:05:01','2026-10-13 21:05:01'),
+(62,'2026-10-13','other',5,5,0,0,6,1,0,'{\"\\/api\\/v1\\/whatsapp\\/webhook\":5}','2026-10-13 21:05:01','2026-10-13 21:05:01');
 /*!40000 ALTER TABLE `api_daily_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_logs`;
@@ -179,7 +182,7 @@ CREATE TABLE `api_logs` (
   KEY `api_logs_endpoint_created_at_index` (`endpoint`,`created_at`),
   KEY `api_logs_created_at_index` (`created_at`),
   CONSTRAINT `api_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=8998 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9327 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `api_logs` WRITE;
@@ -9182,7 +9185,336 @@ INSERT INTO `api_logs` VALUES
 (8994,'GET','/api/v1/days','api.v1.days.index',200,12,'android',NULL,NULL,'196.130.83.34',NULL,'okhttp/4.9.2','2026-10-12 22:59:08'),
 (8995,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'196.130.83.34',NULL,'okhttp/4.9.2','2026-10-12 22:59:08'),
 (8996,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'196.130.83.34',NULL,'okhttp/4.9.2','2026-10-12 22:59:09'),
-(8997,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'196.130.83.34',NULL,'okhttp/4.9.2','2026-10-12 22:59:09');
+(8997,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'196.130.83.34',NULL,'okhttp/4.9.2','2026-10-12 22:59:09'),
+(8998,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,6,'other',NULL,NULL,'127.0.0.1',NULL,'Go-http-client/1.1','2026-10-13 04:02:53'),
+(8999,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,6,'other',NULL,NULL,'127.0.0.1',NULL,'Go-http-client/1.1','2026-10-13 05:09:10'),
+(9000,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,6,'other',NULL,NULL,'127.0.0.1',NULL,'Go-http-client/1.1','2026-10-13 06:52:27'),
+(9001,'GET','/api/v1/jft','api.v1.jft',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9002,'GET','/api/v1/home','api.v1.home',200,16,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9003,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9004,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9005,'GET','/api/v1/meetings','api.v1.meetings.index',200,117,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9006,'GET','/api/v1/groups','api.v1.groups.index',200,144,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9007,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9008,'GET','/api/v1/cities','api.v1.cities.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9009,'GET','/api/v1/events','api.v1.events.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:04'),
+(9010,'GET','/api/v1/topics','api.v1.topics.index',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:05'),
+(9011,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,71,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:05'),
+(9012,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:05'),
+(9013,'GET','/api/v1/days','api.v1.days.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:05'),
+(9014,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:05'),
+(9015,'GET','/api/v1/stats','api.v1.stats',200,6,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:32'),
+(9016,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:32'),
+(9017,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:32'),
+(9018,'GET','/api/v1/home','api.v1.home',200,5,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:32'),
+(9019,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9020,'GET','/api/v1/meetings','api.v1.meetings.index',200,124,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9021,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9022,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9023,'GET','/api/v1/groups','api.v1.groups.index',200,140,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9024,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,63,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:37'),
+(9025,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:38'),
+(9026,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:38'),
+(9027,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:38'),
+(9028,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:38'),
+(9029,'GET','/api/v1/stats','api.v1.stats',200,5,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:05:38'),
+(9030,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:00'),
+(9031,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:00'),
+(9032,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:01'),
+(9033,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:01'),
+(9034,'GET','/api/v1/days','api.v1.days.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:01'),
+(9035,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:01'),
+(9036,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:02'),
+(9037,'GET','/api/v1/events','api.v1.events.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:02'),
+(9038,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:02'),
+(9039,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,61,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:03'),
+(9040,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:03'),
+(9041,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:14:03'),
+(9042,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9043,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9044,'GET','/api/v1/cities','api.v1.cities.index',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9045,'GET','/api/v1/groups','api.v1.groups.index',200,136,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9046,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9047,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9048,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9049,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9050,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9051,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'41.36.216.72',NULL,'okhttp/4.9.2','2026-10-13 07:19:37'),
+(9052,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,6,'other',NULL,NULL,'127.0.0.1',NULL,'Go-http-client/1.1','2026-10-13 07:56:56'),
+(9053,'POST','/api/v1/whatsapp/webhook','api.v1.whatsapp.webhook',200,6,'other',NULL,NULL,'127.0.0.1',NULL,'Go-http-client/1.1','2026-10-13 08:11:17'),
+(9054,'GET','/api/v1/stats','api.v1.stats',200,12,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9055,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9056,'GET','/api/v1/cities','api.v1.cities.index',200,16,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9057,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9058,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,14,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9059,'GET','/api/v1/groups','api.v1.groups.index',200,155,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:40'),
+(9060,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:44'),
+(9061,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:44'),
+(9062,'GET','/api/v1/home','api.v1.home',200,10,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:45'),
+(9063,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:44'),
+(9064,'GET','/api/v1/meetings','api.v1.meetings.index',200,114,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:45'),
+(9065,'GET','/api/v1/cities','api.v1.cities.index',200,19,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:49'),
+(9066,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:49'),
+(9067,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:49'),
+(9068,'GET','/api/v1/groups','api.v1.groups.index',200,144,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:49'),
+(9069,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,57,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:49'),
+(9070,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:52'),
+(9071,'GET','/api/v1/topics','api.v1.topics.index',200,14,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:52'),
+(9072,'GET','/api/v1/days','api.v1.days.index',200,16,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:52'),
+(9073,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:52'),
+(9074,'GET','/api/v1/stats','api.v1.stats',200,5,'android',NULL,NULL,'196.136.87.16',NULL,'okhttp/4.9.2','2026-10-13 10:34:52'),
+(9075,'GET','/api/v1/home','api.v1.home',200,24,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:27'),
+(9076,'GET','/api/v1/jft','api.v1.jft',200,13,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:27'),
+(9077,'GET','/api/v1/stats','api.v1.stats',200,12,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:27'),
+(9078,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:27'),
+(9079,'GET','/api/v1/meetings','api.v1.meetings.index',200,115,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:27'),
+(9080,'GET','/api/v1/cities','api.v1.cities.index',200,8,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:28'),
+(9081,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:28'),
+(9082,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,16,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:28'),
+(9083,'GET','/api/v1/groups','api.v1.groups.index',200,164,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:28'),
+(9084,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:29'),
+(9085,'GET','/api/v1/home','api.v1.home',200,15,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:30'),
+(9086,'GET','/api/v1/topics','api.v1.topics.index',200,14,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:30'),
+(9087,'GET','/api/v1/options','api.v1.options.index',200,16,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:30'),
+(9088,'GET','/api/v1/days','api.v1.days.index',200,17,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:30'),
+(9089,'GET','/api/v1/groups','api.v1.groups.index',200,131,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:31'),
+(9090,'GET','/api/v1/cities','api.v1.cities.index',200,14,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:31'),
+(9091,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:31'),
+(9092,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,24,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:31'),
+(9093,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:31'),
+(9094,'GET','/api/v1/options','api.v1.options.index',200,10,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9095,'GET','/api/v1/topics','api.v1.topics.index',200,16,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9096,'GET','/api/v1/days','api.v1.days.index',200,13,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9097,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,65,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9098,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9099,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'196.157.41.19',NULL,'okhttp/4.9.2','2026-10-13 11:52:32'),
+(9100,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:33'),
+(9101,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:33'),
+(9102,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:34'),
+(9103,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:34'),
+(9104,'GET','/api/v1/meetings','api.v1.meetings.index',200,110,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:34'),
+(9105,'GET','/api/v1/events','api.v1.events.index',200,18,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:35'),
+(9106,'GET','/api/v1/cities','api.v1.cities.index',200,18,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:35'),
+(9107,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,32,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:35'),
+(9108,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,86,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:35'),
+(9109,'GET','/api/v1/groups','api.v1.groups.index',200,141,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:35'),
+(9110,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:36'),
+(9111,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:36'),
+(9112,'GET','/api/v1/topics','api.v1.topics.index',200,12,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:36'),
+(9113,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:37'),
+(9114,'GET','/api/v1/cities','api.v1.cities.index',200,11,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:37'),
+(9115,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,38,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9116,'GET','/api/v1/meetings','api.v1.meetings.index',200,139,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9117,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9118,'GET','/api/v1/groups','api.v1.groups.index',200,184,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9119,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9120,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,65,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:38'),
+(9121,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:40'),
+(9122,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:41'),
+(9123,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:43'),
+(9124,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'196.136.146.238',NULL,'okhttp/4.9.2','2026-10-13 13:12:43'),
+(9125,'GET','/api/v1/jft','api.v1.jft',200,17,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:58'),
+(9126,'GET','/api/v1/stats','api.v1.stats',200,25,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:58'),
+(9127,'GET','/api/v1/home','api.v1.home',200,30,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:58'),
+(9128,'GET','/api/v1/home','api.v1.home',200,27,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:58'),
+(9129,'GET','/api/v1/meetings','api.v1.meetings.index',200,130,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9130,'GET','/api/v1/cities','api.v1.cities.index',200,11,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9131,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,18,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9132,'GET','/api/v1/events','api.v1.events.index',200,13,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9133,'GET','/api/v1/groups','api.v1.groups.index',200,141,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9134,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:58:59'),
+(9135,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:00'),
+(9136,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:00'),
+(9137,'GET','/api/v1/days','api.v1.days.index',200,12,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:00'),
+(9138,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:00'),
+(9139,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9140,'GET','/api/v1/cities','api.v1.cities.index',200,17,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9141,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,31,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9142,'GET','/api/v1/groups','api.v1.groups.index',200,151,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9143,'GET','/api/v1/meetings','api.v1.meetings.index',200,184,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9144,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,83,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9145,'GET','/api/v1/options','api.v1.options.index',200,6,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9146,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:01'),
+(9147,'GET','/api/v1/days','api.v1.days.index',200,8,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:04'),
+(9148,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:05'),
+(9149,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 14:59:05'),
+(9150,'GET','/api/v1/jft','api.v1.jft',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9151,'GET','/api/v1/home','api.v1.home',200,10,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9152,'GET','/api/v1/stats','api.v1.stats',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9153,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9154,'GET','/api/v1/meetings','api.v1.meetings.index',200,124,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9155,'GET','/api/v1/groups','api.v1.groups.index',200,154,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9156,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9157,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,14,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:01'),
+(9158,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9159,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9160,'GET','/api/v1/days','api.v1.days.index',200,15,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9161,'GET','/api/v1/options','api.v1.options.index',200,15,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9162,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9163,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9164,'GET','/api/v1/cities','api.v1.cities.index',200,10,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9165,'GET','/api/v1/meetings','api.v1.meetings.index',200,118,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9166,'GET','/api/v1/groups','api.v1.groups.index',200,145,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:03'),
+(9167,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:04'),
+(9168,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,13,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:04'),
+(9169,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9170,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,71,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9171,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9172,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9173,'GET','/api/v1/options','api.v1.options.index',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9174,'GET','/api/v1/stats','api.v1.stats',200,7,'android',NULL,NULL,'105.92.195.177',NULL,'okhttp/4.9.2','2026-10-13 15:02:05'),
+(9175,'GET','/api/v1/stats','api.v1.stats',200,14,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:04'),
+(9176,'GET','/api/v1/jft','api.v1.jft',200,14,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:04'),
+(9177,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:04'),
+(9178,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:04'),
+(9179,'GET','/api/v1/meetings','api.v1.meetings.index',200,117,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:04'),
+(9180,'GET','/api/v1/events','api.v1.events.index',200,11,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9181,'GET','/api/v1/groups','api.v1.groups.index',200,154,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9182,'GET','/api/v1/cities','api.v1.cities.index',200,20,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9183,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,26,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9184,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9185,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,60,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9186,'GET','/api/v1/days','api.v1.days.index',200,17,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9187,'GET','/api/v1/options','api.v1.options.index',200,20,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9188,'GET','/api/v1/home','api.v1.home',200,5,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:05'),
+(9189,'GET','/api/v1/meetings','api.v1.meetings.index',200,121,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:06'),
+(9190,'GET','/api/v1/groups','api.v1.groups.index',200,131,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:06'),
+(9191,'GET','/api/v1/cities','api.v1.cities.index',200,10,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:06'),
+(9192,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:06'),
+(9193,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:06'),
+(9194,'GET','/api/v1/options','api.v1.options.index',200,9,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9195,'GET','/api/v1/topics','api.v1.topics.index',200,15,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9196,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9197,'GET','/api/v1/days','api.v1.days.index',200,7,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9198,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,69,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9199,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:07'),
+(9200,'GET','/api/v1/helpline-calls/schema','api.v1.helpline-calls.schema',200,8,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:17:51'),
+(9201,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,18,'android',NULL,NULL,'102.62.23.72',NULL,'okhttp/4.9.2','2026-10-13 15:18:33'),
+(9202,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:24'),
+(9203,'GET','/api/v1/home','api.v1.home',200,24,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:24'),
+(9204,'GET','/api/v1/jft','api.v1.jft',200,17,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:24'),
+(9205,'GET','/api/v1/stats','api.v1.stats',200,19,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:24'),
+(9206,'GET','/api/v1/meetings','api.v1.meetings.index',200,125,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:24'),
+(9207,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:25'),
+(9208,'GET','/api/v1/groups','api.v1.groups.index',200,140,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:25'),
+(9209,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,17,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:25'),
+(9210,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:25'),
+(9211,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,65,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:26'),
+(9212,'GET','/api/v1/options','api.v1.options.index',200,8,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:27'),
+(9213,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:27'),
+(9214,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:28'),
+(9215,'GET','/api/v1/home','api.v1.home',200,7,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:29'),
+(9216,'GET','/api/v1/meetings','api.v1.meetings.index',200,112,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:29'),
+(9217,'GET','/api/v1/events','api.v1.events.index',200,16,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:29'),
+(9218,'GET','/api/v1/cities','api.v1.cities.index',200,14,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:29'),
+(9219,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,24,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:29'),
+(9220,'GET','/api/v1/groups','api.v1.groups.index',200,140,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:30'),
+(9221,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:31'),
+(9222,'GET','/api/v1/options','api.v1.options.index',200,17,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:31'),
+(9223,'GET','/api/v1/days','api.v1.days.index',200,10,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:31'),
+(9224,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,67,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:31'),
+(9225,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:32'),
+(9226,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'196.128.176.95',NULL,'okhttp/4.9.2','2026-10-13 15:54:32'),
+(9227,'GET','/api/v1/jft','api.v1.jft',200,7,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9228,'GET','/api/v1/stats','api.v1.stats',200,19,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9229,'GET','/api/v1/home','api.v1.home',200,17,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9230,'GET','/api/v1/home','api.v1.home',200,19,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9231,'GET','/api/v1/meetings','api.v1.meetings.index',200,112,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9232,'GET','/api/v1/events','api.v1.events.index',200,18,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9233,'GET','/api/v1/cities','api.v1.cities.index',200,22,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9234,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,29,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9235,'GET','/api/v1/groups','api.v1.groups.index',200,140,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:17'),
+(9236,'GET','/api/v1/home','api.v1.home',200,13,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:18'),
+(9237,'GET','/api/v1/options','api.v1.options.index',200,22,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:18'),
+(9238,'GET','/api/v1/days','api.v1.days.index',200,21,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:18'),
+(9239,'GET','/api/v1/topics','api.v1.topics.index',200,20,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:18'),
+(9240,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,77,'android',NULL,NULL,'105.180.9.18',NULL,'okhttp/4.9.2','2026-10-13 15:57:18'),
+(9241,'GET','/api/v1/jft','api.v1.jft',200,11,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9242,'GET','/api/v1/home','api.v1.home',200,24,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9243,'GET','/api/v1/stats','api.v1.stats',200,19,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9244,'GET','/api/v1/home','api.v1.home',200,33,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9245,'GET','/api/v1/meetings','api.v1.meetings.index',200,129,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9246,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,14,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9247,'GET','/api/v1/cities','api.v1.cities.index',200,9,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9248,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9249,'GET','/api/v1/groups','api.v1.groups.index',200,170,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9250,'GET','/api/v1/topics','api.v1.topics.index',200,11,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:35'),
+(9251,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9252,'GET','/api/v1/options','api.v1.options.index',200,14,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9253,'GET','/api/v1/days','api.v1.days.index',200,17,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9254,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,66,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9255,'GET','/api/v1/cities','api.v1.cities.index',200,16,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9256,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,24,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9257,'GET','/api/v1/meetings','api.v1.meetings.index',200,151,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9258,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9259,'GET','/api/v1/groups','api.v1.groups.index',200,148,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9260,'GET','/api/v1/topics','api.v1.topics.index',200,7,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9261,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,58,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9262,'GET','/api/v1/options','api.v1.options.index',200,11,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:36'),
+(9263,'GET','/api/v1/stats','api.v1.stats',200,10,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:37'),
+(9264,'GET','/api/v1/home','api.v1.home',200,8,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:37'),
+(9265,'GET','/api/v1/days','api.v1.days.index',200,9,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:48:37'),
+(9266,'GET','/api/v1/helpline-calls/schema','api.v1.helpline-calls.schema',200,7,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:53:58'),
+(9267,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,18,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:55:09'),
+(9268,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,17,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:56:35'),
+(9269,'POST','/api/v1/helpline-calls','api.v1.helpline-calls.store',201,17,'android',NULL,NULL,'41.43.140.183',NULL,'okhttp/4.9.2','2026-10-13 16:57:44'),
+(9270,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:22:36'),
+(9271,'GET','/api/v1/jft','api.v1.jft',200,8,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:25:50'),
+(9272,'GET','/api/v1/cities','api.v1.cities.index',200,19,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9273,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9274,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,19,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9275,'GET','/api/v1/meetings','api.v1.meetings.index',200,159,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9276,'GET','/api/v1/groups','api.v1.groups.index',200,153,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9277,'GET','/api/v1/options','api.v1.options.index',200,11,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9278,'GET','/api/v1/topics','api.v1.topics.index',200,9,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9279,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,74,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:48'),
+(9280,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9281,'GET','/api/v1/days','api.v1.days.index',200,13,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9282,'GET','/api/v1/events','api.v1.events.index',200,7,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9283,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,68,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9284,'GET','/api/v1/home','api.v1.home',200,9,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9285,'GET','/api/v1/events','api.v1.events.index',200,6,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9286,'GET','/api/v1/home','api.v1.home',200,6,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9287,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,86,'android',NULL,NULL,'45.96.62.32',NULL,'okhttp/4.9.2','2026-10-13 17:26:49'),
+(9288,'GET','/api/v1/jft','api.v1.jft',200,19,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9289,'GET','/api/v1/stats','api.v1.stats',200,18,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9290,'GET','/api/v1/home','api.v1.home',200,22,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9291,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9292,'GET','/api/v1/meetings','api.v1.meetings.index',200,117,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9293,'GET','/api/v1/cities','api.v1.cities.index',200,13,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9294,'GET','/api/v1/groups','api.v1.groups.index',200,155,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9295,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,21,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:01'),
+(9296,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9297,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,62,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9298,'GET','/api/v1/home','api.v1.home',200,14,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9299,'GET','/api/v1/topics','api.v1.topics.index',200,13,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9300,'GET','/api/v1/options','api.v1.options.index',200,13,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9301,'GET','/api/v1/days','api.v1.days.index',200,16,'android',NULL,NULL,'105.92.60.125',NULL,'okhttp/4.9.2','2026-10-13 17:52:02'),
+(9302,'GET','/api/v1/jft','api.v1.jft',200,11,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:18'),
+(9303,'GET','/api/v1/home','api.v1.home',200,20,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:18'),
+(9304,'GET','/api/v1/home','api.v1.home',200,21,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:18'),
+(9305,'GET','/api/v1/stats','api.v1.stats',200,13,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:18'),
+(9306,'GET','/api/v1/meetings','api.v1.meetings.index',200,120,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:18'),
+(9307,'GET','/api/v1/events','api.v1.events.index',200,12,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:19'),
+(9308,'GET','/api/v1/cities','api.v1.cities.index',200,18,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:19'),
+(9309,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,26,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:19'),
+(9310,'GET','/api/v1/groups','api.v1.groups.index',200,145,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:19'),
+(9311,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9312,'GET','/api/v1/home','api.v1.home',200,11,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9313,'GET','/api/v1/options','api.v1.options.index',200,15,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9314,'GET','/api/v1/days','api.v1.days.index',200,15,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9315,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,65,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9316,'GET','/api/v1/meetings','api.v1.meetings.index',200,114,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9317,'GET','/api/v1/neighborhoods','api.v1.neighborhoods.index',200,15,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9318,'GET','/api/v1/cities','api.v1.cities.index',200,12,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:20'),
+(9319,'GET','/api/v1/groups','api.v1.groups.index',200,148,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:21'),
+(9320,'GET','/api/v1/events','api.v1.events.index',200,8,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:21'),
+(9321,'GET','/api/v1/topics','api.v1.topics.index',200,10,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:21'),
+(9322,'GET','/api/v1/home','api.v1.home',200,12,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:22'),
+(9323,'GET','/api/v1/options','api.v1.options.index',200,15,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:22'),
+(9324,'GET','/api/v1/days','api.v1.days.index',200,15,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:22'),
+(9325,'GET','/api/v1/calendar-events','api.v1.calendar-events.index',200,63,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:22'),
+(9326,'GET','/api/v1/stats','api.v1.stats',200,8,'android',NULL,NULL,'105.94.212.140',NULL,'okhttp/4.9.2','2026-10-13 18:16:22');
 /*!40000 ALTER TABLE `api_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `apk_download_requests`;
@@ -9203,7 +9535,7 @@ CREATE TABLE `apk_download_requests` (
   UNIQUE KEY `apk_download_requests_token_unique` (`token`),
   KEY `apk_download_requests_email_index` (`email`),
   KEY `apk_download_requests_expires_at_index` (`expires_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `apk_download_requests` WRITE;
@@ -9328,7 +9660,11 @@ INSERT INTO `apk_download_requests` VALUES
 (117,'m7a3k5a@gmail.com','GZzmPjGIF2OFowqiFrioFejLPGo0w4RVXG1JHNZzZayrb8vISAijRsIJZmwFha3r','172.70.216.52','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36','2026-10-13 20:01:58',2,'2026-10-12 20:03:46','2026-10-12 20:01:58','2026-10-12 20:03:46'),
 (118,'basma.ssyed235@gmail.com','wfdfUwRv2WnylECc729CBskiwo5jGjAOug7RB2ORw6S01lhZJmBt6OZXepK2PGJY','172.68.234.155','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36','2026-10-13 20:38:11',3,'2026-10-12 20:40:33','2026-10-12 20:38:11','2026-10-12 20:40:33'),
 (119,'mohammedaamer1001@gmail.com','lqD0awKThPVSsPlnaHjC4lHTDQDcwIsFMMlTV2UO6PYDDpm3cIrz2jIc5TgfqTEe','172.70.108.165','Mozilla/5.0 (Linux; Android 16; 2409BRN2CA Build/BP2A.250605.031.A3) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/155.0.8059.34 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/582.0.0.50.54;IABMV/1;]','2026-10-13 20:49:57',0,NULL,'2026-10-12 20:49:57','2026-10-12 20:49:57'),
-(120,'lawyerm108@gmail.com','gGrisZav3NIaTZoOz3B6Ne3Wx3RfMKd6uo4k70GrF7YjOuKPJ9wUYp8EXB8rPRqm','172.68.234.155','Mozilla/5.0 (Linux; Android 8.1.0; CPH1803) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36','2026-10-13 22:46:50',1,'2026-10-12 22:54:55','2026-10-12 22:46:50','2026-10-12 22:54:55');
+(120,'lawyerm108@gmail.com','gGrisZav3NIaTZoOz3B6Ne3Wx3RfMKd6uo4k70GrF7YjOuKPJ9wUYp8EXB8rPRqm','172.68.234.155','Mozilla/5.0 (Linux; Android 8.1.0; CPH1803) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36','2026-10-13 22:46:50',2,'2026-10-12 23:03:28','2026-10-12 22:46:50','2026-10-12 23:03:28'),
+(121,'1faresallam1@gmail.com','WixcogLW2r7jYCLaadGTsB8SVdFoSQWNdAQReI3FtdFCCjMQfD2WXQm9aQ9qwATU','188.114.102.172','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36','2026-10-14 07:04:03',1,'2026-10-13 07:04:25','2026-10-13 07:04:03','2026-10-13 07:04:25'),
+(122,'saiedkabooo62@gmail.com','pGArO51LqcJ4KUf0OWSgl0bxU5LIqT8gjq00jeAv8DA2VyEx5WBKXjPiy8MxURuY','172.70.108.165','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36','2026-10-14 10:35:17',2,'2026-10-13 10:37:46','2026-10-13 10:35:17','2026-10-13 10:37:46'),
+(123,'yousseflolo0155@gmail.com','iquD8nQj2EYzJI484nDz4S4CNTi58F3irnJ3lSKZZNXFsgoSZFhZgBXdLLasfyNS','172.69.68.50','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36','2026-10-14 16:18:03',2,'2026-10-13 16:19:43','2026-10-13 16:18:03','2026-10-13 16:19:43'),
+(124,'medjhamada74@gmail.com','Mn4SsuFoCFbuNo6AfzOnudDdTvKSrbXgIdUnIVLTLELSMVpbMK879RH244FdXyj0','104.22.83.24','Mozilla/5.0 (Linux; Android 11; SM-M115F Build/RP1A.200720.012) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/153.0.8010.36 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/578.0.0.40.75;IABMV/1;]','2026-10-14 19:39:48',0,NULL,'2026-10-13 19:39:48','2026-10-13 19:39:48');
 /*!40000 ALTER TABLE `apk_download_requests` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `cache`;
@@ -10633,7 +10969,7 @@ CREATE TABLE `helpline_calls` (
   KEY `helpline_calls_caller_type_index` (`caller_type`),
   KEY `helpline_calls_referral_source_index` (`referral_source`),
   CONSTRAINT `helpline_calls_volunteer_id_foreign` FOREIGN KEY (`volunteer_id`) REFERENCES `helpline_volunteers` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `helpline_calls` WRITE;
@@ -10850,7 +11186,17 @@ INSERT INTO `helpline_calls` VALUES
 (212,'less_than_5','2026-10-12','6:00 PM - 8:00 PM','أعضاء محتملة',NULL,'Facebook',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو محتمل كان بيحضر زمان وبيسال إن كان ده رقم صندوق المكافحة رحبت بيه وعرفته بينا والاجتماعات قال إنه عارف الاجتماعات وكان بيحضر بس هوا عنده مشكله مع نوع دوا وعايز يبطله اقترحت عليه يحضر معانا وقالي هاحضر',0,NULL,'2026-10-12 15:23:54','2026-10-12 15:23:54','2026-10-12 15:23:54'),
 (213,'less_than_5','2026-10-12','6:00 PM - 8:00 PM','أعضاء محتملة',NULL,'الموقع الالكتروني',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو محتمل اول مرة يحضر جاب الرقم من علي جوجل بيسال عن اجتماعات في المعادي عرفته المواعيد والعنوان واديته رقم ممثل المجموعة',0,NULL,'2026-10-12 15:54:17','2026-10-12 15:54:17','2026-10-12 15:54:17'),
 (214,'less_than_5','2026-10-12','10:00 PM - 12:00 AM','أعضاء محتملة',NULL,'الموقع الالكتروني',NULL,NULL,NULL,5,'عبد الرحمن ي',NULL,0,'عضو محتمل من أسيوط رحبت بيه وعرفته بينا ووجهته علي مجموعة اسيوط',0,NULL,'2026-10-12 20:11:28','2026-10-12 20:11:28','2026-10-12 20:11:28'),
-(215,'less_than_5','2026-10-12','10:00 PM - 12:00 AM','أعضاء محتملة',NULL,'Facebook',NULL,NULL,NULL,5,'عبد الرحمن ي',NULL,0,'عضو محتمل من الخانكه رحبت بيه وعرفته بينا ووجهته علي مجموعة المرج',0,NULL,'2026-10-12 20:23:34','2026-10-12 20:23:34','2026-10-12 20:23:34');
+(215,'less_than_5','2026-10-12','10:00 PM - 12:00 AM','أعضاء محتملة',NULL,'Facebook',NULL,NULL,NULL,5,'عبد الرحمن ي',NULL,0,'عضو محتمل من الخانكه رحبت بيه وعرفته بينا ووجهته علي مجموعة المرج',0,NULL,'2026-10-12 20:23:34','2026-10-12 20:23:34','2026-10-12 20:23:34'),
+(216,'less_than_5','2026-10-13','12:00 PM - 2:00 PM','بيانات اجتماعات',NULL,'عضو حالي',NULL,NULL,NULL,8,'عبد الرحمن ب',NULL,0,'عضوة حالية بتسال عن اجتماعات الرحلة مستمرة شيراتون وتمت الافادة',0,NULL,'2026-10-13 10:38:35','2026-10-13 10:38:35','2026-10-13 10:38:35'),
+(217,'less_than_5','2026-10-13','2:00 PM - 4:00 PM','عضو حالي',NULL,'بحث جوجل',NULL,NULL,NULL,6,'هاني ج',NULL,0,'بيانات مجموعة المرج',0,NULL,'2026-10-13 12:52:40','2026-10-13 12:52:40','2026-10-13 12:52:40'),
+(218,'more_than_5','2026-10-13','2:00 PM - 4:00 PM','أعضاء محتملة',NULL,'بحث جوجل',NULL,NULL,NULL,6,'هاني ج',NULL,1,'من السويس ومش عارف يعمل ايه عشان يبطل ويرغب في مكالمة مطولة تم التحويل لمتطوع خطوة ١٢',0,NULL,'2026-10-13 13:07:05','2026-10-13 13:07:05','2026-10-13 13:07:05'),
+(219,'less_than_5','2026-10-13','4:00 PM - 6:00 PM','أعضاء محتملة',NULL,'ChatGPT',NULL,NULL,NULL,7,'هيثم',NULL,0,'عضو لسة طالع من مكان و عايز يحضر في شيراتون ، رحبت بيه وعرفته بينا وماهو البرنامج و اديته تفاصيل الاوضة',0,NULL,'2026-10-13 14:24:49','2026-10-13 14:24:49','2026-10-13 14:24:49'),
+(220,'less_than_5','2026-10-13','4:00 PM - 6:00 PM','أعضاء محتملة',NULL,'YouTube',NULL,NULL,NULL,7,'هيثم',NULL,0,'عضو محتمل لسة طالع من مكان و عايز يحضر في فيصل ، رحبت بيه و عرفته بينا و ازاي بنبطل و اديته تفاصيل ااقرب اوضة ليه الهرم',0,NULL,'2026-10-13 14:25:58','2026-10-13 14:25:58','2026-10-13 14:25:58'),
+(221,'less_than_5','2026-10-13','6:00 PM - 8:00 PM','عضو حالي',NULL,'بحث جوجل',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو حالي بيسال عن مواعيد اجتماع السكينة',0,NULL,'2026-10-13 15:18:33','2026-10-13 15:18:33','2026-10-13 15:18:33'),
+(222,'less_than_5','2026-10-13','6:00 PM - 8:00 PM','أعضاء محتملة',NULL,'صديق',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو محتمل عايز يحضر اجتماع اون لاين  وحولت رقمه لرئيس المجموعه لصعوبه شرح المعلومه للعضو',0,NULL,'2026-10-13 16:55:09','2026-10-13 16:55:09','2026-10-13 16:55:09'),
+(223,'less_than_5','2026-10-13','6:00 PM - 8:00 PM','أعضاء محتملة',NULL,'صانع محتوى',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو محتمل ممتنع من ١٢ يوم وحابب يحضر اول اجتماع في مجموعه الهرم رحبت بيه ووضحتله الميعاد والعنوان',0,NULL,'2026-10-13 16:56:35','2026-10-13 16:56:35','2026-10-13 16:56:35'),
+(224,'less_than_5','2026-10-13','6:00 PM - 8:00 PM','عضو حالي',NULL,'مكان علاجي',NULL,NULL,NULL,4,'خالد إينو',NULL,0,'عضو حالي عايز يحضر اجتماع وسأل لو في اجتماع في كرداسه وضحتله أن اقرب اجتماع ليه في الهرم واديته مكان وميعاد الاجتماع',0,NULL,'2026-10-13 16:57:44','2026-10-13 16:57:44','2026-10-13 16:57:44'),
+(225,'less_than_5','2026-10-12','8:00 PM - 10:00 PM','أهالي وأقارب المدمنين',NULL,'عضو حالي',NULL,NULL,NULL,3,'إيهاب',NULL,0,'اخت لعضو منتكس حاليا وعايزة تحضر علشان عندها مشكلة مع السجاير عرفتها أننا للامتناع التام عن أي مادة مغيرة للمذاج والساجير مش كدة ويقترح عليكي تدوري على حل لمشكلتك على الانترنت وصممت وقالتلي عايزة اروح علشان اخويا اديتها بيانات اليوم المفتوح في اكتوبر واكدت عليها أن حل مشكلتها مش عندنا مش هتلاقي خبرات أو تجارب لمشكلتها',0,NULL,'2026-10-13 18:14:55','2026-10-13 18:14:55','2026-10-13 18:14:55');
 /*!40000 ALTER TABLE `helpline_calls` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `helpline_volunteers`;
@@ -13405,7 +13751,7 @@ CREATE TABLE `subscribers` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `subscribers_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=1403 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1406 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `subscribers` WRITE;
@@ -14810,7 +15156,10 @@ INSERT INTO `subscribers` VALUES
 (1399,'ahmedelfeky587@gmail.com','2026-10-11 22:13:09','2026-10-11 22:13:09',NULL,NULL),
 (1400,'ahmedmsoliman24@gmail.com','2026-10-12 12:49:40','2026-10-12 12:49:40',NULL,NULL),
 (1401,'w.s.d.o4.png.uyen.ev.an@gmail.com','2026-10-12 15:25:25','2026-10-12 15:25:25',NULL,NULL),
-(1402,'abdoashrafmahfouz@gmail.com','2026-10-12 21:51:54','2026-10-12 21:51:54',NULL,NULL);
+(1402,'abdoashrafmahfouz@gmail.com','2026-10-12 21:51:54','2026-10-12 21:51:54',NULL,NULL),
+(1403,'hhemahhema24@gmail.com','2026-10-13 10:05:16','2026-10-13 10:05:16',NULL,NULL),
+(1404,'3819882020mmmm@gmail.com','2026-10-13 20:05:56','2026-10-13 20:05:56',NULL,NULL),
+(1405,'drgehad2014@gmail.com','2026-10-13 22:56:37','2026-10-13 22:56:37',NULL,NULL);
 /*!40000 ALTER TABLE `subscribers` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `topics`;
@@ -14877,7 +15226,7 @@ CREATE TABLE `transactions` (
   KEY `transactions_user_id_foreign` (`user_id`),
   CONSTRAINT `transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `transactions_chk_1` CHECK (json_valid(`details`))
-) ENGINE=InnoDB AUTO_INCREMENT=2388 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2395 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `transactions` WRITE;
@@ -16890,7 +17239,14 @@ INSERT INTO `transactions` VALUES
 (2384,'Meeting','delete','{\"id\":276,\"notes\":\"\\u0627\\u0644\\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0627\\u0644\\u0645\\u0641\\u062a\\u0648\\u062d \\u062a\\u0627\\u0646\\u064a \\u062e\\u0645\\u064a\\u0633 \\u0645\\u0646 \\u0643\\u0644 \\u0634\\u0647\\u0631 \\r\\n\\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0639\\u0645\\u0644 \\u0627\\u0644\\u0645\\u062c\\u0645\\u0648\\u0639\\u0647 \\u062a\\u0627\\u0646\\u064a \\u062e\\u0645\\u064a\\u0633  \\u0627\\u0644\\u0633\\u0627\\u0639\\u0647 9:15\",\"start_time\":\"20:00\",\"end_time\":\"21:00\",\"type\":\"closed\",\"group_id\":224,\"topic_id\":6,\"day_id\":6,\"created_at\":\"2026-03-20 21:50:40\",\"updated_at\":\"2026-09-16 13:10:42\",\"lang\":\"arabic\",\"status\":\"suspended\",\"recurrence\":\"[\\\"weekly\\\"]\",\"direct_online_group_id\":null}','{\"id\":276,\"notes\":\"\\u0627\\u0644\\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0627\\u0644\\u0645\\u0641\\u062a\\u0648\\u062d \\u062a\\u0627\\u0646\\u064a \\u062e\\u0645\\u064a\\u0633 \\u0645\\u0646 \\u0643\\u0644 \\u0634\\u0647\\u0631 \\r\\n\\u0627\\u062c\\u062a\\u0645\\u0627\\u0639 \\u0639\\u0645\\u0644 \\u0627\\u0644\\u0645\\u062c\\u0645\\u0648\\u0639\\u0647 \\u062a\\u0627\\u0646\\u064a \\u062e\\u0645\\u064a\\u0633  \\u0627\\u0644\\u0633\\u0627\\u0639\\u0647 9:15\",\"start_time\":\"20:00\",\"end_time\":\"21:00\",\"type\":\"closed\",\"group_id\":224,\"topic_id\":6,\"day_id\":6,\"created_at\":\"2026-03-20 21:50:40\",\"updated_at\":\"2026-09-16 13:10:42\",\"lang\":\"arabic\",\"status\":\"suspended\",\"recurrence\":\"[\\\"weekly\\\"]\",\"direct_online_group_id\":null}',NULL,'154.177.178.116','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36','https://naegypt.org/ar/meeting/276',107,'2026-10-12 17:02:28','2026-10-12 17:02:28'),
 (2385,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'172.69.194.97','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36','https://www.naegypt.org/ar/export-meetings-pdf',NULL,'2026-10-12 17:20:41','2026-10-12 17:20:41'),
 (2386,'User','update','{\"last_login_at\":\"2026-10-12 22:00:20\"}','{\"last_login_at\":\"2026-10-11 05:33:35\"}','{\"last_login_at\":\"2026-10-12 22:00:20\"}','196.132.10.128','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAACCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAGWaKXLdOBQ9baxBPXa-28gAa2z2he_edlNlU7IW_1O8BAe7NBOQe3y-WZZPj2XILoWYGxcQVrWbsSgJ4uzGG62XsV-nnI_QbtivIFbCkGwfbeWqyiPSQAD3TL3_Jd8yPYSu7oCkr_Dmvn_8SoFB5BiJEnC22tRzi0FXIhjotaCDB6okKe9Mdt09DPpQD5jOA4aEULS42oqK0VYsxY3GaEll__ISLJmNGKHrFHM7TQSitcMzz6eYw-C6ysHzIdtCh9x14BPhaUk1zftD6eIoZt--GIffe7J3yFgd6b8mWxck0gc_RF5cqvhPH6fsyW_vuDqEWxa3qRIjcGEHMg_qaIERh9xPYv9wyDrsSulnPK938PQuUVZVI_sM3y07TTxhV5NEuG3ccgTAFs3RyEH3DMZ9RlqG-FzlIfaES6DqxADpzZToGut5ZR2uGzH97eQNeaicHPXBpQE9gimLfvMmas1RKiSVg631tfwLwTtkNJtVCYMfdqff9CJgh0zGCMoX8aeW8JC6cfrrmziJGu66bFN_193Qs-66-lqSFfmi65zf8obvOgyHuMJAYQ7yUBGipVF2rZnfhE6ctcdIlJ7xhH9Lnjb34nXAuiIafZScajok-FujkO9Vz1Ng_j5hErRgec4kC278kYMVWVutIcW1bU7X6ABOlnSzh68DquddDKJaAgDzp8MPQPukjkeWLNKrEyNgIKUJxfTixajrHne0jE1ZCsZq8B8LXOs-Bw9nlCCGsR3WQIa1Cgo8d41OSVHuz0AeF7w3-5Y2MBUewifKAK9yecQkUb9EuAb1SJsdgXdNK7YVathmvsYik5spQ2JONck0ruMhlvef-D-oTUGqVvz57pYswZFrVqSs3RkiR-auaFBNjMKqeU6aIaWNHSGx9KmEIWmMB4muONzu5fQp5gEzhmHxOx2OWGg_Ubw54sng35_conCskUSWNskVhxW8cgCW03eGEtMySYUmYOEj0szjIhIdLTpIKePszEfhAxr46C1JT4Qg6cyQPM4v2mMShTzn6XdqcG_2gvUr_59z-nzYS1P2GBFD5nIrNx1-HUom8D9-XCpqSJ3qKwTb7GKfRETxHbfPL8iH4Y_oLrseoPp-YODSpshd1adE5FMAxCUxSHhuBa53kMFufoIkfJ4NPz7HXlzdnYwInH6-TKCUL8YX7BN4Zf0SatXA1h4YXNflAiJS4c0&session_state=009a732a-7d66-52d9-2841-df5259d53fae',401,'2026-10-12 19:00:20','2026-10-12 19:00:20'),
-(2387,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'45.134.225.16','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','https://naegypt.org/ar/export-meetings-pdf',NULL,'2026-10-12 20:04:55','2026-10-12 20:04:55');
+(2387,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'45.134.225.16','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36','https://naegypt.org/ar/export-meetings-pdf',NULL,'2026-10-12 20:04:55','2026-10-12 20:04:55'),
+(2388,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'162.158.23.199','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36','https://www.naegypt.org/en/export-meetings-pdf',NULL,'2026-10-13 00:49:25','2026-10-13 00:49:25'),
+(2389,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'172.70.108.165','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36','https://www.naegypt.org/en/export-meetings-pdf',NULL,'2026-10-13 00:51:10','2026-10-13 00:51:10'),
+(2390,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'156.204.255.151','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36','https://naegypt.org/en/export-meetings-pdf',NULL,'2026-10-13 00:52:09','2026-10-13 00:52:09'),
+(2391,'PDF','download','{\"type\":\"meetings_pdf\"}',NULL,NULL,'162.158.63.100','Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36','https://new.naegypt.org/en/export-meetings-pdf',NULL,'2026-10-13 12:02:13','2026-10-13 12:02:13'),
+(2392,'User','update','{\"last_login_at\":\"2026-10-13 21:30:56\"}','{\"last_login_at\":\"2026-09-21 18:48:29\"}','{\"last_login_at\":\"2026-10-13 21:30:56\"}','102.11.217.213','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAEaCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAANp4dHIxeV-ZFknrX26YFJ1j9CSH7mY0RaJLkN3FRtYQXQvpvkTHyiaXLGZSUT9DxxG7J2GZfUpJABapcCt9asmr24SdeuWC81q0fkq3JViEmHBC7iVDv3K8dON10K-Rqvn9rIrHW-lpQZ2uw1MaVqWHcHqgyjwbfRpp9kz_2oAhceObI6I683JNQVwbdYVKT3VgYm0fbDVbufTcd8cAxYbbL8IKpfCg1fJwUhyW677AxPf8AUkrmDibkEEddcr0t06icP5R7tpRvFFVlLjcrPJFxwvnmks8vI3BkmLrRCBRIewL9SynCr1VtjYD3oVSXkT1yykUAiXhd6p9Yu4Y-1LdFUxjgziEkjfa5yF8lmzO2XKSvMsc3J84V1TAfHVkl-cVUFfyl7QliHcv_jdiPDDUNVcQbk-Wza0uRGuTvnQ7yFmmud83wWzUDW-pI6l1Cfcxy21PsErqIWb6tHKb5H6C0WkmETsSEj23DmM1VKjB4-bQRJUvQx2T6uu_FE9pJgjqWg1tE4AMd9DY7gIoLWS7jgU_d8KG068Tr19ueSgvttSqIlHoevG93Y2LJwepddYfuxpHp2-8tzl2NQzVldpvjGjvbQuR3KfbvXYQpTBJVoFrHCN3bf90TiYpRoZm1mu5RiOTLtwvlG4Jwxlxs93Om0zd-OoIq37swsQwiIyhlPYIWSUtrE8IWeXBLyL2xfFx56Ur1sHL2039lz-2I_1j28jvVBaUm92tDqFJ7ffldqZUn8JuJBgyfU70xOc_yuAi0svBuIfB1CGNEdcNZuJHPNb4hs5deQ26epobxUP3vGGl8JXd8truw55jO428fyJByxnqdZkEnp-DgjWgu1PJ0khzZv1LJiMDWdE9wp2kyhyVoJWGAAQ-fG8KYyOowU3j6W5ASBOlFtQxUm0zw2gU5rR2amLUF5KtSlpGulnZ6yhn6y-8bzsykmtcT9J8SUpJ3TuxK1xoxKHoXcIujjIot3RfifgIARiEcCrjE-CbDGIbFCsv6nXVw3wSuUSYm8mlf0iIfsKY69KcSFSzuk400Ks_AaodwptdZs3PLQjfOVL8tj1YkUWm7HKW1ugAf0rSetG_F_ahKZRERVJtOPgfR0JEbA9yzopVXry0gTctl2sbZlhy3Uw7wqJ1-rVzrSlmEAh5Jf1AYININZIc6uaGWWLHyEQQJh-wnbmg42bP4qe5H8M2jBFW3xq6OicKI05wtmNR-A&session_state=006d219a-2aa7-d7a8-bd98-644c2d6ce84b',129,'2026-10-13 18:30:56','2026-10-13 18:30:56'),
+(2393,'User','update','{\"last_login_at\":\"2026-10-13 22:02:54\"}','{\"last_login_at\":\"2026-10-08 12:19:56\"}','{\"last_login_at\":\"2026-10-13 22:02:54\"}','105.40.170.66','Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Mobile Safari/537.36','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgaDAE-CAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAANg6vqVwnl5xRtFPrrh-Pfnl8BbcRvMmv1GULIi3E2BKd4nK5b6oIPaQCFhrsfNOyOQZZZpxEDCKkGTtkQPxwIXbQD17nzEe2nssKZ0FT-qvDErdHE8hFGkFgYsW4jRFOHWNIFg39gktbPc8Z7LpfZTsQm6ppX8MKQluFWo-aZVutQGckCGX8GeY946OHTcQ3eVK_CVNxVjBx3GUi_Do3QB-X2LMZXAr_O9W6_VjnC-mCc-be0L5Eh0VtgBnsKi4IHyhj8HIThw4NfXGgHQAxUsABmo-R_zB8ZM5WmDzTvDerokkZHW6gTzNBbMEfMBaDUL9ripyH7G-oAMwPlIVsFNAxPXqzhPsEJ5n4_rhgB_MuxahXOTiQhNF5rML-CdScyIAzIqKfEFSkpcoayr7L20slcCca6-lgq8k4h_z4wXjQcYTgueV4iZuWF3cm1JpsOPhJhEkN-sV2lp0ygfp33D5GkWv81oVjczPvLeeGLssJE7dKGe5FqPTF2ZsbLIHmqkiAfgNxGfYlH4RO_NTNWqohLmR7ExLvp_UDuZYGa1BxkuQeUdA6jRW-GO1zPrUQIyzbqdh3-1qlyrP3jDn4m0Nc2OZzT7SsTAIstimuvrRamJH_T2qs4yKuBB9q9AKQiHbCpem9-NjP5m64fNdBPlvv4uAAyYgzjMVh_znX7zgmYeQypgqxL4rla7x-jDygw9n_mZh2FXeT0yVblZtYjaOauBcU8KSDtB1N3qnb0LO1GAGv85nKt3lGRdAnlbrjxh67hReVM6HOH1Anobf9D2qT1gjcP18K222Ud2A9WI-42W3RgpspuEQ1VLRC_N-LaLpopRf4zgsAQ7mqCavEb3uZRNjH-xbjUZqzdhmHP5qCdnbwAhtj_2uhswWXSNjrZoDE8LDY--dccze6xoHrfTM8m7LD8tX3PFc_VLzDav_NhVFLOiCKZi1FhKwl8owgdfZTMgTiWIyD4YozVjMYCCiEKDfdIuXQPSU7BPamtr0THswAcUBHB_uD82x7WX51ouqlAchBc544UHgTe22g5m8dMLG719--Z-hj9K1rQwEM4ZWIHJsp5Tzuaft9AGub8d6D84d4MGUyWWTZoLxrkNdzrkzxMyG1UzleB6tm3oBVQ-7c4MDNHchIrHDaSj00v9koS4xeM-MDYsj-Mf75cZC&session_state=009a9a3a-4161-a968-4dae-3e0c51589a64',183,'2026-10-13 19:02:54','2026-10-13 19:02:54'),
+(2394,'User','update','{\"last_login_at\":\"2026-10-14 00:15:19\"}','{\"last_login_at\":null}','{\"last_login_at\":\"2026-10-14 00:15:19\"}','41.233.228.12','Mozilla/5.0 (iPhone; CPU iPhone OS 26_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/155.0.8059.24 Mobile/15E148 Safari/604.1','https://naegypt.org/login/microsoft/callback?code=1.AYIAnqqLR15xy0ets2DNKHNJyiraPDoZC9lFl7mDXX40mgYAAACCAA.BQABBAIAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAJqJtz0UyPXuvJtTZOOycnon0JLjRi1Xl60yCt0DzTZDmguJRTtzJbvfmjiH5DY14Yyb0elHjGsLoNH6VdTao0vTci8LNQX4hY4IKtPU4Y27jl8Te2e1iYOCdxztBlbJJpbuu_i95J3GA2DJGL5hplghLYXW9ioRNFqgIoHcITWxMYwY5HmXpj6MOcHT7gK7GYK_HO4f10qxnbrU8axyZ97Ed-qPtFHEe6cR7Lcis1pagYsxlgewqtH-Vkj5kgNjjha-n_oxwXnU4DzqIu-YD751VkdcQPOuDQOhMVMlDlCiJdRw0-yL-jLcfhLcT4xkrqEU4fPlaxYz3lFKp7q4sWvltF2MIMXGFj6SG4jFadm-7EWFH_zG1VrFbyKPsxKGMbEQQ_YnH58NbakJfhWkU7rkZdSf6rANFmaMH04gLVrb-Ai_YpVNlgdyA2PYAhW0F6mtrorxGADaAB6Fmo7sc4CzNTnT3Hfx19NQgzbjEXXysvUqCiVDh2Y9IcGzV38K8ad846pjo-mumD4PZWE2yKii1RBE6jPsvwLBuLfMiHEoEBSl25ebDvpXfuO8oqFyb-eRjdZVEF-D_cxUlDLBlY8pxaY8-oUMILBpLfolE0-sT5YCmoIZw753tOwgwvsZPxILFMyyk_8bYtFT9R9L-dIsrV8JHTw7e9IKt0pl4PsXBIeR1ybugjgbDC9KTbs4DdOv0PWfaORKPC5od9LYzRjb2GCCJWbOOH88guCY8izkOPr3R7zsKKiABiwJnLGzF33TKH8-P-NA1iQoTH61qrtsSsdP8Qc_hvXs5Y1Og0hCaOxkDu_QFk86q0R9Gk3Hk9vUve5y7B-q2HXefB6MIkzning1iiOp-Cl4-fFN__ZU0UMAasqKLePHA0mUTWxBQs0X3okyVSviZvyZ6JSyaqG_sdn7vxKAHQGYYBp0wrhJk0J3L34QLOlxoJv7sSnshnkT4Psp6XilYB5AxsrNLjJ1TQKwtlVFILq9gGW3VlWGgQKeEtZ_VgY3mmFOKsrkdvTGUZICdpZUoONt7FnqK-oHfvypwdoxV9BJtas0WVrBkmtxiF4WqYrGSOHYK9UV1EfrijRSQy3pensA0GJ2qFLOdLW00l9suY4eQcrGndNUGocf2r9GaiCgYoyssknaCwKS7utQliR8IJZ5BkolvVwGLSPFEXH_wD-Y9sd6aXGVAGrAWBGiSpxmI92Z1Gc35OzJAmeNMyo&session_state=009a9a3a-e77a-a175-8beb-bfb9f3b17a7a',191,'2026-10-13 21:15:19','2026-10-13 21:15:19');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `users`;
@@ -16978,14 +17334,14 @@ INSERT INTO `users` VALUES
 (124,'al_horia','مجموعة الحرية','al_horia@naegypt.org',NULL,'2026-10-08 20:17:35',NULL,NULL,NULL,NULL,'2026-10-08 20:17:35',11),
 (125,'womeninrecovery','مجموعة نساء في التعافي','womeninrecovery@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:31:20',3),
 (128,'elaml','مجموعة الأمل','elaml@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:30:03',3),
-(129,'elhorea','مجموعة الحرية','elhorea@naegypt.org',NULL,'2026-09-21 15:48:29',NULL,NULL,NULL,NULL,'2026-09-21 15:48:29',3),
+(129,'elhorea','مجموعة الحرية','elhorea@naegypt.org',NULL,'2026-10-13 18:30:56',NULL,NULL,NULL,NULL,'2026-10-13 18:30:56',3),
 (137,'heliopolis','مجموعة هليوبوليس','heliopolis@naegypt.org',NULL,'2026-09-23 11:14:26',NULL,NULL,NULL,NULL,'2026-09-23 11:14:26',1),
 (178,'elmagmo3a','مجموعة المجموعة','elmagmo3a@naegypt.org',NULL,'2026-09-24 13:28:04',NULL,NULL,NULL,NULL,'2026-09-24 13:28:04',1),
 (179,'saint-cathrine','مجموعة سانت كاترين','saint-cathrine@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:26:46',2),
 (180,'neveralone','مجموعة لست وحدك','neveralone@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:25:18',6),
 (181,'uegsf.rcm','RCM منتدى الصعيد','uegsf.rcm@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-07 08:07:40','2026-06-15 09:22:46',9),
 (182,'web-admin','Ahmed S','web-admin@naegypt.org',NULL,'2026-09-28 17:28:37',NULL,NULL,NULL,'2025-07-07 08:19:01','2026-09-28 17:28:37',NULL),
-(183,'admin','Gamal S','admin@naegypt.org',NULL,'2026-10-08 09:19:56',NULL,NULL,NULL,NULL,'2026-10-08 09:19:56',NULL),
+(183,'admin','Gamal S','admin@naegypt.org',NULL,'2026-10-13 19:02:54',NULL,NULL,NULL,NULL,'2026-10-13 19:02:54',NULL),
 (184,'websiteadmin','Hani G','websiteadmin@naegypt.org',NULL,'2026-10-08 06:08:57',NULL,NULL,NULL,'2025-07-07 22:58:56','2026-10-08 06:08:57',NULL),
 (185,'wcgsf.fac','ميسر غرب القاهرة','wcgsf.fac@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-11 19:19:03','2026-06-14 15:36:48',7),
 (186,'pr','لجنة العلاقات العامة','pr@naegypt.org',NULL,'2026-09-22 13:27:33',NULL,NULL,NULL,'2025-07-16 13:36:03','2026-09-22 13:27:33',NULL),
@@ -16993,7 +17349,7 @@ INSERT INTO `users` VALUES
 (188,'ltc','لجنة الترجمة','ltc@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-07-29 10:05:26','2026-06-14 15:38:14',NULL),
 (189,'wedorecover','مجموعة نحن بالفعل نتعافى','wedorecover@naegypt.org',NULL,NULL,NULL,NULL,NULL,'2025-08-01 23:09:16','2026-06-14 16:15:38',1),
 (190,'shroukcity','مجموعة الشروق','shroukcity@naegypt.org',NULL,'2026-09-23 06:43:35',NULL,NULL,NULL,'2025-08-02 19:12:31','2026-09-23 06:43:35',1),
-(191,'h-i','لجنة المستشفيات والمؤسسات','h-i@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-14 16:16:14',NULL),
+(191,'h-i','لجنة المستشفيات والمؤسسات','h-i@naegypt.org',NULL,'2026-10-13 21:15:19',NULL,NULL,NULL,NULL,'2026-10-13 21:15:19',NULL),
 (192,'lit','لجنة الأدبيات','lit@naegypt.org',NULL,NULL,NULL,NULL,NULL,NULL,'2026-06-15 09:20:57',NULL),
 (193,'f-d','لجنة الدعم والتطوير','f-d@naegypt.org',NULL,'2026-10-05 04:50:56',NULL,NULL,NULL,NULL,'2026-10-05 04:50:56',NULL),
 (195,'activity','لجنة الأنشطة','activity@naegypt.org',NULL,'2026-10-04 15:36:59',NULL,NULL,NULL,'2025-08-04 12:21:37','2026-10-04 15:36:59',NULL),
@@ -17062,7 +17418,7 @@ CREATE TABLE `whatsapp_broadcast_logs` (
   KEY `whatsapp_broadcast_logs_is_dev_broadcast_index` (`is_dev_broadcast`),
   KEY `whatsapp_broadcast_logs_status_index` (`status`),
   CONSTRAINT `whatsapp_broadcast_logs_dispatched_by_foreign` FOREIGN KEY (`dispatched_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `whatsapp_broadcast_logs` WRITE;
@@ -17085,7 +17441,8 @@ INSERT INTO `whatsapp_broadcast_logs` VALUES
 (15,'jft','default','Just For Today - 9 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-09 04:02:59',NULL,'2026-10-09 04:02:45','2026-10-09 04:02:59'),
 (16,'jft','default','Just For Today - 10 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-10 04:02:51',NULL,'2026-10-10 04:02:41','2026-10-10 04:02:51'),
 (17,'jft','default','Just For Today - 11 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-11 04:02:54',NULL,'2026-10-11 04:02:41','2026-10-11 04:02:54'),
-(18,'jft','default','Just For Today - 12 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-12 04:02:53',NULL,'2026-10-12 04:02:42','2026-10-12 04:02:53');
+(18,'jft','default','Just For Today - 12 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-12 04:02:53',NULL,'2026-10-12 04:02:42','2026-10-12 04:02:53'),
+(19,'jft','default','Just For Today - 13 أكتوبر',3,3,0,'completed',NULL,0,NULL,'2026-10-13 04:02:54',NULL,'2026-10-13 04:02:44','2026-10-13 04:02:54');
 /*!40000 ALTER TABLE `whatsapp_broadcast_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `whatsapp_conversations`;
@@ -17356,7 +17713,7 @@ CREATE TABLE `whatsapp_messages` (
   KEY `whatsapp_messages_status_index` (`status`),
   CONSTRAINT `whatsapp_messages_conversation_id_foreign` FOREIGN KEY (`conversation_id`) REFERENCES `whatsapp_conversations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `whatsapp_messages_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=687 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=690 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 LOCK TABLES `whatsapp_messages` WRITE;
@@ -18048,7 +18405,10 @@ INSERT INTO `whatsapp_messages` VALUES
 (683,7,'3EB01A54025D92149A5B5D','outgoing','bot','menu','text','أهلاً بك في واتساب زمالة المدمنين المجهولين - مصر 🇪🇬\nWelcome to NA Egypt WhatsApp Service\n\nالرجاء اختيار رقم الخدمة أو إرسال الكلمة المطلوبة:\n1️⃣ *قراءة لليوم فقط* (Just For Today)\n2️⃣ *البحث عن اجتماعات التعافي* (Find Meetings)\n3️⃣ *أرقام خط المساعدة* (Helpline Numbers)\n4️⃣ *الفعاليات والمؤتمرات* (Upcoming Events)\n5️⃣ *النماذج الإلكترونية وطلب الأدبيات* (Forms & Literature)\n6️⃣ *وسائل التواصل والموقع الرسمي* (Social Media & Website)\n7️⃣ *الاشتراك في رسائل لليوم فقط يومياً* (Daily JFT Broadcast)\n0️⃣ *التحدث مع متطوع خط المساعدة* (Talk to Volunteer)\n\n🌐 موقعنا الرسمي: https://naegypt.org','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-11 22:15:28 +0000 UTC)\",\"results\":{\"message_id\":\"3EB01A54025D92149A5B5D\",\"status\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-11 22:15:28 +0000 UTC)\"}}}','2026-10-11 22:15:28','2026-10-11 22:15:28'),
 (684,8,'3EB09322CD53598F3549ED','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 12 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *أن نكون على حق*\n\n💬 _\"إن تطبيق الخطوات وممارسة المبادئ يبسِّط حياتنا ويُغير من سلوكياتنا القديمة. وعندما نعترف أن حياتنا لا يمكن إدارتها لا يجب أن نُجادل في وجهة نظرنا.... فليس من الضروري أن نكون دومًا على حق.\"_\n\nلا شيء يعزلنا بسرعة عن الدفيء والصداقة الحميمة لزملائنا الأعضاء في المدمنين المجهولين أكثر من اضطرارنا الى أن نكون على \"حق\". وبسبب عدم الأمان، نتظاهر بأننا شخصيات ذوي سلطة. وإذ أننا نعاني من تدني احترام الذات، نحاول تعزيز أنفسنا بالتقليل من شأن الآخرين. وفي أحسن الأحوال، فان مثل هذه الأساليب تدفع الآخرين بعيداً عنا؛ وفي أسوئها، سوف يوجهون الهجوم لنا. وكلما حاولنا إقناع الآخرين بمدى كوننا على \"حق،\" كلما ازداد خطئنا.\n\nنحن لسنا مضطرين لأن نكون على \"حق\" لنشعر بالأمان؛ ولسنا مضطرين للتظاهر أمام الأخرين بأن لدينا جميع الإجابات ليحبونا أو يحترمونا. ففي الواقع، العكس تماما هو الصحيح. فلا أحد منا لديه جميع الإجابات. ونحن نعتمد على بعضنا البعض للمساعدة في سد فجوات فهمنا للأمور، ونعتمد على قوة أعظم من أنفسنا لتعوضنا عن انعدام قوتنا. نحن نعيش بسهولة مع الآخرين عندما نقدم ما نعرفه، ونُقر بما لا نعرفه، ونسعى للتعلم من أقراننا. ونعيش بأمان داخلي عندما نكُف عن الاعتماد على قوتنا الذاتية ونبدأ في الاعتماد على الله الذي توصلنا الى فهمه في التعافي.\n\nنحن لسنا مضطرين أن نكون على \"حق\" دائماً، فنحن فقط نتعافى.\n\n✨ *تذكرة اليوم:* لليوم فقط: إلهي، أنا أقر بانعدام قوتي وعدم قدرتي على إدارة حياتي. ساعدني على العيش مع الآخرين على قدم المساواة، معتمداً عليك لإرشادي ومنحي القوة.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201129998927@s.whatsapp.net (server timestamp: 2026-10-12 04:02:42 +0000 UTC)\",\"results\":{\"message_id\":\"3EB09322CD53598F3549ED\",\"status\":\"Message sent to 201129998927@s.whatsapp.net (server timestamp: 2026-10-12 04:02:42 +0000 UTC)\"}}}','2026-10-12 04:02:42','2026-10-12 04:02:42'),
 (685,7,'3EB0BD9359B5EBA8436F98','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 12 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *أن نكون على حق*\n\n💬 _\"إن تطبيق الخطوات وممارسة المبادئ يبسِّط حياتنا ويُغير من سلوكياتنا القديمة. وعندما نعترف أن حياتنا لا يمكن إدارتها لا يجب أن نُجادل في وجهة نظرنا.... فليس من الضروري أن نكون دومًا على حق.\"_\n\nلا شيء يعزلنا بسرعة عن الدفيء والصداقة الحميمة لزملائنا الأعضاء في المدمنين المجهولين أكثر من اضطرارنا الى أن نكون على \"حق\". وبسبب عدم الأمان، نتظاهر بأننا شخصيات ذوي سلطة. وإذ أننا نعاني من تدني احترام الذات، نحاول تعزيز أنفسنا بالتقليل من شأن الآخرين. وفي أحسن الأحوال، فان مثل هذه الأساليب تدفع الآخرين بعيداً عنا؛ وفي أسوئها، سوف يوجهون الهجوم لنا. وكلما حاولنا إقناع الآخرين بمدى كوننا على \"حق،\" كلما ازداد خطئنا.\n\nنحن لسنا مضطرين لأن نكون على \"حق\" لنشعر بالأمان؛ ولسنا مضطرين للتظاهر أمام الأخرين بأن لدينا جميع الإجابات ليحبونا أو يحترمونا. ففي الواقع، العكس تماما هو الصحيح. فلا أحد منا لديه جميع الإجابات. ونحن نعتمد على بعضنا البعض للمساعدة في سد فجوات فهمنا للأمور، ونعتمد على قوة أعظم من أنفسنا لتعوضنا عن انعدام قوتنا. نحن نعيش بسهولة مع الآخرين عندما نقدم ما نعرفه، ونُقر بما لا نعرفه، ونسعى للتعلم من أقراننا. ونعيش بأمان داخلي عندما نكُف عن الاعتماد على قوتنا الذاتية ونبدأ في الاعتماد على الله الذي توصلنا الى فهمه في التعافي.\n\nنحن لسنا مضطرين أن نكون على \"حق\" دائماً، فنحن فقط نتعافى.\n\n✨ *تذكرة اليوم:* لليوم فقط: إلهي، أنا أقر بانعدام قوتي وعدم قدرتي على إدارة حياتي. ساعدني على العيش مع الآخرين على قدم المساواة، معتمداً عليك لإرشادي ومنحي القوة.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-12 04:02:48 +0000 UTC)\",\"results\":{\"message_id\":\"3EB0BD9359B5EBA8436F98\",\"status\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-12 04:02:48 +0000 UTC)\"}}}','2026-10-12 04:02:48','2026-10-12 04:02:48'),
-(686,169,'3EB068EE7F48CD895722A9','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 12 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *أن نكون على حق*\n\n💬 _\"إن تطبيق الخطوات وممارسة المبادئ يبسِّط حياتنا ويُغير من سلوكياتنا القديمة. وعندما نعترف أن حياتنا لا يمكن إدارتها لا يجب أن نُجادل في وجهة نظرنا.... فليس من الضروري أن نكون دومًا على حق.\"_\n\nلا شيء يعزلنا بسرعة عن الدفيء والصداقة الحميمة لزملائنا الأعضاء في المدمنين المجهولين أكثر من اضطرارنا الى أن نكون على \"حق\". وبسبب عدم الأمان، نتظاهر بأننا شخصيات ذوي سلطة. وإذ أننا نعاني من تدني احترام الذات، نحاول تعزيز أنفسنا بالتقليل من شأن الآخرين. وفي أحسن الأحوال، فان مثل هذه الأساليب تدفع الآخرين بعيداً عنا؛ وفي أسوئها، سوف يوجهون الهجوم لنا. وكلما حاولنا إقناع الآخرين بمدى كوننا على \"حق،\" كلما ازداد خطئنا.\n\nنحن لسنا مضطرين لأن نكون على \"حق\" لنشعر بالأمان؛ ولسنا مضطرين للتظاهر أمام الأخرين بأن لدينا جميع الإجابات ليحبونا أو يحترمونا. ففي الواقع، العكس تماما هو الصحيح. فلا أحد منا لديه جميع الإجابات. ونحن نعتمد على بعضنا البعض للمساعدة في سد فجوات فهمنا للأمور، ونعتمد على قوة أعظم من أنفسنا لتعوضنا عن انعدام قوتنا. نحن نعيش بسهولة مع الآخرين عندما نقدم ما نعرفه، ونُقر بما لا نعرفه، ونسعى للتعلم من أقراننا. ونعيش بأمان داخلي عندما نكُف عن الاعتماد على قوتنا الذاتية ونبدأ في الاعتماد على الله الذي توصلنا الى فهمه في التعافي.\n\nنحن لسنا مضطرين أن نكون على \"حق\" دائماً، فنحن فقط نتعافى.\n\n✨ *تذكرة اليوم:* لليوم فقط: إلهي، أنا أقر بانعدام قوتي وعدم قدرتي على إدارة حياتي. ساعدني على العيش مع الآخرين على قدم المساواة، معتمداً عليك لإرشادي ومنحي القوة.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-12 04:02:51 +0000 UTC)\",\"results\":{\"message_id\":\"3EB068EE7F48CD895722A9\",\"status\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-12 04:02:51 +0000 UTC)\"}}}','2026-10-12 04:02:51','2026-10-12 04:02:51');
+(686,169,'3EB068EE7F48CD895722A9','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 12 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *أن نكون على حق*\n\n💬 _\"إن تطبيق الخطوات وممارسة المبادئ يبسِّط حياتنا ويُغير من سلوكياتنا القديمة. وعندما نعترف أن حياتنا لا يمكن إدارتها لا يجب أن نُجادل في وجهة نظرنا.... فليس من الضروري أن نكون دومًا على حق.\"_\n\nلا شيء يعزلنا بسرعة عن الدفيء والصداقة الحميمة لزملائنا الأعضاء في المدمنين المجهولين أكثر من اضطرارنا الى أن نكون على \"حق\". وبسبب عدم الأمان، نتظاهر بأننا شخصيات ذوي سلطة. وإذ أننا نعاني من تدني احترام الذات، نحاول تعزيز أنفسنا بالتقليل من شأن الآخرين. وفي أحسن الأحوال، فان مثل هذه الأساليب تدفع الآخرين بعيداً عنا؛ وفي أسوئها، سوف يوجهون الهجوم لنا. وكلما حاولنا إقناع الآخرين بمدى كوننا على \"حق،\" كلما ازداد خطئنا.\n\nنحن لسنا مضطرين لأن نكون على \"حق\" لنشعر بالأمان؛ ولسنا مضطرين للتظاهر أمام الأخرين بأن لدينا جميع الإجابات ليحبونا أو يحترمونا. ففي الواقع، العكس تماما هو الصحيح. فلا أحد منا لديه جميع الإجابات. ونحن نعتمد على بعضنا البعض للمساعدة في سد فجوات فهمنا للأمور، ونعتمد على قوة أعظم من أنفسنا لتعوضنا عن انعدام قوتنا. نحن نعيش بسهولة مع الآخرين عندما نقدم ما نعرفه، ونُقر بما لا نعرفه، ونسعى للتعلم من أقراننا. ونعيش بأمان داخلي عندما نكُف عن الاعتماد على قوتنا الذاتية ونبدأ في الاعتماد على الله الذي توصلنا الى فهمه في التعافي.\n\nنحن لسنا مضطرين أن نكون على \"حق\" دائماً، فنحن فقط نتعافى.\n\n✨ *تذكرة اليوم:* لليوم فقط: إلهي، أنا أقر بانعدام قوتي وعدم قدرتي على إدارة حياتي. ساعدني على العيش مع الآخرين على قدم المساواة، معتمداً عليك لإرشادي ومنحي القوة.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-12 04:02:51 +0000 UTC)\",\"results\":{\"message_id\":\"3EB068EE7F48CD895722A9\",\"status\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-12 04:02:51 +0000 UTC)\"}}}','2026-10-12 04:02:51','2026-10-12 04:02:51'),
+(687,8,'3EB04BE765C9F5570F4476','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 13 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *إحداث الفارق*\n\n💬 _\"تعجز الكلمات عن وصف هذا الشعور بالوعي الروحاني الذي نشعر به عندما نقدم شيئاُ إلي شخص آخر مهما كان ذلك الشيء قليلا.\"_\n\nفي بعض الأحيان يبدو الأمر وكأن العالم يعاني من قدر كبير من الخلل إلى الحد الذي يجعلنا نتغاضى عن محاولة إحداث فارق. حيث نفكر: \"على أي حال، ما الذي يمكنني أن أغيره في العالم؟ أنا مجرد شخص واحد.\" وسواء كانت اهتماماتنا واسعة النطاق إلى الحد الذي يجعلنا راغبين في أن يعم السلام العالم، أو شخصية جداً إلى الحد الذي يجعلنا راغبين ببساطة في إتاحة التعافي لكل مدمن يريده، فإن المهمة تبدو هائلة. ونتنهد قائلين \"هناك الكثير من العمل الذي يتعين القيام به، والقليل جداً من الوقت\". ونتساءل أحياناً كيف سنتمكن من فعل أي شيء جيد.\n\nوما يثير الدهشة أن أصغر المساهمات يمكن أن تحدث أكبر فارق. ولا يتطلب الأمر الكثير من الجهد من جانبنا لنكتسب من الحياة أكثر من مجرد الوجود العادي المتثاقل. فنحن قد تغيرت حياتنا نتيجة الإحساس العميق بالرضا الذي نختبره عندما نرفع معنويات شخص واحد فقط. فعندما نبتسم لشخص عابس، وعندما نسمح لشخص بالمرور أمامنا على الطريق السريع، وعندما نتصل بعضو جديد لنظهر فقط أننا نهتم، فإننا نخطو إلى عالم استثنائي.\n\nهل تريد أن تغير العالم؟ ابدأ بالمدمن الذي يجلس بجانبك الليلة، ثم تخيل أن تصرفك اللطيف قد تضاعف. شخص واحد في كل مرة، إن كل واحد منا يحدث فرقاً.\n\n✨ *تذكرة اليوم:* لليوم فقط: التصرف بلطف لا يكلفني شيئاً، لكنه لا يقدر بثمن بالنسبة للمتلقي. وسأكون لطيفاً مع شخص ما اليوم.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201129998927@s.whatsapp.net (server timestamp: 2026-10-13 04:02:45 +0000 UTC)\",\"results\":{\"message_id\":\"3EB04BE765C9F5570F4476\",\"status\":\"Message sent to 201129998927@s.whatsapp.net (server timestamp: 2026-10-13 04:02:45 +0000 UTC)\"}}}','2026-10-13 04:02:45','2026-10-13 04:02:45'),
+(688,7,'3EB012AFB0527CDE568DFD','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 13 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *إحداث الفارق*\n\n💬 _\"تعجز الكلمات عن وصف هذا الشعور بالوعي الروحاني الذي نشعر به عندما نقدم شيئاُ إلي شخص آخر مهما كان ذلك الشيء قليلا.\"_\n\nفي بعض الأحيان يبدو الأمر وكأن العالم يعاني من قدر كبير من الخلل إلى الحد الذي يجعلنا نتغاضى عن محاولة إحداث فارق. حيث نفكر: \"على أي حال، ما الذي يمكنني أن أغيره في العالم؟ أنا مجرد شخص واحد.\" وسواء كانت اهتماماتنا واسعة النطاق إلى الحد الذي يجعلنا راغبين في أن يعم السلام العالم، أو شخصية جداً إلى الحد الذي يجعلنا راغبين ببساطة في إتاحة التعافي لكل مدمن يريده، فإن المهمة تبدو هائلة. ونتنهد قائلين \"هناك الكثير من العمل الذي يتعين القيام به، والقليل جداً من الوقت\". ونتساءل أحياناً كيف سنتمكن من فعل أي شيء جيد.\n\nوما يثير الدهشة أن أصغر المساهمات يمكن أن تحدث أكبر فارق. ولا يتطلب الأمر الكثير من الجهد من جانبنا لنكتسب من الحياة أكثر من مجرد الوجود العادي المتثاقل. فنحن قد تغيرت حياتنا نتيجة الإحساس العميق بالرضا الذي نختبره عندما نرفع معنويات شخص واحد فقط. فعندما نبتسم لشخص عابس، وعندما نسمح لشخص بالمرور أمامنا على الطريق السريع، وعندما نتصل بعضو جديد لنظهر فقط أننا نهتم، فإننا نخطو إلى عالم استثنائي.\n\nهل تريد أن تغير العالم؟ ابدأ بالمدمن الذي يجلس بجانبك الليلة، ثم تخيل أن تصرفك اللطيف قد تضاعف. شخص واحد في كل مرة، إن كل واحد منا يحدث فرقاً.\n\n✨ *تذكرة اليوم:* لليوم فقط: التصرف بلطف لا يكلفني شيئاً، لكنه لا يقدر بثمن بالنسبة للمتلقي. وسأكون لطيفاً مع شخص ما اليوم.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-13 04:02:49 +0000 UTC)\",\"results\":{\"message_id\":\"3EB012AFB0527CDE568DFD\",\"status\":\"Message sent to 201006979198@s.whatsapp.net (server timestamp: 2026-10-13 04:02:49 +0000 UTC)\"}}}','2026-10-13 04:02:49','2026-10-13 04:02:49'),
+(689,169,'3EB0BDE49C41CD0CB57F39','outgoing','bot','broadcast','text','🌅 *رسالة فقط لليوم - 13 أكتوبر*\nزمالة المدمنين المجهولين - مصر 🇪🇬\n\n📌 *إحداث الفارق*\n\n💬 _\"تعجز الكلمات عن وصف هذا الشعور بالوعي الروحاني الذي نشعر به عندما نقدم شيئاُ إلي شخص آخر مهما كان ذلك الشيء قليلا.\"_\n\nفي بعض الأحيان يبدو الأمر وكأن العالم يعاني من قدر كبير من الخلل إلى الحد الذي يجعلنا نتغاضى عن محاولة إحداث فارق. حيث نفكر: \"على أي حال، ما الذي يمكنني أن أغيره في العالم؟ أنا مجرد شخص واحد.\" وسواء كانت اهتماماتنا واسعة النطاق إلى الحد الذي يجعلنا راغبين في أن يعم السلام العالم، أو شخصية جداً إلى الحد الذي يجعلنا راغبين ببساطة في إتاحة التعافي لكل مدمن يريده، فإن المهمة تبدو هائلة. ونتنهد قائلين \"هناك الكثير من العمل الذي يتعين القيام به، والقليل جداً من الوقت\". ونتساءل أحياناً كيف سنتمكن من فعل أي شيء جيد.\n\nوما يثير الدهشة أن أصغر المساهمات يمكن أن تحدث أكبر فارق. ولا يتطلب الأمر الكثير من الجهد من جانبنا لنكتسب من الحياة أكثر من مجرد الوجود العادي المتثاقل. فنحن قد تغيرت حياتنا نتيجة الإحساس العميق بالرضا الذي نختبره عندما نرفع معنويات شخص واحد فقط. فعندما نبتسم لشخص عابس، وعندما نسمح لشخص بالمرور أمامنا على الطريق السريع، وعندما نتصل بعضو جديد لنظهر فقط أننا نهتم، فإننا نخطو إلى عالم استثنائي.\n\nهل تريد أن تغير العالم؟ ابدأ بالمدمن الذي يجلس بجانبك الليلة، ثم تخيل أن تصرفك اللطيف قد تضاعف. شخص واحد في كل مرة، إن كل واحد منا يحدث فرقاً.\n\n✨ *تذكرة اليوم:* لليوم فقط: التصرف بلطف لا يكلفني شيئاً، لكنه لا يقدر بثمن بالنسبة للمتلقي. وسأكون لطيفاً مع شخص ما اليوم.\n\n🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n🕊️ لإلغاء الاشتراك أرسل: *الغاء الاشتراك*','sent',NULL,'{\"success\":true,\"data\":{\"code\":\"SUCCESS\",\"message\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-13 04:02:52 +0000 UTC)\",\"results\":{\"message_id\":\"3EB0BDE49C41CD0CB57F39\",\"status\":\"Message sent to 201060622604@s.whatsapp.net (server timestamp: 2026-10-13 04:02:52 +0000 UTC)\"}}}','2026-10-13 04:02:52','2026-10-13 04:02:52');
 /*!40000 ALTER TABLE `whatsapp_messages` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `whatsapp_subscribers`;
