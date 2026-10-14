@@ -593,6 +593,10 @@ Route::group(
             return view('frontend.questions');
         })->name('frontend.questions');
 
+        Route::get('/clean-time', function(){
+            return view('frontend.cleantime');
+        })->name('frontend.cleantime');
+
         Route::get('/events', [\App\Http\Controllers\FrontendEventController::class, 'index'])->name('frontend.events');
         Route::get('/web-calendar-events', [\App\Http\Controllers\Api\CalendarEventController::class, 'index'])->name('web-calendar-events.index');
 
@@ -658,6 +662,7 @@ Route::get('/sitemap.xml', function () {
         ['loc' => '/forpublic', 'changefreq' => 'monthly', 'priority' => '0.7'],
         ['loc' => '/contactus', 'changefreq' => 'monthly', 'priority' => '0.6'],
         ['loc' => '/questions', 'changefreq' => 'monthly', 'priority' => '0.6'],
+        ['loc' => '/clean-time', 'changefreq' => 'weekly', 'priority' => '0.85'],
     ];
 
     $xml = '<?xml version="1.0" encoding="UTF-8"?>';

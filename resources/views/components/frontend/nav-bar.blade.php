@@ -51,6 +51,11 @@
                 </a>
               </li>
               <li>
+                <a href="{{ route('frontend.cleantime') }}" class="submenu-item {{ Route::currentRouteName() === 'frontend.cleantime' ? 'active' : '' }}">
+                  <i class="bi bi-award-fill me-2 text-warning"></i> {{ __('messages.clean_time_title') }}
+                </a>
+              </li>
+              <li>
                 <a href="{{ route('frontend.events') }}" class="submenu-item {{ Route::currentRouteName() === 'frontend.events' ? 'active' : '' }}">
                   <i class="bi bi-calendar-event-fill me-2 text-danger"></i> {{ __('messages.Events') ?? 'Events' }}
                 </a>
@@ -266,6 +271,11 @@
               <li class="mb-2">
                 <a href="{{ route('frontend.literature') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.literature' ? 'active' : '' }}">
                   {{ __('messages.Literature') }}
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="{{ route('frontend.cleantime') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.cleantime' ? 'active' : '' }}">
+                  <i class="bi bi-award-fill me-1 text-warning"></i> {{ __('messages.clean_time_title') }}
                 </a>
               </li>
               <li class="mb-2">
