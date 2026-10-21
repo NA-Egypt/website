@@ -7,78 +7,90 @@
 @endphp
 
 <div id="naEmergencyActionBar" class="na-emergency-bar-wrapper" role="region" aria-label="{{ __('messages.emergency_helpline_bar') ?? 'خط المساعدة المباشر لزمالة المدمنين المجهولين' }}">
-  <!-- Expandable Helpline Drawer Sheet -->
-  <div id="naEmergencyDrawer" class="na-emergency-drawer-sheet" aria-hidden="true">
-    <div class="container-fluid px-3 px-md-5" style="max-width: 1280px; margin: 0 auto;">
-      <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-white-10">
+
+  <!-- Lightweight Floating Popover for Additional Helpline Numbers -->
+  <div id="naLinesPopoverCard" class="na-lines-popover-card" style="display: none;" role="dialog" aria-modal="false" aria-labelledby="naPopoverTitle">
+    <div class="na-popover-inner">
+      <div class="d-flex align-items-center justify-content-between pb-2 mb-2 border-bottom border-white-10">
         <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-shield-lock-fill text-info fs-5"></i>
-          <span class="fw-bold fs-6">{{ __('messages.anonymity_helpline_promise') ?? 'خصوصية ومجهولية تامة — لن يسألك أحد عن هويتك' }}</span>
+          <i class="bi bi-telephone-outbound-fill text-info fs-6"></i>
+          <span id="naPopoverTitle" class="fw-bold small text-white">{{ __('messages.direct_helplines_title') ?? 'خطوط المساعدة المباشرة' }}</span>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 py-1" onclick="toggleEmergencyDrawer()" aria-label="{{ __('messages.close') ?? 'إغلاق' }}">
-          <i class="bi bi-x-lg me-1"></i> {{ __('messages.close') ?? 'إغلاق' }}
-        </button>
+        <button type="button" class="btn-close btn-close-white p-1" style="font-size: 0.65rem;" onclick="closeLinesPopover()" aria-label="{{ __('messages.close') ?? 'إغلاق' }}"></button>
       </div>
 
-      <div class="na-helpline-grid-expanded">
-        <!-- Line 1: Regional Egypt 1 -->
-        <div class="na-helpline-card-expanded">
-          <div>
-            <div class="text-white-50 small mb-1">{{ __('messages.helpline_regional_1') ?? 'الخط الساخن الإقليمي (مصر ١)' }}</div>
-            <div class="fw-bold font-monospace fs-5 text-white" dir="ltr">+20 100 697 9198</div>
+      <div class="d-flex flex-column gap-2">
+        <!-- Alexandria & North Coast -->
+        <div class="na-popover-item p-2 rounded-3">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_alexandria') ?? 'خط الإسكندرية والساحل الشمالي' }}</span>
+            <span class="badge bg-white-10 text-white rounded-pill x-small px-2 py-0.5">Alexandria</span>
           </div>
-          <div class="d-flex gap-2 flex-shrink-0">
-            <a href="tel:+201006979198" class="btn btn-sm na-btn-primary rounded-pill px-3 py-2 text-white" title="{{ __('messages.call_now') ?? 'اتصال' }}" aria-label="{{ __('messages.call_now') ?? 'اتصال' }} +20 100 697 9198">
-              <i class="bi bi-telephone-fill"></i>
-            </a>
-            <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-3 py-2 text-white" title="{{ __('messages.whatsapp') ?? 'WhatsApp' }}" aria-label="{{ __('messages.whatsapp') ?? 'WhatsApp' }}">
-              <i class="bi bi-whatsapp"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Line 2: Regional Egypt 2 & WhatsApp -->
-        <div class="na-helpline-card-expanded">
-          <div>
-            <div class="text-white-50 small mb-1">{{ __('messages.helpline_regional_2') ?? 'الخط الساخن الإقليمي (مصر ٢ / واتساب)' }}</div>
-            <div class="fw-bold font-monospace fs-5 text-white" dir="ltr">+20 106 093 3888</div>
-          </div>
-          <div class="d-flex gap-2 flex-shrink-0">
-            <a href="tel:+201060933888" class="btn btn-sm na-btn-primary rounded-pill px-3 py-2 text-white" title="{{ __('messages.call_now') ?? 'اتصال' }}" aria-label="{{ __('messages.call_now') ?? 'اتصال' }} +20 106 093 3888">
-              <i class="bi bi-telephone-fill"></i>
-            </a>
-            <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-3 py-2 text-white" title="{{ __('messages.whatsapp') ?? 'WhatsApp' }}" aria-label="{{ __('messages.whatsapp') ?? 'WhatsApp' }}">
-              <i class="bi bi-whatsapp"></i>
-            </a>
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <span class="fw-bold font-monospace text-white fs-6" dir="ltr">+20 150 388 4411</span>
+            <div class="d-flex gap-1">
+              <a href="tel:+201503884411" class="btn btn-sm btn-outline-info rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="{{ __('messages.call_now') ?? 'اتصال' }}">
+                <i class="bi bi-telephone-fill"></i>
+                <span>{{ __('messages.call_now') ?? 'اتصال' }}</span>
+              </a>
+              <a href="https://wa.me/201503884411" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+              </a>
+            </div>
           </div>
         </div>
 
-        <!-- Line 3: Alexandria & Coast -->
-        <div class="na-helpline-card-expanded">
-          <div>
-            <div class="text-white-50 small mb-1">{{ __('messages.helpline_alexandria') ?? 'خط الإسكندرية والساحل الشمالي' }}</div>
-            <div class="fw-bold font-monospace fs-5 text-white" dir="ltr">+20 150 388 4411</div>
+        <!-- Regional Line 2 (WhatsApp & Phone) -->
+        <div class="na-popover-item p-2 rounded-3">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_2') ?? 'الخط الساخن الإقليمي (مصر ٢ / واتساب)' }}</span>
+            <span class="badge bg-success-subtle text-success rounded-pill x-small px-2 py-0.5">WhatsApp / Call</span>
           </div>
-          <div class="d-flex gap-2 flex-shrink-0">
-            <a href="tel:+201503884411" class="btn btn-sm na-btn-primary rounded-pill px-3 py-2 text-white" title="{{ __('messages.call_now') ?? 'اتصال' }}" aria-label="{{ __('messages.call_now') ?? 'اتصال' }} +20 150 388 4411">
-              <i class="bi bi-telephone-fill"></i>
-            </a>
-            <a href="https://wa.me/201503884411" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-3 py-2 text-white" title="{{ __('messages.whatsapp') ?? 'WhatsApp' }}" aria-label="{{ __('messages.whatsapp') ?? 'WhatsApp' }}">
-              <i class="bi bi-whatsapp"></i>
-            </a>
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <span class="fw-bold font-monospace text-white fs-6" dir="ltr">+20 106 093 3888</span>
+            <div class="d-flex gap-1">
+              <a href="tel:+201060933888" class="btn btn-sm btn-outline-info rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="{{ __('messages.call_now') ?? 'اتصال' }}">
+                <i class="bi bi-telephone-fill"></i>
+                <span>{{ __('messages.call_now') ?? 'اتصال' }}</span>
+              </a>
+              <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regional Line 1 (Egypt 1) -->
+        <div class="na-popover-item p-2 rounded-3">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_1') ?? 'الخط الساخن الإقليمي (مصر ١)' }}</span>
+            <span class="badge bg-white-10 text-white rounded-pill x-small px-2 py-0.5">Hotline</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <span class="fw-bold font-monospace text-white fs-6" dir="ltr">+20 100 697 9198</span>
+            <div class="d-flex gap-1">
+              <a href="tel:+201006979198" class="btn btn-sm na-btn-primary rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="{{ __('messages.call_now') ?? 'اتصال' }}">
+                <i class="bi bi-telephone-fill"></i>
+                <span>{{ __('messages.call_now') ?? 'اتصال' }}</span>
+              </a>
+              <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success rounded-pill px-2.5 py-1 text-white x-small d-inline-flex align-items-center gap-1" title="WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Schedule & Guidance -->
-      <div class="mt-3 pt-2 d-flex flex-wrap align-items-center justify-content-between gap-2 text-white-50 small">
-        <div class="d-flex align-items-center gap-2">
+      <!-- Schedule note & Zoom link -->
+      <div class="mt-2 pt-2 border-top border-white-10 d-flex flex-column gap-1">
+        <div class="d-flex align-items-center gap-1 text-white-50 x-small">
           <i class="bi bi-clock-history text-warning"></i>
-          <span>{{ __('messages.helpline_operating_hours') ?? 'ساعات عمل خط المساعدة الهاتفي يومياً: من 10:00 صباحاً حتى 10:00 مساءً بتوقيت مصر' }}</span>
+          <span>{{ __('messages.helpline_hours_short') ?? 'يومياً 10:00 ص - 10:00 م بتوقيت مصر' }}</span>
         </div>
         <div>
-          <a href="{{ route('frontend.meetings', ['type' => 'online']) }}" class="text-info text-decoration-underline">
-            {{ __('messages.attend_online_meetings_notice') ?? 'خارج ساعات العمل؟ احضر اجتماع أونلاين الآن عبر زووم (متاح 24 ساعة)' }} &larr;
+          <a href="{{ route('frontend.meetings', ['type' => 'online']) }}" class="text-info x-small text-decoration-underline d-inline-flex align-items-center gap-1">
+            <i class="bi bi-camera-video"></i>
+            <span>{{ __('messages.attend_online_meetings_notice') ?? 'خارج ساعات العمل؟ احضر اجتماع أونلاين الآن عبر زووم' }}</span>
           </a>
         </div>
       </div>
@@ -86,9 +98,9 @@
   </div>
 
   <!-- Persistent Main Bar (Compact Floating Bar) -->
-  <div class="container-fluid px-2 px-md-4 px-lg-5" style="max-width: 1280px; margin: 0 auto;">
+  <div class="container-fluid px-2 px-md-4 px-lg-5 position-relative" style="max-width: 1280px; margin: 0 auto;">
     
-    <!-- DESKTOP BAR (md and up: clean spaced layout, no overlap) -->
+    <!-- DESKTOP BAR (md and up: sleek single row, zero overflow) -->
     <div class="na-emergency-main-bar na-emergency-desktop-bar d-none d-md-flex">
       <!-- Status Badge & Zoom Link -->
       <div class="d-flex align-items-center gap-2 flex-shrink-0">
@@ -109,48 +121,45 @@
         </a>
       </div>
 
-      <!-- Quick Dial Direct Phone Chips -->
-      <div class="na-emergency-dial-chips">
-        <a href="tel:+201006979198" class="na-dial-chip" title="{{ __('messages.helpline_regional_1') ?? 'مصر ١' }}">
+      <!-- Quick Dial Direct Actions (Single Line) -->
+      <div class="na-emergency-dial-chips flex-nowrap">
+        <!-- Primary Hotline Chip -->
+        <a href="tel:+201006979198" class="na-dial-chip na-dial-chip-call" title="{{ __('messages.helpline_regional_1') ?? 'الخط الساخن الإقليمي (مصر ١)' }}">
           <i class="bi bi-telephone-fill text-warning"></i>
-          <span class="d-none d-lg-inline">{{ __('messages.cairo_region') ?? 'القاهرة ومصر' }}:</span>
-          <span class="d-inline d-lg-none">{{ __('messages.helpline_regional_1') ?? 'مصر ١' }}:</span>
-          <span dir="ltr">0100 697 9198</span>
+          <span class="d-none d-lg-inline text-white-50 small">{{ __('messages.cairo_region') ?? 'مصر' }}:</span>
+          <span class="fw-bold font-monospace" dir="ltr">0100 697 9198</span>
         </a>
 
-        <a href="tel:+201060933888" class="na-dial-chip" title="{{ __('messages.helpline_regional_2') ?? 'مصر ٢' }}">
-          <i class="bi bi-telephone-fill text-warning"></i>
-          <span class="d-none d-lg-inline">{{ __('messages.helpline_short_2') ?? 'خط 2' }}:</span>
-          <span dir="ltr">0106 093 3888</span>
-        </a>
-
-        <a href="tel:+201503884411" class="na-dial-chip d-none d-xl-inline-flex" title="{{ __('messages.helpline_alexandria') ?? 'الإسكندرية' }}">
-          <i class="bi bi-telephone-fill text-warning"></i>
-          <span>{{ __('messages.alexandria_short') ?? 'إسكندرية' }}:</span>
-          <span dir="ltr">0150 388 4411</span>
-        </a>
-
+        <!-- WhatsApp Chip -->
         <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="na-dial-chip na-dial-chip-wa" title="WhatsApp">
-          <i class="bi bi-whatsapp text-success"></i>
+          <i class="bi bi-whatsapp"></i>
           <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span>
         </a>
+
+        <!-- More Numbers Popover Trigger -->
+        <div class="na-lines-popover-anchor position-relative d-inline-block">
+          <button type="button" class="na-dial-chip na-dial-chip-more" onclick="toggleLinesPopover(event)" id="naLinesDesktopToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" title="{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}">
+            <i class="bi bi-grid-fill text-info"></i>
+            <span>{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}</span>
+            <i class="bi bi-chevron-up transition-transform na-popover-chevron ms-1" style="font-size: 0.72rem;"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- Anonymity Seal & Drawer Expand Trigger -->
+      <!-- Anonymity Seal & Minimize Button -->
       <div class="d-flex align-items-center gap-2 flex-shrink-0">
-        <div class="na-anonymity-seal-micro d-none d-xxl-flex">
+        <div class="na-anonymity-seal-micro d-none d-xl-flex">
           <i class="bi bi-shield-check text-success fs-6"></i>
           <span>{{ __('messages.anonymity_assurance_micro') ?? 'مكالمتك سرية ومجهولة بالكامل' }}</span>
         </div>
 
-        <button type="button" class="na-emergency-drawer-toggle" onclick="toggleEmergencyDrawer()" aria-expanded="false" aria-controls="naEmergencyDrawer" title="{{ __('messages.view_all_lines') ?? 'عرض كافة الخطوط ومواعيد العمل' }}">
-          <i class="bi bi-chevron-up transition-transform na-drawer-chevron"></i>
-          <span>{{ __('messages.all_lines_info') ?? 'جميع الخطوط' }}</span>
+        <button type="button" class="na-emergency-minimize-btn" onclick="toggleEmergencyBarMinimize()" aria-label="{{ __('messages.minimize_helpline_bar') ?? 'تصغير شريط المساعدة' }}" title="{{ __('messages.minimize_helpline_bar') ?? 'تصغير شريط المساعدة' }}">
+          <i class="bi bi-x-lg"></i>
         </button>
       </div>
     </div>
 
-    <!-- MOBILE BAR (under md: streamlined 3-action buttons + compact status, zero overlap) -->
+    <!-- MOBILE BAR (under md: streamlined 3-action buttons + compact status, zero overflow) -->
     <div class="na-emergency-main-bar na-emergency-mobile-bar d-flex d-md-none">
       <!-- Compact Status Dot & Offhours Zoom -->
       <div class="d-flex align-items-center gap-1 flex-shrink-0">
@@ -166,8 +175,8 @@
         </a>
       </div>
 
-      <!-- Streamlined Quick Actions (Call, WhatsApp, All Lines) -->
-      <div class="na-mobile-actions-deck">
+      <!-- Streamlined Quick Actions (Call, WhatsApp, More Lines, Minimize) -->
+      <div class="na-mobile-actions-deck flex-nowrap">
         <a href="tel:+201006979198" class="na-mobile-btn na-mobile-btn-call" aria-label="{{ __('messages.call_now') ?? 'اتصال' }}">
           <i class="bi bi-telephone-fill"></i>
           <span>{{ __('messages.call_now') ?? 'اتصال' }}</span>
@@ -178,9 +187,14 @@
           <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span>
         </a>
 
-        <button type="button" class="na-mobile-btn na-mobile-btn-lines na-emergency-drawer-toggle" onclick="toggleEmergencyDrawer()" aria-expanded="false" aria-controls="naEmergencyDrawer" aria-label="{{ __('messages.all_lines_info') ?? 'جميع الخطوط' }}">
-          <i class="bi bi-chevron-up transition-transform na-drawer-chevron"></i>
-          <span>{{ __('messages.all_lines_info_short') ?? 'الخطوط' }}</span>
+        <button type="button" class="na-mobile-btn na-mobile-btn-lines" onclick="toggleLinesPopover(event)" id="naLinesMobileToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" aria-label="{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}">
+          <i class="bi bi-grid-fill text-info"></i>
+          <span>{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}</span>
+          <i class="bi bi-chevron-up transition-transform na-popover-chevron ms-1" style="font-size: 0.7rem;"></i>
+        </button>
+
+        <button type="button" class="na-mobile-btn na-mobile-btn-minimize" onclick="toggleEmergencyBarMinimize()" aria-label="{{ __('messages.minimize_helpline_bar') ?? 'تصغير' }}" title="{{ __('messages.minimize_helpline_bar') ?? 'تصغير' }}">
+          <i class="bi bi-x-lg"></i>
         </button>
       </div>
     </div>
@@ -188,29 +202,138 @@
   </div>
 </div>
 
-<script>
-  function toggleEmergencyDrawer() {
-    const drawer = document.getElementById('naEmergencyDrawer');
-    const toggles = document.querySelectorAll('.na-emergency-drawer-toggle');
-    const chevrons = document.querySelectorAll('.na-drawer-chevron');
-    if (!drawer) return;
+<!-- Floating Restore Trigger Pill when Minimized -->
+<button type="button" id="naEmergencyRestoreBtn" class="na-emergency-restore-pill d-none" onclick="toggleEmergencyBarMinimize()" aria-label="{{ __('messages.show_helpline_bar') ?? 'إظهار خط المساعدة' }}" title="{{ __('messages.show_helpline_bar') ?? 'إظهار خط المساعدة' }}">
+  <span class="na-pulse-dot" aria-hidden="true"></span>
+  <i class="bi bi-telephone-fill text-warning"></i>
+  <span>{{ __('messages.emergency_helpline_short') ?? 'خط المساعدة' }}</span>
+  <i class="bi bi-chevron-up ms-1"></i>
+</button>
 
-    const isOpen = drawer.classList.contains('open');
+<script>
+  function updateEmergencyBarOffset() {
+    const bar = document.getElementById('naEmergencyActionBar');
+    if (!bar) return;
+    const isMinimized = bar.classList.contains('minimized');
+    if (isMinimized) {
+      document.documentElement.style.setProperty('--na-emergency-bar-height', '0px');
+      return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const mainBar = isMobile
+      ? bar.querySelector('.na-emergency-mobile-bar')
+      : bar.querySelector('.na-emergency-desktop-bar');
+
+    const baseHeight = isMobile ? 50 : 54;
+    const measuredHeight = (mainBar && mainBar.offsetHeight > 0) ? mainBar.offsetHeight : baseHeight;
+    // Strictly clamp between 40px and 60px to prevent any layout runaway
+    const clampedHeight = Math.min(Math.max(measuredHeight, 40), 60);
+
+    document.documentElement.style.setProperty('--na-emergency-bar-height', clampedHeight + 'px');
+  }
+
+  function toggleEmergencyBarMinimize() {
+    const bar = document.getElementById('naEmergencyActionBar');
+    const restoreBtn = document.getElementById('naEmergencyRestoreBtn');
+    if (!bar) return;
+
+    // If popover is open, close it before minimizing
+    closeLinesPopover();
+
+    const isMinimized = bar.classList.toggle('minimized');
+    if (restoreBtn) {
+      if (isMinimized) {
+        restoreBtn.classList.remove('d-none');
+      } else {
+        restoreBtn.classList.add('d-none');
+      }
+    }
+
+    try {
+      sessionStorage.setItem('na_emergency_bar_minimized', isMinimized ? '1' : '0');
+    } catch(e) {}
+
+    updateEmergencyBarOffset();
+  }
+
+  function toggleLinesPopover(e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const popover = document.getElementById('naLinesPopoverCard');
+    const desktopBtn = document.getElementById('naLinesDesktopToggle');
+    const mobileBtn = document.getElementById('naLinesMobileToggle');
+    if (!popover) return;
+
+    const isOpen = popover.classList.contains('open');
     if (isOpen) {
-      drawer.classList.remove('open');
-      drawer.setAttribute('aria-hidden', 'true');
-      toggles.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
-      chevrons.forEach(ch => ch.style.transform = 'rotate(0deg)');
+      closeLinesPopover();
     } else {
-      drawer.classList.add('open');
-      drawer.setAttribute('aria-hidden', 'false');
-      toggles.forEach(btn => btn.setAttribute('aria-expanded', 'true'));
-      chevrons.forEach(ch => ch.style.transform = 'rotate(180deg)');
+      popover.style.display = 'block';
+      requestAnimationFrame(() => {
+        popover.classList.add('open');
+      });
+      if (desktopBtn) desktopBtn.setAttribute('aria-expanded', 'true');
+      if (mobileBtn) mobileBtn.setAttribute('aria-expanded', 'true');
+      document.querySelectorAll('.na-popover-chevron').forEach(ch => ch.style.transform = 'rotate(180deg)');
     }
   }
 
+  function closeLinesPopover() {
+    const popover = document.getElementById('naLinesPopoverCard');
+    const desktopBtn = document.getElementById('naLinesDesktopToggle');
+    const mobileBtn = document.getElementById('naLinesMobileToggle');
+    if (!popover) return;
+
+    popover.classList.remove('open');
+    document.querySelectorAll('.na-popover-chevron').forEach(ch => ch.style.transform = 'rotate(0deg)');
+    if (desktopBtn) desktopBtn.setAttribute('aria-expanded', 'false');
+    if (mobileBtn) mobileBtn.setAttribute('aria-expanded', 'false');
+
+    setTimeout(() => {
+      if (!popover.classList.contains('open')) {
+        popover.style.display = 'none';
+      }
+    }, 200);
+  }
+
+  // Close popover when clicking outside
+  document.addEventListener('click', function(e) {
+    const popover = document.getElementById('naLinesPopoverCard');
+    if (!popover || popover.style.display === 'none') return;
+    const isInside = popover.contains(e.target);
+    const isDesktopToggle = e.target.closest('#naLinesDesktopToggle');
+    const isMobileToggle = e.target.closest('#naLinesMobileToggle');
+    if (!isInside && !isDesktopToggle && !isMobileToggle) {
+      closeLinesPopover();
+    }
+  });
+
+  // Escape key closes popover
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeLinesPopover();
+    }
+  });
+
   // Client-Side Egypt Time Verifier to handle CDN/Edge Cache Time Drift
   document.addEventListener('DOMContentLoaded', function() {
+    // Restore minimized state on page load if user previously minimized
+    try {
+      if (sessionStorage.getItem('na_emergency_bar_minimized') === '1') {
+        const bar = document.getElementById('naEmergencyActionBar');
+        const restoreBtn = document.getElementById('naEmergencyRestoreBtn');
+        if (bar) bar.classList.add('minimized');
+        if (restoreBtn) restoreBtn.classList.remove('d-none');
+      }
+    } catch(e) {}
+
+    updateEmergencyBarOffset();
+    window.addEventListener('resize', updateEmergencyBarOffset);
+    window.addEventListener('orientationchange', updateEmergencyBarOffset);
+
     try {
       const now = new Date();
       // Format current hour in Africa/Cairo timezone

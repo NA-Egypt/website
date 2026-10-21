@@ -101,7 +101,7 @@
 <style>
 .na-pwa-banner {
   position: fixed;
-  bottom: 64px; /* Just above emergency bar */
+  bottom: calc(var(--na-emergency-bar-height, 60px) + 12px);
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 24px);
@@ -111,6 +111,7 @@
   border-color: rgba(255, 255, 255, 0.15) !important;
   z-index: 1040;
   animation: naSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes naSlideUp {
@@ -128,7 +129,7 @@
 
 @media (max-width: 576px) {
   .na-pwa-banner {
-    bottom: 58px;
+    bottom: calc(var(--na-emergency-bar-height, 56px) + 8px);
     border-radius: 16px;
   }
   .na-pwa-desc {

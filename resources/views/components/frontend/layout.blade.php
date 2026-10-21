@@ -63,6 +63,7 @@
   <!-- PWA Web App Manifest & Mobile Theme -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#1B2A4A">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="NA Egypt">
