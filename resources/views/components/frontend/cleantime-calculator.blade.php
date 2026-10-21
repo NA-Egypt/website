@@ -182,7 +182,7 @@
       <div class="col-6 col-md-3">
         <div class="na-stat-card na-stat-card-total">
           <div id="ctTotalDaysVal" class="na-stat-num na-stat-teal">0</div>
-          <div class="na-stat-label fw-bold text-teal-800">{{ __('messages.total_clean_days') }}</div>
+          <div class="na-stat-label fw-bold text-navy-800">{{ __('messages.total_clean_days') }}</div>
         </div>
       </div>
     </div>
@@ -484,8 +484,8 @@
 }
 
 .na-badge-pill {
-  background: rgba(14, 131, 136, 0.08);
-  color: var(--na-teal-700, #0E8388);
+  background: rgba(50, 85, 127, 0.08);
+  color: #32557f;
   font-size: 0.85rem;
 }
 
@@ -594,8 +594,8 @@
 }
 
 .na-stat-card-total {
-  background: #f0fdfa;
-  border-color: #ccfbf1;
+  background: #f0f7ff;
+  border-color: #dbe7f6;
 }
 
 .na-stat-num {
@@ -608,7 +608,6 @@
 }
 
 .na-stat-teal {
-  color: #0f766e;
 }
 
 .na-stat-label {
@@ -678,7 +677,7 @@
 }
 
 .na-shelf-item.current-highest .na-keytag-graphic {
-  filter: drop-shadow(0 10px 22px rgba(14, 131, 136, 0.55));
+  filter: drop-shadow(0 10px 22px rgba(50, 85, 127, 0.45));
 }
 
 .na-shelf-item.next-target {
@@ -809,14 +808,14 @@
 }
 
 .na-btn-share {
-  background: linear-gradient(135deg, #0e8388 0%, #0c696e 100%);
+  background: linear-gradient(135deg, #32557f 0%, #243f60 100%);
   border: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .na-btn-share:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(14, 131, 136, 0.35);
+  box-shadow: 0 8px 18px rgba(50, 85, 127, 0.35);
 }
 
 /* Mobile responsive adjustments */
@@ -1397,7 +1396,7 @@
     ctx.restore();
 
     // 3. Subtle Outer Glow Frame
-    ctx.strokeStyle = 'rgba(14, 131, 136, 0.35)';
+    ctx.strokeStyle = 'rgba(50, 85, 127, 0.35)';
     ctx.lineWidth = 3;
     ctx.strokeRect(36, 36, w - 72, h - 72);
 
@@ -1453,7 +1452,7 @@
 
     // 11. Subtle Date calculated on
     const dateStr = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
-    ctx.fillStyle = 'rgba(14, 131, 136, 0.7)';
+    ctx.fillStyle = 'rgba(50, 85, 127, 0.7)';
     ctx.font = '600 15px "Cairo", sans-serif';
     ctx.fillText(`تاريخ الحساب: ${dateStr}`, w / 2, 1005);
   }

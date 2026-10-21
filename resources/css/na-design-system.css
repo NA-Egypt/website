@@ -16,13 +16,16 @@
   --na-navy-100: #e8eef8;
   --na-navy-50:  #f3f6fc;
 
-  /* Calming Accents */
-  --na-teal-800: #075256;
-  --na-teal-700: #0a6b70;
-  --na-teal-600: #0e8388; /* Primary Teal Accent */
-  --na-teal-500: #2e8b9a; /* Secondary Soft Teal */
-  --na-teal-100: #d1f0f2;
-  --na-teal-50:  #eaf8f8;
+  /* NA Egypt Authentic Fellowship Colors (naegypt.org palette) */
+  --na-teal-900: #101b30;
+  --na-teal-800: #1b2a4a; /* Deep Brand Navy */
+  --na-teal-700: #243f60; /* Darker Slate/Egyptian Blue */
+  --na-teal-600: #32557f; /* Official NA Egypt Blue (rgb: 50, 85, 127) */
+  --na-teal-500: #00698f; /* Classic Egyptian Ocean / Helpline Blue */
+  --na-teal-400: #2563eb; /* Vibrant Royal Accent Blue */
+  --na-teal-300: #00baf0; /* Cyan Accent */
+  --na-teal-100: #dbe7f6; /* Soft Sky Blue Tint */
+  --na-teal-50:  #f4f8fd; /* Ultra-soft Ice Blue Surface */
 
   /* Surfaces & Canvas */
   --na-canvas:   #f8f9fa; /* Warm Sanctuary Canvas */
@@ -91,6 +94,18 @@ html {
 }
 
 /* Typographic Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, #1e3a8a, #00baf0) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block;
+  line-height: 1.55 !important;
+  padding-top: 2px !important;
+  padding-bottom: 6px !important;
+  overflow: visible;
+}
+
 .na-heading-display {
   font-size: clamp(1.85rem, 4vw, 2.75rem);
   font-weight: 800;
@@ -154,9 +169,9 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(14, 131, 136, 0.1);
+  background: rgba(50, 85, 127, 0.1);
   color: var(--na-teal-700);
-  border: 1px solid rgba(14, 131, 136, 0.25);
+  border: 1px solid rgba(50, 85, 127, 0.25);
   padding: 6px 16px;
   border-radius: 9999px;
   font-size: 0.85rem;
@@ -192,13 +207,13 @@ select:focus-visible {
 }
 
 .na-tripath-card.primary-help {
-  border-color: rgba(14, 131, 136, 0.35);
-  background: linear-gradient(180deg, #ffffff 0%, #f7fcfa 100%);
+  border-color: rgba(50, 85, 127, 0.35);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8fd 100%);
 }
 
 .na-tripath-card.primary-help:hover {
   border-color: var(--na-teal-600);
-  box-shadow: 0 16px 36px -8px rgba(14, 131, 136, 0.22);
+  box-shadow: 0 16px 36px -8px rgba(50, 85, 127, 0.22);
 }
 
 .na-card-top-icon {
@@ -275,7 +290,7 @@ select:focus-visible {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  box-shadow: 0 4px 14px rgba(14, 131, 136, 0.25);
+  box-shadow: 0 4px 14px rgba(50, 85, 127, 0.25);
   transition: all 0.25s ease;
   text-decoration: none !important;
   cursor: pointer;
@@ -284,7 +299,7 @@ select:focus-visible {
 .na-btn-primary:hover {
   background: linear-gradient(135deg, var(--na-teal-700) 0%, var(--na-teal-800) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(14, 131, 136, 0.35);
+  box-shadow: 0 6px 18px rgba(50, 85, 127, 0.35);
   color: #ffffff !important;
 }
 
@@ -351,7 +366,7 @@ select:focus-visible {
 .na-filter-select:focus {
   outline: none;
   border-color: var(--na-teal-600);
-  box-shadow: 0 0 0 3px rgba(14, 131, 136, 0.15);
+  box-shadow: 0 0 0 3px rgba(50, 85, 127, 0.15);
 }
 
 .na-format-pill-toggle {
@@ -441,14 +456,14 @@ select:focus-visible {
 .na-jft-container {
   background: #ffffff;
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(14, 131, 136, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.02) 0%, transparent 40%);
-  border: 1px solid rgba(14, 131, 136, 0.16);
+    radial-gradient(circle at 100% 0%, rgba(50, 85, 127, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(37, 99, 235, 0.02) 0%, transparent 40%);
+  border: 1px solid rgba(50, 85, 127, 0.16);
   border-radius: 24px;
   padding: 2.25rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(14, 131, 136, 0.04);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(50, 85, 127, 0.04);
   transition: all 0.3s ease;
 }
 
@@ -475,9 +490,9 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(14, 131, 136, 0.1);
+  background: rgba(50, 85, 127, 0.1);
   color: var(--na-teal-700);
-  border: 1px solid rgba(14, 131, 136, 0.2);
+  border: 1px solid rgba(50, 85, 127, 0.2);
   border-radius: 9999px;
   padding: 4px 12px;
   font-size: 0.84rem;
@@ -606,19 +621,19 @@ select:focus-visible {
   align-items: center;
   gap: 7px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(14, 131, 136, 0.25);
+  box-shadow: 0 4px 12px rgba(50, 85, 127, 0.25);
   transition: all 0.2s ease;
 }
 
 .jft-share-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(14, 131, 136, 0.35);
+  box-shadow: 0 6px 16px rgba(50, 85, 127, 0.35);
 }
 
 /* Audio Player Bar */
 .jft-audio-bar {
-  background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
-  border: 1.5px solid rgba(14, 131, 136, 0.18);
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f7ff 100%);
+  border: 1.5px solid rgba(50, 85, 127, 0.18);
   border-radius: 18px;
   padding: 10px 16px;
   display: flex;
@@ -640,7 +655,7 @@ select:focus-visible {
   gap: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.3);
+  box-shadow: 0 2px 8px rgba(50, 85, 127, 0.3);
 }
 
 .jft-audio-play-btn:hover {
@@ -754,7 +769,7 @@ select:focus-visible {
 }
 
 .jft-quote-source-badge {
-  background: rgba(14, 131, 136, 0.12);
+  background: rgba(50, 85, 127, 0.12);
   color: var(--na-teal-800);
   padding: 3px 12px;
   border-radius: 9999px;
@@ -777,18 +792,18 @@ select:focus-visible {
 }
 
 .jft-paragraph.jft-speaking-active {
-  background: rgba(14, 131, 136, 0.1);
+  background: rgba(50, 85, 127, 0.1);
   padding: 6px 12px;
   color: #0f172a;
 }
 
 /* Affirmation Card ("لليوم فقط: ...") */
 .jft-affirmation-card {
-  background: linear-gradient(135deg, rgba(14, 131, 136, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
-  border: 1.5px solid rgba(14, 131, 136, 0.24);
+  background: linear-gradient(135deg, rgba(50, 85, 127, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%);
+  border: 1.5px solid rgba(50, 85, 127, 0.24);
   border-radius: 18px;
   padding: 1.5rem 1.75rem;
-  box-shadow: 0 4px 16px rgba(14, 131, 136, 0.08);
+  box-shadow: 0 4px 16px rgba(50, 85, 127, 0.08);
   margin-top: 2rem;
 }
 
@@ -798,7 +813,7 @@ select:focus-visible {
   gap: 6px;
   background: #ffffff;
   color: var(--na-teal-700);
-  border: 1px solid rgba(14, 131, 136, 0.25);
+  border: 1px solid rgba(50, 85, 127, 0.25);
   border-radius: 9999px;
   padding: 4px 12px;
   font-size: 0.82rem;
@@ -990,7 +1005,7 @@ select:focus-visible {
 }
 
 .na-keytag-item.current-milestone .na-keytag-svg-wrap {
-  filter: drop-shadow(0 8px 20px rgba(14, 131, 136, 0.45));
+  filter: drop-shadow(0 8px 20px rgba(50, 85, 127, 0.45));
 }
 
 .na-keytag-label {
@@ -1127,7 +1142,7 @@ select:focus-visible {
   background: rgba(16, 27, 48, 0.96);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  border-top: 1.5px solid rgba(14, 131, 136, 0.35);
+  border-top: 1.5px solid rgba(50, 85, 127, 0.35);
   box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.35);
   color: #ffffff;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1261,7 +1276,7 @@ select:focus-visible {
   justify-content: center;
   font-size: 0.85rem;
   text-decoration: none;
-  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.4);
+  box-shadow: 0 2px 8px rgba(50, 85, 127, 0.4);
   flex-shrink: 0;
 }
 
@@ -1295,7 +1310,7 @@ select:focus-visible {
 .na-mobile-btn-call {
   background: var(--na-teal-600);
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(14, 131, 136, 0.35);
+  box-shadow: 0 2px 8px rgba(50, 85, 127, 0.35);
 }
 
 .na-mobile-btn-call:hover, .na-mobile-btn-call:active {

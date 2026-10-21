@@ -370,19 +370,19 @@
 <style>
   .na-smart-upcoming-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fbfd 60%, #f0f7fb 100%);
-    border: 1.5px solid rgba(14, 131, 136, 0.28) !important;
+    border: 1.5px solid rgba(50, 85, 127, 0.22) !important;
     border-radius: 20px;
-    box-shadow: 0 8px 24px -4px rgba(14, 131, 136, 0.12);
+    box-shadow: 0 8px 24px -4px rgba(50, 85, 127, 0.12);
     transition: all 0.3s ease;
   }
   .na-smart-upcoming-card:hover {
     border-color: var(--na-teal-600) !important;
-    box-shadow: 0 12px 32px -4px rgba(14, 131, 136, 0.2);
+    box-shadow: 0 12px 32px -4px rgba(50, 85, 127, 0.2);
   }
   .na-upcoming-header-badge {
-    color: #0e8388;
-    background: rgba(14, 131, 136, 0.1);
-    border: 1px solid rgba(14, 131, 136, 0.2);
+    color: #32557f;
+    background: rgba(50, 85, 127, 0.08);
+    border: 1px solid rgba(50, 85, 127, 0.18);
     border-radius: 9999px;
     padding: 3px 12px;
     font-size: 0.82rem;
@@ -422,7 +422,7 @@
   .na-filter-input:focus {
     outline: none;
     border-color: var(--na-teal-600);
-    box-shadow: 0 0 0 3px rgba(14, 131, 136, 0.15);
+    box-shadow: 0 0 0 3px rgba(50, 85, 127, 0.15);
   }
   .na-autocomplete-dropdown {
     position: absolute;
@@ -455,8 +455,8 @@
     border-bottom: none;
   }
   .na-autocomplete-item:hover, .na-autocomplete-item.active {
-    background: #f0fdfa;
-    color: var(--na-teal-700);
+    background: #f0f7ff;
+    color: #32557f;
   }
   .na-quick-chip {
     font-size: 0.72rem;
@@ -470,8 +470,8 @@
   }
   .na-quick-chip:hover {
     border-color: var(--na-teal-500);
-    background: #f0fdfa;
-    color: var(--na-teal-700);
+    background: #f0f7ff;
+    color: #32557f;
   }
   .na-tag-badge {
     background: #f1f5f9;

@@ -28,26 +28,27 @@
   </div>
 
   <style>
+    /* High-Impact Hero APK Card (naegypt.org Palette) */
     .btn-hero-apk-card {
       position: relative;
       background: linear-gradient(135deg, #ffffff 0%, #f4f8fd 60%, #eef5fc 100%);
-      border: 1.5px solid rgba(14, 131, 136, 0.22) !important;
+      border: 1.5px solid rgba(37, 99, 235, 0.18) !important;
       border-radius: 18px;
       padding: 10px 16px;
       width: 100%;
       max-width: 440px;
       min-height: 64px;
-      box-shadow: 0 4px 16px rgba(14, 131, 136, 0.08);
+      box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.12), 0 2px 8px -2px rgba(15, 23, 42, 0.05);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       text-decoration: none;
       color: inherit;
     }
     .btn-hero-apk-card:hover {
-      background: linear-gradient(135deg, #ffffff 0%, #edf8f8 60%, #e5f6f6 100%);
-      border-color: var(--na-teal-600) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px -6px rgba(14, 131, 136, 0.2);
+      background: linear-gradient(135deg, #ffffff 0%, #edf4fe 60%, #e5f0fc 100%);
+      border-color: rgba(37, 99, 235, 0.45) !important;
+      transform: translateY(-2.5px);
+      box-shadow: 0 16px 36px -8px rgba(37, 99, 235, 0.22), 0 4px 12px -2px rgba(15, 23, 42, 0.08);
     }
     .apk-card-shimmer {
       position: absolute;
@@ -68,10 +69,10 @@
       height: 44px;
       min-width: 44px;
       border-radius: 13px;
-      background: linear-gradient(135deg, #0e8388 0%, #0a6b70 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       display: grid;
       place-items: center;
-      box-shadow: 0 4px 14px rgba(14, 131, 136, 0.35);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
       margin-inline-end: 12px;
       z-index: 1;
     }
@@ -79,7 +80,7 @@
       position: absolute;
       inset: -3px;
       border-radius: 16px;
-      border: 2px solid rgba(14, 131, 136, 0.35);
+      border: 2px solid rgba(16, 185, 129, 0.35);
       animation: apkAuraPulse 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       pointer-events: none;
     }
@@ -116,9 +117,9 @@
       white-space: nowrap;
     }
     .apk-card-version-badge {
-      background: rgba(14, 131, 136, 0.12);
-      color: #0e8388;
-      border: 1px solid rgba(14, 131, 136, 0.25);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10) 0%, rgba(37, 99, 235, 0.16) 100%);
+      color: #1d4ed8;
+      border: 1px solid rgba(37, 99, 235, 0.22);
       font-size: 0.64rem;
       font-weight: 700;
       padding: 1.5px 7px;
@@ -139,12 +140,19 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #0e8388;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: #ffffff;
-      padding: 6px 14px;
+      padding: 7px 14px;
       border-radius: 9999px;
       font-size: 0.82rem;
       font-weight: 700;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.32);
+      transition: all 0.25s ease;
+    }
+    .btn-hero-apk-card:hover .apk-card-cta-btn {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.42);
+      transform: scale(1.03);
     }
   </style>
 
@@ -309,9 +317,9 @@
       overflow: hidden;
     }
     .apk-input-group:focus-within {
-      border-color: #0e8388;
+      border-color: #32557f;
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(14, 131, 136, 0.12);
+      box-shadow: 0 0 0 4px rgba(50, 85, 127, 0.15);
     }
     .apk-input-group .form-control {
       border: none !important;

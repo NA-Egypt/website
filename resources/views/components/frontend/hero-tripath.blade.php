@@ -12,7 +12,7 @@
   </div>
 
   <!-- Main Headline & Subtitle -->
-  <h1 id="hero-heading" class="na-heading-display mb-3">
+  <h1 id="hero-heading" class="na-heading-display text-gradient mb-3">
     {{ __('messages.hero_main_headline') ?? 'أهلاً بك في زمالة المدمنين المجهولين - مصر' }}
   </h1>
   <p class="na-lead mx-auto mb-4" style="max-width: 760px;">
