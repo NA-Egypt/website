@@ -21,19 +21,19 @@
 
         <!-- Social Channels -->
         <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
-          <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Facebook" class="footer-social-icon p-2 rounded-circle" style="background: rgba(255,255,255,0.08); color: #fff;">
+          <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Facebook" class="footer-social-icon social-facebook">
             <x-fab-facebook style="width:18px; height:18px;" />
           </a>
-          <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Instagram" class="footer-social-icon p-2 rounded-circle" style="background: rgba(255,255,255,0.08); color: #fff;">
+          <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Instagram" class="footer-social-icon social-instagram">
             <x-fab-instagram style="width:18px; height:18px;" />
           </a>
-          <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on TikTok" class="footer-social-icon p-2 rounded-circle" style="background: rgba(255,255,255,0.08); color: #fff;">
+          <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on TikTok" class="footer-social-icon social-tiktok">
             <x-fab-tiktok style="width:18px; height:18px;" />
           </a>
-          <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="footer-social-icon p-2 rounded-circle" style="background: rgba(37,211,102,0.2); color: #4ade80;">
+          <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="footer-social-icon social-whatsapp">
             <x-fab-whatsapp style="width:18px; height:18px;" />
           </a>
-          <a href="mailto:pr@naegypt.org" aria-label="Email" class="footer-social-icon p-2 rounded-circle" style="background: rgba(255,255,255,0.08); color: #fff;">
+          <a href="mailto:pr@naegypt.org" aria-label="Email" class="footer-social-icon social-email">
             <x-fas-envelope style="width:18px; height:18px;" />
           </a>
         </div>
