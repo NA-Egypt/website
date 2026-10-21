@@ -43,7 +43,7 @@
       <!-- ==================================================================
            TOOLBAR ROW: Navigation, Date Picker, Font Size, Print, Share
            ================================================================== -->
-      <div class="jft-toolbar-wrapper d-print-none mb-4 pb-3 border-bottom border-teal-10">
+      <div class="jft-toolbar-wrapper d-print-none mb-4 pb-3 border-bottom border-light-subtle">
         <!-- Right / Start: Date & Reading Identity -->
         <div class="d-flex flex-column gap-1">
           <div class="d-flex align-items-center flex-wrap gap-2">

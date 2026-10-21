@@ -28,7 +28,7 @@
       <div class="hero-shell p-4 p-md-5 rounded-4 shadow-sm position-relative overflow-hidden">
         <div class="row align-items-center g-4 position-relative" style="z-index: 1;">
           <div class="col-12 col-lg-8">
-            <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(14, 131, 136, 0.12); color: #0E8388; font-weight: 700; font-size: 0.88rem;">
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(50, 85, 127, 0.08); color: #32557f; font-weight: 700; font-size: 0.88rem;">
               <i class="bi bi-android2 fs-5"></i>
               <span>v1.2.0-Hope • {{ app()->getLocale() === 'ar' ? 'تطبيق الزمالة الرسمي للأجهزة الذكية' : 'Official Fellowship Mobile App' }}</span>
             </div>
@@ -99,9 +99,9 @@
   <style>
     .hero-shell {
       background:
-        radial-gradient(circle at top left, rgba(14, 131, 136, 0.12), transparent 28%),
+        radial-gradient(circle at top left, rgba(50, 85, 127, 0.08), transparent 28%),
         linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-      border: 1px solid rgba(14, 131, 136, 0.18);
+      border: 1px solid rgba(50, 85, 127, 0.15);
     }
   </style>
 </x-frontend.layout>

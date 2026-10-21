@@ -28,7 +28,7 @@
       <div class="hero-shell p-4 p-md-5 rounded-4 shadow-sm position-relative overflow-hidden">
         <div class="row align-items-center g-4 position-relative" style="z-index: 1;">
           <div class="col-12 col-lg-8">
-            <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(14, 131, 136, 0.12); color: #0E8388; font-weight: 700; font-size: 0.88rem;">
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(50, 85, 127, 0.08); color: #32557f; font-weight: 700; font-size: 0.88rem;">
               <i class="bi bi-stars"></i>
               <span>{{ __('messages.just_for_today') }} • {{ __('messages.miracle_quote_humble') }}</span>
             </div>
@@ -171,7 +171,7 @@
             </div>
 
             <!-- Quick Help / Meeting Action Box -->
-            <div class="p-3 rounded-3 text-white text-center" style="background: linear-gradient(135deg, #0e8388 0%, #1b2a4a 100%);">
+            <div class="p-3 rounded-3 text-white text-center" style="background: linear-gradient(135deg, #32557f 0%, #1b2a4a 100%);">
               <div class="fw-bold small mb-1">{{ $isArabic ? 'هل تبحث عن اجتماع أو تحتاج لمساعدة؟' : 'Looking for a meeting or need help?' }}</div>
               <div class="x-small text-white-50 mb-3">{{ $isArabic ? 'اجتماعات الزمالة متاحة حضورياً وأونلاين في كافة المحافظات' : 'NA meetings available in-person and online across all governorates' }}</div>
               <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
@@ -196,9 +196,9 @@
 
     .hero-shell {
       background:
-        radial-gradient(circle at top left, rgba(14, 131, 136, 0.12), transparent 28%),
+        radial-gradient(circle at top left, rgba(50, 85, 127, 0.08), transparent 28%),
         linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-      border: 1px solid rgba(14, 131, 136, 0.18);
+      border: 1px solid rgba(50, 85, 127, 0.15);
     }
 
     .x-small {

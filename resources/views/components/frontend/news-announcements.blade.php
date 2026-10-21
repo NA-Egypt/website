@@ -24,7 +24,7 @@
   </div>
 
   <!-- Featured Regional Convention Banner -->
-  <div class="p-4 rounded-4 mb-4 text-white position-relative overflow-hidden shadow-md" style="background: linear-gradient(135deg, #101b30 0%, #1b2a4a 55%, #0e8388 100%);">
+  <div class="p-4 rounded-4 mb-4 text-white position-relative overflow-hidden shadow-md" style="background: linear-gradient(135deg, #101b30 0%, #1b2a4a 55%, #32557f 100%);">
     <div class="row align-items-center">
       <div class="col-12 col-md-8">
         <span class="badge rounded-pill bg-warning text-dark fw-bold px-3 py-1.5 mb-2 shadow-xs">
@@ -63,7 +63,9 @@
                 <span>{{ $startDate }}</span>
               </span>
               @if($event->is_featured)
-                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill small">مميز</span>
+                <span class="badge rounded-pill shadow-xs" style="background-color: #fef3c7 !important; color: #92400e !important; border: 1px solid #fde68a !important; font-size: 0.75rem; font-weight: 700; padding: 4px 10px;">
+                  <i class="bi bi-star-fill text-warning me-1"></i>{{ __('messages.featured') ?? 'مميز' }}
+                </span>
               @endif
             </div>
 

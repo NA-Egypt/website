@@ -195,7 +195,7 @@
         </div>
 
         {{-- Definition of Narcotics Anonymous--}}
-        <div id="definition" class="content-section flip-in" style="animation-delay: 0.1s;">
+        <div id="definition" class="content-section">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-green">
@@ -231,7 +231,7 @@
         </div>
 
         {{-- Information about the local fellowship--}}
-        <div id="local-fellowship" class="content-section flip-in" style="animation-delay: 0.2s;">
+        <div id="local-fellowship" class="content-section">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-blue">
@@ -274,7 +274,7 @@
         </div>
 
         {{-- Local statistics (general characteristics of members) --}}
-        <div id="local-statistics" class="content-section flip-in" style="animation-delay: 0.3s;">
+        <div id="local-statistics" class="content-section">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-purple">
@@ -336,7 +336,7 @@
         </div>
 
         {{-- Informational brochures (Arabic) --}}
-        <div id="arabic-brochures" class="content-section flip-in" style="animation-delay: 0.4s;">
+        <div id="arabic-brochures" class="content-section">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-red">
@@ -453,7 +453,7 @@
         </div>
 
         {{-- Society Benefits Section --}}
-        <div id="community-benefits" class="content-section flip-in" style="animation-delay: 0.5s;">
+        <div id="community-benefits" class="content-section">
             <div class="container">
                 <div class="section-header">
                     <div class="header-icon icon-indigo">
@@ -544,7 +544,6 @@
             width: 300px;
             height: 300px;
             background: radial-gradient(circle, #3b82f6 0%, transparent 80%);
-            animation: float-blob-1 20s infinite alternate;
         }
 
         .mesh-blob-2 {
@@ -553,7 +552,6 @@
             width: 350px;
             height: 350px;
             background: radial-gradient(circle, #8b5cf6 0%, transparent 80%);
-            animation: float-blob-2 25s infinite alternate;
         }
 
         .mesh-blob-3 {
@@ -562,25 +560,6 @@
             width: 250px;
             height: 250px;
             background: radial-gradient(circle, #10b981 0%, transparent 80%);
-            animation: float-blob-3 18s infinite alternate;
-        }
-
-        @keyframes float-blob-1 {
-            0% { transform: translate(0px, 0px) scale(1); }
-            50% { transform: translate(60px, -40px) scale(1.2); }
-            100% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        @keyframes float-blob-2 {
-            0% { transform: translate(0px, 0px) scale(1.1); }
-            50% { transform: translate(-50px, 50px) scale(0.8); }
-            100% { transform: translate(40px, -30px) scale(1.2); }
-        }
-
-        @keyframes float-blob-3 {
-            0% { transform: translate(0px, 0px) scale(0.9); }
-            50% { transform: translate(-30px, -60px) scale(1.1); }
-            100% { transform: translate(50px, 30px) scale(1); }
         }
 
         .hero-container {
@@ -1400,7 +1379,6 @@
 
         .faq-answer {
             padding: 25px;
-            animation: slideDown 0.3s ease;
         }
 
         .faq-answer p {
@@ -1409,18 +1387,6 @@
 
         .faq-answer p:last-child {
             margin-bottom: 0;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* Back to Top Button */
@@ -1448,73 +1414,27 @@
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
         }
 
-        /* Animations */
-        @keyframes flipIn {
-            0% {
-                transform: perspective(800px) rotateY(90deg);
-                opacity: 0;
-            }
-
-            100% {
-                transform: perspective(800px) rotateY(0);
-                opacity: 1;
-            }
-        }
-
-        .flip-in {
-            animation: flipIn 0.8s ease forwards;
-            transform-origin: var(--flip-origin, right) center;
-            opacity: 0;
-            backface-visibility: hidden;
+        /* Static Display (Animations Removed) */
+        .flip-in,
+        .fade-in,
+        .fade-in-delay-1,
+        .fade-in-delay-2,
+        .fade-in-delay-3,
+        .fade-in-delay-4,
+        .fade-in-delay-5 {
+            opacity: 1 !important;
+            transform: none !important;
+            animation: none !important;
         }
 
         .modern-page[dir="ltr"] {
             --arrow-shift: 4px;
             --brochure-shift: 5px;
-            --flip-origin: left;
         }
 
         .modern-page[dir="rtl"] {
             --arrow-shift: -4px;
             --brochure-shift: -5px;
-            --flip-origin: right;
-        }
-
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeInUp 1s ease forwards;
-            opacity: 0;
-        }
-
-        .fade-in-delay-1 {
-            animation-delay: 0.3s;
-        }
-
-        .fade-in-delay-2 {
-            animation-delay: 0.5s;
-        }
-
-        .fade-in-delay-3 {
-            animation-delay: 0.7s;
-        }
-
-        .fade-in-delay-4 {
-            animation-delay: 0.9s;
-        }
-
-        .fade-in-delay-5 {
-            animation-delay: 1.1s;
         }
 
         html {
@@ -1743,23 +1663,10 @@
             toggleScrollBtn();
         }
 
-        // Animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
+        // Animations removed - ensure all elements are immediately visible
+        document.querySelectorAll('.fade-in, .flip-in').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
         });
     </script>
 </x-frontend.layout>

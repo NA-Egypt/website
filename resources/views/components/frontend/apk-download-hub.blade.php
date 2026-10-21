@@ -171,19 +171,19 @@
   box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
 }
 .na-apk-hero-panel {
-  background: linear-gradient(135deg, #f8fafc 0%, #edf8f8 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #edf4fe 100%);
   border-color: #cbd5e1 !important;
 }
 .na-btn-direct-apk {
-  background: linear-gradient(135deg, #0e8388 0%, #0c696e 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
   font-size: 1rem;
   transition: all 0.25s ease;
 }
 .na-btn-direct-apk:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(14, 131, 136, 0.35);
-  background: linear-gradient(135deg, #0c696e 0%, #0a565a 100%);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
 }
 .na-qr-container {
   max-width: 170px;
@@ -196,7 +196,7 @@
 }
 .na-step-card:hover {
   transform: translateY(-2px);
-  border-color: #0e8388 !important;
+  border-color: #32557f !important;
 }
 .select-all {
   user-select: all;

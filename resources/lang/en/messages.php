@@ -48,6 +48,7 @@ return [
     'Topics' => 'Topics',
     'Topic' => 'Topic',
     'Topic Title' => 'Topic Title',
+    'featured' => 'Featured',
     'Notes' => 'Notes',
     'Groups' => 'Groups',
     'Group' => 'Group',
