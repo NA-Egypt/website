@@ -27,6 +27,30 @@
     </div>
   </div>
 
+  <!-- Header Social Channels Row -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2 gap-sm-3">
+      <span class="text-secondary small fw-semibold hero-social-label">{{ __('messages.hero_social_connect') }}</span>
+      <div class="d-flex align-items-center gap-2">
+        <a href="https://www.facebook.com/OfficialNAEgyPage" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Facebook" class="header-social-icon social-facebook">
+          <x-fab-facebook style="width:18px; height:18px;" />
+        </a>
+        <a href="https://www.instagram.com/narcoticsanonymousegy" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on Instagram" class="header-social-icon social-instagram">
+          <x-fab-instagram style="width:18px; height:18px;" />
+        </a>
+        <a href="https://www.tiktok.com/@narcoticsanonymousegypt" target="_blank" rel="noopener noreferrer" aria-label="NA Egypt on TikTok" class="header-social-icon social-tiktok">
+          <x-fab-tiktok style="width:18px; height:18px;" />
+        </a>
+        <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="header-social-icon social-whatsapp">
+          <x-fab-whatsapp style="width:18px; height:18px;" />
+        </a>
+        <a href="mailto:pr@naegypt.org" aria-label="Email" class="header-social-icon social-email">
+          <x-fas-envelope style="width:18px; height:18px;" />
+        </a>
+      </div>
+    </div>
+  </div>
+
   <style>
     /* High-Impact Hero APK Card (naegypt.org Palette) */
     .btn-hero-apk-card {

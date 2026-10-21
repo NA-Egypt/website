@@ -2331,6 +2331,7 @@ return [
     'apk_cta_download' => 'Download',
     'apk_download_app' => 'Download App (Android)',
     'apk_hero_pill' => 'NA Egypt Mobile App',
+    'hero_social_connect' => 'Connect with us:',
     'apk_modal_title' => 'Download Android App',
     'apk_modal_subtitle' => 'Enter your email address to receive your direct download link for the Android app.',
     'apk_email_label' => 'Email Address',

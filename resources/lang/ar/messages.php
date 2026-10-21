@@ -2336,6 +2336,7 @@ return [
     'apk_cta_download' => 'تحميل',
     'apk_download_app' => 'تحميل التطبيق (Android)',
     'apk_hero_pill' => 'تطبيق زمالة المدمنين المجهولين',
+    'hero_social_connect' => 'تابعنا على منصات التواصل:',
     'apk_modal_title' => 'تحميل تطبيق Android',
     'apk_modal_subtitle' => 'أدخل بريدك الإلكتروني لاستلام رابط التحميل المباشر لتطبيق أندرويد.',
     'apk_email_label' => 'البريد الإلكتروني',

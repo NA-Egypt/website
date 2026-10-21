@@ -30,7 +30,6 @@
     <svg viewBox="0 0 100 100" class="na-jft-watermark" aria-hidden="true">
       <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="4" />
       <rect x="23" y="23" width="54" height="54" rx="2" fill="none" stroke="currentColor" stroke-width="3" transform="rotate(45 50 50)" />
-      <circle cx="50" cy="50" r="6" fill="currentColor" />
     </svg>
 
     <!-- Print Only Header -->

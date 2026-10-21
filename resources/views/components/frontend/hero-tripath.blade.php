@@ -5,7 +5,6 @@
       <svg viewBox="0 0 100 100" style="width: 20px; height: 20px; color: var(--na-teal-700);" aria-hidden="true">
         <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="6" />
         <rect x="24" y="24" width="52" height="52" rx="3" fill="none" stroke="currentColor" stroke-width="5" transform="rotate(45 50 50)" />
-        <circle cx="50" cy="50" r="7" fill="currentColor" />
       </svg>
       <span>{{ __('messages.na_fellowship_egypt_badge') ?? 'زمالة المدمنين المجهولين — مصر' }}</span>
     </div>

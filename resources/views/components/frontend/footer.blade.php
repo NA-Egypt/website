@@ -7,7 +7,6 @@
           <svg viewBox="0 0 100 100" style="width: 38px; height: 38px; color: var(--na-teal-500);" aria-hidden="true">
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="5" />
             <rect x="23" y="23" width="54" height="54" rx="2" fill="none" stroke="currentColor" stroke-width="4.5" transform="rotate(45 50 50)" />
-            <circle cx="50" cy="50" r="7" fill="currentColor" />
           </svg>
           <div>
             <div class="fw-bold fs-5 text-white lh-sm">{{ __('messages.na_egypt_full_name') ?? 'زمالة المدمنين المجهولين بمصر' }}</div>
