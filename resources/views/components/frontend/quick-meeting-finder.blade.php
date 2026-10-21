@@ -42,9 +42,9 @@
        SMART QUICK-RESULT: "أقرب اجتماع يبدأ قريباً" (Next Upcoming Meeting)
        ====================================================================== -->
   <div id="smartUpcomingCardWrap" class="mb-4">
-    <div class="card na-smart-upcoming-card shadow-sm border-0 position-relative overflow-hidden">
+    <div class="card na-smart-upcoming-card shadow-sm border-0 position-relative overflow-hidden online-border">
       <div class="card-body p-3 p-md-4">
-        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 pb-3 border-bottom border-light-subtle">
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2.5 pb-3 border-bottom border-light-subtle">
           <div class="d-flex align-items-center flex-wrap gap-2">
             <span class="na-upcoming-header-badge d-inline-flex align-items-center gap-1.5 fw-bold">
               <i class="bi bi-lightning-charge-fill text-warning"></i>
@@ -67,13 +67,13 @@
 
         <div class="row align-items-center g-3 pt-3">
           <div class="col-12 col-lg-8">
-            <h3 id="upcomingMeetingName" class="fw-bold fs-5 text-dark mb-1 lh-sm">
+            <h3 id="upcomingMeetingName" class="fw-bold fs-5 text-dark mb-2 lh-sm">
               {{ __('messages.loading_meetings') }}
             </h3>
 
             <div class="d-flex align-items-center gap-2 text-muted small mb-2 flex-wrap">
               <span class="d-inline-flex align-items-center gap-1">
-                <i class="bi bi-geo-alt-fill text-primary"></i>
+                <i class="bi bi-geo-alt-fill text-danger"></i>
                 <span id="upcomingLocationText">--</span>
               </span>
               <span class="text-secondary opacity-50">•</span>
@@ -81,12 +81,12 @@
             </div>
 
             <!-- Tags -->
-            <div id="upcomingTagsContainer" class="d-flex flex-wrap gap-1">
+            <div id="upcomingTagsContainer" class="d-flex flex-wrap gap-1 mt-2">
               <!-- Dynamically rendered tags -->
             </div>
           </div>
 
-          <div class="col-12 col-lg-4 text-lg-end">
+          <div class="col-12 col-lg-4 text-lg-end mt-2 mt-lg-0">
             <div id="upcomingActionContainer">
               <a id="upcomingActionBtn" href="{{ route('frontend.meetings') }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-sm w-100 w-lg-auto justify-content-center">
                 <i class="bi bi-box-arrow-up-right"></i>
@@ -193,36 +193,38 @@
       </div>
 
       <!-- 4. Format Toggle & Proximity Geolocation Button Row -->
-      <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3 pt-2 border-top border-light-subtle">
-        <div class="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0" style="min-width: 280px; max-width: 440px;">
-          <span class="text-secondary small fw-bold text-nowrap d-none d-sm-inline">
-            <i class="bi bi-sliders text-primary"></i> {{ __('messages.meeting_format') }}:
-          </span>
-          <div class="na-format-pill-toggle flex-grow-1" role="group" aria-label="Meeting Format">
-            <button type="button" id="fmtBtnAll" class="active" onclick="setFormatFilter('all')">{{ __('messages.all') ?? 'الكل' }}</button>
-            <button type="button" id="fmtBtnInPerson" onclick="setFormatFilter('in_person')">{{ __('messages.in_person') ?? 'حضوري' }}</button>
-            <button type="button" id="fmtBtnOnline" onclick="setFormatFilter('online')">{{ __('messages.online_zoom') ?? 'أونلاين (زووم)' }}</button>
+      <div class="col-12 pt-2 border-top border-light-subtle">
+        <div class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-2.5 gap-md-3">
+          <div class="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0 na-format-wrapper">
+            <span class="text-secondary small fw-bold text-nowrap d-none d-lg-inline">
+              <i class="bi bi-sliders text-primary"></i> {{ __('messages.meeting_format') }}:
+            </span>
+            <div class="na-format-pill-toggle w-100 flex-grow-1" role="group" aria-label="Meeting Format">
+              <button type="button" id="fmtBtnAll" class="active" onclick="setFormatFilter('all')">{{ __('messages.all') ?? 'الكل' }}</button>
+              <button type="button" id="fmtBtnInPerson" onclick="setFormatFilter('in_person')">{{ __('messages.in_person') ?? 'حضوري' }}</button>
+              <button type="button" id="fmtBtnOnline" onclick="setFormatFilter('online')">{{ __('messages.online_zoom') ?? 'أونلاين (زووم)' }}</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Proximity Search Button -->
-        <div class="d-flex align-items-center gap-2 ms-auto">
-          <button type="button" 
-                  id="meetingFinderGeoBtn" 
-                  class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs"
-                  onclick="requestUserProximitySort()">
-            <i class="bi bi-crosshair"></i>
-            <span id="geoBtnText">{{ __('messages.use_my_location') }}</span>
-          </button>
+          <!-- Proximity Search Button & Reset Button -->
+          <div class="d-flex align-items-center gap-2 ms-md-auto na-geo-wrapper">
+            <button type="button" 
+                    id="meetingFinderGeoBtn" 
+                    class="btn btn-outline-primary rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center justify-content-center gap-1.5 shadow-xs w-100 w-md-auto"
+                    onclick="requestUserProximitySort()">
+              <i class="bi bi-crosshair"></i>
+              <span id="geoBtnText">{{ __('messages.use_my_location') }}</span>
+            </button>
 
-          <button type="button" 
-                  id="meetingFinderResetAllBtn" 
-                  class="btn btn-sm btn-light border rounded-pill px-3 py-1.5 text-secondary d-none" 
-                  onclick="resetAllMeetingFilters()"
-                  title="{{ __('messages.reset_all_filters') }}">
-            <i class="bi bi-arrow-counterclockwise"></i>
-            <span>{{ __('messages.reset_all_filters') }}</span>
-          </button>
+            <button type="button" 
+                    id="meetingFinderResetAllBtn" 
+                    class="btn btn-light border rounded-pill px-3 py-2 text-secondary d-none w-100 w-md-auto justify-content-center align-items-center gap-1" 
+                    onclick="resetAllMeetingFilters()"
+                    title="{{ __('messages.reset_all_filters') }}">
+              <i class="bi bi-arrow-counterclockwise"></i>
+              <span>{{ __('messages.reset_all_filters') }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -260,63 +262,85 @@
         $cityName = $isOnline
           ? 'أونلاين (زووم)'
           : ($meeting->group?->neighborhood?->city?->ar_name ?? 'مصر');
+        $neighborhoodName = !$isOnline ? ($meeting->group?->neighborhood?->ar_name ?? '') : '';
         $address = $isOnline
           ? 'عبر تطبيق زووم'
           : ($meeting->group?->ar_address ?? $meeting->group?->location ?? 'العنوان متاح بالدليل');
         $zoomLink = $isOnline ? $meeting->directOnlineGroup?->location : null;
         $dayName = $meeting->day?->ar_name ?? '';
+        $borderClass = $isOnline ? 'online-border' : ($meeting->type === 'open' ? 'open-border' : 'closed-border');
+        $isOpen = $meeting->type === 'open';
       @endphp
-      <div class="na-meeting-card" 
+      <div class="na-meeting-card {{ $borderClass }}" 
            data-city="{{ $cityName }}" 
            data-day="{{ $dayName }}" 
            data-format="{{ $isOnline ? 'online' : 'in_person' }}">
         <div>
+          <!-- Day & Time Header -->
           <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="meeting-day d-inline-flex align-items-center gap-1 {{ $isOnline ? 'text-success' : ($isOpen ? 'text-danger' : 'text-primary') }}">
+              <i class="bi bi-calendar-event"></i>
+              <span>{{ $dayName }}</span>
+            </span>
+
+            <span class="meeting-start-time d-inline-flex align-items-center gap-1 font-monospace">
+              <i class="bi bi-clock text-muted"></i>
+              <span>{{ $meeting->start_time ? \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') : 'محدد' }}</span>
+            </span>
+          </div>
+
+          <!-- Meeting Title -->
+          <h3 class="fw-bold fs-6 text-dark mb-2 lh-sm">{{ $groupName }}</h3>
+          
+          <!-- Badges -->
+          <div class="d-flex flex-wrap gap-1 mb-2">
             @if($isOnline)
-              <span class="na-meeting-badge-online">
+              <span class="badge meeting-badge-online">
                 <i class="bi bi-camera-video-fill"></i> {{ __('messages.online_zoom') }}
               </span>
             @else
-              <span class="na-meeting-badge-inperson">
+              <span class="badge meeting-badge-inperson">
                 <i class="bi bi-building"></i> {{ __('messages.in_person') }}
               </span>
             @endif
 
-            <span class="badge bg-light text-secondary border font-monospace small">
-              {{ $dayName }}
-            </span>
+            @if($isOpen)
+              <span class="badge meeting-badge-open">
+                <i class="bi bi-door-open-fill"></i> {{ __('messages.open') }}
+              </span>
+            @elseif($meeting->type === 'closed')
+              <span class="badge meeting-badge-closed">
+                <i class="bi bi-door-closed-fill"></i> {{ __('messages.closed') }}
+              </span>
+            @endif
           </div>
 
-          <h3 class="fw-bold fs-6 text-dark mb-1 lh-sm">{{ $groupName }}</h3>
-          
-          <div class="d-flex align-items-center gap-1 text-muted small mb-2">
-            <i class="bi bi-geo-alt text-primary"></i>
-            <span>{{ $cityName }}</span>
+          <!-- Location & Address -->
+          <div class="d-flex align-items-center gap-1 text-muted small mb-1">
+            <i class="bi bi-geo-alt-fill text-danger"></i>
+            <span>{{ $cityName }}{{ $neighborhoodName ? ' • ' . $neighborhoodName : '' }}</span>
           </div>
 
-          <p class="text-secondary small mb-3 text-truncate-2" style="font-size: 0.84rem; line-height: 1.4;">
+          <p class="text-secondary small mb-3 text-truncate-2" style="font-size: 0.84rem; line-height: 1.45;">
             {{ $address }}
           </p>
         </div>
 
-        <div class="pt-2 border-top d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center gap-1 text-dark fw-bold small font-monospace">
-            <i class="bi bi-clock text-info"></i>
-            <span>{{ $meeting->start_time ? \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') : 'محدد' }}</span>
-          </div>
-
+        <!-- Action Button -->
+        <div class="pt-2 border-top">
           @if($isOnline && $zoomLink)
-            <a href="{{ $zoomLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary rounded-pill px-3 py-1 shadow-xs d-inline-flex align-items-center gap-1">
+            <a href="{{ $zoomLink }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 shadow-xs d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-bold">
               <i class="bi bi-box-arrow-up-right"></i>
               <span>{{ __('messages.join_zoom') }}</span>
             </a>
           @elseif(!$isOnline && !empty($meeting->group?->location))
-            <a href="https://maps.google.com/?q={{ urlencode($meeting->group?->location) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1">
+            <a href="https://maps.google.com/?q={{ urlencode($meeting->group?->location) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-bold">
               <i class="bi bi-map"></i>
               <span>{{ __('messages.directions') }}</span>
             </a>
           @else
-            <a href="{{ route('frontend.meetings') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+            <a href="{{ route('frontend.meetings') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-semibold">
+              <i class="bi bi-info-circle"></i>
               <span>{{ __('messages.details') }}</span>
             </a>
           @endif
@@ -370,14 +394,24 @@
 <style>
   .na-smart-upcoming-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fbfd 60%, #f0f7fb 100%);
-    border: 1.5px solid rgba(50, 85, 127, 0.22) !important;
     border-radius: 20px;
-    box-shadow: 0 8px 24px -4px rgba(50, 85, 127, 0.12);
+    box-shadow: 0 4px 14px rgba(50, 85, 127, 0.1);
     transition: all 0.3s ease;
   }
+  .na-smart-upcoming-card.online-border {
+    border: 4px solid #10b981 !important;
+  }
+  .na-smart-upcoming-card.open-border {
+    border: 4px solid #f43f5e !important;
+  }
+  .na-smart-upcoming-card.closed-border {
+    border: 4px solid #3b82f6 !important;
+  }
+  .na-smart-upcoming-card.business-border {
+    border: 4px solid #ffc107 !important;
+  }
   .na-smart-upcoming-card:hover {
-    border-color: var(--na-teal-600) !important;
-    box-shadow: 0 12px 32px -4px rgba(50, 85, 127, 0.2);
+    box-shadow: 0 12px 32px -4px rgba(50, 85, 127, 0.18);
   }
   .na-upcoming-header-badge {
     color: #32557f;
@@ -473,26 +507,101 @@
     background: #f0f7ff;
     color: #32557f;
   }
-  .na-tag-badge {
-    background: #f1f5f9;
+  .meeting-day {
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+  .meeting-start-time {
+    font-weight: 600;
+    font-size: 0.82rem;
     color: #475569;
-    border: 1px solid #e2e8f0;
+  }
+  .meeting-badge-open {
+    background-color: #fff1f2 !important;
+    color: #e11d48 !important;
+    border: 1px solid #fecdd3 !important;
     border-radius: 9999px;
-    font-size: 0.72rem;
-    padding: 1.5px 7px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meeting-badge-closed {
+    background-color: #eff6ff !important;
+    color: #2563eb !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 9999px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meeting-badge-online {
+    background-color: #ecfdf5 !important;
+    color: #059669 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-radius: 9999px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meeting-badge-inperson {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 9999px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .meeting-badge-topic {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9999px;
+    font-size: 0.74rem;
     font-weight: 500;
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
   }
   .na-distance-badge {
     background: #fef3c7;
     color: #92400e;
     border: 1px solid #fde68a;
     border-radius: 9999px;
-    font-size: 0.72rem;
-    padding: 1.5px 7px;
+    font-size: 0.74rem;
+    padding: 2px 8px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 3px;
+  }
+  .na-format-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+  @media (min-width: 768px) {
+    .na-format-wrapper {
+      max-width: 440px;
+      min-width: 300px;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .na-geo-wrapper {
+      width: 100%;
+    }
   }
   .xsmall {
     font-size: 0.75rem;
@@ -929,6 +1038,18 @@
       }
 
       upcomingCardWrap.classList.remove('d-none');
+      const smartCard = upcomingCardWrap.querySelector('.na-smart-upcoming-card');
+      if (smartCard) {
+        smartCard.classList.remove('online-border', 'open-border', 'closed-border', 'business-border');
+        if (candidate.is_online) {
+          smartCard.classList.add('online-border');
+        } else if (candidate.type === 'open') {
+          smartCard.classList.add('open-border');
+        } else {
+          smartCard.classList.add('closed-border');
+        }
+      }
+
       if (upcomingName) upcomingName.textContent = LOCALE === 'ar' ? candidate.name : candidate.name_en;
       if (upcomingLocation) upcomingLocation.textContent = LOCALE === 'ar' ? candidate.city_ar : candidate.city_en;
       if (upcomingAddress) upcomingAddress.textContent = candidate.address;
@@ -954,11 +1075,21 @@
       // Tags
       if (upcomingTags) {
         upcomingTags.innerHTML = '';
+        if (candidate.type) {
+          const typeSpan = document.createElement('span');
+          typeSpan.className = candidate.type === 'open' ? 'badge meeting-badge-open' : 'badge meeting-badge-closed';
+          typeSpan.innerHTML = candidate.type === 'open' 
+            ? `<i class="bi bi-door-open-fill"></i> ${LOCALE === 'ar' ? 'مفتوح' : 'Open'}`
+            : `<i class="bi bi-door-closed-fill"></i> ${LOCALE === 'ar' ? 'مغلق' : 'Closed'}`;
+          upcomingTags.appendChild(typeSpan);
+        }
         (candidate.tags || []).forEach(tag => {
-          const span = document.createElement('span');
-          span.className = 'badge na-tag-badge';
-          span.textContent = tag;
-          upcomingTags.appendChild(span);
+          if (tag !== 'مفتوح' && tag !== 'مغلق') {
+            const span = document.createElement('span');
+            span.className = 'badge meeting-badge-topic';
+            span.innerHTML = `<i class="bi bi-book"></i> ${tag}`;
+            upcomingTags.appendChild(span);
+          }
         });
       }
 
@@ -1008,7 +1139,10 @@
 
       itemsToRender.forEach(m => {
         const card = document.createElement('div');
-        card.className = 'na-meeting-card';
+        const borderClass = m.is_online 
+          ? 'online-border' 
+          : (m.type === 'open' ? 'open-border' : 'closed-border');
+        card.className = `na-meeting-card ${borderClass}`;
         card.setAttribute('data-city', m.city_ar);
         card.setAttribute('data-day', m.day_ar);
         card.setAttribute('data-format', m.is_online ? 'online' : 'in_person');
@@ -1016,10 +1150,21 @@
         const title = LOCALE === 'ar' ? m.name : m.name_en;
         const cityName = LOCALE === 'ar' ? m.city_ar : m.city_en;
         const dayLabel = LOCALE === 'ar' ? m.day_ar : m.day_en;
-        
+        const locationText = m.neighborhood_ar 
+          ? `${cityName} • ${LOCALE === 'ar' ? m.neighborhood_ar : (m.neighborhood_en || m.neighborhood_ar)}`
+          : cityName;
+        const dayColorClass = m.is_online ? 'text-success' : (m.type === 'open' ? 'text-danger' : 'text-primary');
+
         let formatBadgeHtml = m.is_online 
-          ? `<span class="na-meeting-badge-online"><i class="bi bi-camera-video-fill"></i> ${LOCALE === 'ar' ? 'أونلاين' : 'Online'}</span>`
-          : `<span class="na-meeting-badge-inperson"><i class="bi bi-building"></i> ${LOCALE === 'ar' ? 'حضوري' : 'In-Person'}</span>`;
+          ? `<span class="badge meeting-badge-online"><i class="bi bi-camera-video-fill"></i> ${LOCALE === 'ar' ? 'أونلاين (زووم)' : 'Online (Zoom)'}</span>`
+          : `<span class="badge meeting-badge-inperson"><i class="bi bi-building"></i> ${LOCALE === 'ar' ? 'حضوري' : 'In-Person'}</span>`;
+
+        let typeBadgeHtml = '';
+        if (m.type === 'open') {
+          typeBadgeHtml = `<span class="badge meeting-badge-open"><i class="bi bi-door-open-fill"></i> ${LOCALE === 'ar' ? 'مفتوح' : 'Open'}</span>`;
+        } else if (m.type === 'closed') {
+          typeBadgeHtml = `<span class="badge meeting-badge-closed"><i class="bi bi-door-closed-fill"></i> ${LOCALE === 'ar' ? 'مغلق' : 'Closed'}</span>`;
+        }
 
         let distanceBadgeHtml = '';
         if (proximitySortingActive && !m.is_online && m.distance && m.distance < 9999) {
@@ -1027,69 +1172,72 @@
           distanceBadgeHtml = `<span class="na-distance-badge"><i class="bi bi-geo-alt-fill"></i> ${LOCALE === 'ar' ? `على بُعد ${distKm} كم` : `${distKm} km`}</span>`;
         }
 
+        let tagsHtml = '';
+        if (m.tags && m.tags.length > 0) {
+          m.tags.slice(0, 3).forEach(t => {
+            if (t !== 'مفتوح' && t !== 'مغلق') {
+              tagsHtml += `<span class="badge meeting-badge-topic"><i class="bi bi-book"></i> ${t}</span>`;
+            }
+          });
+        }
+
         let actionBtnHtml = '';
         if (m.is_online && m.zoom_url) {
           actionBtnHtml = `
-            <a href="${m.zoom_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary rounded-pill px-3 py-1 shadow-xs d-inline-flex align-items-center gap-1">
+            <a href="${m.zoom_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary rounded-pill px-3 py-1.5 shadow-xs d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-bold">
               <i class="bi bi-box-arrow-up-right"></i>
               <span>{{ __('messages.join_zoom') }}</span>
             </a>
           `;
         } else if (!m.is_online && m.map_url) {
           actionBtnHtml = `
-            <a href="${m.map_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1">
+            <a href="${m.map_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-bold">
               <i class="bi bi-map"></i>
               <span>{{ __('messages.directions') }}</span>
             </a>
           `;
         } else {
           actionBtnHtml = `
-            <a href="{{ route('frontend.meetings') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+            <a href="{{ route('frontend.meetings') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 d-inline-flex align-items-center justify-content-center gap-1.5 w-100 fw-semibold">
+              <i class="bi bi-info-circle"></i>
               <span>{{ __('messages.details') }}</span>
             </a>
           `;
         }
 
-        let tagsHtml = '';
-        if (m.tags && m.tags.length > 0) {
-          tagsHtml = '<div class="d-flex flex-wrap gap-1 mt-2">';
-          m.tags.slice(0, 3).forEach(t => {
-            tagsHtml += `<span class="badge na-tag-badge">${t}</span>`;
-          });
-          tagsHtml += '</div>';
-        }
-
         card.innerHTML = `
           <div>
             <div class="d-flex align-items-center justify-content-between mb-2">
-              <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                ${formatBadgeHtml}
-                ${distanceBadgeHtml}
-              </div>
-              <span class="badge bg-light text-secondary border font-monospace small">
-                ${dayLabel}
+              <span class="meeting-day d-inline-flex align-items-center gap-1 ${dayColorClass}">
+                <i class="bi bi-calendar-event"></i>
+                <span>${dayLabel}</span>
+              </span>
+              <span class="meeting-start-time d-inline-flex align-items-center gap-1 font-monospace">
+                <i class="bi bi-clock text-muted"></i>
+                <span>${m.time_fmt}</span>
               </span>
             </div>
 
-            <h3 class="fw-bold fs-6 text-dark mb-1 lh-sm">${title}</h3>
+            <h3 class="fw-bold fs-6 text-dark mb-2 lh-sm">${title}</h3>
             
-            <div class="d-flex align-items-center gap-1 text-muted small mb-2">
-              <i class="bi bi-geo-alt text-primary"></i>
-              <span>${cityName}</span>
+            <div class="d-flex flex-wrap gap-1 mb-2">
+              ${formatBadgeHtml}
+              ${typeBadgeHtml}
+              ${distanceBadgeHtml}
+              ${tagsHtml}
             </div>
 
-            <p class="text-secondary small mb-2 text-truncate-2" style="font-size: 0.84rem; line-height: 1.4;">
+            <div class="d-flex align-items-center gap-1 text-muted small mb-1">
+              <i class="bi bi-geo-alt-fill text-danger"></i>
+              <span>${locationText}</span>
+            </div>
+
+            <p class="text-secondary small mb-3 text-truncate-2" style="font-size: 0.84rem; line-height: 1.45;">
               ${m.address}
             </p>
-
-            ${tagsHtml}
           </div>
 
-          <div class="pt-2 border-top mt-3 d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center gap-1 text-dark fw-bold small font-monospace">
-              <i class="bi bi-clock text-info"></i>
-              <span>${m.time_fmt}</span>
-            </div>
+          <div class="pt-2 border-top">
             ${actionBtnHtml}
           </div>
         `;
