@@ -7,6 +7,13 @@ Disallow: /forms/helpline
 Disallow: /*/forms/helpline
 Disallow: /helpline
 Disallow: /*/helpline
+Disallow: /decarch
+Disallow: /decarch*
+Disallow: /decarch.html
+Disallow: /*/decarch*
+Disallow: /decisions-archive
+Disallow: /decisions-archive*
+Disallow: /*/decisions-archive*
 
 # Sitemap
 Sitemap: https://naegypt.org/sitemap.xml

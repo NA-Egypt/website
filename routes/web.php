@@ -640,8 +640,31 @@ Route::group(
         Route::post('/apk/request-link', [ApkDownloadController::class, 'requestLink'])
             ->middleware('throttle:5,1')
             ->name('apk.request_link');
+
+        // Decisions Archive
+        Route::get('/decarch', function () {
+            return redirect('/decarch');
+        });
+        Route::get('/decisions-archive', function () {
+            return redirect('/decarch');
+        });
     }
 );
+
+// Public Decisions Archive (Excluded from search engines)
+$decarchHandler = function () {
+    $filePath = public_path('decarch.html');
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath, [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'X-Robots-Tag' => 'noindex, nofollow, noarchive, nosnippet',
+    ]);
+};
+
+Route::get('/decarch', $decarchHandler)->name('decarch');
+Route::get('/decisions-archive', $decarchHandler)->name('decisions.archive');
 
 // Pre-release APK Secret Streaming Download Route (Legacy token-based)
 Route::get('/apk/download/{token}', [ApkDownloadController::class, 'download'])
