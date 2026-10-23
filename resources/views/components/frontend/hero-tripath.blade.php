@@ -73,7 +73,7 @@
           </li>
           <li>
             <i class="bi bi-book-fill" aria-hidden="true"></i>
-            <span>{{ __('messages.tripath_point_public_booklets') ?? 'كتيبات ومعلومات موثقة للأهل والمهتمين بالصحة' }}</span>
+            <span>{{ __('messages.tripath_point_public_booklets') ?? 'كتيبات ومعلومات موثقة للأهل والمهتمين' }}</span>
           </li>
         </ul>
       </div>

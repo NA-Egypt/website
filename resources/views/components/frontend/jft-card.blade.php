@@ -212,7 +212,7 @@
           <div class="d-flex align-items-center gap-2 mb-2">
             <span class="jft-affirmation-badge">
               <i class="bi bi-feather text-primary"></i>
-              <span>{{ __('messages.jft_affirmation_title') ?? 'توكيد لليوم فقط' }}</span>
+              <span>{{ __('messages.jft_affirmation_title') ?? 'لليوم فقط' }}</span>
             </span>
           </div>
           <div id="jftAffirmationText" class="jft-affirmation-text">

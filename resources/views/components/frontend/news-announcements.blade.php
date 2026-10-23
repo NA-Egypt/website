@@ -34,7 +34,7 @@
           {{ __('messages.annual_egypt_convention_title') ?? 'المؤتمر السنوي لزمالة المدمنين المجهولين بمصر (مسار يجمعنا)' }}
         </h3>
         <p class="text-white-50 small mb-3 mb-md-0" style="max-width: 620px; line-height: 1.6;">
-          {{ __('messages.convention_banner_desc') ?? 'تجمع أخوي سنوي يضم أعضاء الزمالة من كافة المحافظات والزوار من حول العالم لمشاركة الأمل والقوة والتعافي.' }}
+          {{ __('messages.convention_banner_desc') ?? 'تجمع  سنوي يضم أعضاء الزمالة من كافة المحافظات والزوار من حول العالم لمشاركة الأمل والقوة والتعافي.' }}
         </p>
       </div>
 

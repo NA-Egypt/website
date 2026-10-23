@@ -2695,7 +2695,7 @@ return [
     'jft_font_increase' => 'Increase Font Size',
     'jft_font_reset' => 'Reset Font Size',
     'jft_print' => 'Print Meditation',
-    'jft_affirmation_title' => 'Just For Today Affirmation',
+    'jft_affirmation_title' => 'Just For Today',
     'jft_loading' => 'Loading reflection...',
     'jft_reading_for' => 'Reading for',
     'telegram' => 'Telegram',
