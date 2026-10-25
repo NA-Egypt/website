@@ -84,7 +84,7 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
     @endif
     <div class="badge-type-container">
         <span class="badge-type">
-            {{ $form->type === 'survey' ? (__('messages.Survey') ?? 'Survey') : ($form->type === 'service_position_application' ? (__('messages.Service Position Application') ?? 'Service Position Application') : (__('messages.Event Registration') ?? 'Event Registration')) }}
+            {{ $form->type === 'survey' ? (__('messages.Survey') ?? 'Survey') : ($form->type === 'service_position_application' ? (__('messages.Service Position Application') ?? 'Service Position Application') : ($form->type === 'suggestions' ? (__('messages.Suggestions') ?? 'Suggestions') : (__('messages.Event Registration') ?? 'Event Registration'))) }}
         </span>
     </div>
     <div class="meta">

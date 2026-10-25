@@ -38,6 +38,7 @@
                                     <option value="survey">{{ __('messages.Survey') ?? 'Survey' }}</option>
                                     <option value="event_registration">{{ __('messages.Event Registration') ?? 'Event Entry Registration' }}</option>
                                     <option value="service_position_application">{{ __('messages.Service Position Application') ?? 'Service Position Application' }}</option>
+                                    <option value="suggestions">{{ __('messages.Suggestions') ?? 'Suggestions' }}</option>
                                 </select>
                             </div>
 
@@ -66,6 +67,7 @@
                                 <option value="bi-envelope">✉️ Envelope</option>
                                 <option value="bi-hand-thumbs-up">👍 Hand Thumbs Up</option>
                                 <option value="bi-heart">❤️ Heart</option>
+                                <option value="bi-lightbulb">💡 Lightbulb / Ideas</option>
                             </select>
                         </div>
 
@@ -489,6 +491,22 @@
                 previewTypeBadge.style.setProperty('background-color', 'rgba(99, 102, 241, 0.12)', 'important');
                 previewTypeBadge.style.setProperty('color', '#4f46e5', 'important');
                 previewTypeBadge.style.setProperty('border', '1px solid rgba(99, 102, 241, 0.25)', 'important');
+            } else if (typeSelect.value === 'suggestions') {
+                if (iconSelectorGroup) iconSelectorGroup.style.setProperty('display', 'block', 'important');
+                if (previewIconWrapper) {
+                    previewIconWrapper.style.setProperty('display', 'flex', 'important');
+                    previewIconWrapper.style.setProperty('background-color', 'rgba(245, 158, 11, 0.12)', 'important');
+                    previewIconWrapper.style.setProperty('color', '#d97706', 'important');
+                }
+
+                if (previewIcon && settingsIcon) {
+                    previewIcon.className = 'bi ' + (settingsIcon.value || 'bi-lightbulb');
+                }
+
+                previewTypeBadge.className = 'badge rounded-pill px-3 py-1.5 fw-bold text-uppercase';
+                previewTypeBadge.style.setProperty('background-color', 'rgba(245, 158, 11, 0.12)', 'important');
+                previewTypeBadge.style.setProperty('color', '#d97706', 'important');
+                previewTypeBadge.style.setProperty('border', '1px solid rgba(245, 158, 11, 0.25)', 'important');
             } else {
                 if (iconSelectorGroup) iconSelectorGroup.style.setProperty('display', 'none', 'important');
                 if (previewIconWrapper) previewIconWrapper.style.setProperty('display', 'none', 'important');

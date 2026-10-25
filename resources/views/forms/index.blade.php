@@ -47,6 +47,8 @@
                                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">{{ __('messages.Survey') ?? 'Survey' }}</span>
                                         @elseif ($form->type === 'service_position_application')
                                             <span class="badge rounded-pill px-2 py-0.5" style="font-size: 0.7rem; background-color: rgba(99, 102, 241, 0.12); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25);">{{ __('messages.Service Position Application') ?? 'Service Position Application' }}</span>
+                                        @elseif ($form->type === 'suggestions')
+                                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 0.7rem; background-color: rgba(245, 158, 11, 0.12); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25);">{{ __('messages.Suggestions') ?? 'Suggestions' }}</span>
                                         @else
                                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.7rem;">{{ __('messages.Event Registration') ?? 'Event Registration' }}</span>
                                         @endif

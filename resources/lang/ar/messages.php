@@ -1109,6 +1109,8 @@ return [
     'Field Placeholder' => 'نص تلميح الحقل (Placeholder)',
     'Field Description / Help Text' => 'وصف الحقل / نص المساعدة',
     'Service Position Application' => 'نموذج التقدم لشغل منصب خدمي',
+    'Suggestions' => 'مقترحات',
+    'submit_another_suggestion' => 'تقديم مقترح آخر',
     'Table with Repeatable Rows' => 'جدول مع ترويسة وصفوف متكررة',
     'Yes / No with Textbox on Yes' => 'نعم / لا مع تفاصيل عند اختيار نعم',
     'Table Column Headers (comma separated)' => 'أسماء أعمدة الجدول (مفصولة بفواصل)',

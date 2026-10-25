@@ -48,7 +48,7 @@ class CustomFormController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|in:survey,event_registration,service_position_application',
+            'type' => 'required|in:survey,event_registration,service_position_application,suggestions',
             'status' => 'required|in:draft,published,unpublished',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',
@@ -134,7 +134,7 @@ class CustomFormController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|in:survey,event_registration,service_position_application',
+            'type' => 'required|in:survey,event_registration,service_position_application,suggestions',
             'status' => 'required|in:draft,published,unpublished',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',

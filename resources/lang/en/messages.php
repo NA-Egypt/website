@@ -1096,6 +1096,8 @@ return [
     'Field Placeholder' => 'Field Placeholder',
     'Field Description / Help Text' => 'Field Description / Help Text',
     'Service Position Application' => 'Service Position Application',
+    'Suggestions' => 'Suggestions',
+    'submit_another_suggestion' => 'Submit Another Suggestion',
     'Table with Repeatable Rows' => 'Table with Repeatable Rows',
     'Yes / No with Textbox on Yes' => 'Yes / No with Textbox on Yes',
     'Table Column Headers (comma separated)' => 'Table Column Headers (comma separated)',

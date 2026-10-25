@@ -154,6 +154,10 @@
                             <span class="badge rounded-pill px-2.5 py-0.5" style="font-size: 0.75rem; background-color: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);">
                                 {{ __('messages.Service Application') ?? 'Service Application' }}
                             </span>
+                        @elseif ($form->type === 'suggestions')
+                            <span class="badge rounded-pill px-2.5 py-0.5" style="font-size: 0.75rem; background-color: rgba(245, 158, 11, 0.12); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25);">
+                                {{ __('messages.Suggestions') ?? 'Suggestions' }}
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -165,6 +169,11 @@
                     <a href="{{ route('forms.show.public', $form->slug) }}" class="btn btn-action-primary w-100 w-sm-auto d-inline-flex align-items-center justify-content-center gap-2">
                         <i class="bi bi-plus-circle"></i>
                         {{ __('messages.New Registration') ?? 'New Registration' }}
+                    </a>
+                @elseif ($form->type === 'suggestions')
+                    <a href="{{ route('forms.show.public', $form->slug) }}" class="btn btn-action-secondary w-100 w-sm-auto d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-plus-circle"></i>
+                        {{ __('messages.submit_another_suggestion') ?? 'Submit Another Suggestion' }}
                     </a>
                 @else
                     <a href="{{ route('forms.show.public', $form->slug) }}" class="btn btn-action-secondary w-100 w-sm-auto d-inline-flex align-items-center justify-content-center gap-2">

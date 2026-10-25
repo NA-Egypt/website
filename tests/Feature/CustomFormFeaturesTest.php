@@ -600,4 +600,107 @@ class CustomFormFeaturesTest extends TestCase
         $this->assertStringContainsString('Clean Time Compliant?', $html);
         $this->assertStringContainsString('Continuous clean time verified.', $html);
     }
+
+    public function test_can_create_and_update_suggestions_form()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('rsc');
+        $this->actingAs($user);
+
+        $response = $this->post(route('forms.store'), [
+            'title' => 'Fellowship Suggestions Box 2026',
+            'type' => 'suggestions',
+            'status' => 'published',
+            'settings' => [
+                'icon' => 'bi-lightbulb',
+                'subtitle' => 'Share your ideas to improve fellowship services',
+            ],
+            'fields' => [
+                [
+                    'label' => 'Member Name (Optional)',
+                    'type' => 'text',
+                    'required' => '0',
+                ],
+                [
+                    'label' => 'Your Suggestion',
+                    'type' => 'textarea',
+                    'required' => '1',
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect(route('forms.index'));
+
+        $this->assertDatabaseHas('custom_forms', [
+            'title' => 'Fellowship Suggestions Box 2026',
+            'type' => 'suggestions',
+            'status' => 'published',
+        ]);
+
+        $form = CustomForm::where('title', 'Fellowship Suggestions Box 2026')->first();
+        $this->assertEquals('suggestions', $form->type);
+        $this->assertEquals('bi-lightbulb', $form->settings['icon']);
+
+        // Test updating
+        $updateResponse = $this->put(route('forms.update', $form->id), [
+            'title' => 'Updated Suggestions Box',
+            'type' => 'suggestions',
+            'status' => 'published',
+            'settings' => [
+                'icon' => 'bi-lightbulb',
+                'subtitle' => 'Updated subtitle',
+            ],
+        ]);
+
+        $updateResponse->assertRedirect(route('forms.index'));
+        $this->assertDatabaseHas('custom_forms', [
+            'id' => $form->id,
+            'title' => 'Updated Suggestions Box',
+            'type' => 'suggestions',
+        ]);
+    }
+
+    public function test_can_view_and_submit_suggestions_form()
+    {
+        $user = User::factory()->create();
+
+        $form = CustomForm::create([
+            'title' => 'Public Suggestions Form',
+            'type' => 'suggestions',
+            'status' => 'published',
+            'user_id' => $user->id,
+            'slug' => 'public-suggestions-box',
+            'settings' => [
+                'icon' => 'bi-lightbulb',
+                'subtitle' => 'We value your input',
+            ],
+        ]);
+
+        $field = CustomFormField::create([
+            'custom_form_id' => $form->id,
+            'label' => 'Idea Details',
+            'type' => 'textarea',
+            'required' => true,
+            'sort_order' => 0,
+        ]);
+
+        // Visit public form
+        $viewResponse = $this->get(route('forms.show.public', $form->slug));
+        $viewResponse->assertStatus(200);
+        $viewResponse->assertSee('Public Suggestions Form');
+        $viewResponse->assertSee('bi-lightbulb');
+
+        // Submit form
+        $submitResponse = $this->post(route('forms.submit.public', $form->slug), [
+            'field_' . $field->id => 'I suggest creating an online archive of convention speakers.',
+        ]);
+
+        $submitResponse->assertStatus(200);
+        $submitResponse->assertSee('Public Suggestions Form');
+        $submitResponse->assertSee(__('messages.submit_another_suggestion') ?? 'Submit Another Suggestion');
+
+        $this->assertDatabaseHas('custom_form_submissions', [
+            'custom_form_id' => $form->id,
+        ]);
+    }
 }

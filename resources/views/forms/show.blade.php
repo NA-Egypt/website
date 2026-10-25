@@ -306,6 +306,17 @@ if (!function_exists('form_autolink')) {
                             <span class="badge rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(99, 102, 241, 0.12) !important; color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25);">
                                 {{ __('messages.Service Position Application') ?? 'Service Position Application' }}
                             </span>
+                        @elseif ($form->type === 'suggestions')
+                            <div class="icon-wrapper-header mx-auto mb-2 mb-md-3 d-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 68px; height: 68px; background-color: rgba(245, 158, 11, 0.12) !important; color: #d97706;">
+                                <i class="bi {{ $form->settings['icon'] ?? 'bi-lightbulb' }}" style="font-size: 2.1rem;"></i>
+                            </div>
+                            <h2 class="form-main-title fw-bold mb-2 mb-md-3" style="color: #0f172a !important; font-size: clamp(1.25rem, 3.5vw, 1.85rem); letter-spacing: -0.5px;">{{ $form->title }}</h2>
+                            @if (!empty($form->settings['subtitle']))
+                                <p class="text-secondary mb-3 small">{{ $form->settings['subtitle'] }}</p>
+                            @endif
+                            <span class="badge rounded-pill px-3 py-1.5 fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px; background-color: rgba(245, 158, 11, 0.12) !important; color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25);">
+                                {{ __('messages.Suggestions') ?? 'Suggestions' }}
+                            </span>
                         @else
                             <div class="icon-wrapper-header mx-auto mb-2 mb-md-3 d-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success shadow-sm" style="width: 68px; height: 68px; background-color: rgba(16, 185, 129, 0.1) !important;">
                                 <i class="bi {{ $form->settings['icon'] ?? 'bi-calendar-check' }}" style="font-size: 2.1rem;"></i>
