@@ -505,8 +505,8 @@
                 });
             }
 
-            // Filter out steps whose element does not exist in current DOM
-            tourSteps = tourSteps.filter(step => !step.element || document.querySelector(step.element));
+            // Filter out steps whose element does not exist or is hidden in current DOM
+            tourSteps = tourSteps.filter(step => !step.element || (document.querySelector(step.element) && document.querySelector(step.element).offsetParent !== null));
 
             const nextBtnLabel = isRtl ? '{{ __("messages.tour_next") }} &larr;' : '{{ __("messages.tour_next") }} &rarr;';
             const prevBtnLabel = isRtl ? '&rarr; {{ __("messages.tour_prev") }}' : '&larr; {{ __("messages.tour_prev") }}';

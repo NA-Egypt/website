@@ -164,4 +164,67 @@ class MeetingFilterTest extends TestCase
             ->assertSee('Virtual groups are not directly affiliated')
             ->assertSee(__('messages.virtual_meetings_hint_title'));
     }
+
+    public function test_gsr_contact_hidden_for_guests_with_gesture_and_visible_for_logged_in_users()
+    {
+        app()->setLocale('en');
+
+        // Setup parent and meeting with a group that has GSR phone
+        $city = \App\Models\City::forceCreate(['id' => 10, 'en_name' => 'Giza', 'ar_name' => 'الجيزة']);
+        $serviceBody = ServiceBody::forceCreate([
+            'id' => 10, 'en_name' => 'Giza Area', 'ar_name' => 'منطقة الجيزة',
+            'day_id' => 1, 'start_time' => '18:00', 'end_time' => '19:00', 'location' => 'Giza'
+        ]);
+        $neighborhood = Neighborhood::forceCreate([
+            'id' => 10, 'en_name' => 'Dokki', 'ar_name' => 'الدقي', 'city_id' => 10
+        ]);
+        $user = \App\Models\User::factory()->create();
+
+        $group = Group::forceCreate([
+            'id' => 250,
+            'en_name' => 'Hope Group',
+            'ar_name' => 'مجموعة الأمل',
+            'group_type' => 'فعلي',
+            'neighborhood_id' => 10,
+            'service_body_id' => 10,
+            'user_id' => $user->id,
+            'phone' => '+201000000000',
+            'en_gsr_name' => 'John Doe',
+            'ar_gsr_name' => 'جون دو',
+            'ar_address' => 'الدقي',
+            'en_address' => 'Dokki',
+            'location' => 'https://maps.google.com'
+        ]);
+
+        $topic = Topic::firstOrCreate(['id' => 1], ['en_name' => 'General Topic', 'ar_name' => 'موضوع عام']);
+
+        $today = Day::where('en_name', now()->format('l'))->first() ?? Day::first();
+
+        $meeting = Meeting::forceCreate([
+            'id' => 450,
+            'day_id' => $today->id,
+            'group_id' => 250,
+            'topic_id' => $topic->id,
+            'start_time' => '19:00',
+            'end_time' => '20:30',
+            'type' => 'open',
+            'lang' => 'english',
+            'status' => 'available'
+        ]);
+
+        // 1. As a public guest (unauthenticated)
+        $this->assertFalse(auth()->check());
+        $responseGuest = Livewire::test(MeetingFilter::class);
+        $responseGuest->assertSeeHtml('revealed: false');
+        $responseGuest->assertSeeHtml('@click="handleNameClick()"');
+        $responseGuest->assertSeeHtml('style="display: none;"');
+        $responseGuest->assertSeeHtml('+201000000000');
+
+        // 2. As an authenticated user
+        $this->actingAs($user);
+        $this->assertTrue(auth()->check());
+        $responseAuth = Livewire::test(MeetingFilter::class);
+        $responseAuth->assertSeeHtml('revealed: true');
+        $responseAuth->assertDontSeeHtml('style="display: none;"');
+    }
 }

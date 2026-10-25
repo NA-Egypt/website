@@ -54,6 +54,10 @@ $sortedSections = $sections->sort(function($a, $b) {
 $isFirstCardAcrossSections = true;
 @endphp
 <style>
+    [x-cloak] {
+        display: none !important;
+    }
+
     .meeting-item.open-border {
         border: 4px solid #f43f5e !important; /* Rose 500 */
     }
@@ -176,7 +180,25 @@ $isFirstCardAcrossSections = true;
                     @php
                         $isTargetCard = $isFirstCardAcrossSections;
                     @endphp
-                    <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isTargetCard) id="tour-meeting-card" @endif>
+                    <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isTargetCard) id="tour-meeting-card" @endif
+                         x-data="{
+                             revealed: {{ auth()->check() ? 'true' : 'false' }},
+                             clicks: 0,
+                             timer: null,
+                             handleNameClick() {
+                                 if (this.revealed) return;
+                                 this.clicks++;
+                                 clearTimeout(this.timer);
+                                 if (this.clicks >= 5) {
+                                     this.revealed = true;
+                                     this.clicks = 0;
+                                 } else {
+                                     this.timer = setTimeout(() => {
+                                         this.clicks = 0;
+                                     }, 1000);
+                                 }
+                             }
+                         }">
                         @php
                             $isOnline = $meeting->direct_online_group_id !== null || ($group && in_array($group->group_type, ['اونلاين', 'اون لاين', 'online']));
                             $isBusiness = $meeting->topics && $meeting->topics->contains('en_name', 'Group Business Meeting');
@@ -212,7 +234,9 @@ $isFirstCardAcrossSections = true;
                                 {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                             </span>
                         </div>
-                        <div class="meeting-group-name" @if($isTargetCard) id="tour-card-group" @endif>
+                        <div class="meeting-group-name" @if($isTargetCard) id="tour-card-group" @endif
+                             @click="handleNameClick()"
+                             style="user-select: none; -webkit-user-select: none;">
                             {{ $direction === 'rtl' ? $group->ar_name : $group->en_name }}
                         </div>
 
@@ -269,7 +293,14 @@ $isFirstCardAcrossSections = true;
                             }
                         @endphp
                         @if($group && $group->phone && !$isBot)
-                        <div data-nosnippet @if($isTargetCard) id="tour-card-contact" @endif>
+                        <div data-nosnippet
+                             @if($isTargetCard) id="tour-card-contact" @endif
+                             x-show="revealed"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-cloak
+                             @if(!auth()->check()) style="display: none;" @endif>
                             <x-fas-user-circle style="width:16px; height:16px;"/>
                             {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
                             <br />
