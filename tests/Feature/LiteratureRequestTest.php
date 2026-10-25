@@ -429,4 +429,184 @@ class LiteratureRequestTest extends TestCase
             'total_items_count' => 12,
         ]);
     }
+
+    public function test_treasurer_can_view_cart_and_add_items_for_group_in_their_service_body()
+    {
+        Carbon::setTestNow('2026-07-10');
+
+        $response = $this->actingAs($this->treasurerUser)->get(route('literature-requests.cart', [
+            'group_id' => $this->group->id,
+        ]));
+        $response->assertStatus(200);
+        $response->assertSee($this->group->ar_name);
+
+        // Treasurer updates cart on behalf of group
+        $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.cart.update'), [
+            'group_id' => $this->group->id,
+            'action' => 'draft',
+            'quantities' => [
+                $this->item1->id => 6,
+            ],
+        ]);
+
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $this->group->id]));
+        $this->assertDatabaseHas('literature_requests', [
+            'group_id' => $this->group->id,
+            'status' => 'draft',
+            'total_items_count' => 6,
+        ]);
+    }
+
+    public function test_treasurer_cannot_manage_group_from_different_service_body()
+    {
+        Carbon::setTestNow('2026-07-10');
+
+        $otherSb = ServiceBody::create([
+            'ar_name' => 'هيئة أخرى',
+            'en_name' => 'Other Service Body',
+            'day_id' => $this->serviceBody->day_id,
+            'description' => 'Desc',
+            'type' => 'area',
+            'date' => '2026-06-01',
+            'start_time' => '10:00:00',
+            'end_time' => '12:00:00',
+            'location' => 'Alexandria',
+        ]);
+
+        $foreignUser = User::factory()->create([
+            'email' => 'foreign_gsr@test.com',
+        ]);
+
+        $foreignGroup = Group::create([
+            'ar_name' => 'مجموعة خارجية',
+            'en_name' => 'Foreign Group',
+            'ar_gsr_name' => 'GSR',
+            'en_gsr_name' => 'GSR',
+            'email' => 'foreign@naegypt.org',
+            'phone' => '99999999',
+            'user_id' => $foreignUser->id,
+            'ar_address' => 'العنوان',
+            'en_address' => 'Address',
+            'location' => 'https://maps.google.com',
+            'group_type' => 'open',
+            'service_body_id' => $otherSb->id,
+            'neighborhood_id' => $this->group->neighborhood_id,
+        ]);
+
+        // Attempt to access cart with foreign group_id -> defaults to own service body group instead
+        $response = $this->actingAs($this->treasurerUser)->get(route('literature-requests.cart', [
+            'group_id' => $foreignGroup->id,
+        ]));
+        $response->assertStatus(200);
+        // It should load a group from treasurer's own service body, NOT the foreign group
+        $response->assertDontSee($foreignGroup->ar_name);
+    }
+
+    public function test_treasurer_can_add_or_edit_group_request_after_19th_if_accumulated_invoice_not_sent()
+    {
+        Carbon::setTestNow('2026-07-22'); // Past 19th!
+
+        // Treasurer updates cart on behalf of group using save_and_submit
+        $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.cart.update'), [
+            'group_id' => $this->group->id,
+            'action' => 'submit',
+            'quantities' => [
+                $this->item1->id => 15,
+            ],
+        ]);
+
+        $response->assertRedirect(route('literature-requests.cart', ['group_id' => $this->group->id]));
+        $this->assertDatabaseHas('literature_requests', [
+            'group_id' => $this->group->id,
+            'status' => 'submitted',
+            'total_items_count' => 15,
+        ]);
+    }
+
+    public function test_treasurer_cannot_edit_group_request_after_accumulated_invoice_sent_to_committee()
+    {
+        Carbon::setTestNow('2026-07-22');
+
+        // Accumulated request already sent to committee
+        LiteratureRequest::create([
+            'service_body_id' => $this->serviceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'servicebody',
+            'status' => 'sent_to_committee',
+            'total_items_count' => 10,
+            'total_price' => 100.00,
+        ]);
+
+        $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.cart.update'), [
+            'group_id' => $this->group->id,
+            'quantities' => [
+                $this->item1->id => 20,
+            ],
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
+    }
+
+    public function test_accumulated_draft_auto_syncs_when_group_request_is_submitted_or_updated()
+    {
+        Carbon::setTestNow('2026-07-20');
+
+        // Create a draft accumulated invoice
+        $accumulated = LiteratureRequest::create([
+            'service_body_id' => $this->serviceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'servicebody',
+            'status' => 'draft',
+            'total_items_count' => 0,
+            'total_price' => 0.00,
+        ]);
+
+        // Treasurer saves & submits a group request with 5 item1 and 3 item2
+        $this->actingAs($this->treasurerUser)->post(route('literature-requests.cart.update'), [
+            'group_id' => $this->group->id,
+            'action' => 'submit',
+            'quantities' => [
+                $this->item1->id => 5,
+                $this->item2->id => 3,
+            ],
+        ]);
+
+        // Accumulated draft must be automatically synchronized
+        $accumulated->refresh();
+        $this->assertEquals(8, $accumulated->total_items_count);
+        $this->assertEquals(110.00, $accumulated->total_price); // 5*10 + 3*20
+    }
+
+    public function test_treasurer_can_toggle_group_request_status_from_dashboard()
+    {
+        Carbon::setTestNow('2026-07-15');
+
+        // Create a draft group request
+        $groupReq = LiteratureRequest::create([
+            'group_id' => $this->group->id,
+            'service_body_id' => $this->serviceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'group',
+            'status' => 'draft',
+            'total_items_count' => 5,
+            'total_price' => 50.00,
+        ]);
+
+        // Toggle to submitted
+        $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.group.toggle-status', $groupReq->id));
+        $response->assertRedirect();
+        $this->assertDatabaseHas('literature_requests', [
+            'id' => $groupReq->id,
+            'status' => 'submitted',
+        ]);
+
+        // Toggle back to draft
+        $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.group.toggle-status', $groupReq->id));
+        $response->assertRedirect();
+        $this->assertDatabaseHas('literature_requests', [
+            'id' => $groupReq->id,
+            'status' => 'draft',
+        ]);
+    }
 }

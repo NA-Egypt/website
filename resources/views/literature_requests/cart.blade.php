@@ -10,7 +10,13 @@
                     {{ __('messages.Literature Request for :month', ['month' => \App\Services\DateNumberHelper::translatedFormat($month, 'F Y')]) }}
                 </p>
             </div>
-            <div>
+            <div class="d-flex gap-2">
+                @if(auth()->user()->hasRole('Treasurer') || auth()->user()->hasRole('ServiceBody') || auth()->user()->hasRole('super admin'))
+                    <a href="{{ route('literature-requests.treasurer') }}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        {{ __('messages.back_to_treasurer_dashboard') }}
+                    </a>
+                @endif
                 <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                     <i class="bi bi-archive me-1"></i>
                     {{ __('messages.literature_requests_archive') }}
@@ -18,8 +24,8 @@
             </div>
         </div>
 
-        {{-- Group switcher for Super Admin --}}
-        @if(auth()->user()->hasRole('super admin') && count($allGroups) > 0)
+        {{-- Group switcher for Super Admin, Treasurer, and ServiceBody --}}
+        @if(count($allGroups) > 0)
             <div class="card mb-4 border-0 shadow-sm p-3">
                 <form action="{{ route('literature-requests.cart') }}" method="GET" class="row g-2 align-items-center">
                     <div class="col-12 col-md-4">
@@ -172,24 +178,30 @@
                         </h4>
                     </div>
                     @if(!$isLocked)
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" name="action" value="draft" class="btn btn-secondary rounded-pill px-4 shadow-sm">
                                 <i class="bi bi-save me-1"></i>
                                 {{ __('messages.save') ?? 'Save Draft' }}
                             </button>
+                            <button type="submit" name="action" value="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-send-check me-1"></i>
+                                {{ __('messages.save_and_submit') ?? 'Save & Submit' }}
+                            </button>
                         </form>
                         
-                        @if($request && $request->items->count() > 0)
+                        @if($request && $request->status === 'draft' && $request->items->count() > 0)
                             <form action="{{ route('literature-requests.submit') }}" method="POST" class="d-inline">
                                 @csrf
                                 <input type="hidden" name="group_id" value="{{ $group->id }}">
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                <button type="submit" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                                     <i class="bi bi-send me-1"></i>
                                     {{ __('messages.submit_request') }}
                                 </button>
                             </form>
                         @endif
                         </div>
+                    @else
+                        </form>
                     @endif
                 </div>
         </div>

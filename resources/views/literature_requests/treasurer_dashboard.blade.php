@@ -59,9 +59,17 @@
             {{-- Group Requests List --}}
             <div class="col-12 col-xl-6">
                 <div class="card border-0 shadow-sm p-4 h-100">
-                    <h4 class="fw-bold mb-3 text-secondary">
-                        {{ __('messages.groups_invoices') }}
-                    </h4>
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h4 class="fw-bold mb-0 text-secondary">
+                            {{ __('messages.groups_invoices') }}
+                        </h4>
+                        @if(!$isAccumulatedSent && count($serviceBodyGroups) > 0)
+                            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addGroupRequestModal">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                {{ __('messages.add_group_request') }}
+                            </button>
+                        @endif
+                    </div>
                     <div class="table-responsive">
                         <table class="table align-middle table-hover">
                             <thead class="table-light">
@@ -70,6 +78,7 @@
                                     <th class="text-center">{{ __('messages.quantity') }}</th>
                                     <th class="text-end">{{ __('messages.total') }}</th>
                                     <th class="text-center">{{ __('messages.status') ?? 'Status' }}</th>
+                                    <th class="text-center">{{ __('messages.actions') ?? 'Actions' }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -81,14 +90,48 @@
                                         <td class="text-center">{{ $gReq->total_items_count }}</td>
                                         <td class="text-end fw-bold text-primary">{{ $gReq->total_price }} {{ __('messages.EGP') }}</td>
                                         <td class="text-center">
-                                            <span class="badge bg-success rounded-pill px-2 py-1">
+                                            @php
+                                                $gStatusBadge = 'bg-secondary';
+                                                if ($gReq->status === 'submitted') $gStatusBadge = 'bg-success';
+                                                elseif ($gReq->status === 'draft') $gStatusBadge = 'bg-warning text-dark';
+                                                elseif ($gReq->status === 'approved') $gStatusBadge = 'bg-info';
+                                            @endphp
+                                            <span class="badge {{ $gStatusBadge }} rounded-pill px-2 py-1">
                                                 {{ __('messages.' . $gReq->status) }}
                                             </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-inline-flex gap-1 align-items-center">
+                                                @if(!$isAccumulatedSent)
+                                                    <a href="{{ route('literature-requests.cart', ['group_id' => $gReq->group_id]) }}" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1" title="{{ __('messages.edit') }}">
+                                                        <i class="bi bi-pencil-square me-1"></i>
+                                                        {{ __('messages.edit') }}
+                                                    </a>
+                                                    <form action="{{ route('literature-requests.group.toggle-status', $gReq->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @if($gReq->status === 'draft')
+                                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1" title="{{ __('messages.submit_request') }}">
+                                                                <i class="bi bi-check2-circle me-1"></i>
+                                                                {{ __('messages.submit') }}
+                                                            </button>
+                                                        @elseif($gReq->status === 'submitted')
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1" title="{{ __('messages.revert_to_draft') }}">
+                                                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                                                {{ __('messages.revert_to_draft') }}
+                                                            </button>
+                                                        @endif
+                                                    </form>
+                                                @else
+                                                    <a href="{{ route('literature-requests.pdf', $gReq->id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1" title="{{ __('messages.Download PDF') }}">
+                                                        <i class="bi bi-file-earmark-pdf"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center py-4 text-muted">
+                                        <td colspan="5" class="text-center py-4 text-muted">
                                             <i class="bi bi-folder2-open fs-3 d-block mb-2"></i>
                                             {{ __('messages.no_agendas_submitted_yet') ?? 'No submitted requests yet' }}
                                         </td>
@@ -180,4 +223,59 @@
             </div>
         </div>
     </div>
+
+    {{-- Add Group Request Modal --}}
+    @if(!$isAccumulatedSent && count($serviceBodyGroups) > 0)
+        <div class="modal fade" id="addGroupRequestModal" tabindex="-1" aria-labelledby="addGroupRequestModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <form action="{{ route('literature-requests.cart') }}" method="GET">
+                        <div class="modal-header border-bottom-0 pb-0">
+                            <h5 class="modal-title fw-bold" id="addGroupRequestModalLabel">
+                                <i class="bi bi-cart-plus text-primary me-2"></i>
+                                {{ __('messages.add_group_request') }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body py-4">
+                            <p class="text-secondary small mb-3">
+                                {{ __('messages.select_group_to_request') }}
+                            </p>
+                            @php
+                                $existingGroupRequestStatuses = $groupRequests->pluck('status', 'group_id')->toArray();
+                            @endphp
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ __('messages.Group') }}</label>
+                                <select name="group_id" class="form-select rounded-3 py-2" required>
+                                    @foreach($serviceBodyGroups as $grp)
+                                        @php
+                                            $grpStatus = $existingGroupRequestStatuses[$grp->id] ?? null;
+                                            $statusText = '';
+                                            if ($grpStatus === 'submitted') {
+                                                $statusText = ' (' . __('messages.submitted') . ')';
+                                            } elseif ($grpStatus === 'draft') {
+                                                $statusText = ' (' . __('messages.draft') . ')';
+                                            }
+                                        @endphp
+                                        <option value="{{ $grp->id }}">
+                                            {{ $grp->{app()->getLocale() . '_name'} ?? $grp->en_name }}{{ $statusText }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                                {{ __('messages.cancel') }}
+                            </button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-arrow-right-circle me-1"></i>
+                                {{ __('messages.open_group_cart') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 </x-layout>

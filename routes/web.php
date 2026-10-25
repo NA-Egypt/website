@@ -107,6 +107,7 @@ Route::group(
             Route::post('/literature-requests/submit', [\App\Http\Controllers\LiteratureRequestController::class, 'submitRequest'])->name('literature-requests.submit');
             Route::get('/literature-requests/treasurer', [\App\Http\Controllers\LiteratureRequestController::class, 'treasurerDashboard'])->name('literature-requests.treasurer');
             Route::post('/literature-requests/{id}/approve-send', [\App\Http\Controllers\LiteratureRequestController::class, 'approveAndSend'])->name('literature-requests.approve-send');
+            Route::post('/literature-requests/group/{id}/toggle-status', [\App\Http\Controllers\LiteratureRequestController::class, 'toggleGroupRequestStatus'])->name('literature-requests.group.toggle-status');
             Route::get('/literature-requests/committee', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeDashboard'])->name('literature-requests.committee');
             Route::get('/literature-requests/committee/{id}/edit', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeEdit'])->name('literature-requests.committee.edit');
             Route::post('/literature-requests/committee/{id}/update', [\App\Http\Controllers\LiteratureRequestController::class, 'committeeUpdate'])->name('literature-requests.committee.update');

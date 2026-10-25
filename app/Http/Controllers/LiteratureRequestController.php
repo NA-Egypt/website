@@ -25,7 +25,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     }
 
     /**
-     * Helper to get group of current user
+     * Helper to get group of current user or selected group for admin/treasurer
      */
     private function getCurrentGroup(Request $request = null)
     {
@@ -37,7 +37,127 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             }
             return Group::first();
         }
+
+        if ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
+            $serviceBodyId = $user->service_body_id;
+            $groupId = $request ? ($request->input('group_id') ?? $request->input('selected_group_id')) : request('group_id');
+            if ($groupId) {
+                $group = Group::find($groupId);
+                if ($group && $group->service_body_id == $serviceBodyId) {
+                    return $group;
+                }
+            }
+            return Group::where('service_body_id', $serviceBodyId)->first();
+        }
+
         return Group::where('user_id', $user->id)->first();
+    }
+
+    /**
+     * Check if group request editing is locked
+     */
+    private function isRequestLocked(Group $group, Carbon $month): bool
+    {
+        $user = Auth::user();
+        $isTreasurerOrAdmin = $user->hasRole('super admin') || $user->hasRole('Treasurer') || $user->hasRole('ServiceBody');
+
+        $accumulated = LiteratureRequest::where('service_body_id', $group->service_body_id)
+            ->where('month', $month)
+            ->where('type', 'servicebody')
+            ->first();
+
+        // If accumulated invoice has been sent to committee or beyond, editing is locked
+        if ($accumulated && in_array($accumulated->status, ['sent_to_committee', 'returned_by_committee', 'approved'])) {
+            return true;
+        }
+
+        // Treasurers and Super Admins can edit past 19th as long as accumulated invoice is not sent
+        if ($isTreasurerOrAdmin) {
+            return false;
+        }
+
+        // For GSR, locked after day 19
+        return Carbon::now()->day > 19;
+    }
+
+    /**
+     * Re-compile accumulated invoice from submitted group requests if draft exists or when requested
+     */
+    private function syncAccumulatedInvoice($serviceBodyId, Carbon $month)
+    {
+        $accumulated = LiteratureRequest::where('service_body_id', $serviceBodyId)
+            ->where('month', $month)
+            ->where('type', 'servicebody')
+            ->first();
+
+        // If it exists but is already sent to committee or beyond, do not alter
+        if ($accumulated && $accumulated->status !== 'draft') {
+            return $accumulated;
+        }
+
+        $groupRequests = LiteratureRequest::where('service_body_id', $serviceBodyId)
+            ->where('month', $month)
+            ->where('type', 'group')
+            ->where('status', 'submitted')
+            ->get();
+
+        if ($groupRequests->isEmpty()) {
+            if ($accumulated) {
+                $accumulated->items()->delete();
+                $accumulated->update([
+                    'total_items_count' => 0,
+                    'total_price' => 0.00
+                ]);
+            }
+            return $accumulated;
+        }
+
+        if (!$accumulated) {
+            $accumulated = LiteratureRequest::create([
+                'service_body_id' => $serviceBodyId,
+                'month' => $month,
+                'type' => 'servicebody',
+                'status' => 'draft',
+                'total_items_count' => 0,
+                'total_price' => 0.00
+            ]);
+        }
+
+        // Reset items
+        $accumulated->items()->delete();
+
+        // Accumulate items
+        $compiledItems = [];
+        foreach ($groupRequests as $gReq) {
+            foreach ($gReq->items as $item) {
+                if (isset($compiledItems[$item->inventory_item_id])) {
+                    $compiledItems[$item->inventory_item_id]['qty'] += $item->quantity;
+                } else {
+                    $compiledItems[$item->inventory_item_id] = [
+                        'qty' => $item->quantity,
+                        'price' => $item->price
+                    ];
+                }
+            }
+        }
+
+        foreach ($compiledItems as $itemId => $data) {
+            LiteratureRequestItem::create([
+                'literature_request_id' => $accumulated->id,
+                'inventory_item_id' => $itemId,
+                'quantity' => $data['qty'],
+                'price' => $data['price'],
+                'total' => $data['qty'] * $data['price']
+            ]);
+        }
+
+        // Update totals
+        $accumulated->update([
+            'total_items_count' => $accumulated->items()->sum('quantity'),
+            'total_price' => $accumulated->items()->sum('total'),
+        ]);
+
+        return $accumulated;
     }
 
     /**
@@ -50,8 +170,9 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             return redirect()->route('dashboard')->with('error', 'You must be associated with a group to request literature.');
         }
 
+        $user = Auth::user();
         $month = Carbon::now()->startOfMonth();
-        $isLocked = Carbon::now()->day > 19;
+        $isLocked = $this->isRequestLocked($group, $month);
 
         // Check if there is an existing request for this month
         $requestData = LiteratureRequest::where('group_id', $group->id)
@@ -64,7 +185,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
               ->orWhere('lit_quantity', '>', 0);
         })->orderBy('name')->get();
 
-        $allGroups = Auth::user()->hasRole('super admin') ? Group::orderBy('ar_name')->get() : collect();
+        if ($user->hasRole('super admin')) {
+            $allGroups = Group::orderBy('ar_name')->get();
+        } elseif ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
+            $allGroups = Group::where('service_body_id', $user->service_body_id)->orderBy('ar_name')->get();
+        } else {
+            $allGroups = collect();
+        }
 
         return view('literature_requests.cart', [
             'group' => $group,
@@ -86,31 +213,31 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             return redirect()->back()->with('error', 'No group associated.');
         }
 
-        if (Carbon::now()->day > 19) {
+        $month = Carbon::now()->startOfMonth();
+
+        if ($this->isRequestLocked($group, $month)) {
             return redirect()->back()->with('error', __('messages.locked_after_19th'));
         }
 
-        $month = Carbon::now()->startOfMonth();
+        $action = $request->input('action', 'draft');
+        $newStatus = ($action === 'submit') ? 'submitted' : 'draft';
 
-        // Find or create draft request
+        // Find or create request
         $litRequest = LiteratureRequest::firstOrCreate([
             'group_id' => $group->id,
             'service_body_id' => $group->service_body_id,
             'month' => $month,
             'type' => 'group',
         ], [
-            'status' => 'draft',
+            'status' => $newStatus,
             'total_items_count' => 0,
             'total_price' => 0.00
         ]);
 
-        // If previously submitted, overriding is allowed before 19th
-        if ($litRequest->status === 'submitted') {
-            // Overriding is allowed, reset totals and items
-            $litRequest->items()->delete();
-            $litRequest->status = 'draft';
-            $litRequest->save();
-        }
+        // Reset items
+        $litRequest->items()->delete();
+        $litRequest->status = $newStatus;
+        $litRequest->save();
 
         $quantities = $request->input('quantities', []); // [item_id => qty]
         
@@ -141,7 +268,14 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             'total_price' => $totalPrice,
         ]);
 
-        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', __('messages.item_updated_success'));
+        // Auto-sync accumulated invoice if draft exists
+        $this->syncAccumulatedInvoice($group->service_body_id, $month);
+
+        $successMsg = ($newStatus === 'submitted')
+            ? __('messages.request_submitted_success')
+            : __('messages.item_updated_success');
+
+        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', $successMsg);
     }
 
     /**
@@ -154,11 +288,11 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             return redirect()->back()->with('error', 'Group not found.');
         }
 
-        if (Carbon::now()->day > 19) {
+        $month = Carbon::now()->startOfMonth();
+
+        if ($this->isRequestLocked($group, $month)) {
             return redirect()->back()->with('error', __('messages.locked_after_19th'));
         }
-
-        $month = Carbon::now()->startOfMonth();
 
         $litRequest = LiteratureRequest::where('group_id', $group->id)
             ->where('month', $month)
@@ -173,9 +307,48 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         $litRequest->update(['status' => 'submitted']);
 
+        // Auto-sync accumulated invoice if draft exists
+        $this->syncAccumulatedInvoice($group->service_body_id, $month);
+
         return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', 
             $isOverride ? __('messages.request_overridden_success') : __('messages.request_submitted_success')
         );
+    }
+
+    /**
+     * Toggle group request between draft and submitted (Treasurer / Admin)
+     */
+    public function toggleGroupRequestStatus(Request $request, $id)
+    {
+        $user = Auth::user();
+        if (!$user->hasRole('super admin') && !$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody')) {
+            abort(403);
+        }
+
+        $litRequest = LiteratureRequest::where('type', 'group')->findOrFail($id);
+
+        if (!$user->hasRole('super admin') && $litRequest->service_body_id !== $user->service_body_id) {
+            abort(403);
+        }
+
+        $month = $litRequest->month;
+        $group = $litRequest->group;
+
+        if ($this->isRequestLocked($group, $month)) {
+            return redirect()->back()->with('error', __('messages.locked_after_19th'));
+        }
+
+        $newStatus = ($litRequest->status === 'submitted') ? 'draft' : 'submitted';
+        $litRequest->update(['status' => $newStatus]);
+
+        // Auto-sync accumulated invoice
+        $this->syncAccumulatedInvoice($litRequest->service_body_id, $month);
+
+        $msg = ($newStatus === 'submitted')
+            ? __('messages.request_submitted_success')
+            : __('messages.request_moved_to_draft_success');
+
+        return redirect()->back()->with('success', $msg);
     }
 
     /**
@@ -203,68 +376,15 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         // 1. Auto-compile accumulated invoice if day >= 19
         if (Carbon::now()->day >= 19) {
-            $accumulated = LiteratureRequest::where('service_body_id', $serviceBodyId)
-                ->where('month', $month)
-                ->where('type', 'servicebody')
-                ->first();
-
-            if (!$accumulated) {
-                // Compile from all group requests of this service body for this month with status 'submitted'
-                $groupRequests = LiteratureRequest::where('service_body_id', $serviceBodyId)
-                    ->where('month', $month)
-                    ->where('type', 'group')
-                    ->where('status', 'submitted')
-                    ->get();
-
-                if ($groupRequests->count() > 0) {
-                    $accumulated = LiteratureRequest::create([
-                        'service_body_id' => $serviceBodyId,
-                        'month' => $month,
-                        'type' => 'servicebody',
-                        'status' => 'draft',
-                        'total_items_count' => 0,
-                        'total_price' => 0.00
-                    ]);
-
-                    // Accumulate items
-                    $compiledItems = [];
-                    foreach ($groupRequests as $gReq) {
-                        foreach ($gReq->items as $item) {
-                            if (isset($compiledItems[$item->inventory_item_id])) {
-                                $compiledItems[$item->inventory_item_id]['qty'] += $item->quantity;
-                            } else {
-                                $compiledItems[$item->inventory_item_id] = [
-                                    'qty' => $item->quantity,
-                                    'price' => $item->price
-                                ];
-                            }
-                        }
-                    }
-
-                    foreach ($compiledItems as $itemId => $data) {
-                        LiteratureRequestItem::create([
-                            'literature_request_id' => $accumulated->id,
-                            'inventory_item_id' => $itemId,
-                            'quantity' => $data['qty'],
-                            'price' => $data['price'],
-                            'total' => $data['qty'] * $data['price']
-                        ]);
-                    }
-
-                    // Update totals
-                    $accumulated->update([
-                        'total_items_count' => $accumulated->items()->sum('quantity'),
-                        'total_price' => $accumulated->items()->sum('total'),
-                    ]);
-                }
-            }
+            $this->syncAccumulatedInvoice($serviceBodyId, $month);
         }
 
-        // 2. Fetch Group requests and Service Body accumulated requests
+        // 2. Fetch Group requests (draft, submitted, approved) and Service Body accumulated requests
         $groupRequests = LiteratureRequest::where('service_body_id', $serviceBodyId)
             ->where('month', $month)
             ->where('type', 'group')
-            ->whereIn('status', ['submitted', 'approved'])
+            ->whereIn('status', ['draft', 'submitted', 'approved'])
+            ->with(['group', 'items'])
             ->get();
 
         $accumulatedRequest = LiteratureRequest::where('service_body_id', $serviceBodyId)
@@ -273,9 +393,12 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             ->first();
 
         $allServiceBodies = ServiceBody::orderBy('ar_name')->get();
+        $serviceBodyGroups = Group::where('service_body_id', $serviceBodyId)->orderBy('ar_name')->get();
+
+        $isAccumulatedSent = $accumulatedRequest && in_array($accumulatedRequest->status, ['sent_to_committee', 'returned_by_committee', 'approved']);
 
         return view('literature_requests.treasurer_dashboard', compact(
-            'serviceBody', 'groupRequests', 'accumulatedRequest', 'month', 'allServiceBodies', 'serviceBodyId'
+            'serviceBody', 'groupRequests', 'accumulatedRequest', 'month', 'allServiceBodies', 'serviceBodyId', 'serviceBodyGroups', 'isAccumulatedSent'
         ));
     }
 
