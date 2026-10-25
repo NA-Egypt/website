@@ -1,8 +1,8 @@
 @php
     $cairoNow = \Carbon\Carbon::now('Africa/Cairo');
     $cairoHour = (int) $cairoNow->format('H');
-    // Active between 10:00 AM (10) and 10:00 PM (22)
-    $isAvailable = ($cairoHour >= 10 && $cairoHour < 22);
+    // Active daily between 10:00 AM (10) and 12:00 Midnight (24:00) Cairo time
+    $isAvailable = ($cairoHour >= 10 && $cairoHour < 24);
     $locale = app()->getLocale();
 @endphp
 
@@ -85,7 +85,7 @@
       <div class="mt-2 pt-2 border-top border-white-10 d-flex flex-column gap-1">
         <div class="d-flex align-items-center gap-1 text-white-50 x-small">
           <i class="bi bi-clock-history text-warning"></i>
-          <span>{{ __('messages.helpline_hours_short') ?? 'يومياً 10:00 ص - 10:00 م بتوقيت مصر' }}</span>
+          <span>{{ __('messages.helpline_hours_short') ?? 'يومياً 10:00 ص - 12:00 منتصف الليل بتوقيت مصر' }}</span>
         </div>
         <div>
           <a href="{{ route('frontend.meetings', ['type' => 'online']) }}" class="text-info x-small text-decoration-underline d-inline-flex align-items-center gap-1">
@@ -343,7 +343,7 @@
         hourCycle: 'h23'
       });
       const cairoHour = parseInt(cairoFormatter.format(now), 10);
-      const isOnline = (cairoHour >= 10 && cairoHour < 22);
+      const isOnline = (cairoHour >= 10 && cairoHour < 24);
 
       const badges = document.querySelectorAll('.na-status-badge-element');
       const texts = document.querySelectorAll('.na-status-text-element');
@@ -353,9 +353,11 @@
         if (isOnline) {
           badge.classList.remove('offline');
           badge.classList.add('online');
+          badge.setAttribute('title', "{{ __('messages.helpline_status_available') ?? 'متاح الآن للاتصال' }}");
         } else {
           badge.classList.remove('online');
           badge.classList.add('offline');
+          badge.setAttribute('title', "{{ __('messages.helpline_status_offhours') ?? 'خط المساعدة غير متاح حالياً' }}");
         }
       });
 
