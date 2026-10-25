@@ -40,9 +40,9 @@
             <!-- Day -->
             <div class="col-12 col-sm-4">
               <label for="ctDaySelect" class="visually-hidden">{{ __('messages.day') }}</label>
-              <div class="input-group input-group-sm">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-calendar3"></i></span>
-                <select id="ctDaySelect" class="form-select form-select-sm fw-bold border-start-0" aria-label="{{ __('messages.day') }}" onchange="onSegmentedDateChange()">
+              <div class="input-group input-group-sm ct-date-input-group">
+                <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar3"></i></span>
+                <select id="ctDaySelect" class="form-select form-select-sm fw-bold" aria-label="{{ __('messages.day') }}" onchange="onSegmentedDateChange()">
                   <option value="">{{ __('messages.day') }}</option>
                   @for ($d = 1; $d <= 31; $d++)
                     <option value="{{ $d }}">{{ $d }}</option>
@@ -509,6 +509,108 @@
 
 .x-small {
   font-size: 0.76rem;
+}
+
+/* Clean-Time Segmented Date Dropdowns Styling & RTL Fixes */
+.ct-date-input-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: 100%;
+  border-radius: 0.375rem;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* LTR Styles */
+[dir="ltr"] .ct-date-input-group,
+.na-cleantime-wrapper[dir="ltr"] .ct-date-input-group {
+  direction: ltr !important;
+  flex-direction: row !important;
+}
+
+[dir="ltr"] .ct-date-input-group .input-group-text,
+.na-cleantime-wrapper[dir="ltr"] .ct-date-input-group .input-group-text {
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border: 1px solid #ced4da !important;
+  border-right: none !important;
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  padding: 0.25rem 0.65rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+[dir="ltr"] .ct-date-input-group .form-select,
+.na-cleantime-wrapper[dir="ltr"] .ct-date-input-group .form-select {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+  border: 1px solid #ced4da !important;
+  border-left: 1px solid #e2e8f0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background-position: right 0.75rem center !important;
+  padding-right: 2.25rem !important;
+  padding-left: 0.75rem !important;
+}
+
+/* RTL Styles: Keep icon on the right (start) attached seamlessly to Day select */
+[dir="rtl"] .ct-date-input-group,
+.na-cleantime-wrapper[dir="rtl"] .ct-date-input-group {
+  direction: rtl !important;
+  flex-direction: row !important;
+}
+
+[dir="rtl"] .ct-date-input-group .input-group-text,
+.na-cleantime-wrapper[dir="rtl"] .ct-date-input-group .input-group-text {
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border: 1px solid #ced4da !important;
+  border-left: none !important;
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  padding: 0.25rem 0.65rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+[dir="rtl"] .ct-date-input-group .form-select,
+.na-cleantime-wrapper[dir="rtl"] .ct-date-input-group .form-select {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+  border: 1px solid #ced4da !important;
+  border-right: 1px solid #e2e8f0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background-position: left 0.75rem center !important;
+  padding-left: 2.25rem !important;
+  padding-right: 0.75rem !important;
+}
+
+/* RTL Chevron & Padding Alignment for Month and Year Selects */
+[dir="rtl"] .na-date-input-panel .form-select,
+.na-cleantime-wrapper[dir="rtl"] .na-date-input-panel .form-select {
+  background-position: left 0.75rem center !important;
+  padding-left: 2.25rem !important;
+  padding-right: 0.75rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.ct-date-input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(50, 85, 127, 0.15) !important;
+  border-radius: 0.375rem;
+}
+
+.ct-date-input-group:focus-within .input-group-text,
+.ct-date-input-group:focus-within .form-select {
+  border-color: #32557f !important;
 }
 
 /* Prominent Clean-Time Banner */
