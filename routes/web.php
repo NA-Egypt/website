@@ -447,8 +447,9 @@ Route::group(
                 ];
             });
 
-            $jftReading = Cache::remember('frontend_jft_reading_' . date('Y_m_d'), 86400, function() {
-                return app(\App\Services\JftService::class)->getReading();
+            $currentLocale = \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocale() ?: app()->getLocale() ?: 'ar';
+            $jftReading = Cache::remember('frontend_jft_reading_' . $currentLocale . '_' . date('Y_m_d'), 86400, function() use ($currentLocale) {
+                return app(\App\Services\JftService::class)->getReading(null, $currentLocale);
             });
             $jftContent = $jftReading['content_html'] ?? '';
 

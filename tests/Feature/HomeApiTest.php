@@ -99,6 +99,26 @@ class HomeApiTest extends TestCase
         $this->assertNotEmpty($data['content_html']);
     }
 
+    public function test_jft_endpoint_returns_english_daily_reading(): void
+    {
+        $response = $this->getJson('/api/v1/jft?date=2026-01-10&locale=en');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'date' => '2026-01-10',
+                    'title' => 'Gratitude',
+                    'page_date' => 'January 10',
+                ]
+            ]);
+
+        $data = $response->json('data');
+        $this->assertStringContainsString('IP No. 21, The Loner', $data['quote_source']);
+        $this->assertStringContainsString('Just for today', $data['thought_for_the_day']);
+        $this->assertNotEmpty($data['content']);
+        $this->assertNotEmpty($data['content_html']);
+    }
+
     public function test_stats_endpoint_returns_correct_metrics(): void
     {
         $city = City::create(['ar_name' => 'القاهرة', 'en_name' => 'Cairo']);

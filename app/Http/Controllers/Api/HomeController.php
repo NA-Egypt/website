@@ -31,11 +31,16 @@ class HomeController extends Controller
     public function index(Request $request): JsonResponse
     {
         $date = $request->query('date');
-        $cacheKey = 'api_v1_home_data_' . ($date ?: now()->format('Y_m_d'));
+        $locale = $request->query('locale', $request->query('lang', $request->header('X-Locale', app()->getLocale())));
+        if (!in_array($locale, ['ar', 'en'])) {
+            $locale = 'ar';
+        }
 
-        $data = Cache::remember($cacheKey, 1800, function () use ($date) {
+        $cacheKey = 'api_v1_home_data_' . $locale . '_' . ($date ?: now()->format('Y_m_d'));
+
+        $data = Cache::remember($cacheKey, 1800, function () use ($date, $locale) {
             $stats = $this->statsService->getStats();
-            $jft = $this->jftService->getReading($date);
+            $jft = $this->jftService->getReading($date, $locale);
 
             // Helplines matching the official frontpage
             $helplineNumbers = [

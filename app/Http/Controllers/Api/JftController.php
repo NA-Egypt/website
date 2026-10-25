@@ -26,10 +26,14 @@ class JftController extends Controller
     {
         $request->validate([
             'date' => 'nullable|date_format:Y-m-d',
+            'locale' => 'nullable|string|in:ar,en',
+            'lang' => 'nullable|string|in:ar,en',
         ]);
 
         $dateString = $request->query('date');
-        $reading = $this->jftService->getReading($dateString);
+        $locale = $request->query('locale', $request->query('lang', $request->header('X-Locale', app()->getLocale())));
+
+        $reading = $this->jftService->getReading($dateString, $locale);
 
         return response()->json([
             'data' => $reading,

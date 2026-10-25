@@ -5,15 +5,18 @@
 
 @php
     $cairoNow = \Carbon\Carbon::now('Africa/Cairo');
+    $currentLocale = app()->getLocale() ?: 'ar';
+    $isRtl = $currentLocale === 'ar';
+    $direction = $isRtl ? 'rtl' : 'ltr';
     if (empty($jftReading)) {
         try {
-            $jftReading = app(\App\Services\JftService::class)->getReading($cairoNow->format('Y-m-d'));
+            $jftReading = app(\App\Services\JftService::class)->getReading($cairoNow->format('Y-m-d'), $currentLocale);
         } catch (\Throwable $e) {
             $jftReading = [];
         }
     }
     $jftDate = $jftReading['date'] ?? $cairoNow->format('Y-m-d');
-    $jftPageDate = $jftReading['page_date'] ?? $cairoNow->locale(app()->getLocale())->translatedFormat('j F');
+    $jftPageDate = $jftReading['page_date'] ?? $cairoNow->locale($currentLocale)->translatedFormat('j F');
     $jftTitle = $jftReading['title'] ?? '';
     $jftQuote = $jftReading['quote'] ?? '';
     $jftQuoteSource = $jftReading['quote_source'] ?? '';
@@ -21,10 +24,11 @@
     $jftThought = $jftReading['thought_for_the_day'] ?? '';
     $jftHtml = $jftReading['content_html'] ?? $jftContent;
     $todayDate = $cairoNow->format('Y-m-d');
-    $formattedFullDate = $cairoNow->locale(app()->getLocale())->translatedFormat('l، j F Y');
+    $dateFormatPattern = $currentLocale === 'en' ? 'l, j F Y' : 'l، j F Y';
+    $formattedFullDate = $cairoNow->locale($currentLocale)->translatedFormat($dateFormatPattern);
 @endphp
 
-<section id="jftSection" class="na-section-shell p-0 overflow-hidden mb-5" aria-labelledby="jft-main-heading">
+<section id="jftSection" class="na-section-shell p-0 overflow-hidden mb-5" aria-labelledby="jft-main-heading" dir="{{ $direction }}">
   <div class="na-jft-container" id="naJftCard">
     <!-- Subtle Watermark Emblem -->
     <svg viewBox="0 0 100 100" class="na-jft-watermark" aria-hidden="true">
@@ -67,7 +71,7 @@
           <!-- History Navigator (Quick Arrows + Calendar Input) -->
           <div class="jft-history-deck" role="group" aria-label="{{ __('messages.jft_pick_date') ?? 'تصفح تواريخ التأمل' }}">
             <button type="button" class="jft-nav-btn" onclick="navigateJftDay(-1)" title="{{ __('messages.jft_prev_day') ?? 'الأمس' }}" aria-label="{{ __('messages.jft_prev_day') ?? 'الأمس' }}">
-              <i class="bi bi-chevron-right rtl-flip"></i>
+              <i class="bi {{ $isRtl ? 'bi-chevron-right' : 'bi-chevron-left' }}"></i>
               <span class="d-none d-sm-inline">{{ __('messages.jft_prev_day') ?? 'الأمس' }}</span>
             </button>
 
@@ -80,7 +84,7 @@
 
             <button type="button" class="jft-nav-btn" onclick="navigateJftDay(1)" title="{{ __('messages.jft_next_day') ?? 'الغد' }}" aria-label="{{ __('messages.jft_next_day') ?? 'الغد' }}">
               <span class="d-none d-sm-inline">{{ __('messages.jft_next_day') ?? 'الغد' }}</span>
-              <i class="bi bi-chevron-left rtl-flip"></i>
+              <i class="bi {{ $isRtl ? 'bi-chevron-left' : 'bi-chevron-right' }}"></i>
             </button>
 
             <button type="button" id="jftTodayBtn" class="jft-nav-btn jft-today-pill d-none" onclick="jumpToTodayJft()" title="{{ __('messages.jft_today') ?? 'اليوم' }}">
@@ -157,7 +161,7 @@
       <!-- ==================================================================
            READING CONTENT ARCHITECTURE
            ================================================================== -->
-      <div id="jftReadingContainer" class="jft-reading-card-surface position-relative" dir="rtl">
+      <div id="jftReadingContainer" class="jft-reading-card-surface position-relative" dir="{{ $direction }}">
         <!-- Loading Overlay -->
         <div id="jftLoadingOverlay" class="jft-loading-overlay d-none">
           <div class="spinner-border text-primary" role="status">
@@ -228,7 +232,7 @@
           <span>{{ __('messages.jft_quote_footer') ?? 'لليوم فقط: أفكاري ستكون مركزة على تعافيّ، وحياتي بدون مخدرات.' }}</span>
         </div>
         <a href="{{ route('frontend.literature') }}" class="text-primary fw-semibold text-decoration-none">
-          {{ __('messages.browse_all_literature') ?? 'تصفح مكتبة الأدبيات الكاملة' }} &larr;
+          {{ __('messages.browse_all_literature') ?? 'تصفح مكتبة الأدبيات الكاملة' }} {!! $isRtl ? '&larr;' : '&rarr;' !!}
         </a>
       </div>
     </div>
@@ -238,7 +242,7 @@
 <!-- ======================================================================
      ONE-TAP SHARE MODAL (مشاركة التأمل)
      ====================================================================== -->
-<div class="modal fade" id="jftShareModal" tabindex="-1" aria-labelledby="jftShareModalLabel" aria-hidden="true" dir="rtl">
+<div class="modal fade" id="jftShareModal" tabindex="-1" aria-labelledby="jftShareModalLabel" aria-hidden="true" dir="{{ $direction }}">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
     <div class="modal-content jft-share-modal-content">
       <div class="modal-header border-0 pb-0 d-flex align-items-center justify-content-between">
@@ -309,7 +313,29 @@
   let isPlayingSpeech = false;
   let isPausedSpeech = false;
   let currentSpeechRate = 1.0;
+  const currentAppLocale = '{{ $currentLocale }}';
   let arabicVoice = null;
+  let englishVoice = null;
+
+  function findArabicVoice(voices) {
+    if (!voices || voices.length === 0) return null;
+    return voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('ar-eg')) ||
+           voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('ar-sa')) ||
+           voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('ar-')) ||
+           voices.find(v => v.lang && (v.lang.toLowerCase() === 'ar' || v.lang.toLowerCase().startsWith('ar'))) ||
+           voices.find(v => v.name && (v.name.includes('Arabic') || v.name.includes('عربي') || v.name.includes('Salma') || v.name.includes('Shakir') || v.name.includes('Naayf') || v.name.includes('Maged') || v.name.includes('Tarek') || v.name.includes('Laila') || v.name.includes('Hoda') || v.name.includes('Mariam') || v.name.includes('Zayd'))) ||
+           null;
+  }
+
+  function findEnglishVoice(voices) {
+    if (!voices || voices.length === 0) return null;
+    return voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('en-us')) ||
+           voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('en-gb')) ||
+           voices.find(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('en-')) ||
+           voices.find(v => v.lang && (v.lang.toLowerCase() === 'en' || v.lang.toLowerCase().startsWith('en'))) ||
+           voices.find(v => v.name && (v.name.toLowerCase().includes('english') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('samantha'))) ||
+           null;
+  }
 
   // Initialize Speech Voices
   function initSpeechVoices() {
@@ -318,17 +344,16 @@
       if (audioBar) audioBar.classList.add('d-none');
       return;
     }
-    const voices = window.speechSynthesis.getVoices();
-    // Prioritize Arabic voices (e.g., ar-EG, ar-SA, ar)
-    arabicVoice = voices.find(v => v.lang.startsWith('ar-EG')) ||
-                  voices.find(v => v.lang.startsWith('ar-SA')) ||
-                  voices.find(v => v.lang.startsWith('ar')) ||
-                  null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    arabicVoice = findArabicVoice(voices);
+    englishVoice = findEnglishVoice(voices);
   }
 
   if ('speechSynthesis' in window) {
     initSpeechVoices();
-    window.speechSynthesis.onvoiceschanged = initSpeechVoices;
+    window.speechSynthesis.onvoiceschanged = function() {
+      initSpeechVoices();
+    };
   }
 
   // Load Saved Font Size
@@ -390,7 +415,7 @@
     const overlay = document.getElementById('jftLoadingOverlay');
     if (overlay) overlay.classList.remove('d-none');
 
-    fetch('/api/v1/jft?date=' + encodeURIComponent(dateStr))
+    fetch('/api/v1/jft?date=' + encodeURIComponent(dateStr) + '&locale=' + encodeURIComponent(currentAppLocale))
       .then(res => res.json())
       .then(json => {
         if (!json || !json.data) return;
@@ -478,14 +503,30 @@
   // =========================================================================
   function buildSpeechChunks() {
     speechChunks = [];
-    if (jftTitle) speechChunks.push('عنوان التأمل: ' + jftTitle);
-    if (jftQuote) speechChunks.push(jftQuote + (jftQuoteSource ? ' — ' + jftQuoteSource : ''));
-    if (jftParagraphs && jftParagraphs.length > 0) {
-      jftParagraphs.forEach(p => {
-        if (p.trim()) speechChunks.push(p.trim());
-      });
+    if (jftTitle) {
+      speechChunks.push(currentAppLocale === 'en' ? ('Title: ' + jftTitle) : ('عنوان التأمل: ' + jftTitle));
     }
-    if (jftThought) speechChunks.push(jftThought);
+    if (jftQuote) {
+      speechChunks.push(jftQuote + (jftQuoteSource ? ' — ' + jftQuoteSource : ''));
+    }
+    if (Array.isArray(jftParagraphs) && jftParagraphs.length > 0) {
+      jftParagraphs.forEach(p => {
+        if (p && typeof p === 'string' && p.trim()) {
+          speechChunks.push(p.trim());
+        }
+      });
+    } else {
+      const pElements = document.querySelectorAll('#jftParagraphsContainer p');
+      if (pElements.length > 0) {
+        pElements.forEach(el => {
+          const t = el.textContent ? el.textContent.trim() : '';
+          if (t) speechChunks.push(t);
+        });
+      }
+    }
+    if (jftThought) {
+      speechChunks.push(jftThought);
+    }
   }
 
   window.toggleJftAudioPlayback = function() {
@@ -505,7 +546,11 @@
       isPausedSpeech = false;
       updateAudioUI('playing');
     } else {
-      // Start from beginning
+      // Reset any hanging previous speech synthesis before starting
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+
       buildSpeechChunks();
       if (speechChunks.length === 0) return;
       currentChunkIdx = 0;
@@ -521,11 +566,48 @@
       return;
     }
 
-    const chunkText = speechChunks[currentChunkIdx];
+    const rawChunkText = speechChunks[currentChunkIdx];
+    const isArabic = /[\u0600-\u06FF]/.test(rawChunkText);
+
+    // Sanitize punctuation for TTS:
+    // Convert multiple dots/ellipsis (...) into natural comma pauses (، or ,)
+    // so TTS engines never speak "dot dot dot" out loud.
+    let chunkText = rawChunkText
+      .replace(/\.{2,}/g, isArabic ? '، ' : ', ')
+      .replace(/…/g, isArabic ? '، ' : ', ')
+      .replace(/["“”«»]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!chunkText) {
+      currentChunkIdx++;
+      playCurrentChunk();
+      return;
+    }
+
     speechUtterance = new SpeechSynthesisUtterance(chunkText);
-    speechUtterance.rate = currentSpeechRate;
-    speechUtterance.lang = 'ar';
-    if (arabicVoice) speechUtterance.voice = arabicVoice;
+    window._jftActiveUtterance = speechUtterance; // Prevent Chrome garbage collection bug
+
+    speechUtterance.rate = currentSpeechRate || 1.0;
+
+    const voices = window.speechSynthesis.getVoices() || [];
+    if (isArabic) {
+      if (!arabicVoice) arabicVoice = findArabicVoice(voices);
+      if (arabicVoice) {
+        speechUtterance.voice = arabicVoice;
+        speechUtterance.lang = arabicVoice.lang || 'ar';
+      } else {
+        speechUtterance.lang = 'ar';
+      }
+    } else {
+      if (!englishVoice) englishVoice = findEnglishVoice(voices);
+      if (englishVoice) {
+        speechUtterance.voice = englishVoice;
+        speechUtterance.lang = englishVoice.lang || 'en';
+      } else {
+        speechUtterance.lang = 'en';
+      }
+    }
 
     speechUtterance.onstart = function() {
       updateAudioUI('playing');
@@ -541,22 +623,32 @@
     };
 
     speechUtterance.onerror = function(e) {
-      console.warn('Speech error', e);
-      if (e.error !== 'canceled') {
-        currentChunkIdx++;
-        if (isPlayingSpeech && !isPausedSpeech) {
-          playCurrentChunk();
-        }
+      console.warn('Speech synthesis event:', e.error);
+      if (e.error === 'canceled' || e.error === 'interrupted') {
+        return;
+      }
+      currentChunkIdx++;
+      if (isPlayingSpeech && !isPausedSpeech && currentChunkIdx < speechChunks.length) {
+        setTimeout(playCurrentChunk, 50);
+      } else {
+        stopJftAudio();
       }
     };
 
+    // Chrome pause safety check
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
     window.speechSynthesis.speak(speechUtterance);
   }
 
   window.stopJftAudio = function() {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
     }
+    window._jftActiveUtterance = null;
     isPlayingSpeech = false;
     isPausedSpeech = false;
     currentChunkIdx = 0;
@@ -688,10 +780,14 @@
     const cleanQuote = jftQuote ? `\n"${jftQuote}"\n${jftQuoteSource ? '— ' + jftQuoteSource : ''}\n` : '';
     const cleanAff = jftThought ? `\n✨ ${jftThought}\n` : '';
 
-    const textSnippet = `🌿 *تأمل لليوم فقط — زمالة المدمنين المجهولين (مصر)*\n📅 ${jftPageDate} | ${jftTitle}\n${cleanQuote}${cleanAff}\n🔗 لقراءة التأمل كاملاً من الموقع الرسمي:\n${shareUrl}`;
+    const textSnippet = currentAppLocale === 'en'
+      ? `🌿 *Just For Today Meditation — Narcotics Anonymous (Egypt)*\n📅 ${jftPageDate} | ${jftTitle}\n${cleanQuote}${cleanAff}\n🔗 Read full meditation on official website:\n${shareUrl}`
+      : `🌿 *تأمل لليوم فقط — زمالة المدمنين المجهولين (مصر)*\n📅 ${jftPageDate} | ${jftTitle}\n${cleanQuote}${cleanAff}\n🔗 لقراءة التأمل كاملاً من الموقع الرسمي:\n${shareUrl}`;
 
     return {
-      title: `تأمل لليوم فقط — ${jftTitle} (${jftPageDate})`,
+      title: currentAppLocale === 'en'
+        ? `Just For Today — ${jftTitle} (${jftPageDate})`
+        : `تأمل لليوم فقط — ${jftTitle} (${jftPageDate})`,
       text: textSnippet,
       url: shareUrl
     };
