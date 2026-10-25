@@ -23,7 +23,7 @@
         <!-- Alexandria & North Coast -->
         <div class="na-popover-item p-2 rounded-3">
           <div class="d-flex align-items-center justify-content-between mb-1">
-            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_alexandria') ?? 'خط الإسكندرية والساحل الشمالي' }}</span>
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_alexandria') ?? 'خط المساعدة اسكندرية ' }}</span>
             <span class="badge bg-white-10 text-white rounded-pill x-small px-2 py-0.5">Alexandria</span>
           </div>
           <div class="d-flex align-items-center justify-content-between gap-2">
@@ -43,7 +43,7 @@
         <!-- Regional Line 2 (WhatsApp & Phone) -->
         <div class="na-popover-item p-2 rounded-3">
           <div class="d-flex align-items-center justify-content-between mb-1">
-            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_2') ?? 'الخط الساخن الإقليمي (مصر ٢ / واتساب)' }}</span>
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_2') ?? 'خط المساعدة الإقليمي (مصر ٢ / واتساب)' }}</span>
             <span class="badge bg-success-subtle text-success rounded-pill x-small px-2 py-0.5">WhatsApp / Call</span>
           </div>
           <div class="d-flex align-items-center justify-content-between gap-2">
@@ -63,8 +63,8 @@
         <!-- Regional Line 1 (Egypt 1) -->
         <div class="na-popover-item p-2 rounded-3">
           <div class="d-flex align-items-center justify-content-between mb-1">
-            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_1') ?? 'الخط الساخن الإقليمي (مصر ١)' }}</span>
-            <span class="badge bg-white-10 text-white rounded-pill x-small px-2 py-0.5">Hotline</span>
+            <span class="text-white-50 x-small fw-semibold">{{ __('messages.helpline_regional_1') ?? 'خط المساعدة الإقليمي (مصر ١)' }}</span>
+            <span class="badge bg-white-10 text-white rounded-pill x-small px-2 py-0.5">Helpline</span>
           </div>
           <div class="d-flex align-items-center justify-content-between gap-2">
             <span class="fw-bold font-monospace text-white fs-6" dir="ltr">+20 100 697 9198</span>
@@ -123,8 +123,8 @@
 
       <!-- Quick Dial Direct Actions (Single Line) -->
       <div class="na-emergency-dial-chips flex-nowrap">
-        <!-- Primary Hotline Chip -->
-        <a href="tel:+201006979198" class="na-dial-chip na-dial-chip-call" title="{{ __('messages.helpline_regional_1') ?? 'الخط الساخن الإقليمي (مصر ١)' }}">
+        <!-- Primary Helpline Chip -->
+        <a href="tel:+201006979198" class="na-dial-chip na-dial-chip-call" title="{{ __('messages.helpline_regional_1') ?? 'خط المساعدة الإقليمي (مصر ١)' }}">
           <i class="bi bi-telephone-fill text-warning"></i>
           <span class="d-none d-lg-inline text-white-50 small">{{ __('messages.cairo_region') ?? 'مصر' }}:</span>
           <span class="fw-bold font-monospace" dir="ltr">0100 697 9198</span>
@@ -133,14 +133,14 @@
         <!-- WhatsApp Chip -->
         <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="na-dial-chip na-dial-chip-wa" title="WhatsApp">
           <i class="bi bi-whatsapp"></i>
-          <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span>
+          <!-- <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span> -->
         </a>
 
         <!-- More Numbers Popover Trigger -->
         <div class="na-lines-popover-anchor position-relative d-inline-block">
-          <button type="button" class="na-dial-chip na-dial-chip-more" onclick="toggleLinesPopover(event)" id="naLinesDesktopToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" title="{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}">
+          <button type="button" class="na-dial-chip na-dial-chip-more" onclick="toggleLinesPopover(event)" id="naLinesDesktopToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" title="{{ __('messages.more_helpline_numbers') ?? 'خطوط المساعدة' }}">
             <i class="bi bi-grid-fill text-info"></i>
-            <span>{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}</span>
+            <span>{{ __('messages.more_helpline_numbers') ?? 'خطوط المساعدة' }}</span>
             <i class="bi bi-chevron-up transition-transform na-popover-chevron ms-1" style="font-size: 0.72rem;"></i>
           </button>
         </div>
@@ -184,12 +184,12 @@
 
         <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="na-mobile-btn na-mobile-btn-wa" aria-label="WhatsApp">
           <i class="bi bi-whatsapp"></i>
-          <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span>
+          <!-- <span>{{ __('messages.whatsapp') ?? 'واتساب' }}</span> -->
         </a>
 
-        <button type="button" class="na-mobile-btn na-mobile-btn-lines" onclick="toggleLinesPopover(event)" id="naLinesMobileToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" aria-label="{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}">
+        <button type="button" class="na-mobile-btn na-mobile-btn-lines" onclick="toggleLinesPopover(event)" id="naLinesMobileToggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="naLinesPopoverCard" aria-label="{{ __('messages.more_helpline_numbers') ?? 'خطوط المساعدة' }}">
           <i class="bi bi-grid-fill text-info"></i>
-          <span>{{ __('messages.more_helpline_numbers') ?? 'أرقام أخرى' }}</span>
+          <span>{{ __('messages.more_helpline_numbers') ?? 'خطوط المساعدة' }}</span>
           <i class="bi bi-chevron-up transition-transform na-popover-chevron ms-1" style="font-size: 0.7rem;"></i>
         </button>
 

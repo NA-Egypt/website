@@ -1,15 +1,15 @@
 <!-- Progressive Web App (PWA) In-App Install Banner & iOS Guidance Modal -->
 <div id="naPwaInstallBanner" class="na-pwa-banner d-none shadow-lg border" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-  <div class="d-flex align-items-center justify-content-between gap-3 p-3">
+  <div class="na-pwa-banner-content d-flex align-items-center justify-content-between gap-2 gap-sm-3">
     <!-- App Emblem & Info -->
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-2 gap-sm-3 min-w-0 flex-grow-1">
       <div class="na-pwa-emblem flex-shrink-0">
-        <img src="{{ asset('assets/images/icons/icon-192.png') }}" alt="NA Egypt" width="46" height="46" class="rounded-3 shadow-xs">
+        <img src="{{ asset('assets/images/icons/icon-192.png') }}" alt="NA Egypt" width="44" height="44" class="rounded-3 shadow-xs na-pwa-icon">
       </div>
-      <div>
+      <div class="min-w-0 flex-grow-1">
         <div class="d-flex align-items-center gap-1.5 flex-wrap">
-          <span class="fw-bold text-white small">{{ __('messages.pwa_install_title') }}</span>
-          <span class="badge bg-white-20 text-white rounded-pill x-small" style="background: rgba(255,255,255,0.2);">
+          <span class="fw-bold text-white small text-truncate d-block">{{ __('messages.pwa_install_title') }}</span>
+          <span class="badge bg-white-20 text-white rounded-pill x-small d-none d-md-inline-block" style="background: rgba(255,255,255,0.2);">
             {{ __('messages.pwa_install_feature_tag') }}
           </span>
         </div>
@@ -20,15 +20,16 @@
     </div>
 
     <!-- Actions -->
-    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+    <div class="d-flex align-items-center gap-1.5 gap-sm-2 flex-shrink-0">
       <!-- Install / Add Button -->
-      <button type="button" id="btnPwaAction" class="btn btn-warning btn-sm rounded-pill px-3 py-1.5 fw-black text-dark shadow-xs" onclick="onPwaInstallClick()">
+      <button type="button" id="btnPwaAction" class="btn btn-warning btn-sm rounded-pill fw-bold text-dark shadow-xs" onclick="onPwaInstallClick()">
         <i class="bi bi-cloud-arrow-down-fill me-1"></i>
-        <span>{{ __('messages.pwa_btn_install') }}</span>
+        <span class="d-none d-sm-inline">{{ __('messages.pwa_btn_install') }}</span>
+        <span class="d-inline d-sm-none">{{ __('messages.pwa_btn_install_short') }}</span>
       </button>
 
       <!-- Dismiss Button -->
-      <button type="button" class="btn btn-link btn-sm text-white-50 p-1 text-decoration-none" onclick="dismissPwaBanner()" aria-label="{{ __('messages.Close') ?? 'Close' }}">
+      <button type="button" class="btn btn-link btn-sm text-white-50 p-0 text-decoration-none na-pwa-dismiss-btn" onclick="dismissPwaBanner()" aria-label="{{ __('messages.Close') ?? 'Close' }}">
         <i class="bi bi-x-lg fs-6"></i>
       </button>
     </div>
@@ -112,11 +113,17 @@
   z-index: 1040;
   animation: naSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 @keyframes naSlideUp {
   from { opacity: 0; transform: translate(-50%, 20px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.na-pwa-banner-content {
+  padding: 1rem;
 }
 
 .na-pwa-desc {
@@ -127,13 +134,46 @@
   font-size: 0.76rem;
 }
 
+#btnPwaAction {
+  padding: 0.4rem 1rem;
+  white-space: nowrap;
+}
+
+.na-pwa-dismiss-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.na-pwa-dismiss-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+}
+
 @media (max-width: 576px) {
   .na-pwa-banner {
+    width: calc(100% - 16px);
     bottom: calc(var(--na-emergency-bar-height, 56px) + 8px);
     border-radius: 16px;
   }
+  .na-pwa-banner-content {
+    padding: 0.65rem 0.75rem;
+  }
   .na-pwa-desc {
     display: none; /* Keep super clean on narrow mobile */
+  }
+  .na-pwa-icon {
+    width: 38px;
+    height: 38px;
+  }
+  #btnPwaAction {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
   }
 }
 </style>

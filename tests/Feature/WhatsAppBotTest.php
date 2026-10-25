@@ -99,7 +99,7 @@ class WhatsAppBotTest extends TestCase
         $this->assertNotNull($outgoing);
     }
 
-    public function test_helpline_keyword_returns_hotline_numbers(): void
+    public function test_helpline_keyword_returns_Helpline_numbers(): void
     {
         $bot = $this->app->make(WhatsAppBotService::class);
 

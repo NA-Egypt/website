@@ -58,7 +58,7 @@
           </div>
 
           <h2 id="jft-main-heading" class="na-heading-2 mb-0 mt-1">
-            {{ __('messages.just_for_today_heading') ?? 'قراءات لليوم فقط (Just For Today)' }}
+            {{ __('messages.just_for_today_heading') ?? 'قراءات لليوم فقط ' }}
           </h2>
         </div>
 

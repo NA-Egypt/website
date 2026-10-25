@@ -12,7 +12,7 @@ Narcotics Anonymous (NA) is a global, community-based organization offering reco
 
 ## Key Services & Links
 - [Meeting Finder / دليل الاجتماعات](https://naegypt.org/ar/meetings): Find daily in-person meetings by city/governorate and online recovery meetings.
-- [Helpline & Contact / الخط الساخن والاتصال](https://naegypt.org/ar/contactus): Immediate telephone & WhatsApp support.
+- [Helpline & Contact / خط المساعدة والاتصال](https://naegypt.org/ar/contactus): Immediate telephone & WhatsApp support.
 - [Recovery Literature & Daily Readings / الأدبيات والقراءات اليومية](https://naegypt.org/ar/literature): Access "Just for Today" (لليوم فقط), informational pamphlets, and recovery books.
 - [For Public & Professionals / معلومات للجمهور والمهنيين](https://naegypt.org/ar/forpublic): Information about NA's fellowship, anonymity, principles, and cooperation with professionals.
 - [Events & Conventions / الأحداث والمؤتمرات](https://naegypt.org/ar/events): Annual conventions, service events, and workshops.

@@ -72,7 +72,7 @@ class CommitteeLiteratureRequestTest extends TestCase
 
         // Inventory Items: Note store_quantity vs lit_quantity
         $this->itemA = InventoryItem::create([
-            'name' => 'الكتاب الأساسي',
+            'name' => 'النص الأساسي',
             'name_en' => 'Basic Text',
             'category' => 'Books',
             'cost_price' => 50.00,

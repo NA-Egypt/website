@@ -11,7 +11,7 @@
                 <p>لا يقوم هذا الموقع بجمع بيانات شخصية تعبيرية أو تتبع هوية الزوار دون موافقتهم الصريحة. قد يتم استخدام كوكيز (Cookies) أساسية فقط لتوفير التصفح وسلاسة التجربة.</p>
 
                 <h3 class="h5 mt-4 text-secondary">التواصل معنا</h3>
-                <p>أي معلومات يتم تقديمها من خلال نماذج الاتصال أو الخط الساخن تعامل بسرية تامة ولا يتم مشاركتها مع أي جهة خارجية.</p>
+                <p>أي معلومات يتم تقديمها من خلال نماذج الاتصال أو خط المساعدة تعامل بسرية تامة ولا يتم مشاركتها مع أي جهة خارجية.</p>
             @else
                 <h2 class="h4 text-primary mb-3">Privacy & Information Protection</h2>
                 <p>Narcotics Anonymous Egypt is committed to protecting the privacy of all website visitors. Confidentiality and personal anonymity are core principles of our fellowship.</p>
@@ -20,7 +20,7 @@
                 <p>This website does not collect personally identifiable information without explicit consent. Only essential cookies may be used to ensure technical site functionality and usability.</p>
 
                 <h3 class="h5 mt-4 text-secondary">Contact & Communications</h3>
-                <p>Any information submitted via contact forms or hotlines is treated with strict confidentiality and is never shared with third parties.</p>
+                <p>Any information submitted via contact forms or Helplines is treated with strict confidentiality and is never shared with third parties.</p>
             @endif
         </div>
     </div>

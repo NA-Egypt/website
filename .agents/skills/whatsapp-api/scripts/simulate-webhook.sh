@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
       echo ""
       echo "Examples:"
       echo "  $0 --message '1'                          # Test JFT reading locally"
-      echo "  $0 --message 'helpline'                   # Test Helpline hotline locally"
+      echo "  $0 --message 'helpline'                   # Test Helpline Helpline locally"
       echo "  $0 --target production --message 'jft'    # Test production webhook"
       exit 0
       ;;

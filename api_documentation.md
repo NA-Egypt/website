@@ -169,7 +169,7 @@ Returns all aggregated data required for rendering the homepage in a single roun
           "title": "مؤتمر التعافي السنوي ٢٠٢٦",
           "start": "2026-09-01T10:00:00.000000Z",
           "end": "2026-09-01T18:00:00.000000Z",
-          "description": "مؤتمر سنوي عام لجميع الأعضاء...",
+          "description": "مؤتمر سنوي عام لكل الأعضاء...",
           "color": "#00698f",
           "organizer": "لجنة المؤتمرات",
           "location": "القاهرة - مدينة نصر",

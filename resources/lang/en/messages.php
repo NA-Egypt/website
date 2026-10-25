@@ -2865,6 +2865,7 @@ return [
     'pwa_install_feature_tag' => 'No App Store • Lightweight • Works Offline',
     'pwa_install_desc' => 'Takes minimal storage, works offline, and is completely private without needing an app store.',
     'pwa_btn_install' => 'Install App Now',
+    'pwa_btn_install_short' => 'Install',
     'pwa_btn_later' => 'Maybe Later',
     'pwa_ios_title' => 'Install App on iPhone / iPad (iOS)',
     'pwa_ios_step1' => 'Tap the Share button',

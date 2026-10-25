@@ -136,7 +136,7 @@ To prevent accidental broadcasts or testing messages to real fellowship members 
 - **Interactive Keywords:**
   - `1`, `jft`, `فقط لليوم`: Daily Just For Today reading from `JftService`.
   - `2`, `اجتماعات`, `meetings`: Two-step city lookup (Cairo, Giza, Alexandria, Online).
-  - `3`, `خط المساعدة`, `helpline`: Official helpline hotlines.
+  - `3`, `خط المساعدة`, `helpline`: Official helpline Helplines.
   - `4`, `فعاليات`, `events`: Upcoming events from `CalendarEvent`.
   - `5`, `نماذج`, `forms`: Links to Cooperation, Literature, and Contact forms.
   - `6`, `سوشيال`, `social`: Official social media and website links.

@@ -42,10 +42,10 @@
       <div class="col-6 col-md-4 col-lg-2">
         <h4 class="na-footer-heading">{{ __('messages.literature_heading') ?? 'أدبيات التعافي' }}</h4>
         <ul class="na-footer-links">
-          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.basic_text') ?? 'الكتاب الأساسي' }}</a></li>
-          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.it_works_how_and_why') ?? 'كيف يعمل ولماذا' }}</a></li>
+          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.basic_text') ?? 'النص الأساسي' }}</a></li>
+          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.it_works_how_and_why') ?? 'إنه يعمل: كيف ولماذا' }}</a></li>
           <li><a href="{{ route('frontend.literature') }}">{{ __('messages.just_for_today_book') ?? 'لليوم فقط' }}</a></li>
-          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.step_working_guides') ?? 'دليل خطوات التعافي' }}</a></li>
+          <li><a href="{{ route('frontend.literature') }}">{{ __('messages.step_working_guides') ?? 'دليل العمل بالخطوات' }}</a></li>
           <li><a href="{{ route('frontend.literature') }}">{{ __('messages.information_pamphlets') ?? 'كتيبات المعلومات (IPs)' }}</a></li>
           <li><a href="{{ route('frontend.literature') }}">{{ __('messages.literature_catalog_online') ?? 'طلب الأدبيات للمجموعات' }}</a></li>
         </ul>
@@ -58,7 +58,7 @@
           <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.regional_committee_rsc') ?? 'لجنة الخدمة الإقليمية بمصر (RSC)' }}</a></li>
           <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.pr_committee') ?? 'لجنة العلاقات العامة (PR)' }}</a></li>
           <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.hi_committee') ?? 'لجنة المستشفيات والمؤسسات (H&I)' }}</a></li>
-          <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.helpline_committee') ?? 'لجنة خط المساعدة الهاتفي' }}</a></li>
+          <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.helpline_committee') ?? 'فريق خطوط الهاتف' }}</a></li>
           <li><a href="{{ route('frontend.meetings', ['type' => 'online']) }}">{{ __('messages.direct_online_groups') ?? 'مجموعات الإنترنت المباشرة (زووم)' }}</a></li>
           <li><a href="{{ route('frontend.events') }}">{{ __('messages.calendar_events_nav') ?? 'تقويم الفعاليات والمؤتمرات' }}</a></li>
         </ul>
@@ -90,10 +90,10 @@
     <div class="na-anonymity-box text-center">
       <div class="d-inline-flex align-items-center gap-2 fw-bold text-info mb-1">
         <i class="bi bi-shield-check fs-5"></i>
-        <span>{{ __('messages.tradition_12_title') ?? 'التقليد الثاني عشر — عهد المجهولية الروحاني' }}</span>
+        <span>{{ __('messages.tradition_12_title') ?? 'التقليد الثاني عشر — المجهولية' }}</span>
       </div>
       <p class="mb-0 text-white-50 mx-auto" style="max-width: 860px;">
-        {{ __('messages.tradition_12_text') ?? '«المجهولية هي الأساس الروحاني لجميع تقاليدنا، تذكرنا دائماً بأن نضع المبادئ قبل الشخصيات». كل ما يُقال في اجتماعاتنا أو عبر خطوط المساعدة يبقى في طي السرية والكتمان التام.' }}
+        {{ __('messages.tradition_12_text') ?? '«المجهولية هي الأساس الروحاني لكل تقاليدنا، فلنتذكر دائمًا وأبدًا أن نُقدم المبادئ على الشخصيات». كل ما يُقال في اجتماعاتنا أو عبر خطوط المساعدة يبقى في طي السرية والكتمان التام.' }}
       </p>
     </div>
 
@@ -104,7 +104,7 @@
         | <a href="{{ route('privacy.policy') }}" class="text-white-50 text-decoration-underline ms-2">{{ __('messages.privacy_policy') ?? 'سياسة الخصوصية' }}</a>
       </div>
       <div class="text-white-50">
-        {{ __('messages.fellowship_nonprofit_notice') ?? 'الموقع الرسمي المعتمد لزمالة المدمنين المجهولين في جمهورية مصر العربية' }}
+        {{ __('messages.fellowship_nonprofit_notice') ?? 'الموقع الالكتروني لزمالة المدمنين المجهولين - مصر' }}
       </div>
     </div>
   </div>
