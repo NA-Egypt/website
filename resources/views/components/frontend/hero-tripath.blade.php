@@ -153,9 +153,9 @@
 
         <!-- Quick Helplines Row -->
         <div class="na-card-quicklinks">
-          <a href="tel:+201207470004" class="na-quick-chip" title="{{ __('messages.tripath_quick_call') ?? 'اتصال بالخط الساخن' }}">
+          <a href="tel:+201207470004" class="na-quick-chip" title="{{ __('messages.tripath_quick_call') ?? 'اتصال بخطوط المساعدة' }}">
             <i class="bi bi-telephone-fill text-teal" aria-hidden="true"></i>
-            <span>{{ __('messages.tripath_quick_call') ?? 'اتصال بالخط الساخن' }}</span>
+            <span>{{ __('messages.tripath_quick_call') ?? 'اتصال بخطوط المساعدة' }}</span>
           </a>
           <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="na-quick-chip" title="{{ __('messages.tripath_quick_whatsapp') ?? 'محادثة واتساب سرية' }}">
             <i class="bi bi-whatsapp text-success" aria-hidden="true"></i>
