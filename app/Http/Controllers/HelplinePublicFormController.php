@@ -66,7 +66,7 @@ class HelplinePublicFormController extends Controller
             'volunteer_name' => 'required|string|max:150',
             'volunteer_name_other' => 'nullable|string|max:150',
             'is_step_12' => 'required|in:0,1,yes,no',
-            'call_brief' => 'required_unless:caller_type,عضو حالي|nullable|string',
+            'call_brief' => 'required_unless:caller_type,عضو حالي,مكالمة بالخطأ|nullable|string',
             'discuss_in_meeting' => 'required|in:0,1,yes,no',
             'additional_info' => 'nullable|string',
         ], [

@@ -267,6 +267,33 @@ class HelplineCallApiTest extends TestCase
         ]);
     }
 
+    public function test_submit_helpline_call_allows_empty_call_brief_when_caller_is_wrong_call(): void
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مكالمة بالخطأ',
+            'referral_source' => 'أخرى',
+            'referral_source_other' => 'رقم خاطئ',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => false,
+            'call_brief' => '',
+            'discuss_in_meeting' => false,
+        ];
+
+        $response = $this->postJson('/api/v1/helpline-calls', $payload);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.caller_type', 'مكالمة بالخطأ')
+            ->assertJsonPath('data.call_brief', null);
+
+        $this->assertDatabaseHas('helpline_calls', [
+            'caller_type' => 'مكالمة بالخطأ',
+            'call_brief' => null,
+        ]);
+    }
+
     public function test_submit_helpline_call_requires_call_brief_when_caller_is_not_existing_member(): void
     {
         $payload = [

@@ -149,6 +149,30 @@ class HelplineCallTest extends TestCase
         ]);
     }
 
+    public function test_public_form_submission_allows_empty_call_brief_for_wrong_call()
+    {
+        $payload = [
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->format('Y-m-d'),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مكالمة بالخطأ',
+            'referral_source' => 'أخرى',
+            'referral_source_other' => 'رقم خطأ',
+            'volunteer_name' => 'أحمد ع.',
+            'is_step_12' => '0',
+            'call_brief' => '',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $response = $this->postJson('/forms/helpline', $payload);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('helpline_calls', [
+            'caller_type' => 'مكالمة بالخطأ',
+            'call_brief' => null,
+        ]);
+    }
+
     public function test_public_form_submission_validates_conditional_hospital_name()
     {
         $payload = [

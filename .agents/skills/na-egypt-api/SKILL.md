@@ -495,8 +495,9 @@ Provides schema discovery, public call response logging, and authenticated admin
       "call_brief": {
         "rule": "optional_if",
         "field": "caller_type",
-        "value": "عضو حالي",
-        "description": "Call brief is optional when caller_type is \"عضو حالي\", required otherwise."
+        "values": ["عضو حالي", "مكالمة بالخطأ"],
+        "value": "عضو حالي, مكالمة بالخطأ",
+        "description": "Call brief is optional when caller_type is \"عضو حالي\" or \"مكالمة بالخطأ\", required otherwise."
       },
       "hospital_name": {
         "rule": "required_if",
@@ -530,7 +531,7 @@ Provides schema discovery, public call response logging, and authenticated admin
   - `volunteer_name`: `required|string|max:150`
   - `volunteer_name_other`: `nullable|string|max:150` (*Required with `422` validation failure if `volunteer_name === 'أخرى'`*)
   - `is_step_12`: `required|boolean`
-  - `call_brief`: `required_unless:caller_type,عضو حالي|nullable|string` (*Optional when `caller_type === 'عضو حالي'`, required otherwise*)
+  - `call_brief`: `required_unless:caller_type,عضو حالي,مكالمة بالخطأ|nullable|string` (*Optional when `caller_type === 'عضو حالي'` or `caller_type === 'مكالمة بالخطأ'`, required otherwise*)
   - `discuss_in_meeting`: `required|boolean`
   - `additional_info`: `nullable|string`
 - **Behavior:**

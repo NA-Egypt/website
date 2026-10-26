@@ -542,8 +542,9 @@ Manages the public helpline response logging workflow and authenticated administ
       "call_brief": {
         "rule": "optional_if",
         "field": "caller_type",
-        "value": "عضو حالي",
-        "description": "Call brief is optional when caller_type is \"عضو حالي\", required otherwise."
+        "values": ["عضو حالي", "مكالمة بالخطأ"],
+        "value": "عضو حالي, مكالمة بالخطأ",
+        "description": "Call brief is optional when caller_type is \"عضو حالي\" or \"مكالمة بالخطأ\", required otherwise."
       },
       "hospital_name": {
         "rule": "required_if",
@@ -577,7 +578,7 @@ Manages the public helpline response logging workflow and authenticated administ
   - `volunteer_name`: `required|string|max:150`
   - `volunteer_name_other`: `nullable|string|max:150` (*Mandatory with 422 if `volunteer_name === 'أخرى'`*)
   - `is_step_12`: `required|boolean`
-  - `call_brief`: `required_unless:caller_type,عضو حالي|nullable|string` (*Optional when `caller_type === 'عضو حالي'`, required otherwise*)
+  - `call_brief`: `required_unless:caller_type,عضو حالي,مكالمة بالخطأ|nullable|string` (*Optional when `caller_type === 'عضو حالي'` or `caller_type === 'مكالمة بالخطأ'`, required otherwise*)
   - `discuss_in_meeting`: `required|boolean`
   - `additional_info`: `nullable|string`
 - **Behavior:** Automatically resolves `volunteer_id` if `volunteer_name` matches an active volunteer, and sets `entry_time` to current timestamp.

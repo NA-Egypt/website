@@ -918,11 +918,11 @@
                 <label class="field-label" for="call_brief">
                     <span class="field-badge-number">8</span>
                     نبذة عن المكالمة
-                    <span class="required-star" id="brief_required_star" style="{{ old('caller_type') === 'عضو حالي' ? 'display: none;' : '' }}">*</span>
-                    <span class="optional-badge" id="brief_optional_badge" style="{{ old('caller_type') === 'عضو حالي' ? 'display: inline-flex;' : 'display: none;' }}">(اختياري)</span>
+                    <span class="required-star" id="brief_required_star" style="{{ in_array(old('caller_type'), ['عضو حالي', 'مكالمة بالخطأ']) ? 'display: none;' : '' }}">*</span>
+                    <span class="optional-badge" id="brief_optional_badge" style="{{ in_array(old('caller_type'), ['عضو حالي', 'مكالمة بالخطأ']) ? 'display: inline-flex;' : 'display: none;' }}">(اختياري)</span>
                 </label>
                 <p class="field-description">سجل ملخصاً واضحاً لما دار في المكالمة وما تم تقديمه للمتصل من معلومات أو مساعدة.</p>
-                <textarea id="call_brief" name="call_brief" class="form-control" rows="4" placeholder="اكتب ملخص المكالمة هنا..." {{ old('caller_type') === 'عضو حالي' ? '' : 'required' }}>{{ old('call_brief') }}</textarea>
+                <textarea id="call_brief" name="call_brief" class="form-control" rows="4" placeholder="اكتب ملخص المكالمة هنا..." {{ in_array(old('caller_type'), ['عضو حالي', 'مكالمة بالخطأ']) ? '' : 'required' }}>{{ old('call_brief') }}</textarea>
                 @error('call_brief')
                     <div class="error-message">
                         <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
@@ -1083,12 +1083,12 @@
             if (otherInput) otherInput.value = '';
         }
 
-        // Toggle call brief optionality for 'عضو حالي'
+        // Toggle call brief optionality for 'عضو حالي' and 'مكالمة بالخطأ'
         const briefTextarea = document.getElementById('call_brief');
         const briefStar = document.getElementById('brief_required_star');
         const briefBadge = document.getElementById('brief_optional_badge');
 
-        if (value === 'عضو حالي') {
+        if (value === 'عضو حالي' || value === 'مكالمة بالخطأ') {
             if (briefTextarea) briefTextarea.removeAttribute('required');
             if (briefStar) briefStar.style.display = 'none';
             if (briefBadge) briefBadge.style.display = 'inline-flex';
@@ -1318,7 +1318,7 @@
             return;
         }
 
-        if (callerType !== 'عضو حالي') {
+        if (callerType !== 'عضو حالي' && callerType !== 'مكالمة بالخطأ') {
             const briefInput = document.getElementById('call_brief');
             if (!briefInput.value.trim()) {
                 showFormAlert('يرجى كتابة نبذة أو ملخص عن المكالمة.', 'حقل مطلوب', briefInput);
