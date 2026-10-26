@@ -34,7 +34,7 @@ class MeetingExportTest extends TestCase
         $day = Day::first(); // automatically seeded by migration
 
         $sb = ServiceBody::create([
-            'ar_name' => 'الهيئة الخدمية',
+            'ar_name' => 'منطقة/منتدى',
             'en_name' => 'Service Body',
             'day_id' => $day->id,
             'date' => '2026-06-01',
@@ -98,7 +98,7 @@ class MeetingExportTest extends TestCase
         $day = Day::first(); // automatically seeded by migration
 
         $sb = ServiceBody::create([
-            'ar_name' => 'الهيئة الخدمية',
+            'ar_name' => 'منطقة/منتدى',
             'en_name' => 'Service Body',
             'day_id' => $day->id,
             'date' => '2026-06-01',

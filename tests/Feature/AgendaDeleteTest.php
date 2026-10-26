@@ -40,7 +40,7 @@ class AgendaDeleteTest extends TestCase
         $day->name = 'Sunday';
         $day->save();
         $serviceBody = ServiceBody::create([
-            'ar_name' => 'الهيئة الخدمية',
+            'ar_name' => 'منطقة/منتدى',
             'en_name' => 'Service Body',
             'day_id' => $day->id,
             'start_time' => '10:00:00',

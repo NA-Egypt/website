@@ -1850,7 +1850,7 @@ return [
     'Select City...' => 'اختر المدينة...',
     'Select Neighborhood...' => 'اختر الحي/المنطقة...',
     'Select Committee...' => 'اختر اللجنة...',
-    'Select Service Body...' => 'اختر الهيئة الخدمية...',
+    'Select Service Body...' => 'اختر منطقة/منتدى...',
     'Choose a Committee...' => 'اختر لجنة...',
     'Choose a Service Body...' => 'اختر هيئة خدمية...',
     'No service body requests received.' => 'لم يتم استلام طلبات من هيئات الخدمة.',

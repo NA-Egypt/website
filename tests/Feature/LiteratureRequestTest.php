@@ -46,7 +46,7 @@ class LiteratureRequestTest extends TestCase
         $day->name = 'Saturday';
         $day->save();
         $this->serviceBody = ServiceBody::create([
-            'ar_name' => 'الهيئة الخدمية',
+            'ar_name' => 'منطقة/منتدى',
             'en_name' => 'Service Body One',
             'day_id' => $day->id,
             'description' => 'Desc',
