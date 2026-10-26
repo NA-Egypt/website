@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-md-4 text-center">
                         <h4 class="mb-0 fw-bold text-primary">{{ $report->serviceCommittee->{app()->getLocale() . '_name'} ?? $report->serviceCommittee->ar_name }}</h4>
-                        <span class="text-muted fw-bold">{{ __('messages.Committee Reports') ?? 'Committee Report' }}</span>
+                        <span class="text-muted fw-bold">{{ ($report->serviceCommittee && $report->serviceCommittee->isWorkgroup()) ? __('messages.Workgroup Report') : __('messages.Committee Reports') }}</span>
                     </div>
                     <div class="col-md-4 text-end">
                         @if($report->serviceCommittee->logo)

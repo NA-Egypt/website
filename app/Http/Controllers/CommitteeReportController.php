@@ -421,9 +421,23 @@ class CommitteeReportController extends Controller
             'footer' => $request->footer,
         ]);
 
-        // Link embedded workgroup reports
-        if ($request->filled('embedded_workgroup_report_ids') && is_array($request->embedded_workgroup_report_ids)) {
-            CommitteeReport::whereIn('id', $request->embedded_workgroup_report_ids)
+        // Two-way sync of embedded workgroup reports
+        $newEmbeddedIds = $request->input('embedded_workgroup_report_ids', []);
+        if (!is_array($newEmbeddedIds)) {
+            $newEmbeddedIds = [];
+        }
+        
+        // Detach any previously embedded workgroup reports that were un-embedded/removed
+        CommitteeReport::where('parent_report_id', $report->id)
+            ->whereNotIn('id', $newEmbeddedIds)
+            ->update([
+                'parent_report_id' => null,
+                'status' => 'draft',
+            ]);
+
+        // Link currently embedded reports
+        if (!empty($newEmbeddedIds)) {
+            CommitteeReport::whereIn('id', $newEmbeddedIds)
                 ->update([
                     'parent_report_id' => $report->id,
                     'status' => 'embedded',
@@ -454,6 +468,12 @@ class CommitteeReportController extends Controller
                 abort(403, 'Only drafts can be deleted.');
             }
         }
+
+        // Release any embedded workgroup reports back to available drafts
+        $report->embeddedWorkgroupReports()->update([
+            'parent_report_id' => null,
+            'status' => 'draft',
+        ]);
 
         // Delete physical files
         foreach ($report->attachments as $attachment) {

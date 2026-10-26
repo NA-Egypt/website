@@ -453,4 +453,194 @@ class WorkgroupHierarchyTest extends TestCase
         $view->assertSee(__('messages.My Committee Details') ?? 'My Committee Details');
         $view->assertSee(__('messages.My Workgroups'));
     }
+
+    public function test_parent_committee_can_unembed_workgroup_report_returning_it_to_draft()
+    {
+        $commUser = User::factory()->create(['email' => 'parentcomm@naegypt.org']);
+        $commUser->assignRole('Committees');
+
+        $parentComm = ServiceCommittee::create([
+            'ar_name' => 'لجنة العلاقات العامة',
+            'en_name' => 'Public Relations Committee',
+            'email' => 'parentcomm@naegypt.org',
+            'user_id' => $commUser->id,
+        ]);
+
+        $wgUser = User::factory()->create(['email' => 'mediawg@naegypt.org']);
+        $wgUser->assignRole('Workgroups');
+
+        $childWg = ServiceCommittee::create([
+            'parent_id' => $parentComm->id,
+            'workgroup_type' => 'permanent',
+            'status' => 'active',
+            'ar_name' => 'مجموعة الإعلام',
+            'en_name' => 'Media Workgroup',
+            'email' => 'mediawg@naegypt.org',
+            'user_id' => $wgUser->id,
+        ]);
+
+        // Create workgroup draft report
+        $wgReport = \App\Models\CommitteeReport::create([
+            'service_committee_id' => $childWg->id,
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'Weekly WG Sync',
+            'body' => json_encode([['headline' => 'Social Media Campaign', 'content' => '<p>Reaching 10k users</p>']]),
+            'status' => 'draft',
+            'report_date' => now()->toDateString(),
+        ]);
+
+        $this->actingAs($commUser);
+
+        // Parent committee creates a draft report embedding the workgroup report
+        $createResponse = $this->post(route('committee-reports.store'), [
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'PR Committee Monthly Sync',
+            'sections' => [
+                ['headline' => 'General Overview', 'content' => '<p>All PR operations</p>'],
+            ],
+            'status' => 'draft',
+            'embedded_workgroup_report_ids' => [$wgReport->id],
+        ]);
+
+        $createResponse->assertRedirect(route('committee-reports.index'));
+        $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
+        $this->assertNotNull($parentReport);
+
+        // Verify report is embedded
+        $this->assertEquals($parentReport->id, $wgReport->fresh()->parent_report_id);
+        $this->assertEquals('embedded', $wgReport->fresh()->status);
+
+        // Now parent committee updates their report and un-embeds the workgroup report
+        $updateResponse = $this->put(route('committee-reports.update', $parentReport->id), [
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'PR Committee Monthly Sync - Updated',
+            'sections' => [
+                ['headline' => 'General Overview Updated', 'content' => '<p>Updated operations</p>'],
+            ],
+            'status' => 'draft',
+            'embedded_workgroup_report_ids' => [], // Un-embedded!
+        ]);
+
+        $updateResponse->assertRedirect(route('committee-reports.index'));
+
+        // Verify workgroup report is released back to draft
+        $refreshedWgReport = $wgReport->fresh();
+        $this->assertNull($refreshedWgReport->parent_report_id);
+        $this->assertEquals('draft', $refreshedWgReport->status);
+    }
+
+    public function test_deleting_draft_parent_report_releases_embedded_workgroup_reports()
+    {
+        $commUser = User::factory()->create(['email' => 'hicon@naegypt.org']);
+        $commUser->assignRole('Committees');
+
+        $parentComm = ServiceCommittee::create([
+            'ar_name' => 'لجنة المستشفيات والمؤسسات',
+            'en_name' => 'H&I Committee',
+            'email' => 'hicon@naegypt.org',
+            'user_id' => $commUser->id,
+        ]);
+
+        $wgUser = User::factory()->create(['email' => 'prisons@naegypt.org']);
+        $wgUser->assignRole('Workgroups');
+
+        $childWg = ServiceCommittee::create([
+            'parent_id' => $parentComm->id,
+            'workgroup_type' => 'permanent',
+            'status' => 'active',
+            'ar_name' => 'مجموعة السجون',
+            'en_name' => 'Prisons Workgroup',
+            'email' => 'prisons@naegypt.org',
+            'user_id' => $wgUser->id,
+        ]);
+
+        $wgReport = \App\Models\CommitteeReport::create([
+            'service_committee_id' => $childWg->id,
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'Prison Visit Sync',
+            'body' => json_encode([['headline' => 'Facility Meeting', 'content' => '<p>Went well</p>']]),
+            'status' => 'draft',
+            'report_date' => now()->toDateString(),
+        ]);
+
+        $this->actingAs($commUser);
+
+        // Parent committee creates draft report with embedded workgroup report
+        $this->post(route('committee-reports.store'), [
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'H&I Monthly Meeting',
+            'sections' => [
+                ['headline' => 'General Overview', 'content' => '<p>H&I ops</p>'],
+            ],
+            'status' => 'draft',
+            'embedded_workgroup_report_ids' => [$wgReport->id],
+        ]);
+
+        $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
+        $this->assertEquals('embedded', $wgReport->fresh()->status);
+
+        // Delete parent draft report
+        $deleteResponse = $this->delete(route('committee-reports.destroy', $parentReport->id));
+        $deleteResponse->assertRedirect(route('committee-reports.index'));
+
+        // Assert parent report is deleted
+        $this->assertDatabaseMissing('committee_reports', ['id' => $parentReport->id]);
+
+        // Assert embedded workgroup report is freed back to draft
+        $freedReport = $wgReport->fresh();
+        $this->assertNotNull($freedReport);
+        $this->assertNull($freedReport->parent_report_id);
+        $this->assertEquals('draft', $freedReport->status);
+    }
+
+    public function test_workgroup_report_create_view_renders_workgroup_guidance_and_drawer()
+    {
+        $commUser = User::factory()->create(['email' => 'litcomm@naegypt.org']);
+        $commUser->assignRole('Committees');
+
+        $parentComm = ServiceCommittee::create([
+            'ar_name' => 'لجنة المطبوعات',
+            'en_name' => 'Literature Committee',
+            'email' => 'litcomm@naegypt.org',
+            'user_id' => $commUser->id,
+        ]);
+
+        $wgUser = User::factory()->create(['email' => 'transwg@naegypt.org']);
+        $wgUser->assignRole('Workgroups');
+
+        $childWg = ServiceCommittee::create([
+            'parent_id' => $parentComm->id,
+            'workgroup_type' => 'permanent',
+            'status' => 'active',
+            'ar_name' => 'مجموعة الترجمة',
+            'en_name' => 'Translation Workgroup',
+            'email' => 'transwg@naegypt.org',
+            'user_id' => $wgUser->id,
+        ]);
+
+        // Workgroup user visits create report
+        $this->actingAs($wgUser);
+        $wgViewResponse = $this->get(route('committee-reports.create'));
+        $wgViewResponse->assertStatus(200);
+        $wgViewResponse->assertSee(__('messages.Create Workgroup Report'));
+        $wgViewResponse->assertSee(__('messages.Workgroup Report Guidance'));
+        $wgViewResponse->assertSee(__('messages.Submit to Parent Committee'));
+
+        // Parent committee user visits create report (with draft available)
+        $wgDraft = \App\Models\CommitteeReport::create([
+            'service_committee_id' => $childWg->id,
+            'meeting_date' => now()->format('Y-m-d'),
+            'meeting_day_description' => 'Weekly Translation Review',
+            'body' => json_encode([['headline' => 'Step Working Guide Translation', 'content' => '<p>Chapter 4 reviewed</p>']]),
+            'status' => 'draft',
+            'report_date' => now()->toDateString(),
+        ]);
+
+        $this->actingAs($commUser);
+        $parentViewResponse = $this->get(route('committee-reports.create'));
+        $parentViewResponse->assertStatus(200);
+        $parentViewResponse->assertSee(__('messages.Embed Workgroup Report'));
+        $parentViewResponse->assertSee('embedWorkgroupDrawer');
+        $parentViewResponse->assertSee('مجموعة الترجمة');
+    }
 }
