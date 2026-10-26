@@ -17,7 +17,12 @@ class PublicFormController extends Controller
     {
         $form = CustomForm::where('slug', $slug)->firstOrFail();
 
-        // Draft forms are only viewable by owner/admin
+        // Archived forms show the closed/archived public notice
+        if ($form->isArchived()) {
+            return response()->view('forms.archived', compact('form'), 200);
+        }
+
+        // Draft/unpublished forms are only viewable by owner/admin
         if ($form->status !== 'published') {
             if (!auth()->check()) {
                 abort(403, 'This form is currently a draft and not open to the public.');
@@ -56,6 +61,11 @@ class PublicFormController extends Controller
     public function submit(Request $request, $slug)
     {
         $form = CustomForm::where('slug', $slug)->firstOrFail();
+
+        if ($form->isArchived()) {
+            return redirect()->route('forms.show.public', $slug)
+                ->with('error', __('messages.form_archived_notice_desc'));
+        }
 
         if ($form->status !== 'published') {
             if (!auth()->check()) {

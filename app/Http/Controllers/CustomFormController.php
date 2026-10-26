@@ -24,19 +24,32 @@ class CustomFormController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
-            $forms = CustomForm::with('submissions')->orderBy('created_at', 'desc')->get();
+            $allForms = CustomForm::with('submissions')->orderBy('created_at', 'desc')->get();
         } else {
-            $forms = CustomForm::with('submissions')
+            $allForms = CustomForm::with('submissions')
                 ->where('user_id', $user->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
         }
 
-        return view('forms.index', compact('forms'));
+        $activeCount = $allForms->where('status', '!=', 'archived')->count();
+        $archivedCount = $allForms->where('status', '===', 'archived')->count();
+        $totalCount = $allForms->count();
+
+        $filter = $request->query('tab', 'active');
+        if ($filter === 'archived') {
+            $forms = $allForms->where('status', '===', 'archived');
+        } elseif ($filter === 'all') {
+            $forms = $allForms;
+        } else {
+            $forms = $allForms->where('status', '!=', 'archived');
+        }
+
+        return view('forms.index', compact('forms', 'filter', 'activeCount', 'archivedCount', 'totalCount'));
     }
 
     public function create()
@@ -49,7 +62,7 @@ class CustomFormController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:survey,event_registration,service_position_application,suggestions',
-            'status' => 'required|in:draft,published,unpublished',
+            'status' => 'required|in:draft,published,unpublished,archived',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',
             'settings.emails' => 'nullable|string|max:1000',
@@ -125,17 +138,22 @@ class CustomFormController extends Controller
     {
         $this->checkAccess($form);
         $form->load('fields');
-        return view('forms.edit', compact('form'));
+        $isArchived = $form->isArchived();
+        return view('forms.edit', compact('form', 'isArchived'));
     }
 
     public function update(Request $request, CustomForm $form)
     {
         $this->checkAccess($form);
 
+        if ($form->isArchived() && $request->input('status') === 'archived') {
+            return back()->with('error', __('messages.form_archived_locked'));
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:survey,event_registration,service_position_application,suggestions',
-            'status' => 'required|in:draft,published,unpublished',
+            'status' => 'required|in:draft,published,unpublished,archived',
             'settings' => 'nullable|array',
             'settings.icon' => 'nullable|string|max:50',
             'settings.emails' => 'nullable|string|max:1000',
@@ -283,10 +301,32 @@ class CustomFormController extends Controller
     public function toggleStatus(CustomForm $form)
     {
         $this->checkAccess($form);
-        $form->status = $form->status === 'published' ? 'unpublished' : 'published';
+        if ($form->isArchived()) {
+            $form->status = 'published';
+        } else {
+            $form->status = $form->status === 'published' ? 'unpublished' : 'published';
+        }
         $form->save();
 
         return back()->with('success', __('messages.form_status_updated'));
+    }
+
+    public function archive(CustomForm $form)
+    {
+        $this->checkAccess($form);
+        $form->status = 'archived';
+        $form->save();
+
+        return back()->with('success', __('messages.form_archived_success'));
+    }
+
+    public function unarchive(CustomForm $form)
+    {
+        $this->checkAccess($form);
+        $form->status = 'unpublished';
+        $form->save();
+
+        return back()->with('success', __('messages.form_unarchived_success'));
     }
 
     public function duplicate(CustomForm $form)

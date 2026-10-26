@@ -52,4 +52,19 @@ class CustomForm extends Model
         }
         return round(($this->submissions()->count() / $this->views) * 100, 1);
     }
+
+    public function isArchived(): bool
+    {
+        return $this->status === 'archived';
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', '!=', 'archived');
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->where('status', 'archived');
+    }
 }

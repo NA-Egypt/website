@@ -10,6 +10,38 @@
             </a>
         </div>
 
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if($isArchived ?? $form->isArchived())
+            <div class="alert alert-warning border-0 shadow-sm rounded-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3 p-3" role="alert" style="background: rgba(245, 158, 11, 0.12); color: #b45309;">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-archive-fill fs-5"></i>
+                    <div>
+                        <strong>{{ __('messages.form_archived_notice_title') }}:</strong>
+                        <span>{{ __('messages.form_archived_banner') }}</span>
+                    </div>
+                </div>
+                <form action="{{ route('forms.unarchive', $form->id) }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold d-flex align-items-center gap-1 shadow-sm">
+                        <i class="bi bi-arrow-counterclockwise"></i> {{ __('messages.Restore Form') }}
+                    </button>
+                </form>
+            </div>
+        @endif
+
         <form action="{{ route('forms.update', $form->id) }}" method="POST" id="form-builder-form">
             @csrf
             @method('PUT')
@@ -49,6 +81,7 @@
                                     <option value="draft" {{ $form->status === 'draft' ? 'selected' : '' }}>{{ __('messages.Draft') ?? 'Draft' }}</option>
                                     <option value="published" {{ $form->status === 'published' ? 'selected' : '' }}>{{ __('messages.Published') ?? 'Published' }}</option>
                                     <option value="unpublished" {{ $form->status === 'unpublished' ? 'selected' : '' }}>{{ __('messages.Unpublished') ?? 'Unpublished (Deactivated)' }}</option>
+                                    <option value="archived" {{ $form->status === 'archived' ? 'selected' : '' }}>{{ __('messages.Archived') ?? 'Archived' }}</option>
                                 </select>
                             </div>
                         </div>
@@ -89,9 +122,15 @@
                             <h5 class="fw-bold mb-0 d-flex align-items-center gap-2" style="color: var(--text-primary);">
                                 <i class="bi bi-list-task text-primary"></i> {{ __('messages.Configure Fields') ?? 'Configure Fields' }}
                             </h5>
-                            <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-flex align-items-center gap-1" onclick="addField()">
-                                <i class="bi bi-plus-circle-fill"></i> {{ __('messages.Add Field') ?? 'Add Field' }}
-                            </button>
+                            @if($isArchived ?? $form->isArchived())
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small d-inline-flex align-items-center gap-1">
+                                    <i class="bi bi-lock-fill"></i> {{ __('messages.Archived') }} (Read-Only)
+                                </span>
+                            @else
+                                <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-flex align-items-center gap-1" onclick="addField()">
+                                    <i class="bi bi-plus-circle-fill"></i> {{ __('messages.Add Field') ?? 'Add Field' }}
+                                </button>
+                            @endif
                         </div>
 
                         <div id="fields-container" class="d-flex flex-column gap-3 mb-4">

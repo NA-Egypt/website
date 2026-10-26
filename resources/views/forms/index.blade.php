@@ -6,15 +6,46 @@
         
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                {{ session('success') }}
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ __('messages.Forms List') ?? 'Forms Dashboard' }}</h4>
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <h4 class="mb-1 fw-bold" style="color: var(--text-primary);">{{ __('messages.Forms List') ?? 'Forms Dashboard' }}</h4>
+            </div>
             <a href="{{ route('forms.create') }}" class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2">
                 <i class="bi bi-plus-circle"></i> {{ __('messages.Create Form') ?? 'Create Form' }}
+            </a>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="{{ route('forms.index', ['tab' => 'active']) }}" 
+               class="btn rounded-pill px-3 py-1.5 d-flex align-items-center gap-2 {{ ($filter ?? 'active') === 'active' ? 'btn-primary shadow-sm' : 'btn-outline-secondary' }}" style="font-size: 0.88rem;">
+                <i class="bi bi-collection-play"></i>
+                <span>{{ __('messages.Active Forms') }}</span>
+                <span class="badge rounded-pill {{ ($filter ?? 'active') === 'active' ? 'bg-white text-primary' : 'bg-secondary' }}">{{ $activeCount ?? 0 }}</span>
+            </a>
+            <a href="{{ route('forms.index', ['tab' => 'archived']) }}" 
+               class="btn rounded-pill px-3 py-1.5 d-flex align-items-center gap-2 {{ ($filter ?? '') === 'archived' ? 'btn-primary shadow-sm' : 'btn-outline-secondary' }}" style="font-size: 0.88rem;">
+                <i class="bi bi-archive"></i>
+                <span>{{ __('messages.Archived Forms') }}</span>
+                <span class="badge rounded-pill {{ ($filter ?? '') === 'archived' ? 'bg-white text-primary' : 'bg-secondary' }}">{{ $archivedCount ?? 0 }}</span>
+            </a>
+            <a href="{{ route('forms.index', ['tab' => 'all']) }}" 
+               class="btn rounded-pill px-3 py-1.5 d-flex align-items-center gap-2 {{ ($filter ?? '') === 'all' ? 'btn-primary shadow-sm' : 'btn-outline-secondary' }}" style="font-size: 0.88rem;">
+                <i class="bi bi-layers"></i>
+                <span>{{ __('messages.All Forms') }}</span>
+                <span class="badge rounded-pill {{ ($filter ?? '') === 'all' ? 'bg-white text-primary' : 'bg-secondary' }}">{{ $totalCount ?? 0 }}</span>
             </a>
         </div>
 
@@ -37,9 +68,12 @@
                             @php
                                 $lastSubmission = $form->submissions()->latest()->first();
                                 $conversion = $form->conversion_rate;
-                                $statusBadge = $form->status === 'published' ? 'bg-success' : ($form->status === 'draft' ? 'bg-warning text-dark' : 'bg-secondary');
+                                $isArchived = $form->status === 'archived';
+                                $statusBadge = $isArchived 
+                                    ? 'bg-secondary text-white' 
+                                    : ($form->status === 'published' ? 'bg-success' : ($form->status === 'draft' ? 'bg-warning text-dark' : 'bg-secondary'));
                             @endphp
-                            <tr>
+                            <tr class="{{ $isArchived ? 'opacity-75' : '' }}">
                                 <td class="fw-bold" style="color: var(--text-primary);" title="{{ $form->title }}">
                                     <div class="d-flex flex-column align-items-center gap-1">
                                         <span>{{ \Illuminate\Support\Str::limit($form->title, 35) }}</span>
@@ -56,14 +90,20 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <form action="{{ route('forms.toggleStatus', $form->id) }}" method="POST" id="status-toggle-{{ $form->id }}" class="m-0">
-                                            @csrf
-                                            <div class="form-check form-switch mb-0">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="switch-{{ $form->id }}" onchange="document.getElementById('status-toggle-{{ $form->id }}').submit()" {{ $form->status === 'published' ? 'checked' : '' }} style="cursor: pointer;">
-                                            </div>
-                                        </form>
-                                        <span class="badge {{ $statusBadge }} rounded-pill px-2.5 py-1 small">
-                                            {{ ucfirst($form->status) }}
+                                        @if (!$isArchived)
+                                            <form action="{{ route('forms.toggleStatus', $form->id) }}" method="POST" id="status-toggle-{{ $form->id }}" class="m-0">
+                                                @csrf
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="switch-{{ $form->id }}" onchange="document.getElementById('status-toggle-{{ $form->id }}').submit()" {{ $form->status === 'published' ? 'checked' : '' }} style="cursor: pointer;">
+                                                </div>
+                                            </form>
+                                        @endif
+                                        <span class="badge {{ $statusBadge }} rounded-pill px-2.5 py-1 small d-inline-flex align-items-center gap-1">
+                                            @if ($isArchived)
+                                                <i class="bi bi-archive-fill"></i> {{ __('messages.Archived') ?? 'Archived' }}
+                                            @else
+                                                {{ ucfirst($form->status) }}
+                                            @endif
                                         </span>
                                     </div>
                                 </td>
@@ -110,15 +150,17 @@
                                                         <i class="bi bi-link-45deg text-success"></i> {{ __('messages.Copy URL') ?? 'Copy URL' }}
                                                     </button>
                                                 </li>
-                                                <li>
-                                                    <form action="{{ route('forms.toggleStatus', $form->id) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="dropdown-item d-flex align-items-center gap-2">
-                                                            <i class="bi bi-toggle-on text-warning"></i> 
-                                                            {{ $form->status === 'published' ? (__('messages.Unpublish') ?? 'Unpublish') : (__('messages.Publish') ?? 'Publish') }}
-                                                        </button>
-                                                    </form>
-                                                </li>
+                                                @if (!$isArchived)
+                                                    <li>
+                                                        <form action="{{ route('forms.toggleStatus', $form->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2">
+                                                                <i class="bi bi-toggle-on text-warning"></i> 
+                                                                {{ $form->status === 'published' ? (__('messages.Unpublish') ?? 'Unpublish') : (__('messages.Publish') ?? 'Publish') }}
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
                                                 <li>
                                                     <a href="{{ route('forms.report', $form->id) }}" class="dropdown-item d-flex align-items-center gap-2">
                                                         <i class="bi bi-database text-info"></i> {{ __('messages.View Submissions') ?? 'View Submissions' }}
@@ -133,6 +175,25 @@
                                                     </form>
                                                 </li>
                                                 <li><hr class="dropdown-divider"></li>
+                                                @if ($isArchived)
+                                                    <li>
+                                                        <form action="{{ route('forms.unarchive', $form->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-success">
+                                                                <i class="bi bi-arrow-counterclockwise text-success"></i> {{ __('messages.Restore Form') }}
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @else
+                                                    <li>
+                                                        <form action="{{ route('forms.archive', $form->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.are_you_sure') ?? 'Are you sure you want to archive this form?' }}');">
+                                                            @csrf
+                                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-warning">
+                                                                <i class="bi bi-archive text-warning"></i> {{ __('messages.Archive Form') }}
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
                                                 <li>
                                                     <form action="{{ route('forms.reset', $form->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reset all submissions and views? This action cannot be undone.');">
                                                         @csrf

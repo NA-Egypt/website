@@ -310,6 +310,8 @@ Route::group(
             // Custom Form Builder:
             Route::middleware(['permission:manage own forms'])->group(function () {
                 Route::post('forms/{form}/toggle-status', [CustomFormController::class, 'toggleStatus'])->name('forms.toggleStatus')->where('form', '[0-9]+');
+                Route::post('forms/{form}/archive', [CustomFormController::class, 'archive'])->name('forms.archive')->where('form', '[0-9]+');
+                Route::post('forms/{form}/unarchive', [CustomFormController::class, 'unarchive'])->name('forms.unarchive')->where('form', '[0-9]+');
                 Route::post('forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('forms.duplicate')->where('form', '[0-9]+');
                 Route::post('forms/{form}/reset', [CustomFormController::class, 'resetSubmissions'])->name('forms.reset')->where('form', '[0-9]+');
                 Route::get('forms/{form}/report', [CustomFormController::class, 'showReport'])->name('forms.report')->where('form', '[0-9]+');
