@@ -77,21 +77,36 @@ class DirectoryApiTest extends TestCase
             'group_type' => 'in_person',
         ]);
 
-        // Public index
+        // Public index - GSR names, phone, and user must be hidden from unauthenticated callers
         $indexRes = $this->getJson('/api/v1/groups');
         $indexRes->assertStatus(200)
-            ->assertJsonPath('data.0.ar_name', 'مجموعة الأمل');
+            ->assertJsonPath('data.0.ar_name', 'مجموعة الأمل')
+            ->assertJsonMissingPath('data.0.ar_gsr_name')
+            ->assertJsonMissingPath('data.0.en_gsr_name')
+            ->assertJsonMissingPath('data.0.phone')
+            ->assertJsonMissingPath('data.0.user_id')
+            ->assertJsonMissingPath('data.0.user');
 
-        // Public show
+        // Public show - GSR names, phone, and user must be hidden from unauthenticated callers
         $showRes = $this->getJson("/api/v1/groups/{$group->id}");
         $showRes->assertStatus(200)
-            ->assertJsonPath('data.en_name', 'Hope Group');
+            ->assertJsonPath('data.en_name', 'Hope Group')
+            ->assertJsonMissingPath('data.ar_gsr_name')
+            ->assertJsonMissingPath('data.en_gsr_name')
+            ->assertJsonMissingPath('data.phone')
+            ->assertJsonMissingPath('data.user_id')
+            ->assertJsonMissingPath('data.user');
 
         // Unauthenticated write fails
         $this->postJson('/api/v1/groups', ['ar_name' => 'New Group'])->assertStatus(401);
 
-        // Authenticated write
+        // Authenticated read & write includes GSR info
         Sanctum::actingAs($this->user);
+        $authShowRes = $this->getJson("/api/v1/groups/{$group->id}");
+        $authShowRes->assertStatus(200)
+            ->assertJsonPath('data.ar_gsr_name', 'أحمد')
+            ->assertJsonPath('data.en_gsr_name', 'Ahmed')
+            ->assertJsonPath('data.phone', '+201000000000');
         $createRes = $this->postJson('/api/v1/groups', [
             'ar_name' => 'مجموعة السلام',
             'en_name' => 'Peace Group',

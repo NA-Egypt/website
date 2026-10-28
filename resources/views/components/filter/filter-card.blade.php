@@ -183,20 +183,49 @@ $isFirstCardAcrossSections = true;
                     <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isTargetCard) id="tour-meeting-card" @endif
                          x-data="{
                              revealed: {{ auth()->check() ? 'true' : 'false' }},
+                             gsrName: '',
+                             gsrPhone: '',
+                             loadingContact: false,
                              clicks: 0,
                              timer: null,
                              handleNameClick() {
-                                 if (this.revealed) return;
+                                 if (this.revealed || this.loadingContact) return;
                                  this.clicks++;
                                  clearTimeout(this.timer);
                                  if (this.clicks >= 5) {
-                                     this.revealed = true;
                                      this.clicks = 0;
+                                     this.fetchGroupContact();
                                  } else {
                                      this.timer = setTimeout(() => {
                                          this.clicks = 0;
                                      }, 1000);
                                  }
+                             },
+                             fetchGroupContact() {
+                                 @if(!auth()->check() && $meeting->group_id && $group && $group->phone)
+                                 this.loadingContact = true;
+                                 fetch('{{ route('meetings.group.contact', ['group' => $meeting->group_id]) }}', {
+                                     method: 'POST',
+                                     headers: {
+                                         'Content-Type': 'application/json',
+                                         'Accept': 'application/json',
+                                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                         'X-Requested-With': 'XMLHttpRequest'
+                                     }
+                                 })
+                                 .then(r => r.ok ? r.json() : Promise.reject())
+                                 .then(data => {
+                                     if (data && data.phone) {
+                                         this.gsrName = data.gsr_name || '';
+                                         this.gsrPhone = data.phone || '';
+                                         this.revealed = true;
+                                     }
+                                 })
+                                 .catch(() => {})
+                                 .finally(() => {
+                                     this.loadingContact = false;
+                                 });
+                                 @endif
                              }
                          }">
                         @php
@@ -276,21 +305,7 @@ $isFirstCardAcrossSections = true;
                         </div>
                         <!-- GSR DATA -->
                         @php
-                            $userAgent = request()->header('User-Agent');
-                            $isBot = false;
-                            if ($userAgent) {
-                                $bots = [
-                                    'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
-                                    'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
-                                    'crawler', 'spider', 'bot'
-                                ];
-                                foreach ($bots as $bot) {
-                                    if (stripos($userAgent, $bot) !== false) {
-                                        $isBot = true;
-                                        break;
-                                    }
-                                }
-                            }
+                            $isBot = \App\Services\BotDetectionService::isBotOrAi();
                         @endphp
                         @if($group && $group->phone && !$isBot)
                         <div data-nosnippet
@@ -301,13 +316,21 @@ $isFirstCardAcrossSections = true;
                              x-transition:enter-end="opacity-100 transform translate-y-0"
                              x-cloak
                              @if(!auth()->check()) style="display: none;" @endif>
-                            <x-fas-user-circle style="width:16px; height:16px;"/>
-                            {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
-                            <br />
-                            <x-fas-mobile-alt style="width:16px; height:16px;"/>
-                            <a href="tel:{{ $group->phone }}" itemprop="telephone" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;">
-                                {{ $group->phone }}
-                            </a>
+                            @auth
+                                <x-fas-user-circle style="width:16px; height:16px;"/>
+                                {{ $direction === 'rtl' ? $group->ar_gsr_name : $group->en_gsr_name }}
+                                <br />
+                                <x-fas-mobile-alt style="width:16px; height:16px;"/>
+                                <a href="tel:{{ $group->phone }}" rel="nofollow" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;">
+                                    {{ $group->phone }}
+                                </a>
+                            @else
+                                <x-fas-user-circle style="width:16px; height:16px;"/>
+                                <span x-text="gsrName"></span>
+                                <br />
+                                <x-fas-mobile-alt style="width:16px; height:16px;"/>
+                                <a :href="'tel:' + gsrPhone" x-text="gsrPhone" rel="nofollow" dir="ltr" style="direction: ltr !important; unicode-bidi: embed;"></a>
+                            @endauth
                         </div>
                         @endif
                         <!-- Meeting Options -->

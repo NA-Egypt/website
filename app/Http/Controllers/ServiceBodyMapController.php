@@ -110,7 +110,11 @@ class ServiceBodyMapController extends Controller
      */
     public function apiData()
     {
-        return response()->json($this->getServiceBodiesMapData());
+        return response()->json(
+            $this->getServiceBodiesMapData(),
+            200,
+            \App\Services\BotDetectionService::noIndexAiHeaders()
+        );
     }
 
     /**
@@ -119,7 +123,7 @@ class ServiceBodyMapController extends Controller
     public function getServiceBodiesMapData()
     {
         $locale = app()->getLocale();
-        return \Illuminate\Support\Facades\Cache::remember('service_bodies_map_data_' . $locale, 3600, function () {
+        return \Illuminate\Support\Facades\Cache::remember('service_bodies_map_data_v2_' . $locale, 3600, function () {
             return $this->computeServiceBodiesMapData();
         });
     }
@@ -289,8 +293,6 @@ class ServiceBodyMapController extends Controller
                     'name' => $isAr ? ($g->ar_name ?: $g->en_name) : ($g->en_name ?: $g->ar_name),
                     'ar_name' => $g->ar_name,
                     'en_name' => $g->en_name,
-                    'gsr_name' => $isAr ? ($g->ar_gsr_name ?: $g->en_gsr_name) : ($g->en_gsr_name ?: $g->ar_gsr_name),
-                    'phone' => $g->phone,
                     'location_url' => $g->location,
                     'address' => $isAr ? ($g->ar_address ?: $g->en_address) : ($g->en_address ?: $g->ar_address),
                     'city' => $g->neighborhood && $g->neighborhood->city ? ($isAr ? $g->neighborhood->city->ar_name : $g->neighborhood->city->en_name) : '',

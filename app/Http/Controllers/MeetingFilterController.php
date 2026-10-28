@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use Illuminate\Http\Request;
+use App\Services\BotDetectionService;
 use App\Services\MeetingFilterService;
 use App\Models\Day;
 use App\Models\ServiceBody;
@@ -25,21 +26,35 @@ class MeetingFilterController extends Controller
     {
         return view('frontend.meetings');
     }
+
+    /**
+     * Reveal group GSR name and phone on-demand (5-click gesture) with strict bot/AI blocking.
+     */
+    public function revealGroupContact(Request $request, Group $group)
+    {
+        if (BotDetectionService::isBotOrAi($request)) {
+            abort(403, 'Bots and AI agents are not allowed to access contact data.');
+        }
+
+        $locale = app()->getLocale();
+        $gsrName = $locale === 'ar'
+            ? ($group->ar_gsr_name ?: $group->en_gsr_name)
+            : ($group->en_gsr_name ?: $group->ar_gsr_name);
+
+        return response()->json([
+            'gsr_name'    => $gsrName,
+            'ar_gsr_name' => $group->ar_gsr_name,
+            'en_gsr_name' => $group->en_gsr_name,
+            'phone'       => $group->phone,
+        ], 200, array_merge(BotDetectionService::noIndexAiHeaders(), [
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        ]));
+    }
     
     public function exportMeetingsToPDF()
     {
-        $userAgent = request()->header('User-Agent');
-        if ($userAgent) {
-            $bots = [
-                'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
-                'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
-                'crawler', 'spider', 'bot'
-            ];
-            foreach ($bots as $bot) {
-                if (stripos($userAgent, $bot) !== false) {
-                    abort(403, 'Bots are not allowed to export data.');
-                }
-            }
+        if (BotDetectionService::isBotOrAi()) {
+            abort(403, 'Bots are not allowed to export data.');
         }
 
         $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
@@ -69,36 +84,28 @@ class MeetingFilterController extends Controller
 
         return response($mpdf->Output('meetings.pdf', 'S'), 200)
                ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="meetings.pdf"');
+               ->header('Content-Disposition', 'attachment; filename="meetings.pdf"')
+               ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noai, noimageai');
     }
     public function exportMeetingsToCSV()
     {
-        $userAgent = request()->header('User-Agent');
-        if ($userAgent) {
-            $bots = [
-                'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
-                'yandexbot', 'sogou', 'exabot', 'facebot', 'ia_archiver',
-                'crawler', 'spider', 'bot'
-            ];
-            foreach ($bots as $bot) {
-                if (stripos($userAgent, $bot) !== false) {
-                    abort(403, 'Bots are not allowed to export data.');
-                }
-            }
+        if (BotDetectionService::isBotOrAi()) {
+            abort(403, 'Bots are not allowed to export data.');
         }
 
         $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
+        $isAuthenticated = auth()->check();
 
-        $headers = [
+        $headers = array_merge([
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="meetings.csv"',
-        ];
+        ], BotDetectionService::noIndexAiHeaders());
 
-        $callback = function() use ($meetings) {
+        $callback = function() use ($meetings, $isAuthenticated) {
             $handle = fopen('php://output', 'w');
             if (app()->getLocale() == 'en') {
-                fputcsv($handle, [
+                $csvHeader = [
                     'Day',
                     'Group',
                     'Time',
@@ -110,12 +117,16 @@ class MeetingFilterController extends Controller
                     'Options',
                     'Status',
                     'Address',
-                    'GSR',
-                    'Phone',
-                    'Notes'
-                ]);
+                ];
+                if ($isAuthenticated) {
+                    $csvHeader[] = 'GSR';
+                    $csvHeader[] = 'Phone';
+                }
+                $csvHeader[] = 'Notes';
+                fputcsv($handle, $csvHeader);
+
                 foreach ($meetings as $meeting) {
-                    fputcsv($handle, [
+                    $row = [
                         $meeting->day->en_name ?? '',
                         $meeting->group->en_name ?? '',
                         $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
@@ -127,13 +138,16 @@ class MeetingFilterController extends Controller
                         $meeting->options()->pluck('en_name')->implode(', ') ?? '',
                         $meeting->status ?? '',
                         $meeting->group->en_address ?? '',
-                        $meeting->group->en_gsr_name ?? '',
-                        $meeting->group->phone ?? '',
-                        $meeting->notes ?? ''
-                    ]);
+                    ];
+                    if ($isAuthenticated) {
+                        $row[] = $meeting->group->en_gsr_name ?? '';
+                        $row[] = $meeting->group->phone ?? '';
+                    }
+                    $row[] = $meeting->notes ?? '';
+                    fputcsv($handle, $row);
                 }
             } else {
-                fputcsv($handle, [
+                $csvHeader = [
                     'اليوم',
                     'المجموعة',
                     'الوقت',
@@ -145,12 +159,16 @@ class MeetingFilterController extends Controller
                     'خصائص',
                     'الحالة',
                     'العنوان',
-                    'المسؤول',
-                    'الهاتف',
-                    'الملاحظات'
-                ]);
+                ];
+                if ($isAuthenticated) {
+                    $csvHeader[] = 'المسؤول';
+                    $csvHeader[] = 'الهاتف';
+                }
+                $csvHeader[] = 'الملاحظات';
+                fputcsv($handle, $csvHeader);
+
                 foreach ($meetings as $meeting) {
-                    fputcsv($handle, [
+                    $row = [
                         $meeting->day->ar_name ?? '',
                         $meeting->group->ar_name ?? '',
                         $meeting->formatted_start_time . ' - ' . $meeting->formatted_end_time ?? '',
@@ -162,10 +180,13 @@ class MeetingFilterController extends Controller
                         $meeting->options()->pluck('ar_name')->implode(', ') ?? '',
                         $meeting->status ?? '',
                         $meeting->group->ar_address ?? '',
-                        $meeting->group->ar_gsr_name ?? '',
-                        $meeting->group->phone ?? '',
-                        $meeting->notes ?? ''
-                    ]);
+                    ];
+                    if ($isAuthenticated) {
+                        $row[] = $meeting->group->ar_gsr_name ?? '';
+                        $row[] = $meeting->group->phone ?? '';
+                    }
+                    $row[] = $meeting->notes ?? '';
+                    fputcsv($handle, $row);
                 }
             }
 

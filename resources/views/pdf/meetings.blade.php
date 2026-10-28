@@ -56,8 +56,10 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <th>{{__('messages.Group')}}</th>
                 <th>{{__('messages.Day')}}</th>
                 <th colspan="2" width="24%">{{__('messages.Time')}}</th>
+                @auth
                 <th>{{__('messages.contact')}}</th>
                 <th width="30%">{{__('messages.Phone')}}</th>
+                @endauth
                 <th>{{__('messages.Type')}}</th>
             </tr>
         </thead>
@@ -75,13 +77,15 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                     </td>
                     <td>{{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }}</td>
                     <td>{{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}</td>
+                    @auth
                     <td>{{ $meeting->group->ar_gsr_name }}</td>
                     <td>{{ $meeting->group->phone }}</td>
+                    @endauth
                     <td>{{ __("messages." . $meeting->type) }}</td>
                 </tr>
                 <tr>
                     <th colspan="1">{{__('messages.Address')}}</th>
-                    <td colspan="6">{{ $meeting->group->ar_address }}</td>
+                    <td colspan="{{ auth()->check() ? 6 : 4 }}">{{ $meeting->group->ar_address }}</td>
                 </tr>
             </tbody>            
             @endforeach

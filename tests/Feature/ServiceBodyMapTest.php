@@ -99,6 +99,17 @@ class ServiceBodyMapTest extends TestCase
         $this->assertNotContains(2, $ids, 'Al Ahram GSF (id: 2) must be excluded from map data');
         $this->assertContains(1, $ids);
         $this->assertContains(3, $ids);
+
+        // Verify GSR names and phone numbers are never exposed in map data
+        $sb1Data = collect($data['service_bodies'])->firstWhere('id', 1);
+        $firstGroup = $sb1Data['groups'][0] ?? [];
+        $this->assertArrayNotHasKey('gsr_name', $firstGroup);
+        $this->assertArrayNotHasKey('ar_gsr_name', $firstGroup);
+        $this->assertArrayNotHasKey('en_gsr_name', $firstGroup);
+        $this->assertArrayNotHasKey('phone', $firstGroup);
+        $response->assertDontSee('ممثل المجموعة');
+        $response->assertDontSee('GSR Name');
+        $response->assertDontSee('01000000000');
     }
 
     public function test_authenticated_dashboard_service_body_map_is_accessible()

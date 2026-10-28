@@ -35,7 +35,12 @@ class DirectOnlineGroupApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.ar_name', 'مجموعة التعافي أونلاين')
-            ->assertJsonPath('data.0.location', 'https://zoom.us/j/123456789');
+            ->assertJsonPath('data.0.location', 'https://zoom.us/j/123456789')
+            ->assertJsonMissingPath('data.0.ar_gsr_name')
+            ->assertJsonMissingPath('data.0.en_gsr_name')
+            ->assertJsonMissingPath('data.0.phone')
+            ->assertJsonMissingPath('data.0.user_id')
+            ->assertJsonMissingPath('data.0.user');
     }
 
     public function test_public_can_get_single_direct_online_group(): void
@@ -43,6 +48,8 @@ class DirectOnlineGroupApiTest extends TestCase
         $group = DirectOnlineGroup::create([
             'ar_name'     => 'مجموعة الأمل أونلاين',
             'en_name'     => 'Hope Online Group',
+            'ar_gsr_name' => 'محمود',
+            'en_gsr_name' => 'Mahmoud',
             'phone'       => '+201000000002',
             'location'    => 'https://zoom.us/j/987654321',
             'user_id'     => $this->user->id,
@@ -52,7 +59,12 @@ class DirectOnlineGroupApiTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.id', $group->id)
-            ->assertJsonPath('data.en_name', 'Hope Online Group');
+            ->assertJsonPath('data.en_name', 'Hope Online Group')
+            ->assertJsonMissingPath('data.ar_gsr_name')
+            ->assertJsonMissingPath('data.en_gsr_name')
+            ->assertJsonMissingPath('data.phone')
+            ->assertJsonMissingPath('data.user_id')
+            ->assertJsonMissingPath('data.user');
     }
 
     public function test_unauthenticated_user_cannot_create_direct_online_group(): void

@@ -15,8 +15,14 @@ class GroupController extends Controller
     public function index(Request $request)
     {
         $perPage = min((int) $request->get('per_page', 15), 100);
-        $groups = Group::with(['serviceBody', 'neighborhood', 'user'])->paginate($perPage);
-        return GroupResource::collection($groups);
+        $relations = ['serviceBody', 'neighborhood'];
+        if ($request->user('sanctum') || auth('sanctum')->check() || auth()->check()) {
+            $relations[] = 'user';
+        }
+        $groups = Group::with($relations)->paginate($perPage);
+        return GroupResource::collection($groups)
+            ->response()
+            ->withHeaders(\App\Services\BotDetectionService::noIndexAiHeaders());
     }
 
     /**
@@ -48,9 +54,15 @@ class GroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Group $group)
+    public function show(Request $request, Group $group)
     {
-        return new GroupResource($group->load(['serviceBody', 'neighborhood', 'user']));
+        $relations = ['serviceBody', 'neighborhood'];
+        if ($request->user('sanctum') || auth('sanctum')->check() || auth()->check()) {
+            $relations[] = 'user';
+        }
+        return (new GroupResource($group->load($relations)))
+            ->response()
+            ->withHeaders(\App\Services\BotDetectionService::noIndexAiHeaders());
     }
 
     /**

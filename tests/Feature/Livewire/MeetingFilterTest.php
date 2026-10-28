@@ -212,19 +212,31 @@ class MeetingFilterTest extends TestCase
             'status' => 'available'
         ]);
 
-        // 1. As a public guest (unauthenticated)
+        // 1. As a public guest (unauthenticated): GSR name & phone MUST NOT be in initial HTML
         $this->assertFalse(auth()->check());
         $responseGuest = Livewire::test(MeetingFilter::class);
         $responseGuest->assertSeeHtml('revealed: false');
         $responseGuest->assertSeeHtml('@click="handleNameClick()"');
         $responseGuest->assertSeeHtml('style="display: none;"');
-        $responseGuest->assertSeeHtml('+201000000000');
+        $responseGuest->assertDontSeeHtml('+201000000000');
+        $responseGuest->assertDontSeeHtml('John Doe');
+        $responseGuest->assertDontSeeHtml('جون دو');
 
-        // 2. As an authenticated user
+        // 1b. Public search on /meetings must never match GSR name or phone number
+        Livewire::test(MeetingFilter::class)
+            ->set('search', 'John Doe')
+            ->assertViewHas('meetings', fn ($m) => $m->isEmpty());
+        Livewire::test(MeetingFilter::class)
+            ->set('search', '+201000000000')
+            ->assertViewHas('meetings', fn ($m) => $m->isEmpty());
+
+        // 2. As an authenticated user: GSR name & phone are visible
         $this->actingAs($user);
         $this->assertTrue(auth()->check());
         $responseAuth = Livewire::test(MeetingFilter::class);
         $responseAuth->assertSeeHtml('revealed: true');
         $responseAuth->assertDontSeeHtml('style="display: none;"');
+        $responseAuth->assertSeeHtml('+201000000000');
+        $responseAuth->assertSeeHtml('John Doe');
     }
 }

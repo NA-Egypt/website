@@ -15,9 +15,15 @@ class DirectOnlineGroupController extends Controller
     public function index(Request $request)
     {
         $perPage = min((int) $request->get('per_page', 15), 100);
-        $groups = DirectOnlineGroup::with(['user', 'meetings'])->paginate($perPage);
+        $relations = ['meetings'];
+        if ($request->user('sanctum') || auth('sanctum')->check() || auth()->check()) {
+            $relations[] = 'user';
+        }
+        $groups = DirectOnlineGroup::with($relations)->paginate($perPage);
 
-        return DirectOnlineGroupResource::collection($groups);
+        return DirectOnlineGroupResource::collection($groups)
+            ->response()
+            ->withHeaders(\App\Services\BotDetectionService::noIndexAiHeaders());
     }
 
     /**
@@ -45,9 +51,15 @@ class DirectOnlineGroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DirectOnlineGroup $directOnlineGroup)
+    public function show(Request $request, DirectOnlineGroup $directOnlineGroup)
     {
-        return new DirectOnlineGroupResource($directOnlineGroup->load(['user', 'meetings']));
+        $relations = ['meetings'];
+        if ($request->user('sanctum') || auth('sanctum')->check() || auth()->check()) {
+            $relations[] = 'user';
+        }
+        return (new DirectOnlineGroupResource($directOnlineGroup->load($relations)))
+            ->response()
+            ->withHeaders(\App\Services\BotDetectionService::noIndexAiHeaders());
     }
 
     /**

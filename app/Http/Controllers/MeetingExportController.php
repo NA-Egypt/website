@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Meeting;
 use App\Models\Group;
 use App\Models\Day;
+use App\Services\BotDetectionService;
 use App\Services\MpdfService;
 
 class MeetingExportController extends Controller
@@ -18,6 +19,10 @@ class MeetingExportController extends Controller
 
     public function download(Request $request)
     {
+        if (BotDetectionService::isBotOrAi($request)) {
+            abort(403, 'Bots are not allowed to export data.');
+        }
+
         $request->validate([
             'export_type' => 'required|string|in:cities,service_bodies',
             'service_bodies' => 'required_if:export_type,service_bodies|array|max:2',
@@ -163,6 +168,7 @@ class MeetingExportController extends Controller
 
         return response($pdfContent, 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noai, noimageai');
     }
 }

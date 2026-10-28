@@ -172,19 +172,23 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="10%">المجموعة</th>
-                        <th width="10%">ممثل المجموعة</th>
-                        <th width="10%">رقم الهاتف</th>
-                        <th width="70%">العنوان</th>
+                        <th width="{{ auth()->check() ? '10%' : '25%' }}">المجموعة</th>
+                        @auth
+                            <th width="10%">ممثل المجموعة</th>
+                            <th width="10%">رقم الهاتف</th>
+                        @endauth
+                        <th width="{{ auth()->check() ? '70%' : '75%' }}">العنوان</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($groups as $group)
                         <tr>
                             <td><strong>{{ $group->ar_name ?: $group->en_name }}</strong></td>
-                            <td>{{ $group->ar_gsr_name ?: $group->en_gsr_name ?: '-' }}</td>
-                            <td style="direction: ltr; text-align: right;">{{ $group->phone ?: '-' }}</td>
-                            <td>{{ $group->ar_address ?: $group->en_address ?: '-' }}</td>
+                            @auth
+                                <td>{{ ($group->ar_gsr_name ?: $group->en_gsr_name) ?: '-' }}</td>
+                                <td style="direction: ltr; text-align: right;">{{ $group->phone ?: '-' }}</td>
+                            @endauth
+                            <td>{{ ($group->ar_address ?: $group->en_address) ?: '-' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

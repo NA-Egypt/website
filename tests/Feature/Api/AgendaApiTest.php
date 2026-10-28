@@ -100,11 +100,16 @@ class AgendaApiTest extends TestCase
             ],
         ]);
 
-        // Public index & show
-        $this->getJson('/api/v1/agendas')->assertStatus(200);
+        // Public index & show - submitter_name & alt_gsr_name hidden from unauthenticated callers
+        $this->getJson('/api/v1/agendas')
+            ->assertStatus(200)
+            ->assertJsonMissingPath('data.0.submitter_name')
+            ->assertJsonMissingPath('data.0.alt_gsr_name');
         $this->getJson("/api/v1/agendas/{$agenda->id}")
             ->assertStatus(200)
-            ->assertJsonPath('data.service_position', 'GSR');
+            ->assertJsonPath('data.service_position', 'GSR')
+            ->assertJsonMissingPath('data.submitter_name')
+            ->assertJsonMissingPath('data.alt_gsr_name');
 
         // Authenticated CRUD
         Sanctum::actingAs($this->user);
