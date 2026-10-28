@@ -1,9 +1,7 @@
 ---
 description: Backend rules for Laravel controllers, models, migrations, seeders, and Spatie permissions
-globs:
-  - app/**/*.php
-  - config/**/*.php
-  - database/**/*.php
+trigger: glob
+globs: app/**/*.php, config/**/*.php, database/**/*.php
 ---
 
 # Backend Development Standards

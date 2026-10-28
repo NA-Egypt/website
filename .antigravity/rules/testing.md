@@ -1,7 +1,7 @@
 ---
 description: Testing guidelines for PHPUnit and Livewire tests
-globs:
-  - tests/**/*.php
+trigger: glob
+globs: tests/**/*.php
 ---
 
 # Testing & Quality Assurance Standards

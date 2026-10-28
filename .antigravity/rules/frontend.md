@@ -1,9 +1,7 @@
 ---
 description: Rules for Blade templates, Livewire components, forms, and custom CSS
-globs:
-  - resources/views/**/*.blade.php
-  - resources/css/**/*.css
-  - resources/js/**/*.js
+trigger: glob
+globs: resources/views/**/*.blade.php, resources/css/**/*.css, resources/js/**/*.js
 ---
 
 # Frontend Development Standards

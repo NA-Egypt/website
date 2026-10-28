@@ -1,8 +1,7 @@
 ---
 description: Web security guardrails including SQLi/XSS prevention, file upload safety, and Azure AD guidelines
-globs:
-  - /**/*.php
-  - /**/*.js
+trigger: glob
+globs: /**/*.php, /**/*.js
 ---
 
 # Secure Coding Standards

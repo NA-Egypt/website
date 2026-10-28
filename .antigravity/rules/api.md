@@ -1,8 +1,7 @@
 ---
 description: RESTful API standards, API v1 versioning, input validation, and HTTP status code standards
-globs:
-  - routes/api.php
-  - app/Http/Controllers/Api/**/*.php
+trigger: glob
+globs: routes/api.php, app/Http/Controllers/Api/**/*.php
 ---
 
 # API & Mobile Integration Standards

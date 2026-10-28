@@ -1,9 +1,7 @@
 ---
 description: Standards for PDF generation and Arabic typography configuration
-globs:
-  - app/Services/Pdf*.php
-  - app/Http/Controllers/*Pdf*.php
-  - resources/views/pdf/**/*.blade.php
+trigger: glob
+globs: app/Services/Pdf*.php, app/Http/Controllers/*Pdf*.php, resources/views/pdf/**/*.blade.php
 ---
 
 # PDF & Arabic Typography Standards
