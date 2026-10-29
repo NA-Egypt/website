@@ -10,7 +10,10 @@
                     {{ __('messages.lit_reconciliation_desc') }}
                 </p>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/guidelines/inventory/#lit-inventory-and-reconciliation" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill shadow-sm px-3" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half me-1"></i>{{ __('messages.inventory_system_guide') }}
+                </a>
                 <a href="{{ route('slips.index') }}" class="btn btn-outline-secondary rounded-pill shadow-sm px-3">
                     <i class="bi bi-receipt me-1"></i>{{ __('messages.inventory_slips') }}
                 </a>

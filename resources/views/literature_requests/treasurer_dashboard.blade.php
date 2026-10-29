@@ -13,7 +13,10 @@
                     ]) }}
                 </p>
             </div>
-            <div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/guidelines/inventory/#group-treasurer-requests" target="_blank" rel="noopener" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half me-1"></i>{{ __('messages.inventory_system_guide') }}
+                </a>
                 <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                     <i class="bi bi-archive me-1"></i>
                     {{ __('messages.literature_requests_archive') }}

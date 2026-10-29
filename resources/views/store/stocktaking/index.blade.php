@@ -10,7 +10,10 @@
                     {{ __('messages.stocktaking_desc') }}
                 </p>
             </div>
-            <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <a href="/guidelines/inventory/#stocktaking-lifecycle" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill px-3 shadow-sm" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half me-1"></i>{{ __('messages.inventory_system_guide') }}
+                </a>
                 @if ($activeSession)
                     <a href="{{ route('store.stocktaking.count', $activeSession->id) }}" class="btn btn-warning rounded-pill px-4 shadow-sm text-dark fw-bold">
                         <i class="bi bi-pencil-square me-1"></i>{{ __('messages.continue_active_session') }} (#{{ $activeSession->id }})

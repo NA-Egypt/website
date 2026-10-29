@@ -20,6 +20,10 @@
                 </p>
             </div>
             <div class="d-flex flex-wrap gap-2">
+                <a href="/guidelines/inventory/#monthly-ledger" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-xs d-inline-flex align-items-center gap-1.5 transition-all" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half"></i>
+                    <span>{{ __('messages.inventory_system_guide') }}</span>
+                </a>
                 <a href="{{ route('slips.index') }}" class="btn btn-outline-secondary rounded-pill px-3 py-2 shadow-xs d-inline-flex align-items-center gap-1.5 transition-all">
                     <i class="bi bi-receipt"></i>
                     <span>{{ __('messages.inventory_slips') }}</span>

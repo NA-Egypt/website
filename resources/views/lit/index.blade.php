@@ -20,7 +20,11 @@
                     {{ __('messages.lit_inventory_desc') }}
                 </p>
             </div>
-            <div>
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <a href="/guidelines/inventory/" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill px-3 shadow-sm fw-semibold d-inline-flex align-items-center gap-1" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half"></i>
+                    <span>{{ __('messages.inventory_system_guide') }}</span>
+                </a>
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm fw-semibold d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#keyboardShortcutsModal" title="{{ __('messages.keyboard_shortcuts_desc') }}">
                     <i class="bi bi-keyboard"></i>
                     <span>{{ __('messages.keyboard_shortcuts') }}</span>

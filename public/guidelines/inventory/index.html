@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل نظام المخزون والأدبيات – زمالة المدمنين المجهولين مصر (NA-Egypt)</title>
+  <meta name="description" content="الدليل المرجعي الشامل للاستخدام الإلكتروني والطباعة الورقية لمنظومة المخزن الرئيسي، لجنة الأدبيات، الجرد الفعلي، الأذونات، وطلبات المجموعات واللجان.">
+
+  <!-- Google Fonts: Cairo & Alexandria for Modern Arabic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">NA</div>
+        <div class="app-title-box">
+          <h1>دليل المخزون والأدبيات</h1>
+          <span>الإقليم الخدمي لمصر – الاستخدام والطباعة</span>
+        </div>
+        <button id="sidebar-close-btn" class="sidebar-close-btn" title="إغلاق القائمة" aria-label="إغلاق القائمة">✕</button>
+      </div>
+
+      <div class="sidebar-search-box">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="بحث ذكي في الدليل، الاختصارات، الأكواد..." autocomplete="off">
+          <button id="clear-search-btn" class="clear-search-btn" title="مسح البحث">✕</button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- Dynamically rendered table of contents -->
+      </nav>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+
+      <!-- Top Sticky Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button id="menu-toggle-btn" class="menu-toggle-btn" title="القائمة" aria-label="فتح الفهرس">
+            <span class="menu-icon">☰</span>
+            <span class="menu-label">الفهرس</span>
+          </button>
+          <div class="breadcrumbs">
+            <span class="breadcrumb-root">دليل المخزون والأدبيات</span>
+            <span class="breadcrumb-separator">&gt;</span>
+            <span class="current" id="breadcrumb-current">الغلاف</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <a href="/store" class="header-btn desktop-only-btn" title="العودة إلى لوحة المخزن">↩️ العودة للنظام</a>
+          <!-- Mobile search trigger button -->
+          <button id="mobile-search-btn" class="header-btn mobile-search-btn" title="البحث الذكي" aria-label="البحث الذكي">🔍 <span class="btn-text">بحث</span></button>
+          <button id="font-decrease-btn" class="header-btn desktop-only-btn" title="تصغير الخط">A-</button>
+          <button id="font-increase-btn" class="header-btn desktop-only-btn" title="تكبير الخط">A+</button>
+          <button id="theme-toggle-btn" class="header-btn" title="تبديل المظهر">
+            <span id="theme-btn-text">🌙 الوضع الداكن</span>
+          </button>
+          <button id="copy-link-btn" class="header-btn desktop-only-btn" title="نسخ رابط القسم">🔗 مشاركة</button>
+          <button id="print-section-btn" class="header-btn desktop-only-btn" title="طباعة الفصل الحالي فقط">🖨️ طباعة القسم</button>
+          <button id="print-full-book-btn" class="header-btn btn-primary-solid desktop-only-btn" title="طباعة الدليل الكامل ككتاب A4 أو حفظه PDF">📚 طباعة الدليل الكامل</button>
+        </div>
+      </header>
+
+      <!-- Mobile Search Modal Overlay -->
+      <div id="mobile-search-modal" class="mobile-search-modal" role="dialog" aria-modal="true" aria-label="البحث الذكي">
+        <div class="mobile-search-content">
+          <div class="mobile-search-header">
+            <div class="search-input-wrapper mobile-search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="mobile-search-input" placeholder="ابحث في المخزن، الجرد، الأذونات، أو الطلبات..." autocomplete="off">
+              <button id="mobile-clear-search-btn" class="clear-search-btn" title="مسح">✕</button>
+            </div>
+            <button id="close-search-modal-btn" class="close-search-modal-btn" title="إغلاق البحث" aria-label="إغلاق البحث">✕</button>
+          </div>
+
+          <div class="search-filter-pills mobile-search-filter-pills">
+            <button class="filter-pill active" data-category="all">الكل</button>
+            <button class="filter-pill" data-category="مقدمة وهيكلة النظام">مقدمة وهيكلة النظام</button>
+            <button class="filter-pill" data-category="إدارة المخزن الرئيسي">إدارة المخزن الرئيسي</button>
+            <button class="filter-pill" data-category="الجرد الفعلي والمطابقة">الجرد الفعلي والمطابقة</button>
+            <button class="filter-pill" data-category="لجنة الأدبيات والدفتر الشهري">لجنة الأدبيات والدفتر الشهري</button>
+            <button class="filter-pill" data-category="الأذونات والاستلام">الأذونات والاستلام</button>
+            <button class="filter-pill" data-category="طلبات المجموعات وأمناء الصندوق">طلبات المجموعات</button>
+            <button class="filter-pill" data-category="مطبوعات اللجان الفرعية">مطبوعات اللجان</button>
+            <button class="filter-pill" data-category="المراجع والأسئلة الشائعة">الأسئلة الشائعة</button>
+          </div>
+
+          <div class="mobile-search-results-stats" id="mobile-search-stats"></div>
+          <div id="mobile-search-results-list" class="mobile-search-results-list"></div>
+        </div>
+      </div>
+
+      <!-- Search Results Overlay Pane (Desktop) -->
+      <div class="content-container">
+
+        <div id="search-results-pane" class="search-results-pane">
+          <div class="search-results-header">
+            <h3>نتائج البحث الذكي (<span id="search-count-badge">0</span>)</h3>
+          </div>
+
+          <div class="search-filter-pills">
+            <button class="filter-pill active" data-category="all">الكل</button>
+            <button class="filter-pill" data-category="مقدمة وهيكلة النظام">مقدمة وهيكلة النظام</button>
+            <button class="filter-pill" data-category="إدارة المخزن الرئيسي">إدارة المخزن الرئيسي</button>
+            <button class="filter-pill" data-category="الجرد الفعلي والمطابقة">الجرد الفعلي والمطابقة</button>
+            <button class="filter-pill" data-category="لجنة الأدبيات والدفتر الشهري">لجنة الأدبيات والدفتر الشهري</button>
+            <button class="filter-pill" data-category="الأذونات والاستلام">الأذونات والاستلام</button>
+            <button class="filter-pill" data-category="طلبات المجموعات وأمناء الصندوق">طلبات المجموعات</button>
+            <button class="filter-pill" data-category="مطبوعات اللجان الفرعية">مطبوعات اللجان</button>
+            <button class="filter-pill" data-category="المراجع والأسئلة الشائعة">الأسئلة الشائعة</button>
+          </div>
+
+          <div id="search-results-list"></div>
+        </div>
+
+        <!-- Section Content Render Target (Screen & Single-Section Print) -->
+        <div id="guideline-content">
+          <!-- Article dynamically rendered from guideline_data.js -->
+        </div>
+
+        <!-- Full Manual Book Render Target (Used when printing Full Manual Book) -->
+        <div id="full-manual-print-container"></div>
+
+      </div>
+
+      <!-- Mobile Floating Bottom Action Bar -->
+      <nav class="mobile-bottom-bar" id="mobile-bottom-bar" aria-label="شريط أدوات القراءة">
+        <button id="bottom-menu-btn" class="bottom-bar-btn" title="الفهرس" aria-label="فتح الفهرس">
+          <span class="btn-icon">📑</span>
+          <span class="btn-label">الفهرس</span>
+        </button>
+        <button id="bottom-search-btn" class="bottom-bar-btn" title="بحث" aria-label="البحث الذكي">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-label">بحث</span>
+        </button>
+        <div class="font-size-group">
+          <button id="bottom-font-decrease" class="bottom-bar-btn icon-only" title="تصغير الخط" aria-label="تصغير الخط">
+            <span class="btn-icon">A-</span>
+          </button>
+          <button id="bottom-font-increase" class="bottom-bar-btn icon-only" title="تكبير الخط" aria-label="تكبير الخط">
+            <span class="btn-icon">A+</span>
+          </button>
+        </div>
+        <button id="bottom-print-btn" class="bottom-bar-btn" title="طباعة الكتاب" aria-label="طباعة الدليل الكامل">
+          <span class="btn-icon">🖨️</span>
+          <span class="btn-label">طباعة</span>
+        </button>
+        <button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
+          <span class="btn-icon">↑</span>
+          <span class="btn-label">للأعلى</span>
+        </button>
+      </nav>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="data/guideline_data.js"></script>
+  <script src="data/reference_tables.js"></script>
+  <script src="js/search-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+

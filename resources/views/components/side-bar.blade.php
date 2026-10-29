@@ -468,6 +468,7 @@
             @if($canArchiveLit)
             <li><a href="{{ route('literature-requests.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.literature_requests_archive') }}</a></li>
             @endif
+            <li><a href="/guidelines/inventory/" target="_blank" rel="noopener"><i class="bi bi-book-half"></i>{{ __('messages.inventory_system_guide') }}</a></li>
           </ul>
         </div>
       </li>

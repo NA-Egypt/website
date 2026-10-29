@@ -10,7 +10,11 @@
                     {{ __('messages.reports_desc') }}
                 </p>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/guidelines/inventory/#store-reports" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill px-3 shadow-sm" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half me-1"></i>
+                    {{ __('messages.inventory_system_guide') }}
+                </a>
                 <a href="{{ route('store.reports.pdf', request()->all()) }}" class="btn btn-outline-danger rounded-pill px-3 shadow-sm">
                     <i class="bi bi-file-earmark-pdf me-1"></i>
                     {{ __('messages.export_pdf') }}

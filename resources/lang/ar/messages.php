@@ -3132,6 +3132,8 @@ return [
     'editing_accumulated_request_for' => 'تعديل الطلب المجمع الخاص بـ :service_body لشهر :month',
     'exceeds_stock' => 'يتجاوز الرصيد',
     'clear_filter' => 'إلغاء التصفية',
+    'inventory_system_guide' => 'دليل نظام المخزون',
+    'inventory_system_guide_desc' => 'فتح الدليل الإرشادي الشامل للاستخدام والطباعة',
 ];
 
 

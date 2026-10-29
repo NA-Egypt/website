@@ -3128,6 +3128,8 @@ return [
     'editing_accumulated_request_for' => 'Editing Accumulated Request of :service_body for :month',
     'exceeds_stock' => 'Exceeds stock',
     'clear_filter' => 'Clear filter',
+    'inventory_system_guide' => 'Inventory System Guide',
+    'inventory_system_guide_desc' => 'Open the comprehensive electronic and printable inventory manual',
 ];
 
 

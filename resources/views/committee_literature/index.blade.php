@@ -20,6 +20,10 @@
                 </p>
             </div>
             <div class="d-flex flex-wrap gap-2">
+                <a href="/guidelines/inventory/#committee-literature" target="_blank" rel="noopener" class="btn btn-outline-primary rounded-pill px-3 py-2 shadow-xs d-inline-flex align-items-center gap-1" title="{{ __('messages.inventory_system_guide_desc') }}">
+                    <i class="bi bi-book-half"></i>
+                    <span>{{ __('messages.inventory_system_guide') }}</span>
+                </a>
                 @if($committee)
                 <a href="{{ route('committee-literature.create', ['committee_id' => $committee->id]) }}" class="btn btn-teal text-white rounded-pill px-3.5 py-2 shadow-sm d-inline-flex align-items-center gap-1.5" style="background-color: #0d9488;">
                     <i class="bi bi-plus-circle"></i>
