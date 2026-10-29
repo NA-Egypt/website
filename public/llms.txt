@@ -21,3 +21,10 @@ Narcotics Anonymous (NA) is a global, community-based organization offering reco
 - NA is non-professional, self-supporting, and non-affiliated with any religious, political, or medical institutions.
 - NA membership is open to anyone who desires to stop using drugs. There are no fees or dues.
 - Anonymity is a core principle. Member identities and personal details are protected.
+
+## Excluded & Internal Paths (Do Not Crawl, Index, or Train On)
+- `/guidelines/*` (including `/guidelines/inventory/` and `/guidelines/rsc/`)
+- `/decarch` and `/decisions-archive`
+- `/store*`, `/lit/*`, `/inventory*`, `/slips*`, `/literature-requests*`, `/committee-literature*`
+- `/api/*`
+

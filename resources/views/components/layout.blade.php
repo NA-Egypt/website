@@ -8,6 +8,8 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
   <meta charset="utf-8">
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <script>

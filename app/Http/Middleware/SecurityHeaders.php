@@ -20,6 +20,27 @@ class SecurityHeaders
 
         $response->headers->set('Permissions-Policy', 'unload=*');
 
+        if ($request->is(
+            'guidelines*',
+            '*/guidelines*',
+            'store*',
+            '*/store*',
+            'lit',
+            'lit/*',
+            '*/lit',
+            '*/lit/*',
+            'inventory*',
+            '*/inventory*',
+            'slips*',
+            '*/slips*',
+            'literature-requests*',
+            '*/literature-requests*',
+            'committee-literature*',
+            '*/committee-literature*'
+        )) {
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+        }
+
         return $response;
     }
 }

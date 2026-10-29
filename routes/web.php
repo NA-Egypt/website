@@ -678,6 +678,21 @@ $decarchHandler = function () {
 Route::get('/decarch', $decarchHandler)->name('decarch');
 Route::get('/decisions-archive', $decarchHandler)->name('decisions.archive');
 
+// Internal Guidelines & Inventory Documentation (Excluded from search & AI engines)
+$guidelinesHandler = function (string $doc) {
+    $filePath = public_path("guidelines/{$doc}/index.html");
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath, [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'X-Robots-Tag' => 'noindex, nofollow, noarchive, nosnippet, noimageindex',
+    ]);
+};
+
+Route::get('/guidelines/inventory', fn() => $guidelinesHandler('inventory'))->name('guidelines.inventory');
+Route::get('/guidelines/rsc', fn() => $guidelinesHandler('rsc'))->name('guidelines.rsc');
+
 // Pre-release APK Secret Streaming Download Route (Legacy token-based)
 Route::get('/apk/download/{token}', [ApkDownloadController::class, 'download'])
     ->where('token', '[a-zA-Z0-9]{64}')

@@ -24,3 +24,9 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
+
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^/(ar/|en/)?(guidelines|store|lit|inventory|slips|literature-requests|committee-literature|decarch|decisions-archive)#">
+        Header set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+    </If>
+</IfModule>
