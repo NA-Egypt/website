@@ -71,7 +71,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold text-primary mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-box-seam"></i>
-                            {{ __('messages.litstore_monthly_summary') }}
+                            <span>{{ __('messages.litstore_monthly_summary') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.litstore_monthly_summary')"
+                                :description="__('messages.card_help_ledger_store')"
+                                :formula="__('messages.card_formula_ledger_store')"
+                            />
                         </h5>
                         <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1.5 fw-semibold">{{ __('messages.litstore') }}</span>
                     </div>
@@ -106,7 +111,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold text-info mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-book"></i>
-                            {{ __('messages.lit_comm_monthly_summary') }}
+                            <span>{{ __('messages.lit_comm_monthly_summary') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.lit_comm_monthly_summary')"
+                                :description="__('messages.card_help_ledger_lit')"
+                                :formula="__('messages.card_formula_ledger_lit')"
+                            />
                         </h5>
                         <span class="badge bg-info-subtle text-info rounded-pill px-3 py-1.5 fw-semibold">{{ __('messages.lit_committee') }}</span>
                     </div>
@@ -145,7 +155,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold text-success mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-pie-chart"></i>
-                            {{ __('messages.combined_monthly_overview') }}
+                            <span>{{ __('messages.combined_monthly_overview') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.combined_monthly_overview')"
+                                :description="__('messages.card_help_ledger_combined')"
+                                :formula="__('messages.card_formula_ledger_combined')"
+                            />
                         </h5>
                         <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1.5 fw-semibold">{{ __('messages.total') }}</span>
                     </div>

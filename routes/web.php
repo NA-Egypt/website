@@ -66,6 +66,7 @@ Route::group(
 
             // Store Inventory Read Routes:
             Route::get('/store', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
+            Route::get('/store/live-state', [\App\Http\Controllers\StoreController::class, 'liveState'])->name('store.live_state');
             Route::get('/store/reports', [\App\Http\Controllers\StoreController::class, 'reports'])->name('store.reports');
             Route::get('/store/reports/pdf', [\App\Http\Controllers\StoreController::class, 'exportPdf'])->name('store.reports.pdf');
             Route::get('/store/reports/csv', [\App\Http\Controllers\StoreController::class, 'exportCsv'])->name('store.reports.csv');
@@ -85,10 +86,14 @@ Route::group(
                 Route::post('/store/{item}/receive', [\App\Http\Controllers\StoreController::class, 'receive'])->name('store.receive');
                 Route::post('/store/{item}/transfer', [\App\Http\Controllers\StoreController::class, 'transfer'])->name('store.transfer');
                 Route::post('/store/{item}/return', [\App\Http\Controllers\StoreController::class, 'returnStock'])->name('store.return');
+                Route::post('/store/{item}/damage', [\App\Http\Controllers\StoreController::class, 'markDamaged'])->name('store.damage');
+                Route::post('/store/{item}/cancel-wrong-receive', [\App\Http\Controllers\StoreController::class, 'cancelWrongReceive'])->name('store.cancel_wrong_receive');
             });
 
             // Lit Inventory Routes:
+            Route::get('/inventory/live-state', [\App\Http\Controllers\LitLedgerController::class, 'liveState'])->name('inventory.live_state');
             Route::get('/lit', [\App\Http\Controllers\LitController::class, 'index'])->name('lit.index');
+            Route::post('/lit/{item}/damage', [\App\Http\Controllers\LitController::class, 'markDamaged'])->name('lit.damage');
             Route::get('/lit/reconciliation', [\App\Http\Controllers\LitReconciliationController::class, 'index'])->name('lit.reconciliation');
             Route::post('/lit/reconciliation/return', [\App\Http\Controllers\LitReconciliationController::class, 'processReturn'])->name('lit.reconciliation.return');
             Route::get('/lit/ledger', [\App\Http\Controllers\LitLedgerController::class, 'index'])->name('lit.ledger');

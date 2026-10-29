@@ -367,4 +367,170 @@ class StoreTest extends TestCase
         $response->assertViewHas('totalLitStock', 5);
         $response->assertViewHas('totalValuation', (10 + 5) * 100.00);
     }
+
+    public function test_store_manager_can_mark_item_as_damaged_with_note()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Store Manager');
+
+        $item = InventoryItem::create([
+            'name' => 'Basic Text Arabic',
+            'selling_price' => 150.00,
+            'store_quantity' => 30,
+            'lit_quantity' => 10,
+            'damaged_quantity' => 0,
+            'category' => 'Arabic Books',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('store.damage', $item), [
+            'quantity' => 3,
+            'source_location' => 'store',
+            'notes' => 'Water damage on cover during shipping',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        $item->refresh();
+        $this->assertEquals(27, $item->store_quantity);
+        $this->assertEquals(10, $item->lit_quantity);
+        $this->assertEquals(3, $item->damaged_quantity);
+
+        $this->assertDatabaseHas('inventory_transactions', [
+            'inventory_item_id' => $item->id,
+            'type' => 'damaged',
+            'source_location' => 'store',
+            'quantity' => 3,
+            'notes' => 'Water damage on cover during shipping',
+            'status' => 'active',
+        ]);
+    }
+
+    public function test_lit_user_can_mark_lit_item_as_damaged_with_note()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Lit User');
+
+        $item = InventoryItem::create([
+            'name' => 'Step Working Guide',
+            'selling_price' => 140.00,
+            'store_quantity' => 20,
+            'lit_quantity' => 12,
+            'damaged_quantity' => 1,
+            'category' => 'Arabic Books',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('lit.damage', $item), [
+            'quantity' => 2,
+            'notes' => 'Torn pages found at Literature table',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        $item->refresh();
+        $this->assertEquals(20, $item->store_quantity);
+        $this->assertEquals(10, $item->lit_quantity);
+        $this->assertEquals(3, $item->damaged_quantity);
+
+        $this->assertDatabaseHas('inventory_transactions', [
+            'inventory_item_id' => $item->id,
+            'type' => 'damaged',
+            'source_location' => 'lit',
+            'quantity' => 2,
+            'notes' => 'Torn pages found at Literature table',
+        ]);
+    }
+
+    public function test_store_manager_can_cancel_wrong_receive_and_start_new_receive()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Store Manager');
+
+        $item = InventoryItem::create([
+            'name' => 'It Works How and Why',
+            'selling_price' => 130.00,
+            'store_quantity' => 10,
+            'lit_quantity' => 5,
+            'category' => 'Arabic Books',
+        ]);
+
+        // Step 1: User receives wrong quantity (e.g. 500 instead of 50)
+        $this->actingAs($user)->postJson(route('store.receive', $item), [
+            'quantity' => 500,
+            'notes' => 'Printer batch',
+        ])->assertStatus(200);
+
+        $this->assertEquals(510, $item->fresh()->store_quantity);
+
+        $wrongTx = InventoryTransaction::where('inventory_item_id', $item->id)
+            ->where('type', 'receive')
+            ->latest('id')
+            ->first();
+        $this->assertNotNull($wrongTx);
+        $this->assertEquals('active', $wrongTx->status);
+
+        // Step 2: User marks receive as wrong entry
+        $cancelResponse = $this->actingAs($user)->postJson(route('store.cancel_wrong_receive', $item), [
+            'transaction_id' => $wrongTx->id,
+            'reason' => 'Entered 500 by mistake instead of 50',
+        ]);
+
+        $cancelResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'cancelled_transaction_id' => $wrongTx->id,
+                'start_new_receive_item_id' => $item->id,
+            ]);
+
+        // Verify store_quantity was reversed back to 10
+        $this->assertEquals(10, $item->fresh()->store_quantity);
+
+        // Verify original receive transaction is marked cancelled
+        $this->assertDatabaseHas('inventory_transactions', [
+            'id' => $wrongTx->id,
+            'status' => 'cancelled',
+            'cancelled_by' => $user->id,
+        ]);
+
+        // Verify audit cancellation record is logged
+        $this->assertDatabaseHas('inventory_transactions', [
+            'inventory_item_id' => $item->id,
+            'type' => 'receive_cancelled',
+            'quantity' => 500,
+            'reference_transaction_id' => $wrongTx->id,
+            'status' => 'active',
+        ]);
+    }
+
+    public function test_inventory_live_state_and_ui_help_and_shortcuts_render()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Store Manager');
+
+        $item = InventoryItem::create([
+            'name' => 'Just For Today',
+            'selling_price' => 110.00,
+            'store_quantity' => 15,
+            'lit_quantity' => 8,
+            'damaged_quantity' => 2,
+            'category' => 'Arabic Books',
+        ]);
+
+        $liveResponse = $this->actingAs($user)->getJson(route('inventory.live_state'));
+        $liveResponse->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('live_state.totals.total_store_stock', 15)
+            ->assertJsonPath('live_state.totals.total_lit_stock', 8)
+            ->assertJsonPath('live_state.totals.total_damaged_stock', 2);
+
+        $indexResponse = $this->actingAs($user)->get(route('store.index'));
+        $indexResponse->assertStatus(200)
+            ->assertSee('keyboardShortcutsModal', false)
+            ->assertSee('damageModal', false)
+            ->assertSee('wrongReceiveModal', false)
+            ->assertSee('inv-card-help-btn', false);
+    }
 }

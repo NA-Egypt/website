@@ -84,10 +84,17 @@
         {{-- Metrics Summary Cards --}}
         <div class="row g-4 mb-4">
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm">
+                <div class="card p-3 border-0 shadow-sm h-100">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_expected_system_qty') }}</span>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="text-secondary small fw-semibold">{{ __('messages.total_expected_system_qty') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.total_expected_system_qty')"
+                                    :description="__('messages.card_help_stocktaking_expected')"
+                                    :formula="__('messages.card_formula_stocktaking_expected')"
+                                />
+                            </div>
                             <h3 class="mt-1 mb-0 font-bold text-dark">{{ $totalSystemQty }}</h3>
                         </div>
                         <div class="fs-2 text-secondary bg-light rounded-3 p-2 px-3"><i class="bi bi-box"></i></div>
@@ -96,10 +103,17 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm">
+                <div class="card p-3 border-0 shadow-sm h-100">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.total_physical_counted_qty') }}</span>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="text-secondary small fw-semibold">{{ __('messages.total_physical_counted_qty') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.total_physical_counted_qty')"
+                                    :description="__('messages.card_help_stocktaking_counted')"
+                                    :formula="__('messages.card_formula_stocktaking_counted')"
+                                />
+                            </div>
                             <h3 class="mt-1 mb-0 font-bold text-primary">{{ $totalCountedQty }}</h3>
                         </div>
                         <div class="fs-2 text-primary bg-primary-subtle rounded-3 p-2 px-3"><i class="bi bi-calculator"></i></div>
@@ -108,10 +122,17 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm">
+                <div class="card p-3 border-0 shadow-sm h-100">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.net_qty_variance') }}</span>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="text-secondary small fw-semibold">{{ __('messages.net_qty_variance') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.net_qty_variance')"
+                                    :description="__('messages.card_help_stocktaking_variance')"
+                                    :formula="__('messages.card_formula_stocktaking_variance')"
+                                />
+                            </div>
                             <h3 class="mt-1 mb-0 font-bold {{ $totalVarianceQty >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ $totalVarianceQty > 0 ? "+{$totalVarianceQty}" : $totalVarianceQty }}
                             </h3>
@@ -124,10 +145,17 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm">
+                <div class="card p-3 border-0 shadow-sm h-100">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-semibold">{{ __('messages.net_financial_variance_value') }}</span>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="text-secondary small fw-semibold">{{ __('messages.net_financial_variance_value') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.net_financial_variance_value')"
+                                    :description="__('messages.card_help_stocktaking_variance_val')"
+                                    :formula="__('messages.card_formula_stocktaking_variance_val')"
+                                />
+                            </div>
                             <h3 class="mt-1 mb-0 font-bold {{ $totalVarianceValue >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ __('messages.EGP') }} {{ number_format($totalVarianceValue, 2) }}
                             </h3>

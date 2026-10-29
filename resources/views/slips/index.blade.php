@@ -59,7 +59,14 @@
                 <div class="card border-0 shadow-sm rounded-4 p-3.5 h-100 bg-white border-start border-4 border-primary">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-medium d-block mb-1">{{ __('messages.total_slips') ?? 'Total Slips' }}</span>
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                <span class="text-secondary small fw-medium">{{ __('messages.total_slips') ?? 'Total Slips' }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.total_slips')"
+                                    :description="__('messages.card_help_slips_total')"
+                                    :formula="__('messages.card_formula_slips_total')"
+                                />
+                            </div>
                             <h3 class="fw-bold mb-0 text-dark">{{ $stats['total_slips'] ?? $slips->total() }}</h3>
                         </div>
                         <div class="avatar-box bg-primary-subtle text-primary rounded-4 p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
@@ -73,7 +80,14 @@
                 <div class="card border-0 shadow-sm rounded-4 p-3.5 h-100 bg-white border-start border-4 border-info">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-medium d-block mb-1">{{ __('messages.slip_type_transfer') }}</span>
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                <span class="text-secondary small fw-medium">{{ __('messages.slip_type_transfer') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.slip_type_transfer')"
+                                    :description="__('messages.card_help_slips_transfer')"
+                                    :formula="__('messages.card_formula_slips_transfer')"
+                                />
+                            </div>
                             <h3 class="fw-bold mb-0 text-info">{{ $stats['transferred'] ?? 0 }}</h3>
                         </div>
                         <div class="avatar-box bg-info-subtle text-info rounded-4 p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
@@ -87,7 +101,14 @@
                 <div class="card border-0 shadow-sm rounded-4 p-3.5 h-100 bg-white border-start border-4 border-warning">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-medium d-block mb-1">{{ __('messages.slip_type_return') }}</span>
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                <span class="text-secondary small fw-medium">{{ __('messages.slip_type_return') }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.slip_type_return')"
+                                    :description="__('messages.card_help_slips_return')"
+                                    :formula="__('messages.card_formula_slips_return')"
+                                />
+                            </div>
                             <h3 class="fw-bold mb-0 text-warning">{{ $stats['returned'] ?? 0 }}</h3>
                         </div>
                         <div class="avatar-box bg-warning-subtle text-warning rounded-4 p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
@@ -101,7 +122,14 @@
                 <div class="card border-0 shadow-sm rounded-4 p-3.5 h-100 bg-white border-start border-4 {{ ($stats['pending_acknowledgment'] ?? 0) > 0 ? 'border-danger' : 'border-success' }}">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-secondary small fw-medium d-block mb-1">{{ __('messages.pending_acknowledgment') ?? 'Pending Acknowledgment' }}</span>
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                <span class="text-secondary small fw-medium">{{ __('messages.pending_acknowledgment') ?? 'Pending Acknowledgment' }}</span>
+                                <x-inventory-card-help
+                                    :title="__('messages.pending_acknowledgment')"
+                                    :description="__('messages.card_help_slips_pending')"
+                                    :formula="__('messages.card_formula_slips_pending')"
+                                />
+                            </div>
                             <h3 class="fw-bold mb-0 {{ ($stats['pending_acknowledgment'] ?? 0) > 0 ? 'text-danger' : 'text-success' }}">
                                 {{ $stats['pending_acknowledgment'] ?? 0 }}
                             </h3>

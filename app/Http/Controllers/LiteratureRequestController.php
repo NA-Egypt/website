@@ -469,16 +469,26 @@ class LiteratureRequestController extends Controller implements HasMiddleware
      */
     public function committeeUpdate(Request $request, $id)
     {
-        $litRequest = LiteratureRequest::findOrFail($id);
+        $litRequest = LiteratureRequest::with(['items', 'serviceBody'])->findOrFail($id);
 
         $user = Auth::user();
         if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
             abort(403);
         }
 
+        $wasFulfilled = in_array($litRequest->status, ['returned_by_committee', 'approved'], true);
+        $previousQuantities = [];
+        if ($wasFulfilled) {
+            foreach ($litRequest->items as $existingItem) {
+                $previousQuantities[$existingItem->inventory_item_id] =
+                    ($previousQuantities[$existingItem->inventory_item_id] ?? 0) + (int) $existingItem->quantity;
+            }
+        }
+
         $litRequest->items()->delete();
 
         $quantities = $request->input('quantities', []);
+        $newQuantities = [];
 
         foreach ($quantities as $itemId => $qty) {
             $qty = intval($qty);
@@ -494,6 +504,57 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 'price' => $item->selling_price,
                 'total' => $qty * $item->selling_price
             ]);
+
+            $newQuantities[$item->id] = ($newQuantities[$item->id] ?? 0) + $qty;
+        }
+
+        // Deduct fulfilled quantities (or adjust delta on re-edits) from InventoryItem::lit_quantity
+        $affectedItemIds = array_unique(array_merge(array_keys($previousQuantities), array_keys($newQuantities)));
+        $sbName = $litRequest->serviceBody
+            ? ($litRequest->serviceBody->ar_name ?: $litRequest->serviceBody->en_name)
+            : ('Service Body #' . $litRequest->service_body_id);
+
+        foreach ($affectedItemIds as $itemId) {
+            $prevQty = (int) ($previousQuantities[$itemId] ?? 0);
+            $newQty = (int) ($newQuantities[$itemId] ?? 0);
+            $delta = $newQty - $prevQty;
+
+            if ($delta === 0) {
+                continue;
+            }
+
+            $invItem = InventoryItem::find($itemId);
+            if (!$invItem) {
+                continue;
+            }
+
+            if ($delta > 0) {
+                $invItem->lit_quantity = max(0, (int) $invItem->lit_quantity - $delta);
+                $invItem->save();
+
+                \App\Models\InventoryTransaction::create([
+                    'inventory_item_id' => $invItem->id,
+                    'user_id' => $user->id,
+                    'type' => 'lit_sale',
+                    'source_location' => 'lit',
+                    'quantity' => $delta,
+                    'notes' => "Sold to {$sbName} (Request #{$litRequest->id})",
+                    'status' => 'active',
+                ]);
+            } else {
+                $restoreQty = abs($delta);
+                $invItem->increment('lit_quantity', $restoreQty);
+
+                \App\Models\InventoryTransaction::create([
+                    'inventory_item_id' => $invItem->id,
+                    'user_id' => $user->id,
+                    'type' => 'lit_sale_adjustment',
+                    'source_location' => 'lit',
+                    'quantity' => $restoreQty,
+                    'notes' => "Restored from adjusted sale for {$sbName} (Request #{$litRequest->id})",
+                    'status' => 'active',
+                ]);
+            }
         }
 
         $litRequest->update([
@@ -501,6 +562,14 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             'total_items_count' => $litRequest->items()->sum('quantity'),
             'total_price' => $litRequest->items()->sum('total'),
         ]);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoice updated and returned to Service Body successfully.',
+                'live_state' => app(\App\Services\InventoryLedgerService::class)->getLiveInventoryState(),
+            ]);
+        }
 
         return redirect()->route('literature-requests.committee')->with('success', 'Invoice updated and returned to Service Body successfully.');
     }

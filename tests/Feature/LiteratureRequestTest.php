@@ -287,6 +287,63 @@ class LiteratureRequestTest extends TestCase
         ]);
     }
 
+    public function test_lit_committee_sales_deduct_from_lit_quantity_and_reflect_in_live_state()
+    {
+        Carbon::setTestNow('2026-07-20');
+
+        // Give item1 50 units in Literature stock
+        $this->item1->update(['lit_quantity' => 50]);
+
+        $accumulated = LiteratureRequest::create([
+            'service_body_id' => $this->serviceBody->id,
+            'month' => Carbon::now()->startOfMonth(),
+            'type' => 'servicebody',
+            'status' => 'sent_to_committee',
+            'total_items_count' => 12,
+            'total_price' => 120.00,
+        ]);
+
+        LiteratureRequestItem::create([
+            'literature_request_id' => $accumulated->id,
+            'inventory_item_id' => $this->item1->id,
+            'quantity' => 12,
+            'price' => $this->item1->selling_price,
+            'total' => 120.00,
+        ]);
+
+        // Literature committee fulfills 10 units
+        $this->actingAs($this->litUser)->post(route('literature-requests.committee.update', $accumulated->id), [
+            'quantities' => [
+                $this->item1->id => 10,
+            ],
+        ])->assertRedirect(route('literature-requests.committee'));
+
+        // Verify lit_quantity decreased from 50 to 40
+        $this->assertEquals(40, $this->item1->fresh()->lit_quantity);
+
+        // Verify lit_sale transaction logged
+        $this->assertDatabaseHas('inventory_transactions', [
+            'inventory_item_id' => $this->item1->id,
+            'type' => 'lit_sale',
+            'quantity' => 10,
+        ]);
+
+        // If Literature Committee re-edits the fulfilled invoice from 10 down to 7, 3 units are restored (40 -> 43)
+        $this->actingAs($this->litUser)->post(route('literature-requests.committee.update', $accumulated->id), [
+            'quantities' => [
+                $this->item1->id => 7,
+            ],
+        ])->assertRedirect(route('literature-requests.committee'));
+
+        $this->assertEquals(43, $this->item1->fresh()->lit_quantity);
+
+        // Verify live_state endpoint reflects the new lit_quantity immediately
+        $liveResp = $this->actingAs($this->litUser)->getJson(route('inventory.live_state'));
+        $liveResp->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('live_state.totals.total_lit_stock', 43);
+    }
+
     public function test_archive_can_be_filtered_by_group_with_proper_restrictions()
     {
         Carbon::setTestNow('2026-07-20');

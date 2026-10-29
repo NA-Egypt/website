@@ -437,7 +437,10 @@ class InventoryLedgerService
         foreach ($items as $item) {
             $itemTx = $transactions->get($item->id, collect());
 
-            $storeReceived = (int) $itemTx->where('type', 'receive')->sum('quantity');
+            $storeReceived = (int) $itemTx
+                ->where('type', 'receive')
+                ->filter(fn ($t) => ($t->status ?? 'active') !== 'cancelled')
+                ->sum('quantity');
             $transferredToLit = (int) $itemTx->whereIn('type', ['transfer_to_lit', 'transfer'])->sum('quantity');
             $returnedFromLit = (int) $itemTx->where('type', 'return_from_lit')->sum('quantity');
             $soldQty = (int) ($salesByItem[$item->id] ?? 0);
@@ -574,6 +577,125 @@ class InventoryLedgerService
                 'total_valuation' => $storeTotalValuation + $litTotalStockValuation,
                 'total_sales_value' => $litTotalSalesValuation,
             ],
+        ];
+    }
+
+    /**
+     * Format a single InventoryItem with its damaged history and last active receive transaction
+     */
+    public function formatItemForLiveState(InventoryItem $item): array
+    {
+        $item->loadMissing(['damagedTransactions.user', 'lastActiveReceiveTransaction.user']);
+
+        $damageNotes = $item->damagedTransactions->map(function ($tx) {
+            return [
+                'id' => $tx->id,
+                'quantity' => (int) $tx->quantity,
+                'source' => $tx->source_location ?: 'store',
+                'source_location' => $tx->source_location ?: 'store',
+                'notes' => $tx->notes ?: '',
+                'user' => $tx->user->name ?? 'System',
+                'user_name' => $tx->user->name ?? 'System',
+                'date' => $tx->created_at ? $tx->created_at->format('Y-m-d H:i') : '',
+                'created_at' => $tx->created_at ? $tx->created_at->format('Y-m-d H:i') : '',
+            ];
+        })->values()->toArray();
+
+        $lastReceive = $item->lastActiveReceiveTransaction;
+        $lastReceiveData = $lastReceive ? [
+            'id' => $lastReceive->id,
+            'quantity' => (int) $lastReceive->quantity,
+            'notes' => $lastReceive->notes ?: '',
+            'user' => $lastReceive->user->name ?? 'System',
+            'user_name' => $lastReceive->user->name ?? 'System',
+            'date' => $lastReceive->created_at ? $lastReceive->created_at->format('Y-m-d H:i') : '',
+            'created_at' => $lastReceive->created_at ? $lastReceive->created_at->format('Y-m-d H:i') : '',
+        ] : null;
+
+        return [
+            'id' => $item->id,
+            'name' => $item->name,
+            'name_en' => $item->name_en,
+            'display_name' => $item->store_display_name,
+            'category' => $item->category,
+            'description' => $item->description,
+            'selling_price' => number_format((float) $item->selling_price, 2, '.', ''),
+            'selling_price_float' => (float) $item->selling_price,
+            'selling_price_raw' => (float) $item->selling_price,
+            'store_quantity' => (int) $item->store_quantity,
+            'lit_quantity' => (int) $item->lit_quantity,
+            'damaged_quantity' => (int) ($item->damaged_quantity ?? 0),
+            'damage_notes' => $damageNotes,
+            'last_receive_tx' => $lastReceiveData,
+        ];
+    }
+
+    /**
+     * Get Complete Live Inventory State for real-time UI updates without page reload
+     */
+    public function getLiveInventoryState(?Carbon $month = null): array
+    {
+        $targetMonth = ($month ?: Carbon::now())->copy()->startOfMonth();
+        $items = InventoryItem::with(['damagedTransactions.user', 'lastActiveReceiveTransaction.user'])
+            ->orderBy('name')
+            ->get();
+
+        $formattedItems = $items->map(fn ($item) => $this->formatItemForLiveState($item))->values()->toArray();
+
+        $totalStoreStock = (int) $items->sum('store_quantity');
+        $totalLitStock = (int) $items->sum('lit_quantity');
+        $totalDamagedStock = (int) $items->sum('damaged_quantity');
+        $lowStockCount = (int) $items->where('store_quantity', '<=', 5)->count();
+        $totalUniqueItems = $items->count();
+
+        $storeValuation = (float) $items->sum(fn ($i) => $i->store_quantity * $i->selling_price);
+        $litValuation = (float) $items->sum(fn ($i) => $i->lit_quantity * $i->selling_price);
+        $damagedValuation = (float) $items->sum(fn ($i) => ($i->damaged_quantity ?? 0) * $i->selling_price);
+
+        $salesByItem = $this->getMonthlySalesByItem($targetMonth);
+        $monthlySoldTotal = array_sum($salesByItem);
+
+        $latestTxId = (int) InventoryTransaction::max('id');
+        $latestReqUpdated = LiteratureRequest::max('updated_at');
+        $stateHash = md5(json_encode([
+            $totalStoreStock,
+            $totalLitStock,
+            $totalDamagedStock,
+            $lowStockCount,
+            $totalUniqueItems,
+            $storeValuation,
+            $litValuation,
+            $monthlySoldTotal,
+            $latestTxId,
+            (string) $latestReqUpdated,
+            collect($formattedItems)->pluck('store_quantity', 'id'),
+            collect($formattedItems)->pluck('lit_quantity', 'id'),
+            collect($formattedItems)->pluck('damaged_quantity', 'id'),
+            collect($formattedItems)->pluck('selling_price', 'id'),
+        ]));
+
+        return [
+            'state_hash' => $stateHash,
+            'timestamp' => now()->timestamp,
+            'totals' => [
+                'store_stock' => $totalStoreStock,
+                'total_store_stock' => $totalStoreStock,
+                'lit_stock' => $totalLitStock,
+                'total_lit_stock' => $totalLitStock,
+                'damaged_stock' => $totalDamagedStock,
+                'total_damaged_stock' => $totalDamagedStock,
+                'low_stock_count' => $lowStockCount,
+                'total_unique_items' => $totalUniqueItems,
+                'store_valuation' => number_format($storeValuation, 2, '.', ''),
+                'lit_valuation' => number_format($litValuation, 2, '.', ''),
+                'lit_valuation_formatted' => number_format($litValuation, 2),
+                'damaged_valuation' => number_format($damagedValuation, 2, '.', ''),
+                'combined_stock' => $totalStoreStock + $totalLitStock,
+                'combined_valuation' => number_format($storeValuation + $litValuation, 2, '.', ''),
+                'monthly_sold_qty' => (int) $monthlySoldTotal,
+            ],
+            'sales_by_item' => $salesByItem,
+            'items' => $formattedItems,
         ];
     }
 }

@@ -68,21 +68,38 @@
         {{-- Header Section --}}
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
-                <h1 class="h2 text-gradient font-bold mb-0">
-                    {{ __('messages.store_lit_dashboard') }}
-                </h1>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <h1 class="h2 text-gradient font-bold mb-0">
+                        {{ __('messages.store_lit_dashboard') }}
+                    </h1>
+                    <span id="liveSyncStatusBadge" class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1 small fw-semibold">
+                        <span class="spinner-grow spinner-grow-sm text-success" style="width: 7px; height: 7px;" role="status"></span>
+                        <span id="liveSyncStatusText">{{ __('messages.live_sync_active') }}</span>
+                        <x-inventory-card-help
+                            :title="__('messages.live_sync_active')"
+                            :description="__('messages.card_help_live_sync')"
+                        />
+                    </span>
+                </div>
                 <p class="text-secondary mb-0">
                     {{ __('messages.store_lit_desc') }}
                 </p>
             </div>
-            <div>
-                <button type="button" class="btn btn-warning rounded-pill px-4 shadow-sm fw-bold text-dark me-2" data-bs-toggle="modal" data-bs-target="#quickBatchMovementModal" @if(isset($activeStocktaking) && $activeStocktaking) disabled @endif>
-                    <i class="bi bi-arrow-left-right me-1"></i>
-                    {{ __('messages.quick_stock_movement') }}
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm fw-semibold d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#keyboardShortcutsModal" title="{{ __('messages.keyboard_shortcuts_desc') }}">
+                    <i class="bi bi-keyboard"></i>
+                    <span class="d-none d-md-inline">{{ __('messages.keyboard_shortcuts') }}</span>
+                    <span class="kbd-badge ms-1">?</span>
                 </button>
-                <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#createItemModal">
+                <button type="button" id="btnOpenBatchModal" class="btn btn-warning rounded-pill px-4 shadow-sm fw-bold text-dark d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#quickBatchMovementModal" @if(isset($activeStocktaking) && $activeStocktaking) disabled @endif>
+                    <i class="bi bi-arrow-left-right me-1"></i>
+                    <span>{{ __('messages.quick_stock_movement') }}</span>
+                    <span class="kbd-badge ms-1 d-none d-sm-inline-flex">M</span>
+                </button>
+                <button type="button" id="btnOpenCreateModal" class="btn btn-primary rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#createItemModal">
                     <i class="bi bi-plus-lg me-1"></i>
-                    {{ __('messages.add_new_item') }}
+                    <span>{{ __('messages.add_new_item') }}</span>
+                    <span class="kbd-badge ms-1 bg-white text-primary border-0 d-none d-sm-inline-flex">N</span>
                 </button>
             </div>
         </div>
@@ -127,19 +144,20 @@
             </div>
         @endif
 
-        {{-- Search & Category Filter --}}
-        <div class="row g-4 mb-4">
-            <div class="col-12 col-xl-6">
+        {{-- Search & KPI Summary Cards --}}
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-xl-4">
                 <div class="card p-3 shadow-sm border-0 h-100 justify-content-center">
                     <form action="{{ route('store.index') }}" method="GET" class="row g-2 align-items-center">
                         <input type="hidden" name="category" value="{{ request('category') }}">
                         @if(request('low_stock'))
                             <input type="hidden" name="low_stock" value="1">
                         @endif
-                        <div class="col-12 col-md-9 position-relative">
-                            <input type="search" name="search" value="{{ request('search') }}" class="form-control rounded-pill bg-transparent border-secondary-subtle px-4" placeholder="{{ __('messages.Search') }}...">
+                        <div class="col-12 col-md-8 position-relative">
+                            <input type="search" id="storeSearchInput" name="search" value="{{ request('search') }}" class="form-control rounded-pill bg-transparent border-secondary-subtle px-4 pe-5" placeholder="{{ __('messages.Search') }}... ( / )">
+                            <span class="kbd-badge position-absolute top-50 translate-middle-y end-0 me-3 d-none d-md-inline-flex" style="pointer-events: none;">/</span>
                         </div>
-                        <div class="col-12 col-md-3">
+                        <div class="col-12 col-md-4">
                             <button type="submit" class="btn btn-secondary rounded-pill w-100 shadow-sm">
                                 <i class="bi bi-search me-1"></i>
                                 {{ __('messages.Search') }}
@@ -149,35 +167,71 @@
                 </div>
             </div>
             
-            <div class="col-12 col-md-4 col-xl-2">
-                <div class="card text-center p-3 border-0 bg-success-subtle text-success h-100">
+            <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                <div class="card text-center p-3 border-0 bg-success-subtle text-success h-100 position-relative">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <x-inventory-card-help
+                            :title="__('messages.total_store_stock')"
+                            :description="__('messages.card_help_total_store_stock')"
+                            :formula="__('messages.card_formula_total_store_stock')"
+                        />
+                    </div>
                     <div class="fs-4 mb-1"><i class="bi bi-box-seam"></i></div>
-                    <div class="fw-semibold">{{ __('messages.total_store_stock') }}</div>
-                    <div class="h3 mb-0 mt-2 font-bold">{{ $items->sum('store_quantity') }}</div>
+                    <div class="fw-semibold small">{{ __('messages.total_store_stock') }}</div>
+                    <div class="h3 mb-0 mt-2 font-bold" id="totalStoreStockCardVal">{{ $totalStoreStock ?? $items->sum('store_quantity') }}</div>
                 </div>
             </div>
 
-            <div class="col-12 col-md-4 col-xl-2">
-                <div class="card text-center p-3 border-0 bg-info-subtle text-info h-100">
+            <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                <div class="card text-center p-3 border-0 bg-info-subtle text-info h-100 position-relative">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <x-inventory-card-help
+                            :title="__('messages.total_lit_stock')"
+                            :description="__('messages.card_help_total_lit_stock')"
+                            :formula="__('messages.card_formula_total_lit_stock')"
+                        />
+                    </div>
                     <div class="fs-4 mb-1"><i class="bi bi-book"></i></div>
-                    <div class="fw-semibold">{{ __('messages.total_lit_stock') }}</div>
-                    <div class="h3 mb-0 mt-2 font-bold">{{ $items->sum('lit_quantity') }}</div>
+                    <div class="fw-semibold small">{{ __('messages.total_lit_stock') }}</div>
+                    <div class="h3 mb-0 mt-2 font-bold" id="totalLitStockCardVal">{{ $totalLitStock ?? $items->sum('lit_quantity') }}</div>
                 </div>
             </div>
 
-            <div class="col-12 col-md-4 col-xl-2">
-                <a href="{{ route('store.index', array_filter(array_merge(request()->query(), ['low_stock' => request('low_stock') ? null : 1]))) }}" class="text-decoration-none">
-                    <div class="card text-center p-3 {{ request('low_stock') ? 'card-low-stock-active' : 'card-low-stock-inactive' }} h-100 position-relative" style="cursor: pointer;">
+            <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                <div class="card text-center p-3 border-0 bg-danger-subtle text-danger h-100 position-relative">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <x-inventory-card-help
+                            :title="__('messages.total_damaged_stock')"
+                            :description="__('messages.card_help_total_damaged_stock')"
+                            :formula="__('messages.card_formula_total_damaged_stock')"
+                        />
+                    </div>
+                    <div class="fs-4 mb-1"><i class="bi bi-heartbreak-fill"></i></div>
+                    <div class="fw-semibold small">{{ __('messages.total_damaged_stock') }}</div>
+                    <div class="h3 mb-0 mt-2 font-bold" id="totalDamagedStockCardVal">{{ $totalDamagedStock ?? $items->sum('damaged_quantity') }}</div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3 col-xl-2">
+                <div class="card text-center p-3 {{ request('low_stock') ? 'card-low-stock-active' : 'card-low-stock-inactive' }} h-100 position-relative">
+                    <div class="position-absolute top-0 start-0 m-2" style="z-index: 3;">
+                        <x-inventory-card-help
+                            :title="__('messages.low_stock_filter')"
+                            :description="__('messages.card_help_low_stock')"
+                            :formula="__('messages.card_formula_low_stock')"
+                        />
+                    </div>
+                    <a href="{{ route('store.index', array_filter(array_merge(request()->query(), ['low_stock' => request('low_stock') ? null : 1]))) }}" class="text-decoration-none text-reset d-block h-100">
                         <div class="fs-4 mb-1"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                        <div class="fw-semibold">{{ __('messages.low_stock_filter') }}</div>
-                        <div class="h3 mb-0 mt-2 font-bold">{{ $lowStockCount ?? 0 }}</div>
+                        <div class="fw-semibold small">{{ __('messages.low_stock_filter') }}</div>
+                        <div class="h3 mb-0 mt-2 font-bold" id="lowStockCardVal">{{ $lowStockCount ?? 0 }}</div>
                         @if(request('low_stock'))
                             <span class="position-absolute top-0 end-0 m-2 badge rounded-pill bg-danger" title="Clear filter">
                                 <i class="bi bi-x-lg"></i>
                             </span>
                         @endif
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -241,6 +295,23 @@
 
         {{-- Inventory Items Table --}}
         <div class="card border-0 shadow-sm p-4">
+            {{-- Keyboard Navigation Hint Bar --}}
+            <div class="d-none d-lg-flex align-items-center justify-content-between bg-light rounded-3 px-3 py-2 mb-3 border border-secondary-subtle small text-secondary">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <span><i class="bi bi-keyboard text-primary me-1"></i><strong>{{ __('messages.keyboard_shortcuts') }}:</strong></span>
+                    <span><span class="kbd-badge">↑</span> <span class="kbd-badge">↓</span> {{ __('messages.shortcut_nav_rows') }}</span>
+                    <span><span class="kbd-badge">R</span> {{ __('messages.receive') }}</span>
+                    <span><span class="kbd-badge">T</span> {{ __('messages.btn_to_lit') }}</span>
+                    <span><span class="kbd-badge">U</span> {{ __('messages.btn_from_lit') }}</span>
+                    <span><span class="kbd-badge">D</span> {{ __('messages.mark_damaged') }}</span>
+                    <span><span class="kbd-badge">W</span> {{ __('messages.wrong_receive_btn') }}</span>
+                    <span><span class="kbd-badge">E</span> {{ __('messages.Edit') }}</span>
+                </div>
+                <button type="button" class="btn btn-link btn-sm text-primary text-decoration-none p-0 fw-semibold" data-bs-toggle="modal" data-bs-target="#keyboardShortcutsModal">
+                    {{ __('messages.shortcut_open_help') }} <span class="kbd-badge ms-1">?</span>
+                </button>
+            </div>
+
             <div class="table-responsive">
                 @php 
                     $canEditPrice = auth()->check() && (auth()->user()->hasRole('super admin') || auth()->user()->hasRole('Lit User') || auth()->user()->hasRole('Committees') || auth()->user()->can('view lit inventory')); 
@@ -290,31 +361,82 @@
                             <th class="text-center" style="min-width: 95px;">+ {{ __('messages.received_quantity') ?? 'Rec. Qty' }}</th>
                             <th class="text-center" style="min-width: 95px;">{{ $transferArrow }} {{ __('messages.transfer_to_lit') ?? 'Trans. Qty' }}</th>
                             <th class="text-center sortable-header">
-                                <a href="{{ $sortUrl('store_quantity') }}" class="text-decoration-none text-dark d-inline-flex align-items-center justify-content-center fw-bold">
-                                    {{ __('messages.store_qty') }}
-                                    @if($currentSort === 'store_quantity')
-                                        <i class="bi bi-sort-numeric-{{ $currentDir === 'asc' ? 'down' : 'down-alt' }} text-primary ms-1"></i>
-                                    @else
-                                        <i class="bi bi-arrow-down-up text-muted opacity-50 ms-1 small"></i>
-                                    @endif
-                                </a>
+                                <div class="d-inline-flex align-items-center justify-content-center gap-1">
+                                    <a href="{{ $sortUrl('store_quantity') }}" class="text-decoration-none text-dark d-inline-flex align-items-center fw-bold">
+                                        {{ __('messages.store_qty') }}
+                                        @if($currentSort === 'store_quantity')
+                                            <i class="bi bi-sort-numeric-{{ $currentDir === 'asc' ? 'down' : 'down-alt' }} text-primary ms-1"></i>
+                                        @else
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50 ms-1 small"></i>
+                                        @endif
+                                    </a>
+                                    <x-inventory-card-help
+                                        :title="__('messages.store_qty')"
+                                        :description="__('messages.card_help_total_store_stock')"
+                                        :formula="__('messages.card_formula_total_store_stock')"
+                                    />
+                                </div>
                             </th>
                             <th class="text-center sortable-header">
-                                <a href="{{ $sortUrl('lit_quantity') }}" class="text-decoration-none text-dark d-inline-flex align-items-center justify-content-center fw-bold">
-                                    {{ __('messages.lit_qty') }}
-                                    @if($currentSort === 'lit_quantity')
-                                        <i class="bi bi-sort-numeric-{{ $currentDir === 'asc' ? 'down' : 'down-alt' }} text-primary ms-1"></i>
-                                    @else
-                                        <i class="bi bi-arrow-down-up text-muted opacity-50 ms-1 small"></i>
-                                    @endif
-                                </a>
+                                <div class="d-inline-flex align-items-center justify-content-center gap-1">
+                                    <a href="{{ $sortUrl('lit_quantity') }}" class="text-decoration-none text-dark d-inline-flex align-items-center fw-bold">
+                                        {{ __('messages.lit_qty') }}
+                                        @if($currentSort === 'lit_quantity')
+                                            <i class="bi bi-sort-numeric-{{ $currentDir === 'asc' ? 'down' : 'down-alt' }} text-primary ms-1"></i>
+                                        @else
+                                            <i class="bi bi-arrow-down-up text-muted opacity-50 ms-1 small"></i>
+                                        @endif
+                                    </a>
+                                    <x-inventory-card-help
+                                        :title="__('messages.lit_qty')"
+                                        :description="__('messages.card_help_total_lit_stock')"
+                                        :formula="__('messages.card_formula_total_lit_stock')"
+                                    />
+                                </div>
                             </th>
-                            <th class="text-center" style="min-width: 140px;">{{ __('messages.Actions') }}</th>
+                            <th class="text-center" style="min-width: 110px;">
+                                <div class="d-inline-flex align-items-center justify-content-center gap-1 fw-bold text-dark">
+                                    <span>{{ __('messages.damaged_qty') }}</span>
+                                    <x-inventory-card-help
+                                        :title="__('messages.damaged_qty')"
+                                        :description="__('messages.card_help_total_damaged_stock')"
+                                        :formula="__('messages.card_formula_total_damaged_stock')"
+                                    />
+                                </div>
+                            </th>
+                            <th class="text-center" style="min-width: 195px;">{{ __('messages.Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($items as $item)
-                            <tr class="inventory-row" data-row-id="{{ $item->id }}">
+                            @php
+                                $lastRecTx = $item->lastActiveReceiveTransaction;
+                                $lastRecJson = $lastRecTx ? [
+                                    'id' => $lastRecTx->id,
+                                    'quantity' => (int) $lastRecTx->quantity,
+                                    'notes' => $lastRecTx->notes,
+                                    'created_at' => $lastRecTx->created_at ? $lastRecTx->created_at->format('Y-m-d H:i') : '',
+                                    'user_name' => $lastRecTx->user->name ?? 'System',
+                                ] : null;
+
+                                $damageNotesHtml = '';
+                                if ($item->relationLoaded('damagedTransactions') && $item->damagedTransactions->isNotEmpty()) {
+                                    $damageNotesHtml = '<div class="inv-help-popover-body"><div class="inv-help-popover-title"><i class="bi bi-heartbreak-fill text-danger"></i>' . e(__('messages.damage_notes_history')) . '</div><ul class="list-unstyled mb-0 small">';
+                                    foreach ($item->damagedTransactions->take(5) as $dTx) {
+                                        $srcLabel = ($dTx->source_location === 'lit') ? __('messages.damage_source_lit') : __('messages.damage_source_store');
+                                        $damageNotesHtml .= '<li class="mb-2 pb-1 border-bottom border-light"><div class="d-flex justify-content-between fw-bold text-danger"><span>-' . (int) $dTx->quantity . ' (' . e($srcLabel) . ')</span><span class="text-muted fw-normal" style="font-size:0.7rem;">' . e($dTx->created_at ? $dTx->created_at->format('Y-m-d H:i') : '') . '</span></div><div class="text-dark mt-1">' . e($dTx->notes) . '</div><div class="text-muted" style="font-size:0.7rem;">' . e($dTx->user->name ?? 'System') . '</div></li>';
+                                    }
+                                    $damageNotesHtml .= '</ul></div>';
+                                }
+                            @endphp
+                            <tr class="inventory-row" 
+                                data-row-id="{{ $item->id }}"
+                                data-item-name="{{ $item->store_display_name }}"
+                                data-store-qty="{{ $item->store_quantity }}"
+                                data-lit-qty="{{ $item->lit_quantity }}"
+                                data-damaged-qty="{{ (int) ($item->damaged_quantity ?? 0) }}"
+                                data-last-receive-tx='@json($lastRecJson)'
+                                tabindex="0">
                                 <td>
                                     <input type="checkbox" class="form-check-input item-checkbox" 
                                            data-id="{{ $item->id }}" 
@@ -323,15 +445,15 @@
                                            data-lit-qty="{{ $item->lit_quantity }}">
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">{{ $item->store_display_name }}</div>
+                                    <div class="fw-bold text-dark item-display-name">{{ $item->store_display_name }}</div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1 item-category-badge">
                                         {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $item->category))) }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="text-secondary small">{{ Str::limit($item->description, 60) ?: '-' }}</span>
+                                    <span class="text-secondary small item-description-text">{{ Str::limit($item->description, 60) ?: '-' }}</span>
                                 </td>
                                 <td class="text-end">
                                     {{-- Read mode price --}}
@@ -409,6 +531,29 @@
                                         </span>
                                     @endif
                                 </td>
+                                <td class="text-center damaged-qty-container" id="damaged-qty-container-{{ $item->id }}">
+                                    @if ((int) ($item->damaged_quantity ?? 0) > 0)
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-1"
+                                              @if($damageNotesHtml)
+                                              tabindex="0"
+                                              data-bs-toggle="popover"
+                                              data-bs-trigger="hover focus click"
+                                              data-bs-placement="top"
+                                              data-bs-html="true"
+                                              data-bs-custom-class="inv-help-popover"
+                                              data-bs-content="{{ $damageNotesHtml }}"
+                                              style="cursor: pointer;"
+                                              @endif>
+                                            <i class="bi bi-heartbreak-fill"></i>
+                                            <span class="damaged-qty-val">{{ (int) $item->damaged_quantity }}</span>
+                                            @if($damageNotesHtml)
+                                                <i class="bi bi-chat-left-text-fill ms-1 small opacity-75"></i>
+                                            @endif
+                                        </span>
+                                    @else
+                                        <span class="text-muted small damaged-qty-val">0</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center gap-1">
                                         {{-- Read mode actions --}}
@@ -416,25 +561,40 @@
                                              <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-2 py-0 fw-bold btn-row-quick-receive" 
                                                      data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}"
                                                      data-bs-toggle="modal" data-bs-target="#receiveModal"
-                                                     title="{{ __('messages.receive') }}" style="font-size: 0.75rem;">
+                                                     title="{{ __('messages.receive') }} (R)" style="font-size: 0.75rem;">
                                                  {{ __('messages.btn_rec') }}
                                              </button>
                                              <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0 fw-bold btn-row-quick-transfer" 
                                                      data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-store-qty="{{ $item->store_quantity }}"
                                                      data-bs-toggle="modal" data-bs-target="#transferModal"
-                                                     title="{{ __('messages.transfer_to_lit') }}" style="font-size: 0.75rem;">
+                                                     title="{{ __('messages.transfer_to_lit') }} (T)" style="font-size: 0.75rem;">
                                                  {{ __('messages.btn_to_lit') }}
                                              </button>
                                              <button type="button" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-2 py-0 fw-bold btn-row-quick-return" 
                                                      data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-lit-qty="{{ $item->lit_quantity }}"
                                                      data-bs-toggle="modal" data-bs-target="#returnModal"
-                                                     title="{{ __('messages.return_from_lit') }}" style="font-size: 0.75rem;">
+                                                     title="{{ __('messages.return_from_lit') }} (U)" style="font-size: 0.75rem;">
                                                  {{ __('messages.btn_from_lit') }}
                                              </button>
-                                             <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle btn-quick-edit shadow-sm ms-1" 
-                                                     data-id="{{ $item->id }}" title="{{ __('messages.Edit') }}" 
+                                             <button type="button" class="btn btn-sm btn-outline-danger rounded-circle btn-row-damage shadow-sm" 
+                                                     data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}"
+                                                     data-store-qty="{{ $item->store_quantity }}" data-lit-qty="{{ $item->lit_quantity }}"
+                                                     data-bs-toggle="modal" data-bs-target="#damageModal"
+                                                     title="{{ __('messages.mark_damaged') }} (D)" 
                                                      style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
-                                                 <i class="bi bi-pencil-fill" style="font-size: 0.75rem;"></i>
+                                                 <i class="bi bi-heartbreak-fill" style="font-size: 0.72rem;"></i>
+                                             </button>
+                                             <button type="button" class="btn btn-sm btn-outline-dark rounded-circle btn-row-wrong-receive shadow-sm {{ !$lastRecJson ? 'opacity-50' : '' }}" 
+                                                     data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}"
+                                                     data-bs-toggle="modal" data-bs-target="#wrongReceiveModal"
+                                                     title="{{ __('messages.wrong_receive_entry') }} (W)" 
+                                                     style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                                                 <i class="bi bi-arrow-counterclockwise" style="font-size: 0.78rem;"></i>
+                                             </button>
+                                             <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle btn-quick-edit shadow-sm" 
+                                                     data-id="{{ $item->id }}" title="{{ __('messages.Edit') }} (E)" 
+                                                     style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                                                 <i class="bi bi-pencil-fill" style="font-size: 0.72rem;"></i>
                                              </button>
                                         </div>
 
@@ -459,38 +619,59 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded-3">
                                                 <li>
-                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-success py-2" 
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-success py-2" 
                                                             data-bs-toggle="modal" data-bs-target="#receiveModal"
                                                             data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}">
-                                                        <i class="bi bi-plus-circle-fill"></i>{{ __('messages.receive') }}
+                                                        <span><i class="bi bi-plus-circle-fill me-2"></i>{{ __('messages.receive') }}</span>
+                                                        <span class="kbd-badge">R</span>
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-primary py-2" 
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-primary py-2 dropdown-transfer-btn" 
                                                             data-bs-toggle="modal" data-bs-target="#transferModal"
                                                             data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-store-qty="{{ $item->store_quantity }}">
-                                                        <i class="bi {{ $transferIcon }}"></i>{{ __('messages.transfer_to_lit') }}
+                                                        <span><i class="bi {{ $transferIcon }} me-2"></i>{{ __('messages.transfer_to_lit') }}</span>
+                                                        <span class="kbd-badge">T</span>
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-warning-emphasis py-2" 
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-warning-emphasis py-2 dropdown-return-btn" 
                                                             data-bs-toggle="modal" data-bs-target="#returnModal"
                                                             data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}" data-lit-qty="{{ $item->lit_quantity }}">
-                                                        <i class="bi {{ $returnIcon }}"></i>{{ __('messages.return_from_lit') }}
+                                                        <span><i class="bi {{ $returnIcon }} me-2"></i>{{ __('messages.return_from_lit') }}</span>
+                                                        <span class="kbd-badge">U</span>
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-danger py-2 dropdown-damage-btn" 
+                                                            data-bs-toggle="modal" data-bs-target="#damageModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}"
+                                                            data-store-qty="{{ $item->store_quantity }}" data-lit-qty="{{ $item->lit_quantity }}">
+                                                        <span><i class="bi bi-heartbreak-fill me-2"></i>{{ __('messages.mark_damaged') }}</span>
+                                                        <span class="kbd-badge">D</span>
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-dark py-2 dropdown-wrong-receive-btn" 
+                                                            data-bs-toggle="modal" data-bs-target="#wrongReceiveModal"
+                                                            data-id="{{ $item->id }}" data-name="{{ $item->store_display_name }}">
+                                                        <span><i class="bi bi-arrow-counterclockwise me-2 text-warning-emphasis"></i>{{ __('messages.wrong_receive_entry') }}</span>
+                                                        <span class="kbd-badge">W</span>
                                                     </button>
                                                 </li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
-                                                    <button type="button" class="dropdown-item d-flex align-items-center gap-2 text-dark py-2" 
+                                                    <button type="button" class="dropdown-item d-flex align-items-center justify-content-between gap-2 text-dark py-2 dropdown-edit-btn" 
                                                             data-bs-toggle="modal" data-bs-target="#editModal"
                                                             data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-name-en="{{ $item->name_en }}"
                                                             data-category="{{ $item->category }}" data-price="{{ $item->selling_price }}"
                                                             data-description="{{ $item->description }}">
-                                                        <i class="bi bi-pencil-fill text-secondary"></i>{{ __('messages.Edit') ?? 'Edit' }}
+                                                        <span><i class="bi bi-pencil-fill text-secondary me-2"></i>{{ __('messages.Edit') ?? 'Edit' }}</span>
+                                                        <span class="kbd-badge">E</span>
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <form action="{{ route('store.destroy', $item->id) }}" method="POST" onsubmit="return confirm('{{ __('messages.confirm_delete_item') }}')">
+                                                    <form action="{{ route('store.destroy', $item->id) }}" method="POST" class="item-delete-form" data-id="{{ $item->id }}">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger py-2">
@@ -505,7 +686,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-secondary py-5">
+                                <td colspan="11" class="text-center text-secondary py-5">
                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                     {{ __('messages.no_items_found') }}
                                 </td>
@@ -938,6 +1119,98 @@
         </div>
     </div>
 
+    {{-- Mark Damaged Modal --}}
+    <div class="modal fade" id="damageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4" id="damageModalForm">
+                @csrf
+                <div class="modal-header border-0 bg-danger-subtle text-danger">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-heartbreak-fill me-2"></i>{{ __('messages.mark_damaged_title', ['name' => '']) }}<span class="modal-title-name"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.damage_source_label') }}</label>
+                        <select name="source_location" id="damageSourceSelect" class="form-select rounded-3 fw-semibold">
+                            <option value="store" selected>{{ __('messages.damage_source_store') }} (<span id="damageStoreBalanceText">0</span>)</option>
+                            <option value="lit">{{ __('messages.damage_source_lit') }} (<span id="damageLitBalanceText">0</span>)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.damaged_quantity_input') }}</label>
+                        <input type="number" name="quantity" id="damageQuantityInput" min="1" required class="form-control rounded-3" placeholder="e.g. 2">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('messages.damage_note_label') }} <span class="text-danger">*</span></label>
+                        <textarea name="notes" id="damageNotesInput" required class="form-control rounded-3" rows="3" placeholder="{{ __('messages.damage_note_placeholder') }}"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold">
+                        <i class="bi bi-heartbreak-fill me-1"></i>{{ __('messages.confirm_damaged') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Wrong Receive Entry Cancellation Modal --}}
+    <div class="modal fade" id="wrongReceiveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="" method="POST" class="modal-content border-0 shadow-lg rounded-4" id="wrongReceiveModalForm">
+                @csrf
+                <input type="hidden" name="transaction_id" id="wrongReceiveTxIdInput" value="">
+                <div class="modal-header border-0 bg-warning-subtle text-warning-emphasis">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>{{ __('messages.wrong_receive_title', ['name' => '']) }}<span class="modal-title-name"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-secondary small mb-3">
+                        {{ __('messages.wrong_receive_desc') }}
+                    </p>
+                    <div id="wrongReceiveTxDetailsBox" class="alert alert-light border border-warning-subtle rounded-3 p-3 mb-3">
+                        <div class="fw-bold text-dark small mb-2">
+                            <i class="bi bi-clock-history text-warning-emphasis me-1"></i>{{ __('messages.last_receive_details') }}
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-secondary">{{ __('messages.received_quantity') }}:</span>
+                            <span class="badge bg-success-subtle text-success fw-bold" id="wrongReceiveTxQtyBadge">+0</span>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-secondary">{{ __('messages.Date') ?? 'Date' }}:</span>
+                            <span class="fw-semibold text-dark" id="wrongReceiveTxDateText">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-secondary">{{ __('messages.Notes') }}:</span>
+                            <span class="text-muted text-truncate ms-2" style="max-width: 220px;" id="wrongReceiveTxNotesText">-</span>
+                        </div>
+                    </div>
+                    <div id="wrongReceiveEmptyAlert" class="alert alert-secondary border-0 rounded-3 p-3 mb-3 d-none small">
+                        <i class="bi bi-info-circle me-1"></i>{{ __('messages.no_active_receive_found') }}
+                    </div>
+                    <div class="mb-2" id="wrongReceiveReasonGroup">
+                        <label class="form-label fw-semibold">{{ __('messages.wrong_receive_reason_label') }}</label>
+                        <textarea name="reason" id="wrongReceiveReasonInput" class="form-control rounded-3" rows="2" placeholder="{{ __('messages.wrong_receive_reason_placeholder') }}"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
+                    <button type="submit" id="btnConfirmWrongReceive" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-arrow-repeat me-1"></i>{{ __('messages.confirm_cancel_and_reenter') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Keyboard Shortcuts Legend Modal --}}
+    <x-inventory-shortcuts-modal mode="store" />
+
     {{-- Hidden form for Bulk Delete --}}
     <form id="bulkDeleteForm" action="{{ route('store.bulk_delete') }}" method="POST" class="d-none">
         @csrf
@@ -945,19 +1218,71 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const csrfToken = '{{ csrf_token() }}';
+            const liveStateUrl = '{{ route("inventory.live_state") }}';
+            let currentStateHash = null;
+            let focusedRowIndex = -1;
+
+            // Cross-tab BroadcastChannel for instant zero-reload updates across open tabs
+            const inventoryChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('na_egypt_inventory_live') : null;
+            if (inventoryChannel) {
+                inventoryChannel.addEventListener('message', function (event) {
+                    if (event.data && event.data.live_state) {
+                        applyLiveState(event.data.live_state, true);
+                    }
+                });
+            }
+
+            function broadcastLiveState(liveState) {
+                if (inventoryChannel && liveState) {
+                    try {
+                        inventoryChannel.postMessage({ live_state: liveState });
+                    } catch (e) {}
+                }
+            }
+
+            // Helper to open Receive modal programmatically for a specific item ID
+            function openReceiveModalForItem(itemId) {
+                const row = document.querySelector(`.inventory-row[data-row-id="${itemId}"]`);
+                const receiveModalEl = document.getElementById('receiveModal');
+                if (!receiveModalEl) return;
+
+                const itemName = row ? (row.getAttribute('data-item-name') || '') : '';
+                const form = receiveModalEl.querySelector('form');
+                form.action = "{{ route('store.receive', ':id') }}".replace(':id', itemId);
+                form.reset();
+
+                const titleName = receiveModalEl.querySelector('.modal-title-name');
+                if (titleName) titleName.textContent = itemName;
+
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(receiveModalEl);
+                modalInstance.show();
+
+                setTimeout(() => {
+                    const qtyInput = receiveModalEl.querySelector('input[name="quantity"]');
+                    if (qtyInput) qtyInput.focus();
+                }, 250);
+            }
+
             // Reusable Receive Modal Setup
             const receiveModal = document.getElementById('receiveModal');
             if (receiveModal) {
                 receiveModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return;
                     const id = button.getAttribute('data-id');
                     const name = button.getAttribute('data-name');
                     
                     const form = receiveModal.querySelector('form');
                     form.action = "{{ route('store.receive', ':id') }}".replace(':id', id);
+                    form.reset();
                     
                     const titleName = receiveModal.querySelector('.modal-title-name');
                     if (titleName) titleName.textContent = name;
+                });
+                receiveModal.addEventListener('shown.bs.modal', function () {
+                    const qtyInput = receiveModal.querySelector('input[name="quantity"]');
+                    if (qtyInput) qtyInput.focus();
                 });
             }
 
@@ -966,12 +1291,15 @@
             if (transferModal) {
                 transferModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return;
                     const id = button.getAttribute('data-id');
                     const name = button.getAttribute('data-name');
-                    const storeQty = button.getAttribute('data-store-qty');
+                    const row = document.querySelector(`.inventory-row[data-row-id="${id}"]`);
+                    const storeQty = row ? row.getAttribute('data-store-qty') : button.getAttribute('data-store-qty');
                     
                     const form = transferModal.querySelector('form');
                     form.action = "{{ route('store.transfer', ':id') }}".replace(':id', id);
+                    form.reset();
                     
                     const titleName = transferModal.querySelector('.modal-title-name');
                     if (titleName) titleName.textContent = name;
@@ -984,6 +1312,10 @@
                         qtyInput.max = storeQty;
                     }
                 });
+                transferModal.addEventListener('shown.bs.modal', function () {
+                    const qtyInput = transferModal.querySelector('input[name="quantity"]');
+                    if (qtyInput) qtyInput.focus();
+                });
             }
 
             // Reusable Return Modal Setup
@@ -991,12 +1323,15 @@
             if (returnModal) {
                 returnModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return;
                     const id = button.getAttribute('data-id');
                     const name = button.getAttribute('data-name');
-                    const litQty = button.getAttribute('data-lit-qty');
+                    const row = document.querySelector(`.inventory-row[data-row-id="${id}"]`);
+                    const litQty = row ? row.getAttribute('data-lit-qty') : button.getAttribute('data-lit-qty');
                     
                     const form = returnModal.querySelector('form');
                     form.action = "{{ route('store.return', ':id') }}".replace(':id', id);
+                    form.reset();
                     
                     const titleName = returnModal.querySelector('.modal-title-name');
                     if (titleName) titleName.textContent = name;
@@ -1009,6 +1344,111 @@
                         qtyInput.max = litQty;
                     }
                 });
+                returnModal.addEventListener('shown.bs.modal', function () {
+                    const qtyInput = returnModal.querySelector('input[name="quantity"]');
+                    if (qtyInput) qtyInput.focus();
+                });
+            }
+
+            // Reusable Damage Modal Setup
+            const damageModal = document.getElementById('damageModal');
+            const damageSourceSelect = document.getElementById('damageSourceSelect');
+            const damageQuantityInput = document.getElementById('damageQuantityInput');
+            if (damageModal) {
+                damageModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    if (!button) return;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const row = document.querySelector(`.inventory-row[data-row-id="${id}"]`);
+                    const storeQty = parseInt(row ? row.getAttribute('data-store-qty') : (button.getAttribute('data-store-qty') || 0), 10);
+                    const litQty = parseInt(row ? row.getAttribute('data-lit-qty') : (button.getAttribute('data-lit-qty') || 0), 10);
+
+                    const form = damageModal.querySelector('form');
+                    form.action = "{{ route('store.damage', ':id') }}".replace(':id', id);
+                    form.reset();
+
+                    const titleName = damageModal.querySelector('.modal-title-name');
+                    if (titleName) titleName.textContent = name;
+
+                    damageModal.setAttribute('data-store-qty', storeQty);
+                    damageModal.setAttribute('data-lit-qty', litQty);
+
+                    const storeOpt = damageSourceSelect.querySelector('option[value="store"]');
+                    const litOpt = damageSourceSelect.querySelector('option[value="lit"]');
+                    if (storeOpt) storeOpt.textContent = `{{ __('messages.damage_source_store') }} (${storeQty})`;
+                    if (litOpt) litOpt.textContent = `{{ __('messages.damage_source_lit') }} (${litQty})`;
+
+                    damageSourceSelect.value = storeQty > 0 ? 'store' : (litQty > 0 ? 'lit' : 'store');
+                    if (damageQuantityInput) {
+                        damageQuantityInput.max = damageSourceSelect.value === 'lit' ? litQty : storeQty;
+                    }
+                });
+                damageModal.addEventListener('shown.bs.modal', function () {
+                    if (damageQuantityInput) damageQuantityInput.focus();
+                });
+                if (damageSourceSelect) {
+                    damageSourceSelect.addEventListener('change', function () {
+                        const storeQty = parseInt(damageModal.getAttribute('data-store-qty') || 0, 10);
+                        const litQty = parseInt(damageModal.getAttribute('data-lit-qty') || 0, 10);
+                        if (damageQuantityInput) {
+                            damageQuantityInput.max = this.value === 'lit' ? litQty : storeQty;
+                        }
+                    });
+                }
+            }
+
+            // Reusable Wrong Receive Modal Setup
+            const wrongReceiveModal = document.getElementById('wrongReceiveModal');
+            if (wrongReceiveModal) {
+                wrongReceiveModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    if (!button) return;
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const row = document.querySelector(`.inventory-row[data-row-id="${id}"]`);
+
+                    const form = wrongReceiveModal.querySelector('form');
+                    form.action = "{{ route('store.cancel_wrong_receive', ':id') }}".replace(':id', id);
+                    form.reset();
+
+                    const titleName = wrongReceiveModal.querySelector('.modal-title-name');
+                    if (titleName) titleName.textContent = name;
+
+                    let lastTx = null;
+                    if (row && row.getAttribute('data-last-receive-tx')) {
+                        try {
+                            lastTx = JSON.parse(row.getAttribute('data-last-receive-tx'));
+                        } catch (e) {}
+                    }
+
+                    const detailsBox = document.getElementById('wrongReceiveTxDetailsBox');
+                    const emptyAlert = document.getElementById('wrongReceiveEmptyAlert');
+                    const reasonGroup = document.getElementById('wrongReceiveReasonGroup');
+                    const confirmBtn = document.getElementById('btnConfirmWrongReceive');
+                    const txIdInput = document.getElementById('wrongReceiveTxIdInput');
+
+                    if (lastTx && lastTx.id) {
+                        detailsBox.classList.remove('d-none');
+                        emptyAlert.classList.add('d-none');
+                        reasonGroup.classList.remove('d-none');
+                        confirmBtn.disabled = false;
+                        txIdInput.value = lastTx.id;
+                        document.getElementById('wrongReceiveTxQtyBadge').textContent = '+' + lastTx.quantity;
+                        document.getElementById('wrongReceiveTxDateText').textContent = (lastTx.created_at || '') + (lastTx.user_name ? ' (' + lastTx.user_name + ')' : '');
+                        document.getElementById('wrongReceiveTxNotesText').textContent = lastTx.notes || '-';
+                    } else {
+                        detailsBox.classList.add('d-none');
+                        emptyAlert.classList.remove('d-none');
+                        reasonGroup.classList.add('d-none');
+                        confirmBtn.disabled = true;
+                        txIdInput.value = '';
+                    }
+                });
+                wrongReceiveModal.addEventListener('shown.bs.modal', function () {
+                    const reasonInput = document.getElementById('wrongReceiveReasonInput');
+                    if (reasonInput && !reasonInput.closest('.d-none')) reasonInput.focus();
+                });
             }
 
             // Reusable Edit Modal Setup
@@ -1016,6 +1456,7 @@
             if (editModal) {
                 editModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return;
                     const id = button.getAttribute('data-id');
                     const name = button.getAttribute('data-name');
                     const nameEn = button.getAttribute('data-name-en');
@@ -1036,12 +1477,15 @@
 
             // Bulk Actions logic
             const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.item-checkbox');
             const bulkToolbar = document.getElementById('bulkActionsToolbar');
             const selectedCountSpan = document.getElementById('selectedCount');
 
+            function getAllCheckboxes() {
+                return Array.from(document.querySelectorAll('.item-checkbox'));
+            }
+
             function getSelectedCheckboxes() {
-                return Array.from(checkboxes).filter(cb => cb.checked);
+                return getAllCheckboxes().filter(cb => cb.checked);
             }
 
             function updateBulkToolbar() {
@@ -1056,22 +1500,23 @@
 
             if (selectAll) {
                 selectAll.addEventListener('change', function() {
-                    checkboxes.forEach(cb => {
+                    getAllCheckboxes().forEach(cb => {
                         cb.checked = selectAll.checked;
                     });
                     updateBulkToolbar();
                 });
             }
 
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    if (!this.checked) {
-                        selectAll.checked = false;
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('item-checkbox')) {
+                    const checkboxes = getAllCheckboxes();
+                    if (!e.target.checked) {
+                        if (selectAll) selectAll.checked = false;
                     } else if (getSelectedCheckboxes().length === checkboxes.length) {
-                        selectAll.checked = true;
+                        if (selectAll) selectAll.checked = true;
                     }
                     updateBulkToolbar();
-                });
+                }
             });
 
             // Populate Bulk Receive Modal
@@ -1150,7 +1595,7 @@
                 });
             }
 
-            // Bulk Delete handler
+            // Bulk Delete handler (Zero-reload AJAX)
             const btnBulkDelete = document.getElementById('btnBulkDelete');
             if (btnBulkDelete) {
                 btnBulkDelete.addEventListener('click', function() {
@@ -1158,22 +1603,152 @@
                     if (selected.length === 0) return;
                     
                     if (confirm("{{ __('messages.confirm_bulk_delete') }}")) {
-                        const form = document.getElementById('bulkDeleteForm');
-                        // Remove old inputs if any
-                        form.querySelectorAll('input[name="ids[]"]').forEach(el => el.remove());
-                        
-                        selected.forEach(cb => {
-                            const id = cb.getAttribute('data-id');
-                            const input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = 'ids[]';
-                            input.value = id;
-                            form.appendChild(input);
-                        });
-                        form.submit();
+                        const ids = selected.map(cb => cb.getAttribute('data-id'));
+                        fetch("{{ route('store.bulk_delete') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            body: JSON.stringify({ ids: ids })
+                        })
+                        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                        .then(({ status, body }) => {
+                            if (status >= 200 && status < 300 && body.success) {
+                                ids.forEach(id => {
+                                    const row = document.querySelector(`.inventory-row[data-row-id="${id}"]`);
+                                    if (row) row.remove();
+                                });
+                                if (selectAll) selectAll.checked = false;
+                                updateBulkToolbar();
+                                if (body.live_state) {
+                                    applyLiveState(body.live_state, true);
+                                    broadcastLiveState(body.live_state);
+                                }
+                                showToast(body.message, 'success');
+                            } else {
+                                showToast(body.message || 'Error deleting items.', 'danger');
+                            }
+                        })
+                        .catch(() => showToast('Network error occurred.', 'danger'));
                     }
                 });
             }
+
+            // Single Item Delete Form (Zero-reload AJAX)
+            document.addEventListener('submit', function(e) {
+                const delForm = e.target.closest('.item-delete-form');
+                if (!delForm) return;
+                e.preventDefault();
+                if (!confirm("{{ __('messages.confirm_delete_item') }}")) return;
+
+                const itemId = delForm.getAttribute('data-id');
+                fetch(delForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: new FormData(delForm)
+                })
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status >= 200 && status < 300 && body.success) {
+                        const row = document.querySelector(`.inventory-row[data-row-id="${itemId}"]`);
+                        if (row) row.remove();
+                        updateBulkToolbar();
+                        if (body.live_state) {
+                            applyLiveState(body.live_state, true);
+                            broadcastLiveState(body.live_state);
+                        }
+                        showToast(body.message, 'success');
+                    } else {
+                        showToast(body.message || 'Failed to delete item.', 'danger');
+                    }
+                })
+                .catch(() => showToast('Network error occurred.', 'danger'));
+            });
+
+            // Intercept Modal Forms for Zero-Reload Live Updates
+            const ajaxModalIds = [
+                'receiveModal',
+                'transferModal',
+                'returnModal',
+                'damageModal',
+                'wrongReceiveModal',
+                'editModal',
+                'createItemModal',
+                'bulkReceiveModal',
+                'bulkTransferModal',
+                'bulkReturnModal'
+            ];
+
+            ajaxModalIds.forEach(modalId => {
+                const modalEl = document.getElementById(modalId);
+                if (!modalEl) return;
+                const form = modalEl.querySelector('form');
+                if (!form) return;
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>';
+                    }
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: new FormData(form)
+                    })
+                    .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                    .then(({ status, body }) => {
+                        if (status >= 200 && status < 300 && body.success) {
+                            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                            if (modalInstance) modalInstance.hide();
+
+                            if (body.live_state) {
+                                applyLiveState(body.live_state, true);
+                                broadcastLiveState(body.live_state);
+                            } else if (body.item) {
+                                const row = document.querySelector(`.inventory-row[data-row-id="${body.item.id}"]`);
+                                if (row) updateRowDisplayData(row, body.item, true);
+                            }
+
+                            showToast(body.message || "{{ __('messages.item_updated_success') }}", 'success');
+
+                            // If cancelling a wrong receive, immediately start a new receive for that item!
+                            if (body.start_new_receive_item_id) {
+                                setTimeout(() => {
+                                    openReceiveModalForItem(body.start_new_receive_item_id);
+                                }, 300);
+                            }
+                        } else {
+                            let errMsg = body.message || 'Validation error occurred.';
+                            if (body.errors) {
+                                const firstErr = Object.values(body.errors)[0];
+                                if (Array.isArray(firstErr) && firstErr.length > 0) errMsg = firstErr[0];
+                            }
+                            showToast(errMsg, 'danger');
+                        }
+                    })
+                    .catch(() => {
+                        showToast('Failed to process request.', 'danger');
+                    })
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = origBtnHtml;
+                        }
+                    });
+                });
+            });
 
             // --- Inline Edit Toggle & Real-time Validation System ---
 
@@ -1186,6 +1761,8 @@
                     readFields.forEach(el => el.classList.add('d-none'));
                     editFields.forEach(el => el.classList.remove('d-none'));
                     validateRowInputs(row);
+                    const recInput = row.querySelector('.inline-receive-input');
+                    if (recInput) recInput.focus();
                 } else {
                     row.classList.remove('is-editing', 'table-warning');
                     readFields.forEach(el => el.classList.remove('d-none'));
@@ -1270,7 +1847,7 @@
                 }
             });
 
-            // Keyboard navigation handler (Enter to Save, Esc to Cancel)
+            // Keyboard navigation handler inside inline inputs (Enter to Save, Esc to Cancel)
             document.addEventListener('keydown', function(e) {
                 if (e.target.matches('.inline-price-input, .inline-receive-input, .inline-transfer-input')) {
                     const row = e.target.closest('tr');
@@ -1332,21 +1909,26 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': csrfToken
                     },
                     body: JSON.stringify(payload)
                 })
                 .then(response => response.json().then(data => ({ status: response.status, body: data })))
                 .then(({ status, body }) => {
                     if (status >= 200 && status < 300 && body.success) {
-                        updateRowDisplayData(row, body.item);
                         toggleRowEditMode(row, false);
+                        if (body.live_state) {
+                            applyLiveState(body.live_state, true);
+                            broadcastLiveState(body.live_state);
+                        } else if (body.item) {
+                            updateRowDisplayData(row, body.item, true);
+                        }
                         showToast(body.message || "{{ __('messages.item_updated_success') }}", 'success');
                     } else {
                         showToast(body.message || 'An error occurred.', 'danger');
                     }
                 })
-                .catch(err => {
+                .catch(() => {
                     showToast('Failed to save changes.', 'danger');
                 })
                 .finally(() => {
@@ -1427,27 +2009,30 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': csrfToken
                         },
                         body: JSON.stringify({ items: itemsPayload })
                     })
                     .then(response => response.json().then(data => ({ status: response.status, body: data })))
                     .then(({ status, body }) => {
                         if (status >= 200 && status < 300 && body.success) {
-                            (body.updated_items || []).forEach(itemData => {
-                                const row = document.querySelector(`.inventory-row[data-row-id="${itemData.id}"]`);
-                                if (row) {
-                                    updateRowDisplayData(row, itemData);
-                                    toggleRowEditMode(row, false);
-                                }
-                            });
+                            editingRows.forEach(row => toggleRowEditMode(row, false));
+                            if (body.live_state) {
+                                applyLiveState(body.live_state, true);
+                                broadcastLiveState(body.live_state);
+                            } else {
+                                (body.updated_items || []).forEach(itemData => {
+                                    const row = document.querySelector(`.inventory-row[data-row-id="${itemData.id}"]`);
+                                    if (row) updateRowDisplayData(row, itemData, true);
+                                });
+                            }
                             if (bulkEditBar) bulkEditBar.classList.add('d-none');
                             showToast(body.message || 'Bulk update completed successfully', 'success');
                         } else {
                             showToast(body.message || 'An error occurred during bulk update.', 'danger');
                         }
                     })
-                    .catch(err => {
+                    .catch(() => {
                         showToast('Failed to save bulk changes.', 'danger');
                     })
                     .finally(() => {
@@ -1457,42 +2042,190 @@
                 });
             }
 
-            function updateRowDisplayData(row, itemData) {
-                // Update price read display
-                const priceValEl = row.querySelector('.price-val');
-                if (priceValEl) priceValEl.textContent = itemData.selling_price;
+            function escapeHtml(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
 
-                const priceInput = row.querySelector('.inline-price-input');
-                if (priceInput) priceInput.setAttribute('data-original', itemData.selling_price);
+            function buildDamagePopoverHtml(damageNotes) {
+                if (!Array.isArray(damageNotes) || damageNotes.length === 0) return '';
+                let html = `<div class="inv-help-popover-body"><div class="inv-help-popover-title"><i class="bi bi-heartbreak-fill text-danger"></i>{{ __('messages.damage_notes_history') }}</div><ul class="list-unstyled mb-0 small">`;
+                damageNotes.slice(0, 5).forEach(dTx => {
+                    const srcLabel = dTx.source_location === 'lit' ? "{{ __('messages.damage_source_lit') }}" : "{{ __('messages.damage_source_store') }}";
+                    html += `<li class="mb-2 pb-1 border-bottom border-light"><div class="d-flex justify-content-between fw-bold text-danger"><span>-${parseInt(dTx.quantity || 0, 10)} (${escapeHtml(srcLabel)})</span><span class="text-muted fw-normal" style="font-size:0.7rem;">${escapeHtml(dTx.created_at || '')}</span></div><div class="text-dark mt-1">${escapeHtml(dTx.notes || '')}</div><div class="text-muted" style="font-size:0.7rem;">${escapeHtml(dTx.user_name || 'System')}</div></li>`;
+                });
+                html += `</ul></div>`;
+                return html;
+            }
+
+            function flashElement(el) {
+                if (!el) return;
+                el.classList.remove('live-updated-flash');
+                void el.offsetWidth;
+                el.classList.add('live-updated-flash');
+            }
+
+            function updateRowDisplayData(row, itemData, highlightChanges = false) {
+                const prevStore = parseInt(row.getAttribute('data-store-qty') || 0, 10);
+                const prevLit = parseInt(row.getAttribute('data-lit-qty') || 0, 10);
+                const prevDamaged = parseInt(row.getAttribute('data-damaged-qty') || 0, 10);
+
+                const sq = parseInt(itemData.store_quantity ?? prevStore, 10);
+                const lq = parseInt(itemData.lit_quantity ?? prevLit, 10);
+                const dq = parseInt(itemData.damaged_quantity ?? prevDamaged, 10);
+
+                row.setAttribute('data-store-qty', sq);
+                row.setAttribute('data-lit-qty', lq);
+                row.setAttribute('data-damaged-qty', dq);
+
+                if (itemData.display_name) {
+                    row.setAttribute('data-item-name', itemData.display_name);
+                    const nameEl = row.querySelector('.item-display-name');
+                    if (nameEl) nameEl.textContent = itemData.display_name;
+                }
+
+                if ('last_receive_tx' in itemData) {
+                    row.setAttribute('data-last-receive-tx', JSON.stringify(itemData.last_receive_tx || null));
+                    const wrongBtn = row.querySelector('.btn-row-wrong-receive');
+                    if (wrongBtn) {
+                        if (itemData.last_receive_tx && itemData.last_receive_tx.id) {
+                            wrongBtn.classList.remove('opacity-50');
+                        } else {
+                            wrongBtn.classList.add('opacity-50');
+                        }
+                    }
+                }
+
+                // Update price read display
+                if (itemData.selling_price !== undefined) {
+                    const priceValEl = row.querySelector('.price-val');
+                    if (priceValEl) priceValEl.textContent = itemData.selling_price;
+                    const priceInput = row.querySelector('.inline-price-input');
+                    if (priceInput && !row.classList.contains('is-editing')) {
+                        priceInput.setAttribute('data-original', itemData.selling_price);
+                        priceInput.value = itemData.selling_price;
+                    }
+                }
 
                 // Update store qty badge
                 const storeContainer = row.querySelector('.store-qty-container');
                 if (storeContainer) {
-                    const sq = itemData.store_quantity;
                     let badgeClass = sq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle border' : (sq <= 5 ? 'badge-low-stock' : 'bg-success-subtle text-success border-success-subtle border');
                     let icon = sq == 0 ? '<i class="bi bi-exclamation-octagon-fill me-1"></i>' : (sq <= 5 ? '<i class="bi bi-exclamation-triangle me-1"></i>' : '');
                     storeContainer.innerHTML = `<span class="badge ${badgeClass} px-3 py-2 rounded-pill fw-bold">${icon}${sq}</span>`;
+                    if (highlightChanges && sq !== prevStore) flashElement(storeContainer);
                 }
 
                 // Update literature stock badge consistently
                 const litContainer = row.querySelector('.lit-qty-container');
                 if (litContainer) {
-                    const lq = itemData.lit_quantity;
                     let badgeClass = lq == 0 ? 'bg-danger-subtle text-danger border-danger-subtle border' : (lq <= 5 ? 'badge-low-stock' : 'bg-info-subtle text-info border-info-subtle border');
                     litContainer.innerHTML = `<span class="badge ${badgeClass} px-3 py-2 rounded-pill fw-bold">${lq}</span>`;
+                    if (highlightChanges && lq !== prevLit) flashElement(litContainer);
                 }
 
-                // Update input dataset store-qty limit
-                const transferInput = row.querySelector('.inline-transfer-input');
-                if (transferInput) transferInput.setAttribute('data-store-qty', itemData.store_quantity);
+                // Update damaged stock badge + notes popover
+                const damagedContainer = row.querySelector('.damaged-qty-container');
+                if (damagedContainer) {
+                    if (dq > 0) {
+                        const popHtml = buildDamagePopoverHtml(itemData.damage_notes || []);
+                        const popAttrs = popHtml
+                            ? `tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus click" data-bs-placement="top" data-bs-html="true" data-bs-custom-class="inv-help-popover" data-bs-content="${escapeHtml(popHtml)}" style="cursor: pointer;"`
+                            : '';
+                        const chatIcon = popHtml ? `<i class="bi bi-chat-left-text-fill ms-1 small opacity-75"></i>` : '';
+                        damagedContainer.innerHTML = `<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-1" ${popAttrs}><i class="bi bi-heartbreak-fill"></i><span class="damaged-qty-val">${dq}</span>${chatIcon}</span>`;
+                        if (typeof window.initInventoryPopovers === 'function') {
+                            window.initInventoryPopovers(damagedContainer);
+                        }
+                    } else {
+                        damagedContainer.innerHTML = `<span class="text-muted small damaged-qty-val">0</span>`;
+                    }
+                    if (highlightChanges && dq !== prevDamaged) flashElement(damagedContainer);
+                }
 
-                // Update checkbox datasets
-                const checkbox = row.querySelector('.item-checkbox');
-                if (checkbox) {
-                    checkbox.setAttribute('data-store-qty', itemData.store_quantity);
-                    checkbox.setAttribute('data-lit-qty', itemData.lit_quantity);
+                // Update input & button dataset limits
+                const transferInput = row.querySelector('.inline-transfer-input');
+                if (transferInput) transferInput.setAttribute('data-store-qty', sq);
+
+                row.querySelectorAll('[data-store-qty]').forEach(el => el.setAttribute('data-store-qty', sq));
+                row.querySelectorAll('[data-lit-qty]').forEach(el => el.setAttribute('data-lit-qty', lq));
+            }
+
+            function applyLiveState(liveState, highlightChanges = false) {
+                if (!liveState) return;
+                if (liveState.state_hash && currentStateHash === liveState.state_hash && !highlightChanges) {
+                    return;
+                }
+                const isFirstLoad = currentStateHash === null;
+                currentStateHash = liveState.state_hash || null;
+
+                if (Array.isArray(liveState.items)) {
+                    liveState.items.forEach(itemData => {
+                        const row = document.querySelector(`.inventory-row[data-row-id="${itemData.id}"]`);
+                        if (row && !row.classList.contains('is-editing')) {
+                            updateRowDisplayData(row, itemData, !isFirstLoad && highlightChanges);
+                        }
+                        // Also keep allItemsData in sync for Quick Batch Movement modal
+                        const memItem = allItemsData.find(i => i.id === itemData.id);
+                        if (memItem) {
+                            memItem.store_quantity = itemData.store_quantity;
+                            memItem.lit_quantity = itemData.lit_quantity;
+                            memItem.damaged_quantity = itemData.damaged_quantity;
+                            memItem.selling_price = parseFloat(itemData.selling_price_raw ?? itemData.selling_price);
+                        }
+                    });
+                }
+
+                if (liveState.totals) {
+                    const elStore = document.getElementById('totalStoreStockCardVal');
+                    const elLit = document.getElementById('totalLitStockCardVal');
+                    const elDamaged = document.getElementById('totalDamagedStockCardVal');
+                    const elLow = document.getElementById('lowStockCardVal');
+
+                    if (elStore && String(elStore.textContent).trim() !== String(liveState.totals.total_store_stock)) {
+                        elStore.textContent = liveState.totals.total_store_stock;
+                        if (!isFirstLoad) flashElement(elStore.closest('.card'));
+                    }
+                    if (elLit && String(elLit.textContent).trim() !== String(liveState.totals.total_lit_stock)) {
+                        elLit.textContent = liveState.totals.total_lit_stock;
+                        if (!isFirstLoad) flashElement(elLit.closest('.card'));
+                    }
+                    if (elDamaged && String(elDamaged.textContent).trim() !== String(liveState.totals.total_damaged_stock)) {
+                        elDamaged.textContent = liveState.totals.total_damaged_stock;
+                        if (!isFirstLoad) flashElement(elDamaged.closest('.card'));
+                    }
+                    if (elLow && String(elLow.textContent).trim() !== String(liveState.totals.low_stock_count)) {
+                        elLow.textContent = liveState.totals.low_stock_count;
+                        if (!isFirstLoad) flashElement(elLow.closest('.card'));
+                    }
                 }
             }
+
+            // Poll live state every 4 seconds so Literature Committee sales or other users' changes appear live without reload
+            function pollLiveInventoryState() {
+                if (document.hidden) return;
+                fetch(liveStateUrl, {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.success && data.live_state) {
+                        if (currentStateHash && currentStateHash !== data.live_state.state_hash) {
+                            applyLiveState(data.live_state, true);
+                        } else if (!currentStateHash) {
+                            currentStateHash = data.live_state.state_hash;
+                        }
+                    }
+                })
+                .catch(() => {});
+            }
+
+            setInterval(pollLiveInventoryState, 4000);
+            pollLiveInventoryState();
 
             function updateBulkEditSaveState() {
                 const editingRows = document.querySelectorAll('.inventory-row.is-editing');
@@ -1503,15 +2236,137 @@
                 if (btnSaveBulkEdit) btnSaveBulkEdit.disabled = anyErrors;
             }
 
-            // Enter Key press handler in inline inputs
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && (e.target.classList.contains('inline-price-input') || e.target.classList.contains('inline-receive-input') || e.target.classList.contains('inline-transfer-input'))) {
-                    e.preventDefault();
-                    const row = e.target.closest('tr');
-                    if (row) {
-                        const saveBtn = row.querySelector('.inline-save-btn');
-                        if (saveBtn && !saveBtn.disabled) saveBtn.click();
+            // --- Keyboard Navigation & Hotkeys System ---
+            function getVisibleRows() {
+                return Array.from(document.querySelectorAll('#inventoryTable tbody tr.inventory-row'));
+            }
+
+            function setFocusedRow(index) {
+                const rows = getVisibleRows();
+                rows.forEach(r => r.classList.remove('keyboard-focused-row'));
+                if (rows.length === 0) {
+                    focusedRowIndex = -1;
+                    return null;
+                }
+                if (index < 0) index = 0;
+                if (index >= rows.length) index = rows.length - 1;
+                focusedRowIndex = index;
+                const targetRow = rows[focusedRowIndex];
+                targetRow.classList.add('keyboard-focused-row');
+                targetRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                return targetRow;
+            }
+
+            // Click on a row sets keyboard focus to that row
+            document.addEventListener('click', function(e) {
+                const row = e.target.closest('#inventoryTable tbody tr.inventory-row');
+                if (row) {
+                    const rows = getVisibleRows();
+                    const idx = rows.indexOf(row);
+                    if (idx !== -1) {
+                        rows.forEach(r => r.classList.remove('keyboard-focused-row'));
+                        focusedRowIndex = idx;
+                        row.classList.add('keyboard-focused-row');
                     }
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                const isInputActive = (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || (document.activeElement && document.activeElement.isContentEditable));
+                const anyModalOpen = document.querySelector('.modal.show') !== null;
+
+                // Allow Escape inside search input to blur back to table
+                if (isInputActive && e.key === 'Escape' && document.activeElement.id === 'storeSearchInput') {
+                    document.activeElement.blur();
+                    return;
+                }
+
+                if (isInputActive || anyModalOpen || e.ctrlKey || e.metaKey || e.altKey) {
+                    return;
+                }
+
+                const key = e.key;
+                const lowerKey = key.toLowerCase();
+
+                if (key === '?' || (e.shiftKey && key === '/')) {
+                    e.preventDefault();
+                    const helpModalEl = document.getElementById('keyboardShortcutsModal');
+                    if (helpModalEl) bootstrap.Modal.getOrCreateInstance(helpModalEl).show();
+                    return;
+                }
+
+                if (key === '/') {
+                    e.preventDefault();
+                    const searchInput = document.getElementById('storeSearchInput');
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                    return;
+                }
+
+                if (lowerKey === 'm') {
+                    e.preventDefault();
+                    const batchBtn = document.getElementById('btnOpenBatchModal');
+                    if (batchBtn && !batchBtn.disabled) batchBtn.click();
+                    return;
+                }
+
+                if (lowerKey === 'n') {
+                    e.preventDefault();
+                    const createBtn = document.getElementById('btnOpenCreateModal');
+                    if (createBtn && !createBtn.disabled) createBtn.click();
+                    return;
+                }
+
+                if (key === 'ArrowDown' || lowerKey === 'j') {
+                    e.preventDefault();
+                    setFocusedRow(focusedRowIndex + 1);
+                    return;
+                }
+
+                if (key === 'ArrowUp' || lowerKey === 'k') {
+                    e.preventDefault();
+                    setFocusedRow(focusedRowIndex <= 0 ? 0 : focusedRowIndex - 1);
+                    return;
+                }
+
+                const rows = getVisibleRows();
+                if (rows.length === 0) return;
+                const currentRow = (focusedRowIndex >= 0 && focusedRowIndex < rows.length) ? rows[focusedRowIndex] : setFocusedRow(0);
+                if (!currentRow) return;
+
+                if (key === ' ') {
+                    e.preventDefault();
+                    const cb = currentRow.querySelector('.item-checkbox');
+                    if (cb) {
+                        cb.checked = !cb.checked;
+                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                } else if (lowerKey === 'r') {
+                    e.preventDefault();
+                    const btn = currentRow.querySelector('.btn-row-quick-receive');
+                    if (btn) btn.click();
+                } else if (lowerKey === 't') {
+                    e.preventDefault();
+                    const btn = currentRow.querySelector('.btn-row-quick-transfer');
+                    if (btn) btn.click();
+                } else if (lowerKey === 'u') {
+                    e.preventDefault();
+                    const btn = currentRow.querySelector('.btn-row-quick-return');
+                    if (btn) btn.click();
+                } else if (lowerKey === 'd') {
+                    e.preventDefault();
+                    const btn = currentRow.querySelector('.btn-row-damage');
+                    if (btn) btn.click();
+                } else if (lowerKey === 'w') {
+                    e.preventDefault();
+                    const btn = currentRow.querySelector('.btn-row-wrong-receive');
+                    if (btn) btn.click();
+                } else if (lowerKey === 'e') {
+                    e.preventDefault();
+                    toggleRowEditMode(currentRow, true);
                 }
             });
 
@@ -1816,7 +2671,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-CSRF-TOKEN': csrfToken,
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
@@ -1827,19 +2682,30 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
+                            batchState = [];
+                            renderBatchTable();
+                            if (document.getElementById('batchNotesInput')) {
+                                document.getElementById('batchNotesInput').value = '';
+                            }
+                            const batchModalEl = document.getElementById('quickBatchMovementModal');
+                            if (batchModalEl) {
+                                const inst = bootstrap.Modal.getInstance(batchModalEl);
+                                if (inst) inst.hide();
+                            }
+                            if (data.live_state) {
+                                applyLiveState(data.live_state, true);
+                                broadcastLiveState(data.live_state);
+                            }
                             showToast(data.message, 'success');
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 800);
                         } else {
                             showToast(data.message || 'Error executing batch movement', 'danger');
-                            btnSubmitBatchMovement.disabled = false;
-                            btnSubmitBatchMovement.innerHTML = '<i class="bi bi-check2-circle me-1"></i> ' + i18n.submitBatchMovement;
                         }
                     })
                     .catch(err => {
                         showToast(err.message || 'Network error occurred', 'danger');
-                        btnSubmitBatchMovement.disabled = false;
+                    })
+                    .finally(() => {
+                        btnSubmitBatchMovement.disabled = batchState.length === 0;
                         btnSubmitBatchMovement.innerHTML = '<i class="bi bi-check2-circle me-1"></i> ' + i18n.submitBatchMovement;
                     });
                 });
@@ -1856,7 +2722,7 @@
                     document.body.appendChild(toastContainer);
                 }
                 const toastEl = document.createElement('div');
-                toastEl.className = `toast align-items-center text-bg-${type} border-0 show`;
+                toastEl.className = `toast align-items-center text-bg-${type} border-0 show mb-2`;
                 toastEl.setAttribute('role', 'alert');
                 toastEl.innerHTML = `
                     <div class="d-flex">

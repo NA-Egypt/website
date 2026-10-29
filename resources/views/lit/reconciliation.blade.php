@@ -64,9 +64,16 @@
         {{-- Overview Cards --}}
         <div class="row g-4 mb-4">
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4">
+                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4 h-100">
                     <div>
-                        <span class="text-secondary small fw-semibold">{{ __('messages.received_from_store_this_month') }}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-secondary small fw-semibold">{{ __('messages.received_from_store_this_month') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.received_from_store_this_month')"
+                                :description="__('messages.card_help_recon_received')"
+                                :formula="__('messages.card_formula_recon_received')"
+                            />
+                        </div>
                         <h3 class="mt-1 mb-0 font-bold text-primary">{{ $total_received }}</h3>
                     </div>
                     <div class="fs-2 text-primary bg-primary-subtle rounded-3 p-2 px-3"><i class="bi bi-box-arrow-in-down"></i></div>
@@ -74,9 +81,16 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4">
+                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4 h-100">
                     <div>
-                        <span class="text-secondary small fw-semibold">{{ __('messages.sold_this_month') }}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-secondary small fw-semibold">{{ __('messages.sold_this_month') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.sold_this_month')"
+                                :description="__('messages.card_help_recon_sold')"
+                                :formula="__('messages.card_formula_recon_sold')"
+                            />
+                        </div>
                         <h3 class="mt-1 mb-0 font-bold text-success">{{ $total_sold }}</h3>
                     </div>
                     <div class="fs-2 text-success bg-success-subtle rounded-3 p-2 px-3"><i class="bi bi-cart-check"></i></div>
@@ -84,9 +98,16 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4">
+                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4 h-100">
                     <div>
-                        <span class="text-secondary small fw-semibold">{{ __('messages.returned_to_store_this_month') }}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-secondary small fw-semibold">{{ __('messages.returned_to_store_this_month') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.returned_to_store_this_month')"
+                                :description="__('messages.card_help_recon_returned')"
+                                :formula="__('messages.card_formula_recon_returned')"
+                            />
+                        </div>
                         <h3 class="mt-1 mb-0 font-bold text-warning">{{ $total_returned }}</h3>
                     </div>
                     <div class="fs-2 text-warning bg-warning-subtle rounded-3 p-2 px-3"><i class="bi bi-arrow-return-left"></i></div>
@@ -94,10 +115,17 @@
             </div>
 
             <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4">
+                <div class="card p-3 border-0 shadow-sm d-flex align-items-center justify-content-between flex-row rounded-4 h-100">
                     <div>
-                        <span class="text-secondary small fw-semibold">{{ __('messages.current_lit_balance') }}</span>
-                        <h3 class="mt-1 mb-0 font-bold text-info">{{ $total_current_lit }}</h3>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-secondary small fw-semibold">{{ __('messages.current_lit_balance') }}</span>
+                            <x-inventory-card-help
+                                :title="__('messages.current_lit_balance')"
+                                :description="__('messages.card_help_recon_balance')"
+                                :formula="__('messages.card_formula_recon_balance')"
+                            />
+                        </div>
+                        <h3 class="mt-1 mb-0 font-bold text-info" id="reconCurrentLitCardVal">{{ $total_current_lit }}</h3>
                     </div>
                     <div class="fs-2 text-info bg-info-subtle rounded-3 p-2 px-3"><i class="bi bi-bookshelf"></i></div>
                 </div>

@@ -22,9 +22,22 @@ class LitLedgerController extends Controller implements HasMiddleware
     private function authorizeAccess(): void
     {
         $user = Auth::user();
-        if (!$user || (!$user->can('view lit ledger') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager') && !$user->hasRole('rsc') && !$user->hasRole('super admin'))) {
+        if (!$user || (!$user->can('view lit ledger') && !$user->can('view lit inventory') && !$user->can('manage store') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager') && !$user->hasRole('rsc') && !$user->hasRole('super admin') && !$user->hasRole('Committees'))) {
             abort(403, 'Unauthorized');
         }
+    }
+
+    public function liveState(Request $request, InventoryLedgerService $ledgerService)
+    {
+        $this->authorizeAccess();
+
+        $monthStr = $request->input('month');
+        $month = $monthStr ? Carbon::parse($monthStr . '-01')->startOfMonth() : Carbon::now()->startOfMonth();
+
+        return response()->json([
+            'success' => true,
+            'live_state' => $ledgerService->getLiveInventoryState($month),
+        ]);
     }
 
     public function index(Request $request, InventoryLedgerService $ledgerService)

@@ -20,14 +20,24 @@
 
         {{-- Form --}}
         <div class="card border-0 shadow-sm p-4">
-            <form action="{{ route('literature-requests.committee.update', $litRequest->id) }}" method="POST">
+            <form action="{{ route('literature-requests.committee.update', $litRequest->id) }}" method="POST" id="committeeFulfillForm">
                 @csrf
                 <div class="table-responsive">
-                    <table class="table align-middle table-hover mb-0">
+                    <table class="table align-middle table-hover mb-0" id="committeeFulfillTable">
                         <thead class="table-light">
                             <tr>
                                 <th>{{ __('messages.item_name') }}</th>
                                 <th>{{ __('messages.Category') }}</th>
+                                <th class="text-center">
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <span>{{ __('messages.available_stock_lit') }}</span>
+                                        <x-inventory-card-help
+                                            :title="__('messages.available_stock_lit')"
+                                            :description="__('messages.card_help_total_lit_stock')"
+                                            :formula="__('messages.card_formula_total_lit_stock')"
+                                        />
+                                    </div>
+                                </th>
                                 <th class="text-end">{{ __('messages.selling_price') }}</th>
                                 <th class="text-center" style="width: 150px;">{{ __('messages.quantity') }}</th>
                                 <th class="text-end">{{ __('messages.total') }}</th>
@@ -37,9 +47,15 @@
                             @foreach($allItems as $item)
                                 @php
                                     $existingItem = $litRequest->items->where('inventory_item_id', $item->id)->first();
-                                    $existingQty = $existingItem ? $existingItem->quantity : 0;
+                                    $existingQty = $existingItem ? (int) $existingItem->quantity : 0;
+                                    $alreadyDeducted = in_array($litRequest->status, ['returned_by_committee', 'completed_Invoice'], true) ? $existingQty : 0;
+                                    $basePool = (int) $item->lit_quantity + $alreadyDeducted;
                                 @endphp
-                                <tr class="item-row" data-price="{{ $item->selling_price }}">
+                                <tr class="item-row"
+                                    data-item-id="{{ $item->id }}"
+                                    data-price="{{ $item->selling_price }}"
+                                    data-base-pool="{{ $basePool }}"
+                                    data-already-deducted="{{ $alreadyDeducted }}">
                                     <td>
                                         <div class="fw-bold">{{ $item->name }}</div>
                                         <small class="text-muted">{{ $item->description }}</small>
@@ -47,6 +63,11 @@
                                     <td>
                                         <span class="badge bg-light text-dark">
                                             {{ __('messages.cat_' . Str::snake(str_replace(' ', '_', $item->category))) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info-subtle text-info rounded-pill px-3 py-1 fw-bold live-lit-stock-badge" id="comm-lit-badge-{{ $item->id }}">
+                                            {{ max(0, $basePool - $existingQty) }}
                                         </span>
                                     </td>
                                     <td class="text-end price-value">{{ $item->selling_price }} {{ __('messages.EGP') }}</td>
@@ -85,19 +106,27 @@
         </div>
     </div>
 
-    {{-- Simple Reactive calculation script --}}
+    {{-- Reactive calculation & Live Sync script --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const qtyInputs = document.querySelectorAll('.quantity-input');
             const currencyText = "{{ __('messages.EGP') }}";
+            const inventoryChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('na_egypt_inventory_live') : null;
 
             function recalculateCart() {
                 let overallTotal = 0;
                 document.querySelectorAll('.item-row').forEach(row => {
                     const price = parseFloat(row.getAttribute('data-price'));
+                    const basePool = parseInt(row.getAttribute('data-base-pool') || 0, 10);
                     const qty = parseInt(row.querySelector('.quantity-input').value) || 0;
                     const rowTotal = price * qty;
                     row.querySelector('.row-total').innerText = rowTotal.toFixed(2) + ' ' + currencyText;
+                    const badge = row.querySelector('.live-lit-stock-badge');
+                    if (badge) {
+                        const rem = Math.max(0, basePool - qty);
+                        badge.textContent = rem;
+                        badge.className = 'badge rounded-pill px-3 py-1 fw-bold live-lit-stock-badge ' + (rem === 0 ? 'bg-danger-subtle text-danger' : 'bg-info-subtle text-info');
+                    }
                     overallTotal += rowTotal;
                 });
                 document.getElementById('cart-total-price').innerText = overallTotal.toFixed(2);
