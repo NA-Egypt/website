@@ -7,7 +7,7 @@
                     {{ __('messages.Edit') }} {{ __('messages.Literature Request') }}
                 </h1>
                 <p class="text-secondary mb-0">
-                    Editing Accumulated Request of {{ $litRequest->serviceBody->{app()->getLocale() . '_name'} ?? $litRequest->serviceBody->en_name }} for {{ \App\Services\DateNumberHelper::translatedFormat($litRequest->month, 'F Y') }}
+                    {{ __('messages.editing_accumulated_request_for', ['service_body' => $litRequest->serviceBody->{app()->getLocale() . '_name'} ?? $litRequest->serviceBody->en_name, 'month' => \App\Services\DateNumberHelper::translatedFormat($litRequest->month, 'F Y')]) }}
                 </p>
             </div>
             <div>

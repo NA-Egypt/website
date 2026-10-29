@@ -226,7 +226,7 @@
                         <div class="fw-semibold small">{{ __('messages.low_stock_filter') }}</div>
                         <div class="h3 mb-0 mt-2 font-bold" id="lowStockCardVal">{{ $lowStockCount ?? 0 }}</div>
                         @if(request('low_stock'))
-                            <span class="position-absolute top-0 end-0 m-2 badge rounded-pill bg-danger" title="Clear filter">
+                            <span class="position-absolute top-0 end-0 m-2 badge rounded-pill bg-danger" title="{{ __('messages.clear_filter') }}">
                                 <i class="bi bi-x-lg"></i>
                             </span>
                         @endif
@@ -498,7 +498,7 @@
                                                    data-id="{{ $item->id }}" data-store-qty="{{ $item->store_quantity }}" placeholder="0" style="max-width: 50px;">
                                             <button class="btn btn-outline-primary btn-stepper-plus px-2 py-0 border-primary-subtle" type="button" data-target="inline-transfer-input" data-id="{{ $item->id }}">+</button>
                                         </div>
-                                        <div class="transfer-warning-msg text-danger fw-semibold mt-1 d-none" style="font-size: 0.7rem;">Exceeds stock</div>
+                                        <div class="transfer-warning-msg text-danger fw-semibold mt-1 d-none" style="font-size: 0.7rem;">{{ __('messages.exceeds_stock') }}</div>
                                     </div>
                                 </td>
                                 <td class="text-center store-qty-container" id="store-qty-container-{{ $item->id }}">
