@@ -1,5 +1,6 @@
 @php
     $colsCount = 1 + (in_array('topic', $fields) ? 1 : 0) + (in_array('time', $fields) ? 1 : 0) + (in_array('type', $fields) ? 1 : 0) + (in_array('lang', $fields) ? 1 : 0);
+    $footnotes = [];
 @endphp
 <div class="day-section">
     <table>
@@ -25,8 +26,44 @@
         </thead>
         <tbody>
             @foreach($meetings as $meeting)
+                @php
+                    $isWeekly = empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence);
+                    $hasVariations = $meeting->recurring_variations && $meeting->recurring_variations->isNotEmpty();
+                    $groupName = $meeting->group ? ($meeting->group->ar_name ?: $meeting->group->en_name) : '';
+
+                    if ($hasVariations) {
+                        $pStart = \Carbon\Carbon::parse($meeting->start_time)->format('H:i');
+                        $pEnd = \Carbon\Carbon::parse($meeting->end_time)->format('H:i');
+                        foreach ($meeting->recurring_variations as $var) {
+                            $vStart = \Carbon\Carbon::parse($var->start_time)->format('H:i');
+                            $vEnd = \Carbon\Carbon::parse($var->end_time)->format('H:i');
+                            $vTimeDiff = ($pStart !== $vStart || $pEnd !== $vEnd);
+                            $vTimeStr = '';
+                            if ($vTimeDiff) {
+                                $vStartAr = str_replace(['AM', 'PM'], ['ص', 'م'], \Carbon\Carbon::parse($var->start_time)->format('h:i A'));
+                                $vEndAr = str_replace(['AM', 'PM'], ['ص', 'م'], \Carbon\Carbon::parse($var->end_time)->format('h:i A'));
+                                $vTimeStr = " ({$vStartAr} - {$vEndAr})";
+                            }
+                            $vTypeStr = $var->type === 'open' ? 'مفتوح' : ($var->type === 'closed' ? 'مغلق' : $var->type);
+                            $vTopics = $var->topics && $var->topics->isNotEmpty()
+                                ? implode('، ', $var->topics->pluck('ar_name')->filter()->toArray())
+                                : ($var->topic ? ($var->topic->ar_name ?: $var->topic->en_name) : '');
+
+                            $descParts = array_filter([$vTypeStr, $vTopics]);
+                            $desc = implode(' - ', $descParts);
+                            $footnotes[] = "* {$groupName}: {$var->formatted_recurrence}" . ($desc ? ": {$desc}" : '') . $vTimeStr;
+                        }
+                    }
+                @endphp
                 <tr>
-                    <td><strong>{{ $meeting->group->ar_name ?: $meeting->group->en_name }}</strong></td>
+                    <td>
+                        <strong>{{ $groupName }}</strong>
+                        @if($hasVariations)
+                            <span style="color: #00698f; font-weight: bold;">*</span>
+                        @elseif(!$isWeekly && !empty($meeting->recurrence))
+                            <span style="font-weight: normal; font-size: 85%; color: #555;">({{ $meeting->formatted_recurrence }})</span>
+                        @endif
+                    </td>
                     @if(in_array('topic', $fields))
                         <td>
                             @if($meeting->topic)
@@ -61,4 +98,11 @@
             @endforeach
         </tbody>
     </table>
+    @if(!empty($footnotes))
+        <div class="day-footnotes" style="margin-top: 2px; margin-bottom: 5px; text-align: right; color: #00698f; font-size: {{ $pageSize === 'A5' ? '6.5px' : '7.5px' }}; line-height: 1.3;">
+            @foreach($footnotes as $fn)
+                <div>{{ $fn }}</div>
+            @endforeach
+        </div>
+    @endif
 </div>

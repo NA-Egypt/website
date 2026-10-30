@@ -57,7 +57,10 @@ class MeetingFilterController extends Controller
             abort(403, 'Bots are not allowed to export data.');
         }
 
-        $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
+        $filters = request()->only([
+            'day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search',
+            'recurrence', 'businessMeetingsOnly', 'virtualOnly', 'englishOnly'
+        ]);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
 
         // Register custom fonts "Amiri" and "Cairo" from resources/fonts
@@ -93,7 +96,10 @@ class MeetingFilterController extends Controller
             abort(403, 'Bots are not allowed to export data.');
         }
 
-        $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search']);
+        $filters = request()->only([
+            'day', 'serviceBody', 'group', 'neighborhood', 'type', 'city', 'search',
+            'recurrence', 'businessMeetingsOnly', 'virtualOnly', 'englishOnly'
+        ]);
         $meetings = $this->meetingFilterService->filterMeetings($filters);
         $isAuthenticated = auth()->check();
 

@@ -151,7 +151,7 @@ class MeetingFilterService
      * and filter merged cards so a card is shown whenever either its primary schedule or an embedded
      * recurring variation matches the active type/recurrence filter.
      */
-    protected function mergeRecurringMeetings($candidates, array $filters)
+    public function mergeRecurringMeetings($candidates, array $filters = [])
     {
         $buckets = $candidates->groupBy(function (Meeting $meeting) {
             $groupKey = $meeting->group_id
@@ -224,7 +224,7 @@ class MeetingFilterService
         })->values();
     }
 
-    protected function isWeeklyMeeting(Meeting $meeting): bool
+    public function isWeeklyMeeting(Meeting $meeting): bool
     {
         return empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence, true);
     }

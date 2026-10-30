@@ -38,7 +38,7 @@ class MeetingExportController extends Controller
 
         if ($exportType === 'cities') {
             $cityIds = $request->input('cities');
-            $meetings = Meeting::whereHas('group.neighborhood', function($q) use ($cityIds) {
+            $meetingsQuery = Meeting::whereHas('group.neighborhood', function($q) use ($cityIds) {
                 $q->whereIn('city_id', $cityIds);
             })
             ->whereHas('group', function($q) {
@@ -46,19 +46,20 @@ class MeetingExportController extends Controller
             })
             ->where('status', 'available')
             ->notMonthlyRecurrent()
-            ->with(['group', 'day', 'topic', 'topics'])
-            ->get();
+            ->with(['group', 'day', 'topic', 'topics']);
         } else {
             $serviceBodyIds = $request->input('service_bodies');
-            $meetings = Meeting::whereHas('group', function($q) use ($serviceBodyIds) {
+            $meetingsQuery = Meeting::whereHas('group', function($q) use ($serviceBodyIds) {
                 $q->whereIn('service_body_id', $serviceBodyIds)
                   ->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
             })
             ->where('status', 'available')
             ->notMonthlyRecurrent()
-            ->with(['group', 'day', 'topic', 'topics'])
-            ->get();
+            ->with(['group', 'day', 'topic', 'topics']);
         }
+
+        $filterService = app(\App\Services\MeetingFilterService::class);
+        $meetings = $filterService->mergeRecurringMeetings($meetingsQuery->get(), []);
 
         // Group meetings by day name in Arabic
         $meetingsByDay = [];
