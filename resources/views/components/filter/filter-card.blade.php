@@ -149,6 +149,67 @@ $isFirstCardAcrossSections = true;
         background-color: #f8fafc !important;
         opacity: 0.8;
     }
+
+    .meeting-recurring-subrow {
+        width: 100%;
+        margin-top: -6px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fff1f2 0%, #f8fafc 100%);
+        border: 1px solid rgba(244, 63, 94, 0.22);
+        font-size: 0.82rem;
+        line-height: 1.4;
+        color: #1e293b;
+        transition: all 0.25s ease;
+    }
+
+    .meeting-recurring-subrow.filter-matched {
+        background: linear-gradient(135deg, #ffe4e6 0%, #eff6ff 100%);
+        border: 2px solid #f43f5e;
+        box-shadow: 0 2px 8px rgba(244, 63, 94, 0.16);
+    }
+
+    .recurring-week-label {
+        font-weight: 700;
+        color: #be123c;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .recurring-mini-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.76rem;
+    }
+
+    .recurring-mini-badge.type-open {
+        background-color: rgba(244, 63, 94, 0.12);
+        color: #e11d48;
+        border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .recurring-mini-badge.type-closed {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: #2563eb;
+        border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .recurring-mini-badge.topic-pill {
+        background-color: rgba(15, 23, 42, 0.06);
+        color: #334155;
+    }
+
+    .recurring-mini-badge.time-pill {
+        background-color: rgba(255, 255, 255, 0.85);
+        color: #475569;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+    }
 </style>
 <div class="container-fluid px-1 px-sm-3 justify-content-center" style="max-width: 1140px; width: 100%;">
     @foreach($sortedSections as $section)
@@ -251,7 +312,7 @@ $isFirstCardAcrossSections = true;
                         <div class="meeting-time-row d-flex justify-content-between align-items-center flex-wrap gap-2" @if($isTargetCard) id="tour-card-time" @endif>
                             <div class="meeting-day text-danger mb-0">
                                 <x-fas-calendar-day style="width:16px; height:16px;"/>&NonBreakingSpace;
-                                @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence))
+                                @if(empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence) || ($meeting->recurring_variations && $meeting->recurring_variations->isNotEmpty()))
                                     {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
                                 @else
                                     {{ $meeting->formatted_recurrence }} - {{ $direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name }}
@@ -263,6 +324,53 @@ $isFirstCardAcrossSections = true;
                                 {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                             </span>
                         </div>
+
+                        <!-- Embedded Recurring Schedule Sub-Header Row -->
+                        @if($meeting->recurring_variations && $meeting->recurring_variations->isNotEmpty())
+                            @php
+                                $parentStartNorm = \Carbon\Carbon::parse($meeting->start_time)->format('H:i');
+                                $parentEndNorm = \Carbon\Carbon::parse($meeting->end_time)->format('H:i');
+                            @endphp
+                            @foreach($meeting->recurring_variations as $variation)
+                                @php
+                                    $varStartNorm = \Carbon\Carbon::parse($variation->start_time)->format('H:i');
+                                    $varEndNorm = \Carbon\Carbon::parse($variation->end_time)->format('H:i');
+                                    $hasDifferentTime = ($parentStartNorm !== $varStartNorm || $parentEndNorm !== $varEndNorm);
+                                @endphp
+                                <div class="meeting-recurring-subrow d-flex align-items-center justify-content-between flex-wrap gap-2 {{ !empty($variation->is_filter_match) ? 'filter-matched' : '' }}">
+                                    <span class="recurring-week-label">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                        <span>{{ $variation->formatted_recurrence }}:</span>
+                                    </span>
+                                    <div class="d-inline-flex align-items-center flex-wrap gap-1">
+                                        @if($hasDifferentTime)
+                                            <span class="recurring-mini-badge time-pill" dir="ltr">
+                                                <x-fas-clock style="width:11px; height:11px;"/>
+                                                <span>{{ \Carbon\Carbon::parse($variation->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($variation->end_time)->format('h:i A') }}</span>
+                                            </span>
+                                        @endif
+                                        @if($variation->type)
+                                            <span class="recurring-mini-badge {{ $variation->type === 'open' ? 'type-open' : 'type-closed' }}">
+                                                @if($variation->type === 'open')
+                                                    <x-fas-circle-notch style="width:11px; height:11px;"/>
+                                                @else
+                                                    <x-fas-user-alt-slash style="width:11px; height:11px;"/>
+                                                @endif
+                                                <span>{{ __("messages." . $variation->type) }}</span>
+                                            </span>
+                                        @endif
+                                        @if($variation->topics && $variation->topics->count() > 0)
+                                            @foreach($variation->topics as $varTopic)
+                                                <span class="recurring-mini-badge topic-pill">
+                                                    <x-fas-book-open style="width:11px; height:11px;"/>
+                                                    <span>{{ $direction === 'rtl' ? $varTopic->ar_name : $varTopic->en_name }}</span>
+                                                </span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
                         <div class="meeting-group-name" @if($isTargetCard) id="tour-card-group" @endif
                              @click="handleNameClick()"
                              style="user-select: none; -webkit-user-select: none;">
@@ -382,15 +490,47 @@ $isFirstCardAcrossSections = true;
                         @if($group && ($group->location || $group->ar_address))
                             @php
                                 $shareGroupName = $direction === 'rtl' ? $group->ar_name : $group->en_name;
-                                $shareDay = empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence)
+                                $hasVariations = $meeting->recurring_variations && $meeting->recurring_variations->isNotEmpty();
+                                $shareDay = (empty($meeting->recurrence) || in_array('weekly', $meeting->recurrence) || $hasVariations)
                                     ? ($direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name)
-                                    : $meeting->formatted_recurrence . ' - ' . ($direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name);
+                                    : ($meeting->formatted_recurrence . ' - ' . ($direction === 'rtl' ? $meeting->day->ar_name : $meeting->day->en_name));
                                 $shareTime = \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($meeting->end_time)->format('h:i A');
                                 $shareAddress = $group->ar_address ? ($direction === 'rtl' ? $group->ar_address : ($group->en_address ?: $group->ar_address)) : null;
                                 $shareLocationUrl = $group->location;
 
+                                $shareRecurringLines = [];
+                                if ($hasVariations) {
+                                    $pStart = \Carbon\Carbon::parse($meeting->start_time)->format('H:i');
+                                    $pEnd = \Carbon\Carbon::parse($meeting->end_time)->format('H:i');
+                                    foreach ($meeting->recurring_variations as $variation) {
+                                        $vStart = \Carbon\Carbon::parse($variation->start_time)->format('H:i');
+                                        $vEnd = \Carbon\Carbon::parse($variation->end_time)->format('H:i');
+                                        $vTimeDiff = ($pStart !== $vStart || $pEnd !== $vEnd);
+                                        $vTimeStr = $vTimeDiff
+                                            ? (' (' . \Carbon\Carbon::parse($variation->start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($variation->end_time)->format('h:i A') . ')')
+                                            : '';
+                                        $vParts = [];
+                                        if ($variation->type) {
+                                            $vParts[] = __("messages." . $variation->type);
+                                        }
+                                        if ($variation->topics && $variation->topics->count() > 0) {
+                                            $vTopicNames = $variation->topics->map(function ($t) use ($direction) {
+                                                return $direction === 'rtl' ? $t->ar_name : $t->en_name;
+                                            })->implode($direction === 'rtl' ? '، ' : ', ');
+                                            if ($vTopicNames) {
+                                                $vParts[] = $vTopicNames;
+                                            }
+                                        }
+                                        $vDetails = implode(' - ', $vParts);
+                                        $shareRecurringLines[] = "🔄 {$variation->formatted_recurrence}{$vTimeStr}" . ($vDetails !== '' ? ": {$vDetails}" : '');
+                                    }
+                                }
+
                                 if ($direction === 'rtl') {
                                     $shareText = "اجتماع: {$shareGroupName}\nاليوم: {$shareDay} ({$shareTime})";
+                                    if (!empty($shareRecurringLines)) {
+                                        $shareText .= "\n" . implode("\n", $shareRecurringLines);
+                                    }
                                     if ($shareAddress) {
                                         $shareText .= "\nالعنوان: {$shareAddress}";
                                     }
@@ -399,6 +539,9 @@ $isFirstCardAcrossSections = true;
                                     }
                                 } else {
                                     $shareText = "Meeting: {$shareGroupName}\nDay: {$shareDay} ({$shareTime})";
+                                    if (!empty($shareRecurringLines)) {
+                                        $shareText .= "\n" . implode("\n", $shareRecurringLines);
+                                    }
                                     if ($shareAddress) {
                                         $shareText .= "\nAddress: {$shareAddress}";
                                     }

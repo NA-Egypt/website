@@ -97,7 +97,9 @@ class MeetingFilterTest extends TestCase
     public function test_recurrence_filtering_behavior()
     {
         $thursday = Day::find(6);
+        $friday = Day::find(7);
         $topic = Topic::forceCreate(['id' => 1, 'en_name' => 'Discussion', 'ar_name' => 'مناقشة']);
+        $speakerTopic = Topic::forceCreate(['id' => 2, 'en_name' => 'Speaker', 'ar_name' => 'متحدث']);
         $city = \App\Models\City::forceCreate(['id' => 2, 'en_name' => 'Giza', 'ar_name' => 'الجيزة']);
         $serviceBody = ServiceBody::forceCreate([
             'id' => 2, 'en_name' => 'Giza', 'ar_name' => 'الجيزة', 'day_id' => 6,
@@ -107,41 +109,79 @@ class MeetingFilterTest extends TestCase
         $user = \App\Models\User::factory()->create();
         $group = Group::forceCreate([
             'id' => 186, 'en_name' => 'Dokki Group', 'ar_name' => 'مجموعة الدقي', 'group_type' => 'فعلي',
-            'ar_gsr_name' => 'Test', 'en_gsr_name' => 'Test', 'phone' => '1234567890', 'location' => '',
+            'ar_gsr_name' => 'Test', 'en_gsr_name' => 'Test', 'phone' => '1234567890', 'location' => 'https://maps.google.com',
             'service_body_id' => 2, 'neighborhood_id' => 2, 'user_id' => $user->id,
             'ar_address' => 'الدقي', 'en_address' => 'Dokki'
         ]);
+        $weeklyOnlyGroup = Group::forceCreate([
+            'id' => 187, 'en_name' => 'Agouza Group', 'ar_name' => 'مجموعة العجوزة', 'group_type' => 'فعلي',
+            'ar_gsr_name' => 'Test', 'en_gsr_name' => 'Test', 'phone' => '1234567890', 'location' => '',
+            'service_body_id' => 2, 'neighborhood_id' => 2, 'user_id' => $user->id,
+            'ar_address' => 'العجوزة', 'en_address' => 'Agouza'
+        ]);
 
-        // Create a weekly meeting (no recurrence array or contains 'weekly')
+        // Create a weekly closed meeting for Dokki Group on Thursday
         $weeklyMeeting = Meeting::forceCreate([
             'id' => 320, 'day_id' => 6, 'group_id' => 186, 'topic_id' => 1, 'start_time' => '20:45', 'end_time' => '21:45',
-            'type' => 'open', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => null
+            'type' => 'closed', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => null
         ]);
+        $weeklyMeeting->topics()->attach($topic->id);
 
-        // Create a monthly recurring meeting (recurrence has '1st')
+        // Create a monthly recurring open meeting on the same day for the same group (recurrence has '1st')
         $monthlyMeeting = Meeting::forceCreate([
-            'id' => 321, 'day_id' => 6, 'group_id' => 186, 'topic_id' => 1, 'start_time' => '21:00', 'end_time' => '22:00',
+            'id' => 321, 'day_id' => 6, 'group_id' => 186, 'topic_id' => 2, 'start_time' => '21:00', 'end_time' => '22:00',
             'type' => 'open', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => ['1st']
         ]);
+        $monthlyMeeting->topics()->attach($speakerTopic->id);
 
-        // 1. Default (recurrence is 'weekly') -> should return both weekly and monthly recurring meetings
+        // Create a weekly-only closed meeting for Agouza Group on Thursday
+        Meeting::forceCreate([
+            'id' => 322, 'day_id' => 6, 'group_id' => 187, 'topic_id' => 1, 'start_time' => '19:00', 'end_time' => '20:00',
+            'type' => 'closed', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => ['weekly']
+        ]);
+
+        // Create a standalone monthly meeting on Friday (no weekly sibling on Friday)
+        Meeting::forceCreate([
+            'id' => 323, 'day_id' => 7, 'group_id' => 187, 'topic_id' => 1, 'start_time' => '20:00', 'end_time' => '21:00',
+            'type' => 'open', 'lang' => 'arabic', 'status' => 'available', 'recurrence' => ['3rd']
+        ]);
+
+        // 1. Default ('weekly') on Thursday -> merges 321 into 320's recurring_variations (no separate card for 321)
         $component = Livewire::test(MeetingFilter::class)
             ->set('day', 'الخميس');
         $meetings = $component->viewData('meetings');
         $this->assertTrue($meetings->contains('id', 320));
-        $this->assertTrue($meetings->contains('id', 321));
+        $this->assertFalse($meetings->contains('id', 321));
+        $this->assertTrue($meetings->contains('id', 322));
+        $mergedParent = $meetings->firstWhere('id', 320);
+        $this->assertCount(1, $mergedParent->recurring_variations);
+        $this->assertEquals(321, $mergedParent->recurring_variations->first()->id);
+        $component->assertSeeHtml('meeting-recurring-subrow');
 
-        // 2. Filter by 'monthly' -> should return only the monthly meeting
+        // 2. Filter by 'monthly' -> returns merged parent card 320 (since its variation 321 is monthly) and excludes weekly-only 322
         $component->set('recurrence', 'monthly');
         $meetings = $component->viewData('meetings');
-        $this->assertFalse($meetings->contains('id', 320));
-        $this->assertTrue($meetings->contains('id', 321));
+        $this->assertTrue($meetings->contains('id', 320));
+        $this->assertFalse($meetings->contains('id', 321));
+        $this->assertFalse($meetings->contains('id', 322));
+        $this->assertTrue($meetings->firstWhere('id', 320)->recurring_variations->first()->is_filter_match);
 
-        // 3. Filter by '1st' -> should return only the monthly meeting
+        // 3. Filter by '1st' -> returns merged parent card 320 with filter-matched variation 321
         $component->set('recurrence', '1st');
         $meetings = $component->viewData('meetings');
-        $this->assertFalse($meetings->contains('id', 320));
-        $this->assertTrue($meetings->contains('id', 321));
+        $this->assertTrue($meetings->contains('id', 320));
+        $this->assertFalse($meetings->contains('id', 322));
+
+        // 4. Filter by type 'open' with default 'weekly' recurrence -> returns merged parent card 320 because embedded 321 is open
+        $component->set('recurrence', 'weekly')->set('type', 'open');
+        $meetings = $component->viewData('meetings');
+        $this->assertTrue($meetings->contains('id', 320));
+        $this->assertFalse($meetings->contains('id', 322));
+
+        // 5. Standalone monthly meeting on Friday (no weekly meeting on that day) remains its own standalone card
+        $component->set('type', '')->set('day', 'الجمعة');
+        $meetings = $component->viewData('meetings');
+        $this->assertTrue($meetings->contains('id', 323));
     }
 
     public function test_virtual_meetings_filter_displays_hint()
