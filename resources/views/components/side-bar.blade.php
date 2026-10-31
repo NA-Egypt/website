@@ -313,6 +313,15 @@
         </a>
       </li>
       @endif
+
+      @if($isGsr)
+      <li>
+        <a href="{{ route('gsr.guide') }}" title="{{ __('messages.gsr_meetings_guide') }}">
+          <div class="parent-icon"><i class="bi bi-book-half text-primary"></i></div>
+          <div class="menu-title">{{ __('messages.gsr_meetings_guide') }}</div>
+        </a>
+      </li>
+      @endif
       @endif
 
       {{-- ======================================================== --}}
@@ -336,6 +345,7 @@
             <li><a href="{{ route('meeting.index') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Meetings') }}</a></li>
             <li><a href="{{ route('serviceBody.map') }}"><i class="bi bi-geo-alt"></i>{{ __('messages.Service Bodies Map') }}</a></li>
             @endif
+            <li><a href="{{ route('gsr.guide') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.gsr_meetings_guide') }}</a></li>
           </ul>
         </div>
       </li>

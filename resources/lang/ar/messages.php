@@ -168,7 +168,7 @@ return [
     'suspended' => 'معلق',
     'Status' => 'حالة الاجتماع',
     'Capacity' => 'سعة الاجتماع',
-    'suspended' => 'هذا الاجتماع مُعلق مؤقتًا',
+    'meeting_suspended_notice' => 'هذا الاجتماع مُعلق مؤقتًا',
     'Service Committees' => 'اللجان الخدمية',
     'Arabic Service Committee Name' => 'اسم اللجنة بالعربية',
     'English Service Committee Name' => 'اسم اللجنة بالانجليزية',
@@ -3134,6 +3134,9 @@ return [
     'clear_filter' => 'إلغاء التصفية',
     'inventory_system_guide' => 'دليل نظام المخزون',
     'inventory_system_guide_desc' => 'فتح الدليل الإرشادي الشامل للاستخدام والطباعة',
+    'gsr_meetings_guide' => 'دليل اجتماعات ممثل المجموعة (GSR)',
+    'gsr_guide_subtitle' => 'الدليل الشامل لممثلي المجموعات لإدارة اجتماعات التعافي وإجراءات العمل عبر البوابة',
+    'gsr_guide_button' => 'دليل الاجتماعات',
 ];
 
 

@@ -167,7 +167,7 @@ return [
     'suspended' => 'suspended',
     'Status' => 'Status',
     'Capacity' => 'Capacity',
-    'suspended' => 'This meeting is temporarily suspended',
+    'meeting_suspended_notice' => 'This meeting is temporarily suspended',
     'Service Committees' => 'Service Committees',
     'Arabic Service Committee Name' => 'Arabic Service Committee Name',
     'English Service Committee Name' => 'English Service Committee Name',
@@ -3130,6 +3130,9 @@ return [
     'clear_filter' => 'Clear filter',
     'inventory_system_guide' => 'Inventory System Guide',
     'inventory_system_guide_desc' => 'Open the comprehensive electronic and printable inventory manual',
+    'gsr_meetings_guide' => 'GSR Meetings Guide',
+    'gsr_guide_subtitle' => 'Comprehensive guide for Group Service Representatives to manage recovery meetings and fellowship business',
+    'gsr_guide_button' => 'Meetings Guide',
 ];
 
 

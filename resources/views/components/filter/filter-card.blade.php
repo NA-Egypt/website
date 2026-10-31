@@ -296,7 +296,7 @@ $isFirstCardAcrossSections = true;
                         @if($meeting->status=="suspended")
                             <div class="meeting-item-suspended">
                                 <div style="text-align: center;font-size: x-large;color: crimson;">
-                                    {{ __('messages.suspended') }}
+                                    {{ __('messages.meeting_suspended_notice') }}
                                 </div>
                         @elseif($isBusiness)
                             <div class="meeting-item business-border">

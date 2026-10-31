@@ -199,38 +199,66 @@
         <div class="glass-card p-3 p-md-4 rounded-4 mt-4 mt-md-5">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 border-bottom pb-3 mb-4" style="border-color: var(--glass-border) !important;">
                 <h4 class="mb-0 fw-bold" style="color: var(--text-primary);"><i class="bi bi-calendar-event me-2"></i> {{ __('messages.Meetings') }}</h4>
-                @unless(auth()->user()->hasRole('ServiceBody'))
-                <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" class="rounded-pill" />
-                @endunless
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <a href="{{ route('gsr.guide') }}" class="btn btn-outline-info rounded-pill btn-sm px-3 shadow-sm d-inline-flex align-items-center gap-1" title="{{ __('messages.gsr_meetings_guide') }}">
+                        <i class="bi bi-book-half"></i>
+                        <span>{{ __('messages.gsr_guide_button') }}</span>
+                    </a>
+                    @unless(auth()->user()->hasRole('ServiceBody'))
+                    <x-button-a href="{{ route('meeting.create') }}" color='outline-primary' name="{{__('messages.Add') . ' ' . __('messages.Meeting')}}" class="rounded-pill" />
+                    @endunless
+                </div>
             </div>
             
             @if($meetings->count() > 0)
                 <div class="row row-cols-1 row-cols-lg-2 g-4">
                     @foreach($meetings as $meeting)
+                        @php
+                            $isMeetingSuspended = $meeting->status === 'suspended';
+                            $isBusinessMeeting = $meeting->topics && $meeting->topics->contains('en_name', 'Group Business Meeting');
+                        @endphp
                         <div class="col">
-                            <div class="glass-card h-100 p-3 p-md-4 rounded-4 border position-relative transition-hover" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.01);">
+                            <div class="glass-card h-100 p-3 p-md-4 rounded-4 border position-relative transition-hover {{ $isMeetingSuspended ? 'border-danger-subtle' : '' }}" style="border-color: {{ $isMeetingSuspended ? 'rgba(239, 68, 68, 0.35)' : 'var(--glass-border)' }} !important; background: {{ $isMeetingSuspended ? 'rgba(239, 68, 68, 0.025)' : 'rgba(0,0,0,0.01)' }};">
                                 
                                 {{-- Meeting Header --}}
-                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
                                     <div>
-                                        <h5 class="mb-1 fw-bold text-primary">
-                                            @if(app()->getLocale() === 'ar')
-                                                {{ $meeting->day->ar_name }}
-                                            @else
-                                                {{ $meeting->day->en_name }}
+                                        <h5 class="mb-1 fw-bold text-primary d-flex align-items-center flex-wrap gap-1">
+                                            @if(!empty($meeting->recurrence) && !in_array('weekly', $meeting->recurrence))
+                                                <span class="badge bg-secondary-subtle text-secondary me-1" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-arrow-repeat me-1"></i>{{ $meeting->formatted_recurrence }}
+                                                </span>
                                             @endif
+                                            <span>
+                                                @if(app()->getLocale() === 'ar')
+                                                    {{ $meeting->day->ar_name }}
+                                                @else
+                                                    {{ $meeting->day->en_name }}
+                                                @endif
+                                            </span>
                                         </h5>
                                         <p class="text-secondary small fw-bold mb-0" dir="ltr">
                                             <i class="bi bi-clock mx-1"></i>
                                             {{ \Carbon\Carbon::parse($meeting->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($meeting->end_time)->format('h:i A') }}
                                         </p>
                                     </div>
-                                    <div class="badge px-3 py-2 rounded-pill fw-medium" style="background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important;">
-                                        @if(app()->getLocale() === 'ar')
-                                            {{ __("messages." . $meeting->type) }}
+                                    <div class="d-flex align-items-center gap-1.5 flex-wrap justify-content-end">
+                                        @if($isMeetingSuspended)
+                                            <span class="badge px-2.5 py-1.5 rounded-pill fw-medium" style="background-color: #fee2e2 !important; color: #dc2626 !important; border: 1px solid #fecaca !important;">
+                                                <i class="bi bi-pause-circle-fill me-1"></i>{{ __('messages.suspended') }}
+                                            </span>
                                         @else
-                                            {{ $meeting->type }}
+                                            <span class="badge px-2.5 py-1.5 rounded-pill fw-medium" style="background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0 !important;">
+                                                <i class="bi bi-check-circle-fill me-1"></i>{{ __('messages.available') }}
+                                            </span>
                                         @endif
+                                        <div class="badge px-2.5 py-1.5 rounded-pill fw-medium" style="background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important;">
+                                            @if(app()->getLocale() === 'ar')
+                                                {{ __("messages." . $meeting->type) }}
+                                            @else
+                                                {{ $meeting->type }}
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 

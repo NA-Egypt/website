@@ -54,6 +54,9 @@ Route::group(
             Route::get('/dashboard', [GreatingPagesController::class, 'dashboard'])
                 ->name('dashboard');
 
+            // GSR Meetings Guide:
+            Route::get('/gsr-guide', [\App\Http\Controllers\GsrGuideController::class, 'index'])->name('gsr.guide');
+
             // Stocktaking Routes:
             Route::get('/store/stocktaking', [\App\Http\Controllers\StocktakingController::class, 'index'])->name('store.stocktaking.index');
             Route::post('/store/stocktaking/start', [\App\Http\Controllers\StocktakingController::class, 'start'])->name('store.stocktaking.start');
