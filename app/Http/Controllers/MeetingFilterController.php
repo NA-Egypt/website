@@ -28,6 +28,35 @@ class MeetingFilterController extends Controller
     }
 
     /**
+     * Reveal meeting group GSR name and phone on-demand (5-click gesture) with strict bot/AI blocking.
+     */
+    public function revealMeetingContact(Request $request, Meeting $meeting)
+    {
+        if (BotDetectionService::isBotOrAi($request)) {
+            abort(403, 'Bots and AI agents are not allowed to access contact data.');
+        }
+
+        $group = $meeting->groupOrDirect;
+        if (!$group) {
+            abort(404, 'Meeting has no associated group.');
+        }
+
+        $locale = app()->getLocale();
+        $gsrName = $locale === 'ar'
+            ? ($group->ar_gsr_name ?: $group->en_gsr_name)
+            : ($group->en_gsr_name ?: $group->ar_gsr_name);
+
+        return response()->json([
+            'gsr_name'    => $gsrName,
+            'ar_gsr_name' => $group->ar_gsr_name,
+            'en_gsr_name' => $group->en_gsr_name,
+            'phone'       => $group->phone,
+        ], 200, array_merge(BotDetectionService::noIndexAiHeaders(), [
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        ]));
+    }
+
+    /**
      * Reveal group GSR name and phone on-demand (5-click gesture) with strict bot/AI blocking.
      */
     public function revealGroupContact(Request $request, Group $group)

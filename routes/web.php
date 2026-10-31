@@ -433,8 +433,11 @@ Route::group(
         Route::post('/logout', [AzureAuthController::class, 'logout'])->name('logout');
 
         Route::get('/meetings', [MeetingFilterController::class, 'filterMeetings'])->name('frontend.meetings');
+        Route::post('/meetings/{meeting}/contact', [MeetingFilterController::class, 'revealMeetingContact'])
+            ->middleware('throttle:15,1')
+            ->name('meetings.contact');
         Route::post('/meetings/group-contact/{group}', [MeetingFilterController::class, 'revealGroupContact'])
-            ->middleware('throttle:5,1')
+            ->middleware('throttle:15,1')
             ->name('meetings.group.contact');
         Route::get('/export-meetings-pdf', [MeetingFilterController::class, 'exportMeetingsToPDF'])->name('exportMeetingsToPDF');
         Route::get('/export-meetings-csv', [MeetingFilterController::class, 'exportMeetingsToCSV'])->name('exportMeetingsToCSV');

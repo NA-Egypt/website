@@ -255,6 +255,8 @@ class MeetingFilterTest extends TestCase
         // 1. As a public guest (unauthenticated): GSR name & phone MUST NOT be in initial HTML
         $this->assertFalse(auth()->check());
         $responseGuest = Livewire::test(MeetingFilter::class);
+        $responseGuest->assertSeeHtml('wire:key="meeting-card-450"');
+        $responseGuest->assertSeeHtml('data-contact-url="' . route('meetings.contact', ['meeting' => 450]) . '"');
         $responseGuest->assertSeeHtml('revealed: false');
         $responseGuest->assertSeeHtml('@click="handleNameClick()"');
         $responseGuest->assertSeeHtml('style="display: none;"');

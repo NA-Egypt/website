@@ -237,11 +237,18 @@ $isFirstCardAcrossSections = true;
                 @foreach($section->meetings as $meeting)
                     @php
                         $group = $meeting->groupOrDirect;
-                    @endphp
-                    @php
                         $isTargetCard = $isFirstCardAcrossSections;
+                        if ($isFirstCardAcrossSections) {
+                            $isFirstCardAcrossSections = false;
+                        }
                     @endphp
-                    <div class="col mb-3 d-flex align-items-stretch" dir="{{ $direction }}" @if($isTargetCard) id="tour-meeting-card" @endif
+                    <div class="col mb-3 d-flex align-items-stretch"
+                         wire:key="meeting-card-{{ $meeting->id }}"
+                         dir="{{ $direction }}"
+                         @if($isTargetCard) id="tour-meeting-card" @endif
+                         @if(!auth()->check() && $group && $group->phone)
+                             data-contact-url="{{ route('meetings.contact', ['meeting' => $meeting->id]) }}"
+                         @endif
                          x-data="{
                              revealed: {{ auth()->check() ? 'true' : 'false' }},
                              gsrName: '',
@@ -255,17 +262,19 @@ $isFirstCardAcrossSections = true;
                                  clearTimeout(this.timer);
                                  if (this.clicks >= 5) {
                                      this.clicks = 0;
-                                     this.fetchGroupContact();
+                                     this.fetchContact();
                                  } else {
                                      this.timer = setTimeout(() => {
                                          this.clicks = 0;
                                      }, 1000);
                                  }
                              },
-                             fetchGroupContact() {
-                                 @if(!auth()->check() && $meeting->group_id && $group && $group->phone)
+                             fetchContact() {
+                                 const rootEl = this.$root || (this.$el && this.$el.closest('[data-contact-url]')) || this.$el;
+                                 const contactUrl = rootEl?.dataset?.contactUrl;
+                                 if (!contactUrl) return;
                                  this.loadingContact = true;
-                                 fetch('{{ route('meetings.group.contact', ['group' => $meeting->group_id]) }}', {
+                                 fetch(contactUrl, {
                                      method: 'POST',
                                      headers: {
                                          'Content-Type': 'application/json',
@@ -286,7 +295,6 @@ $isFirstCardAcrossSections = true;
                                  .finally(() => {
                                      this.loadingContact = false;
                                  });
-                                 @endif
                              }
                          }">
                         @php
