@@ -95,7 +95,7 @@
                             </div>
                             <div>
                                 <h4 class="fw-bold mb-0" style="color: var(--text-primary);">
-                                    {{ app()->getLocale() === 'ar' ? 'دليل خدام مجموعات العمل الفرعية' : 'Sub-Workgroup Servants Guide' }}
+                                    {{ app()->getLocale() === 'ar' ? 'دليل خدم مجموعات العمل الفرعية' : 'Sub-Workgroup Servants Guide' }}
                                 </h4>
                                 <small class="text-secondary">{{ app()->getLocale() === 'ar' ? 'الصلاحيات، إنشاء مسودات التقارير، وتوثيق الاجتماعات' : 'Responsibilities, draft reporting, and meeting management' }}</small>
                             </div>
