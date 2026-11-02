@@ -3235,4 +3235,10 @@ return [
     'role_committee_tab' => 'Parent Committees',
     'role_rsc_tab' => 'RSC Officers & Admins',
     'role_scenarios_faq_tab' => 'Scenarios & FAQ',
+    'meeting_cycles' => 'Meeting Cycles (Bi-weekly)',
+    'monthly_cycles' => 'Full Monthly Cycles',
+    'first_tuesday_meeting_report' => '1st Tuesday Meeting Report',
+    'third_tuesday_meeting_report' => '3rd Tuesday Meeting Report',
+    'current_meeting_cycle' => 'Current Meeting Cycle',
+    'helpline_cycle_subtitle' => 'Selected report cycle (1st & 3rd Tuesday meetings / Monthly cycle)',
 ];

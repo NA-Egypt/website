@@ -127,7 +127,7 @@
 
     {{-- Period Range --}}
     <p style="margin-bottom: 12px; font-size: 11.5px; color: #475569;">
-        <strong>فترة التقرير:</strong> من {{ $start->format('Y-m-d') }} إلى {{ $end->format('Y-m-d') }} (إعادة التعيين التلقائي مع نهاية أول ثلاثاء من الشهر).
+        <strong>فترة التقرير:</strong> من {{ $start->format('Y-m-d') }} إلى {{ $end->format('Y-m-d') }}.
     </p>
 
     {{-- KPI Cards Table --}}

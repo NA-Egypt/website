@@ -3239,4 +3239,10 @@ return [
     'role_committee_tab' => 'لجان الخدمة الرئيسية',
     'role_rsc_tab' => 'خدم الإقليم والإدارة',
     'role_scenarios_faq_tab' => 'السيناريوهات والأسئلة الشائعة',
+    'meeting_cycles' => 'دورات الاجتماعات (نصف شهرية)',
+    'monthly_cycles' => 'الدورات الشهرية الكاملة',
+    'first_tuesday_meeting_report' => 'تقرير اجتماع الثلاثاء الأول',
+    'third_tuesday_meeting_report' => 'تقرير اجتماع الثلاثاء الثالث',
+    'current_meeting_cycle' => 'دورة الاجتماع الحالية',
+    'helpline_cycle_subtitle' => 'دورة التقرير المحددة (اجتماعات الثلاثاء الأول والثالث / الدورة الشهرية)',
 ];

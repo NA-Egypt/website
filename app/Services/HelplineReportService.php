@@ -78,6 +78,14 @@ class HelplineReportService
     }
 
     /**
+     * Get the third Tuesday of a specific month and year at 23:59:59.
+     */
+    public function getThirdTuesdayOfMonth(int $year, int $month): Carbon
+    {
+        return $this->getFirstTuesdayOfMonth($year, $month)->copy()->addWeeks(2);
+    }
+
+    /**
      * Determine the active cycle window for a given date (default: now).
      * The cycle resets every first Tuesday by the end of that day.
      */
@@ -105,28 +113,131 @@ class HelplineReportService
             'end' => $cycleEnd,
             'key' => $cycleStart->format('Y-m-d') . '_' . $cycleEnd->format('Y-m-d'),
             'label' => 'دورة ' . $cycleEnd->translatedFormat('F Y') . ' (حتى ' . $cycleEnd->format('Y-m-d') . ')',
+            'group' => 'monthly',
+            'group_label' => 'الدورات الشهرية الكاملة',
+            'is_current' => true,
         ];
     }
 
     /**
-     * Get cycle options for the dropdown selector.
-     * Always includes the current cycle, and only includes past cycles that have calls.
+     * Determine the active meeting cycle window for a given date (default: now).
+     * Meetings take place on the 1st Tuesday and 3rd Tuesday of every month.
+     * Intervals:
+     * - 1st Tuesday Meeting: Wednesday after 3rd Tuesday of prev month -> 1st Tuesday of current month.
+     * - 3rd Tuesday Meeting: Wednesday after 1st Tuesday of current month -> 3rd Tuesday of current month.
      */
-    public function getAvailableCycles(int $count = 12, bool $onlyWithCalls = true): array
+    public function getCurrentMeetingCycleWindow(?Carbon $now = null): array
+    {
+        $now = $now ?: Carbon::now();
+        $firstTuesday = $this->getFirstTuesdayOfMonth($now->year, $now->month);
+        $thirdTuesday = $this->getThirdTuesdayOfMonth($now->year, $now->month);
+
+        if ($now->lte($firstTuesday)) {
+            $prevMonth = $now->copy()->subMonth();
+            $prevThirdTuesday = $this->getThirdTuesdayOfMonth($prevMonth->year, $prevMonth->month);
+            $start = $prevThirdTuesday->copy()->addDay()->startOfDay();
+            $end = $firstTuesday;
+            $type = 'first_tuesday';
+            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+        } elseif ($now->lte($thirdTuesday)) {
+            $start = $firstTuesday->copy()->addDay()->startOfDay();
+            $end = $thirdTuesday;
+            $type = 'third_tuesday';
+            $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+        } else {
+            $nextMonth = $now->copy()->addMonth();
+            $nextFirstTuesday = $this->getFirstTuesdayOfMonth($nextMonth->year, $nextMonth->month);
+            $start = $thirdTuesday->copy()->addDay()->startOfDay();
+            $end = $nextFirstTuesday;
+            $type = 'first_tuesday';
+            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $nextFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $nextFirstTuesday->format('d/m/Y') . ')';
+        }
+
+        return [
+            'start' => $start,
+            'end' => $end,
+            'key' => $start->format('Y-m-d') . '_' . $end->format('Y-m-d'),
+            'label' => $label,
+            'type' => $type,
+            'group' => 'meeting',
+            'group_label' => 'دورات الاجتماعات (نصف شهرية)',
+            'is_current' => true,
+        ];
+    }
+
+    /**
+     * Get meeting cycle options for the dropdown selector.
+     */
+    public function getAvailableMeetingCycles(int $count = 12, bool $onlyWithCalls = true): array
+    {
+        $cycles = [];
+        $current = $this->getCurrentMeetingCycleWindow();
+        $cycles[$current['key']] = $current;
+
+        $cursorType = $current['type'];
+        $cursorMonth = $current['end']->copy();
+
+        // Step backward meeting by meeting
+        for ($step = 1; $step < $count * 2; $step++) {
+            if ($cursorType === 'third_tuesday') {
+                $cursorType = 'first_tuesday';
+                $end = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $prevMonth = $cursorMonth->copy()->subMonth();
+                $prevThirdTuesday = $this->getThirdTuesdayOfMonth($prevMonth->year, $prevMonth->month);
+                $start = $prevThirdTuesday->copy()->addDay()->startOfDay();
+                $label = 'تقرير اجتماع الثلاثاء الأول - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            } else {
+                $cursorMonth = $cursorMonth->copy()->subMonth();
+                $cursorType = 'third_tuesday';
+                $end = $this->getThirdTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $firstTuesday = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $start = $firstTuesday->copy()->addDay()->startOfDay();
+                $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            }
+
+            $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
+
+            if ($onlyWithCalls) {
+                $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
+                    ->whereDate('call_date', '<=', $end->toDateString())
+                    ->exists();
+
+                if (!$hasCalls) {
+                    continue;
+                }
+            }
+
+            $cycles[$key] = [
+                'start' => $start,
+                'end' => $end,
+                'key' => $key,
+                'label' => $label,
+                'type' => $cursorType,
+                'group' => 'meeting',
+                'group_label' => 'دورات الاجتماعات (نصف شهرية)',
+                'is_current' => false,
+            ];
+        }
+
+        return $cycles;
+    }
+
+    /**
+     * Get monthly cycle options for the dropdown selector.
+     */
+    public function getAvailableMonthlyCycles(int $count = 12, bool $onlyWithCalls = true): array
     {
         $cycles = [];
         $current = $this->getCurrentCycleWindow();
         $cursorEnd = $current['end']->copy();
 
         for ($i = 0; $i < $count; $i++) {
-            // End of this cycle
             $end = $cursorEnd->copy();
-            // Start is the first Tuesday of previous month
-            $prev = $end->copy()->subDays(15); // safely go to previous month
+            $prev = $end->copy()->subDays(15);
             $start = $this->getFirstTuesdayOfMonth($prev->year, $prev->month);
 
             $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
-            $label = ($i === 0 ? 'الدورة الحالية: ' : 'دورة ') . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = ($i === 0 ? 'الدورة الشهرية الحالية: ' : 'دورة ') . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
 
             $isCurrent = ($i === 0);
 
@@ -136,6 +247,8 @@ class HelplineReportService
                     'end' => $end,
                     'key' => $key,
                     'label' => $label,
+                    'group' => 'monthly',
+                    'group_label' => 'الدورات الشهرية الكاملة',
                     'is_current' => true,
                 ];
             } elseif ($onlyWithCalls) {
@@ -149,6 +262,8 @@ class HelplineReportService
                         'end' => $end,
                         'key' => $key,
                         'label' => $label,
+                        'group' => 'monthly',
+                        'group_label' => 'الدورات الشهرية الكاملة',
                         'is_current' => false,
                     ];
                 }
@@ -158,12 +273,38 @@ class HelplineReportService
                     'end' => $end,
                     'key' => $key,
                     'label' => $label,
+                    'group' => 'monthly',
+                    'group_label' => 'الدورات الشهرية الكاملة',
                     'is_current' => false,
                 ];
             }
 
-            // Step backward to previous cycle end
             $cursorEnd = $start->copy();
+        }
+
+        return $cycles;
+    }
+
+    /**
+     * Get cycle options for the dropdown selector.
+     * Supports meeting cycles, full monthly cycles, or both ('all').
+     */
+    public function getAvailableCycles(int $count = 12, bool $onlyWithCalls = true, string $type = 'all'): array
+    {
+        $cycles = [];
+
+        // 1. Meeting Cycles
+        if ($type === 'all' || $type === 'meeting') {
+            foreach ($this->getAvailableMeetingCycles($count, $onlyWithCalls) as $key => $cycle) {
+                $cycles[$key] = $cycle;
+            }
+        }
+
+        // 2. Full Monthly Cycles
+        if ($type === 'all' || $type === 'monthly') {
+            foreach ($this->getAvailableMonthlyCycles($count, $onlyWithCalls) as $key => $cycle) {
+                $cycles[$key] = $cycle;
+            }
         }
 
         return $cycles;

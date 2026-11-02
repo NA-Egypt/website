@@ -9,7 +9,7 @@
               <i class="bi bi-calendar-check fs-4"></i>
             </div>
             <div>
-              <div class="text-muted small fw-medium">دورة التقرير المحددة (تنتهي بأول ثلاثاء شهرياً)</div>
+              <div class="text-muted small fw-medium">دورة التقرير المحددة (اجتماعات الثلاثاء الأول والثالث / الدورة الشهرية)</div>
               <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
                 <span>{{ currentPeriod.label }}</span>
                 <span v-if="loading" class="spinner-border spinner-border-sm text-primary" role="status"></span>
@@ -25,12 +25,19 @@
                 v-if="Object.keys(cycles).length > 1"
                 v-model="selectedCycleKey" 
                 class="form-select form-select-sm rounded-pill border shadow-sm px-3" 
-                style="min-width: 200px;"
+                style="min-width: 250px;"
                 @change="onCycleChange"
               >
-                <option v-for="(c, key) in cycles" :key="key" :value="key">
-                  {{ c.label }}
-                </option>
+                <optgroup v-if="Object.keys(groupedCycles.meeting).length > 0" label="دورات الاجتماعات (نصف شهرية)">
+                  <option v-for="(c, key) in groupedCycles.meeting" :key="key" :value="key">
+                    {{ c.label }}
+                  </option>
+                </optgroup>
+                <optgroup v-if="Object.keys(groupedCycles.monthly).length > 0" label="الدورات الشهرية الكاملة">
+                  <option v-for="(c, key) in groupedCycles.monthly" :key="key" :value="key">
+                    {{ c.label }}
+                  </option>
+                </optgroup>
               </select>
 
               <span v-else class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-6">
@@ -666,6 +673,18 @@ const loading = ref(false);
 const calls = ref(props.initialData.data || []);
 const metrics = ref(props.initialMetrics || {});
 const cycles = ref(props.initialCycles || {});
+const groupedCycles = computed(() => {
+  const meeting = {};
+  const monthly = {};
+  for (const [key, c] of Object.entries(cycles.value)) {
+    if (c && c.group === 'meeting') {
+      meeting[key] = c;
+    } else if (c) {
+      monthly[key] = c;
+    }
+  }
+  return { meeting, monthly };
+});
 const selectedCycleKey = ref(props.currentCycleKey);
 const selectedPeriodType = ref('cycle');
 const currentPeriod = ref({
@@ -826,6 +845,10 @@ const clearSearch = () => {
 
 const onCycleChange = () => {
   selectedPeriodType.value = 'cycle';
+  const hiddenCycleInput = document.querySelector('form input[name="cycle"]');
+  if (hiddenCycleInput) {
+    hiddenCycleInput.value = selectedCycleKey.value;
+  }
   fetchData(1);
 };
 

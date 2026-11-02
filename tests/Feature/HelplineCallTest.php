@@ -437,15 +437,72 @@ class HelplineCallTest extends TestCase
         $this->assertNull(HelplineCall::find($call->id));
     }
 
+    public function test_third_tuesday_and_meeting_cycle_calculation()
+    {
+        $service = new HelplineReportService();
+
+        // September 2026: 1st Tuesday is Sep 1, 3rd Tuesday is Sep 15
+        $sep1st = $service->getFirstTuesdayOfMonth(2026, 9);
+        $sep3rd = $service->getThirdTuesdayOfMonth(2026, 9);
+
+        $this->assertEquals(Carbon::TUESDAY, $sep3rd->dayOfWeek);
+        $this->assertEquals(15, $sep3rd->day);
+        $this->assertEquals('23:59:59', $sep3rd->format('H:i:s'));
+
+        // October 2026: 1st Tuesday is Oct 6, 3rd Tuesday is Oct 20
+        $oct3rd = $service->getThirdTuesdayOfMonth(2026, 10);
+        $this->assertEquals(20, $oct3rd->day);
+
+        // Case 1: Date is on 1st Tuesday of September 2026 (Meeting 1)
+        // Cycle must end on Sep 1, and start on Wednesday after August 3rd Tuesday (Aug 19)
+        $now1 = Carbon::create(2026, 9, 1, 14, 0, 0);
+        $meetingCycle1 = $service->getCurrentMeetingCycleWindow($now1);
+        $this->assertEquals('2026-09-01 23:59:59', $meetingCycle1['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-08-19 00:00:00', $meetingCycle1['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('first_tuesday', $meetingCycle1['type']);
+        $this->assertEquals('meeting', $meetingCycle1['group']);
+
+        // Case 2: Date is between 1st and 3rd Tuesday of September 2026 (e.g. Sep 8)
+        // Cycle must end on Sep 15 (3rd Tuesday), and start on Wednesday after 1st Tuesday (Sep 2)
+        $now2 = Carbon::create(2026, 9, 8, 12, 0, 0);
+        $meetingCycle2 = $service->getCurrentMeetingCycleWindow($now2);
+        $this->assertEquals('2026-09-15 23:59:59', $meetingCycle2['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-09-02 00:00:00', $meetingCycle2['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('third_tuesday', $meetingCycle2['type']);
+
+        // Case 3: Date is after 3rd Tuesday of September 2026 (e.g. Sep 20)
+        // Cycle must retrieve report between 3rd Tuesday of September (Wednesday after it: Sep 16) till 1st Tuesday of October (Oct 6)
+        $now3 = Carbon::create(2026, 9, 20, 10, 0, 0);
+        $meetingCycle3 = $service->getCurrentMeetingCycleWindow($now3);
+        $this->assertEquals('2026-10-06 23:59:59', $meetingCycle3['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-09-16 00:00:00', $meetingCycle3['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('first_tuesday', $meetingCycle3['type']);
+    }
+
     public function test_empty_past_cycles_are_filtered_and_only_current_cycle_kept()
     {
         $service = new HelplineReportService();
 
-        // With no calls in past cycles, only 1 cycle (the current cycle) should be returned
-        $cycles = $service->getAvailableCycles(12, true);
-        $this->assertCount(1, $cycles);
-        $currentCycle = array_values($cycles)[0];
-        $this->assertTrue($currentCycle['is_current']);
+        // When only monthly cycles are requested, without calls only 1 current monthly cycle is returned
+        $monthlyCycles = $service->getAvailableCycles(12, true, 'monthly');
+        $this->assertCount(1, $monthlyCycles);
+        $currentMonthly = array_values($monthlyCycles)[0];
+        $this->assertTrue($currentMonthly['is_current']);
+        $this->assertEquals('monthly', $currentMonthly['group']);
+
+        // When all cycles are requested, without calls only active meeting cycle and active monthly cycle are returned
+        $allCycles = $service->getAvailableCycles(12, true, 'all');
+        $this->assertCount(2, $allCycles);
+
+        $hasMeeting = false;
+        $hasMonthly = false;
+        foreach ($allCycles as $c) {
+            if ($c['group'] === 'meeting') $hasMeeting = true;
+            if ($c['group'] === 'monthly') $hasMonthly = true;
+            $this->assertTrue($c['is_current']);
+        }
+        $this->assertTrue($hasMeeting);
+        $this->assertTrue($hasMonthly);
     }
 
     public function test_public_form_rejects_future_call_date()
@@ -509,5 +566,51 @@ class HelplineCallTest extends TestCase
 
         $this->assertGreaterThanOrEqual(1, $reportData['total_calls']);
         $this->assertTrue($reportData['calls']->pluck('id')->contains($pastCall->id));
+    }
+
+    public function test_meeting_cycle_filters_calls_between_third_tuesday_and_first_tuesday()
+    {
+        // Window: 2026-09-16 (Wednesday after 3rd Tuesday Sep 15) to 2026-10-06 (1st Tuesday Oct)
+        $insideCall = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => '2026-09-20',
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مدمن يبحث عن تعافي',
+            'referral_source' => 'بحث جوجل',
+            'volunteer_name' => 'متطوع تجريبي',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة بين الثلاثاء 3 والأول',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::now(),
+        ]);
+
+        $outsideCall = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => '2026-09-10', // inside 1st-to-3rd Tuesday window
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مدمن يبحث عن تعافي',
+            'referral_source' => 'بحث جوجل',
+            'volunteer_name' => 'متطوع تجريبي',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة خارج الفترة',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::now(),
+        ]);
+
+        $service = new HelplineReportService();
+        $cycleKey = '2026-09-16_2026-10-06';
+
+        // Available cycles should discover this meeting cycle because it has a call
+        $cycles = $service->getAvailableCycles(12, true, 'meeting');
+        $this->assertArrayHasKey($cycleKey, $cycles);
+        $this->assertEquals('meeting', $cycles[$cycleKey]['group']);
+
+        // Data endpoint with cycleKey returns the inside call and excludes the outside call
+        $response = $this->actingAs($this->phoneUser)->getJson("/helpline/data?period_type=cycle&cycle={$cycleKey}");
+        $response->assertStatus(200);
+
+        $callIds = collect($response->json('calls.data'))->pluck('id');
+        $this->assertTrue($callIds->contains($insideCall->id));
+        $this->assertFalse($callIds->contains($outsideCall->id));
     }
 }
