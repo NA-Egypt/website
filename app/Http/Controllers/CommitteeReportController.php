@@ -312,8 +312,9 @@ class CommitteeReportController extends Controller
     public function edit($id)
     {
         $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
+        $isRsc = $this->isRsc();
 
-        if (!$this->isRsc()) {
+        if (!$isRsc) {
             $committee = $this->getServiceCommittee();
             if (!$committee || $committee->id !== $report->service_committee_id) {
                 abort(403, 'Unauthorized');
@@ -321,13 +322,13 @@ class CommitteeReportController extends Controller
         }
 
         // Only drafts can be edited by committee members
-        if (!$this->isRsc() && $report->status !== 'draft') {
+        if (!$isRsc && $report->status !== 'draft') {
             return redirect()->route('committee-reports.show', $report->id)
                 ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
 
-        $committees = $this->isRsc() ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
-        $committee = !$this->isRsc() ? $this->getServiceCommittee() : null;
+        $committees = $isRsc ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
+        $committee = !$isRsc ? $this->getServiceCommittee() : null;
 
         $isWorkgroup = ($committee && $committee->isWorkgroup()) || ($report->serviceCommittee && $report->serviceCommittee->isWorkgroup());
         $targetComm = $report->serviceCommittee ?: $committee;

@@ -87,6 +87,7 @@ class CommitteeReportWorkflowTest extends TestCase
 
         // 2. View Draft
         $this->get(route('committee-reports.show', $report->id))->assertStatus(200);
+        $this->get(route('committee-reports.edit', $report->id))->assertStatus(200);
 
         // 3. Edit Draft
         $response = $this->put(route('committee-reports.update', $report->id), [
