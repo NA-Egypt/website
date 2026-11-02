@@ -367,7 +367,7 @@
                             </div>
                             <div>
                                 <h4 class="fw-bold mb-0" style="color: var(--text-primary);">
-                                    {{ app()->getLocale() === 'ar' ? 'دليل ضباط لجنة خدمة الإقليم والإدارة العليا' : 'RSC Officers & Platform Admin Guide' }}
+                                    {{ app()->getLocale() === 'ar' ? 'دليل خدم لجنة خدمة الإقليم والإدارة العليا' : 'RSC Officers & Platform Admin Guide' }}
                                 </h4>
                                 <small class="text-secondary">{{ app()->getLocale() === 'ar' ? 'طابور المراجعة، الاعتماد والأرشفة السحابية، وسجلات التدقيق' : 'Review queue, approval, cloud archiving, and audit logging' }}</small>
                             </div>
@@ -375,7 +375,7 @@
 
                         <p class="text-secondary mb-0">
                             {{ app()->getLocale() === 'ar'
-                                ? 'يختص ضباط الإقليم (دور rsc) بمراجعة تقارير لجان الخدمة الرسمية واعتمادها لتوليد وثائق الـ PDF وأرشفتها تلقائياً على خوادم التخزين السحابي Storagebox، أو إرجاعها كمسودة مع تدوين ملاحظات توجيهية.'
+                                ? 'يختص خدم الإقليم (دور rsc) بمراجعة تقارير لجان الخدمة الرسمية واعتمادها لتوليد وثائق الـ PDF وأرشفتها تلقائياً على خوادم التخزين السحابي Storagebox، أو إرجاعها كمسودة مع تدوين ملاحظات توجيهية.'
                                 : 'Regional officers (rsc role) review official committee reports, approve them for automated PDF generation and Hetzner Storagebox archiving, or return them to draft with actionable review notes.' }}
                         </p>
                     </div>
@@ -483,7 +483,7 @@
                         </h4>
                         <p class="text-secondary mb-0">
                             {{ app()->getLocale() === 'ar'
-                                ? 'أمثلة توضيحية خطوة بخطوة لكيفية سير العمل بين مجموعات العمل واللجان وضباط الإقليم في الحالات الشائعة.'
+                                ? 'أمثلة توضيحية خطوة بخطوة لكيفية سير العمل بين مجموعات العمل واللجان وخدم الإقليم في الحالات الشائعة.'
                                 : 'Step-by-step practical walkthroughs demonstrating the end-to-end interactions across roles and entities.' }}
                         </p>
                     </div>
