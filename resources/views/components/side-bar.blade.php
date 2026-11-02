@@ -390,6 +390,9 @@
             @if($currentUser)
             <li><a href="{{ route('committee-reports.archive') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.Reports Archive') ?? 'Reports Archive' }}</a></li>
             @endif
+            @if($canSeeReports)
+            <li><a href="{{ route('reports.guide') }}"><i class="bi bi-arrow-right-short"></i>{{ __('messages.reports_workgroups_guide') }}</a></li>
+            @endif
 
             @if($canSeeAgendas)
               @php

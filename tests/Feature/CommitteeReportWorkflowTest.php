@@ -827,4 +827,14 @@ class CommitteeReportWorkflowTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee(__('messages.Committee Report Audit Logs'));
     }
+
+    public function test_authenticated_user_can_access_committee_reports_guide()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->get(route('reports.guide'));
+        $response->assertStatus(200);
+        $response->assertSee(__('messages.reports_workgroups_guide'));
+    }
 }

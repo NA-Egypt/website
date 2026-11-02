@@ -59,6 +59,9 @@
                         <i class="bi bi-clock-history"></i> {{ __('messages.Audit Logs') ?? 'Audit Logs' }}
                     </a>
                 @endif
+                <a href="{{ route('reports.guide') }}" class="btn btn-outline-primary" title="{{ __('messages.reports_workgroups_guide') }}">
+                    <i class="bi bi-book-half"></i> {{ __('messages.reports_guide_button') }}
+                </a>
             </div>
             
             <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">

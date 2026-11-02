@@ -3232,4 +3232,11 @@ return [
     'Date & Time' => 'التاريخ والوقت',
     'Report ID' => 'رقم التقرير',
     'All Actions' => 'جميع الإجراءات',
+    'reports_workgroups_guide' => 'دليل تقارير اللجان ومجموعات العمل',
+    'reports_workgroups_guide_subtitle' => 'الدليل التشغيلي الشامل للجان الخدمة، مجموعات العمل، وضباط لجنة خدمة الإقليم',
+    'reports_guide_button' => 'دليل التقارير',
+    'role_workgroup_tab' => 'خدام مجموعات العمل',
+    'role_committee_tab' => 'لجان الخدمة الرئيسية',
+    'role_rsc_tab' => 'ضباط الإقليم والإدارة',
+    'role_scenarios_faq_tab' => 'السيناريوهات والأسئلة الشائعة',
 ];

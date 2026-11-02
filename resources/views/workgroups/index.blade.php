@@ -16,21 +16,27 @@
             </div>
         @endif
 
-        @if(!$isSuperAdmin && $myCommittee)
-            <div class="card border-0 shadow-sm mb-4 glass-card">
-                <div class="card-body p-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white" style="width: 46px; height: 46px;">
-                            <i class="bi bi-people-fill fs-5"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">{{ app()->getLocale() === 'ar' ? $myCommittee->ar_name : $myCommittee->en_name }}</h5>
-                            <small class="text-muted">{{ __('messages.Sub-Workgroups') }}</small>
-                        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            @if(!$isSuperAdmin && $myCommittee)
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white shadow-sm" style="width: 46px; height: 46px;">
+                        <i class="bi bi-people-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">{{ app()->getLocale() === 'ar' ? ($myCommittee->ar_name ?: $myCommittee->en_name) : ($myCommittee->en_name ?: $myCommittee->ar_name) }}</h5>
+                        <small class="text-muted">{{ __('messages.Sub-Workgroups') }}</small>
                     </div>
                 </div>
+            @else
+                <div></div>
+            @endif
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <a href="{{ route('reports.guide') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1.5" title="{{ __('messages.reports_workgroups_guide') }}">
+                    <i class="bi bi-book-half"></i>
+                    <span>{{ __('messages.reports_guide_button') }}</span>
+                </a>
             </div>
-        @endif
+        </div>
 
         @php
             $labels = [

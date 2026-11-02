@@ -579,7 +579,11 @@ class WorkgroupHierarchyTest extends TestCase
         $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
         $this->assertEquals('embedded', $wgReport->fresh()->status);
 
-        // Delete parent draft report
+        // Delete parent draft report as super admin
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
         $deleteResponse = $this->delete(route('committee-reports.destroy', $parentReport->id));
         $deleteResponse->assertRedirect(route('committee-reports.index'));
 

@@ -57,6 +57,9 @@ Route::group(
             // GSR Meetings Guide:
             Route::get('/gsr-guide', [\App\Http\Controllers\GsrGuideController::class, 'index'])->name('gsr.guide');
 
+            // Committee Reports & Workgroups Guide:
+            Route::get('/committee-reports-guide', [\App\Http\Controllers\CommitteeReportsGuideController::class, 'index'])->name('reports.guide');
+
             // Stocktaking Routes:
             Route::get('/store/stocktaking', [\App\Http\Controllers\StocktakingController::class, 'index'])->name('store.stocktaking.index');
             Route::post('/store/stocktaking/start', [\App\Http\Controllers\StocktakingController::class, 'start'])->name('store.stocktaking.start');

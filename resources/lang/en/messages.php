@@ -3228,4 +3228,11 @@ return [
     'Date & Time' => 'Date & Time',
     'Report ID' => 'Report ID',
     'All Actions' => 'All Actions',
+    'reports_workgroups_guide' => 'Reports & Workgroups Guide',
+    'reports_workgroups_guide_subtitle' => 'Comprehensive operational manual for Service Committees, Workgroups, and RSC Officers',
+    'reports_guide_button' => 'Reports Guide',
+    'role_workgroup_tab' => 'Workgroup Servants',
+    'role_committee_tab' => 'Parent Committees',
+    'role_rsc_tab' => 'RSC Officers & Admins',
+    'role_scenarios_faq_tab' => 'Scenarios & FAQ',
 ];
