@@ -51,6 +51,11 @@ class CommitteeReport extends Model
         return $this->hasMany(CommitteeReport::class, 'parent_report_id');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(CommitteeReportLog::class, 'committee_report_id')->orderBy('created_at', 'desc');
+    }
+
     public function isEmbedded(): bool
     {
         return $this->status === 'embedded' || !is_null($this->parent_report_id);

@@ -54,6 +54,11 @@
                 <a href="{{ route('committee-reports.archive') }}" class="btn btn-outline-info">
                     <i class="bi bi-archive-fill"></i> {{ __('messages.Reports Archive') ?? 'Reports Archive' }}
                 </a>
+                @if(auth()->check() && auth()->user()->hasRole('super admin'))
+                    <a href="{{ route('committee-reports.logs') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-clock-history"></i> {{ __('messages.Audit Logs') ?? 'Audit Logs' }}
+                    </a>
+                @endif
             </div>
             
             <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">
@@ -160,6 +165,8 @@
                                                 </button>
                                             </form>
                                         @endif
+                                    @endif
+                                    @if(auth()->check() && auth()->user()->hasRole('super admin') && $report->status === 'draft')
                                         <form action="{{ route('committee-reports.destroy', $report->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.Are you sure you want to delete this report?') ?? 'Are you sure you want to delete this report?' }}')">
                                             @csrf
                                             @method('DELETE')

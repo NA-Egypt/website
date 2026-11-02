@@ -37,7 +37,7 @@ class GenericObserver
         $details = [];
 
         if ($operation === 'create') {
-            $newValues = $this->sanitize($model->getAttributes());
+            $newValues = $this->sanitize($model->getAttributes(), $model);
             $details = $newValues;
         } elseif ($operation === 'update') {
             $hash = spl_object_hash($model);
@@ -56,9 +56,9 @@ class GenericObserver
                 $newValues[$key] = $newValue;
             }
 
-            // Sanitize sensitive fields from change tracking
-            $oldValues = $this->sanitize($oldValues);
-            $newValues = $this->sanitize($newValues);
+            // Sanitize sensitive and oversized payload fields from change tracking
+            $oldValues = $this->sanitize($oldValues, $model);
+            $newValues = $this->sanitize($newValues, $model);
 
             if (empty($oldValues) && empty($newValues)) {
                 return; // No auditable changes detected (e.g. only updated_at changed)
@@ -66,7 +66,7 @@ class GenericObserver
 
             $details = $newValues;
         } elseif ($operation === 'delete') {
-            $oldValues = $this->sanitize($model->getRawOriginal());
+            $oldValues = $this->sanitize($model->getRawOriginal(), $model);
             $details = $oldValues;
         }
 
@@ -88,9 +88,12 @@ class GenericObserver
         ]);
     }
 
-    private function sanitize(array $data): array
+    private function sanitize(array $data, ?Model $model = null): array
     {
         $hidden = ['password', 'remember_token', 'token', 'secret', 'key', 'api_token'];
+        if ($model instanceof \App\Models\CommitteeReport) {
+            $hidden[] = 'body';
+        }
         return array_filter($data, function ($key) use ($hidden) {
             foreach ($hidden as $field) {
                 if (stripos($key, $field) !== false) {

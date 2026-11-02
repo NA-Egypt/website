@@ -738,4 +738,93 @@ class CommitteeReportWorkflowTest extends TestCase
         $apiResponse->assertStatus(200);
         $apiResponse->assertJsonMissing(['review_notes' => 'Secret RSC review notes']);
     }
+
+    public function test_only_super_admin_can_delete_draft_or_returned_reports()
+    {
+        $commUser = User::factory()->create(['email' => 'comm-author@naegypt.org']);
+        $committee = $this->createCommittee($commUser);
+
+        $draftReport = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Draft',
+            'body' => json_encode([['headline' => 'H1', 'content' => 'Body']]),
+            'status' => 'draft',
+        ]);
+
+        // 1. Regular committee user attempts to delete: must be forbidden (403)
+        $this->actingAs($commUser);
+        $response = $this->delete(route('committee-reports.destroy', $draftReport->id));
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('committee_reports', ['id' => $draftReport->id]);
+
+        // 2. Super admin deletes the draft report: must succeed
+        $superAdmin = User::factory()->create(['email' => 'super-admin@naegypt.org']);
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
+        $responseAdmin = $this->delete(route('committee-reports.destroy', $draftReport->id));
+        $responseAdmin->assertRedirect(route('committee-reports.index'));
+        $this->assertDatabaseMissing('committee_reports', ['id' => $draftReport->id]);
+
+        // Verify audit log recorded for deletion
+        $this->assertDatabaseHas('committee_report_logs', [
+            'committee_report_id' => $draftReport->id,
+            'action' => 'deleted',
+            'user_id' => $superAdmin->id,
+        ]);
+    }
+
+    public function test_super_admin_cannot_delete_submitted_or_approved_reports()
+    {
+        $superAdmin = User::factory()->create(['email' => 'super-admin-check@naegypt.org']);
+        $superAdmin->assignRole('super admin');
+        $this->actingAs($superAdmin);
+
+        $committee = $this->createCommittee($superAdmin);
+
+        $submittedReport = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Submitted',
+            'body' => json_encode([['headline' => 'H1', 'content' => 'Body']]),
+            'status' => 'submitted',
+        ]);
+
+        $approvedReport = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-05-20',
+            'meeting_day_description' => 'Wednesday Approved',
+            'body' => json_encode([['headline' => 'H1', 'content' => 'Body']]),
+            'status' => 'approved',
+        ]);
+
+        // Attempting to delete submitted report should redirect with error
+        $response1 = $this->delete(route('committee-reports.destroy', $submittedReport->id));
+        $response1->assertSessionHas('error');
+        $this->assertDatabaseHas('committee_reports', ['id' => $submittedReport->id]);
+
+        // Attempting to delete approved report should redirect with error
+        $response2 = $this->delete(route('committee-reports.destroy', $approvedReport->id));
+        $response2->assertSessionHas('error');
+        $this->assertDatabaseHas('committee_reports', ['id' => $approvedReport->id]);
+    }
+
+    public function test_super_admin_can_access_committee_reports_logs_hub()
+    {
+        $superAdmin = User::factory()->create(['email' => 'admin-logs@naegypt.org']);
+        $superAdmin->assignRole('super admin');
+
+        $regularUser = User::factory()->create(['email' => 'regular-logs@naegypt.org']);
+
+        // Non-super-admin gets 403
+        $this->actingAs($regularUser);
+        $this->get(route('committee-reports.logs'))->assertStatus(403);
+
+        // Super admin gets 200
+        $this->actingAs($superAdmin);
+        $response = $this->get(route('committee-reports.logs'));
+        $response->assertStatus(200);
+        $response->assertSee(__('messages.Committee Report Audit Logs'));
+    }
 }

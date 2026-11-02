@@ -393,6 +393,7 @@ Route::group(
             });
 
             // Committee Reports:
+            Route::get('committee-reports/logs', [\App\Http\Controllers\CommitteeReportController::class, 'logs'])->name('committee-reports.logs');
             Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
             Route::get('committee-reports/storagebox/download', [\App\Http\Controllers\CommitteeReportController::class, 'downloadStorageboxFile'])->name('committee-reports.downloadStorageboxFile');
             Route::get('committee-reports/attachments/{id}', [\App\Http\Controllers\CommitteeReportController::class, 'downloadAttachment'])->name('committee-reports.downloadAttachment');

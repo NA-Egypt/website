@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CommitteeReport;
 use App\Models\ServiceCommittee;
 use App\Models\CommitteeReportAttachment;
+use App\Models\CommitteeReportLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\MpdfService;
@@ -234,6 +235,18 @@ class CommitteeReportController extends Controller
             app(\App\Services\ReportArchiver::class)->archive($report);
         }
 
+        CommitteeReportLog::record(
+            'created',
+            $report,
+            __('messages.report_created_log_summary', ['id' => $report->id, 'committee' => $targetCommittee->ar_name ?? $targetCommittee->en_name ?? 'N/A']),
+            [
+                'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
+                'status' => $report->status,
+                'is_exceptional' => (bool)$report->is_exceptional,
+                'attachment_count' => $request->hasFile('attachments') ? count($request->file('attachments')) : 0,
+            ]
+        );
+
         return redirect()->route('committee-reports.index')->with('success', __('messages.report_created_success'));
     }
 
@@ -408,6 +421,8 @@ class CommitteeReportController extends Controller
         }
 
         $wasDraft = $report->status === 'draft';
+        $oldStatus = $report->status;
+        $oldDate = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null;
 
         $report->update([
             'service_committee_id' => $committeeId,
@@ -452,22 +467,43 @@ class CommitteeReportController extends Controller
             app(\App\Services\ReportArchiver::class)->archive($report->fresh());
         }
 
+        $newDate = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null;
+        CommitteeReportLog::record(
+            'updated',
+            $report,
+            __('messages.report_updated_log_summary', ['id' => $report->id, 'committee' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'N/A']),
+            [
+                'meeting_date' => $newDate,
+                'status' => $report->status,
+                'status_changed' => $oldStatus !== $report->status ? "{$oldStatus} -> {$report->status}" : null,
+                'date_changed' => $oldDate !== $newDate ? "{$oldDate} -> {$newDate}" : null,
+                'is_exceptional' => (bool)$report->is_exceptional,
+                'attachments_added' => $request->hasFile('attachments') ? count($request->file('attachments')) : 0,
+            ]
+        );
+
         return redirect()->route('committee-reports.index')->with('success', __('messages.report_updated_success'));
     }
 
     public function destroy($id)
     {
-        $report = CommitteeReport::findOrFail($id);
-
-        if (!$this->isRsc()) {
-            $committee = $this->getServiceCommittee();
-            if (!$committee || $committee->id !== $report->service_committee_id) {
-                abort(403, 'Unauthorized');
-            }
-            if ($report->status !== 'draft') {
-                abort(403, 'Only drafts can be deleted.');
-            }
+        $user = Auth::user();
+        if (!$user || !$user->hasRole('super admin')) {
+            abort(403, 'Unauthorized. Only Super Admin can delete committee reports.');
         }
+
+        $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
+
+        if ($report->status !== 'draft') {
+            return redirect()->back()->with('error', __('messages.only_draft_reports_can_be_deleted') ?? 'Only draft or returned reports can be deleted.');
+        }
+
+        $reportId = $report->id;
+        $committeeId = $report->service_committee_id;
+        $committeeName = $report->serviceCommittee ? ($report->serviceCommittee->ar_name ?: $report->serviceCommittee->en_name) : null;
+        $meetingDate = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null;
+        $attachmentCount = $report->attachments->count();
+        $wasReturnedDraft = !empty($report->review_notes);
 
         // Release any embedded workgroup reports back to available drafts
         $report->embeddedWorkgroupReports()->update([
@@ -484,6 +520,20 @@ class CommitteeReportController extends Controller
         }
 
         $report->delete();
+
+        CommitteeReportLog::record(
+            'deleted',
+            [
+                'id' => $reportId,
+                'service_committee_id' => $committeeId,
+            ],
+            __('messages.report_deleted_log_summary', ['id' => $reportId, 'committee' => $committeeName ?? 'N/A']),
+            [
+                'meeting_date' => $meetingDate,
+                'attachment_count' => $attachmentCount,
+                'was_returned_draft' => $wasReturnedDraft,
+            ]
+        );
 
         return redirect()->route('committee-reports.index')->with('success', __('messages.report_deleted_success'));
     }
@@ -600,6 +650,15 @@ class CommitteeReportController extends Controller
 
         $report->update(['status' => 'submitted']);
         $this->sendNotificationEmail($report);
+
+        CommitteeReportLog::record(
+            'submitted',
+            $report,
+            __('messages.report_submitted_log_summary', ['id' => $report->id, 'committee' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'N/A']),
+            [
+                'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
+            ]
+        );
         
         return redirect()->back()->with('success', __('messages.report_approved_sent_rsc'));
     }
@@ -990,6 +1049,15 @@ class CommitteeReportController extends Controller
 
         app(\App\Services\ReportArchiver::class)->archive($report);
 
+        CommitteeReportLog::record(
+            'approved',
+            $report,
+            __('messages.report_approved_log_summary', ['id' => $report->id, 'committee' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'N/A']),
+            [
+                'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
+            ]
+        );
+
         return redirect()->route('committee-reports.index')->with('success', __('messages.report_approved_published'));
     }
 
@@ -1014,7 +1082,59 @@ class CommitteeReportController extends Controller
             'review_notes' => $request->review_notes,
         ]);
 
+        CommitteeReportLog::record(
+            'returned_to_draft',
+            $report,
+            __('messages.report_returned_log_summary', ['id' => $report->id, 'committee' => $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'N/A']),
+            [
+                'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
+                'review_notes' => $request->review_notes,
+            ]
+        );
+
         return redirect()->route('committee-reports.index')->with('success', __('messages.report_returned_draft_notes'));
+    }
+
+    public function logs(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user || !$user->hasRole('super admin')) {
+            abort(403, 'Unauthorized. Only Super Admin can view committee report logs.');
+        }
+
+        $query = CommitteeReportLog::with('user')->latest('created_at');
+
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
+        }
+
+        if ($request->filled('committee_id')) {
+            $query->where('service_committee_id', $request->committee_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('summary', 'like', "%{$search}%")
+                  ->orWhere('user_name', 'like', "%{$search}%")
+                  ->orWhere('user_email', 'like', "%{$search}%")
+                  ->orWhere('committee_name', 'like', "%{$search}%")
+                  ->orWhere('committee_report_id', $search);
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $logs = $query->paginate(20)->withQueryString();
+        $committees = ServiceCommittee::orderBy('ar_name')->get();
+
+        return view('reports.logs', compact('logs', 'committees'));
     }
 
     protected function sendNotificationEmail($report)

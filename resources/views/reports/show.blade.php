@@ -189,6 +189,15 @@
                 @endif
 
                 <div class="mt-4 text-end">
+                    @if(auth()->check() && auth()->user()->hasRole('super admin') && $report->status === 'draft')
+                        <form action="{{ route('committee-reports.destroy', $report->id) }}" method="POST" class="d-inline me-2" onsubmit="return confirm('{{ __('messages.Are you sure you want to delete this report?') ?? 'Are you sure you want to delete this report?' }}')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> {{ __('messages.Delete') }}
+                            </button>
+                        </form>
+                    @endif
                     <a href="{{ route('committee-reports.pdf', $report->id) }}" class="btn btn-secondary me-2">
                         <i class="bi bi-file-earmark-pdf"></i> {{ __('messages.Download PDF') }}
                     </a>
@@ -242,6 +251,48 @@
                     </div>
                 </div>
             </div>
+        @endif
+
+        @if(auth()->check() && auth()->user()->hasRole('super admin'))
+            @php
+                $reportLogs = $report->relationLoaded('logs') ? $report->logs : $report->logs()->take(10)->get();
+            @endphp
+            @if($reportLogs && $reportLogs->isNotEmpty())
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-light py-3 border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>{{ __('messages.Report Audit Trail') ?? 'Report Audit Trail' }}</h6>
+                            <a href="{{ route('committee-reports.logs', ['search' => $report->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                {{ __('messages.View Full Logs') ?? 'View Full Logs' }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <ul class="list-group list-group-flush">
+                            @foreach($reportLogs as $log)
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom-dashed">
+                                    <div>
+                                        <span class="badge bg-{{ $log->action === 'approved' ? 'success' : ($log->action === 'submitted' ? 'info' : ($log->action === 'returned_to_draft' ? 'warning text-dark' : ($log->action === 'deleted' ? 'danger' : 'secondary'))) }} rounded-pill me-2">
+                                            {{ __('messages.action_' . $log->action) ?? ucfirst(str_replace('_', ' ', $log->action)) }}
+                                        </span>
+                                        <span class="fw-semibold text-dark">{{ $log->summary }}</span>
+                                        <div class="small text-muted mt-1">
+                                            <i class="bi bi-person me-1"></i>{{ $log->user_name ?? 'System' }} 
+                                            @if($log->user_email) ({{ $log->user_email }}) @endif
+                                            &bull; <i class="bi bi-calendar3 me-1"></i>{{ $log->created_at ? $log->created_at->format('Y-m-d H:i') : '' }}
+                                        </div>
+                                    </div>
+                                    @if(!empty($log->details))
+                                        <span class="badge bg-light text-secondary border">
+                                            {{ count($log->details) }} {{ __('messages.details') ?? 'fields' }}
+                                        </span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
         @endif
     </div>
 </x-layout>
