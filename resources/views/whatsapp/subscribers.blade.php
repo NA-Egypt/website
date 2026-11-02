@@ -114,19 +114,19 @@
                 <div class="row g-2 text-center mb-3">
                     <div class="col">
                         <div class="p-2 rounded-3 bg-light">
-                            <span class="text-muted d-block small" style="font-size: 0.72rem;">{{ __('Total') }}</span>
+                            <span class="text-muted d-block small" style="font-size: 0.72rem;">{{ __('messages.total') }}</span>
                             <strong class="font-monospace fs-6" id="liveTotalCount">{{ $initTotal }}</strong>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-2 rounded-3 bg-success-subtle text-success">
-                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Sent') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('messages.whatsapp_sent') }}</span>
                             <strong class="font-monospace fs-6" id="liveSentCount">{{ $initSent }}</strong>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-2 rounded-3 bg-danger-subtle text-danger">
-                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Failed') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('messages.whatsapp_failed') }}</span>
                             <strong class="font-monospace fs-6" id="liveFailedCount">{{ $initFailed }}</strong>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     </div>
                     <div class="col">
                         <div class="p-2 rounded-3 bg-light text-muted">
-                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('Remaining') }}</span>
+                            <span class="d-block small" style="font-size: 0.72rem;">{{ __('messages.whatsapp_remaining') }}</span>
                             <strong class="font-monospace fs-6" id="liveRemainingCount">{{ $initRemaining }}</strong>
                         </div>
                     </div>
@@ -154,8 +154,8 @@
                         {{-- Quick Filter Pills --}}
                         <div class="btn-group btn-group-sm" role="group" id="logFilterPills">
                             <button type="button" class="btn btn-outline-secondary btn-xs py-0 px-2 active" data-filter="all">{{ __('messages.all') }}</button>
-                            <button type="button" class="btn btn-outline-danger btn-xs py-0 px-2" data-filter="failed">❌ {{ __('Failed') }}</button>
-                            <button type="button" class="btn btn-outline-success btn-xs py-0 px-2" data-filter="sent">✅ {{ __('Sent') }}</button>
+                            <button type="button" class="btn btn-outline-danger btn-xs py-0 px-2" data-filter="failed">❌ {{ __('messages.whatsapp_failed') }}</button>
+                            <button type="button" class="btn btn-outline-success btn-xs py-0 px-2" data-filter="sent">✅ {{ __('messages.whatsapp_sent') }}</button>
                             <button type="button" class="btn btn-outline-warning btn-xs py-0 px-2" data-filter="cooldown">☕ {{ __('messages.whatsapp_cooldown') }}</button>
                         </div>
                     </div>
@@ -305,7 +305,7 @@
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-outline-primary rounded-pill w-100 shadow-sm">
-                            <i class="bi bi-filter me-1"></i>{{ __('Filter') }}
+                            <i class="bi bi-filter me-1"></i>{{ __('messages.Filter') }}
                         </button>
                     </div>
                 </form>
@@ -332,11 +332,11 @@
                                     <td>
                                         @if($sub->is_active)
                                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
-                                                <i class="bi bi-check-circle me-1"></i>{{ __('Active') }}
+                                                <i class="bi bi-check-circle me-1"></i>{{ __('messages.whatsapp_active') }}
                                             </span>
                                         @else
                                             <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">
-                                                <i class="bi bi-x-circle me-1"></i>{{ __('Inactive') }}
+                                                <i class="bi bi-x-circle me-1"></i>{{ __('messages.whatsapp_inactive') }}
                                             </span>
                                         @endif
                                     </td>
@@ -346,7 +346,7 @@
                                 <tr>
                                     <td colspan="6" class="text-center py-4 text-muted">
                                         <i class="bi bi-inbox display-6 d-block mb-2 text-secondary opacity-50"></i>
-                                        {{ __('No subscribers found matching your criteria.') }}
+                                        {{ __('messages.whatsapp_no_subscribers_matching') }}
                                     </td>
                                 </tr>
                             @endforelse
@@ -375,12 +375,12 @@
                                 <th>#</th>
                                 <th>{{ __('messages.Title') }}</th>
                                 <th>{{ __('messages.Channel') }}</th>
-                                <th>{{ __('Device') }}</th>
-                                <th>{{ __('Status') }}</th>
-                                <th>{{ __('Sent / Failed') }}</th>
-                                <th>{{ __('Anti-Ban') }}</th>
-                                <th>{{ __('Dispatched By') }}</th>
-                                <th>{{ __('Date') }}</th>
+                                <th>{{ __('messages.Device') }}</th>
+                                <th>{{ __('messages.Status') }}</th>
+                                <th>{{ __('messages.whatsapp_sent_failed') }}</th>
+                                <th>{{ __('messages.whatsapp_anti_ban') }}</th>
+                                <th>{{ __('messages.whatsapp_dispatched_by') }}</th>
+                                <th>{{ __('messages.Date') }}</th>
                                 <th class="text-end">{{ __('messages.Action') }}</th>
                             </tr>
                         </thead>
@@ -430,7 +430,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4 text-muted">{{ __('No broadcasts dispatched yet.') }}</td>
+                                    <td colspan="10" class="text-center py-4 text-muted">{{ __('messages.whatsapp_no_broadcasts') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -462,12 +462,12 @@
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-info-circle-fill fs-4 text-info"></i>
                                 <span class="small">
-                                    {{ __('Columns supported:') }} <code>phone</code>, <code>name</code>, <code>message</code>.
-                                    {{ __('Need the template?') }}
+                                    {{ __('messages.whatsapp_columns_supported') }} <code>phone</code>, <code>name</code>, <code>message</code>.
+                                    {{ __('messages.whatsapp_need_template') }}
                                 </span>
                             </div>
                             <a href="{{ route('whatsapp.subscribers.sample-csv') }}" class="btn btn-outline-info btn-sm rounded-pill text-nowrap px-3 shadow-sm bg-white">
-                                <i class="bi bi-download me-1"></i>{{ __('Download Sample CSV') }}
+                                <i class="bi bi-download me-1"></i>{{ __('messages.whatsapp_download_sample_csv') }}
                             </a>
                         </div>
 
@@ -501,7 +501,7 @@
                                                 {{ __('messages.whatsapp_mode_template_all') }}
                                             </label>
                                             <span class="text-muted d-block" style="font-size: 0.75rem;">
-                                                {{ __('Uses one shared message template for everyone with auto {name} replacement.') }}
+                                                {{ __('messages.whatsapp_shared_template_info') }}
                                             </span>
                                         </div>
                                     </div>
@@ -524,7 +524,7 @@
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <label class="form-label fw-semibold small mb-0">{{ __('messages.whatsapp_default_message') }} <span class="text-danger">*</span></label>
                                     <div class="d-flex gap-1 align-items-center">
-                                        <span class="text-muted" style="font-size: 0.72rem;">{{ __('Click to insert:') }}</span>
+                                        <span class="text-muted" style="font-size: 0.72rem;">{{ __('messages.whatsapp_click_to_insert') }}</span>
                                         <button type="button" class="btn btn-light btn-xs border rounded-pill px-2 py-0 font-monospace btn-insert-chip" data-token="{name}">{name}</button>
                                         <button type="button" class="btn btn-light btn-xs border rounded-pill px-2 py-0 font-monospace btn-insert-chip" data-token="{phone}">{phone}</button>
                                         <button type="button" class="btn btn-light btn-xs border rounded-pill px-2 py-0 font-monospace btn-insert-chip text-primary" data-token="{مرحباً|أهلاً بكم|السلام عليكم}">{Spintax}</button>
@@ -627,9 +627,9 @@
                     </div>
 
                     <div class="modal-footer border-0 bg-light p-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" id="btnSubmitBulkCsv">
-                            <i class="bi bi-send-check me-1"></i>{{ __('Launch Bulk Campaign') }}
+                            <i class="bi bi-send-check me-1"></i>{{ __('messages.whatsapp_launch_bulk_campaign') }}
                         </button>
                     </div>
                 </form>
@@ -663,14 +663,14 @@
                                         {{ __('messages.whatsapp_convention_attendees_active_count', ['count' => !empty($conventionAttendeesLog) ? count($conventionAttendeesLog->metadata['recipients'] ?? []) : 0]) }}
                                     </div>
                                     <div class="text-muted small">
-                                        {{ __('messages.whatsapp_convention_attendees_last_updated', ['date' => !empty($conventionAttendeesLog->updated_at) ? $conventionAttendeesLog->updated_at->diffForHumans() : __('Never')]) }}
+                                        {{ __('messages.whatsapp_convention_attendees_last_updated', ['date' => !empty($conventionAttendeesLog->updated_at) ? $conventionAttendeesLog->updated_at->diffForHumans() : __('messages.Never')]) }}
                                         @if(!empty($conventionAttendeesLog->metadata['file_name']))
                                             ({{ $conventionAttendeesLog->metadata['file_name'] }})
                                         @endif
                                     </div>
                                 </div>
                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
-                                    <i class="bi bi-card-checklist me-1"></i>{{ __('Roster Uploaded') }}
+                                    <i class="bi bi-card-checklist me-1"></i>{{ __('messages.whatsapp_roster_uploaded') }}
                                 </span>
                             </div>
                         </div>
@@ -678,12 +678,12 @@
                         {{-- Instructions Notice --}}
                         <div class="alert alert-light border rounded-3 p-3 mb-3 small">
                             <div class="fw-semibold mb-1 text-primary">
-                                <i class="bi bi-info-circle me-1"></i>{{ __('How this works:') }}
+                                <i class="bi bi-info-circle me-1"></i>{{ __('messages.whatsapp_how_this_works') }}
                             </div>
                             <ul class="mb-0 ps-3">
-                                <li>{{ __('Uploading this file DOES NOT blast messages to attendees (zero outbound restrictions).') }}</li>
-                                <li>{{ __('Saves verified attendees list for event registration records and admin roster reference.') }}</li>
-                                <li>{{ __('Supports CSV columns:') }} <code>phone</code> ({{ __('required') }}), <code>name</code>, <code>message</code>.</li>
+                                <li>{{ __('messages.whatsapp_roster_upload_notice_1') }}</li>
+                                <li>{{ __('messages.whatsapp_roster_upload_notice_2') }}</li>
+                                <li>{{ __('messages.whatsapp_supports_csv_columns') }} <code>phone</code> ({{ __('messages.whatsapp_required') }}), <code>name</code>, <code>message</code>.</li>
                             </ul>
                         </div>
 
@@ -691,18 +691,18 @@
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold small">{{ __('messages.whatsapp_csv_file') }} <span class="text-danger">*</span></label>
                                 <input type="file" name="csv_file" class="form-control rounded-3" accept=".csv,text/csv" required>
-                                <div class="form-text small">{{ __('Max size: 10MB. UTF-8 encoded CSV file.') }}</div>
+                                <div class="form-text small">{{ __('messages.whatsapp_csv_specs') }}</div>
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label fw-semibold small">{{ __('Campaign Title / Dataset Note (Optional)') }}</label>
+                                <label class="form-label fw-semibold small">{{ __('messages.whatsapp_campaign_dataset_note') }}</label>
                                 <input type="text" name="title" class="form-control rounded-3" placeholder="كشف حضور مؤتمر مسار يجمعنا 2026">
                             </div>
                         </div>
                     </div>
 
                     <div class="modal-footer border-0 bg-light p-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
                         <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm">
                             <i class="bi bi-upload me-1"></i>{{ __('messages.whatsapp_convention_attendees_upload_btn') }}
                         </button>
@@ -739,13 +739,13 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold small">{{ __('messages.Message') }} <span class="text-danger">*</span></label>
                             <textarea name="message" rows="4" class="form-control rounded-3" placeholder="Message content..." required></textarea>
-                            <div class="form-text small">{{ __('Broadcast is rate-limited with anti-ban jitter delays (2-5s per subscriber).') }}</div>
+                            <div class="form-text small">{{ __('messages.whatsapp_broadcast_rate_limit_info') }}</div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 bg-light p-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                            <i class="bi bi-send me-1"></i>{{ __('Dispatch Broadcast') }}
+                            <i class="bi bi-send me-1"></i>{{ __('messages.whatsapp_dispatch_broadcast') }}
                         </button>
                     </div>
                 </form>

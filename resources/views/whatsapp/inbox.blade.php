@@ -31,14 +31,14 @@
                                     {{ __('messages.whatsapp_inbox') }}
                                 </h6>
                                 <span class="badge bg-secondary-subtle text-secondary border rounded-pill font-monospace" style="font-size: 0.65rem;" id="totalConvsCount">
-                                    {{ $conversations->total() }} {{ __('محادثة') }}
+                                    {{ $conversations->total() }} {{ __('messages.whatsapp_conversations_tab') }}
                                 </span>
                             </div>
                         </div>
 
                         {{-- Utility Actions Hub --}}
                         <div class="d-flex align-items-center gap-1">
-                            <button type="button" id="btnToggleAudio" class="btn btn-sm btn-light rounded-circle p-1" style="width: 32px; height: 32px;" title="{{ __('Sound Alert') }}">
+                            <button type="button" id="btnToggleAudio" class="btn btn-sm btn-light rounded-circle p-1" style="width: 32px; height: 32px;" title="{{ __('messages.whatsapp_sound_alert') }}">
                                 <i class="bi bi-bell-fill text-warning fs-6" id="audioBellIcon"></i>
                             </button>
 
@@ -88,7 +88,7 @@
                     @if($isDev)
                         <div class="mt-2 py-1 px-2 rounded-2 bg-warning-subtle text-warning-emphasis d-flex align-items-center justify-content-between font-monospace" style="font-size: 0.68rem;">
                             <span><i class="bi bi-tools me-1"></i>{{ __('messages.whatsapp_dev_badge') }}</span>
-                            <a href="{{ route('whatsapp.docs') }}#dev-testing" class="text-warning-emphasis text-decoration-underline">{{ __('Guide') }}</a>
+                            <a href="{{ route('whatsapp.docs') }}#dev-testing" class="text-warning-emphasis text-decoration-underline">{{ __('messages.Guide') }}</a>
                         </div>
                     @endif
                 </div>
@@ -162,7 +162,7 @@
                     @empty
                         <div class="text-center p-5 text-muted" id="emptyConversationsNotice">
                             <i class="bi bi-chat-square-dots display-4 mb-2 d-block text-secondary opacity-50"></i>
-                            <p class="small mb-0">{{ __('No active conversations yet.') }}</p>
+                            <p class="small mb-0">{{ __('messages.whatsapp_no_active_conversations') }}</p>
                         </div>
                     @endforelse
 
@@ -205,7 +205,7 @@
                                     <span id="liveAgentStatusBadge">
                                         @if($selectedConversation && $selectedConversation->isLiveAgentActive())
                                             <span class="text-warning fw-semibold" style="font-size: 0.74rem;">
-                                                • {{ __('messages.whatsapp_live_agent') }} ({{ __('حتى') }} {{ $selectedConversation->live_agent_until ? $selectedConversation->live_agent_until->format('H:i') : '' }})
+                                                • {{ __('messages.whatsapp_live_agent') }} ({{ __('messages.whatsapp_until') }} {{ $selectedConversation->live_agent_until ? $selectedConversation->live_agent_until->format('H:i') : '' }})
                                             </span>
                                         @else
                                             <span class="text-success fw-semibold" style="font-size: 0.74rem;">• {{ __('messages.whatsapp_bot_active') }}</span>
@@ -224,7 +224,7 @@
 
                             <a id="btnCallPhone" href="tel:{{ $selectedConversation ? $selectedConversation->phone : '' }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-xs d-flex align-items-center gap-1" title="Call">
                                 <i class="bi bi-telephone-fill"></i>
-                                <span class="d-none d-sm-inline">{{ __('اتصال') }}</span>
+                                <span class="d-none d-sm-inline">{{ __('messages.whatsapp_call') }}</span>
                             </a>
 
                             <button type="button" id="btnToggleLiveAgent" class="btn {{ ($selectedConversation && $selectedConversation->isLiveAgentActive()) ? 'btn-success' : 'btn-warning' }} btn-sm rounded-pill px-3 shadow-xs d-flex align-items-center gap-1">
@@ -313,7 +313,7 @@
                         @empty
                             <div class="text-center p-5 text-muted empty-state-box m-auto">
                                 <i class="bi bi-chat-dots display-4 mb-2 d-block text-secondary opacity-50"></i>
-                                <p class="small">{{ __('No message records found in this conversation.') }}</p>
+                                <p class="small">{{ __('messages.whatsapp_no_message_records') }}</p>
                             </div>
                         @endforelse
                     </div>
@@ -357,7 +357,7 @@
                                 <div class="d-flex align-items-end gap-2">
                                     <textarea name="message" id="messageInput" rows="1" class="form-control rounded-4 border shadow-xs p-2 wa-auto-textarea" 
                                               placeholder="{{ __('messages.whatsapp_type_message') }}..." required></textarea>
-                                    <button type="submit" id="sendBtn" class="btn btn-success rounded-circle shadow-xs flex-shrink-0 d-flex align-items-center justify-content-center wa-send-btn" title="{{ __('Send') }}">
+                                    <button type="submit" id="sendBtn" class="btn btn-success rounded-circle shadow-xs flex-shrink-0 d-flex align-items-center justify-content-center wa-send-btn" title="{{ __('messages.Send') }}">
                                         <i class="bi bi-send-fill fs-5" id="sendBtnIcon"></i>
                                     </button>
                                 </div>
@@ -372,7 +372,7 @@
                             </form>
                         @else
                             <div class="p-2 border rounded-3 bg-light text-center text-muted small">
-                                <i class="bi bi-lock-fill me-1"></i>{{ __('You do not have permission to reply as a volunteer (reply whatsapp messages).') }}
+                                <i class="bi bi-lock-fill me-1"></i>{{ __('messages.whatsapp_no_permission_reply') }}
                             </div>
                         @endcan
                     </footer>
@@ -383,9 +383,9 @@
                     <div class="rounded-circle bg-white p-4 shadow-xs mb-3 border">
                         <i class="bi bi-chat-square-text-fill display-3 text-success opacity-75"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">{{ __('Select a Conversation') }}</h5>
+                    <h5 class="fw-bold text-dark">{{ __('messages.whatsapp_select_conversation') }}</h5>
                     <p class="small text-muted" style="max-width: 320px;">
-                        {{ __('Choose a conversation from the list to inspect message history, take over as live agent, or respond.') }}
+                        {{ __('messages.whatsapp_select_conversation_prompt') }}
                     </p>
                 </div>
             </main>
@@ -426,12 +426,12 @@
                     <div class="card border rounded-3 mb-3 shadow-xs">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-bold small text-dark"><i class="bi bi-book-half text-primary me-1"></i>{{ __('اشتراك فقط لليوم (JFT)') }}</span>
+                                <span class="fw-bold small text-dark"><i class="bi bi-book-half text-primary me-1"></i>{{ __('messages.whatsapp_jft_subscription_header') }}</span>
                                 <span id="drawerSubBadge">
                                     @if($selectedConversation && $selectedConversation->subscriber && $selectedConversation->subscriber->is_active)
-                                        <span class="badge bg-success rounded-pill" style="font-size: 0.68rem;">{{ __('نشط') }}</span>
+                                        <span class="badge bg-success rounded-pill" style="font-size: 0.68rem;">{{ __('messages.whatsapp_active') }}</span>
                                     @else
-                                        <span class="badge bg-secondary rounded-pill" style="font-size: 0.68rem;">{{ __('غير نشط') }}</span>
+                                        <span class="badge bg-secondary rounded-pill" style="font-size: 0.68rem;">{{ __('messages.whatsapp_inactive') }}</span>
                                     @endif
                                 </span>
                             </div>
@@ -444,7 +444,7 @@
                             </p>
                             @can('reply whatsapp messages')
                                 <button type="button" id="btnToggleSubscription" class="btn btn-outline-primary btn-xs w-100 rounded-pill">
-                                    <i class="bi bi-arrow-repeat me-1"></i>{{ __('تبديل حالة الاشتراك') }}
+                                    <i class="bi bi-arrow-repeat me-1"></i>{{ __('messages.whatsapp_toggle_subscription') }}
                                 </button>
                             @endcan
                         </div>
@@ -455,14 +455,14 @@
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="fw-bold small text-dark"><i class="bi bi-journal-text text-warning me-1"></i>{{ __('messages.whatsapp_notes') }}</span>
-                                <small class="text-muted" style="font-size: 0.7rem;">{{ __('سري للمتطوعين') }}</small>
+                                <small class="text-muted" style="font-size: 0.7rem;">{{ __('messages.whatsapp_confidential_volunteers') }}</small>
                             </div>
                             <textarea id="drawerNotesInput" class="form-control small mb-2 rounded-3 border" rows="4" 
-                                      placeholder="{{ __('اكتب ملاحظات حول هذه الحالة...') }}">{{ $selectedConversation ? $selectedConversation->notes : '' }}</textarea>
+                                      placeholder="{{ __('messages.whatsapp_notes_placeholder') }}">{{ $selectedConversation ? $selectedConversation->notes : '' }}</textarea>
                             @can('reply whatsapp messages')
                                 <button type="button" id="btnSaveNotes" class="btn btn-dark btn-xs w-100 rounded-pill d-flex align-items-center justify-content-center gap-1">
                                     <i class="bi bi-check2-circle" id="saveNotesIcon"></i>
-                                    <span>{{ __('حفظ الملاحظات') }}</span>
+                                    <span>{{ __('messages.whatsapp_save_notes') }}</span>
                                 </button>
                             @endcan
                         </div>
@@ -501,7 +501,7 @@
                     <div class="modal-body p-3">
                         <div class="input-group mb-3">
                             <span class="input-group-text bg-white border"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" id="searchCanned" class="form-control border" placeholder="{{ __('ابحث في الردود السريعة...') }}">
+                            <input type="text" id="searchCanned" class="form-control border" placeholder="{{ __('messages.whatsapp_search_quick_replies') }}">
                         </div>
 
                         <div class="row g-2" id="cannedList">
@@ -1047,11 +1047,11 @@
                         audioEnabled = !audioEnabled;
                         if (audioEnabled) {
                             if (audioBellIcon) audioBellIcon.className = 'bi bi-bell-fill text-warning fs-6';
-                            showToast('{{ __("تم تفعيل التنبيهات الصوتية") }}');
+                            showToast('{{ __("messages.whatsapp_sound_enabled") }}');
                             playIncomingChime();
                         } else {
                             if (audioBellIcon) audioBellIcon.className = 'bi bi-bell-slash text-muted fs-6';
-                            showToast('{{ __("تم كتم التنبيهات الصوتية") }}');
+                            showToast('{{ __("messages.whatsapp_sound_muted") }}');
                         }
                     });
                 }
@@ -1250,11 +1250,11 @@
                                 const badge = document.getElementById('drawerSubBadge');
                                 const desc = document.getElementById('drawerSubDesc');
                                 if (data.is_subscribed) {
-                                    if (badge) badge.innerHTML = '<span class="badge bg-success rounded-pill" style="font-size: 0.68rem;">{{ __("نشط") }}</span>';
+                                    if (badge) badge.innerHTML = '<span class="badge bg-success rounded-pill" style="font-size: 0.68rem;">{{ __("messages.whatsapp_active") }}</span>';
                                     if (desc) desc.innerText = '{{ __("messages.whatsapp_jft_subscribed") }}';
                                     showToast('{{ __("messages.whatsapp_jft_subscribed") }}');
                                 } else {
-                                    if (badge) badge.innerHTML = '<span class="badge bg-secondary rounded-pill" style="font-size: 0.68rem;">{{ __("غير نشط") }}</span>';
+                                    if (badge) badge.innerHTML = '<span class="badge bg-secondary rounded-pill" style="font-size: 0.68rem;">{{ __("messages.whatsapp_inactive") }}</span>';
                                     if (desc) desc.innerText = '{{ __("messages.whatsapp_jft_not_subscribed") }}';
                                     showToast('{{ __("messages.whatsapp_jft_not_subscribed") }}');
                                 }
@@ -1366,7 +1366,7 @@
                         const isSub = conv.subscriber && conv.subscriber.is_active;
                         const subBadge = document.getElementById('drawerSubBadge');
                         const subDesc = document.getElementById('drawerSubDesc');
-                        if (subBadge) subBadge.innerHTML = `<span class="badge ${isSub ? 'bg-success' : 'bg-secondary'} rounded-pill" style="font-size: 0.68rem;">${isSub ? '{{ __("نشط") }}' : '{{ __("غير نشط") }}'}</span>`;
+                        if (subBadge) subBadge.innerHTML = `<span class="badge ${isSub ? 'bg-success' : 'bg-secondary'} rounded-pill" style="font-size: 0.68rem;">${isSub ? '{{ __("messages.whatsapp_active") }}' : '{{ __("messages.whatsapp_inactive") }}'}</span>`;
                         if (subDesc) subDesc.innerText = isSub ? '{{ __("messages.whatsapp_jft_subscribed") }}' : '{{ __("messages.whatsapp_jft_not_subscribed") }}';
 
                         // Live Agent header button state
@@ -1397,7 +1397,7 @@
                                 messagesContainer.appendChild(node);
                             });
                         } else {
-                            messagesContainer.innerHTML = '<div class="text-center p-5 text-muted empty-state-box m-auto"><i class="bi bi-chat-dots display-4 mb-2 d-block text-secondary opacity-50"></i><p class="small">{{ __("No message records found in this conversation.") }}</p></div>';
+                            messagesContainer.innerHTML = '<div class="text-center p-5 text-muted empty-state-box m-auto"><i class="bi bi-chat-dots display-4 mb-2 d-block text-secondary opacity-50"></i><p class="small">{{ __("messages.whatsapp_no_message_records") }}</p></div>';
                         }
 
                         scrollToBottom();
@@ -1521,7 +1521,7 @@
                     replyForm.addEventListener('submit', function (e) {
                         e.preventDefault();
                         if (!activeConvId) {
-                            alert('{{ __("الرجاء اختيار محادثة أولاً.") }}');
+                            alert('{{ __("messages.whatsapp_please_select_conversation") }}');
                             return;
                         }
                         const text = messageInput.value.trim();
@@ -1630,7 +1630,7 @@
                         toggleLiveAgentIcon.className = 'bi bi-robot';
                         toggleLiveAgentText.innerText = '{{ __("messages.whatsapp_resume_bot") }}';
                         if (liveStatusBadge) {
-                            liveStatusBadge.innerHTML = `<span class="text-warning fw-semibold" style="font-size: 0.74rem;">• {{ __('messages.whatsapp_live_agent') }} ${formattedUntil ? '({{ __("حتى") }} ' + formattedUntil + ')' : ''}</span>`;
+                            liveStatusBadge.innerHTML = `<span class="text-warning fw-semibold" style="font-size: 0.74rem;">• {{ __('messages.whatsapp_live_agent') }} ${formattedUntil ? '({{ __("messages.whatsapp_until") }} ' + formattedUntil + ')' : ''}</span>`;
                         }
                     } else {
                         btnToggleLiveAgent.className = 'btn btn-warning btn-sm rounded-pill px-3 shadow-xs d-flex align-items-center gap-1';
@@ -1651,7 +1651,7 @@
                             snippet.innerHTML = `${prefix}${escapeHtml(text.substring(0, 40))}`;
                         }
                         const timeEl = item.querySelector('.item-time');
-                        if (timeEl) timeEl.innerText = '{{ __("الآن") }}';
+                        if (timeEl) timeEl.innerText = '{{ __("messages.whatsapp_now") }}';
 
                         // Move to top of conversations list
                         if (conversationsList && item !== conversationsList.firstElementChild) {
@@ -1779,7 +1779,7 @@
 
                         const totalBadge = document.getElementById('totalConvsCount');
                         if (totalBadge && data.total !== undefined) {
-                            totalBadge.innerText = `${data.total} {{ __('محادثة') }}`;
+                            totalBadge.innerText = `${data.total} {{ __('messages.whatsapp_conversations_tab') }}`;
                         }
 
                         if (reset) {
@@ -1797,7 +1797,7 @@
                             conversationsList.innerHTML = `
                                 <div class="text-center p-5 text-muted" id="emptyConversationsNotice">
                                     <i class="bi bi-chat-square-dots display-4 mb-2 d-block text-secondary opacity-50"></i>
-                                    <p class="small mb-0">{{ __('No active conversations yet.') }}</p>
+                                    <p class="small mb-0">{{ __('messages.whatsapp_no_active_conversations') }}</p>
                                 </div>
                             `;
                         }

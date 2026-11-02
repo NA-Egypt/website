@@ -58,7 +58,7 @@
                             @if(!empty($devWhitelist))
                                 <span class="d-block mt-1"><strong>{{ __('messages.Allowed Numbers:') }}</strong> <code>{{ implode(', ', $devWhitelist) }}</code></span>
                             @else
-                                <span class="d-block mt-1 text-danger"><strong>{{ __('messages.Notice:') }}</strong> {{ __('No developer whitelist numbers configured in WHATSAPP_DEV_WHITELIST.') }}</span>
+                                <span class="d-block mt-1 text-danger"><strong>{{ __('messages.Notice:') }}</strong> {{ __('messages.whatsapp_no_dev_whitelist') }}</span>
                             @endif
                         </p>
                     </div>
@@ -136,11 +136,11 @@
                             <div class="p-3 rounded-4 bg-light mb-3 flex-grow-1">
                                 <div class="row g-2 small">
                                     <div class="col-6">
-                                        <span class="text-muted d-block" style="font-size: 0.72rem;">{{ __('Created') }}</span>
+                                        <span class="text-muted d-block" style="font-size: 0.72rem;">{{ __('messages.Created') }}</span>
                                         <span class="fw-semibold text-truncate d-block">{{ isset($dev['created_at']) ? \Carbon\Carbon::parse($dev['created_at'])->diffForHumans() : '-' }}</span>
                                     </div>
                                     <div class="col-6">
-                                        <span class="text-muted d-block" style="font-size: 0.72rem;">{{ __('State') }}</span>
+                                        <span class="text-muted d-block" style="font-size: 0.72rem;">{{ __('messages.State') }}</span>
                                         <span class="fw-semibold font-monospace">{{ ucfirst($state) }}</span>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@
                                     <form method="POST" action="{{ route('whatsapp.device.destroy', $devId) }}" class="d-inline ms-auto" onsubmit="return confirm('{{ __('messages.whatsapp_device_delete_confirm') }}')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px;" title="{{ __('Delete Device Slot') }}">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm" style="width: 32px; height: 32px;" title="{{ __('messages.whatsapp_delete_device_slot') }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -193,8 +193,8 @@
                 <div class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
                         <i class="bi bi-phone text-secondary display-4 mb-3"></i>
-                        <h5 class="fw-bold">{{ __('No WhatsApp Devices Configured') }}</h5>
-                        <p class="text-muted small mb-3">{{ __('Add your first device slot to generate a pairing QR code and connect.') }}</p>
+                        <h5 class="fw-bold">{{ __('messages.whatsapp_no_devices_configured') }}</h5>
+                        <p class="text-muted small mb-3">{{ __('messages.whatsapp_add_device_slot_prompt') }}</p>
                         <div>
                             <button type="button" class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
                                 <i class="bi bi-plus-circle me-1"></i>{{ __('messages.whatsapp_add_device') }}
@@ -252,25 +252,25 @@
                 <div class="card border-0 shadow-sm rounded-4 h-100" style="background: var(--card-bg, #ffffff);">
                     <div class="card-body p-4">
                         <h6 class="fw-bold mb-3 text-secondary text-uppercase" style="letter-spacing: 0.5px; font-size: 0.8rem;">
-                            <i class="bi bi-gear-fill me-1"></i>{{ __('Service Overview') }}
+                            <i class="bi bi-gear-fill me-1"></i>{{ __('messages.whatsapp_service_overview') }}
                         </h6>
                         <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small">
                             <li class="d-flex justify-content-between align-items-center pb-2 border-bottom">
-                                <span class="text-muted">{{ __('Microservice URL') }}</span>
+                                <span class="text-muted">{{ __('messages.whatsapp_microservice_url') }}</span>
                                 <code class="small">{{ config('whatsapp.api_url') }}</code>
                             </li>
                             <li class="d-flex justify-content-between align-items-center pb-2 border-bottom">
-                                <span class="text-muted">{{ __('Bot Automation') }}</span>
+                                <span class="text-muted">{{ __('messages.whatsapp_bot_automation') }}</span>
                                 <span class="badge {{ config('whatsapp.bot_enabled') ? 'bg-success' : 'bg-secondary' }} rounded-pill">
                                     {{ config('whatsapp.bot_enabled') ? 'ON' : 'OFF' }}
                                 </span>
                             </li>
                             <li class="d-flex justify-content-between align-items-center pb-2 border-bottom">
-                                <span class="text-muted">{{ __('Live Agent Timeout') }}</span>
+                                <span class="text-muted">{{ __('messages.whatsapp_live_agent_timeout') }}</span>
                                 <span class="fw-semibold">{{ config('whatsapp.live_agent_timeout_minutes') }} min</span>
                             </li>
                             <li class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">{{ __('Daily Broadcast Time') }}</span>
+                                <span class="text-muted">{{ __('messages.whatsapp_daily_broadcast_time') }}</span>
                                 <span class="fw-semibold text-success">07:00 (Cairo)</span>
                             </li>
                         </ul>
@@ -290,7 +290,7 @@
                             <i class="bi bi-qr-code text-primary me-2"></i>{{ __('messages.whatsapp_scan_qr') }}
                         </h5>
                         <p class="text-muted small mb-0">
-                            {{ __('Pairing device:') }} <span id="modalDeviceName" class="fw-bold font-monospace text-primary"></span>
+                            {{ __('messages.whatsapp_pairing_device') }} <span id="modalDeviceName" class="fw-bold font-monospace text-primary"></span>
                         </p>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btnCloseQrModal"></button>
@@ -307,7 +307,7 @@
                         <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p class="text-muted small mb-0">{{ __('Generating fresh pairing QR code...') }}</p>
+                        <p class="text-muted small mb-0">{{ __('messages.whatsapp_generating_qr') }}</p>
                     </div>
 
                     {{-- QR Code View --}}
@@ -327,7 +327,7 @@
                                 <span class="spinner-grow spinner-grow-sm text-success me-1" role="status"></span>
                                 <span id="modalPollingStatus">{{ __('messages.whatsapp_pairing_in_progress') }}</span>
                             </span>
-                            <span>{{ __('Expires in:') }} <strong id="modalQrSeconds" class="text-danger font-monospace">30s</strong></span>
+                            <span>{{ __('messages.whatsapp_expires_in') }} <strong id="modalQrSeconds" class="text-danger font-monospace">30s</strong></span>
                         </div>
                     </div>
 
@@ -338,10 +338,10 @@
                         </div>
                         <h5 class="fw-bold text-success mb-2">{{ __('messages.whatsapp_already_paired') }}</h5>
                         <p class="text-muted small mb-3" id="modalAlreadyLoggedInDesc">
-                            {{ __('Device is connected and authenticated. No new QR code needed.') }}
+                            {{ __('messages.whatsapp_connected_no_qr') }}
                         </p>
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
-                            {{ __('Close') }}
+                            {{ __('messages.Close') }}
                         </button>
                     </div>
 
@@ -351,22 +351,22 @@
                             <i class="bi bi-check-lg display-3"></i>
                         </div>
                         <h4 class="fw-bold text-success mb-2">{{ __('messages.whatsapp_linked_successfully') }}</h4>
-                        <p class="text-muted small mb-0">{{ __('The connection was verified. Refreshing dashboard...') }}</p>
+                        <p class="text-muted small mb-0">{{ __('messages.whatsapp_conn_verified_refreshing') }}</p>
                     </div>
 
                     {{-- Error State --}}
                     <div id="modalQrError" class="py-4 text-center" style="display: none;">
                         <i class="bi bi-exclamation-triangle-fill text-danger display-4 mb-2 d-block"></i>
-                        <h6 class="fw-bold text-danger mb-2">{{ __('Failed to load pairing QR code') }}</h6>
+                        <h6 class="fw-bold text-danger mb-2">{{ __('messages.whatsapp_failed_load_qr') }}</h6>
                         <p class="text-muted small mb-3" id="modalQrErrorMsg"></p>
                         <button type="button" class="btn btn-primary btn-sm rounded-pill px-3" id="btnModalRetryQr">
-                            <i class="bi bi-arrow-clockwise me-1"></i>{{ __('Retry') }}
+                            <i class="bi bi-arrow-clockwise me-1"></i>{{ __('messages.Retry') }}
                         </button>
                     </div>
                 </div>
                 <div class="modal-footer border-0 bg-light p-3">
                     <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
-                        {{ __('Close') }}
+                        {{ __('messages.Close') }}
                     </button>
                 </div>
             </div>
@@ -393,9 +393,9 @@
                         </div>
                     </div>
                     <div class="modal-footer border-0 bg-light p-3">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{{ __('messages.Cancel') }}</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                            <i class="bi bi-check-circle me-1"></i>{{ __('Save Device') }}
+                            <i class="bi bi-check-circle me-1"></i>{{ __('messages.whatsapp_save_device') }}
                         </button>
                     </div>
                 </form>
