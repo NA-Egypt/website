@@ -87,32 +87,40 @@ class HelplineReportService
 
     /**
      * Determine the active cycle window for a given date (default: now).
-     * The cycle resets every first Tuesday by the end of that day.
+     * The cycle runs from the previous 1st Tuesday (00:00:00) through
+     * the Monday before the upcoming 1st Tuesday (23:59:59).
+     * Transitions immediately at Tuesday 00:00:00 to the new cycle.
      */
     public function getCurrentCycleWindow(?Carbon $now = null): array
     {
         $now = $now ?: Carbon::now();
         $firstTuesdayThisMonth = $this->getFirstTuesdayOfMonth($now->year, $now->month);
 
-        if ($now->lte($firstTuesdayThisMonth)) {
-            // We are before or on the first Tuesday of this month:
-            // Active cycle ends on this first Tuesday, and started on previous month's first Tuesday.
-            $prevMonth = $now->copy()->subMonth();
-            $cycleStart = $this->getFirstTuesdayOfMonth($prevMonth->year, $prevMonth->month);
-            $cycleEnd = $firstTuesdayThisMonth;
+        if ($now->lt($firstTuesdayThisMonth->copy()->startOfDay())) {
+            // Before this month's 1st Tuesday 00:00:00:
+            // Target meeting is this 1st Tuesday.
+            // Cycle ends on Monday before this 1st Tuesday, started on previous month's 1st Tuesday.
+            $prevMonth = $now->copy()->firstOfMonth()->subMonth();
+            $prevFirstTuesday = $this->getFirstTuesdayOfMonth($prevMonth->year, $prevMonth->month);
+            $cycleStart = $prevFirstTuesday->copy()->startOfDay();
+            $cycleEnd = $firstTuesdayThisMonth->copy()->subDay()->endOfDay();
+            $targetMeetingTuesday = $firstTuesdayThisMonth;
         } else {
-            // We have passed the first Tuesday of this month:
-            // Active cycle started on this first Tuesday, and ends on next month's first Tuesday.
-            $nextMonth = $now->copy()->addMonth();
-            $cycleStart = $firstTuesdayThisMonth;
-            $cycleEnd = $this->getFirstTuesdayOfMonth($nextMonth->year, $nextMonth->month);
+            // On or after this month's 1st Tuesday 00:00:00:
+            // Target meeting is next month's 1st Tuesday.
+            // Cycle starts on this 1st Tuesday, ends on Monday before next month's 1st Tuesday.
+            $nextMonth = $now->copy()->firstOfMonth()->addMonth();
+            $nextFirstTuesday = $this->getFirstTuesdayOfMonth($nextMonth->year, $nextMonth->month);
+            $cycleStart = $firstTuesdayThisMonth->copy()->startOfDay();
+            $cycleEnd = $nextFirstTuesday->copy()->subDay()->endOfDay();
+            $targetMeetingTuesday = $nextFirstTuesday;
         }
 
         return [
             'start' => $cycleStart,
             'end' => $cycleEnd,
             'key' => $cycleStart->format('Y-m-d') . '_' . $cycleEnd->format('Y-m-d'),
-            'label' => 'دورة ' . $cycleEnd->translatedFormat('F Y') . ' (حتى ' . $cycleEnd->format('Y-m-d') . ')',
+            'label' => 'دورة ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $cycleStart->format('d/m') . ' إلى ' . $cycleEnd->format('d/m/Y') . ')',
             'group' => 'monthly',
             'group_label' => 'الدورات الشهرية الكاملة',
             'is_current' => true,
@@ -123,8 +131,9 @@ class HelplineReportService
      * Determine the active meeting cycle window for a given date (default: now).
      * Meetings take place on the 1st Tuesday and 3rd Tuesday of every month.
      * Intervals:
-     * - 1st Tuesday Meeting: Wednesday after 3rd Tuesday of prev month -> 1st Tuesday of current month.
-     * - 3rd Tuesday Meeting: Wednesday after 1st Tuesday of current month -> 3rd Tuesday of current month.
+     * - 1st Tuesday Meeting: Previous month's 3rd Tuesday (00:00:00) -> Monday before this month's 1st Tuesday (23:59:59).
+     * - 3rd Tuesday Meeting: This month's 1st Tuesday (00:00:00) -> Monday before this month's 3rd Tuesday (23:59:59).
+     * Transitions immediately at Tuesday 00:00:00 to the new cycle.
      */
     public function getCurrentMeetingCycleWindow(?Carbon $now = null): array
     {
@@ -132,25 +141,34 @@ class HelplineReportService
         $firstTuesday = $this->getFirstTuesdayOfMonth($now->year, $now->month);
         $thirdTuesday = $this->getThirdTuesdayOfMonth($now->year, $now->month);
 
-        if ($now->lte($firstTuesday)) {
-            $prevMonth = $now->copy()->subMonth();
+        if ($now->lt($firstTuesday->copy()->startOfDay())) {
+            // Before 1st Tuesday 00:00:00 of this month:
+            // Target meeting is this 1st Tuesday.
+            // Ends on Monday before this 1st Tuesday, started on previous month's 3rd Tuesday
+            $prevMonth = $now->copy()->firstOfMonth()->subMonth();
             $prevThirdTuesday = $this->getThirdTuesdayOfMonth($prevMonth->year, $prevMonth->month);
-            $start = $prevThirdTuesday->copy()->addDay()->startOfDay();
-            $end = $firstTuesday;
+            $start = $prevThirdTuesday->copy()->startOfDay();
+            $end = $firstTuesday->copy()->subDay()->endOfDay();
             $type = 'first_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
-        } elseif ($now->lte($thirdTuesday)) {
-            $start = $firstTuesday->copy()->addDay()->startOfDay();
-            $end = $thirdTuesday;
+            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $firstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+        } elseif ($now->lt($thirdTuesday->copy()->startOfDay())) {
+            // Between 1st Tuesday 00:00:00 and 3rd Tuesday 00:00:00:
+            // Target meeting is this 3rd Tuesday.
+            // Ends on Monday before this 3rd Tuesday, started on this 1st Tuesday
+            $start = $firstTuesday->copy()->startOfDay();
+            $end = $thirdTuesday->copy()->subDay()->endOfDay();
             $type = 'third_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $thirdTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
         } else {
-            $nextMonth = $now->copy()->addMonth();
+            // From 3rd Tuesday 00:00:00 onwards:
+            // Target meeting is next month's 1st Tuesday.
+            // Ends on Monday before next month's 1st Tuesday, started on this 3rd Tuesday
+            $nextMonth = $now->copy()->firstOfMonth()->addMonth();
             $nextFirstTuesday = $this->getFirstTuesdayOfMonth($nextMonth->year, $nextMonth->month);
-            $start = $thirdTuesday->copy()->addDay()->startOfDay();
-            $end = $nextFirstTuesday;
+            $start = $thirdTuesday->copy()->startOfDay();
+            $end = $nextFirstTuesday->copy()->subDay()->endOfDay();
             $type = 'first_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $nextFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $nextFirstTuesday->format('d/m/Y') . ')';
+            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $nextFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
         }
 
         return [
@@ -175,24 +193,27 @@ class HelplineReportService
         $cycles[$current['key']] = $current;
 
         $cursorType = $current['type'];
-        $cursorMonth = $current['end']->copy();
+        // The Tuesday of the meeting for this current interval is end + 1 day
+        $cursorMonth = $current['end']->copy()->addDay();
 
         // Step backward meeting by meeting
         for ($step = 1; $step < $count * 2; $step++) {
             if ($cursorType === 'third_tuesday') {
                 $cursorType = 'first_tuesday';
-                $end = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
-                $prevMonth = $cursorMonth->copy()->subMonth();
+                $targetMeetingTuesday = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $end = $targetMeetingTuesday->copy()->subDay()->endOfDay();
+                $prevMonth = $cursorMonth->copy()->firstOfMonth()->subMonth();
                 $prevThirdTuesday = $this->getThirdTuesdayOfMonth($prevMonth->year, $prevMonth->month);
-                $start = $prevThirdTuesday->copy()->addDay()->startOfDay();
-                $label = 'تقرير اجتماع الثلاثاء الأول - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+                $start = $prevThirdTuesday->copy()->startOfDay();
+                $label = 'تقرير اجتماع الثلاثاء الأول - ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
             } else {
-                $cursorMonth = $cursorMonth->copy()->subMonth();
+                $cursorMonth = $cursorMonth->copy()->firstOfMonth()->subMonth();
                 $cursorType = 'third_tuesday';
-                $end = $this->getThirdTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $targetMeetingTuesday = $this->getThirdTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
+                $end = $targetMeetingTuesday->copy()->subDay()->endOfDay();
                 $firstTuesday = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
-                $start = $firstTuesday->copy()->addDay()->startOfDay();
-                $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+                $start = $firstTuesday->copy()->startOfDay();
+                $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
             }
 
             $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
@@ -229,57 +250,46 @@ class HelplineReportService
     {
         $cycles = [];
         $current = $this->getCurrentCycleWindow();
-        $cursorEnd = $current['end']->copy();
+        $cursorTargetTuesday = $current['end']->copy()->addDay();
 
         for ($i = 0; $i < $count; $i++) {
-            $end = $cursorEnd->copy();
-            $prev = $end->copy()->subDays(15);
-            $start = $this->getFirstTuesdayOfMonth($prev->year, $prev->month);
+            if ($i === 0) {
+                $cycles[$current['key']] = $current;
+                $cursorTargetTuesday = $current['start']->copy();
+                continue;
+            }
+
+            $targetMeetingTuesday = $cursorTargetTuesday->copy();
+            $end = $targetMeetingTuesday->copy()->subDay()->endOfDay();
+            $prevMonth = $targetMeetingTuesday->copy()->firstOfMonth()->subMonth();
+            $prevFirstTuesday = $this->getFirstTuesdayOfMonth($prevMonth->year, $prevMonth->month);
+            $start = $prevFirstTuesday->copy()->startOfDay();
 
             $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
-            $label = ($i === 0 ? 'الدورة الشهرية الحالية: ' : 'دورة ') . $end->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'دورة ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
 
-            $isCurrent = ($i === 0);
-
-            if ($isCurrent) {
-                $cycles[$key] = [
-                    'start' => $start,
-                    'end' => $end,
-                    'key' => $key,
-                    'label' => $label,
-                    'group' => 'monthly',
-                    'group_label' => 'الدورات الشهرية الكاملة',
-                    'is_current' => true,
-                ];
-            } elseif ($onlyWithCalls) {
+            if ($onlyWithCalls) {
                 $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
                     ->whereDate('call_date', '<=', $end->toDateString())
                     ->exists();
 
-                if ($hasCalls) {
-                    $cycles[$key] = [
-                        'start' => $start,
-                        'end' => $end,
-                        'key' => $key,
-                        'label' => $label,
-                        'group' => 'monthly',
-                        'group_label' => 'الدورات الشهرية الكاملة',
-                        'is_current' => false,
-                    ];
+                if (!$hasCalls) {
+                    $cursorTargetTuesday = $start->copy();
+                    continue;
                 }
-            } else {
-                $cycles[$key] = [
-                    'start' => $start,
-                    'end' => $end,
-                    'key' => $key,
-                    'label' => $label,
-                    'group' => 'monthly',
-                    'group_label' => 'الدورات الشهرية الكاملة',
-                    'is_current' => false,
-                ];
             }
 
-            $cursorEnd = $start->copy();
+            $cycles[$key] = [
+                'start' => $start,
+                'end' => $end,
+                'key' => $key,
+                'label' => $label,
+                'group' => 'monthly',
+                'group_label' => 'الدورات الشهرية الكاملة',
+                'is_current' => false,
+            ];
+
+            $cursorTargetTuesday = $start->copy();
         }
 
         return $cycles;

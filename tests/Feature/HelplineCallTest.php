@@ -366,13 +366,14 @@ class HelplineCallTest extends TestCase
         $this->assertEquals('23:59:59', $sepFirstTuesday->format('H:i:s'));
 
         // Cycle test when now is after the 1st Tuesday of September:
-        // e.g. Sep 16, 2026: Cycle should start at end of Sep 1, and end at 1st Tuesday of Oct 2026
+        // e.g. Sep 16, 2026: Cycle starts on Sep 1 00:00:00, and ends at Monday Oct 5 23:59:59 (before 1st Tuesday of Oct)
         $now = Carbon::create(2026, 9, 16, 12, 0, 0);
         $cycle = $service->getCurrentCycleWindow($now);
 
-        $this->assertEquals('2026-09-01 23:59:59', $cycle['start']->format('Y-m-d H:i:s'));
-        $this->assertEquals(Carbon::TUESDAY, $cycle['end']->dayOfWeek);
+        $this->assertEquals('2026-09-01 00:00:00', $cycle['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals(Carbon::MONDAY, $cycle['end']->dayOfWeek);
         $this->assertEquals(10, $cycle['end']->month);
+        $this->assertEquals(5, $cycle['end']->day);
     }
 
     public function test_helpline_vue_data_endpoint_returns_json()
@@ -453,29 +454,29 @@ class HelplineCallTest extends TestCase
         $oct3rd = $service->getThirdTuesdayOfMonth(2026, 10);
         $this->assertEquals(20, $oct3rd->day);
 
-        // Case 1: Date is on 1st Tuesday of September 2026 (Meeting 1)
-        // Cycle must end on Sep 1, and start on Wednesday after August 3rd Tuesday (Aug 19)
-        $now1 = Carbon::create(2026, 9, 1, 14, 0, 0);
+        // Case 1: Date is before 1st Tuesday of September 2026 (e.g. Aug 31, Monday before Sep 1)
+        // Cycle must end on Aug 31 (Monday), and start on August 3rd Tuesday (Aug 18)
+        $now1 = Carbon::create(2026, 8, 31, 14, 0, 0);
         $meetingCycle1 = $service->getCurrentMeetingCycleWindow($now1);
-        $this->assertEquals('2026-09-01 23:59:59', $meetingCycle1['end']->format('Y-m-d H:i:s'));
-        $this->assertEquals('2026-08-19 00:00:00', $meetingCycle1['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-08-31 23:59:59', $meetingCycle1['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-08-18 00:00:00', $meetingCycle1['start']->format('Y-m-d H:i:s'));
         $this->assertEquals('first_tuesday', $meetingCycle1['type']);
         $this->assertEquals('meeting', $meetingCycle1['group']);
 
         // Case 2: Date is between 1st and 3rd Tuesday of September 2026 (e.g. Sep 8)
-        // Cycle must end on Sep 15 (3rd Tuesday), and start on Wednesday after 1st Tuesday (Sep 2)
+        // Cycle must end on Monday before 3rd Tuesday (Sep 14), and start on 1st Tuesday (Sep 1)
         $now2 = Carbon::create(2026, 9, 8, 12, 0, 0);
         $meetingCycle2 = $service->getCurrentMeetingCycleWindow($now2);
-        $this->assertEquals('2026-09-15 23:59:59', $meetingCycle2['end']->format('Y-m-d H:i:s'));
-        $this->assertEquals('2026-09-02 00:00:00', $meetingCycle2['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-09-14 23:59:59', $meetingCycle2['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-09-01 00:00:00', $meetingCycle2['start']->format('Y-m-d H:i:s'));
         $this->assertEquals('third_tuesday', $meetingCycle2['type']);
 
-        // Case 3: Date is after 3rd Tuesday of September 2026 (e.g. Sep 20)
-        // Cycle must retrieve report between 3rd Tuesday of September (Wednesday after it: Sep 16) till 1st Tuesday of October (Oct 6)
+        // Case 3: Date is on or after 3rd Tuesday of September 2026 (e.g. Sep 20)
+        // Cycle must start on 3rd Tuesday of September (Sep 15) and end on Monday before 1st Tuesday of October (Oct 5)
         $now3 = Carbon::create(2026, 9, 20, 10, 0, 0);
         $meetingCycle3 = $service->getCurrentMeetingCycleWindow($now3);
-        $this->assertEquals('2026-10-06 23:59:59', $meetingCycle3['end']->format('Y-m-d H:i:s'));
-        $this->assertEquals('2026-09-16 00:00:00', $meetingCycle3['start']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-10-05 23:59:59', $meetingCycle3['end']->format('Y-m-d H:i:s'));
+        $this->assertEquals('2026-09-15 00:00:00', $meetingCycle3['start']->format('Y-m-d H:i:s'));
         $this->assertEquals('first_tuesday', $meetingCycle3['type']);
     }
 
@@ -570,7 +571,7 @@ class HelplineCallTest extends TestCase
 
     public function test_meeting_cycle_filters_calls_between_third_tuesday_and_first_tuesday()
     {
-        // Window: 2026-09-16 (Wednesday after 3rd Tuesday Sep 15) to 2026-10-06 (1st Tuesday Oct)
+        // Window: 2026-09-15 (3rd Tuesday Sep 15) to 2026-10-05 (Monday before 1st Tuesday Oct)
         $insideCall = HelplineCall::create([
             'duration' => 'less_than_5',
             'call_date' => '2026-09-20',
@@ -598,7 +599,7 @@ class HelplineCallTest extends TestCase
         ]);
 
         $service = new HelplineReportService();
-        $cycleKey = '2026-09-16_2026-10-06';
+        $cycleKey = '2026-09-15_2026-10-05';
 
         // Available cycles should discover this meeting cycle because it has a call
         $cycles = $service->getAvailableCycles(12, true, 'meeting');
