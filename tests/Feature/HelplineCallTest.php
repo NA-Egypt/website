@@ -387,6 +387,42 @@ class HelplineCallTest extends TestCase
         ]);
     }
 
+    public function test_helpline_today_period_filter_returns_only_today_calls()
+    {
+        $todayCall = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::today()->toDateString(),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مدمن يبحث عن تعافي',
+            'referral_source' => 'بحث جوجل',
+            'volunteer_name' => 'متطوع تجريبي',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة اليوم',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::now(),
+        ]);
+
+        $yesterdayCall = HelplineCall::create([
+            'duration' => 'less_than_5',
+            'call_date' => Carbon::yesterday()->toDateString(),
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'مدمن يبحث عن تعافي',
+            'referral_source' => 'بحث جوجل',
+            'volunteer_name' => 'متطوع تجريبي',
+            'is_step_12' => false,
+            'call_brief' => 'مكالمة أمس',
+            'discuss_in_meeting' => false,
+            'entry_time' => Carbon::yesterday(),
+        ]);
+
+        $response = $this->actingAs($this->phoneUser)->getJson('/helpline/data?period_type=today');
+        $response->assertStatus(200);
+
+        $callIds = collect($response->json('calls.data'))->pluck('id');
+        $this->assertTrue($callIds->contains($todayCall->id));
+        $this->assertFalse($callIds->contains($yesterdayCall->id));
+    }
+
     public function test_toggle_discuss_in_meeting_action()
     {
         $call = HelplineCall::first();

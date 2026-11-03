@@ -57,6 +57,10 @@ class HelplineDashboardController extends Controller
 
         if ($selectedPeriodType === 'all_time') {
             $periodLabel = 'كافة المكالمات (منذ البداية)';
+        } elseif ($selectedPeriodType === 'today') {
+            $startDate = Carbon::today()->startOfDay();
+            $endDate = Carbon::today()->endOfDay();
+            $periodLabel = 'مكالمات اليوم (' . Carbon::today()->translatedFormat('d F Y') . ')';
         } elseif ($selectedPeriodType === 'custom') {
             $from = $request->input('from_date');
             $to = $request->input('to_date');
@@ -261,7 +265,13 @@ class HelplineDashboardController extends Controller
         $startDate = null;
         $endDate = null;
 
-        if ($periodType === 'custom') {
+        if ($periodType === 'all_time') {
+            $startDate = null;
+            $endDate = null;
+        } elseif ($periodType === 'today') {
+            $startDate = Carbon::today()->startOfDay();
+            $endDate = Carbon::today()->endOfDay();
+        } elseif ($periodType === 'custom') {
             $from = $request->input('from_date');
             $to = $request->input('to_date');
             $startDate = $from ? Carbon::parse($from)->startOfDay() : null;

@@ -59,17 +59,17 @@ class HelplineCall extends Model
     public function getEffectiveCallerTypeAttribute(): string
     {
         if (($this->caller_type === 'أخرى' || $this->caller_type === 'Other') && !empty($this->caller_type_other)) {
-            return $this->caller_type_other;
+            return (string) $this->caller_type_other;
         }
-        return $this->caller_type;
+        return (string) ($this->caller_type ?? '');
     }
 
     public function getEffectiveReferralSourceAttribute(): string
     {
         if (($this->referral_source === 'أخرى' || $this->referral_source === 'Other') && !empty($this->referral_source_other)) {
-            return $this->referral_source_other;
+            return (string) $this->referral_source_other;
         }
-        return $this->referral_source;
+        return (string) ($this->referral_source ?? '');
     }
 
     public function getDurationLabelAttribute(): string

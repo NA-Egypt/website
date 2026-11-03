@@ -44,6 +44,16 @@
                 <i class="bi bi-calendar2-check me-1"></i> {{ currentPeriod.label }}
               </span>
 
+              <!-- Today Button -->
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill px-3 shadow-sm"
+                :class="selectedPeriodType === 'today' ? 'btn-primary' : 'btn-outline-secondary'"
+                @click="setToday"
+              >
+                <i class="bi bi-calendar-event me-1"></i> مكالمات اليوم
+              </button>
+
               <!-- All Time Button (Only shown if multiple cycles exist or currently active) -->
               <button 
                 v-if="Object.keys(cycles).length > 1 || selectedPeriodType === 'all_time'"
@@ -854,6 +864,11 @@ const onCycleChange = () => {
 
 const setAllTime = () => {
   selectedPeriodType.value = 'all_time';
+  fetchData(1);
+};
+
+const setToday = () => {
+  selectedPeriodType.value = 'today';
   fetchData(1);
 };
 

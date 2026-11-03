@@ -104,7 +104,7 @@ class HelplineReportService
             $prevFirstTuesday = $this->getFirstTuesdayOfMonth($prevMonth->year, $prevMonth->month);
             $cycleStart = $prevFirstTuesday->copy()->startOfDay();
             $cycleEnd = $firstTuesdayThisMonth->copy()->subDay()->endOfDay();
-            $targetMeetingTuesday = $firstTuesdayThisMonth;
+            $cycleMonth = $prevFirstTuesday;
         } else {
             // On or after this month's 1st Tuesday 00:00:00:
             // Target meeting is next month's 1st Tuesday.
@@ -113,14 +113,14 @@ class HelplineReportService
             $nextFirstTuesday = $this->getFirstTuesdayOfMonth($nextMonth->year, $nextMonth->month);
             $cycleStart = $firstTuesdayThisMonth->copy()->startOfDay();
             $cycleEnd = $nextFirstTuesday->copy()->subDay()->endOfDay();
-            $targetMeetingTuesday = $nextFirstTuesday;
+            $cycleMonth = $firstTuesdayThisMonth;
         }
 
         return [
             'start' => $cycleStart,
             'end' => $cycleEnd,
             'key' => $cycleStart->format('Y-m-d') . '_' . $cycleEnd->format('Y-m-d'),
-            'label' => 'دورة ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $cycleStart->format('d/m') . ' إلى ' . $cycleEnd->format('d/m/Y') . ')',
+            'label' => 'دورة ' . $cycleMonth->translatedFormat('F Y') . ' (' . $cycleStart->format('d/m') . ' إلى ' . $cycleEnd->format('d/m/Y') . ')',
             'group' => 'monthly',
             'group_label' => 'الدورات الشهرية الكاملة',
             'is_current' => true,
@@ -266,7 +266,7 @@ class HelplineReportService
             $start = $prevFirstTuesday->copy()->startOfDay();
 
             $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
-            $label = 'دورة ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'دورة ' . $prevFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
 
             if ($onlyWithCalls) {
                 $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
