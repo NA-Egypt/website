@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\Mpdf\ReportMpdf;
 use Mpdf\Mpdf;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
@@ -45,6 +46,8 @@ class MpdfService
             ],
             'default_font' => 'cairo',
             'tempDir' => storage_path('app/mpdf'),
+            'shrink_tables_to_fit' => 1,
+            'use_kwt' => true,
         ];
 
         // Merge custom options
@@ -55,7 +58,7 @@ class MpdfService
             $mergedOptions['fontdata'] = $options['fontdata'] + $customOptions['fontdata'];
         }
 
-        $mpdf = new Mpdf($mergedOptions);
+        $mpdf = new ReportMpdf($mergedOptions);
 
         $mpdf->autoArabic = true;
         $mpdf->autoScriptToLang = true;
