@@ -120,21 +120,41 @@
                         <tbody>
                             @if($report->positions_status)
                                 @foreach($report->positions_status as $pos)
+                                    @php
+                                        $statusKey = $pos['status'] ?? '';
+                                        $statusBadgeClass = match($statusKey) {
+                                            'Present' => 'bg-success text-white',
+                                            'Absent' => 'bg-danger text-white',
+                                            'Excused' => 'bg-warning text-dark',
+                                            'Vacant' => 'bg-secondary text-white',
+                                            default => 'bg-secondary text-white',
+                                        };
+                                        $statusIcon = match($statusKey) {
+                                            'Present' => 'bi-check-circle-fill',
+                                            'Absent' => 'bi-x-circle-fill',
+                                            'Excused' => 'bi-clock-fill',
+                                            'Vacant' => 'bi-dash-circle-fill',
+                                            default => 'bi-info-circle-fill',
+                                        };
+                                        $statusLabel = !empty($statusKey) ? (__('messages.' . $statusKey) !== 'messages.' . $statusKey ? __('messages.' . $statusKey) : $statusKey) : '-';
+                                    @endphp
                                     <tr>
                                         <td>{{ $pos['name'] ?? '-' }}</td>
                                         <td>{{ $pos['member_name'] ?? '-' }}</td>
                                         <td>
-                                            <span class="badge 
-                                                @if(($pos['status']??'') == 'Present') bg-success 
-                                                @elseif(($pos['status']??'') == 'Absent') bg-danger 
-                                                @elseif(($pos['status']??'') == 'Excused') bg-warning text-dark 
-                                                @else bg-secondary @endif">
-                                                {{ $pos['status'] ?? '-' }}
-                                            </span>
+                                            @if(!empty($statusKey))
+                                                <span class="badge {{ $statusBadgeClass }} px-2 py-1">
+                                                    <i class="bi {{ $statusIcon }} me-1"></i>{{ $statusLabel }}
+                                                </span>
+                                            @else
+                                                -
+                                            @endif
                                         </td>
                                         <td>
                                             @if(!empty($pos['election']))
-                                                <span class="text-danger fw-bold">{{ __('messages.Open') }}</span>
+                                                <span class="badge bg-danger text-white px-2 py-1">
+                                                    <i class="bi bi-exclamation-circle-fill me-1"></i>{{ __('messages.Open') }}
+                                                </span>
                                             @else
                                                 -
                                             @endif
@@ -272,7 +292,7 @@
                             @foreach($reportLogs as $log)
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom-dashed">
                                     <div>
-                                        <span class="badge bg-{{ $log->action === 'approved' ? 'success' : ($log->action === 'submitted' ? 'info' : ($log->action === 'returned_to_draft' ? 'warning text-dark' : ($log->action === 'deleted' ? 'danger' : 'secondary'))) }} rounded-pill me-2">
+                                        <span class="badge bg-{{ $log->action === 'approved' ? 'success' : ($log->action === 'submitted' ? 'info' : ($log->action === 'returned_to_draft' ? 'warning' : ($log->action === 'deleted' ? 'danger' : 'secondary'))) }} {{ $log->action === 'returned_to_draft' || $log->action === 'submitted' ? 'text-dark' : 'text-white' }} rounded-pill me-2">
                                             {{ __('messages.action_' . $log->action) ?? ucfirst(str_replace('_', ' ', $log->action)) }}
                                         </span>
                                         <span class="fw-semibold text-dark">{{ $log->summary }}</span>
@@ -283,7 +303,7 @@
                                         </div>
                                     </div>
                                     @if(!empty($log->details))
-                                        <span class="badge bg-light text-secondary border">
+                                        <span class="badge bg-light text-dark border">
                                             {{ count($log->details) }} {{ __('messages.details') ?? 'fields' }}
                                         </span>
                                     @endif

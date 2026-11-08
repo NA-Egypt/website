@@ -680,7 +680,7 @@
             const ext = item.name.split('.').pop().toUpperCase();
             const typeBadge = document.getElementById('drawer-file-type');
             typeBadge.textContent = ext;
-            typeBadge.className = 'badge ' + (ext === 'PDF' ? 'bg-danger' : (['XLSX', 'XLS', 'CSV'].includes(ext) ? 'bg-success' : 'bg-primary'));
+            typeBadge.className = 'badge text-white ' + (ext === 'PDF' ? 'bg-danger' : (['XLSX', 'XLS', 'CSV'].includes(ext) ? 'bg-success' : 'bg-primary'));
             
             document.getElementById('drawer-file-size').textContent = item.size ? formatBytes(item.size) : 'N/A';
             document.getElementById('drawer-file-path').textContent = item.path;

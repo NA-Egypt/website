@@ -39,7 +39,7 @@
                     <a class="nav-link {{ $activeTab === 'workgroups' ? 'active' : '' }}" href="{{ route('committee-reports.index', ['tab' => 'workgroups']) }}">
                         <i class="bi bi-people me-1"></i> {{ __('messages.Workgroup Drafts') }}
                         @if($unembeddedDraftsCount > 0)
-                            <span class="badge bg-danger rounded-pill ms-1">{{ $unembeddedDraftsCount }}</span>
+                            <span class="badge bg-danger text-white rounded-pill ms-1">{{ $unembeddedDraftsCount }}</span>
                         @endif
                     </a>
                 </li>
@@ -124,21 +124,21 @@
                                 <td>
                                     {{ \App\Services\DateNumberHelper::translatedFormat($report->meeting_date, 'Y-m-d') }}
                                     @if($report->is_exceptional)
-                                        <span class="badge bg-danger ms-1" style="font-size: 0.75rem;">{{ __('messages.Exceptional Meeting') }}</span>
+                                        <span class="badge bg-danger text-white ms-1" style="font-size: 0.75rem;">{{ __('messages.Exceptional Meeting') }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $report->meeting_day_description }}</td>
                                 <td>
                                     @if($report->isEmbedded())
-                                        <span class="badge bg-info text-dark"><i class="bi bi-link-45deg"></i> {{ __('messages.Embedded in Report') }}</span>
+                                        <span class="badge bg-info text-dark"><i class="bi bi-link-45deg me-1"></i>{{ __('messages.Embedded in Report') }}</span>
                                     @elseif($report->serviceCommittee && $report->serviceCommittee->isWorkgroup())
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft for Committee') }}</span>
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark me-1"></i>{{ __('messages.Draft for Committee') }}</span>
                                     @elseif($report->status === 'draft')
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark"></i> {{ __('messages.Draft') ?? 'Draft' }}</span>
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark me-1"></i>{{ __('messages.Draft') ?? 'Draft' }}</span>
                                     @elseif($report->status === 'approved')
-                                        <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> {{ __('messages.Approved') ?? 'Approved & Published' }}</span>
+                                        <span class="badge bg-success text-white"><i class="bi bi-patch-check-fill me-1"></i>{{ __('messages.Approved') ?? 'Approved & Published' }}</span>
                                     @else
-                                        <span class="badge bg-primary"><i class="bi bi-check-circle"></i> {{ __('messages.Submitted') ?? 'Submitted' }}</span>
+                                        <span class="badge bg-primary text-white"><i class="bi bi-check-circle me-1"></i>{{ __('messages.Submitted') ?? 'Submitted' }}</span>
                                     @endif
                                 </td>
                                 <td>

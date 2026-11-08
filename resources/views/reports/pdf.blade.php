@@ -69,6 +69,18 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
             break-inside: avoid;
             break-after: avoid;
         }
+        .pdf-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .pdf-badge-present { background-color: #198754; color: #ffffff; }
+        .pdf-badge-absent { background-color: #dc3545; color: #ffffff; }
+        .pdf-badge-excused { background-color: #ffc107; color: #000000; }
+        .pdf-badge-vacant { background-color: #6c757d; color: #ffffff; }
+        .pdf-badge-election { background-color: #dc3545; color: #ffffff; }
         .section-headline,
         .content-box h1,
         .content-box h2,
@@ -155,11 +167,34 @@ $direction = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
                 <tbody>
                     @if($report->positions_status)
                         @foreach($report->positions_status as $pos)
+                            @php
+                                $statusKey = $pos['status'] ?? '';
+                                $statusClass = match($statusKey) {
+                                    'Present' => 'pdf-badge-present',
+                                    'Absent' => 'pdf-badge-absent',
+                                    'Excused' => 'pdf-badge-excused',
+                                    'Vacant' => 'pdf-badge-vacant',
+                                    default => 'pdf-badge-vacant',
+                                };
+                                $statusLabel = !empty($statusKey) ? (__('messages.' . $statusKey) !== 'messages.' . $statusKey ? __('messages.' . $statusKey) : $statusKey) : '-';
+                            @endphp
                             <tr>
                                 <td>{{ $pos['name'] ?? '-' }}</td>
                                 <td>{{ $pos['member_name'] ?? '-' }}</td>
-                                <td>{{ $pos['status'] ?? '-' }}</td>
-                                <td>{{ !empty($pos['election']) ? (__('messages.Open') ?? 'Open') : '-' }}</td>
+                                <td>
+                                    @if(!empty($statusKey))
+                                        <span class="pdf-badge {{ $statusClass }}">{{ $statusLabel }}</span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(!empty($pos['election']))
+                                        <span class="pdf-badge pdf-badge-election">{{ __('messages.Open') ?? 'Open' }}</span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     @else

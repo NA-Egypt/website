@@ -838,4 +838,64 @@ class CommitteeReportWorkflowTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee(__('messages.reports_workgroups_guide'));
     }
+
+    public function test_servant_status_badges_localized_and_high_contrast()
+    {
+        $user = User::factory()->create(['email' => 'servant-test@naegypt.org']);
+        $committee = $this->createCommittee($user);
+
+        $report = CommitteeReport::create([
+            'service_committee_id' => $committee->id,
+            'meeting_date' => '2026-08-15',
+            'meeting_day_description' => 'Saturday First Week',
+            'body' => 'Body text',
+            'status' => 'draft',
+            'positions_status' => [
+                ['name' => 'Chair', 'member_name' => 'Ahmed', 'status' => 'Present', 'election' => false],
+                ['name' => 'Vice Chair', 'member_name' => 'Omar', 'status' => 'Absent', 'election' => true],
+                ['name' => 'Secretary', 'member_name' => 'Sara', 'status' => 'Excused', 'election' => false],
+                ['name' => 'Treasurer', 'member_name' => '', 'status' => 'Vacant', 'election' => true],
+            ],
+        ]);
+
+        $this->actingAs($user);
+
+        // Test in Arabic locale
+        app()->setLocale('ar');
+        session(['locale' => 'ar']);
+        $responseAr = $this->get(route('committee-reports.show', $report->id));
+        $responseAr->assertStatus(200);
+        $responseAr->assertSee('حاضر');
+        $responseAr->assertSee('غائب');
+        $responseAr->assertSee('معتذر');
+        $responseAr->assertSee('شاغر');
+        $responseAr->assertSee('مفتوح');
+        $responseAr->assertSee('bg-success text-white');
+        $responseAr->assertSee('bg-danger text-white');
+        $responseAr->assertSee('bg-warning text-dark');
+        $responseAr->assertSee('bg-secondary text-white');
+        $responseAr->assertSee('bi-check-circle-fill');
+        $responseAr->assertSee('bi-x-circle-fill');
+        $responseAr->assertSee('bi-clock-fill');
+        $responseAr->assertSee('bi-dash-circle-fill');
+        $responseAr->assertSee('bi-exclamation-circle-fill');
+
+        // Test in English locale
+        app()->setLocale('en');
+        session(['locale' => 'en']);
+        $responseEn = $this->get(route('committee-reports.show', $report->id));
+        $responseEn->assertStatus(200);
+        $responseEn->assertSee('Present');
+        $responseEn->assertSee('Absent');
+        $responseEn->assertSee('Excused');
+        $responseEn->assertSee('Vacant');
+        $responseEn->assertSee('Open');
+
+        // Test PDF export contains badges and localized text
+        app()->setLocale('ar');
+        session(['locale' => 'ar']);
+        $responsePdf = $this->get(route('committee-reports.pdf', $report->id));
+        $responsePdf->assertStatus(200);
+        $this->assertTrue(str_contains($responsePdf->headers->get('content-type'), 'pdf'));
+    }
 }

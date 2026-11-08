@@ -100,13 +100,13 @@
                                 <td>
                                     @php
                                         $badgeClass = match($log->action) {
-                                            'approved' => 'bg-success',
-                                            'submitted' => 'bg-primary',
+                                            'approved' => 'bg-success text-white',
+                                            'submitted' => 'bg-primary text-white',
                                             'returned_to_draft' => 'bg-warning text-dark',
-                                            'deleted' => 'bg-danger',
+                                            'deleted' => 'bg-danger text-white',
                                             'updated' => 'bg-info text-dark',
-                                            'created' => 'bg-secondary',
-                                            default => 'bg-dark'
+                                            'created' => 'bg-secondary text-white',
+                                            default => 'bg-dark text-white'
                                         };
                                     @endphp
                                     <span class="badge {{ $badgeClass }} rounded-pill px-3 py-2">

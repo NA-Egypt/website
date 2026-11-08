@@ -22,7 +22,7 @@
                     <h6 class="fw-bold mb-1 text-primary d-flex align-items-center gap-2">
                         {{ __('messages.Workgroup Report Guidance') }}
                         @if(isset($committee) && $committee && $committee->parent)
-                            <span class="badge bg-secondary bg-opacity-75 text-white rounded-pill fw-normal small">
+                            <span class="badge bg-secondary text-white rounded-pill fw-normal small">
                                 {{ __('messages.Parent Committee') }}: {{ app()->getLocale() === 'ar' ? ($committee->parent->ar_name ?: $committee->parent->en_name) : ($committee->parent->en_name ?: $committee->parent->ar_name) }}
                             </span>
                         @endif
@@ -55,7 +55,7 @@
                                 <i class="bi {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bi-diagram-3-fill text-success' : 'bi-building text-primary' }} fs-4"></i>
                                 <h5 class="mb-0 fw-bold">{{ app()->getLocale() === 'ar' ? ($committee->ar_name ?: $committee->en_name) : ($committee->en_name ?: $committee->ar_name) }}</h5>
                             </div>
-                            <span class="badge {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bg-success' : 'bg-primary' }} bg-opacity-10 {{ (isset($isWorkgroup) && $isWorkgroup) ? 'text-success' : 'text-primary' }} px-3 py-2 rounded-pill fw-semibold">
+                            <span class="badge {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bg-success' : 'bg-primary' }} text-white px-3 py-2 rounded-pill fw-semibold">
                                 {{ (isset($isWorkgroup) && $isWorkgroup) ? __('messages.Workgroup Report') : __('messages.Committee Reports') }}
                             </span>
                         </div>
@@ -244,6 +244,24 @@
             })->values();
         @endphp
 
+        <style>
+            .draft-item.active {
+                background-color: #0d6efd !important;
+                border-color: #0d6efd !important;
+                color: #ffffff !important;
+            }
+            .draft-item.active h6,
+            .draft-item.active .text-muted,
+            .draft-item.active small,
+            .draft-item.active i {
+                color: #ffffff !important;
+            }
+            .draft-item.active .badge {
+                background-color: rgba(255, 255, 255, 0.25) !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            }
+        </style>
         <div class="offcanvas {{ $isRtl ? 'offcanvas-start' : 'offcanvas-end' }} shadow-lg border-0" tabindex="-1" id="embedWorkgroupDrawer" style="max-width: 100%; width: 880px;">
             <div class="offcanvas-header bg-primary bg-gradient text-white p-3 p-md-4">
                 <div class="d-flex align-items-center gap-3">
@@ -274,7 +292,7 @@
                                    onclick="selectDrawerReport({{ $wg['id'] }})">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h6 class="fw-bold mb-0 text-truncate" style="max-width: 200px;">{{ $wg['wg_name'] }}</h6>
-                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill small">{{ count($wg['sections'] ?? []) }} {{ __('messages.sections') ?? 'sections' }}</span>
+                                        <span class="badge bg-success text-white rounded-pill small">{{ count($wg['sections'] ?? []) }} {{ __('messages.sections') ?? 'sections' }}</span>
                                     </div>
                                     <div class="text-muted small mb-2">
                                         <i class="bi bi-calendar3 me-1"></i> {{ $wg['meeting_date'] }}
@@ -283,10 +301,10 @@
                                         @endif
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill small">
+                                        <span class="badge bg-secondary text-white rounded-pill small">
                                             <i class="bi bi-paperclip me-1"></i> {{ count($wg['attachments'] ?? []) }}
                                         </span>
-                                        <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill small px-2 py-1 embed-status-badge">
+                                        <span class="badge bg-primary text-white rounded-pill small px-2 py-1 embed-status-badge">
                                             <i class="bi bi-eye me-1"></i> {{ __('messages.Draft Preview') }}
                                         </span>
                                     </div>
@@ -579,12 +597,22 @@
 
                     let positionsHtml = '';
                     if (r.positions && r.positions.length > 0) {
+                        const statusMap = {
+                            'Present': { label: @json(__('messages.Present')), bg: 'bg-success text-white', icon: 'bi-check-circle-fill' },
+                            'Absent': { label: @json(__('messages.Absent')), bg: 'bg-danger text-white', icon: 'bi-x-circle-fill' },
+                            'Excused': { label: @json(__('messages.Excused')), bg: 'bg-warning text-dark', icon: 'bi-clock-fill' },
+                            'Vacant': { label: @json(__('messages.Vacant')), bg: 'bg-secondary text-white', icon: 'bi-dash-circle-fill' }
+                        };
                         positionsHtml = `
                             <div class="table-responsive mb-3">
                                 <table class="table table-sm table-bordered text-center small mb-0">
-                                    <thead class="table-light"><tr><th>{{ __('messages.Position') }}</th><th>{{ __('messages.Member Name') }}</th><th>{{ __('messages.Status') }}</th></tr></thead>
+                                    <thead class="table-light"><tr><th>{{ __('messages.Position') }}</th><th>{{ __('messages.Member Name') }}</th><th>{{ __('messages.Status') }}</th><th>{{ __('messages.Election') }}</th></tr></thead>
                                     <tbody>
-                                        ${r.positions.map(p => `<tr><td>${p.name || '-'}</td><td>${p.member_name || '-'}</td><td><span class="badge bg-secondary">${p.status || '-'}</span></td></tr>`).join('')}
+                                        ${r.positions.map(p => {
+                                            const st = statusMap[p.status] || { label: p.status || '-', bg: 'bg-secondary text-white', icon: 'bi-info-circle-fill' };
+                                            const electionHtml = p.election ? `<span class="badge bg-danger text-white px-2 py-1"><i class="bi bi-exclamation-circle-fill me-1"></i>{{ __('messages.Open') }}</span>` : '-';
+                                            return `<tr><td>${p.name || '-'}</td><td>${p.member_name || '-'}</td><td><span class="badge ${st.bg} px-2 py-1"><i class="bi ${st.icon} me-1"></i>${st.label}</span></td><td>${electionHtml}</td></tr>`;
+                                        }).join('')}
                                     </tbody>
                                 </table>
                             </div>
@@ -612,7 +640,7 @@
                                     ${r.meeting_day_description ? `&bull; ${r.meeting_day_description}` : ''}
                                 </div>
                             </div>
-                            ${isAlreadyEmbedded ? '<span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check2-circle me-1"></i> {{ __("messages.Already Embedded") }}</span>' : '<span class="badge bg-warning bg-opacity-75 text-dark rounded-pill px-3 py-2">{{ __("messages.Draft for Committee") }}</span>'}
+                            ${isAlreadyEmbedded ? '<span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check2-circle me-1"></i> {{ __("messages.Already Embedded") }}</span>' : '<span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-file-earmark me-1"></i> {{ __("messages.Draft for Committee") }}</span>'}
                         </div>
 
                         ${r.attended_members ? `
@@ -689,7 +717,7 @@
                     if (drawerItem) {
                         const badge = drawerItem.querySelector('.embed-status-badge');
                         if (badge) {
-                            badge.className = 'badge bg-success bg-opacity-25 text-success rounded-pill small px-2 py-1 embed-status-badge';
+                            badge.className = 'badge bg-success text-white rounded-pill small px-2 py-1 embed-status-badge';
                             badge.innerHTML = '<i class="bi bi-check2 me-1"></i> {{ __("messages.Already Embedded") }}';
                         }
                     }
@@ -721,7 +749,7 @@
                     if (drawerItem) {
                         const badge = drawerItem.querySelector('.embed-status-badge');
                         if (badge) {
-                            badge.className = 'badge bg-primary bg-opacity-25 text-primary rounded-pill small px-2 py-1 embed-status-badge';
+                            badge.className = 'badge bg-primary text-white rounded-pill small px-2 py-1 embed-status-badge';
                             badge.innerHTML = '<i class="bi bi-eye me-1"></i> {{ __("messages.Draft Preview") }}';
                         }
                     }
