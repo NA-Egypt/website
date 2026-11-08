@@ -39,6 +39,10 @@ Route::get('/login/microsoft/callback', [AzureAuthController::class, 'handleAzur
 Route::get('/auth/azure/redirect', [\App\Http\Controllers\Auth\AzureAuthController::class, 'redirectForMobile']);
 Route::get('/auth/azure/callback', [\App\Http\Controllers\Auth\AzureAuthController::class, 'handleCallbackForMobile']);
 
+// Committee Reports & Workgroups Documentation (External Public & Standard Routes):
+Route::get('/reports-guide', [\App\Http\Controllers\CommitteeReportsGuideController::class, 'publicIndex'])->name('reports.guide.public');
+Route::get('/committee-reports-guide', [\App\Http\Controllers\CommitteeReportsGuideController::class, 'index'])->name('reports.guide');
+
 // Localization Routes:
 Route::group(
     [
@@ -56,9 +60,6 @@ Route::group(
 
             // GSR Meetings Guide:
             Route::get('/gsr-guide', [\App\Http\Controllers\GsrGuideController::class, 'index'])->name('gsr.guide');
-
-            // Committee Reports & Workgroups Guide:
-            Route::get('/committee-reports-guide', [\App\Http\Controllers\CommitteeReportsGuideController::class, 'index'])->name('reports.guide');
 
             // Stocktaking Routes:
             Route::get('/store/stocktaking', [\App\Http\Controllers\StocktakingController::class, 'index'])->name('store.stocktaking.index');

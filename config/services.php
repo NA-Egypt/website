@@ -52,4 +52,8 @@ return [
         'filename' => env('APK_FILENAME', 'na-egypt-1.2.0.apk'),
         'token_expiry_hours' => (int) env('APK_TOKEN_EXPIRY_HOURS', 24),
     ],
+
+    'reports_guide' => [
+        'token' => env('REPORTS_GUIDE_ACCESS_TOKEN', 'naegypt-reports-guide-secret-key-2025'),
+    ],
 ];

@@ -35,6 +35,10 @@
                     <i class="bi bi-book-half"></i>
                     <span>{{ __('messages.reports_guide_button') }}</span>
                 </a>
+                <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1.5 copy-public-link-btn" data-url="{{ \App\Http\Controllers\CommitteeReportsGuideController::getPublicUrl() }}" title="{{ __('messages.copy_public_link') }}">
+                    <i class="bi bi-link-45deg"></i>
+                    <span>{{ __('messages.copy_public_link') }}</span>
+                </button>
             </div>
         </div>
 
@@ -94,4 +98,5 @@
              data-csrf-token="{{ csrf_token() }}">
         </div>
     </div>
+    <x-copy-link-toast />
 </x-layout>

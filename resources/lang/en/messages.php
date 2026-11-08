@@ -3241,4 +3241,8 @@ return [
     'third_tuesday_meeting_report' => '3rd Tuesday Meeting Report',
     'current_meeting_cycle' => 'Current Meeting Cycle',
     'helpline_cycle_subtitle' => 'Selected report cycle (1st & 3rd Tuesday meetings / Monthly cycle)',
+    'copy_public_link' => 'Copy Public Link',
+    'public_link_copied' => 'Public link copied to clipboard!',
+    'reports_guide_invalid_token' => 'Sorry, the reports guide link is invalid or expired. Please sign in or use a valid link.',
+    'portal_login' => 'Log in to Portal',
 ];

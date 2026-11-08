@@ -19,14 +19,28 @@
                     </p>
                 </div>
                 <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <a href="{{ route('committee-reports.index') }}" class="btn btn-outline-primary rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
-                        <i class="bi bi-arrow-left"></i>
-                        <span>{{ __('messages.Committee Reports') }}</span>
-                    </a>
-                    <a href="{{ route('workgroup.index') }}" class="btn btn-outline-secondary rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
-                        <i class="bi bi-people"></i>
-                        <span>{{ __('messages.Workgroups') }}</span>
-                    </a>
+                    @auth
+                        <a href="{{ route('committee-reports.index') }}" class="btn btn-outline-primary rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>{{ __('messages.Committee Reports') }}</span>
+                        </a>
+                        <a href="{{ route('workgroup.index') }}" class="btn btn-outline-secondary rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
+                            <i class="bi bi-people"></i>
+                            <span>{{ __('messages.Workgroups') }}</span>
+                        </a>
+                        <button type="button" 
+                                class="btn btn-outline-success rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm copy-public-link-btn"
+                                data-url="{{ $publicUrl ?? \App\Http\Controllers\CommitteeReportsGuideController::getPublicUrl() }}"
+                                title="{{ __('messages.copy_public_link') }}">
+                            <i class="bi bi-link-45deg"></i>
+                            <span>{{ __('messages.copy_public_link') }}</span>
+                        </button>
+                    @else
+                        <a href="{{ route('login.azure') }}" class="btn btn-primary rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5 shadow-sm">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>{{ __('messages.portal_login') }}</span>
+                        </a>
+                    @endauth
                 </div>
             </div>
 
@@ -631,5 +645,9 @@
             }
         }
     </script>
+
+    @auth
+        <x-copy-link-toast />
+    @endauth
 </x-layout>
 

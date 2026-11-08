@@ -62,6 +62,9 @@
                 <a href="{{ route('reports.guide') }}" class="btn btn-outline-primary" title="{{ __('messages.reports_workgroups_guide') }}">
                     <i class="bi bi-book-half"></i> {{ __('messages.reports_guide_button') }}
                 </a>
+                <button type="button" class="btn btn-outline-success copy-public-link-btn" data-url="{{ \App\Http\Controllers\CommitteeReportsGuideController::getPublicUrl() }}" title="{{ __('messages.copy_public_link') }}">
+                    <i class="bi bi-link-45deg"></i> {{ __('messages.copy_public_link') }}
+                </button>
             </div>
             
             <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">
@@ -206,4 +209,5 @@
             {{ $reports->links() }}
         </div>
     </div>
+    <x-copy-link-toast />
 </x-layout>
