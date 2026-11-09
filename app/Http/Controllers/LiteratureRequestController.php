@@ -71,13 +71,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             return true;
         }
 
-        // Treasurers and Super Admins can edit past 19th as long as accumulated invoice is not sent
+        // Treasurers and Super Admins can edit past 22nd as long as accumulated invoice is not sent
         if ($isTreasurerOrAdmin) {
             return false;
         }
 
-        // For GSR, locked after day 19
-        return Carbon::now()->day > 19;
+        // For GSR, locked after day 22
+        return Carbon::now()->day > 22;
     }
 
     /**
@@ -374,8 +374,8 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $serviceBody = ServiceBody::find($serviceBodyId);
         $month = Carbon::now()->startOfMonth();
 
-        // 1. Auto-compile accumulated invoice if day >= 19
-        if (Carbon::now()->day >= 19) {
+        // 1. Auto-compile accumulated invoice if day >= 22
+        if (Carbon::now()->day >= 22) {
             $this->syncAccumulatedInvoice($serviceBodyId, $month);
         }
 

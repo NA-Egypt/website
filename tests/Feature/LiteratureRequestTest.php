@@ -142,7 +142,7 @@ class LiteratureRequestTest extends TestCase
 
     public function test_gsr_cannot_add_items_to_cart_after_19th()
     {
-        Carbon::setTestNow('2026-07-20'); // After 19th
+        Carbon::setTestNow('2026-07-24'); // After 22nd
 
         $response = $this->actingAs($this->gsrUser)->post(route('literature-requests.cart.update'), [
             'quantities' => [
@@ -209,8 +209,8 @@ class LiteratureRequestTest extends TestCase
         ]);
         $this->actingAs($this->gsrUser)->post(route('literature-requests.submit'));
 
-        // Visit treasurer dashboard on 20th
-        Carbon::setTestNow('2026-07-20');
+        // Visit treasurer dashboard on 23rd (after 22nd)
+        Carbon::setTestNow('2026-07-23');
 
         $response = $this->actingAs($this->treasurerUser)->get(route('literature-requests.treasurer'));
         $response->assertStatus(200);
@@ -561,7 +561,7 @@ class LiteratureRequestTest extends TestCase
 
     public function test_treasurer_can_add_or_edit_group_request_after_19th_if_accumulated_invoice_not_sent()
     {
-        Carbon::setTestNow('2026-07-22'); // Past 19th!
+        Carbon::setTestNow('2026-07-24'); // Past 22nd!
 
         // Treasurer updates cart on behalf of group using save_and_submit
         $response = $this->actingAs($this->treasurerUser)->post(route('literature-requests.cart.update'), [
@@ -582,7 +582,7 @@ class LiteratureRequestTest extends TestCase
 
     public function test_treasurer_cannot_edit_group_request_after_accumulated_invoice_sent_to_committee()
     {
-        Carbon::setTestNow('2026-07-22');
+        Carbon::setTestNow('2026-07-24');
 
         // Accumulated request already sent to committee
         LiteratureRequest::create([

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</title>
+    <title>دليل فيديو تفاعلي معمق: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</title>
 
     <!-- Real NA Egypt Fonts & Stylesheets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,13 +16,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
-        /* Real App Neo-Glassmorphism Styles from layout.blade.php */
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
         body, .hanken-grotesk {
             font-family: 'Cairo', sans-serif !important;
         }
         body, html {
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-bg: rgba(255, 255, 255, 0.88);
             --glass-border: rgba(0, 0, 0, 0.08);
             --neon-glow: 0 5px 20px rgba(0, 0, 0, 0.05);
             --text-primary: #1a202c !important;
@@ -56,24 +55,23 @@
             color: var(--text-primary) !important;
         }
 
-        /* Video Player Wrapper Shell */
         .tutorial-player-container {
             width: 100%;
-            max-width: 1360px;
+            max-width: 1380px;
             margin: 12px auto;
             background: #0f172a;
             border-radius: 20px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.12);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
-        /* Top Header in Player */
+        /* Top Header Bar */
         .player-header-bar {
             background: #1e293b;
-            padding: 10px 24px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -107,9 +105,9 @@
             background: #0f172a;
             color: #94a3b8;
             border: 1px solid #334155;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -126,17 +124,78 @@
             color: #93c5fd;
         }
 
-        /* Real Viewport Window */
+        /* Stepper Dots Bar */
+        .stepper-dots-bar {
+            background: #131c2e;
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            overflow-x: auto;
+            z-index: 1040;
+        }
+
+        .step-dot-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .step-dot-item:hover {
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .step-dot-item.active {
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .step-dot-item.completed {
+            color: #34d399;
+        }
+
+        .step-dot-item .dot-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            background: #334155;
+            color: white;
+        }
+
+        .step-dot-item.active .dot-circle {
+            background: #0ea5e9;
+        }
+
+        .step-dot-item.completed .dot-circle {
+            background: #10b981;
+        }
+
+        /* Real System Viewport */
         .real-system-viewport {
             width: 100%;
-            height: 660px;
+            height: 670px;
             background: #f8fafc;
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
         }
 
-        /* Virtual Animated Cursor */
         .v-cursor {
             position: absolute;
             top: 0;
@@ -145,7 +204,7 @@
             height: 24px;
             z-index: 99999;
             pointer-events: none;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
             transform: translate(500px, 250px);
             filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
         }
@@ -165,7 +224,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: rgba(37, 99, 235, 0.65);
+            background: rgba(37, 99, 235, 0.7);
             transform: translate(-50%, -50%) scale(0);
             pointer-events: none;
             z-index: 99998;
@@ -180,7 +239,7 @@
             100% { transform: scale(3.5); opacity: 0; }
         }
 
-        /* Explainer Banner */
+        /* Floating Explainer Banner */
         .floating-explainer {
             position: absolute;
             bottom: 24px;
@@ -189,9 +248,10 @@
             background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(12px);
             border-radius: 14px;
-            padding: 14px 22px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 16px;
             color: white;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
@@ -200,17 +260,51 @@
             transition: all 0.3s ease;
         }
 
+        .explainer-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         .floating-explainer-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             flex-shrink: 0;
             background: rgba(37, 99, 235, 0.15);
             color: #3b82f6;
+        }
+
+        .explainer-quick-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-step-nav {
+            background: #1e293b;
+            color: white;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-step-nav:hover {
+            background: #2563eb;
+            border-color: #2563eb;
         }
 
         /* Bottom Controls Bar */
@@ -310,7 +404,6 @@
             color: white;
         }
 
-        /* Real Shell Overrides for Container */
         .real-system-viewport .wrapper {
             background: transparent !important;
             min-height: 100%;
@@ -331,7 +424,6 @@
             min-height: 580px;
         }
 
-        /* Hidden scene containers */
         .tutorial-scene-box {
             display: none;
         }
@@ -346,7 +438,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Celebration Screen */
         .celebration-modal {
             position: absolute;
             inset: 0;
@@ -372,7 +463,7 @@
             border-radius: 20px;
             padding: 32px;
             text-align: center;
-            max-width: 540px;
+            max-width: 560px;
             color: white;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
@@ -385,16 +476,21 @@
         <div class="player-header-bar">
             <div class="d-flex align-items-center gap-2">
                 <span class="player-badge">GSR Real System</span>
-                <span class="player-title-text">دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</span>
+                <span class="player-title-text">دليل فيديو تفاعلي معمق: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</span>
             </div>
             <div class="ch-pills-row">
-                <button type='button' class='ch-pill-btn active' id='chPill0' onclick='seekTo(0)'>١. إدارة مواعيد الاجتماعات</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='seekTo(25)'>٢. تقرير وأجندة المجموعة (ASC)</button><button type='button' class='ch-pill-btn ' id='chPill2' onclick='seekTo(50)'>٣. سلة طلبات الأدبيات والميداليات</button>
+                <button type='button' class='ch-pill-btn active' id='chPill0' onclick='jumpToChapter(0)'>الفصل 1: إدارة مواعيد الاجتماعات</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='jumpToChapter(1)'>الفصل 2: تقرير وأجندة المجموعة (ASC)</button><button type='button' class='ch-pill-btn ' id='chPill2' onclick='jumpToChapter(2)'>الفصل 3: طلب الأدبيات والميداليات (الموعد: 22)</button>
             </div>
         </div>
 
-        <!-- Real System Viewport (The EXACT NA Egypt Application DOM) -->
+        <!-- Stepper Dots Bar for Granular Navigation -->
+        <div class="stepper-dots-bar" id="stepperDotsBar">
+            <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Real System Viewport -->
         <div class="real-system-viewport" id="sysViewport">
-            <!-- Virtual Cursor Pointer -->
+            <!-- Virtual Cursor -->
             <div class="v-cursor" id="vCursor">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 2l16 12-8.5 1.5L8 22z" />
@@ -402,9 +498,8 @@
             </div>
             <div class="click-pulse-ring" id="clickWave"></div>
 
-            <!-- The Real Application Shell -->
+            <!-- Authentic Application Shell -->
             <div class="wrapper">
-                <!-- 1. Real NA Egypt Navbar -->
                 <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
     <nav class="navbar navbar-expand">
             <div class="top-navbar d-flex align-items-center gap-2">
@@ -460,7 +555,7 @@
                 </div>
               </li>
               <li class="p-1">
-                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="https://127.0.0.1" style="color: var(--text-primary);">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="#" style="color: var(--text-primary);">
                       <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6;">
                           <i class="bi bi-globe fs-6"></i>
                       </div>
@@ -478,7 +573,7 @@
                             <li><hr class="dropdown-divider my-1" style="border-color: var(--glass-border);"></li>
               <li class="p-1">
                                   <form method="POST" action="/logout">
-                    <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <input type="hidden" name="_token" value="YCRkXUvHkkbJdCDpxl9vMw09CGBm0OergX47Krru" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                       <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444;">
                           <i class="bi bi-box-arrow-right fs-6"></i>
                       </div>
@@ -494,8 +589,6 @@
       </div>
     </nav>
 </header>
-
-                <!-- 2. Real NA Egypt Sidebar -->
                 <style>
 /* Sidebar Wrapper Enhancement - Light/Dark Theme aware */
 .sidebar-wrapper,
@@ -1005,11 +1098,9 @@
   </aside>
   <div class="sidebar-overlay" onclick="typeof window.toggleSidebarMenu === 'function' ? window.toggleSidebarMenu(false) : document.body.classList.remove('sidebar-open')"></div>
 
-                <!-- 3. Real NA Egypt Page Content Container -->
                 <main class="page-content hanken-grotesk">
                     <div class="container-fluid" id="scenesContainer">
-                            <!-- Scene 1: Real Meeting Form -->
-    <div class="tutorial-scene-box active" id="sceneBoxMeeting">
+                            <div class="tutorial-scene-box active" id="sceneBoxMeeting">
         
           <div class="container-fluid">
             <div class="text-center w-100 mb-3">
@@ -1017,7 +1108,7 @@
 </div>
     <div class="container-fluid glass-card p-4 p-md-5 mt-4 mb-5 mx-auto" style="max-width: 900px;">
         <form action="/meeting" method="post" class="meeting-form">
-                    <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">
+                    <input type="hidden" name="_token" value="YCRkXUvHkkbJdCDpxl9vMw09CGBm0OergX47Krru" autocomplete="off">
                                                                         <div class="row mb-4">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -1913,8 +2004,6 @@
           </div>
         
     </div>
-
-    <!-- Scene 2: Real Agenda Form -->
     <div class="tutorial-scene-box" id="sceneBoxAgenda">
         
           <div class="container-fluid">
@@ -1932,7 +2021,7 @@
 
                 <div class="card-body p-4">
                     <form action="/agenda" method="POST" id="agendaForm">
-                        <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                        <input type="hidden" name="group_id" value="175">
+                        <input type="hidden" name="_token" value="YCRkXUvHkkbJdCDpxl9vMw09CGBm0OergX47Krru" autocomplete="off">                        <input type="hidden" name="group_id" value="175">
 
                         <!-- SECTION 1: Group's Data -->
                         <div id="section1" class="form-section">
@@ -2005,7 +2094,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">اجتماع العمل القادم</label>
-                                <input type="datetime-local" name="next_business_meeting" class="form-control" value="2026-11-14T11:51">
+                                <input type="datetime-local" name="next_business_meeting" class="form-control" value="2026-11-14T21:55">
                             </div>
 
                             <div class="mb-3">
@@ -2288,8 +2377,6 @@
           </div>
         
     </div>
-
-    <!-- Scene 3: Real Cart Form -->
     <div class="tutorial-scene-box" id="sceneBoxCart">
         
           <div class="container-fluid">
@@ -2343,7 +2430,7 @@
         
         <div class="card border-0 shadow-sm p-4">
             <form action="/literature-requests/cart/update" method="POST" id="cart-form">
-                <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                <input type="hidden" name="group_id" value="175">
+                <input type="hidden" name="_token" value="YCRkXUvHkkbJdCDpxl9vMw09CGBm0OergX47Krru" autocomplete="off">                <input type="hidden" name="group_id" value="175">
 
                 
                                                     <ul class="nav nav-pills flex-wrap sm:flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="categoryTabList" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
@@ -2668,7 +2755,7 @@
                 </main>
             </div>
 
-            <!-- Celebration Modal -->
+            <!-- Celebration Screen -->
             <div class="celebration-modal" id="celebModal">
                 <div class="celebration-card-box">
                     <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 32px; box-shadow: 0 0 25px rgba(16,185,129,0.5);">
@@ -2678,20 +2765,30 @@
                     <p class="small text-light opacity-75 mb-4" id="celebText">
                         تمت محاكاة جميع الإجراءات بنجاح في النظام الفعلي.
                     </p>
-                    <button type="button" class="btn btn-outline-light rounded-pill px-4" onclick="seekTo(0)">
+                    <button type="button" class="btn btn-outline-light rounded-pill px-4" onclick="seekToStep(0)">
                         <i class="bi bi-arrow-repeat me-1"></i> إعادة مشاهدة العرض
                     </button>
                 </div>
             </div>
 
-            <!-- Floating Explainer Banner -->
+            <!-- Floating Explainer Banner with Step Controls -->
             <div class="floating-explainer" id="explainerBanner">
-                <div class="floating-explainer-icon" id="explainerIcon">
-                    <i class="bi bi-info-circle-fill"></i>
+                <div class="explainer-left">
+                    <div class="floating-explainer-icon" id="explainerIcon">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1" id="explainerTitle" style="font-size: 14.5px;">عنوان الخطوة</h5>
+                        <p class="mb-0 text-light opacity-75 small" id="explainerDesc">وصف الخطوة التوضيحية.</p>
+                    </div>
                 </div>
-                <div>
-                    <h5 class="fw-bold mb-1" id="explainerTitle" style="font-size: 14.5px;">عنوان الخطوة</h5>
-                    <p class="mb-0 text-light opacity-75 small" id="explainerDesc">وصف الخطوة التوضيحية.</p>
+                <div class="explainer-quick-controls">
+                    <button type="button" class="btn-step-nav" onclick="prevStep()">
+                        <i class="bi bi-chevron-right"></i> الخطوة السابقة
+                    </button>
+                    <button type="button" class="btn-step-nav" onclick="nextStep()" style="background: #2563eb;">
+                        الخطوة التالية <i class="bi bi-chevron-left"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -2707,15 +2804,18 @@
 
             <div class="controls-btn-row">
                 <div class="d-flex align-items-center gap-3">
-                    <button type="button" class="btn-play-toggle" id="btnPlay" onclick="togglePlay()">
+                    <button type="button" class="btn-play-toggle" id="btnPlay" onclick="togglePlay()" title="تشغيل / إيقاف (مسافة)">
                         <i class="bi bi-play-fill fs-5" id="playIcon"></i>
                     </button>
                     <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-variant-numeric: tabular-nums;">
-                        <span id="timeNow">00:00</span> / <span id="timeTotal">01:15</span>
+                        <span id="timeNow">00:00</span> / <span id="timeTotal">02:30</span>
                     </div>
                     <span class="badge rounded-pill bg-dark border border-secondary text-info px-3 py-1.5" id="sceneBadge">
-                        الخطوة 1
+                        الخطوة 1 من 12
                     </span>
+                    <button type="button" class="ctrl-pill-btn" id="btnTourMode" onclick="toggleTourMode()" style="border-color: #0ea5e9; color: #38bdf8;">
+                        <i class="bi bi-compass"></i> وضع الجولة (توقف تلقائي)
+                    </button>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
@@ -2723,7 +2823,7 @@
                         <span>السرعة</span>
                         <span class="badge bg-secondary text-white" id="speedTag">1.0x</span>
                     </button>
-                    <button type="button" class="ctrl-pill-btn" onclick="seekTo(0)">
+                    <button type="button" class="ctrl-pill-btn" onclick="seekToStep(0)">
                         <i class="bi bi-arrow-counterclockwise"></i>
                         <span>إعادة</span>
                     </button>
@@ -2736,14 +2836,16 @@
         </div>
     </div>
 
-    <!-- Animation & Interactive Timeline Engine -->
+    <!-- Script Engine -->
     <script>
-        const DURATION = 75;
+        const DURATION = 150;
         let curTime = 0;
         let isPlaying = false;
         let playSpeed = 1.0;
+        let tourMode = false;
         let lastTs = null;
         let animId = null;
+        let currentStepIdx = 0;
 
         const vCursor = document.getElementById('vCursor');
         const clickWave = document.getElementById('clickWave');
@@ -2753,84 +2855,131 @@
         const playIcon = document.getElementById('playIcon');
         const sceneBadge = document.getElementById('sceneBadge');
         const speedTag = document.getElementById('speedTag');
+        const btnTourMode = document.getElementById('btnTourMode');
 
         const explainerBanner = document.getElementById('explainerBanner');
         const explainerIcon = document.getElementById('explainerIcon');
         const explainerTitle = document.getElementById('explainerTitle');
         const explainerDesc = document.getElementById('explainerDesc');
         const celebModal = document.getElementById('celebModal');
+        const stepperDotsBar = document.getElementById('stepperDotsBar');
 
-        const scenes = [
-                {
+        const steps = [
+    // CHAPTER 1: MEETINGS (0s - 50s)
+    {
         start: 0,
-        end: 9,
+        end: 10,
         chapterIdx: 0,
-        badge: "اجتماعات المجموعة",
-        title: "الفصل 1: إدارة وتحديث مواعيد واجتماعات المجموعة",
-        desc: "فتح نموذج إضافة وتحديث موعد الاجتماع الحقيقي لمجموعة العباسية (التابعة لمنتدى غرب القاهرة).",
+        shortTitle: "لوحة المجموعة والمواعيد",
+        title: "الخطوة 1: الدخول إلى نموذج إضافة وتحديث مواعيد الاجتماعات",
+        desc: "يبدأ ممثل خدمة المجموعة بالدخول إلى شاشة إضافة موعد اجتماع لمجموعة العباسية في منتدى غرب القاهرة.",
         icon: "bi-calendar-event-fill",
         borderColor: "#0ea5e9",
         iconColor: "#0ea5e9",
-        cursorPos: { x: 800, y: 180 },
+        cursorPos: { x: 780, y: 170 },
         action: (p) => {
             showScene('sceneBoxMeeting');
             celebModal.classList.remove('active');
         }
     },
     {
-        start: 9,
-        end: 18,
+        start: 10,
+        end: 20,
         chapterIdx: 0,
-        badge: "موضوع الاجتماع",
-        title: "اختيار الموضوع وتحديد يوم وتوقيت الاجتماع",
-        desc: "تحديد نمط الاجتماع من القائمة الرسمية مع مراعاة قفل موعد اجتماع العمل الشهري (Business Meeting Lock).",
+        shortTitle: "اليوم والتوقيت والمدة",
+        title: "الخطوة 2: تحديد يوم الاجتماع ووقت البدء والانتهاء",
+        desc: "اختيار يوم الأحد (Sunday)، وتحديد وقت البدء (07:00 م) ووقت الانتهاء (08:30 م - 90 دقيقة).",
+        icon: "bi-clock-fill",
+        borderColor: "#0ea5e9",
+        iconColor: "#0ea5e9",
+        cursorPos: { x: 620, y: 280 },
+        action: (p) => {
+            showScene('sceneBoxMeeting');
+        }
+    },
+    {
+        start: 20,
+        end: 30,
+        chapterIdx: 0,
+        shortTitle: "الموضوع وقفل اجتماع العمل",
+        title: "الخطوة 3: اختيار الموضوع والتحقق من قفل اجتماع العمل الشهري",
+        desc: "تحديد نمط الاجتماع من القائمة الرسمية: (موضوعات وخطوات التعافي) ومراعاة خاصية قفل اجتماع العمل الشهري.",
         icon: "bi-chat-left-quote-fill",
         borderColor: "#0ea5e9",
         iconColor: "#0ea5e9",
-        cursorPos: { x: 650, y: 320 },
+        cursorPos: { x: 580, y: 350 },
         action: (p) => {
             showScene('sceneBoxMeeting');
             const topicSel = document.getElementById('topic-selector');
-            if (topicSel && topicSel.options.length > 1) {
-                topicSel.selectedIndex = 1;
-            }
+            if (topicSel && topicSel.options.length > 1) topicSel.selectedIndex = 1;
         }
     },
     {
-        start: 18,
-        end: 25,
+        start: 30,
+        end: 40,
         chapterIdx: 0,
-        badge: "حفظ الاجتماع",
-        title: "حفظ موعد الاجتماع واعتماده في الدليل العام",
-        desc: "الضغط على زر حفظ وتحديث الاجتماع ليظهر مباشرة في جدول مواعيد المجموعة ودليل الاجتماعات العام.",
-        icon: "bi-check-circle-fill",
+        shortTitle: "مفاتيح الخصائص",
+        title: "الخطوة 4: تفعيل مفاتيح الخصائص (مفتوح / كراسي متحركة)",
+        desc: "تفعيل الخيارات المناسبة: اجتماع مفتوح لغير المدمنين (Open Meeting) وتجهيزات الكراسي المتحركة (Wheelchair Accessible).",
+        icon: "bi-toggle-on",
         borderColor: "#0ea5e9",
         iconColor: "#0ea5e9",
-        cursorPos: { x: 500, y: 550 },
+        cursorPos: { x: 450, y: 460 },
         action: (p) => {
             showScene('sceneBoxMeeting');
-            if (p > 0.5) doClick(500, 550);
+        }
+    },
+    {
+        start: 40,
+        end: 50,
+        chapterIdx: 0,
+        shortTitle: "حفظ الاجتماع بالدليل",
+        title: "الخطوة 5: حفظ موعد الاجتماع والظهور المباشر بالدليل العام للمنطقة",
+        desc: "الضغط على زر حفظ وتحديث الاجتماع ليظهر مباشرة كاجتماع نشط في دليل الاجتماعات العام وموقع الزمالة.",
+        icon: "bi-check2-circle",
+        borderColor: "#0ea5e9",
+        iconColor: "#0ea5e9",
+        cursorPos: { x: 400, y: 550 },
+        action: (p) => {
+            showScene('sceneBoxMeeting');
+            if (p > 0.5) doClick(400, 550);
         }
     },
 
-    // CHAPTER 2: AGENDAS (25s - 50s)
+    // CHAPTER 2: AGENDAS (50s - 100s)
     {
-        start: 25,
-        end: 34,
+        start: 50,
+        end: 60,
         chapterIdx: 1,
-        badge: "أجندة المجموعة",
-        title: "الفصل 2: تجهيز تقرير وأجندة المجموعة لاجتماع المنطقة (ASC)",
-        desc: "الانتقال إلى نموذج الأجندة الرسمي، واختيار صفة مقدم التقرير (GSR - ممثل خدمة المجموعة).",
+        shortTitle: "نموذج الأجندة والصفة",
+        title: "الخطوة 6: فتح نموذج تقرير وأجندة المجموعة وتحديد صفة الخادم",
+        desc: "الانتقال لنموذج الأجندة الفعلي (agenda.create)، وتحديد صفة مقدم التقرير: (GSR - ممثل خدمة المجموعة).",
         icon: "bi-journal-check",
         borderColor: "#8b5cf6",
         iconColor: "#8b5cf6",
         cursorPos: { x: 750, y: 220 },
         action: (p) => {
             showScene('sceneBoxAgenda');
+            celebModal.classList.remove('active');
             const rGSR = document.getElementById('pos_gsr');
             if (rGSR) rGSR.checked = true;
             const wName = document.getElementById('submitterNameWrapper');
             if (wName) wName.style.display = 'block';
+        }
+    },
+    {
+        start: 60,
+        end: 70,
+        chapterIdx: 1,
+        shortTitle: "اسم الخادم والتواصل",
+        title: "الخطوة 7: تسجيل اسم الخادم المؤتمن وبيانات التواصل",
+        desc: "كتابة اسم الخادم المؤتمن: (م. كريم - ممثل خدمة مجموعة العباسية) لتسجيل الحضور الرسمي في مؤتمر المنطقة.",
+        icon: "bi-person-badge",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 600, y: 300 },
+        action: (p) => {
+            showScene('sceneBoxAgenda');
             const subInput = document.getElementById('submitter_name');
             if (subInput) {
                 const name = "م. كريم - ممثل خدمة مجموعة العباسية";
@@ -2839,16 +2988,16 @@
         }
     },
     {
-        start: 34,
-        end: 42,
+        start: 70,
+        end: 80,
         chapterIdx: 1,
-        badge: "القادمون الجدد والمراكز",
-        title: "توثيق القادمين الجدد والمراكز الشاغرة",
-        desc: "تسجيل 14 قادم جديد خلال الشهر، وتوثيق المراكز الخدمية الشاغرة تمهيداً لعرضها في مؤتمر المنطقة.",
+        shortTitle: "الاجتماعات والقادمون",
+        title: "الخطوة 8: عدد الاجتماعات الأسبوعية، القادمون الجدد، والمراكز الشاغرة",
+        desc: "التحقق من حساب عدد الاجتماعات الأسبوعية (8 اجتماعات)، تسجيل 14 قادم جديد، وتوثيق المراكز الشاغرة.",
         icon: "bi-people-fill",
         borderColor: "#8b5cf6",
         iconColor: "#8b5cf6",
-        cursorPos: { x: 620, y: 380 },
+        cursorPos: { x: 550, y: 390 },
         action: (p) => {
             showScene('sceneBoxAgenda');
             const inNew = document.querySelector('input[name="new_comers"]');
@@ -2858,52 +3007,67 @@
         }
     },
     {
-        start: 42,
-        end: 50,
+        start: 80,
+        end: 90,
         chapterIdx: 1,
-        badge: "ضمير المجموعة والماليات",
-        title: "توثيق ضمير المجموعة والمسائل المالية وتقديم الأجندة",
-        desc: "توثيق رصيد المجموعة المالي (1,250 ج.م) وتصويت المجموعة على بنود المنطقة، ثم الضغط على تقديم الأجندة.",
-        icon: "bi-send-check-fill",
+        shortTitle: "ضمير المجموعة والماليات",
+        title: "الخطوة 9: تدوين ضمير المجموعة (Group Conscience) والموقف المالي",
+        desc: "توثيق رصيد المجموعة المالي (1,250 ج.م) والاحتياطي الحكيم، وتدوين تصويت المجموعة على مقترحات المنطقة.",
+        icon: "bi-cash-coin",
         borderColor: "#8b5cf6",
         iconColor: "#8b5cf6",
-        cursorPos: { x: 450, y: 520 },
+        cursorPos: { x: 480, y: 490 },
         action: (p) => {
             showScene('sceneBoxAgenda');
             const inFin = document.querySelector('input[name="financial_issues"]');
             if (inFin) inFin.value = "رصيد المجموعة: 1,250 ج.م - لا توجد التزامات متأخرة.";
-            if (p > 0.6) doClick(450, 520);
+        }
+    },
+    {
+        start: 90,
+        end: 100,
+        chapterIdx: 1,
+        shortTitle: "تقديم الأجندة لـ ASC",
+        title: "الخطوة 10: حفظ وتقديم الأجندة لمؤتمر خدمة المنطقة (ASC) وتصدير PDF",
+        desc: "الضغط على زر حفظ وتقديم الأجندة لتسجيل التقرير رسمياً لمؤتمر المنطقة مع إمكانية تصدير نسخة PDF فورية.",
+        icon: "bi-send-check-fill",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 420, y: 550 },
+        action: (p) => {
+            showScene('sceneBoxAgenda');
+            if (p > 0.5) doClick(420, 550);
         }
     },
 
-    // CHAPTER 3: LITERATURE (50s - 75s)
+    // CHAPTER 3: LITERATURE (100s - 150s)
     {
-        start: 50,
-        end: 58,
+        start: 100,
+        end: 115,
         chapterIdx: 2,
-        badge: "سلة الأدبيات",
-        title: "الفصل 3: طلب الأدبيات والميداليات عبر السلة الإلكترونية",
-        desc: "فتح سلة طلبات الأدبيات والمطبوعات الرسمية باسم (مجموعة العباسية) لتجهيز طلبية الشهر.",
+        shortTitle: "سلة الأدبيات (الموعد: 22)",
+        title: "الخطوة 11: فتح سلة الأدبيات وقاعدة الموعد النهائي (يوم 22 من الشهر)",
+        desc: "📅 فتح سلة الطلبات باسم مجموعة العباسية، مع التأكيد على الموعد النهائي لتقديم الطلبات (قبل يوم 22 من الشهر).",
         icon: "bi-cart3",
         borderColor: "#f59e0b",
         iconColor: "#f59e0b",
-        cursorPos: { x: 700, y: 180 },
+        cursorPos: { x: 750, y: 180 },
         action: (p) => {
             showScene('sceneBoxCart');
             celebModal.classList.remove('active');
         }
     },
     {
-        start: 58,
-        end: 67,
+        start: 115,
+        end: 132,
         chapterIdx: 2,
-        badge: "بنود الطلبية",
-        title: "تحديد كميات الكتب والمطبوعات والميداليات",
-        desc: "تحديد 5 نسخ من النص الأساسي، 3 نسخ من كتاب لليوم فقط، و30 ميدالية تعافي وترحيب.",
+        shortTitle: "اختيار البنود والإجمالي",
+        title: "الخطوة 12: اختيار كميات الكتب والميداليات واحتساب الإجمالي التلقائي",
+        desc: "إضافة 5 نسخ من النص الأساسي، 3 نسخ من كتاب لليوم فقط، و30 ميدالية تعافي وترحيب، ومراجعة الإجمالي (1,025 ج.م).",
         icon: "bi-journal-bookmark-fill",
         borderColor: "#f59e0b",
         iconColor: "#f59e0b",
-        cursorPos: { x: 550, y: 320 },
+        cursorPos: { x: 550, y: 340 },
         action: (p) => {
             showScene('sceneBoxCart');
             const qtyInputs = document.querySelectorAll('#sceneBoxCart input[type="number"]');
@@ -2913,28 +3077,42 @@
         }
     },
     {
-        start: 67,
-        end: 75,
+        start: 132,
+        end: 150,
         chapterIdx: 2,
-        badge: "اعتماد وإرسال الطلبية",
-        title: "إرسال طلب الأدبيات للجنة المنطقة واكتمال الدورة",
-        desc: "الضغط على زر إرسال الطلبية لتصل رسمياً إلى لجنة الأدبيات بالمنطقة لاعتمادها وإصدار إيصال الصرف.",
+        shortTitle: "ملاحظات الاستلام والإرسال",
+        title: "الخطوة 13: تدوين ملاحظات الاستلام وإرسال الطلب رسمياً للجنة الأدبيات",
+        desc: "كتابة ملاحظات الاستلام (استلام الطلبية في اجتماع خدمة المنطقة القادم لمنتدى غرب القاهرة) والضغط على إرسال الطلب.",
         icon: "bi-check-all",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 450, y: 550 },
+        cursorPos: { x: 400, y: 550 },
         action: (p) => {
             showScene('sceneBoxCart');
             if (p > 0.5) {
-                doClick(450, 550);
+                doClick(400, 550);
                 celebModal.classList.add('active');
-                document.getElementById('celebText').innerText = "تم إرسال طلب الأدبيات والميداليات بنجاح إلى لجنة خدمة المنطقة، وتحديث جدول الاجتماعات والأجندة في النظام الفعلي.";
-            } else {
-                celebModal.classList.remove('active');
+                document.getElementById('celebText').innerText = "تم إكمال جميع إجراءات ممثل خدمة المجموعة (GSR) بنجاح: تم تحديث جدول مواعيد الاجتماعات، تقديم أجندة المجموعة لمؤتمر المنطقة (ASC)، وإرسال طلبية الأدبيات قبل الموعد النهائي (يوم 22 من الشهر).";
             }
         }
     }
-        ];
+];
+
+        // Render Stepper Dots
+        function initStepperDots() {
+            stepperDotsBar.innerHTML = '';
+            steps.forEach((s, idx) => {
+                const item = document.createElement('div');
+                item.className = 'step-dot-item' + (idx === 0 ? ' active' : '');
+                item.id = 'stepDot' + idx;
+                item.onclick = () => seekToStep(idx);
+                item.innerHTML = `
+                    <div class="dot-circle">${idx + 1}</div>
+                    <span>${s.shortTitle}</span>
+                `;
+                stepperDotsBar.appendChild(item);
+            });
+        }
 
         function showScene(sceneId) {
             document.querySelectorAll('.tutorial-scene-box').forEach(s => {
@@ -2984,26 +3162,51 @@
             const s = Math.floor(curTime % 60);
             timeNow.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
 
-            const activeScene = scenes.find(s => curTime >= s.start && curTime < s.end) || scenes[scenes.length - 1];
-            const p = (curTime - activeScene.start) / (activeScene.end - activeScene.start);
+            const activeIdx = steps.findIndex(s => curTime >= s.start && curTime < s.end);
+            const stepIdx = activeIdx !== -1 ? activeIdx : (curTime >= DURATION ? steps.length - 1 : 0);
+            const activeStep = steps[stepIdx];
+            const p = (curTime - activeStep.start) / (activeStep.end - activeStep.start);
 
-            activeScene.action(Math.min(1, Math.max(0, p)));
+            if (currentStepIdx !== stepIdx && tourMode && isPlaying && stepIdx > currentStepIdx) {
+                // Pause at next step in tour mode
+                togglePlay();
+            }
+            currentStepIdx = stepIdx;
 
-            explainerIcon.innerHTML = `<i class="bi ${activeScene.icon}"></i>`;
-            explainerIcon.style.color = activeScene.iconColor;
-            explainerTitle.innerText = activeScene.title;
-            explainerDesc.innerText = activeScene.desc;
-            explainerBanner.style.borderRightColor = activeScene.borderColor;
+            // Execute step action
+            activeStep.action(Math.min(1, Math.max(0, p)));
 
-            sceneBadge.innerText = activeScene.badge;
+            explainerIcon.innerHTML = `<i class="bi ${activeStep.icon}"></i>`;
+            explainerIcon.style.color = activeStep.iconColor;
+            explainerTitle.innerText = activeStep.title;
+            explainerDesc.innerText = activeStep.desc;
+            explainerBanner.style.borderRightColor = activeStep.borderColor;
 
-            if (activeScene.cursorPos) {
-                vCursor.style.transform = `translate(${activeScene.cursorPos.x}px, ${activeScene.cursorPos.y}px)`;
+            sceneBadge.innerText = `الخطوة ${stepIdx + 1} من ${steps.length}`;
+
+            if (activeStep.cursorPos) {
+                vCursor.style.transform = `translate(${activeStep.cursorPos.x}px, ${activeStep.cursorPos.y}px)`;
             }
 
+            // Update Chapter Pills
             document.querySelectorAll('.ch-pill-btn').forEach((btn, idx) => {
-                if (idx === activeScene.chapterIdx) btn.classList.add('active');
+                if (idx === activeStep.chapterIdx) btn.classList.add('active');
                 else btn.classList.remove('active');
+            });
+
+            // Update Stepper Dots
+            steps.forEach((_, idx) => {
+                const dot = document.getElementById('stepDot' + idx);
+                if (dot) {
+                    if (idx === stepIdx) {
+                        dot.className = 'step-dot-item active';
+                        dot.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    } else if (idx < stepIdx) {
+                        dot.className = 'step-dot-item completed';
+                    } else {
+                        dot.className = 'step-dot-item';
+                    }
+                }
             });
         }
 
@@ -3023,11 +3226,42 @@
             }
         }
 
-        function seekTo(sec) {
-            curTime = Math.min(DURATION, Math.max(0, sec));
+        function seekToStep(idx) {
+            const clamped = Math.max(0, Math.min(steps.length - 1, idx));
+            curTime = steps[clamped].start + 0.1;
             celebModal.classList.remove('active');
             render();
-            if (!isPlaying) togglePlay();
+            if (!isPlaying && !tourMode) togglePlay();
+        }
+
+        function jumpToChapter(chIdx) {
+            const firstStep = steps.find(s => s.chapterIdx === chIdx);
+            if (firstStep) {
+                seekToStep(steps.indexOf(firstStep));
+            }
+        }
+
+        function nextStep() {
+            if (currentStepIdx < steps.length - 1) {
+                seekToStep(currentStepIdx + 1);
+            }
+        }
+
+        function prevStep() {
+            if (currentStepIdx > 0) {
+                seekToStep(currentStepIdx - 1);
+            }
+        }
+
+        function toggleTourMode() {
+            tourMode = !tourMode;
+            if (tourMode) {
+                btnTourMode.innerHTML = `<i class="bi bi-check-circle-fill"></i> وضع الجولة (نشط)`;
+                btnTourMode.style.background = "rgba(14, 165, 233, 0.2)";
+            } else {
+                btnTourMode.innerHTML = `<i class="bi bi-compass"></i> وضع الجولة (توقف تلقائي)`;
+                btnTourMode.style.background = "#1e293b";
+            }
         }
 
         function cycleSpeed() {
@@ -3041,7 +3275,8 @@
             const rect = document.getElementById('timelineRail').getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const rtlRatio = (rect.width - clickX) / rect.width;
-            seekTo(rtlRatio * DURATION);
+            curTime = rtlRatio * DURATION;
+            render();
         }
 
         function toggleFullscreen() {
@@ -3054,10 +3289,15 @@
             if (e.code === 'Space') {
                 e.preventDefault();
                 togglePlay();
+            } else if (e.code === 'ArrowLeft') {
+                nextStep();
+            } else if (e.code === 'ArrowRight') {
+                prevStep();
             }
         });
 
-        // Initialize & Play
+        // Initialize
+        initStepperDots();
         render();
         togglePlay();
     </script>
