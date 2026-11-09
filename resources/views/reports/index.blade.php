@@ -62,6 +62,10 @@
                 <a href="{{ route('reports.guide') }}" class="btn btn-outline-primary" title="{{ __('messages.reports_workgroups_guide') }}">
                     <i class="bi bi-book-half"></i> {{ __('messages.reports_guide_button') }}
                 </a>
+                <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#reportsVideoModal" title="{{ __('messages.reports_animated_guide_title') }}">
+                    <i class="bi bi-play-circle-fill"></i>
+                    <span>{{ __('messages.animated_video_tutorial') }}</span>
+                </button>
                 <button type="button" class="btn btn-outline-success copy-public-link-btn" data-url="{{ \App\Http\Controllers\CommitteeReportsGuideController::getPublicUrl() }}" title="{{ __('messages.copy_public_link') }}">
                     <i class="bi bi-link-45deg"></i> {{ __('messages.copy_public_link') }}
                 </button>
@@ -210,4 +214,5 @@
         </div>
     </div>
     <x-copy-link-toast />
+    <x-reports-video-modal />
 </x-layout>

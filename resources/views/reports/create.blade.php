@@ -55,9 +55,15 @@
                                 <i class="bi {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bi-diagram-3-fill text-success' : 'bi-building text-primary' }} fs-4"></i>
                                 <h5 class="mb-0 fw-bold">{{ app()->getLocale() === 'ar' ? ($committee->ar_name ?: $committee->en_name) : ($committee->en_name ?: $committee->ar_name) }}</h5>
                             </div>
-                            <span class="badge {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bg-success' : 'bg-primary' }} text-white px-3 py-2 rounded-pill fw-semibold">
-                                {{ (isset($isWorkgroup) && $isWorkgroup) ? __('messages.Workgroup Report') : __('messages.Committee Reports') }}
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#reportsVideoModal" title="{{ __('messages.reports_animated_guide_title') }}">
+                                    <i class="bi bi-play-circle-fill"></i>
+                                    <span>{{ __('messages.animated_video_tutorial') }}</span>
+                                </button>
+                                <span class="badge {{ (isset($isWorkgroup) && $isWorkgroup) ? 'bg-success' : 'bg-primary' }} text-white px-3 py-2 rounded-pill fw-semibold">
+                                    {{ (isset($isWorkgroup) && $isWorkgroup) ? __('messages.Workgroup Report') : __('messages.Committee Reports') }}
+                                </span>
+                            </div>
                         </div>
                     @endif
                 </div>
@@ -776,4 +782,5 @@
             @endif
         });
     </script>
+    <x-reports-video-modal />
 </x-layout>

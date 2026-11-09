@@ -3245,4 +3245,10 @@ return [
     'public_link_copied' => 'Public link copied to clipboard!',
     'reports_guide_invalid_token' => 'Sorry, the reports guide link is invalid or expired. Please sign in or use a valid link.',
     'portal_login' => 'Log in to Portal',
+    'animated_video_tutorial' => 'Animated Video Tutorial',
+    'reports_animated_guide_title' => 'Animated Video Guide: Reports & Workgroups Lifecycle',
+    'reports_animated_guide_desc' => 'Watch an interactive animated simulation demonstrating how workgroup reports are drafted, reviewed, embedded, and submitted by the parent committee.',
+    'watch_video_tutorial' => 'Watch Video Guide',
+    'close_modal' => 'Close',
+    'open_in_new_tab' => 'Open Fullscreen in New Tab',
 ];

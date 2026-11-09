@@ -64,6 +64,37 @@
             </div>
         </div>
 
+        {{-- Interactive Animated Video Showcase Banner --}}
+        <div class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; border: 1px solid rgba(255,255,255,0.08);">
+            <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; background: rgba(37,99,235,0.25); border: 2px solid #3b82f6; color: #60a5fa; font-size: 24px;">
+                        <i class="bi bi-play-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge bg-danger text-white rounded-pill px-2.5 py-1" style="font-size: 0.75rem;">{{ __('messages.animated_video_tutorial') }}</span>
+                            <span class="text-white-50 small">&bull; {{ __('messages.role_workgroup_tab') }} + {{ __('messages.role_committee_tab') }}</span>
+                        </div>
+                        <h5 class="fw-bold mb-1 text-white">{{ __('messages.reports_animated_guide_title') }}</h5>
+                        <p class="text-secondary small mb-0" style="max-width: 650px; color: #94a3b8 !important;">
+                            {{ __('messages.reports_animated_guide_desc') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 flex-shrink-0">
+                    <button type="button" class="btn btn-primary rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#reportsVideoModal">
+                        <i class="bi bi-play-fill fs-5"></i>
+                        <span>{{ __('messages.watch_video_tutorial') }}</span>
+                    </button>
+                    <a href="{{ asset('tutorials/report-guide-animation.html') }}" target="_blank" class="btn btn-outline-light rounded-pill px-3 py-2 btn-sm d-inline-flex align-items-center gap-1.5" title="{{ __('messages.open_in_new_tab') }}">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>{{ __('messages.open_in_new_tab') }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         {{-- Role Tabs Header --}}
         <ul class="nav nav-pills custom-guide-tabs mb-4 gap-2 flex-nowrap overflow-auto pb-2" id="guideTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -649,5 +680,7 @@
     @auth
         <x-copy-link-toast />
     @endauth
+
+    <x-reports-video-modal />
 </x-layout>
 

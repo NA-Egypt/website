@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل فيديو تفاعلي: دورة إعداد ودمج تقارير اللجان ومجموعات العمل - NA Egypt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --success: #10b981;
+            --success-dark: #059669;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --dark: #0f172a;
+            --slate: #1e293b;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-700: #334155;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+            background: #090d16;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+
+        .player-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            background: #0f172a;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Top Bar */
+        .player-header {
+            background: #1e293b;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .player-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chapter-pill {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chapter-pill.active {
+            background: rgba(37, 99, 235, 0.25);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .chapter-pill.workgroup.active {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .chapter-pill:not(.active) {
+            background: #0f172a;
+            color: #94a3b8;
+        }
+
+        .chapter-pill:hover:not(.active) {
+            background: #334155;
+            color: white;
+        }
+
+        /* Stage Canvas / Screen */
+        .screen-container {
+            width: 100%;
+            height: 560px;
+            position: relative;
+            background: #f8fafc;
+            color: #0f172a;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Simulated NA Portal Layout */
+        .portal-sidebar {
+            width: 220px;
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-left: 1px solid #1e293b;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .portal-sidebar .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px 16px 10px;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .portal-sidebar .logo-circle {
+            width: 32px;
+            height: 32px;
+            background: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 13px;
+        }
+
+        .portal-sidebar .logo-text {
+            font-size: 13px;
+            font-weight: 800;
+            color: #f8fafc;
+        }
+
+        .nav-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            color: #94a3b8;
+        }
+
+        .nav-item.active-blue {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .nav-item.active-green {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        /* Main Workspace Inside Simulated Screen */
+        .portal-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f1f5f9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .portal-topbar {
+            height: 52px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .portal-breadcrumb {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 30px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+        }
+
+        /* Viewport Canvas Area */
+        .portal-content {
+            flex: 1;
+            padding: 16px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simulated Windows & Views */
+        .sim-view {
+            position: absolute;
+            inset: 16px 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(10px) scale(0.99);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sim-view.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .view-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .tag-workgroup {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .tag-committee {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .tag-draft {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .tag-embedded {
+            background: #f5f3ff;
+            color: #7c3aed;
+            border: 1px solid #ddd6fe;
+        }
+
+        .tag-submitted {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #6ee7b7;
+        }
+
+        .view-body {
+            flex: 1;
+            padding: 16px 18px;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Form Controls Mock */
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .form-input {
+            height: 34px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-family: inherit;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .form-input.focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .form-textarea {
+            height: 70px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-family: inherit;
+            color: #1e293b;
+            line-height: 1.5;
+            transition: all 0.2s;
+        }
+
+        .table-mini {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .table-mini th {
+            background: #f8fafc;
+            padding: 8px 10px;
+            text-align: right;
+            color: #475569;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-mini td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* Virtual Cursor */
+        .virtual-cursor {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            z-index: 99;
+            pointer-events: none;
+            transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translate(300px, 200px);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .cursor-pointer-icon {
+            width: 100%;
+            height: 100%;
+            fill: #0f172a;
+            stroke: #ffffff;
+            stroke-width: 1.5;
+        }
+
+        .click-pulse {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.6);
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 98;
+        }
+
+        .click-pulse.animate {
+            animation: pulseWave 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes pulseWave {
+            0% { transform: scale(0.2); opacity: 1; }
+            100% { transform: scale(2.8); opacity: 0; }
+        }
+
+        /* Floating Explanatory Callout Banner */
+        .explainer-card {
+            position: absolute;
+            bottom: 24px;
+            right: 32px;
+            left: 32px;
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            z-index: 10;
+            border-right: 4px solid #3b82f6;
+            animation: slideUpFade 0.4s ease;
+        }
+
+        .explainer-card.green {
+            border-right-color: #10b981;
+        }
+
+        .explainer-card.amber {
+            border-right-color: #f59e0b;
+        }
+
+        .explainer-card.purple {
+            border-right-color: #8b5cf6;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explainer-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .explainer-text h4 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .explainer-text p {
+            font-size: 12.5px;
+            color: #cbd5e1;
+            line-height: 1.45;
+        }
+
+        /* Modal/Drawer Overlay simulation for Embedding */
+        .drawer-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 20;
+            display: flex;
+            justify-content: flex-start;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-panel {
+            width: 440px;
+            height: 100%;
+            background: white;
+            box-shadow: -8px 0 24px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .drawer-overlay.active .drawer-panel {
+            transform: translateX(0);
+        }
+
+        .drawer-head {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-head h5 {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .drawer-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workgroup-draft-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .workgroup-draft-card.highlight {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-mini {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-blue {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-green {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+        }
+
+        /* Player Control Bar at Bottom */
+        .player-controls {
+            background: #0f172a;
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Timeline Scrub Bar */
+        .timeline-container {
+            width: 100%;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-track {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #2563eb 50%, #8b5cf6 100%);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+
+        .timeline-chapter-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.4);
+            z-index: 2;
+        }
+
+        .timeline-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            right: 0%;
+        }
+
+        /* Buttons & Speed */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ctrl-group-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .play-btn {
+            width: 38px;
+            height: 38px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.06);
+            background: #3b82f6;
+        }
+
+        .time-display {
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            font-variant-numeric: tabular-nums;
+            min-width: 90px;
+        }
+
+        .step-indicator {
+            font-size: 12px;
+            font-weight: 700;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .ctrl-group-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ctrl-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .ctrl-btn:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .speed-badge {
+            background: #334155;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        /* Success Confetti & Celebration Layer */
+        .celebration-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.85) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-card {
+            background: #1e293b;
+            border: 2px solid #10b981;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            max-width: 480px;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .celebration-overlay.active .celebration-card {
+            transform: scale(1);
+        }
+
+        .celebration-badge-icon {
+            width: 64px;
+            height: 64px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 0 24px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .portal-sidebar { width: 60px; padding: 12px 6px; }
+            .portal-sidebar .logo-text, .portal-sidebar .nav-text { display: none; }
+            .screen-container { height: 480px; }
+            .explainer-card { bottom: 12px; right: 12px; left: 12px; padding: 10px 14px; }
+            .drawer-panel { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-wrapper" id="playerWrapper">
+        <!-- Top Navigation Bar -->
+        <div class="player-header">
+            <div class="brand">
+                <span class="brand-badge">NA Egypt</span>
+                <span class="brand-title">دورة إعداد ودمج تقارير اللجان ومجموعات العمل</span>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="chapter-pill workgroup active" id="btnChapter1" onclick="jumpTo(0)">
+                    <span>🌱</span>
+                    <span>الجزء 1: مسؤول مجموعة العمل</span>
+                </button>
+                <button type="button" class="chapter-pill" id="btnChapter2" onclick="jumpTo(30)">
+                    <span>🏢</span>
+                    <span>الجزء 2: رئيس لجنة الخدمة</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Simulated Portal Canvas Area -->
+        <div class="screen-container" id="screenStage">
+            
+            <!-- Virtual Pointer Cursor -->
+            <div class="virtual-cursor" id="virtualCursor">
+                <svg class="cursor-pointer-icon" viewBox="0 0 24 24">
+                    <path d="M4 2l16 12-8.5 1.5L8 22z" />
+                </svg>
+            </div>
+            <div class="click-pulse" id="clickPulse"></div>
+
+            <!-- Simulated Portal Sidebar -->
+            <aside class="portal-sidebar">
+                <div class="logo-area">
+                    <div class="logo-circle">NA</div>
+                    <div class="logo-text">زمالة مصر</div>
+                </div>
+                <div class="nav-item" id="navHome">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">لوحة التحكم</span>
+                </div>
+                <div class="nav-item active-green" id="navWorkgroups">
+                    <span class="nav-icon">🌱</span>
+                    <span class="nav-text">مجموعات العمل</span>
+                </div>
+                <div class="nav-item" id="navCommittees">
+                    <span class="nav-icon">🏢</span>
+                    <span class="nav-text">لجان الخدمة</span>
+                </div>
+                <div class="nav-item" id="navReports">
+                    <span class="nav-icon">📑</span>
+                    <span class="nav-text">التقارير الدورية</span>
+                </div>
+                <div class="nav-item" id="navRsc">
+                    <span class="nav-icon">⚖️</span>
+                    <span class="nav-text">لجنة الإقليم (RSC)</span>
+                </div>
+            </aside>
+
+            <!-- Main Workspace Inside Screen -->
+            <main class="portal-main">
+                <!-- Portal Top Bar -->
+                <div class="portal-topbar">
+                    <div class="portal-breadcrumb" id="topBreadcrumb">
+                        <span>الرئيسية</span>
+                        <span>/</span>
+                        <span id="breadcrumbSection">مجموعات العمل</span>
+                        <span>/</span>
+                        <span id="breadcrumbPage" style="color: #2563eb;">إعداد التقرير الدوري</span>
+                    </div>
+                    <div class="user-badge" id="userBadge">
+                        <div class="user-avatar" id="userAvatar" style="background: #10b981;">IT</div>
+                        <span id="userName">خادم مجموعة تقنية المعلومات</span>
+                        <span id="userRoleBadge" class="tag-badge tag-workgroup">مجموعة عمل</span>
+                    </div>
+                </div>
+
+                <!-- Views Container -->
+                <div class="portal-content">
+                    
+                    <!-- View 1: Workgroup Index View -->
+                    <div class="sim-view active" id="viewWgIndex">
+                        <div class="view-header">
+                            <div class="view-title">
+                                <span>تقارير مجموعة العمل (IT Workgroup)</span>
+                                <span class="tag-badge tag-workgroup">لجنة فرعية تابعة للجنة العلاقات العامة</span>
+                            </div>
+                            <button class="btn-mini btn-green" id="btnAddWgReport">
+                                <span>➕</span> إضافة تقرير جديد
+                            </button>
+                        </div>
+                        <div class="view-body">
+                            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 24px; text-align: center;">
+                                <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+                                <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 4px;">لا توجد تقارير للشهر الحالي حتى الآن</h4>
+                                <p style="font-size: 12px; color: #64748b;">اضغط على "إضافة تقرير جديد" لتوثيق أعمال المجموعة ورفعها للجنة الأم للمراجعة.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View 2: Workgroup Create Form View -->
+                    <div class="sim-view" id="viewWgCreate">
+                        <div class="view-header">
+                            <div class="view-title">
+                                <span>نموذج تقرير مجموعة العمل</span>
+                                <span class="tag-badge tag-workgroup">🌱 مجموعة عمل: تقنية المعلومات</span>
+                                <span class="tag-badge tag-draft" id="wgStatusBadge">حالة التقرير: مسودة (قيد الإعداد)</span>
+                            </div>
+                            <span style="font-size: 12px; color: #64748b;">تاريخ التقرير: نوفمبر 2026</span>
+                        </div>
+                        <div class="view-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">اللجنة الرئيسية التابع لها</label>
+                                    <input type="text" class="form-input" value="لجنة العلاقات العامة (PR Committee)" readonly style="background: #f1f5f9;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">تاريخ اجتماع مجموعة العمل</label>
+                                    <input type="text" class="form-input" value="الجمعة 7 نوفمبر 2026" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">أبرز الأنشطة والإنجازات المنفذة خلال الشهر</label>
+                                <div class="form-textarea" id="txtWgActivities"></div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">الرصيد المالي المتبقي في الخزينة</label>
+                                    <div class="form-input" id="txtWgFinance"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">عدد الأعضاء الحاضرين في الاجتماع</label>
+                                    <input type="text" class="form-input" value="6 أعضاء فاعلين" readonly>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 10px; border-top: 1px solid #f1f5f9;">
+                                <button class="btn-mini btn-outline">إلغاء</button>
+                                <button class="btn-mini btn-green" id="btnSaveWgDraft">
+                                    <span>💾</span> حفظ التقرير كمسودة للجنة الأم
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View 3: Committee Reports Index View -->
+                    <div class="sim-view" id="viewCommitteeIndex">
+                        <div class="view-header">
+                            <div class="view-title">
+                                <span>تقارير لجان الخدمة (لجنة العلاقات العامة)</span>
+                                <span class="tag-badge tag-committee">🏢 لجنة خدمة رئيسية</span>
+                            </div>
+                            <button class="btn-mini btn-blue" id="btnAddCommitteeReport">
+                                <span>➕</span> إضافة تقرير اللجنة
+                            </button>
+                        </div>
+                        <div class="view-body">
+                            <!-- Alert for pending workgroup draft -->
+                            <div id="noticePendingWg" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 20px;">🔔</span>
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 700; color: #92400e;">يوجد مسودة تقرير معلقة لمجموعة العمل (1)</div>
+                                        <div style="font-size: 11.5px; color: #b45309;">قامت مجموعة تقنية المعلومات برفع مسودة بانتظار تضمينها في تقرير اللجنة.</div>
+                                    </div>
+                                </div>
+                                <span class="tag-badge tag-draft">مسودة بانتظار التضمين</span>
+                            </div>
+
+                            <table class="table-mini">
+                                <thead>
+                                    <tr>
+                                        <th>الشهر</th>
+                                        <th>اللجنة</th>
+                                        <th>حالة التقرير</th>
+                                        <th>مجموعات العمل المضمنة</th>
+                                        <th>الإجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>أكتوبر 2026</td>
+                                        <td>لجنة العلاقات العامة</td>
+                                        <td><span class="tag-badge tag-submitted">مُعتمد ومُرسل للإقليم</span></td>
+                                        <td>1 مجموعة عمل</td>
+                                        <td><button class="btn-mini btn-outline">عرض</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- View 4: Committee Create Form View & Embedding -->
+                    <div class="sim-view" id="viewCommitteeCreate">
+                        <div class="view-header">
+                            <div class="view-title">
+                                <span>تقرير لجنة العلاقات العامة لشهر نوفمبر 2026</span>
+                                <span class="tag-badge tag-committee">لجنة خدمة</span>
+                            </div>
+                            <span class="tag-badge tag-draft">قيد الإعداد</span>
+                        </div>
+                        <div class="view-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">اسم اللجنة</label>
+                                    <input type="text" class="form-input" value="لجنة العلاقات العامة (PR Committee)" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">الجهة الموجه إليها التقرير</label>
+                                    <input type="text" class="form-input" value="لجنة خدمة الإقليم (RSC)" readonly style="background: #ede9fe; color: #6d28d9; font-weight: 700;">
+                                </div>
+                            </div>
+
+                            <!-- Workgroup Embedding Card Inside Committee Report -->
+                            <div style="border: 2px dashed #93c5fd; border-radius: 10px; padding: 12px 14px; background: #f8fafc;" id="embedBox">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <div style="font-size: 13px; font-weight: 800; color: #1e40af; display: flex; align-items: center; gap: 6px;">
+                                        <span>📂</span>
+                                        <span>تقارير مجموعات العمل التابعة (Workgroups)</span>
+                                    </div>
+                                    <button class="btn-mini btn-blue" id="btnOpenEmbedDrawer">
+                                        <span>🔍</span> استعراض وتضمين تقارير مجموعات العمل (1 مسودة)
+                                    </button>
+                                </div>
+                                <div id="embedStatusText" style="font-size: 12px; color: #64748b;">
+                                    لم يتم تضمين أي تقارير بعد. انقر على الزر أعلاه لمراجعة وتضمين مسودات مجموعات العمل.
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">ملخص أعمال وإنجازات لجنة العلاقات العامة</label>
+                                <div class="form-textarea" id="txtCommitteeSummary"></div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+                                <button class="btn-mini btn-outline">حفظ مسودة مؤقتة</button>
+                                <button class="btn-mini btn-blue" id="btnSubmitToRsc" style="font-size: 13px; padding: 8px 18px; font-weight: 800;">
+                                    <span>🚀</span> اعتماد وإرسال التقرير النهائي للإقليم (RSC)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Drawer for Embedding Workgroup Reports -->
+                    <div class="drawer-overlay" id="embedDrawerOverlay">
+                        <div class="drawer-panel">
+                            <div class="drawer-head">
+                                <h5>مسودات تقارير مجموعات العمل</h5>
+                                <span style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px;">لجنة العلاقات العامة</span>
+                            </div>
+                            <div class="drawer-body">
+                                <div class="workgroup-draft-card highlight" id="wgDraftCard">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                        <div>
+                                            <div style="font-size: 13px; font-weight: 800; color: #0f172a;">مجموعة عمل تقنية المعلومات (IT)</div>
+                                            <div style="font-size: 11.5px; color: #64748b;">تاريخ التقديم: 7 نوفمبر 2026</div>
+                                        </div>
+                                        <span class="tag-badge tag-draft" id="cardStatusTag">مسودة غير مضمنة</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #334155; line-height: 1.4; background: white; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                        <strong>أبرز الأعمال:</strong> إطلاق نظام الحضور الإلكتروني، وتحديث جدول الاجتماعات الأسبوعي.
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                        <span style="font-size: 11.5px; color: #059669; font-weight: 700;">الرصيد: 450 ج.م</span>
+                                        <button class="btn-mini btn-blue" id="btnDoEmbed">
+                                            <span>🔗</span> تضمين في تقرير اللجنة
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration / Success Overlay -->
+                    <div class="celebration-overlay" id="celebrationOverlay">
+                        <div class="celebration-card">
+                            <div class="celebration-badge-icon">✓</div>
+                            <h3 style="font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px;">تم اعتماد وإرسال التقرير للإقليم بنجاح!</h3>
+                            <p style="font-size: 13px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                                تم إكمال الدورة بنجاح: وثقت مجموعة العمل تقريرها كمسودة، وراجعتها اللجنة الأم وضمنتها رسمياً في تقريرها الموحد المرفوع لـ RSC.
+                            </p>
+                            <div style="display: flex; justify-content: center; gap: 10px;">
+                                <button class="btn-mini btn-green" onclick="jumpTo(0)" style="padding: 8px 18px;">
+                                    <span>🔄</span> إعادة مشاهدة العرض
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Dynamic Callout Banner -->
+                    <div class="explainer-card green" id="explainerBanner">
+                        <div class="explainer-icon" id="explainerIcon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">
+                            🌱
+                        </div>
+                        <div class="explainer-text">
+                            <h4 id="explainerTitle">الجزء 1: تسجيل دخول مسؤول مجموعة العمل</h4>
+                            <p id="explainerDesc">يدخل خادم مجموعة العمل إلى لوحة التحكم لاختيار قسم تقارير مجموعات العمل والبدء في توثيق إنجازات الشهر.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+
+        <!-- Player Controls Bar -->
+        <div class="player-controls">
+            <!-- Timeline Track -->
+            <div class="timeline-container" id="timelineContainer" onclick="handleTimelineClick(event)">
+                <div class="timeline-track">
+                    <div class="timeline-progress" id="timelineProgress"></div>
+                    <!-- Marker at 50% for Part 2 -->
+                    <div class="timeline-chapter-marker" style="right: 50%;"></div>
+                </div>
+                <div class="timeline-thumb" id="timelineThumb"></div>
+            </div>
+
+            <!-- Controls Row -->
+            <div class="controls-row">
+                <div class="ctrl-group-left">
+                    <button type="button" class="play-btn" id="btnPlayPause" onclick="togglePlayPause()" title="تشغيل / إيقاف (المسافة)">
+                        <span id="playIcon">▶</span>
+                    </button>
+                    <div class="time-display">
+                        <span id="curTime">00:00</span> / <span id="totTime">01:00</span>
+                    </div>
+                    <div class="step-indicator" id="stepIndicator">
+                        المشهد 1 من 10
+                    </div>
+                </div>
+
+                <div class="ctrl-group-right">
+                    <button type="button" class="ctrl-btn" onclick="cycleSpeed()" id="btnSpeed" title="سرعة التشغيل">
+                        <span>السرعة</span>
+                        <span class="speed-badge" id="speedBadge">1.0x</span>
+                    </button>
+                    <button type="button" class="ctrl-btn" onclick="jumpTo(0)" title="إعادة تشغيل من البداية">
+                        <span>↺</span> إعادة
+                    </button>
+                    <button type="button" class="ctrl-btn" onclick="toggleFullscreen()" title="ملء الشاشة">
+                        <span>⛶</span> ملء الشاشة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Animation Timeline Engine -->
+    <script>
+        const TOTAL_DURATION = 60; // 60 seconds total runtime
+        let currentTime = 0;
+        let isPlaying = false;
+        let playbackSpeed = 1.0;
+        let lastFrameTimestamp = null;
+        let animationFrameId = null;
+
+        // Elements
+        const timelineProgress = document.getElementById('timelineProgress');
+        const timelineThumb = document.getElementById('timelineThumb');
+        const curTimeText = document.getElementById('curTime');
+        const playIcon = document.getElementById('playIcon');
+        const speedBadge = document.getElementById('speedBadge');
+        const stepIndicator = document.getElementById('stepIndicator');
+        const virtualCursor = document.getElementById('virtualCursor');
+        const clickPulse = document.getElementById('clickPulse');
+
+        // Banners & Pills
+        const btnChapter1 = document.getElementById('btnChapter1');
+        const btnChapter2 = document.getElementById('btnChapter2');
+        const explainerBanner = document.getElementById('explainerBanner');
+        const explainerIcon = document.getElementById('explainerIcon');
+        const explainerTitle = document.getElementById('explainerTitle');
+        const explainerDesc = document.getElementById('explainerDesc');
+
+        // Sidebar and Header
+        const navWorkgroups = document.getElementById('navWorkgroups');
+        const navCommittees = document.getElementById('navCommittees');
+        const navReports = document.getElementById('navReports');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userRoleBadge = document.getElementById('userRoleBadge');
+        const breadcrumbSection = document.getElementById('breadcrumbSection');
+
+        // Views
+        const viewWgIndex = document.getElementById('viewWgIndex');
+        const viewWgCreate = document.getElementById('viewWgCreate');
+        const viewCommitteeIndex = document.getElementById('viewCommitteeIndex');
+        const viewCommitteeCreate = document.getElementById('viewCommitteeCreate');
+        const embedDrawerOverlay = document.getElementById('embedDrawerOverlay');
+        const celebrationOverlay = document.getElementById('celebrationOverlay');
+
+        // Dynamic Text Elements
+        const txtWgActivities = document.getElementById('txtWgActivities');
+        const txtWgFinance = document.getElementById('txtWgFinance');
+        const txtCommitteeSummary = document.getElementById('txtCommitteeSummary');
+        const embedStatusText = document.getElementById('embedStatusText');
+        const cardStatusTag = document.getElementById('cardStatusTag');
+        const btnDoEmbed = document.getElementById('btnDoEmbed');
+
+        // Scene Definitions (Timeline from 0s to 60s)
+        const scenes = [
+            // PART 1: Workgroup Officer (0s - 30s)
+            {
+                start: 0,
+                end: 6,
+                id: 1,
+                chapter: 1,
+                title: "الجزء 1: تسجيل الدخول واختيار تقارير مجموعات العمل",
+                desc: "يدخل خادم مجموعة العمل إلى لوحة التحكم ويختار قسم مجموعات العمل التابعة للجنته للبدء في توثيق إنجازات الشهر.",
+                icon: "🌱",
+                colorClass: "green",
+                cursorPos: { x: 920, y: 150 }, // Moving near sidebar
+                action: (progress) => {
+                    activateView(viewWgIndex);
+                    setUser('IT', 'خادم مجموعة تقنية المعلومات', 'مجموعة عمل', '#10b981', 'tag-workgroup');
+                    setNavActive(navWorkgroups, 'active-green');
+                    breadcrumbSection.innerText = 'مجموعات العمل';
+                }
+            },
+            {
+                start: 6,
+                end: 13,
+                id: 2,
+                chapter: 1,
+                title: "بدء إنشاء تقرير مجموعة العمل (+ إضافة تقرير)",
+                desc: "ينقر الخادم على زر 'إضافة تقرير جديد' ليفتح نموذج تقرير مجموعة العمل بالشارة الخضراء الخاصة باللجان الفرعية.",
+                icon: "📝",
+                colorClass: "green",
+                cursorPos: { x: 300, y: 110 }, // Towards "+ إضافة تقرير جديد"
+                action: (progress) => {
+                    if (progress > 0.6) {
+                        triggerClick(300, 110);
+                        activateView(viewWgCreate);
+                    } else {
+                        activateView(viewWgIndex);
+                    }
+                }
+            },
+            {
+                start: 13,
+                end: 22,
+                id: 3,
+                chapter: 1,
+                title: "توثيق إنجازات وأنشطة وخزينة مجموعة العمل",
+                desc: "يقوم مسؤول المجموعة بتوثيق الأنشطة الميدانية المنفذة، الحضور، وتحديث الموقف المالي للخزينة بكل شفافية.",
+                icon: "✍️",
+                colorClass: "green",
+                cursorPos: { x: 550, y: 280 }, // Typing area
+                action: (progress) => {
+                    activateView(viewWgCreate);
+                    const fullText = "تم إطلاق نظام الحضور الإلكتروني للاجتماعات وتحديث قائمة المجموعات النشطة عبر الموقع.";
+                    const typedLength = Math.floor(progress * fullText.length);
+                    txtWgActivities.innerHTML = `<span style="color:#0f172a; font-weight:600;">${fullText.slice(0, typedLength)}</span><span style="border-right: 2px solid #10b981; animation: blink 1s infinite;"></span>`;
+                    txtWgFinance.innerHTML = `<span style="color:#059669; font-weight:700;">المتبقي: 450 ج.م</span>`;
+                }
+            },
+            {
+                start: 22,
+                end: 30,
+                id: 4,
+                chapter: 1,
+                title: "⚠️ تنبيه جوهري: الحفظ كمسودة (Draft) للجنة الأم",
+                desc: "💡 تقارير مجموعات العمل لا تُرسل مباشرة للإقليم (RSC)! بل تُحفظ كمسودة لتراجعها وتُضمنها لجنة الخدمة الأم في تقريرها الرسمي.",
+                icon: "💡",
+                colorClass: "amber",
+                cursorPos: { x: 260, y: 470 }, // Towards Save Draft Button
+                action: (progress) => {
+                    activateView(viewWgCreate);
+                    if (progress > 0.5) {
+                        triggerClick(260, 470);
+                        document.getElementById('wgStatusBadge').innerText = "تم الحفظ كمسودة (Draft) - بانتظار تضمين اللجنة الأم";
+                        document.getElementById('wgStatusBadge').className = "tag-badge tag-draft";
+                    }
+                }
+            },
+
+            // PART 2: Committee Chairperson (30s - 60s)
+            {
+                start: 30,
+                end: 37,
+                id: 5,
+                chapter: 2,
+                title: "الجزء 2: تسجيل دخول رئيس لجنة الخدمة وإشعار المسودة",
+                desc: "يدخل رئيس لجنة الخدمة (العلاقات العامة) ويلاحظ ظهور تنبيه بوجود مسودة تقرير معلقة رفعتها مجموعة العمل التابعة.",
+                icon: "🏢",
+                colorClass: "blue",
+                cursorPos: { x: 880, y: 220 }, // Sidebar Committees
+                action: (progress) => {
+                    activateView(viewCommitteeIndex);
+                    setUser('PR', 'رئيس لجنة العلاقات العامة', 'لجنة خدمة', '#2563eb', 'tag-committee');
+                    setNavActive(navCommittees, 'active-blue');
+                    breadcrumbSection.innerText = 'لجان الخدمة';
+                    embedDrawerOverlay.classList.remove('active');
+                }
+            },
+            {
+                start: 37,
+                end: 44,
+                id: 6,
+                chapter: 2,
+                title: "إنشاء تقرير اللجنة الأم للشهر الحالي",
+                desc: "يضغط رئيس اللجنة على زر 'إضافة تقرير اللجنة' للبدء في تجميع تقرير العلاقات العامة الدوري الموجه للإقليم (RSC).",
+                icon: "📑",
+                colorClass: "blue",
+                cursorPos: { x: 280, y: 110 }, // Towards Add Committee Report
+                action: (progress) => {
+                    if (progress > 0.6) {
+                        triggerClick(280, 110);
+                        activateView(viewCommitteeCreate);
+                    } else {
+                        activateView(viewCommitteeIndex);
+                    }
+                }
+            },
+            {
+                start: 44,
+                end: 50,
+                id: 7,
+                chapter: 2,
+                title: "فتح نافذة مراجعة وتضمين تقارير مجموعات العمل التابعة",
+                desc: "من داخل نموذج التقرير، يفتح رئيس اللجنة قسم مجموعات العمل لاستعراض المسودات المرفوعة من فرق العمل التابعة.",
+                icon: "🔍",
+                colorClass: "blue",
+                cursorPos: { x: 340, y: 225 }, // Button Open Embed Drawer
+                action: (progress) => {
+                    activateView(viewCommitteeCreate);
+                    if (progress > 0.4) {
+                        triggerClick(340, 225);
+                        embedDrawerOverlay.classList.add('active');
+                    } else {
+                        embedDrawerOverlay.classList.remove('active');
+                    }
+                }
+            },
+            {
+                start: 50,
+                end: 55,
+                id: 8,
+                chapter: 2,
+                title: "تضمين التقرير (Embed): تحول الحالة إلى مُضمّن",
+                desc: "يراجع رئيس اللجنة أعمال مجموعة العمل ثم يضغط 'تضمين في التقرير'، فتتحول حالة تقرير المجموعة فوراً إلى (مُضمّن - Embedded).",
+                icon: "🔗",
+                colorClass: "purple",
+                cursorPos: { x: 740, y: 280 }, // Inside drawer "تضمين"
+                action: (progress) => {
+                    activateView(viewCommitteeCreate);
+                    embedDrawerOverlay.classList.add('active');
+                    if (progress > 0.4) {
+                        triggerClick(740, 280);
+                        cardStatusTag.innerText = "✓ مُضمّن (Embedded)";
+                        cardStatusTag.className = "tag-badge tag-embedded";
+                        btnDoEmbed.innerText = "تم التضمين بنجاح";
+                        btnDoEmbed.className = "btn-mini btn-outline";
+                        embedStatusText.innerHTML = `<span style="color:#059669; font-weight:700;">✓ تم تضمين تقرير مجموعة تقنية المعلومات (IT) بنجاح في التقرير الرسمي.</span>`;
+                    }
+                }
+            },
+            {
+                start: 55,
+                end: 60,
+                id: 9,
+                chapter: 2,
+                title: "الاعتماد والإرسال النهائي إلى لجنة خدمة الإقليم (RSC)",
+                desc: "بعد إغلاق النافذة واكتمال التقرير الموحد، يضغط رئيس اللجنة على 'اعتماد وإرسال التقرير' ليصبح متاحاً لمؤتمر الإقليم.",
+                icon: "🚀",
+                colorClass: "green",
+                cursorPos: { x: 260, y: 480 }, // Submit to RSC button
+                action: (progress) => {
+                    embedDrawerOverlay.classList.remove('active');
+                    activateView(viewCommitteeCreate);
+                    txtCommitteeSummary.innerHTML = `<span style="color:#1e3a8a; font-weight:600;">تقرير العلاقات العامة لشهر نوفمبر: تم تنفيذ حملات التوعية ودعم مجموعات العمل التابعة بنجاح.</span>`;
+                    if (progress > 0.7) {
+                        triggerClick(260, 480);
+                        celebrationOverlay.classList.add('active');
+                    } else {
+                        celebrationOverlay.classList.remove('active');
+                    }
+                }
+            }
+        ];
+
+        // State Helpers
+        function activateView(viewElem) {
+            document.querySelectorAll('.sim-view').forEach(v => {
+                if (v === viewElem) {
+                    v.classList.add('active');
+                } else {
+                    v.classList.remove('active');
+                }
+            });
+        }
+
+        function setUser(initials, name, roleText, avatarColor, roleClass) {
+            userAvatar.innerText = initials;
+            userAvatar.style.background = avatarColor;
+            userName.innerText = name;
+            userRoleBadge.innerText = roleText;
+            userRoleBadge.className = `tag-badge ${roleClass}`;
+        }
+
+        function setNavActive(navElem, activeClass) {
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.className = 'nav-item';
+            });
+            navElem.className = `nav-item ${activeClass}`;
+        }
+
+        let lastClickTime = 0;
+        function triggerClick(x, y) {
+            const now = performance.now();
+            if (now - lastClickTime < 300) return; // Debounce
+            lastClickTime = now;
+            clickPulse.style.left = `${x}px`;
+            clickPulse.style.top = `${y}px`;
+            clickPulse.classList.remove('animate');
+            void clickPulse.offsetWidth; // Force reflow
+            clickPulse.classList.add('animate');
+        }
+
+        // Main Animation Frame Tick
+        function tick(timestamp) {
+            if (!lastFrameTimestamp) lastFrameTimestamp = timestamp;
+            const deltaSec = (timestamp - lastFrameTimestamp) / 1000;
+            lastFrameTimestamp = timestamp;
+
+            if (isPlaying) {
+                currentTime += deltaSec * playbackSpeed;
+                if (currentTime >= TOTAL_DURATION) {
+                    currentTime = TOTAL_DURATION;
+                    isPlaying = false;
+                    playIcon.innerText = "↺";
+                }
+                updateUI();
+            }
+
+            if (isPlaying) {
+                animationFrameId = requestAnimationFrame(tick);
+            }
+        }
+
+        function updateUI() {
+            // Update time display
+            const progressRatio = Math.min(1, Math.max(0, currentTime / TOTAL_DURATION));
+            timelineProgress.style.width = `${progressRatio * 100}%`;
+            timelineThumb.style.right = `${(1 - progressRatio) * 100}%`;
+
+            const curMins = Math.floor(currentTime / 60);
+            const curSecs = Math.floor(currentTime % 60);
+            curTimeText.innerText = `${curMins < 10 ? '0' : ''}${curMins}:${curSecs < 10 ? '0' : ''}${curSecs}`;
+
+            // Find current scene
+            const currentScene = scenes.find(s => currentTime >= s.start && currentTime < s.end) || scenes[scenes.length - 1];
+            const sceneProgress = (currentTime - currentScene.start) / (currentScene.end - currentScene.start);
+
+            // Execute scene action
+            currentScene.action(Math.min(1, Math.max(0, sceneProgress)));
+
+            // Update Explainer Banner
+            explainerIcon.innerText = currentScene.icon;
+            explainerTitle.innerText = currentScene.title;
+            explainerDesc.innerText = currentScene.desc;
+            explainerBanner.className = `explainer-card ${currentScene.colorClass}`;
+
+            stepIndicator.innerText = `المشهد ${currentScene.id} من ${scenes.length}`;
+
+            // Smooth Cursor Interpolation
+            if (currentScene.cursorPos) {
+                virtualCursor.style.transform = `translate(${currentScene.cursorPos.x}px, ${currentScene.cursorPos.y}px)`;
+            }
+
+            // Update Chapter Active Pill
+            if (currentScene.chapter === 1) {
+                btnChapter1.className = "chapter-pill workgroup active";
+                btnChapter2.className = "chapter-pill";
+            } else {
+                btnChapter1.className = "chapter-pill workgroup";
+                btnChapter2.className = "chapter-pill active";
+            }
+        }
+
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                if (currentTime >= TOTAL_DURATION) {
+                    currentTime = 0;
+                    celebrationOverlay.classList.remove('active');
+                }
+                playIcon.innerText = "⏸";
+                lastFrameTimestamp = performance.now();
+                animationFrameId = requestAnimationFrame(tick);
+            } else {
+                playIcon.innerText = "▶";
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            }
+        }
+
+        function jumpTo(seconds) {
+            currentTime = Math.min(TOTAL_DURATION, Math.max(0, seconds));
+            celebrationOverlay.classList.remove('active');
+            updateUI();
+            if (!isPlaying) {
+                togglePlayPause();
+            }
+        }
+
+        function cycleSpeed() {
+            const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
+            const currentIndex = speeds.indexOf(playbackSpeed);
+            playbackSpeed = speeds[(currentIndex + 1) % speeds.length];
+            speedBadge.innerText = `${playbackSpeed}x`;
+        }
+
+        function handleTimelineClick(e) {
+            const rect = document.getElementById('timelineContainer').getBoundingClientRect();
+            // Since RTL, right is 0, left is width
+            const clickX = e.clientX - rect.left;
+            const rtlPercent = (rect.width - clickX) / rect.width;
+            jumpTo(rtlPercent * TOTAL_DURATION);
+        }
+
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('playerWrapper');
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen().catch(err => alert(err.message));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Spacebar shortcut
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlayPause();
+            }
+        });
+
+        // Initialize first frame
+        updateUI();
+        // Start playback automatically on load
+        togglePlayPause();
+    </script>
+</body>
+</html>
+
