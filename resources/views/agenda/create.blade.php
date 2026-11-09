@@ -3,8 +3,12 @@
     <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-8 px-0 px-sm-2">
             <div class="card shadow-lg" style="border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
-                <div class="card-header text-white" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                <div class="card-header text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-top-left-radius: 15px; border-top-right-radius: 15px;">
                     <h4 class="mb-0">{{ __('messages.create_agenda') }} - {{ $group->{app()->getLocale() . '_name'} }}</h4>
+                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#gsrVideoModal" title="{{ __('messages.gsr_animated_guide_title') }}">
+                        <i class="bi bi-play-circle-fill text-warning"></i>
+                        <span>{{ __('messages.gsr_video_tutorial_btn') }}</span>
+                    </button>
                 </div>
 
                 <div class="card-body p-4">
@@ -345,4 +349,5 @@
         addOtherTopicItem();
     });
 </script>
+<x-gsr-video-modal />
 </x-layout>

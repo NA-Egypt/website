@@ -3251,4 +3251,7 @@ return [
     'watch_video_tutorial' => 'Watch Video Guide',
     'close_modal' => 'Close',
     'open_in_new_tab' => 'Open Fullscreen in New Tab',
+    'gsr_animated_guide_title' => 'Interactive Video Guide: GSR Processes (Meetings, Agendas & Literature)',
+    'gsr_animated_guide_desc' => 'Watch an interactive simulation from the real system demonstrating meeting management, ASC group agenda preparation, and literature & keytags ordering.',
+    'gsr_video_tutorial_btn' => 'Watch GSR Video Guide',
 ];

@@ -1,672 +1,239 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!doctype html>
+<html lang="ar" dir="rtl" class="minimal-theme">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل فيديو تفاعلي: دورة إعداد ودمج تقارير اللجان ومجموعات العمل - NA Egypt</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>دليل فيديو تفاعلي: دورة إعداد ودمج تقارير اللجان ومجموعات العمل في النظام الفعلي</title>
+
+    <!-- Real NA Egypt Fonts & Stylesheets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #dbeafe;
-            --success: #10b981;
-            --success-dark: #059669;
-            --success-light: #d1fae5;
-            --warning: #f59e0b;
-            --warning-light: #fef3c7;
-            --purple: #8b5cf6;
-            --purple-light: #ede9fe;
-            --dark: #0f172a;
-            --slate: #1e293b;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-700: #334155;
-            --white: #ffffff;
-        }
+    <link rel="stylesheet" href="/build/assets/core-vendor-BHJtUl81.css">
+    <link rel="stylesheet" href="/build/assets/app-B1tuYdtP.css">
+    <link rel="stylesheet" href="/build/assets/vendor-select2-8yPzm9Re.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        * {
-            box-sizing: border-box;
+    <style>
+        /* Real App Neo-Glassmorphism Styles from layout.blade.php */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body, .hanken-grotesk {
+            font-family: 'Cairo', sans-serif !important;
+        }
+        body, html {
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --neon-glow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            --text-primary: #1a202c !important;
+            --text-secondary: #4a5568 !important;
+            background-color: #f8fafc !important;
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%) !important;
+            background-attachment: fixed !important;
+            color: var(--text-primary) !important;
             margin: 0;
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
         }
 
-        body {
-            font-family: 'Cairo', system-ui, -apple-system, sans-serif;
-            background: #090d16;
-            color: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 16px;
-            overflow-x: hidden;
+        .text-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            color: transparent !important;
+            display: inline-block;
         }
 
-        .player-wrapper {
+        .card, .glass-card {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: var(--neon-glow) !important;
+            border-radius: 16px !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Video Player Wrapper Shell */
+        .tutorial-player-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1360px;
+            margin: 12px auto;
             background: #0f172a;
             border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
-        /* Top Bar */
-        .player-header {
+        /* Top Header in Player */
+        .player-header-bar {
             background: #1e293b;
-            padding: 12px 20px;
+            padding: 10px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1050;
         }
 
-        .player-header .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-badge {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        .player-badge {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             padding: 4px 10px;
-            border-radius: 8px;
-            letter-spacing: 0.5px;
+            border-radius: 6px;
         }
 
-        .brand-title {
-            font-size: 15px;
+        .player-title-text {
+            color: #f1f5f9;
+            font-size: 14.5px;
             font-weight: 700;
-            color: #e2e8f0;
+            margin-right: 8px;
         }
 
-        .header-actions {
+        .ch-pills-row {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .chapter-pill {
-            padding: 5px 14px;
+        .ch-pill-btn {
+            background: #0f172a;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             cursor: pointer;
-            border: 1px solid transparent;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .chapter-pill.active {
+        .ch-pill-btn:hover {
+            color: white;
+            background: #334155;
+        }
+
+        .ch-pill-btn.active {
             background: rgba(37, 99, 235, 0.25);
             border-color: #3b82f6;
             color: #93c5fd;
         }
 
-        .chapter-pill.workgroup.active {
-            background: rgba(16, 185, 129, 0.25);
-            border-color: #10b981;
-            color: #6ee7b7;
-        }
-
-        .chapter-pill:not(.active) {
-            background: #0f172a;
-            color: #94a3b8;
-        }
-
-        .chapter-pill:hover:not(.active) {
-            background: #334155;
-            color: white;
-        }
-
-        /* Stage Canvas / Screen */
-        .screen-container {
+        /* Real Viewport Window */
+        .real-system-viewport {
             width: 100%;
-            height: 560px;
-            position: relative;
+            height: 660px;
             background: #f8fafc;
-            color: #0f172a;
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* Simulated NA Portal Layout */
-        .portal-sidebar {
-            width: 220px;
-            background: #0f172a;
-            color: #94a3b8;
-            padding: 16px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            border-left: 1px solid #1e293b;
-            flex-shrink: 0;
-            z-index: 2;
-        }
-
-        .portal-sidebar .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px 16px 10px;
-            border-bottom: 1px solid #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .portal-sidebar .logo-circle {
-            width: 32px;
-            height: 32px;
-            background: #2563eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 900;
-            font-size: 13px;
-        }
-
-        .portal-sidebar .logo-text {
-            font-size: 13px;
-            font-weight: 800;
-            color: #f8fafc;
-        }
-
-        .nav-item {
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-            color: #94a3b8;
-        }
-
-        .nav-item.active-blue {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .nav-item.active-green {
-            background: #10b981;
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .nav-icon {
-            font-size: 16px;
-            display: inline-block;
-        }
-
-        /* Main Workspace Inside Simulated Screen */
-        .portal-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #f1f5f9;
-            overflow: hidden;
             position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        .portal-topbar {
-            height: 52px;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .portal-breadcrumb {
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 30px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 800;
-            color: white;
-        }
-
-        /* Viewport Canvas Area */
-        .portal-content {
-            flex: 1;
-            padding: 16px 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Simulated Windows & Views */
-        .sim-view {
+        /* Virtual Animated Cursor */
+        .v-cursor {
             position: absolute;
-            inset: 16px 20px;
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transform: translateY(10px) scale(0.99);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            z-index: 99999;
             pointer-events: none;
-            overflow: hidden;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translate(500px, 250px);
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
         }
 
-        .sim-view.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-        }
-
-        .view-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .view-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tag-badge {
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-        }
-
-        .tag-workgroup {
-            background: #ecfdf5;
-            color: #059669;
-            border: 1px solid #a7f3d0;
-        }
-
-        .tag-committee {
-            background: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #bfdbfe;
-        }
-
-        .tag-draft {
-            background: #fef3c7;
-            color: #d97706;
-            border: 1px solid #fde68a;
-        }
-
-        .tag-embedded {
-            background: #f5f3ff;
-            color: #7c3aed;
-            border: 1px solid #ddd6fe;
-        }
-
-        .tag-submitted {
-            background: #ecfdf5;
-            color: #059669;
-            border: 1px solid #6ee7b7;
-        }
-
-        .view-body {
-            flex: 1;
-            padding: 16px 18px;
-            overflow-y: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        /* Form Controls Mock */
-        .form-row {
-            display: flex;
-            gap: 12px;
-        }
-
-        .form-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .form-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #475569;
-        }
-
-        .form-input {
-            height: 34px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 0 10px;
-            font-size: 12px;
-            font-family: inherit;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            transition: all 0.2s;
-        }
-
-        .form-input.focus {
-            border-color: #2563eb;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        .form-textarea {
-            height: 70px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 12px;
-            font-family: inherit;
-            color: #1e293b;
-            line-height: 1.5;
-            transition: all 0.2s;
-        }
-
-        .table-mini {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .table-mini th {
-            background: #f8fafc;
-            padding: 8px 10px;
-            text-align: right;
-            color: #475569;
-            font-weight: 700;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .table-mini td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #1e293b;
-        }
-
-        /* Virtual Cursor */
-        .virtual-cursor {
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            z-index: 99;
-            pointer-events: none;
-            transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-            transform: translate(300px, 200px);
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-
-        .cursor-pointer-icon {
+        .v-cursor svg {
             width: 100%;
             height: 100%;
             fill: #0f172a;
             stroke: #ffffff;
-            stroke-width: 1.5;
+            stroke-width: 1.8;
         }
 
-        .click-pulse {
+        .click-pulse-ring {
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: rgba(37, 99, 235, 0.6);
+            background: rgba(37, 99, 235, 0.65);
             transform: translate(-50%, -50%) scale(0);
             pointer-events: none;
-            z-index: 98;
+            z-index: 99998;
         }
 
-        .click-pulse.animate {
-            animation: pulseWave 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        .click-pulse-ring.animate {
+            animation: pulseWaveRing 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
 
-        @keyframes pulseWave {
+        @keyframes pulseWaveRing {
             0% { transform: scale(0.2); opacity: 1; }
-            100% { transform: scale(2.8); opacity: 0; }
+            100% { transform: scale(3.5); opacity: 0; }
         }
 
-        /* Floating Explanatory Callout Banner */
-        .explainer-card {
+        /* Explainer Banner */
+        .floating-explainer {
             position: absolute;
             bottom: 24px;
             right: 32px;
             left: 32px;
-            background: rgba(15, 23, 42, 0.94);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            color: white;
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(12px);
             border-radius: 14px;
-            padding: 14px 20px;
+            padding: 14px 22px;
             display: flex;
             align-items: center;
             gap: 16px;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15);
-            z-index: 10;
-            border-right: 4px solid #3b82f6;
-            animation: slideUpFade 0.4s ease;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            z-index: 2000;
+            border-right: 5px solid #3b82f6;
+            transition: all 0.3s ease;
         }
 
-        .explainer-card.green {
-            border-right-color: #10b981;
-        }
-
-        .explainer-card.amber {
-            border-right-color: #f59e0b;
-        }
-
-        .explainer-card.purple {
-            border-right-color: #8b5cf6;
-        }
-
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .explainer-icon {
-            width: 42px;
-            height: 42px;
+        .floating-explainer-icon {
+            width: 44px;
+            height: 44px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             flex-shrink: 0;
+            background: rgba(37, 99, 235, 0.15);
+            color: #3b82f6;
         }
 
-        .explainer-text h4 {
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 2px;
-        }
-
-        .explainer-text p {
-            font-size: 12.5px;
-            color: #cbd5e1;
-            line-height: 1.45;
-        }
-
-        /* Modal/Drawer Overlay simulation for Embedding */
-        .drawer-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(3px);
-            z-index: 20;
-            display: flex;
-            justify-content: flex-start;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s ease;
-        }
-
-        .drawer-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .drawer-panel {
-            width: 440px;
-            height: 100%;
-            background: white;
-            box-shadow: -8px 0 24px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            transform: translateX(-100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .drawer-overlay.active .drawer-panel {
-            transform: translateX(0);
-        }
-
-        .drawer-head {
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
-            color: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .drawer-head h5 {
-            font-size: 14px;
-            font-weight: 800;
-        }
-
-        .drawer-body {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .workgroup-draft-card {
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 12px 14px;
-            background: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .workgroup-draft-card.highlight {
-            border-color: #3b82f6;
-            background: #eff6ff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        }
-
-        .btn-mini {
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-
-        .btn-blue {
-            background: #2563eb;
-            color: white;
-        }
-
-        .btn-green {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-outline {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #334155;
-        }
-
-        /* Player Control Bar at Bottom */
-        .player-controls {
+        /* Bottom Controls Bar */
+        .player-bottom-bar {
             background: #0f172a;
-            padding: 14px 20px;
+            padding: 14px 24px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             gap: 10px;
+            z-index: 1050;
         }
 
-        /* Timeline Scrub Bar */
-        .timeline-container {
+        .timeline-rail-wrap {
             width: 100%;
-            height: 24px;
-            position: relative;
+            height: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            position: relative;
         }
 
-        .timeline-track {
+        .timeline-rail-bar {
             width: 100%;
             height: 6px;
             background: #334155;
@@ -675,7 +242,7 @@
             overflow: hidden;
         }
 
-        .timeline-progress {
+        .timeline-rail-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #10b981 0%, #2563eb 50%, #8b5cf6 100%);
@@ -683,16 +250,7 @@
             transition: width 0.1s linear;
         }
 
-        .timeline-chapter-marker {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.4);
-            z-index: 2;
-        }
-
-        .timeline-thumb {
+        .timeline-rail-thumb {
             position: absolute;
             top: 50%;
             transform: translate(50%, -50%);
@@ -700,73 +258,42 @@
             height: 14px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
             pointer-events: none;
             right: 0%;
         }
 
-        /* Buttons & Speed */
-        .controls-row {
+        .controls-btn-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .ctrl-group-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .play-btn {
+        .btn-play-toggle {
             width: 38px;
             height: 38px;
+            border-radius: 50%;
             background: #2563eb;
             color: white;
             border: none;
-            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
             font-size: 16px;
+            transition: all 0.2s;
         }
 
-        .play-btn:hover {
-            transform: scale(1.06);
+        .btn-play-toggle:hover {
             background: #3b82f6;
+            transform: scale(1.06);
         }
 
-        .time-display {
-            font-size: 13px;
-            font-weight: 700;
-            color: #94a3b8;
-            font-variant-numeric: tabular-nums;
-            min-width: 90px;
-        }
-
-        .step-indicator {
-            font-size: 12px;
-            font-weight: 700;
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.1);
-            padding: 3px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-        }
-
-        .ctrl-group-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ctrl-btn {
+        .ctrl-pill-btn {
             background: #1e293b;
             color: #cbd5e1;
             border: 1px solid #334155;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
@@ -774,827 +301,2536 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
             font-family: inherit;
+            transition: all 0.2s;
         }
 
-        .ctrl-btn:hover {
+        .ctrl-pill-btn:hover {
             background: #334155;
             color: white;
         }
 
-        .speed-badge {
-            background: #334155;
-            color: #38bdf8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
+        /* Real Shell Overrides for Container */
+        .real-system-viewport .wrapper {
+            background: transparent !important;
+            min-height: 100%;
         }
 
-        /* Success Confetti & Celebration Layer */
-        .celebration-overlay {
+        .real-system-viewport .sidebar-wrapper {
+            position: absolute !important;
+            top: 60px;
+            bottom: 0;
+            right: 0;
+            height: auto !important;
+            z-index: 100;
+        }
+
+        .real-system-viewport .page-content {
+            margin-right: 260px !important;
+            padding: 20px 24px !important;
+            min-height: 580px;
+        }
+
+        /* Hidden scene containers */
+        .tutorial-scene-box {
+            display: none;
+        }
+
+        .tutorial-scene-box.active {
+            display: block;
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Celebration Screen */
+        .celebration-modal {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.85) 100%);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 50;
+            z-index: 5000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
 
-        .celebration-overlay.active {
+        .celebration-modal.active {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .celebration-card {
+        .celebration-card-box {
             background: #1e293b;
             border: 2px solid #10b981;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            border-radius: 18px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 32px;
             text-align: center;
-            max-width: 480px;
-            transform: scale(0.9);
-            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-        }
-
-        .celebration-overlay.active .celebration-card {
-            transform: scale(1);
-        }
-
-        .celebration-badge-icon {
-            width: 64px;
-            height: 64px;
-            background: #10b981;
+            max-width: 540px;
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 16px auto;
-            box-shadow: 0 0 24px rgba(16, 185, 129, 0.5);
-        }
-
-        /* Responsive */
-        @media (max-width: 850px) {
-            .portal-sidebar { width: 60px; padding: 12px 6px; }
-            .portal-sidebar .logo-text, .portal-sidebar .nav-text { display: none; }
-            .screen-container { height: 480px; }
-            .explainer-card { bottom: 12px; right: 12px; left: 12px; padding: 10px 14px; }
-            .drawer-panel { width: 100%; }
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
-<body>
+<body class="hanken-grotesk has-sidebar">
 
-    <div class="player-wrapper" id="playerWrapper">
-        <!-- Top Navigation Bar -->
-        <div class="player-header">
-            <div class="brand">
-                <span class="brand-badge">NA Egypt</span>
-                <span class="brand-title">دورة إعداد ودمج تقارير اللجان ومجموعات العمل</span>
+    <div class="tutorial-player-container" id="playerWrap">
+        <!-- Top Controls -->
+        <div class="player-header-bar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="player-badge">Reports Real System</span>
+                <span class="player-title-text">دليل فيديو تفاعلي: دورة إعداد ودمج تقارير اللجان ومجموعات العمل في النظام الفعلي</span>
             </div>
-            <div class="header-actions">
-                <button type="button" class="chapter-pill workgroup active" id="btnChapter1" onclick="jumpTo(0)">
-                    <span>🌱</span>
-                    <span>الجزء 1: مسؤول مجموعة العمل</span>
-                </button>
-                <button type="button" class="chapter-pill" id="btnChapter2" onclick="jumpTo(30)">
-                    <span>🏢</span>
-                    <span>الجزء 2: رئيس لجنة الخدمة</span>
-                </button>
+            <div class="ch-pills-row">
+                <button type='button' class='ch-pill-btn active' id='chPill0' onclick='seekTo(0)'>الجزء 1: مسؤول مجموعة العمل</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='seekTo(30)'>الجزء 2: رئيس لجنة الخدمة</button>
             </div>
         </div>
 
-        <!-- Simulated Portal Canvas Area -->
-        <div class="screen-container" id="screenStage">
-            
-            <!-- Virtual Pointer Cursor -->
-            <div class="virtual-cursor" id="virtualCursor">
-                <svg class="cursor-pointer-icon" viewBox="0 0 24 24">
+        <!-- Real System Viewport (The EXACT NA Egypt Application DOM) -->
+        <div class="real-system-viewport" id="sysViewport">
+            <!-- Virtual Cursor Pointer -->
+            <div class="v-cursor" id="vCursor">
+                <svg viewBox="0 0 24 24">
                     <path d="M4 2l16 12-8.5 1.5L8 22z" />
                 </svg>
             </div>
-            <div class="click-pulse" id="clickPulse"></div>
+            <div class="click-pulse-ring" id="clickWave"></div>
 
-            <!-- Simulated Portal Sidebar -->
-            <aside class="portal-sidebar">
-                <div class="logo-area">
-                    <div class="logo-circle">NA</div>
-                    <div class="logo-text">زمالة مصر</div>
-                </div>
-                <div class="nav-item" id="navHome">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-text">لوحة التحكم</span>
-                </div>
-                <div class="nav-item active-green" id="navWorkgroups">
-                    <span class="nav-icon">🌱</span>
-                    <span class="nav-text">مجموعات العمل</span>
-                </div>
-                <div class="nav-item" id="navCommittees">
-                    <span class="nav-icon">🏢</span>
-                    <span class="nav-text">لجان الخدمة</span>
-                </div>
-                <div class="nav-item" id="navReports">
-                    <span class="nav-icon">📑</span>
-                    <span class="nav-text">التقارير الدورية</span>
-                </div>
-                <div class="nav-item" id="navRsc">
-                    <span class="nav-icon">⚖️</span>
-                    <span class="nav-text">لجنة الإقليم (RSC)</span>
-                </div>
-            </aside>
-
-            <!-- Main Workspace Inside Screen -->
-            <main class="portal-main">
-                <!-- Portal Top Bar -->
-                <div class="portal-topbar">
-                    <div class="portal-breadcrumb" id="topBreadcrumb">
-                        <span>الرئيسية</span>
-                        <span>/</span>
-                        <span id="breadcrumbSection">مجموعات العمل</span>
-                        <span>/</span>
-                        <span id="breadcrumbPage" style="color: #2563eb;">إعداد التقرير الدوري</span>
-                    </div>
-                    <div class="user-badge" id="userBadge">
-                        <div class="user-avatar" id="userAvatar" style="background: #10b981;">IT</div>
-                        <span id="userName">خادم مجموعة تقنية المعلومات</span>
-                        <span id="userRoleBadge" class="tag-badge tag-workgroup">مجموعة عمل</span>
-                    </div>
-                </div>
-
-                <!-- Views Container -->
-                <div class="portal-content">
-                    
-                    <!-- View 1: Workgroup Index View -->
-                    <div class="sim-view active" id="viewWgIndex">
-                        <div class="view-header">
-                            <div class="view-title">
-                                <span>تقارير مجموعة العمل (IT Workgroup)</span>
-                                <span class="tag-badge tag-workgroup">لجنة فرعية تابعة للجنة العلاقات العامة</span>
-                            </div>
-                            <button class="btn-mini btn-green" id="btnAddWgReport">
-                                <span>➕</span> إضافة تقرير جديد
-                            </button>
-                        </div>
-                        <div class="view-body">
-                            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 24px; text-align: center;">
-                                <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
-                                <h4 style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 4px;">لا توجد تقارير للشهر الحالي حتى الآن</h4>
-                                <p style="font-size: 12px; color: #64748b;">اضغط على "إضافة تقرير جديد" لتوثيق أعمال المجموعة ورفعها للجنة الأم للمراجعة.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- View 2: Workgroup Create Form View -->
-                    <div class="sim-view" id="viewWgCreate">
-                        <div class="view-header">
-                            <div class="view-title">
-                                <span>نموذج تقرير مجموعة العمل</span>
-                                <span class="tag-badge tag-workgroup">🌱 مجموعة عمل: تقنية المعلومات</span>
-                                <span class="tag-badge tag-draft" id="wgStatusBadge">حالة التقرير: مسودة (قيد الإعداد)</span>
-                            </div>
-                            <span style="font-size: 12px; color: #64748b;">تاريخ التقرير: نوفمبر 2026</span>
-                        </div>
-                        <div class="view-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">اللجنة الرئيسية التابع لها</label>
-                                    <input type="text" class="form-input" value="لجنة العلاقات العامة (PR Committee)" readonly style="background: #f1f5f9;">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">تاريخ اجتماع مجموعة العمل</label>
-                                    <input type="text" class="form-input" value="الجمعة 7 نوفمبر 2026" readonly>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">أبرز الأنشطة والإنجازات المنفذة خلال الشهر</label>
-                                <div class="form-textarea" id="txtWgActivities"></div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">الرصيد المالي المتبقي في الخزينة</label>
-                                    <div class="form-input" id="txtWgFinance"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">عدد الأعضاء الحاضرين في الاجتماع</label>
-                                    <input type="text" class="form-input" value="6 أعضاء فاعلين" readonly>
-                                </div>
-                            </div>
-
-                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 10px; border-top: 1px solid #f1f5f9;">
-                                <button class="btn-mini btn-outline">إلغاء</button>
-                                <button class="btn-mini btn-green" id="btnSaveWgDraft">
-                                    <span>💾</span> حفظ التقرير كمسودة للجنة الأم
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- View 3: Committee Reports Index View -->
-                    <div class="sim-view" id="viewCommitteeIndex">
-                        <div class="view-header">
-                            <div class="view-title">
-                                <span>تقارير لجان الخدمة (لجنة العلاقات العامة)</span>
-                                <span class="tag-badge tag-committee">🏢 لجنة خدمة رئيسية</span>
-                            </div>
-                            <button class="btn-mini btn-blue" id="btnAddCommitteeReport">
-                                <span>➕</span> إضافة تقرير اللجنة
-                            </button>
-                        </div>
-                        <div class="view-body">
-                            <!-- Alert for pending workgroup draft -->
-                            <div id="noticePendingWg" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 20px;">🔔</span>
-                                    <div>
-                                        <div style="font-size: 13px; font-weight: 700; color: #92400e;">يوجد مسودة تقرير معلقة لمجموعة العمل (1)</div>
-                                        <div style="font-size: 11.5px; color: #b45309;">قامت مجموعة تقنية المعلومات برفع مسودة بانتظار تضمينها في تقرير اللجنة.</div>
-                                    </div>
-                                </div>
-                                <span class="tag-badge tag-draft">مسودة بانتظار التضمين</span>
-                            </div>
-
-                            <table class="table-mini">
-                                <thead>
-                                    <tr>
-                                        <th>الشهر</th>
-                                        <th>اللجنة</th>
-                                        <th>حالة التقرير</th>
-                                        <th>مجموعات العمل المضمنة</th>
-                                        <th>الإجراء</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>أكتوبر 2026</td>
-                                        <td>لجنة العلاقات العامة</td>
-                                        <td><span class="tag-badge tag-submitted">مُعتمد ومُرسل للإقليم</span></td>
-                                        <td>1 مجموعة عمل</td>
-                                        <td><button class="btn-mini btn-outline">عرض</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- View 4: Committee Create Form View & Embedding -->
-                    <div class="sim-view" id="viewCommitteeCreate">
-                        <div class="view-header">
-                            <div class="view-title">
-                                <span>تقرير لجنة العلاقات العامة لشهر نوفمبر 2026</span>
-                                <span class="tag-badge tag-committee">لجنة خدمة</span>
-                            </div>
-                            <span class="tag-badge tag-draft">قيد الإعداد</span>
-                        </div>
-                        <div class="view-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">اسم اللجنة</label>
-                                    <input type="text" class="form-input" value="لجنة العلاقات العامة (PR Committee)" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">الجهة الموجه إليها التقرير</label>
-                                    <input type="text" class="form-input" value="لجنة خدمة الإقليم (RSC)" readonly style="background: #ede9fe; color: #6d28d9; font-weight: 700;">
-                                </div>
-                            </div>
-
-                            <!-- Workgroup Embedding Card Inside Committee Report -->
-                            <div style="border: 2px dashed #93c5fd; border-radius: 10px; padding: 12px 14px; background: #f8fafc;" id="embedBox">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <div style="font-size: 13px; font-weight: 800; color: #1e40af; display: flex; align-items: center; gap: 6px;">
-                                        <span>📂</span>
-                                        <span>تقارير مجموعات العمل التابعة (Workgroups)</span>
-                                    </div>
-                                    <button class="btn-mini btn-blue" id="btnOpenEmbedDrawer">
-                                        <span>🔍</span> استعراض وتضمين تقارير مجموعات العمل (1 مسودة)
-                                    </button>
-                                </div>
-                                <div id="embedStatusText" style="font-size: 12px; color: #64748b;">
-                                    لم يتم تضمين أي تقارير بعد. انقر على الزر أعلاه لمراجعة وتضمين مسودات مجموعات العمل.
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">ملخص أعمال وإنجازات لجنة العلاقات العامة</label>
-                                <div class="form-textarea" id="txtCommitteeSummary"></div>
-                            </div>
-
-                            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 8px; border-top: 1px solid #f1f5f9;">
-                                <button class="btn-mini btn-outline">حفظ مسودة مؤقتة</button>
-                                <button class="btn-mini btn-blue" id="btnSubmitToRsc" style="font-size: 13px; padding: 8px 18px; font-weight: 800;">
-                                    <span>🚀</span> اعتماد وإرسال التقرير النهائي للإقليم (RSC)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Side Drawer for Embedding Workgroup Reports -->
-                    <div class="drawer-overlay" id="embedDrawerOverlay">
-                        <div class="drawer-panel">
-                            <div class="drawer-head">
-                                <h5>مسودات تقارير مجموعات العمل</h5>
-                                <span style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px;">لجنة العلاقات العامة</span>
-                            </div>
-                            <div class="drawer-body">
-                                <div class="workgroup-draft-card highlight" id="wgDraftCard">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                        <div>
-                                            <div style="font-size: 13px; font-weight: 800; color: #0f172a;">مجموعة عمل تقنية المعلومات (IT)</div>
-                                            <div style="font-size: 11.5px; color: #64748b;">تاريخ التقديم: 7 نوفمبر 2026</div>
-                                        </div>
-                                        <span class="tag-badge tag-draft" id="cardStatusTag">مسودة غير مضمنة</span>
-                                    </div>
-                                    <div style="font-size: 12px; color: #334155; line-height: 1.4; background: white; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;">
-                                        <strong>أبرز الأعمال:</strong> إطلاق نظام الحضور الإلكتروني، وتحديث جدول الاجتماعات الأسبوعي.
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                                        <span style="font-size: 11.5px; color: #059669; font-weight: 700;">الرصيد: 450 ج.م</span>
-                                        <button class="btn-mini btn-blue" id="btnDoEmbed">
-                                            <span>🔗</span> تضمين في تقرير اللجنة
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Celebration / Success Overlay -->
-                    <div class="celebration-overlay" id="celebrationOverlay">
-                        <div class="celebration-card">
-                            <div class="celebration-badge-icon">✓</div>
-                            <h3 style="font-size: 18px; font-weight: 900; color: white; margin-bottom: 8px;">تم اعتماد وإرسال التقرير للإقليم بنجاح!</h3>
-                            <p style="font-size: 13px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
-                                تم إكمال الدورة بنجاح: وثقت مجموعة العمل تقريرها كمسودة، وراجعتها اللجنة الأم وضمنتها رسمياً في تقريرها الموحد المرفوع لـ RSC.
-                            </p>
-                            <div style="display: flex; justify-content: center; gap: 10px;">
-                                <button class="btn-mini btn-green" onclick="jumpTo(0)" style="padding: 8px 18px;">
-                                    <span>🔄</span> إعادة مشاهدة العرض
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Floating Dynamic Callout Banner -->
-                    <div class="explainer-card green" id="explainerBanner">
-                        <div class="explainer-icon" id="explainerIcon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">
-                            🌱
-                        </div>
-                        <div class="explainer-text">
-                            <h4 id="explainerTitle">الجزء 1: تسجيل دخول مسؤول مجموعة العمل</h4>
-                            <p id="explainerDesc">يدخل خادم مجموعة العمل إلى لوحة التحكم لاختيار قسم تقارير مجموعات العمل والبدء في توثيق إنجازات الشهر.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </main>
+            <!-- The Real Application Shell -->
+            <div class="wrapper">
+                <!-- 1. Real NA Egypt Navbar -->
+                <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
+    <nav class="navbar navbar-expand">
+            <div class="top-navbar d-flex align-items-center gap-2">
+                <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="تصغير/توسيع القائمة">
+          <i class="bi bi-list fs-3"></i>
         </div>
+                <a href="/dashboard" class="d-flex align-items-center">
+          <img src="/assets/images/na.png" alt="NA Logo" width="140" height="45" style="object-fit: contain;">
+        </a>
+      </div>
 
-        <!-- Player Controls Bar -->
-        <div class="player-controls">
-            <!-- Timeline Track -->
-            <div class="timeline-container" id="timelineContainer" onclick="handleTimelineClick(event)">
-                <div class="timeline-track">
-                    <div class="timeline-progress" id="timelineProgress"></div>
-                    <!-- Marker at 50% for Part 2 -->
-                    <div class="timeline-chapter-marker" style="right: 50%;"></div>
+
+
+      <div class="top-navbar-left ms-auto ">
+        <ul class="navbar-nav align-items-center">
+
+          <!-- Language Switcher -->
+          <!-- Language Switcher -->
+                              <li class="me-2 d-none d-sm-block">
+            <a href="/en" class="btn btn-sm btn-light rounded-pill border shadow-sm d-flex align-items-center gap-2 px-3">
+              <img src="/assets/images/flags/en.png" alt="en Flag" width="20" height="15" class="rounded-1">
+              <span class="fw-bold text-dark small">English</span>
+            </a>
+          </li>
+                
+          
+          <li class="nav-item dropdown dropdown-large">
+            <a class="nav-link p-0" href="#" data-bs-toggle="dropdown">
+              <div class="user-setting d-flex align-items-center gap-2 rounded-pill p-1 pe-3" style="background: rgba(0,0,0,0.03); border: 1px solid var(--glass-border);">
+                <img src="/assets/images/icons/na-logo.png" class="user-img rounded-circle" alt="" style="width: 32px; height: 32px; border: 1px solid var(--glass-border);">
+                <div class="user-name d-none d-sm-block">
+                  <span class="fw-bold text-dark small">
+                                      admin
+                                    </span>
                 </div>
-                <div class="timeline-thumb" id="timelineThumb"></div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start shadow-lg rounded-4 p-0 overflow-hidden mt-2" style="min-width: 240px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);">
+              <li>
+                <div class="d-flex align-items-center p-3 border-bottom" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                    <img src="/assets/images/icons/na-logo.png" class="user-img rounded-circle p-1" alt="" style="width: 48px; height: 48px; background: rgba(0,0,0,0.05); border: 1px solid var(--glass-border);">
+                    <div class="ms-3">
+                        <h6 class="mb-0 fw-bold" style="color: var(--text-primary);">
+                                                      admin
+                                                  </h6>
+                        <small class="text-muted small d-block">
+                                                      admin@naegypt.org
+                                                  </small>
+                                                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mt-1 px-2 py-1" style="font-size: 0.7rem; text-transform: uppercase;">
+                          super admin
+                        </span>
+                                            </div>
+                </div>
+              </li>
+              <li class="p-1">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="https://127.0.0.1" style="color: var(--text-primary);">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6;">
+                          <i class="bi bi-globe fs-6"></i>
+                      </div>
+                      <span class="fw-medium">الموقع الإلكتروني</span>
+                  </a>
+              </li>
+                            <li class="p-1 d-block d-sm-none">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="/en" style="color: var(--text-primary);">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+                          <i class="bi bi-translate fs-6"></i>
+                      </div>
+                      <span class="fw-medium">English</span>
+                  </a>
+              </li>
+                            <li><hr class="dropdown-divider my-1" style="border-color: var(--glass-border);"></li>
+              <li class="p-1">
+                                  <form method="POST" action="/logout">
+                    <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444;">
+                          <i class="bi bi-box-arrow-right fs-6"></i>
+                      </div>
+                      <span class="fw-bold">الخروج</span>
+                    </a>
+                  </form>
+                              </li>
+            </ul>
+          </li>
+          
+
+        </ul>
+      </div>
+    </nav>
+</header>
+
+                <!-- 2. Real NA Egypt Sidebar -->
+                <style>
+/* Sidebar Wrapper Enhancement - Light/Dark Theme aware */
+.sidebar-wrapper,
+.sidebar-wrapper [data-simplebar],
+.sidebar-wrapper .simplebar-content-wrapper {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid var(--glass-border) !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar,
+.sidebar-wrapper *::-webkit-scrollbar,
+.sidebar-wrapper .simplebar-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}
+
+[dir="rtl"] .sidebar-wrapper {
+    box-shadow: -4px 0 25px rgba(0, 0, 0, 0.05) !important;
+    border-right: none !important;
+    border-left: 1px solid var(--glass-border) !important;
+}
+
+/* Header & Toggle Section */
+.sidebar-header-controls {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sidebar-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+/* Sidebar Links */
+.sidebar-wrapper .navigation li a {
+    color: var(--text-secondary) !important;
+    padding: 7px 12px;
+    margin: 2px 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-weight: 500;
+    font-size: 13.5px;
+    text-decoration: none;
+}
+
+/* Hover State - Soft Sky Blue */
+.sidebar-wrapper .navigation li a:hover {
+    color: #2563eb !important;
+    background: rgba(37, 99, 235, 0.06) !important;
+    transform: translateX(3px);
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li a:hover {
+    transform: translateX(-3px);
+}
+
+/* Active State - Lighter Soft Sky Blue Pill */
+.sidebar-wrapper .navigation li.mm-active > a {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12) !important;
+    font-weight: 600;
+}
+
+/* Active Parent Glow State - Soft Sky Blue */
+.sidebar-wrapper .navigation li.mm-active-parent > a {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border-left: 3px solid #2563eb;
+    font-weight: 600;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li.mm-active-parent > a {
+    border-left: none;
+    border-right: 3px solid #2563eb;
+}
+
+/* Parent Icon & Text styling */
+.sidebar-wrapper .navigation .parent-icon {
+    font-size: 16px;
+    line-height: 1;
+    margin-right: 10px;
+    transition: transform 0.2s ease;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation .parent-icon {
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.sidebar-wrapper .navigation li a:hover .parent-icon {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.sidebar-wrapper .navigation li.mm-active > a .parent-icon,
+.sidebar-wrapper .navigation li.mm-active-parent > a .parent-icon {
+    opacity: 1;
+    color: #2563eb !important;
+}
+
+/* Submenu dropdown list with Tree Connection Line */
+.sidebar-wrapper .navigation ul {
+    background: rgba(0, 0, 0, 0.02) !important;
+    padding: 4px 0 4px 8px;
+    margin: 2px 8px !important;
+    list-style: none;
+    border-radius: 8px;
+    position: relative;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul {
+    padding: 4px 8px 4px 0;
+}
+
+.sidebar-wrapper .navigation ul::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 14px;
+    width: 2px;
+    background: rgba(37, 99, 235, 0.25);
+    border-radius: 2px;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul::before {
+    left: auto;
+    right: 14px;
+}
+
+.sidebar-wrapper .navigation ul li a {
+    padding: 5px 12px 5px 24px;
+    margin: 1px 4px;
+    font-size: 13px;
+    opacity: 0.85;
+    position: relative;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul li a {
+    padding: 5px 24px 5px 12px;
+}
+
+/* Mobile Back Button styling */
+.sidebar-wrapper .nav-toggle-icon {
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease;
+}
+
+.sidebar-wrapper .nav-toggle-icon:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+    color: #2563eb !important;
+}
+
+/* Category Labels Styling */
+.sidebar-wrapper .navigation li.menu-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary, #94a3b8) !important;
+    opacity: 0.75;
+    padding: 14px 16px 4px 16px;
+    margin-top: 4px;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li.menu-label {
+    letter-spacing: 0px;
+    padding: 14px 16px 4px 16px;
+}
+</style>
+
+<aside class="sidebar-wrapper" data-simplebar="true">
+        
+    
+    <div class="sidebar-header-controls d-lg-none">
+        <span class="fw-bold small text-uppercase sidebar-title opacity-75" style="letter-spacing: 0.5px;">لوحة التحكم</span>
+        <div class="sidebar-toggle-btn nav-toggle-icon" title="رجوع">
+            <i class="bi bi-x-lg fs-6"></i>
+        </div>
+    </div>
+
+    <!--navigation-->
+    <ul class="navigation mt-1" id="menu">
+
+      
+      
+      
+      
+            <li class="menu-label">مساحتي</li>
+
+      
+      
+            <li>
+        <a href="/calendar" title="التقويم السنوي">
+          <div class="parent-icon"><i class="bi bi-calendar-check"></i></div>
+          <div class="menu-title">التقويم السنوي</div>
+        </a>
+      </li>
+      
+            
+      
+      
+      
+            <li class="menu-label">الاجتماعات والمجموعات</li>
+
+      
+            <li>
+        <a href="#menuMeetings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuMeetings" title="الاجتماعات والمجموعات">
+          <div class="parent-icon"><i class="bi bi-calendar3-event"></i></div>
+          <div class="menu-title">الاجتماعات والمجموعات</div>
+        </a>
+        <div class="collapse" id="menuMeetings">
+          <ul>
+            <li><a href="/group"><i class="bi bi-arrow-right-short"></i>المجموعات</a></li>
+                        <li><a href="/direct-online-group"><i class="bi bi-arrow-right-short"></i>أونلاين (مباشر)</a></li>
+            <li><a href="/meeting"><i class="bi bi-arrow-right-short"></i>الاجتماعات</a></li>
+            <li><a href="/serviceBody/map"><i class="bi bi-geo-alt"></i>خريطة مناطق الخدمة</a></li>
+                        <li><a href="/gsr-guide"><i class="bi bi-arrow-right-short"></i>دليل اجتماعات ممثل المجموعة (GSR)</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="#menuStructure" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuStructure" title="هيكل الخدمة والمناطق">
+          <div class="parent-icon"><i class="bi bi-diagram-3-fill"></i></div>
+          <div class="menu-title">هيكل الخدمة والمناطق</div>
+        </a>
+        <div class="collapse" id="menuStructure">
+          <ul>
+            <li><a href="/serviceBody"><i class="bi bi-arrow-right-short"></i>المنطقة أو المنتدى</a></li>
+            <li><a href="/serviceCommittee"><i class="bi bi-arrow-right-short"></i>اللجان الخدمية</a></li>
+            <li><a href="/workgroup"><i class="bi bi-arrow-right-short"></i>مجموعات العمل</a></li>
+            <li><a href="/city"><i class="bi bi-arrow-right-short"></i>المدينة</a></li>
+            <li><a href="/neighborhood"><i class="bi bi-arrow-right-short"></i>الحي</a></li>
+            <li><a href="/topic"><i class="bi bi-arrow-right-short"></i>الموضوعات</a></li>
+          </ul>
+        </div>
+      </li>
+            
+      
+      
+      
+            <li class="menu-label">التقارير والأجندات</li>
+      <li>
+        <a href="#menuReportsAgendas" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuReportsAgendas" title="التقارير والأجندات">
+          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
+          <div class="menu-title">التقارير والأجندات</div>
+        </a>
+        <div class="collapse" id="menuReportsAgendas">
+          <ul>
+                        <li><a href="/committee-reports"><i class="bi bi-arrow-right-short"></i>تقارير اللجان</a></li>
+                                    <li><a href="/committee-reports/archive"><i class="bi bi-arrow-right-short"></i>أرشيف التقارير</a></li>
+                                    <li><a href="/committee-reports-guide"><i class="bi bi-arrow-right-short"></i>دليل تقارير اللجان ومجموعات العمل</a></li>
+            
+                                        <li><a href="/service-body-agendas"><i class="bi bi-arrow-right-short"></i>أجندات المناطق والمنتديات</a></li>
+              <li><a href="/service-body-agendas/archive"><i class="bi bi-arrow-right-short"></i>أرشيف أجندات المناطق والمنتديات</a></li>
+              <li><a href="/groups-agendas/archive"><i class="bi bi-arrow-right-short"></i>أرشيف الأجندات</a></li>
+                      </ul>
+        </div>
+      </li>
+      
+      
+      
+      
+            <li class="menu-label">المطبوعات والمستودع</li>
+
+      
+      
+      <li>
+        <a href="#menuLiteratureStore" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuLiteratureStore" title="المطبوعات والمستودع">
+          <div class="parent-icon"><i class="bi bi-box-seam"></i></div>
+          <div class="menu-title">المطبوعات والمستودع</div>
+        </a>
+        <div class="collapse" id="menuLiteratureStore">
+          <ul>
+            
+                        <li><a href="/store"><i class="bi bi-arrow-right-short"></i>مخزون المستودع</a></li>
+            <li><a href="/store/reports"><i class="bi bi-arrow-right-short"></i>تقارير المستودع</a></li>
+            <li><a href="/store/stocktaking"><i class="bi bi-arrow-right-short"></i>الجرد الفعلي</a></li>
+            
+            
+            
+            
+                        <li><a href="/slips"><i class="bi bi-arrow-right-short"></i>قسائم الصادر والوارد</a></li>
+            
+                        <li><a href="/lit/reconciliation"><i class="bi bi-arrow-right-short"></i>مطابقة واسترجاع المطبوعات</a></li>
+            
+                        <li><a href="/lit/ledger"><i class="bi bi-arrow-right-short"></i>دفتر الأستاذ وحركة المبيعات</a></li>
+            
+            
+                        <li><a href="/literature-requests/treasurer"><i class="bi bi-arrow-right-short"></i>لوحة تحكم أمين الصندوق</a></li>
+            
+                        <li><a href="/literature-requests/committee"><i class="bi bi-arrow-right-short"></i>طلبات المطبوعات</a></li>
+            
+                        <li><a href="/committee-literature"><i class="bi bi-arrow-right-short"></i>طلبات مطبوعات اللجان الخدمية</a></li>
+            
+                        <li><a href="/literature-requests/archive"><i class="bi bi-arrow-right-short"></i>أرشيف طلبات المطبوعات</a></li>
+                        <li><a href="/guidelines/inventory/" target="_blank" rel="noopener"><i class="bi bi-book-half"></i>دليل نظام المخزون</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+      
+      
+            <li class="menu-label">الخدمات والأدوات</li>
+
+      
+            <li>
+        <a href="#menuHelpline" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuHelpline" title="خطوط المساعدة">
+          <div class="parent-icon"><i class="bi bi-telephone-inbound-fill"></i></div>
+          <div class="menu-title">خطوط المساعدة</div>
+        </a>
+        <div class="collapse" id="menuHelpline">
+          <ul>
+            <li><a href="/helpline"><i class="bi bi-bar-chart-line"></i> تقارير المكالمات</a></li>
+            <li><a href="/helpline/volunteers"><i class="bi bi-people"></i> إدارة المتطوعين</a></li>
+            <li><a href="/forms/helpline" target="_blank"><i class="bi bi-box-arrow-up-right"></i> النموذج العام</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="#menuWhatsApp" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuWhatsApp" title="خدمة واتساب">
+          <div class="parent-icon"><i class="bi bi-whatsapp"></i></div>
+          <div class="menu-title">خدمة واتساب</div>
+        </a>
+        <div class="collapse" id="menuWhatsApp">
+          <ul>
+            <li><a href="/whatsapp/inbox"><i class="bi bi-chat-dots-fill"></i> صندوق محادثات واتساب</a></li>
+            <li><a href="/whatsapp/reports"><i class="bi bi-graph-up"></i> تقارير وتحليلات واتساب</a></li>
+                        <li><a href="/whatsapp/subscribers"><i class="bi bi-people-fill"></i> المشتركون والرسائل الجماعية</a></li>
+            <li><a href="/whatsapp/device"><i class="bi bi-qr-code-scan"></i> حالة الاتصال والباركود</a></li>
+                        <li><a href="/whatsapp/docs"><i class="bi bi-book-half"></i> دليل الاستخدام والتوثيق الفني</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="/forms" title="إدارة النماذج">
+          <div class="parent-icon"><i class="bi bi-input-cursor-text"></i></div>
+          <div class="menu-title">إدارة النماذج</div>
+        </a>
+      </li>
+      
+      
+            <li>
+        <a href="/change-requests" title="طلبات الدعم الفني والتعديل">
+          <div class="parent-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div class="menu-title">طلبات الدعم الفني والتعديل</div>
+        </a>
+      </li>
+      
+      
+            <li>
+        <a href="/facebook-targeting" title="استهداف فيسبوك">
+          <div class="parent-icon"><i class="bi bi-facebook"></i></div>
+          <div class="menu-title">استهداف فيسبوك</div>
+        </a>
+      </li>
+            
+      
+      
+      
+            <li class="menu-label">إدارة النظام</li>
+      <li>
+        <a href="#menuAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuAdmin" title="اعدادات مدير النظام">
+          <div class="parent-icon"><i class="bi bi-gear-fill admin-icon"></i></div>
+          <div class="menu-title">اعدادات مدير النظام</div>
+        </a>
+        <div class="collapse" id="menuAdmin">
+          <ul>
+            <li><a href="/users"><i class="bi bi-arrow-right-short"></i>المستخدمين</a></li>
+            <li><a href="/permissions"><i class="bi bi-arrow-right-short"></i>الاذونات</a></li>
+            <li><a href="/roles"><i class="bi bi-arrow-right-short"></i>الصلاحيات</a></li>
+            <li><a href="/subscribers"><i class="bi bi-arrow-right-short"></i>المشتركين</a></li>
+            <li><a href="/transactions"><i class="bi bi-arrow-right-short"></i>تفاصيل السجلات</a></li>
+            <li><a href="/admin/api-usage"><i class="bi bi-arrow-right-short"></i>تحليلات الـ API والتطبيق</a></li>
+            <li><a href="/admin/apk-requests"><i class="bi bi-arrow-right-short"></i>طلبات تحميل تطبيق Android</a></li>
+          </ul>
+        </div>
+      </li>
+      
+    </ul>
+    <!--end navigation-->
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var body = document.body;
+        var sidebar = document.querySelector(".sidebar-wrapper");
+        var pinBtn = document.getElementById("sidebarPinToggle");
+
+        if (pinBtn) {
+            pinBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                if (typeof window.toggleSidebarMenu === 'function') {
+                    window.toggleSidebarMenu();
+                }
+            });
+        }
+
+        // Auto-close mobile drawer on clicking direct navigation links
+        if (sidebar) {
+            sidebar.querySelectorAll("a[href]").forEach(function(link) {
+                var href = link.getAttribute("href");
+                if (href && href !== '#' && !href.startsWith('javascript:') && !link.hasAttribute("data-bs-toggle")) {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 1025) {
+                            if (typeof window.toggleSidebarMenu === 'function') {
+                                window.toggleSidebarMenu(false);
+                            } else {
+                                body.classList.remove("sidebar-open");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Single Accordion Behavior for Submenus
+        if (sidebar) {
+            var collapses = sidebar.querySelectorAll(".collapse");
+            collapses.forEach(function(collapseEl) {
+                collapseEl.addEventListener("show.bs.collapse", function() {
+                    collapses.forEach(function(other) {
+                        if (other !== collapseEl && other.classList.contains("show")) {
+                            var bsCollapse = (typeof bootstrap !== 'undefined' && bootstrap.Collapse)
+                                ? bootstrap.Collapse.getInstance(other)
+                                : null;
+                            if (bsCollapse) {
+                                bsCollapse.hide();
+                            } else {
+                                other.classList.remove("show");
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        // Active Route Parent Highlighting
+        var currentUrl = window.location.href.split('#')[0].split('?')[0];
+        var menuLinks = sidebar ? sidebar.querySelectorAll("a[href]") : [];
+        
+        menuLinks.forEach(function(link) {
+            var linkUrl = link.href.split('#')[0].split('?')[0];
+            if (linkUrl && linkUrl === currentUrl && linkUrl !== 'javascript:;' && linkUrl !== '#') {
+                var parentLi = link.closest("li");
+                if (parentLi) {
+                    parentLi.classList.add("mm-active");
+                }
+                
+                var parentCollapse = link.closest(".collapse");
+                if (parentCollapse) {
+                    parentCollapse.classList.add("show");
+                    var parentDropdownLi = parentCollapse.closest("li");
+                    if (parentDropdownLi) {
+                        parentDropdownLi.classList.add("mm-active-parent");
+                        var parentToggleA = parentDropdownLi.querySelector('[data-bs-toggle="collapse"]');
+                        if (parentToggleA) {
+                            parentToggleA.setAttribute("aria-expanded", "true");
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
+
+  </aside>
+  <div class="sidebar-overlay" onclick="typeof window.toggleSidebarMenu === 'function' ? window.toggleSidebarMenu(false) : document.body.classList.remove('sidebar-open')"></div>
+
+                <!-- 3. Real NA Egypt Page Content Container -->
+                <main class="page-content hanken-grotesk">
+                    <div class="container-fluid" id="scenesContainer">
+                            <!-- Scene 1: Real Workgroup Create Form -->
+    <div class="tutorial-scene-box active" id="sceneBoxWgCreate">
+        
+          <div class="container-fluid">
+            <div class="text-center w-100 mb-3">
+    <h2 class="text-center text-gradient d-inline-block mx-auto" style="line-height: 1.55; padding-bottom: 6px; padding-top: 2px; overflow: visible; font-weight: 700; text-align: center !important; margin: 0 auto; display: inline-block;">إنشاء تقرير مجموعة العمل</h2>
+</div>
+    <div class="container mt-4">
+        
+                    <!-- Workgroup Report Guidance Banner -->
+            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 p-3 mb-4 rounded-4 bg-info bg-opacity-10 text-dark">
+                <div class="rounded-circle bg-info bg-opacity-25 p-2 d-flex align-items-center justify-content-center text-info" style="width: 48px; height: 48px; min-width: 48px;">
+                    <i class="bi bi-diagram-3-fill fs-4"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-1 text-primary d-flex align-items-center gap-2">
+                        تنبيه لتقرير مجموعة العمل
+                                                    <span class="badge bg-secondary text-white rounded-pill fw-normal small">
+                                لجنة الخدمة التابعة لها: لجنة العلاقات العامة
+                            </span>
+                                            </h6>
+                    <p class="mb-0 small text-muted">سيتم حفظ هذا التقرير كمسودة لمراجعتها من قبل لجنتك التابعة قبل تضمينها في تقرير اللجنة الرسمي المرسل للجنة الخدمة الإقليمية (RSC).</p>
+                </div>
+            </div>
+        
+        <form action="/committee-reports" method="POST" id="reportForm" enctype="multipart/form-data">
+            <input type="hidden" name="_token" value="m49JldVrrKl7VcwpB2Zr4EriFPCaBLUSBf54nO1g" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
+
+            <!-- Container for embedded workgroup report IDs -->
+            <div id="embeddedWorkgroupReportsInputs"></div>
+
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-diagram-3-fill text-success fs-4"></i>
+                                <h5 class="mb-0 fw-bold">مجموعة خطوط المساعدة</h5>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#reportsVideoModal" title="دليل فيديو متحرك: دورة إعداد ودمج التقارير">
+                                    <i class="bi bi-play-circle-fill"></i>
+                                    <span>فيديو توضيحي متحرك</span>
+                                </button>
+                                <span class="badge bg-success text-white px-3 py-2 rounded-pill fw-semibold">
+                                    تقرير مجموعة العمل
+                                </span>
+                            </div>
+                        </div>
+                                    </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3 align-items-end g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">تاريخ كتابة التقرير</label>
+                            <input type="text" class="form-control bg-light" readonly value="2026-11-09">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">تاريخ الاجتماع <span class="text-danger">*</span></label>
+                            <input type="date" name="meeting_date" class="form-control" required value="">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">وصف يوم الاجتماع <span class="text-danger">*</span></label>
+                            <input type="text" name="meeting_day_description" class="form-control" placeholder="مثال: أول أحد" required value="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_exceptional" id="is_exceptional" value="1" >
+                                <label class="form-check-label fw-bold text-danger ms-2" for="is_exceptional">
+                                    اجتماع استثنائي
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Controls Row -->
-            <div class="controls-row">
-                <div class="ctrl-group-left">
-                    <button type="button" class="play-btn" id="btnPlayPause" onclick="togglePlayPause()" title="تشغيل / إيقاف (المسافة)">
-                        <span id="playIcon">▶</span>
+            <!-- Positions Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-people-fill text-primary"></i>
+                        حالة المناصب
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="addPositionBtn">
+                        <i class="bi bi-plus-lg me-1"></i> إضافة منصب
                     </button>
-                    <div class="time-display">
-                        <span id="curTime">00:00</span> / <span id="totTime">01:00</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>اسم المنصب</th>
+                                    <th>اسم العضو</th>
+                                    <th>الحالة (Status)</th>
+                                    <th>مفتوح للترشيح</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionsTableBody">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="step-indicator" id="stepIndicator">
-                        المشهد 1 من 10
+                </div>
+            </div>
+
+            <!-- Attended Members Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-person-lines-fill text-success"></i>
+                    الأعضاء الحاضرون
+                </div>
+                <div class="card-body p-4">
+                    <textarea name="attended_members" class="form-control" rows="4" placeholder="أدخل أسماء الأعضاء الحاضرين..."></textarea>
+                </div>
+            </div>
+
+            <!-- Report Body Sections (Repeatable + Embedded Workgroups) -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-richtext-fill text-primary"></i>
+                        أقسام التقرير
+                    </h5>
+                    <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-outline-primary rounded-pill px-3" id="addSectionBtn">
+                            <i class="bi bi-plus-lg me-1"></i> إضافة قسم
+                        </button>
                     </div>
                 </div>
 
-                <div class="ctrl-group-right">
-                    <button type="button" class="ctrl-btn" onclick="cycleSpeed()" id="btnSpeed" title="سرعة التشغيل">
+                <div id="reportSectionsContainer">
+                    <!-- Dynamic standard sections and embedded workgroup cards will appear here -->
+                </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-paperclip text-info"></i>
+                    المرفقات
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">رفع المرفقات</label>
+                        <div id="attachmentsContainer">
+                            <div class="attachment-row mb-2">
+                                <div class="input-group">
+                                    <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                    <button type="button" class="btn btn-outline-danger remove-attachment-btn d-none">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 mt-2" id="addAttachmentBtn">
+                            <i class="bi bi-plus-lg me-1"></i> إضافة مرفق
+                        </button>
+                        <div class="form-text text-muted mt-2">
+                            بحد أقصى 5 ملفات، 5 ميجابايت لكل ملف. <br>
+                            الأنواع المسموح بها: PDF, PNG, JPG, JPEG, DOCX, XLSX
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-layout-text-window-reverse text-secondary"></i>
+                    تذييل التقرير
+                </div>
+                <div class="card-body p-4">
+                    <textarea name="footer" class="form-control" rows="3" placeholder="أدخل نص تذييل التقرير الخاص (يتجاوز تذييل اللجنة الافتراضي)..."></textarea>
+                                    </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex gap-3 mb-5">
+                <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill rounded-pill py-3 fw-semibold">
+                    <i class="bi bi-file-earmark me-1"></i> حفظ كمسودة للجنة
+                </button>
+                                    <button type="submit" id="submitToCommitteeBtn" class="btn btn-success btn-lg flex-fill rounded-pill py-3 fw-bold shadow-sm">
+                        <i class="bi bi-send-check me-1"></i> تقديم للجنة التابعة
+                    </button>
+                            </div>
+        </form>
+    </div>
+
+    <!-- Offcanvas Visual Drawer for Embedding Workgroup Reports -->
+    
+    <!-- Quill Styles & Scripts -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportSectionsContainer = document.getElementById('reportSectionsContainer');
+            const addSectionBtn = document.getElementById('addSectionBtn');
+            let sectionIndex = 0;
+            const quillEditors = {};
+
+            // Add standard section row
+            function addSectionRow(headline = '', content = '', isEmbedded = false, workgroupBadge = '', wgReportId = null) {
+                const card = document.createElement('div');
+                card.className = `card mb-3 section-row shadow-sm border-0 rounded-4 overflow-hidden ${isEmbedded ? 'border-start border-success border-4' : ''}`;
+                card.dataset.index = sectionIndex;
+                if (wgReportId) {
+                    card.dataset.wgReportId = wgReportId;
+                }
+
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light py-3 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            ${workgroupBadge ? `<span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-link-45deg me-1"></i> ${workgroupBadge}</span>` : ''}
+                            <span class="fw-bold text-secondary">${workgroupBadge ? '' : `قسم #${sectionIndex + 1}`}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-section-btn rounded-pill px-3">
+                            <i class="bi bi-trash me-1"></i> ${isEmbedded ? 'إلغاء التضمين' : 'حذف القسم'}
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">عنوان القسم (اختياري)</label>
+                            <input type="text" name="sections[${sectionIndex}][headline]" class="form-control" placeholder="أدخل عنواناً رئيسياً اختيارياً..." value="${headline}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">محتوى القسم</label>
+                            <div class="quill-editor mb-2" id="quill-editor-${sectionIndex}" style="height: 250px;"></div>
+                            <input type="hidden" name="sections[${sectionIndex}][content]" class="section-content-input" id="section-content-${sectionIndex}">
+                        </div>
+                    </div>
+                `;
+                reportSectionsContainer.appendChild(card);
+
+                const editorId = `#quill-editor-${sectionIndex}`;
+                const quill = new Quill(editorId, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'align': [] }],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                if (content) {
+                    quill.root.innerHTML = content;
+                }
+
+                quillEditors[sectionIndex] = quill;
+                const currentIndex = sectionIndex;
+
+                card.querySelector('.remove-section-btn').addEventListener('click', function() {
+                    if (isEmbedded && wgReportId) {
+                        if (!confirm('هل أنت متأكد من إلغاء تضمين تقرير مجموعة العمل هذا؟ سيعود إلى قائمة المسودات المتاحة.')) {
+                            return;
+                        }
+                        unEmbedWorkgroupReport(wgReportId);
+                        return;
+                    }
+
+                    if (document.querySelectorAll('.section-row').length > 1) {
+                        card.remove();
+                        delete quillEditors[currentIndex];
+                        document.querySelectorAll('.section-row:not([data-wg-report-id])').forEach((row, idx) => {
+                            const span = row.querySelector('.card-header span.fw-bold');
+                            if (span) span.textContent = `قسم #${idx + 1}`;
+                        });
+                    } else {
+                        alert("يجب أن يحتوي التقرير على قسم واحد على الأقل.");
+                    }
+                });
+
+                sectionIndex++;
+            }
+
+            // Initialize with one default section
+            addSectionRow();
+            addSectionBtn.addEventListener('click', () => addSectionRow());
+
+            // Form Submit handler
+            const form = document.querySelector('#reportForm');
+            const statusInput = document.getElementById('statusInput');
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            const approveSendBtn = document.getElementById('approveSendBtn');
+            const submitToCommitteeBtn = document.getElementById('submitToCommitteeBtn');
+
+            if (saveDraftBtn) {
+                saveDraftBtn.addEventListener('click', () => { statusInput.value = 'draft'; });
+            }
+            if (submitToCommitteeBtn) {
+                submitToCommitteeBtn.addEventListener('click', () => { statusInput.value = 'draft'; });
+            }
+            if (approveSendBtn) {
+                approveSendBtn.addEventListener('click', () => { statusInput.value = 'submitted'; });
+            }
+
+            form.onsubmit = function() {
+                document.querySelectorAll('.section-row').forEach(row => {
+                    const idx = row.dataset.index;
+                    const contentInput = document.getElementById(`section-content-${idx}`);
+                    if (quillEditors[idx] && contentInput) {
+                        contentInput.value = quillEditors[idx].root.innerHTML;
+                    }
+                });
+            };
+
+            // Dynamic Positions Table
+            const positionsTableBody = document.getElementById('positionsTableBody');
+            const addPositionBtn = document.getElementById('addPositionBtn');
+            let positionIndex = 0;
+
+            function addPositionRow(name = '', status = 'Present', election = false, memberName = '') {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <input type="text" name="positions[${positionIndex}][name]" class="form-control" value="${name}" required>
+                    </td>
+                    <td>
+                        <input type="text" name="positions[${positionIndex}][member_name]" class="form-control" value="${memberName}">
+                    </td>
+                    <td>
+                        <select name="positions[${positionIndex}][status]" class="form-select" required>
+                            <option value="Present" ${status === 'Present' ? 'selected' : ''}>حاضر</option>
+                            <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>غائب</option>
+                            <option value="Excused" ${status === 'Excused' ? 'selected' : ''}>معتذر</option>
+                            <option value="Vacant" ${status === 'Vacant' ? 'selected' : ''}>شاغر</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <input type="checkbox" name="positions[${positionIndex}][election]" value="1" ${election ? 'checked' : ''} class="form-check-input">
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-row rounded-circle">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </td>
+                `;
+                positionsTableBody.appendChild(tr);
+                positionIndex++;
+
+                tr.querySelector('.remove-row').addEventListener('click', function() {
+                    tr.remove();
+                });
+            }
+
+            addPositionBtn.addEventListener('click', () => addPositionRow());
+
+            // Default NA Committee Positions
+            const defaultPositions = [
+                "الرئيس",
+                "نائب الرئيس",
+                "السكرتير",
+                "أمين صندوق"
+            ];
+            defaultPositions.forEach(pos => addPositionRow(pos));
+
+            // Attachments Handling
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const maxAttachments = 5;
+
+            function updateRemoveButtons() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                rows.forEach(row => {
+                    const removeBtn = row.querySelector('.remove-attachment-btn');
+                    if (rows.length > 1) {
+                        removeBtn.classList.remove('d-none');
+                    } else {
+                        removeBtn.classList.add('d-none');
+                    }
+                });
+                addAttachmentBtn.style.display = rows.length >= maxAttachments ? 'none' : 'inline-block';
+            }
+
+            addAttachmentBtn.addEventListener('click', function() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length < maxAttachments) {
+                    const newRow = document.createElement('div');
+                    newRow.className = 'attachment-row mb-2';
+                    newRow.innerHTML = `
+                        <div class="input-group">
+                            <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                            <button type="button" class="btn btn-outline-danger remove-attachment-btn">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    attachmentsContainer.appendChild(newRow);
+                    newRow.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                        newRow.remove();
+                        updateRemoveButtons();
+                    });
+                    updateRemoveButtons();
+                }
+            });
+
+            attachmentsContainer.querySelector('.remove-attachment-btn').addEventListener('click', function(e) {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length > 1) {
+                    e.currentTarget.closest('.attachment-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            form.addEventListener('submit', function() {
+                attachmentsContainer.querySelectorAll('input[type="file"]').forEach(input => {
+                    if (!input.value) input.disabled = true;
+                });
+            });
+
+            // Offcanvas Workgroup Drawer & Embedding Logic
+                    });
+    </script>
+    <div class="modal fade" id="reportsVideoModal" tabindex="-1" aria-labelledby="reportsVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: #090d16; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary px-2.5 py-1 rounded-pill fw-bold">NA Egypt</span>
+                    <h6 class="modal-title fw-bold text-white mb-0" id="reportsVideoModalLabel">
+                        دليل فيديو متحرك: دورة إعداد ودمج التقارير
+                    </h6>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/tutorials/report-guide-animation.html" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-inline-flex align-items-center gap-1.5" title="فتح في نافذة كاملة">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>فتح في نافذة كاملة</span>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh;">
+                <iframe src="/tutorials/report-guide-animation.html" style="width: 100%; height: 100%; border: none;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+          </div>
+        
+    </div>
+
+    <!-- Scene 2: Real Committee Reports Index -->
+    <div class="tutorial-scene-box" id="sceneBoxCommIndex">
+        
+          <div class="container-fluid">
+            <div class="text-center w-100 mb-3">
+    <h2 class="text-center text-gradient d-inline-block mx-auto" style="line-height: 1.55; padding-bottom: 6px; padding-top: 2px; overflow: visible; font-weight: 700; text-align: center !important; margin: 0 auto; display: inline-block;">تقارير اللجان</h2>
+</div>
+    <div class="container mt-4">
+                
+                    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4 shadow-sm border-0">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell-fill fs-4 text-warning"></i>
+                    <div>
+                        <strong>لديك 1 مسودة تقرير من مجموعات العمل التابعة بانتظار الإدراج في تقرير اللجنة.</strong>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/committee-reports?tab=workgroups" class="btn btn-sm btn-outline-dark fw-bold">
+                        <i class="bi bi-eye"></i> مسودات مجموعات العمل (1)
+                    </a>
+                    <a href="/committee-reports/create" class="btn btn-sm btn-primary fw-bold">
+                        <i class="bi bi-plus-lg"></i> إضافة تقرير
+                    </a>
+                </div>
+            </div>
+        
+                    <ul class="nav nav-pills mb-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/committee-reports?tab=committee">
+                        <i class="bi bi-building me-1"></i> تقارير اللجان
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/committee-reports?tab=workgroups">
+                        <i class="bi bi-people me-1"></i> مسودات مجموعات العمل
+                                                    <span class="badge bg-danger text-white rounded-pill ms-1">1</span>
+                                            </a>
+                </li>
+            </ul>
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex gap-2">
+                                    <a href="/committee-reports/create" class="btn btn-outline-primary px-4">إضافة تقرير</a>                                <a href="/committee-reports/archive" class="btn btn-outline-info">
+                    <i class="bi bi-archive-fill"></i> أرشيف التقارير
+                </a>
+                                <a href="/committee-reports-guide" class="btn btn-outline-primary" title="دليل تقارير اللجان ومجموعات العمل">
+                    <i class="bi bi-book-half"></i> دليل التقارير
+                </a>
+                <button type="button" class="btn btn-outline-danger d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#reportsVideoModal" title="دليل فيديو متحرك: دورة إعداد ودمج التقارير">
+                    <i class="bi bi-play-circle-fill"></i>
+                    <span>فيديو توضيحي متحرك</span>
+                </button>
+                <button type="button" class="btn btn-outline-success copy-public-link-btn" data-url="/reports-guide?token=naegypt-reports-guide-secret-key-2025" title="نسخ الرابط العام">
+                    <i class="bi bi-link-45deg"></i> نسخ الرابط العام
+                </button>
+            </div>
+            
+            <form action="/committee-reports" method="GET" class="d-flex">
+                                                <input type="text" name="search" class="form-control me-2" placeholder="بحث..." value="">
+                <button type="submit" class="btn btn-outline-secondary">بحث</button>
+            </form>
+        </div>
+
+        <form action="/committee-reports/export" method="POST">
+            <input type="hidden" name="_token" value="BvACOdcjdIC0T6MBgMZ9gvG7pFJUesotmCq4j6uT" autocomplete="off">            <div class="mb-3">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> تصدير المحدد إلى PDF
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" id="selectAllReports">
+                                </div>
+                            </th>
+                                                        <th>تاريخ كتابة التقرير</th>
+                            <th>تاريخ الاجتماع</th>
+                            <th>اليوم</th>
+                            <th>الحالة (Status)</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr>
+                                <td>
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input report-checkbox" type="checkbox" name="report_ids[]" value="80">
+                                    </div>
+                                </td>
+                                                                <td>2026-06-19</td>
+                                <td>
+                                    2026-06-19
+                                                                    </td>
+                                <td>اول حد</td>
+                                <td>
+                                                                            <span class="badge bg-warning text-dark"><i class="bi bi-file-earmark me-1"></i>مسودة</span>
+                                                                    </td>
+                                <td>
+                                    <a href="/committee-reports/80" class="btn btn-sm btn-info text-white me-1">
+                                        <i class="bi bi-eye"></i> عرض
+                                    </a>
+                                    <a href="/committee-reports/80/pdf" class="btn btn-sm btn-secondary me-1">
+                                        <i class="bi bi-file-earmark-pdf"></i> تقرير PDF
+                                    </a>
+                                                                                                                <a href="/committee-reports/80/edit" class="btn btn-sm btn-primary me-1">
+                                            <i class="bi bi-pencil"></i> تعديل
+                                        </a>
+                                                                                    <form action="/committee-reports/80/send" method="POST" class="d-inline me-1" onsubmit="return confirm('هل أنت متأكد من الموافقة وإرسال هذا التقرير إلى لجنة خدمة الإقليم؟')">
+                                                <input type="hidden" name="_token" value="BvACOdcjdIC0T6MBgMZ9gvG7pFJUesotmCq4j6uT" autocomplete="off">                                                <button class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-circle"></i> إرسال إلى سكرتير المنطقة
+                                                </button>
+                                            </form>
+                                                                                                                                                </td>
+                            </tr>
+                                                    <tr>
+                                <td>
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input report-checkbox" type="checkbox" name="report_ids[]" value="1">
+                                    </div>
+                                </td>
+                                                                <td>2026-01-09</td>
+                                <td>
+                                    2026-01-09
+                                                                    </td>
+                                <td>jjj</td>
+                                <td>
+                                                                            <span class="badge bg-success text-white"><i class="bi bi-patch-check-fill me-1"></i>تمت الموافقة</span>
+                                                                    </td>
+                                <td>
+                                    <a href="/committee-reports/1" class="btn btn-sm btn-info text-white me-1">
+                                        <i class="bi bi-eye"></i> عرض
+                                    </a>
+                                    <a href="/committee-reports/1/pdf" class="btn btn-sm btn-secondary me-1">
+                                        <i class="bi bi-file-earmark-pdf"></i> تقرير PDF
+                                    </a>
+                                                                                                                                            </td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const selectAll = document.getElementById('selectAllReports');
+                const checkboxes = document.querySelectorAll('.report-checkbox');
+                
+                if (selectAll) {
+                    selectAll.addEventListener('change', function() {
+                        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                    });
+                }
+            });
+        </script>
+        <div class="mt-3">
+            
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="public-link-copy-toast" class="toast align-items-center text-white bg-success border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2 py-2.5 px-3">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span class="fw-semibold">تم نسخ الرابط العام بنجاح!</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        function initPublicLinkCopy() {
+            const copyButtons = document.querySelectorAll('.copy-public-link-btn');
+            const toastEl = document.getElementById('public-link-copy-toast');
+            const toast = (toastEl && typeof bootstrap !== 'undefined' && bootstrap.Toast) 
+                ? new bootstrap.Toast(toastEl, { delay: 3000 }) 
+                : null;
+
+            copyButtons.forEach(btn => {
+                if (btn.dataset.copyInitialized) return;
+                btn.dataset.copyInitialized = 'true';
+
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    if (!url) return;
+
+                    const originalHtml = this.innerHTML;
+                    const isRtl = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('lang') === 'ar';
+                    const copiedFeedback = isRtl ? 'تم النسخ!' : 'Copied!';
+
+                    const copySuccess = () => {
+                        this.innerHTML = '<i class="bi bi-check2-circle"></i> <span>' + copiedFeedback + '</span>';
+                        this.classList.remove('btn-outline-success');
+                        this.classList.add('btn-success', 'text-white');
+                        if (toast) {
+                            toast.show();
+                        }
+                        setTimeout(() => {
+                            this.innerHTML = originalHtml;
+                            this.classList.remove('btn-success', 'text-white');
+                            this.classList.add('btn-outline-success');
+                        }, 2500);
+                    };
+
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(url).then(copySuccess).catch(() => fallbackCopy(url, copySuccess));
+                    } else {
+                        fallbackCopy(url, copySuccess);
+                    }
+                });
+            });
+
+            function fallbackCopy(text, onSuccess) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-9999px';
+                textArea.style.top = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful && typeof onSuccess === 'function') {
+                        onSuccess();
+                    } else {
+                        window.prompt(isRtl ? 'انسخ الرابط:' : 'Copy link:', text);
+                    }
+                } catch (err) {
+                    window.prompt('Copy link:', text);
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPublicLinkCopy);
+        } else {
+            initPublicLinkCopy();
+        }
+    })();
+</script>
+
+    <div class="modal fade" id="reportsVideoModal" tabindex="-1" aria-labelledby="reportsVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: #090d16; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary px-2.5 py-1 rounded-pill fw-bold">NA Egypt</span>
+                    <h6 class="modal-title fw-bold text-white mb-0" id="reportsVideoModalLabel">
+                        دليل فيديو متحرك: دورة إعداد ودمج التقارير
+                    </h6>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/tutorials/report-guide-animation.html" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-inline-flex align-items-center gap-1.5" title="فتح في نافذة كاملة">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>فتح في نافذة كاملة</span>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh;">
+                <iframe src="/tutorials/report-guide-animation.html" style="width: 100%; height: 100%; border: none;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+          </div>
+        
+    </div>
+
+    <!-- Scene 3: Real Committee Create Form with Drawer -->
+    <div class="tutorial-scene-box" id="sceneBoxCommCreate">
+        
+          <div class="container-fluid">
+            <div class="text-center w-100 mb-3">
+    <h2 class="text-center text-gradient d-inline-block mx-auto" style="line-height: 1.55; padding-bottom: 6px; padding-top: 2px; overflow: visible; font-weight: 700; text-align: center !important; margin: 0 auto; display: inline-block;">إنشاء تقرير لجنة</h2>
+</div>
+    <div class="container mt-4">
+        
+        
+        <form action="/committee-reports" method="POST" id="reportForm" enctype="multipart/form-data">
+            <input type="hidden" name="_token" value="BvACOdcjdIC0T6MBgMZ9gvG7pFJUesotmCq4j6uT" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
+
+            <!-- Container for embedded workgroup report IDs -->
+            <div id="embeddedWorkgroupReportsInputs"></div>
+
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-building text-primary fs-4"></i>
+                                <h5 class="mb-0 fw-bold">لجنة العلاقات العامة</h5>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#reportsVideoModal" title="دليل فيديو متحرك: دورة إعداد ودمج التقارير">
+                                    <i class="bi bi-play-circle-fill"></i>
+                                    <span>فيديو توضيحي متحرك</span>
+                                </button>
+                                <span class="badge bg-primary text-white px-3 py-2 rounded-pill fw-semibold">
+                                    تقارير اللجان
+                                </span>
+                            </div>
+                        </div>
+                                    </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3 align-items-end g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">تاريخ كتابة التقرير</label>
+                            <input type="text" class="form-control bg-light" readonly value="2026-11-09">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">تاريخ الاجتماع <span class="text-danger">*</span></label>
+                            <input type="date" name="meeting_date" class="form-control" required value="">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">وصف يوم الاجتماع <span class="text-danger">*</span></label>
+                            <input type="text" name="meeting_day_description" class="form-control" placeholder="مثال: أول أحد" required value="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="is_exceptional" id="is_exceptional" value="1" >
+                                <label class="form-check-label fw-bold text-danger ms-2" for="is_exceptional">
+                                    اجتماع استثنائي
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Positions Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
+                        <i class="bi bi-people-fill text-primary"></i>
+                        حالة المناصب
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="addPositionBtn">
+                        <i class="bi bi-plus-lg me-1"></i> إضافة منصب
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>اسم المنصب</th>
+                                    <th>اسم العضو</th>
+                                    <th>الحالة (Status)</th>
+                                    <th>مفتوح للترشيح</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionsTableBody">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attended Members Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-person-lines-fill text-success"></i>
+                    الأعضاء الحاضرون
+                </div>
+                <div class="card-body p-4">
+                    <textarea name="attended_members" class="form-control" rows="4" placeholder="أدخل أسماء الأعضاء الحاضرين..."></textarea>
+                </div>
+            </div>
+
+            <!-- Report Body Sections (Repeatable + Embedded Workgroups) -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-richtext-fill text-primary"></i>
+                        أقسام التقرير
+                    </h5>
+                    <div class="d-flex gap-2">
+                                                    <button type="button" class="btn btn-success shadow-sm rounded-pill px-3" data-bs-toggle="offcanvas" data-bs-target="#embedWorkgroupDrawer">
+                                <i class="bi bi-box-arrow-in-down me-1"></i> إدراج تقرير مجموعة عمل
+                                <span class="badge bg-white text-success rounded-pill ms-1" id="availableDraftsCountBadge">1</span>
+                            </button>
+                                                <button type="button" class="btn btn-outline-primary rounded-pill px-3" id="addSectionBtn">
+                            <i class="bi bi-plus-lg me-1"></i> إضافة قسم
+                        </button>
+                    </div>
+                </div>
+
+                <div id="reportSectionsContainer">
+                    <!-- Dynamic standard sections and embedded workgroup cards will appear here -->
+                </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-paperclip text-info"></i>
+                    المرفقات
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">رفع المرفقات</label>
+                        <div id="attachmentsContainer">
+                            <div class="attachment-row mb-2">
+                                <div class="input-group">
+                                    <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                    <button type="button" class="btn btn-outline-danger remove-attachment-btn d-none">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 mt-2" id="addAttachmentBtn">
+                            <i class="bi bi-plus-lg me-1"></i> إضافة مرفق
+                        </button>
+                        <div class="form-text text-muted mt-2">
+                            بحد أقصى 5 ملفات، 5 ميجابايت لكل ملف. <br>
+                            الأنواع المسموح بها: PDF, PNG, JPG, JPEG, DOCX, XLSX
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Section -->
+            <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-light py-3 border-bottom fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-layout-text-window-reverse text-secondary"></i>
+                    تذييل التقرير
+                </div>
+                <div class="card-body p-4">
+                    <textarea name="footer" class="form-control" rows="3" placeholder="أدخل نص تذييل التقرير الخاص (يتجاوز تذييل اللجنة الافتراضي)..."></textarea>
+                                    </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex gap-3 mb-5">
+                <button type="submit" id="saveDraftBtn" class="btn btn-outline-secondary btn-lg flex-fill rounded-pill py-3 fw-semibold">
+                    <i class="bi bi-file-earmark me-1"></i> حفظ كمسودة
+                </button>
+                                    <button type="submit" id="approveSendBtn" class="btn btn-primary btn-lg flex-fill rounded-pill py-3 fw-bold shadow-sm">
+                        <i class="bi bi-check-circle me-1"></i> موافقة وإرسال إلى لجنة خدمة الإقليم
+                    </button>
+                            </div>
+        </form>
+    </div>
+
+    <!-- Offcanvas Visual Drawer for Embedding Workgroup Reports -->
+            
+        <style>
+            .draft-item.active {
+                background-color: #0d6efd !important;
+                border-color: #0d6efd !important;
+                color: #ffffff !important;
+            }
+            .draft-item.active h6,
+            .draft-item.active .text-muted,
+            .draft-item.active small,
+            .draft-item.active i {
+                color: #ffffff !important;
+            }
+            .draft-item.active .badge {
+                background-color: rgba(255, 255, 255, 0.25) !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            }
+        </style>
+        <div class="offcanvas offcanvas-start shadow-lg border-0" tabindex="-1" id="embedWorkgroupDrawer" style="max-width: 100%; width: 880px;">
+            <div class="offcanvas-header bg-primary bg-gradient text-white p-3 p-md-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-2 d-flex align-items-center justify-content-center text-white" style="width: 44px; height: 44px;">
+                        <i class="bi bi-box-arrow-in-down fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="offcanvas-title fw-bold text-white mb-0">إدراج تقرير مجموعة عمل</h5>
+                        <small class="text-white-50">اختر مسودة مجموعة عمل لمعاينتها وتضمينها</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body p-0">
+                <div class="row g-0 h-100">
+                    <!-- Left List Pane -->
+                    <div class="col-md-5 border-end bg-light p-3 d-flex flex-column" style="max-height: calc(100vh - 85px); overflow-y: auto;">
+                        <div class="mb-3">
+                            <input type="text" id="drawerSearchInput" class="form-control rounded-pill" placeholder="بحث...">
+                        </div>
+
+                        <div class="list-group list-group-flush gap-2" id="drawerDraftsList">
+                                                            <a href="javascript:void(0)" class="list-group-item list-group-item-action border rounded-3 p-3 shadow-sm draft-item active" 
+                                   id="drawer-item-" 
+                                   data-report-id="" 
+                                   onclick="selectDrawerReport()">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="fw-bold mb-0 text-truncate" style="max-width: 200px;">مجموعة خطوط المساعدة</h6>
+                                        <span class="badge bg-success text-white rounded-pill small">0 أقسام</span>
+                                    </div>
+                                    <div class="text-muted small mb-2">
+                                        <i class="bi bi-calendar3 me-1"></i> 2026-11-09
+                                                                                    &bull; اجتماع الجمعة الأول
+                                                                            </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span class="badge bg-secondary text-white rounded-pill small">
+                                            <i class="bi bi-paperclip me-1"></i> 0
+                                        </span>
+                                        <span class="badge bg-primary text-white rounded-pill small px-2 py-1 embed-status-badge">
+                                            <i class="bi bi-eye me-1"></i> معاينة المسودة
+                                        </span>
+                                    </div>
+                                </a>
+                                                    </div>
+                    </div>
+
+                    <!-- Right Preview Pane -->
+                    <div class="col-md-7 p-3 p-md-4 d-flex flex-column justify-content-between" style="max-height: calc(100vh - 85px); overflow-y: auto;">
+                        <div id="drawerPreviewContent">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <!-- Sticky Embed Action -->
+                        <div class="pt-3 border-top mt-3 d-flex justify-content-end gap-2 bg-white sticky-bottom">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="offcanvas">
+                                إغلاق
+                            </button>
+                            <button type="button" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" id="drawerEmbedBtn" onclick="embedCurrentDrawerReport()">
+                                <i class="bi bi-box-arrow-in-down me-1"></i> تضمين التقرير بالكامل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- Quill Styles & Scripts -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportSectionsContainer = document.getElementById('reportSectionsContainer');
+            const addSectionBtn = document.getElementById('addSectionBtn');
+            let sectionIndex = 0;
+            const quillEditors = {};
+
+            // Add standard section row
+            function addSectionRow(headline = '', content = '', isEmbedded = false, workgroupBadge = '', wgReportId = null) {
+                const card = document.createElement('div');
+                card.className = `card mb-3 section-row shadow-sm border-0 rounded-4 overflow-hidden ${isEmbedded ? 'border-start border-success border-4' : ''}`;
+                card.dataset.index = sectionIndex;
+                if (wgReportId) {
+                    card.dataset.wgReportId = wgReportId;
+                }
+
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light py-3 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            ${workgroupBadge ? `<span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-link-45deg me-1"></i> ${workgroupBadge}</span>` : ''}
+                            <span class="fw-bold text-secondary">${workgroupBadge ? '' : `قسم #${sectionIndex + 1}`}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-section-btn rounded-pill px-3">
+                            <i class="bi bi-trash me-1"></i> ${isEmbedded ? 'إلغاء التضمين' : 'حذف القسم'}
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">عنوان القسم (اختياري)</label>
+                            <input type="text" name="sections[${sectionIndex}][headline]" class="form-control" placeholder="أدخل عنواناً رئيسياً اختيارياً..." value="${headline}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">محتوى القسم</label>
+                            <div class="quill-editor mb-2" id="quill-editor-${sectionIndex}" style="height: 250px;"></div>
+                            <input type="hidden" name="sections[${sectionIndex}][content]" class="section-content-input" id="section-content-${sectionIndex}">
+                        </div>
+                    </div>
+                `;
+                reportSectionsContainer.appendChild(card);
+
+                const editorId = `#quill-editor-${sectionIndex}`;
+                const quill = new Quill(editorId, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'align': [] }],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                if (content) {
+                    quill.root.innerHTML = content;
+                }
+
+                quillEditors[sectionIndex] = quill;
+                const currentIndex = sectionIndex;
+
+                card.querySelector('.remove-section-btn').addEventListener('click', function() {
+                    if (isEmbedded && wgReportId) {
+                        if (!confirm('هل أنت متأكد من إلغاء تضمين تقرير مجموعة العمل هذا؟ سيعود إلى قائمة المسودات المتاحة.')) {
+                            return;
+                        }
+                        unEmbedWorkgroupReport(wgReportId);
+                        return;
+                    }
+
+                    if (document.querySelectorAll('.section-row').length > 1) {
+                        card.remove();
+                        delete quillEditors[currentIndex];
+                        document.querySelectorAll('.section-row:not([data-wg-report-id])').forEach((row, idx) => {
+                            const span = row.querySelector('.card-header span.fw-bold');
+                            if (span) span.textContent = `قسم #${idx + 1}`;
+                        });
+                    } else {
+                        alert("يجب أن يحتوي التقرير على قسم واحد على الأقل.");
+                    }
+                });
+
+                sectionIndex++;
+            }
+
+            // Initialize with one default section
+            addSectionRow();
+            addSectionBtn.addEventListener('click', () => addSectionRow());
+
+            // Form Submit handler
+            const form = document.querySelector('#reportForm');
+            const statusInput = document.getElementById('statusInput');
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            const approveSendBtn = document.getElementById('approveSendBtn');
+            const submitToCommitteeBtn = document.getElementById('submitToCommitteeBtn');
+
+            if (saveDraftBtn) {
+                saveDraftBtn.addEventListener('click', () => { statusInput.value = 'draft'; });
+            }
+            if (submitToCommitteeBtn) {
+                submitToCommitteeBtn.addEventListener('click', () => { statusInput.value = 'draft'; });
+            }
+            if (approveSendBtn) {
+                approveSendBtn.addEventListener('click', () => { statusInput.value = 'submitted'; });
+            }
+
+            form.onsubmit = function() {
+                document.querySelectorAll('.section-row').forEach(row => {
+                    const idx = row.dataset.index;
+                    const contentInput = document.getElementById(`section-content-${idx}`);
+                    if (quillEditors[idx] && contentInput) {
+                        contentInput.value = quillEditors[idx].root.innerHTML;
+                    }
+                });
+            };
+
+            // Dynamic Positions Table
+            const positionsTableBody = document.getElementById('positionsTableBody');
+            const addPositionBtn = document.getElementById('addPositionBtn');
+            let positionIndex = 0;
+
+            function addPositionRow(name = '', status = 'Present', election = false, memberName = '') {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <input type="text" name="positions[${positionIndex}][name]" class="form-control" value="${name}" required>
+                    </td>
+                    <td>
+                        <input type="text" name="positions[${positionIndex}][member_name]" class="form-control" value="${memberName}">
+                    </td>
+                    <td>
+                        <select name="positions[${positionIndex}][status]" class="form-select" required>
+                            <option value="Present" ${status === 'Present' ? 'selected' : ''}>حاضر</option>
+                            <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>غائب</option>
+                            <option value="Excused" ${status === 'Excused' ? 'selected' : ''}>معتذر</option>
+                            <option value="Vacant" ${status === 'Vacant' ? 'selected' : ''}>شاغر</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <input type="checkbox" name="positions[${positionIndex}][election]" value="1" ${election ? 'checked' : ''} class="form-check-input">
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-row rounded-circle">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </td>
+                `;
+                positionsTableBody.appendChild(tr);
+                positionIndex++;
+
+                tr.querySelector('.remove-row').addEventListener('click', function() {
+                    tr.remove();
+                });
+            }
+
+            addPositionBtn.addEventListener('click', () => addPositionRow());
+
+            // Default NA Committee Positions
+            const defaultPositions = [
+                "الرئيس",
+                "نائب الرئيس",
+                "السكرتير",
+                "أمين صندوق"
+            ];
+            defaultPositions.forEach(pos => addPositionRow(pos));
+
+            // Attachments Handling
+            const attachmentsContainer = document.getElementById('attachmentsContainer');
+            const addAttachmentBtn = document.getElementById('addAttachmentBtn');
+            const maxAttachments = 5;
+
+            function updateRemoveButtons() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                rows.forEach(row => {
+                    const removeBtn = row.querySelector('.remove-attachment-btn');
+                    if (rows.length > 1) {
+                        removeBtn.classList.remove('d-none');
+                    } else {
+                        removeBtn.classList.add('d-none');
+                    }
+                });
+                addAttachmentBtn.style.display = rows.length >= maxAttachments ? 'none' : 'inline-block';
+            }
+
+            addAttachmentBtn.addEventListener('click', function() {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length < maxAttachments) {
+                    const newRow = document.createElement('div');
+                    newRow.className = 'attachment-row mb-2';
+                    newRow.innerHTML = `
+                        <div class="input-group">
+                            <input class="form-control" type="file" name="attachments[]" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                            <button type="button" class="btn btn-outline-danger remove-attachment-btn">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    attachmentsContainer.appendChild(newRow);
+                    newRow.querySelector('.remove-attachment-btn').addEventListener('click', function() {
+                        newRow.remove();
+                        updateRemoveButtons();
+                    });
+                    updateRemoveButtons();
+                }
+            });
+
+            attachmentsContainer.querySelector('.remove-attachment-btn').addEventListener('click', function(e) {
+                const rows = attachmentsContainer.querySelectorAll('.attachment-row');
+                if (rows.length > 1) {
+                    e.currentTarget.closest('.attachment-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            form.addEventListener('submit', function() {
+                attachmentsContainer.querySelectorAll('input[type="file"]').forEach(input => {
+                    if (!input.value) input.disabled = true;
+                });
+            });
+
+            // Offcanvas Workgroup Drawer & Embedding Logic
+                            const availableDrafts = [{"id":null,"wg_name":"\u0645\u062c\u0645\u0648\u0639\u0629 \u062e\u0637\u0648\u0637 \u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629","meeting_date":"2026-11-09","meeting_day_description":"\u0627\u062c\u062a\u0645\u0627\u0639 \u0627\u0644\u062c\u0645\u0639\u0629 \u0627\u0644\u0623\u0648\u0644","sections":[],"positions":null,"attended_members":null,"attachments":[]}];
+                const embeddedReportIds = new Set();
+                let activeSelectedReportId = availableDrafts.length > 0 ? availableDrafts[0].id : null;
+
+                window.selectDrawerReport = function(reportId) {
+                    activeSelectedReportId = reportId;
+                    document.querySelectorAll('.draft-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    const activeItem = document.getElementById(`drawer-item-${reportId}`);
+                    if (activeItem) activeItem.classList.add('active');
+
+                    renderDrawerPreview(reportId);
+                };
+
+                function renderDrawerPreview(reportId) {
+                    const r = availableDrafts.find(d => d.id === reportId);
+                    const previewContainer = document.getElementById('drawerPreviewContent');
+                    const embedBtn = document.getElementById('drawerEmbedBtn');
+                    if (!r || !previewContainer) return;
+
+                    const isAlreadyEmbedded = embeddedReportIds.has(reportId);
+
+                    let sectionsHtml = '';
+                    if (r.sections && r.sections.length > 0) {
+                        sectionsHtml = r.sections.map((sec, idx) => `
+                            <div class="card mb-3 border-0 bg-light rounded-3 p-3">
+                                <h6 class="fw-bold text-primary mb-2">${sec.headline || `قسم #${idx + 1}`}</h6>
+                                <div class="small text-muted">${sec.content || '<em>messages.No content</em>'}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        sectionsHtml = `<p class="text-muted small"><em>لا توجد أقسام في مسودة هذا التقرير.</em></p>`;
+                    }
+
+                    let positionsHtml = '';
+                    if (r.positions && r.positions.length > 0) {
+                        const statusMap = {
+                            'Present': { label: "\u062d\u0627\u0636\u0631", bg: 'bg-success text-white', icon: 'bi-check-circle-fill' },
+                            'Absent': { label: "\u063a\u0627\u0626\u0628", bg: 'bg-danger text-white', icon: 'bi-x-circle-fill' },
+                            'Excused': { label: "\u0645\u0639\u062a\u0630\u0631", bg: 'bg-warning text-dark', icon: 'bi-clock-fill' },
+                            'Vacant': { label: "\u0634\u0627\u063a\u0631", bg: 'bg-secondary text-white', icon: 'bi-dash-circle-fill' }
+                        };
+                        positionsHtml = `
+                            <div class="table-responsive mb-3">
+                                <table class="table table-sm table-bordered text-center small mb-0">
+                                    <thead class="table-light"><tr><th>المنصب</th><th>اسم العضو</th><th>الحالة (Status)</th><th>ترشيحات</th></tr></thead>
+                                    <tbody>
+                                        ${r.positions.map(p => {
+                                            const st = statusMap[p.status] || { label: p.status || '-', bg: 'bg-secondary text-white', icon: 'bi-info-circle-fill' };
+                                            const electionHtml = p.election ? `<span class="badge bg-danger text-white px-2 py-1"><i class="bi bi-exclamation-circle-fill me-1"></i>مفتوح</span>` : '-';
+                                            return `<tr><td>${p.name || '-'}</td><td>${p.member_name || '-'}</td><td><span class="badge ${st.bg} px-2 py-1"><i class="bi ${st.icon} me-1"></i>${st.label}</span></td><td>${electionHtml}</td></tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    }
+
+                    let attachmentsHtml = '';
+                    if (r.attachments && r.attachments.length > 0) {
+                        attachmentsHtml = `
+                            <div class="mb-3">
+                                <strong class="small d-block mb-1">المرفقات:</strong>
+                                <div class="d-flex flex-wrap gap-2">
+                                    ${r.attachments.map(att => `<span class="badge bg-white text-dark border p-2"><i class="bi bi-file-earmark me-1 text-primary"></i> ${att.name} (${att.size})</span>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    previewContainer.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
+                            <div>
+                                <h5 class="fw-bold text-primary mb-1">${r.wg_name}</h5>
+                                <div class="text-muted small">
+                                    <i class="bi bi-calendar3 me-1"></i> ${r.meeting_date}
+                                    ${r.meeting_day_description ? `&bull; ${r.meeting_day_description}` : ''}
+                                </div>
+                            </div>
+                            ${isAlreadyEmbedded ? '<span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check2-circle me-1"></i> تم الإدراج</span>' : '<span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-file-earmark me-1"></i> مسودة للجنة التابعة</span>'}
+                        </div>
+
+                        ${r.attended_members ? `
+                            <div class="alert alert-light border rounded-3 p-3 mb-3">
+                                <strong class="small text-secondary d-block mb-1"><i class="bi bi-people me-1"></i> الحضور:</strong>
+                                <span class="small text-dark">${r.attended_members}</span>
+                            </div>
+                        ` : ''}
+
+                        ${positionsHtml}
+
+                        <h6 class="fw-bold text-secondary mb-2">أقسام التقرير (${r.sections ? r.sections.length : 0})</h6>
+                        <div class="mb-3">${sectionsHtml}</div>
+
+                        ${attachmentsHtml}
+                    `;
+
+                    if (embedBtn) {
+                        if (isAlreadyEmbedded) {
+                            embedBtn.disabled = true;
+                            embedBtn.className = 'btn btn-secondary rounded-pill px-4';
+                            embedBtn.innerHTML = '<i class="bi bi-check2 me-1"></i> تم الإدراج';
+                        } else {
+                            embedBtn.disabled = false;
+                            embedBtn.className = 'btn btn-success rounded-pill px-4 fw-bold shadow-sm';
+                            embedBtn.innerHTML = '<i class="bi bi-box-arrow-in-down me-1"></i> تضمين التقرير بالكامل';
+                        }
+                    }
+                }
+
+                window.embedCurrentDrawerReport = function() {
+                    if (!activeSelectedReportId) return;
+                    embedWorkgroupReport(activeSelectedReportId);
+                };
+
+                window.embedWorkgroupReport = function(reportId) {
+                    const r = availableDrafts.find(d => d.id === reportId);
+                    if (!r || embeddedReportIds.has(reportId)) return;
+
+                    embeddedReportIds.add(reportId);
+
+                    // Add hidden input for form submission
+                    const hiddenContainer = document.getElementById('embeddedWorkgroupReportsInputs');
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'embedded_workgroup_report_ids[]';
+                    input.value = reportId;
+                    input.id = `input-wg-${reportId}`;
+                    hiddenContainer.appendChild(input);
+
+                    // Add each section as an intact embedded row
+                    if (r.sections && r.sections.length > 0) {
+                        r.sections.forEach((sec, idx) => {
+                            const badge = `${r.wg_name} (${r.meeting_date})`;
+                            const headline = sec.headline ? `[${r.wg_name}] ${sec.headline}` : `[${r.wg_name}] تقرير مجموعة العمل`;
+                            addSectionRow(headline, sec.content || '', true, badge, reportId);
+                        });
+                    } else {
+                        const badge = `${r.wg_name} (${r.meeting_date})`;
+                        addSectionRow(`[${r.wg_name}] تقرير مجموعة العمل`, '', true, badge, reportId);
+                    }
+
+                    // Append attendees to attended_members textarea
+                    if (r.attended_members) {
+                        const attendedTextarea = document.querySelector('textarea[name="attended_members"]');
+                        if (attendedTextarea) {
+                            const prefix = attendedTextarea.value.trim() ? '\n\n' : '';
+                            attendedTextarea.value += prefix + `[${r.wg_name}]: ` + r.attended_members;
+                        }
+                    }
+
+                    // Update drawer item visual state
+                    const drawerItem = document.getElementById(`drawer-item-${reportId}`);
+                    if (drawerItem) {
+                        const badge = drawerItem.querySelector('.embed-status-badge');
+                        if (badge) {
+                            badge.className = 'badge bg-success text-white rounded-pill small px-2 py-1 embed-status-badge';
+                            badge.innerHTML = '<i class="bi bi-check2 me-1"></i> تم الإدراج';
+                        }
+                    }
+
+                    renderDrawerPreview(reportId);
+
+                    // Close offcanvas drawer
+                    const drawerEl = document.getElementById('embedWorkgroupDrawer');
+                    const offcanvasInstance = bootstrap.Offcanvas.getInstance(drawerEl);
+                    if (offcanvasInstance) offcanvasInstance.hide();
+                };
+
+                window.unEmbedWorkgroupReport = function(reportId) {
+                    embeddedReportIds.delete(reportId);
+
+                    // Remove hidden input
+                    const input = document.getElementById(`input-wg-${reportId}`);
+                    if (input) input.remove();
+
+                    // Remove all section cards corresponding to this workgroup
+                    document.querySelectorAll(`.section-row[data-wg-report-id="${reportId}"]`).forEach(card => {
+                        const idx = card.dataset.index;
+                        delete quillEditors[idx];
+                        card.remove();
+                    });
+
+                    // Update drawer item state
+                    const drawerItem = document.getElementById(`drawer-item-${reportId}`);
+                    if (drawerItem) {
+                        const badge = drawerItem.querySelector('.embed-status-badge');
+                        if (badge) {
+                            badge.className = 'badge bg-primary text-white rounded-pill small px-2 py-1 embed-status-badge';
+                            badge.innerHTML = '<i class="bi bi-eye me-1"></i> معاينة المسودة';
+                        }
+                    }
+
+                    renderDrawerPreview(reportId);
+                };
+
+                // Search in Drawer list
+                const drawerSearchInput = document.getElementById('drawerSearchInput');
+                if (drawerSearchInput) {
+                    drawerSearchInput.addEventListener('input', function() {
+                        const q = this.value.trim().toLowerCase();
+                        document.querySelectorAll('.draft-item').forEach(item => {
+                            const text = item.textContent.toLowerCase();
+                            item.style.display = text.includes(q) ? 'block' : 'none';
+                        });
+                    });
+                }
+
+                // Initial render of first draft in drawer
+                if (availableDrafts.length > 0) {
+                    renderDrawerPreview(availableDrafts[0].id);
+                }
+                    });
+    </script>
+    <div class="modal fade" id="reportsVideoModal" tabindex="-1" aria-labelledby="reportsVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: #090d16; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary px-2.5 py-1 rounded-pill fw-bold">NA Egypt</span>
+                    <h6 class="modal-title fw-bold text-white mb-0" id="reportsVideoModalLabel">
+                        دليل فيديو متحرك: دورة إعداد ودمج التقارير
+                    </h6>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/tutorials/report-guide-animation.html" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-inline-flex align-items-center gap-1.5" title="فتح في نافذة كاملة">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>فتح في نافذة كاملة</span>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh;">
+                <iframe src="/tutorials/report-guide-animation.html" style="width: 100%; height: 100%; border: none;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+          </div>
+        
+    </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Celebration Modal -->
+            <div class="celebration-modal" id="celebModal">
+                <div class="celebration-card-box">
+                    <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 32px; box-shadow: 0 0 25px rgba(16,185,129,0.5);">
+                        <i class="bi bi-check-lg text-white"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">اكتملت جميع الخطوات بنجاح!</h4>
+                    <p class="small text-light opacity-75 mb-4" id="celebText">
+                        تمت محاكاة جميع الإجراءات بنجاح في النظام الفعلي.
+                    </p>
+                    <button type="button" class="btn btn-outline-light rounded-pill px-4" onclick="seekTo(0)">
+                        <i class="bi bi-arrow-repeat me-1"></i> إعادة مشاهدة العرض
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating Explainer Banner -->
+            <div class="floating-explainer" id="explainerBanner">
+                <div class="floating-explainer-icon" id="explainerIcon">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1" id="explainerTitle" style="font-size: 14.5px;">عنوان الخطوة</h5>
+                    <p class="mb-0 text-light opacity-75 small" id="explainerDesc">وصف الخطوة التوضيحية.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="player-bottom-bar">
+            <div class="timeline-rail-wrap" id="timelineRail" onclick="onTimelineClick(event)">
+                <div class="timeline-rail-bar">
+                    <div class="timeline-rail-fill" id="timelineFill"></div>
+                </div>
+                <div class="timeline-rail-thumb" id="timelineThumb"></div>
+            </div>
+
+            <div class="controls-btn-row">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn-play-toggle" id="btnPlay" onclick="togglePlay()">
+                        <i class="bi bi-play-fill fs-5" id="playIcon"></i>
+                    </button>
+                    <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-variant-numeric: tabular-nums;">
+                        <span id="timeNow">00:00</span> / <span id="timeTotal">01:15</span>
+                    </div>
+                    <span class="badge rounded-pill bg-dark border border-secondary text-info px-3 py-1.5" id="sceneBadge">
+                        الخطوة 1
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="ctrl-pill-btn" onclick="cycleSpeed()" id="btnSpeed">
                         <span>السرعة</span>
-                        <span class="speed-badge" id="speedBadge">1.0x</span>
+                        <span class="badge bg-secondary text-white" id="speedTag">1.0x</span>
                     </button>
-                    <button type="button" class="ctrl-btn" onclick="jumpTo(0)" title="إعادة تشغيل من البداية">
-                        <span>↺</span> إعادة
+                    <button type="button" class="ctrl-pill-btn" onclick="seekTo(0)">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>إعادة</span>
                     </button>
-                    <button type="button" class="ctrl-btn" onclick="toggleFullscreen()" title="ملء الشاشة">
-                        <span>⛶</span> ملء الشاشة
+                    <button type="button" class="ctrl-pill-btn" onclick="toggleFullscreen()">
+                        <i class="bi bi-fullscreen"></i>
+                        <span>ملء الشاشة</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Interactive Animation Timeline Engine -->
+    <!-- Animation & Interactive Timeline Engine -->
     <script>
-        const TOTAL_DURATION = 60; // 60 seconds total runtime
-        let currentTime = 0;
+        const DURATION = 60;
+        let curTime = 0;
         let isPlaying = false;
-        let playbackSpeed = 1.0;
-        let lastFrameTimestamp = null;
-        let animationFrameId = null;
+        let playSpeed = 1.0;
+        let lastTs = null;
+        let animId = null;
 
-        // Elements
-        const timelineProgress = document.getElementById('timelineProgress');
+        const vCursor = document.getElementById('vCursor');
+        const clickWave = document.getElementById('clickWave');
+        const timelineFill = document.getElementById('timelineFill');
         const timelineThumb = document.getElementById('timelineThumb');
-        const curTimeText = document.getElementById('curTime');
+        const timeNow = document.getElementById('timeNow');
         const playIcon = document.getElementById('playIcon');
-        const speedBadge = document.getElementById('speedBadge');
-        const stepIndicator = document.getElementById('stepIndicator');
-        const virtualCursor = document.getElementById('virtualCursor');
-        const clickPulse = document.getElementById('clickPulse');
+        const sceneBadge = document.getElementById('sceneBadge');
+        const speedTag = document.getElementById('speedTag');
 
-        // Banners & Pills
-        const btnChapter1 = document.getElementById('btnChapter1');
-        const btnChapter2 = document.getElementById('btnChapter2');
         const explainerBanner = document.getElementById('explainerBanner');
         const explainerIcon = document.getElementById('explainerIcon');
         const explainerTitle = document.getElementById('explainerTitle');
         const explainerDesc = document.getElementById('explainerDesc');
+        const celebModal = document.getElementById('celebModal');
 
-        // Sidebar and Header
-        const navWorkgroups = document.getElementById('navWorkgroups');
-        const navCommittees = document.getElementById('navCommittees');
-        const navReports = document.getElementById('navReports');
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
-        const userRoleBadge = document.getElementById('userRoleBadge');
-        const breadcrumbSection = document.getElementById('breadcrumbSection');
-
-        // Views
-        const viewWgIndex = document.getElementById('viewWgIndex');
-        const viewWgCreate = document.getElementById('viewWgCreate');
-        const viewCommitteeIndex = document.getElementById('viewCommitteeIndex');
-        const viewCommitteeCreate = document.getElementById('viewCommitteeCreate');
-        const embedDrawerOverlay = document.getElementById('embedDrawerOverlay');
-        const celebrationOverlay = document.getElementById('celebrationOverlay');
-
-        // Dynamic Text Elements
-        const txtWgActivities = document.getElementById('txtWgActivities');
-        const txtWgFinance = document.getElementById('txtWgFinance');
-        const txtCommitteeSummary = document.getElementById('txtCommitteeSummary');
-        const embedStatusText = document.getElementById('embedStatusText');
-        const cardStatusTag = document.getElementById('cardStatusTag');
-        const btnDoEmbed = document.getElementById('btnDoEmbed');
-
-        // Scene Definitions (Timeline from 0s to 60s)
         const scenes = [
-            // PART 1: Workgroup Officer (0s - 30s)
-            {
-                start: 0,
-                end: 6,
-                id: 1,
-                chapter: 1,
-                title: "الجزء 1: تسجيل الدخول واختيار تقارير مجموعات العمل",
-                desc: "يدخل خادم مجموعة العمل إلى لوحة التحكم ويختار قسم مجموعات العمل التابعة للجنته للبدء في توثيق إنجازات الشهر.",
-                icon: "🌱",
-                colorClass: "green",
-                cursorPos: { x: 920, y: 150 }, // Moving near sidebar
-                action: (progress) => {
-                    activateView(viewWgIndex);
-                    setUser('IT', 'خادم مجموعة تقنية المعلومات', 'مجموعة عمل', '#10b981', 'tag-workgroup');
-                    setNavActive(navWorkgroups, 'active-green');
-                    breadcrumbSection.innerText = 'مجموعات العمل';
-                }
-            },
-            {
-                start: 6,
-                end: 13,
-                id: 2,
-                chapter: 1,
-                title: "بدء إنشاء تقرير مجموعة العمل (+ إضافة تقرير)",
-                desc: "ينقر الخادم على زر 'إضافة تقرير جديد' ليفتح نموذج تقرير مجموعة العمل بالشارة الخضراء الخاصة باللجان الفرعية.",
-                icon: "📝",
-                colorClass: "green",
-                cursorPos: { x: 300, y: 110 }, // Towards "+ إضافة تقرير جديد"
-                action: (progress) => {
-                    if (progress > 0.6) {
-                        triggerClick(300, 110);
-                        activateView(viewWgCreate);
-                    } else {
-                        activateView(viewWgIndex);
-                    }
-                }
-            },
-            {
-                start: 13,
-                end: 22,
-                id: 3,
-                chapter: 1,
-                title: "توثيق إنجازات وأنشطة وخزينة مجموعة العمل",
-                desc: "يقوم مسؤول المجموعة بتوثيق الأنشطة الميدانية المنفذة، الحضور، وتحديث الموقف المالي للخزينة بكل شفافية.",
-                icon: "✍️",
-                colorClass: "green",
-                cursorPos: { x: 550, y: 280 }, // Typing area
-                action: (progress) => {
-                    activateView(viewWgCreate);
-                    const fullText = "تم إطلاق نظام الحضور الإلكتروني للاجتماعات وتحديث قائمة المجموعات النشطة عبر الموقع.";
-                    const typedLength = Math.floor(progress * fullText.length);
-                    txtWgActivities.innerHTML = `<span style="color:#0f172a; font-weight:600;">${fullText.slice(0, typedLength)}</span><span style="border-right: 2px solid #10b981; animation: blink 1s infinite;"></span>`;
-                    txtWgFinance.innerHTML = `<span style="color:#059669; font-weight:700;">المتبقي: 450 ج.م</span>`;
-                }
-            },
-            {
-                start: 22,
-                end: 30,
-                id: 4,
-                chapter: 1,
-                title: "⚠️ تنبيه جوهري: الحفظ كمسودة (Draft) للجنة الأم",
-                desc: "💡 تقارير مجموعات العمل لا تُرسل مباشرة للإقليم (RSC)! بل تُحفظ كمسودة لتراجعها وتُضمنها لجنة الخدمة الأم في تقريرها الرسمي.",
-                icon: "💡",
-                colorClass: "amber",
-                cursorPos: { x: 260, y: 470 }, // Towards Save Draft Button
-                action: (progress) => {
-                    activateView(viewWgCreate);
-                    if (progress > 0.5) {
-                        triggerClick(260, 470);
-                        document.getElementById('wgStatusBadge').innerText = "تم الحفظ كمسودة (Draft) - بانتظار تضمين اللجنة الأم";
-                        document.getElementById('wgStatusBadge').className = "tag-badge tag-draft";
-                    }
-                }
-            },
+                {
+        start: 0,
+        end: 8,
+        chapterIdx: 0,
+        badge: "مجموعة العمل",
+        title: "الجزء 1: تسجيل دخول مسؤول مجموعة العمل وفتح النموذج الحقيقي",
+        desc: "ظهور بانر إرشادات تقرير مجموعة العمل الفعلي التابعة للجنة العلاقات العامة، ونموذج إدخال التقرير بالشارة الخضراء.",
+        icon: "bi-diagram-3-fill",
+        borderColor: "#10b981",
+        iconColor: "#10b981",
+        cursorPos: { x: 750, y: 160 },
+        action: (p) => {
+            showScene('sceneBoxWgCreate');
+            celebModal.classList.remove('active');
+        }
+    },
+    {
+        start: 8,
+        end: 18,
+        chapterIdx: 0,
+        badge: "بيانات الاجتماع والحضور",
+        title: "ملء تاريخ الاجتماع وحضور الخدام المؤتمنين",
+        desc: "ملء تاريخ الاجتماع ووصفه، ومراجعة جدول الخدام المؤتمنين والحضور الفعلي.",
+        icon: "bi-calendar-check-fill",
+        borderColor: "#10b981",
+        iconColor: "#10b981",
+        cursorPos: { x: 620, y: 280 },
+        action: (p) => {
+            showScene('sceneBoxWgCreate');
+            const dateIn = document.querySelector('#sceneBoxWgCreate input[name="meeting_date"]');
+            if (dateIn) dateIn.value = "2026-11-07";
+            const descIn = document.querySelector('#sceneBoxWgCreate input[name="meeting_day_description"]');
+            if (descIn) {
+                const text = "اجتماع الجمعة الأول من نوفمبر";
+                descIn.value = text.slice(0, Math.floor(p * text.length));
+            }
+        }
+    },
+    {
+        start: 18,
+        end: 30,
+        chapterIdx: 0,
+        badge: "حفظ كمسودة للجنة الأم",
+        title: "⚠️ تنبيه جوهري: حفظ التقرير كمسودة (Draft)",
+        desc: "💡 تقارير مجموعات العمل لا تُرسل لـ RSC مباشرة! بل تُحفظ كمسودة لتراجعها وتُضمنها لجنة الخدمة الأم في تقريرها الرسمي.",
+        icon: "bi-shield-exclamation",
+        borderColor: "#f59e0b",
+        iconColor: "#f59e0b",
+        cursorPos: { x: 450, y: 550 },
+        action: (p) => {
+            showScene('sceneBoxWgCreate');
+            const saveBtn = document.querySelector('#sceneBoxWgCreate button[value="draft"]') || document.querySelector('#sceneBoxWgCreate #saveDraftBtn');
+            if (p > 0.5) doClick(450, 550);
+        }
+    },
 
-            // PART 2: Committee Chairperson (30s - 60s)
-            {
-                start: 30,
-                end: 37,
-                id: 5,
-                chapter: 2,
-                title: "الجزء 2: تسجيل دخول رئيس لجنة الخدمة وإشعار المسودة",
-                desc: "يدخل رئيس لجنة الخدمة (العلاقات العامة) ويلاحظ ظهور تنبيه بوجود مسودة تقرير معلقة رفعتها مجموعة العمل التابعة.",
-                icon: "🏢",
-                colorClass: "blue",
-                cursorPos: { x: 880, y: 220 }, // Sidebar Committees
-                action: (progress) => {
-                    activateView(viewCommitteeIndex);
-                    setUser('PR', 'رئيس لجنة العلاقات العامة', 'لجنة خدمة', '#2563eb', 'tag-committee');
-                    setNavActive(navCommittees, 'active-blue');
-                    breadcrumbSection.innerText = 'لجان الخدمة';
-                    embedDrawerOverlay.classList.remove('active');
-                }
-            },
-            {
-                start: 37,
-                end: 44,
-                id: 6,
-                chapter: 2,
-                title: "إنشاء تقرير اللجنة الأم للشهر الحالي",
-                desc: "يضغط رئيس اللجنة على زر 'إضافة تقرير اللجنة' للبدء في تجميع تقرير العلاقات العامة الدوري الموجه للإقليم (RSC).",
-                icon: "📑",
-                colorClass: "blue",
-                cursorPos: { x: 280, y: 110 }, // Towards Add Committee Report
-                action: (progress) => {
-                    if (progress > 0.6) {
-                        triggerClick(280, 110);
-                        activateView(viewCommitteeCreate);
-                    } else {
-                        activateView(viewCommitteeIndex);
-                    }
-                }
-            },
-            {
-                start: 44,
-                end: 50,
-                id: 7,
-                chapter: 2,
-                title: "فتح نافذة مراجعة وتضمين تقارير مجموعات العمل التابعة",
-                desc: "من داخل نموذج التقرير، يفتح رئيس اللجنة قسم مجموعات العمل لاستعراض المسودات المرفوعة من فرق العمل التابعة.",
-                icon: "🔍",
-                colorClass: "blue",
-                cursorPos: { x: 340, y: 225 }, // Button Open Embed Drawer
-                action: (progress) => {
-                    activateView(viewCommitteeCreate);
-                    if (progress > 0.4) {
-                        triggerClick(340, 225);
-                        embedDrawerOverlay.classList.add('active');
-                    } else {
-                        embedDrawerOverlay.classList.remove('active');
-                    }
-                }
-            },
-            {
-                start: 50,
-                end: 55,
-                id: 8,
-                chapter: 2,
-                title: "تضمين التقرير (Embed): تحول الحالة إلى مُضمّن",
-                desc: "يراجع رئيس اللجنة أعمال مجموعة العمل ثم يضغط 'تضمين في التقرير'، فتتحول حالة تقرير المجموعة فوراً إلى (مُضمّن - Embedded).",
-                icon: "🔗",
-                colorClass: "purple",
-                cursorPos: { x: 740, y: 280 }, // Inside drawer "تضمين"
-                action: (progress) => {
-                    activateView(viewCommitteeCreate);
-                    embedDrawerOverlay.classList.add('active');
-                    if (progress > 0.4) {
-                        triggerClick(740, 280);
-                        cardStatusTag.innerText = "✓ مُضمّن (Embedded)";
-                        cardStatusTag.className = "tag-badge tag-embedded";
-                        btnDoEmbed.innerText = "تم التضمين بنجاح";
-                        btnDoEmbed.className = "btn-mini btn-outline";
-                        embedStatusText.innerHTML = `<span style="color:#059669; font-weight:700;">✓ تم تضمين تقرير مجموعة تقنية المعلومات (IT) بنجاح في التقرير الرسمي.</span>`;
-                    }
-                }
-            },
-            {
-                start: 55,
-                end: 60,
-                id: 9,
-                chapter: 2,
-                title: "الاعتماد والإرسال النهائي إلى لجنة خدمة الإقليم (RSC)",
-                desc: "بعد إغلاق النافذة واكتمال التقرير الموحد، يضغط رئيس اللجنة على 'اعتماد وإرسال التقرير' ليصبح متاحاً لمؤتمر الإقليم.",
-                icon: "🚀",
-                colorClass: "green",
-                cursorPos: { x: 260, y: 480 }, // Submit to RSC button
-                action: (progress) => {
-                    embedDrawerOverlay.classList.remove('active');
-                    activateView(viewCommitteeCreate);
-                    txtCommitteeSummary.innerHTML = `<span style="color:#1e3a8a; font-weight:600;">تقرير العلاقات العامة لشهر نوفمبر: تم تنفيذ حملات التوعية ودعم مجموعات العمل التابعة بنجاح.</span>`;
-                    if (progress > 0.7) {
-                        triggerClick(260, 480);
-                        celebrationOverlay.classList.add('active');
-                    } else {
-                        celebrationOverlay.classList.remove('active');
-                    }
+    // PART 2: COMMITTEE (30s - 60s)
+    {
+        start: 30,
+        end: 38,
+        chapterIdx: 1,
+        badge: "تقارير اللجان",
+        title: "الجزء 2: تسجيل دخول رئيس لجنة الخدمة وإشعار المسودة",
+        desc: "الانتقال لشاشة تقارير اللجان الحقيقية وظهور التنبيه الأصفر: (يوجد عدد 1 تقرير غير مضمن لمجموعات العمل التابعة).",
+        icon: "bi-bell-fill",
+        borderColor: "#2563eb",
+        iconColor: "#2563eb",
+        cursorPos: { x: 750, y: 180 },
+        action: (p) => {
+            showScene('sceneBoxCommIndex');
+            celebModal.classList.remove('active');
+        }
+    },
+    {
+        start: 38,
+        end: 45,
+        chapterIdx: 1,
+        badge: "تقرير اللجنة الأم",
+        title: "إنشاء تقرير لجنة العلاقات العامة للشهر الحالي",
+        desc: "الضغط على زر (إضافة تقرير) لفتح نموذج تقرير لجنة العلاقات العامة التابع لمنظومة خدمة الإقليم.",
+        icon: "bi-plus-circle-fill",
+        borderColor: "#2563eb",
+        iconColor: "#2563eb",
+        cursorPos: { x: 400, y: 220 },
+        action: (p) => {
+            if (p > 0.6) {
+                doClick(400, 220);
+                showScene('sceneBoxCommCreate');
+            } else {
+                showScene('sceneBoxCommIndex');
+            }
+        }
+    },
+    {
+        start: 45,
+        end: 53,
+        chapterIdx: 1,
+        badge: "نافذة التضمين (Drawer)",
+        title: "فتح النافذة الجانبية الحقيقية لمراجعة مسودات مجموعات العمل",
+        desc: "الضغط على زر استعراض وتضمين التقارير لفتح الـ Offcanvas ومراجعة مسودة مجموعة خطوط المساعدة.",
+        icon: "bi-box-arrow-in-left",
+        borderColor: "#2563eb",
+        iconColor: "#2563eb",
+        cursorPos: { x: 500, y: 350 },
+        action: (p) => {
+            showScene('sceneBoxCommCreate');
+            const drawerBtn = document.querySelector('#sceneBoxCommCreate [data-bs-target="#workgroupReportsOffcanvas"]');
+            if (drawerBtn && p > 0.4) {
+                doClick(500, 350);
+                const offcanvasEl = document.getElementById('workgroupReportsOffcanvas');
+                if (offcanvasEl) {
+                    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+                    bsOffcanvas.show();
                 }
             }
+        }
+    },
+    {
+        start: 53,
+        end: 60,
+        chapterIdx: 1,
+        badge: "تضمين في التقرير",
+        title: "تضمين التقرير (Embed): تحول الحالة فوراً إلى مُضمّن",
+        desc: "الضغط على زر تضمين في التقرير، فتحصل عملية الدمج الفورية وتتحول الشارة إلى (مُضمّن - Embedded).",
+        icon: "bi-link-45deg",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 300, y: 400 },
+        action: (p) => {
+            showScene('sceneBoxCommCreate');
+            if (p > 0.5) {
+                doClick(300, 400);
+                const offcanvasEl = document.getElementById('workgroupReportsOffcanvas');
+                if (offcanvasEl) {
+                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (bsOffcanvas) bsOffcanvas.hide();
+                }
+                celebModal.classList.add('active');
+                document.getElementById('celebText').innerText = "تم تضمين تقرير مجموعة العمل بنجاح في التقرير الرسمي للجنة الخدمة، واعتماد التقرير الموحد وإرساله إلى لجنة خدمة الإقليم (RSC).";
+            }
+        }
+    }
         ];
 
-        // State Helpers
-        function activateView(viewElem) {
-            document.querySelectorAll('.sim-view').forEach(v => {
-                if (v === viewElem) {
-                    v.classList.add('active');
-                } else {
-                    v.classList.remove('active');
-                }
+        function showScene(sceneId) {
+            document.querySelectorAll('.tutorial-scene-box').forEach(s => {
+                if (s.id === sceneId) s.classList.add('active');
+                else s.classList.remove('active');
             });
         }
 
-        function setUser(initials, name, roleText, avatarColor, roleClass) {
-            userAvatar.innerText = initials;
-            userAvatar.style.background = avatarColor;
-            userName.innerText = name;
-            userRoleBadge.innerText = roleText;
-            userRoleBadge.className = `tag-badge ${roleClass}`;
-        }
-
-        function setNavActive(navElem, activeClass) {
-            document.querySelectorAll('.nav-item').forEach(n => {
-                n.className = 'nav-item';
-            });
-            navElem.className = `nav-item ${activeClass}`;
-        }
-
-        let lastClickTime = 0;
-        function triggerClick(x, y) {
+        let lastClick = 0;
+        function doClick(x, y) {
             const now = performance.now();
-            if (now - lastClickTime < 300) return; // Debounce
-            lastClickTime = now;
-            clickPulse.style.left = `${x}px`;
-            clickPulse.style.top = `${y}px`;
-            clickPulse.classList.remove('animate');
-            void clickPulse.offsetWidth; // Force reflow
-            clickPulse.classList.add('animate');
+            if (now - lastClick < 350) return;
+            lastClick = now;
+            clickWave.style.left = `${x}px`;
+            clickWave.style.top = `${y}px`;
+            clickWave.classList.remove('animate');
+            void clickWave.offsetWidth;
+            clickWave.classList.add('animate');
         }
 
-        // Main Animation Frame Tick
-        function tick(timestamp) {
-            if (!lastFrameTimestamp) lastFrameTimestamp = timestamp;
-            const deltaSec = (timestamp - lastFrameTimestamp) / 1000;
-            lastFrameTimestamp = timestamp;
+        function loop(ts) {
+            if (!lastTs) lastTs = ts;
+            const dt = (ts - lastTs) / 1000;
+            lastTs = ts;
 
             if (isPlaying) {
-                currentTime += deltaSec * playbackSpeed;
-                if (currentTime >= TOTAL_DURATION) {
-                    currentTime = TOTAL_DURATION;
+                curTime += dt * playSpeed;
+                if (curTime >= DURATION) {
+                    curTime = DURATION;
                     isPlaying = false;
-                    playIcon.innerText = "↺";
+                    playIcon.className = "bi bi-arrow-counterclockwise fs-5";
                 }
-                updateUI();
+                render();
             }
 
             if (isPlaying) {
-                animationFrameId = requestAnimationFrame(tick);
+                animId = requestAnimationFrame(loop);
             }
         }
 
-        function updateUI() {
-            // Update time display
-            const progressRatio = Math.min(1, Math.max(0, currentTime / TOTAL_DURATION));
-            timelineProgress.style.width = `${progressRatio * 100}%`;
-            timelineThumb.style.right = `${(1 - progressRatio) * 100}%`;
+        function render() {
+            const ratio = Math.min(1, Math.max(0, curTime / DURATION));
+            timelineFill.style.width = `${ratio * 100}%`;
+            timelineThumb.style.right = `${(1 - ratio) * 100}%`;
 
-            const curMins = Math.floor(currentTime / 60);
-            const curSecs = Math.floor(currentTime % 60);
-            curTimeText.innerText = `${curMins < 10 ? '0' : ''}${curMins}:${curSecs < 10 ? '0' : ''}${curSecs}`;
+            const m = Math.floor(curTime / 60);
+            const s = Math.floor(curTime % 60);
+            timeNow.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
 
-            // Find current scene
-            const currentScene = scenes.find(s => currentTime >= s.start && currentTime < s.end) || scenes[scenes.length - 1];
-            const sceneProgress = (currentTime - currentScene.start) / (currentScene.end - currentScene.start);
+            const activeScene = scenes.find(s => curTime >= s.start && curTime < s.end) || scenes[scenes.length - 1];
+            const p = (curTime - activeScene.start) / (activeScene.end - activeScene.start);
 
-            // Execute scene action
-            currentScene.action(Math.min(1, Math.max(0, sceneProgress)));
+            activeScene.action(Math.min(1, Math.max(0, p)));
 
-            // Update Explainer Banner
-            explainerIcon.innerText = currentScene.icon;
-            explainerTitle.innerText = currentScene.title;
-            explainerDesc.innerText = currentScene.desc;
-            explainerBanner.className = `explainer-card ${currentScene.colorClass}`;
+            explainerIcon.innerHTML = `<i class="bi ${activeScene.icon}"></i>`;
+            explainerIcon.style.color = activeScene.iconColor;
+            explainerTitle.innerText = activeScene.title;
+            explainerDesc.innerText = activeScene.desc;
+            explainerBanner.style.borderRightColor = activeScene.borderColor;
 
-            stepIndicator.innerText = `المشهد ${currentScene.id} من ${scenes.length}`;
+            sceneBadge.innerText = activeScene.badge;
 
-            // Smooth Cursor Interpolation
-            if (currentScene.cursorPos) {
-                virtualCursor.style.transform = `translate(${currentScene.cursorPos.x}px, ${currentScene.cursorPos.y}px)`;
+            if (activeScene.cursorPos) {
+                vCursor.style.transform = `translate(${activeScene.cursorPos.x}px, ${activeScene.cursorPos.y}px)`;
             }
 
-            // Update Chapter Active Pill
-            if (currentScene.chapter === 1) {
-                btnChapter1.className = "chapter-pill workgroup active";
-                btnChapter2.className = "chapter-pill";
-            } else {
-                btnChapter1.className = "chapter-pill workgroup";
-                btnChapter2.className = "chapter-pill active";
-            }
+            document.querySelectorAll('.ch-pill-btn').forEach((btn, idx) => {
+                if (idx === activeScene.chapterIdx) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
         }
 
-        function togglePlayPause() {
+        function togglePlay() {
             isPlaying = !isPlaying;
             if (isPlaying) {
-                if (currentTime >= TOTAL_DURATION) {
-                    currentTime = 0;
-                    celebrationOverlay.classList.remove('active');
+                if (curTime >= DURATION) {
+                    curTime = 0;
+                    celebModal.classList.remove('active');
                 }
-                playIcon.innerText = "⏸";
-                lastFrameTimestamp = performance.now();
-                animationFrameId = requestAnimationFrame(tick);
+                playIcon.className = "bi bi-pause-fill fs-5";
+                lastTs = performance.now();
+                animId = requestAnimationFrame(loop);
             } else {
-                playIcon.innerText = "▶";
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                playIcon.className = "bi bi-play-fill fs-5";
+                if (animId) cancelAnimationFrame(animId);
             }
         }
 
-        function jumpTo(seconds) {
-            currentTime = Math.min(TOTAL_DURATION, Math.max(0, seconds));
-            celebrationOverlay.classList.remove('active');
-            updateUI();
-            if (!isPlaying) {
-                togglePlayPause();
-            }
+        function seekTo(sec) {
+            curTime = Math.min(DURATION, Math.max(0, sec));
+            celebModal.classList.remove('active');
+            render();
+            if (!isPlaying) togglePlay();
         }
 
         function cycleSpeed() {
             const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
-            const currentIndex = speeds.indexOf(playbackSpeed);
-            playbackSpeed = speeds[(currentIndex + 1) % speeds.length];
-            speedBadge.innerText = `${playbackSpeed}x`;
+            const idx = speeds.indexOf(playSpeed);
+            playSpeed = speeds[(idx + 1) % speeds.length];
+            speedTag.innerText = `${playSpeed}x`;
         }
 
-        function handleTimelineClick(e) {
-            const rect = document.getElementById('timelineContainer').getBoundingClientRect();
-            // Since RTL, right is 0, left is width
+        function onTimelineClick(e) {
+            const rect = document.getElementById('timelineRail').getBoundingClientRect();
             const clickX = e.clientX - rect.left;
-            const rtlPercent = (rect.width - clickX) / rect.width;
-            jumpTo(rtlPercent * TOTAL_DURATION);
+            const rtlRatio = (rect.width - clickX) / rect.width;
+            seekTo(rtlRatio * DURATION);
         }
 
         function toggleFullscreen() {
-            const wrapper = document.getElementById('playerWrapper');
-            if (!document.fullscreenElement) {
-                wrapper.requestFullscreen().catch(err => alert(err.message));
-            } else {
-                document.exitFullscreen();
-            }
+            const shell = document.getElementById('playerWrap');
+            if (!document.fullscreenElement) shell.requestFullscreen().catch(e => {});
+            else document.exitFullscreen();
         }
 
-        // Spacebar shortcut
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
-                togglePlayPause();
+                togglePlay();
             }
         });
 
-        // Initialize first frame
-        updateUI();
-        // Start playback automatically on load
-        togglePlayPause();
+        // Initialize & Play
+        render();
+        togglePlay();
     </script>
 </body>
 </html>
-

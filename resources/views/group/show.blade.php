@@ -22,6 +22,10 @@
                 
                 {{-- Actions --}}
                 <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 py-2 shadow-sm d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#gsrVideoModal" title="{{ __('messages.gsr_animated_guide_title') }}">
+                        <i class="bi bi-play-circle-fill text-info"></i>
+                        <span>{{ __('messages.gsr_video_tutorial_btn') }}</span>
+                    </button>
                     @unless(auth()->user()->hasRole('ServiceBody'))
                         <x-button-a href="{{ route('group.edit', $group->id) }}" color='primary' name="{{ __('messages.Edit Group') }}" class="btn-sm rounded-pill px-3 py-2 shadow-sm" />
                     @endunless
@@ -590,6 +594,7 @@
             </div>
         @endforeach
     @endif
+    <x-gsr-video-modal />
 </x-layout>
 
 

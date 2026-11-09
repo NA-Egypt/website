@@ -1,0 +1,3065 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="minimal-theme">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</title>
+
+    <!-- Real NA Egypt Fonts & Stylesheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/build/assets/core-vendor-BHJtUl81.css">
+    <link rel="stylesheet" href="/build/assets/app-B1tuYdtP.css">
+    <link rel="stylesheet" href="/build/assets/vendor-select2-8yPzm9Re.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Real App Neo-Glassmorphism Styles from layout.blade.php */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body, .hanken-grotesk {
+            font-family: 'Cairo', sans-serif !important;
+        }
+        body, html {
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --neon-glow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            --text-primary: #1a202c !important;
+            --text-secondary: #4a5568 !important;
+            background-color: #f8fafc !important;
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%) !important;
+            background-attachment: fixed !important;
+            color: var(--text-primary) !important;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            color: transparent !important;
+            display: inline-block;
+        }
+
+        .card, .glass-card {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: var(--neon-glow) !important;
+            border-radius: 16px !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Video Player Wrapper Shell */
+        .tutorial-player-container {
+            width: 100%;
+            max-width: 1360px;
+            margin: 12px auto;
+            background: #0f172a;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Top Header in Player */
+        .player-header-bar {
+            background: #1e293b;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1050;
+        }
+
+        .player-badge {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .player-title-text {
+            color: #f1f5f9;
+            font-size: 14.5px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .ch-pills-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ch-pill-btn {
+            background: #0f172a;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ch-pill-btn:hover {
+            color: white;
+            background: #334155;
+        }
+
+        .ch-pill-btn.active {
+            background: rgba(37, 99, 235, 0.25);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        /* Real Viewport Window */
+        .real-system-viewport {
+            width: 100%;
+            height: 660px;
+            background: #f8fafc;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Virtual Animated Cursor */
+        .v-cursor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            z-index: 99999;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translate(500px, 250px);
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+        }
+
+        .v-cursor svg {
+            width: 100%;
+            height: 100%;
+            fill: #0f172a;
+            stroke: #ffffff;
+            stroke-width: 1.8;
+        }
+
+        .click-pulse-ring {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.65);
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 99998;
+        }
+
+        .click-pulse-ring.animate {
+            animation: pulseWaveRing 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes pulseWaveRing {
+            0% { transform: scale(0.2); opacity: 1; }
+            100% { transform: scale(3.5); opacity: 0; }
+        }
+
+        /* Explainer Banner */
+        .floating-explainer {
+            position: absolute;
+            bottom: 24px;
+            right: 32px;
+            left: 32px;
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(12px);
+            border-radius: 14px;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+            z-index: 2000;
+            border-right: 5px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+
+        .floating-explainer-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            background: rgba(37, 99, 235, 0.15);
+            color: #3b82f6;
+        }
+
+        /* Bottom Controls Bar */
+        .player-bottom-bar {
+            background: #0f172a;
+            padding: 14px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1050;
+        }
+
+        .timeline-rail-wrap {
+            width: 100%;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .timeline-rail-bar {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-rail-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #2563eb 50%, #8b5cf6 100%);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+
+        .timeline-rail-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            right: 0%;
+        }
+
+        .controls-btn-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-play-toggle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-play-toggle:hover {
+            background: #3b82f6;
+            transform: scale(1.06);
+        }
+
+        .ctrl-pill-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .ctrl-pill-btn:hover {
+            background: #334155;
+            color: white;
+        }
+
+        /* Real Shell Overrides for Container */
+        .real-system-viewport .wrapper {
+            background: transparent !important;
+            min-height: 100%;
+        }
+
+        .real-system-viewport .sidebar-wrapper {
+            position: absolute !important;
+            top: 60px;
+            bottom: 0;
+            right: 0;
+            height: auto !important;
+            z-index: 100;
+        }
+
+        .real-system-viewport .page-content {
+            margin-right: 260px !important;
+            padding: 20px 24px !important;
+            min-height: 580px;
+        }
+
+        /* Hidden scene containers */
+        .tutorial-scene-box {
+            display: none;
+        }
+
+        .tutorial-scene-box.active {
+            display: block;
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Celebration Screen */
+        .celebration-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .celebration-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-card-box {
+            background: #1e293b;
+            border: 2px solid #10b981;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            max-width: 540px;
+            color: white;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="hanken-grotesk has-sidebar">
+
+    <div class="tutorial-player-container" id="playerWrap">
+        <!-- Top Controls -->
+        <div class="player-header-bar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="player-badge">GSR Real System</span>
+                <span class="player-title-text">دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR) في النظام الفعلي</span>
+            </div>
+            <div class="ch-pills-row">
+                <button type='button' class='ch-pill-btn active' id='chPill0' onclick='seekTo(0)'>١. إدارة مواعيد الاجتماعات</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='seekTo(25)'>٢. تقرير وأجندة المجموعة (ASC)</button><button type='button' class='ch-pill-btn ' id='chPill2' onclick='seekTo(50)'>٣. سلة طلبات الأدبيات والميداليات</button>
+            </div>
+        </div>
+
+        <!-- Real System Viewport (The EXACT NA Egypt Application DOM) -->
+        <div class="real-system-viewport" id="sysViewport">
+            <!-- Virtual Cursor Pointer -->
+            <div class="v-cursor" id="vCursor">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 2l16 12-8.5 1.5L8 22z" />
+                </svg>
+            </div>
+            <div class="click-pulse-ring" id="clickWave"></div>
+
+            <!-- The Real Application Shell -->
+            <div class="wrapper">
+                <!-- 1. Real NA Egypt Navbar -->
+                <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
+    <nav class="navbar navbar-expand">
+            <div class="top-navbar d-flex align-items-center gap-2">
+                <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="تصغير/توسيع القائمة">
+          <i class="bi bi-list fs-3"></i>
+        </div>
+                <a href="/dashboard" class="d-flex align-items-center">
+          <img src="/assets/images/na.png" alt="NA Logo" width="140" height="45" style="object-fit: contain;">
+        </a>
+      </div>
+
+
+
+      <div class="top-navbar-left ms-auto ">
+        <ul class="navbar-nav align-items-center">
+
+          <!-- Language Switcher -->
+          <!-- Language Switcher -->
+                              <li class="me-2 d-none d-sm-block">
+            <a href="/en" class="btn btn-sm btn-light rounded-pill border shadow-sm d-flex align-items-center gap-2 px-3">
+              <img src="/assets/images/flags/en.png" alt="en Flag" width="20" height="15" class="rounded-1">
+              <span class="fw-bold text-dark small">English</span>
+            </a>
+          </li>
+                
+          
+          <li class="nav-item dropdown dropdown-large">
+            <a class="nav-link p-0" href="#" data-bs-toggle="dropdown">
+              <div class="user-setting d-flex align-items-center gap-2 rounded-pill p-1 pe-3" style="background: rgba(0,0,0,0.03); border: 1px solid var(--glass-border);">
+                <img src="/assets/images/icons/na-logo.png" class="user-img rounded-circle" alt="" style="width: 32px; height: 32px; border: 1px solid var(--glass-border);">
+                <div class="user-name d-none d-sm-block">
+                  <span class="fw-bold text-dark small">
+                                      admin
+                                    </span>
+                </div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start shadow-lg rounded-4 p-0 overflow-hidden mt-2" style="min-width: 240px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);">
+              <li>
+                <div class="d-flex align-items-center p-3 border-bottom" style="background: rgba(0,0,0,0.02); border-color: var(--glass-border) !important;">
+                    <img src="/assets/images/icons/na-logo.png" class="user-img rounded-circle p-1" alt="" style="width: 48px; height: 48px; background: rgba(0,0,0,0.05); border: 1px solid var(--glass-border);">
+                    <div class="ms-3">
+                        <h6 class="mb-0 fw-bold" style="color: var(--text-primary);">
+                                                      admin
+                                                  </h6>
+                        <small class="text-muted small d-block">
+                                                      admin@naegypt.org
+                                                  </small>
+                                                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mt-1 px-2 py-1" style="font-size: 0.7rem; text-transform: uppercase;">
+                          super admin
+                        </span>
+                                            </div>
+                </div>
+              </li>
+              <li class="p-1">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="https://127.0.0.1" style="color: var(--text-primary);">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6;">
+                          <i class="bi bi-globe fs-6"></i>
+                      </div>
+                      <span class="fw-medium">الموقع الإلكتروني</span>
+                  </a>
+              </li>
+                            <li class="p-1 d-block d-sm-none">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="/en" style="color: var(--text-primary);">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+                          <i class="bi bi-translate fs-6"></i>
+                      </div>
+                      <span class="fw-medium">English</span>
+                  </a>
+              </li>
+                            <li><hr class="dropdown-divider my-1" style="border-color: var(--glass-border);"></li>
+              <li class="p-1">
+                                  <form method="POST" action="/logout">
+                    <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                      <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444;">
+                          <i class="bi bi-box-arrow-right fs-6"></i>
+                      </div>
+                      <span class="fw-bold">الخروج</span>
+                    </a>
+                  </form>
+                              </li>
+            </ul>
+          </li>
+          
+
+        </ul>
+      </div>
+    </nav>
+</header>
+
+                <!-- 2. Real NA Egypt Sidebar -->
+                <style>
+/* Sidebar Wrapper Enhancement - Light/Dark Theme aware */
+.sidebar-wrapper,
+.sidebar-wrapper [data-simplebar],
+.sidebar-wrapper .simplebar-content-wrapper {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid var(--glass-border) !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.sidebar-wrapper::-webkit-scrollbar,
+.sidebar-wrapper *::-webkit-scrollbar,
+.sidebar-wrapper .simplebar-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}
+
+[dir="rtl"] .sidebar-wrapper {
+    box-shadow: -4px 0 25px rgba(0, 0, 0, 0.05) !important;
+    border-right: none !important;
+    border-left: 1px solid var(--glass-border) !important;
+}
+
+/* Header & Toggle Section */
+.sidebar-header-controls {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sidebar-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+/* Sidebar Links */
+.sidebar-wrapper .navigation li a {
+    color: var(--text-secondary) !important;
+    padding: 7px 12px;
+    margin: 2px 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-weight: 500;
+    font-size: 13.5px;
+    text-decoration: none;
+}
+
+/* Hover State - Soft Sky Blue */
+.sidebar-wrapper .navigation li a:hover {
+    color: #2563eb !important;
+    background: rgba(37, 99, 235, 0.06) !important;
+    transform: translateX(3px);
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li a:hover {
+    transform: translateX(-3px);
+}
+
+/* Active State - Lighter Soft Sky Blue Pill */
+.sidebar-wrapper .navigation li.mm-active > a {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12) !important;
+    font-weight: 600;
+}
+
+/* Active Parent Glow State - Soft Sky Blue */
+.sidebar-wrapper .navigation li.mm-active-parent > a {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border-left: 3px solid #2563eb;
+    font-weight: 600;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li.mm-active-parent > a {
+    border-left: none;
+    border-right: 3px solid #2563eb;
+}
+
+/* Parent Icon & Text styling */
+.sidebar-wrapper .navigation .parent-icon {
+    font-size: 16px;
+    line-height: 1;
+    margin-right: 10px;
+    transition: transform 0.2s ease;
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation .parent-icon {
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.sidebar-wrapper .navigation li a:hover .parent-icon {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.sidebar-wrapper .navigation li.mm-active > a .parent-icon,
+.sidebar-wrapper .navigation li.mm-active-parent > a .parent-icon {
+    opacity: 1;
+    color: #2563eb !important;
+}
+
+/* Submenu dropdown list with Tree Connection Line */
+.sidebar-wrapper .navigation ul {
+    background: rgba(0, 0, 0, 0.02) !important;
+    padding: 4px 0 4px 8px;
+    margin: 2px 8px !important;
+    list-style: none;
+    border-radius: 8px;
+    position: relative;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul {
+    padding: 4px 8px 4px 0;
+}
+
+.sidebar-wrapper .navigation ul::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 14px;
+    width: 2px;
+    background: rgba(37, 99, 235, 0.25);
+    border-radius: 2px;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul::before {
+    left: auto;
+    right: 14px;
+}
+
+.sidebar-wrapper .navigation ul li a {
+    padding: 5px 12px 5px 24px;
+    margin: 1px 4px;
+    font-size: 13px;
+    opacity: 0.85;
+    position: relative;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation ul li a {
+    padding: 5px 24px 5px 12px;
+}
+
+/* Mobile Back Button styling */
+.sidebar-wrapper .nav-toggle-icon {
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease;
+}
+
+.sidebar-wrapper .nav-toggle-icon:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+    color: #2563eb !important;
+}
+
+/* Category Labels Styling */
+.sidebar-wrapper .navigation li.menu-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary, #94a3b8) !important;
+    opacity: 0.75;
+    padding: 14px 16px 4px 16px;
+    margin-top: 4px;
+}
+
+[dir="rtl"] .sidebar-wrapper .navigation li.menu-label {
+    letter-spacing: 0px;
+    padding: 14px 16px 4px 16px;
+}
+</style>
+
+<aside class="sidebar-wrapper" data-simplebar="true">
+        
+    
+    <div class="sidebar-header-controls d-lg-none">
+        <span class="fw-bold small text-uppercase sidebar-title opacity-75" style="letter-spacing: 0.5px;">لوحة التحكم</span>
+        <div class="sidebar-toggle-btn nav-toggle-icon" title="رجوع">
+            <i class="bi bi-x-lg fs-6"></i>
+        </div>
+    </div>
+
+    <!--navigation-->
+    <ul class="navigation mt-1" id="menu">
+
+      
+      
+      
+      
+            <li class="menu-label">مساحتي</li>
+
+      
+      
+            <li>
+        <a href="/calendar" title="التقويم السنوي">
+          <div class="parent-icon"><i class="bi bi-calendar-check"></i></div>
+          <div class="menu-title">التقويم السنوي</div>
+        </a>
+      </li>
+      
+            
+      
+      
+      
+            <li class="menu-label">الاجتماعات والمجموعات</li>
+
+      
+            <li>
+        <a href="#menuMeetings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuMeetings" title="الاجتماعات والمجموعات">
+          <div class="parent-icon"><i class="bi bi-calendar3-event"></i></div>
+          <div class="menu-title">الاجتماعات والمجموعات</div>
+        </a>
+        <div class="collapse" id="menuMeetings">
+          <ul>
+            <li><a href="/group"><i class="bi bi-arrow-right-short"></i>المجموعات</a></li>
+                        <li><a href="/direct-online-group"><i class="bi bi-arrow-right-short"></i>أونلاين (مباشر)</a></li>
+            <li><a href="/meeting"><i class="bi bi-arrow-right-short"></i>الاجتماعات</a></li>
+            <li><a href="/serviceBody/map"><i class="bi bi-geo-alt"></i>خريطة مناطق الخدمة</a></li>
+                        <li><a href="/gsr-guide"><i class="bi bi-arrow-right-short"></i>دليل اجتماعات ممثل المجموعة (GSR)</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="#menuStructure" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuStructure" title="هيكل الخدمة والمناطق">
+          <div class="parent-icon"><i class="bi bi-diagram-3-fill"></i></div>
+          <div class="menu-title">هيكل الخدمة والمناطق</div>
+        </a>
+        <div class="collapse" id="menuStructure">
+          <ul>
+            <li><a href="/serviceBody"><i class="bi bi-arrow-right-short"></i>المنطقة أو المنتدى</a></li>
+            <li><a href="/serviceCommittee"><i class="bi bi-arrow-right-short"></i>اللجان الخدمية</a></li>
+            <li><a href="/workgroup"><i class="bi bi-arrow-right-short"></i>مجموعات العمل</a></li>
+            <li><a href="/city"><i class="bi bi-arrow-right-short"></i>المدينة</a></li>
+            <li><a href="/neighborhood"><i class="bi bi-arrow-right-short"></i>الحي</a></li>
+            <li><a href="/topic"><i class="bi bi-arrow-right-short"></i>الموضوعات</a></li>
+          </ul>
+        </div>
+      </li>
+            
+      
+      
+      
+            <li class="menu-label">التقارير والأجندات</li>
+      <li>
+        <a href="#menuReportsAgendas" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuReportsAgendas" title="التقارير والأجندات">
+          <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
+          <div class="menu-title">التقارير والأجندات</div>
+        </a>
+        <div class="collapse" id="menuReportsAgendas">
+          <ul>
+                        <li><a href="/committee-reports"><i class="bi bi-arrow-right-short"></i>تقارير اللجان</a></li>
+                                    <li><a href="/committee-reports/archive"><i class="bi bi-arrow-right-short"></i>أرشيف التقارير</a></li>
+                                    <li><a href="/committee-reports-guide"><i class="bi bi-arrow-right-short"></i>دليل تقارير اللجان ومجموعات العمل</a></li>
+            
+                                        <li><a href="/service-body-agendas"><i class="bi bi-arrow-right-short"></i>أجندات المناطق والمنتديات</a></li>
+              <li><a href="/service-body-agendas/archive"><i class="bi bi-arrow-right-short"></i>أرشيف أجندات المناطق والمنتديات</a></li>
+              <li><a href="/groups-agendas/archive"><i class="bi bi-arrow-right-short"></i>أرشيف الأجندات</a></li>
+                      </ul>
+        </div>
+      </li>
+      
+      
+      
+      
+            <li class="menu-label">المطبوعات والمستودع</li>
+
+      
+      
+      <li>
+        <a href="#menuLiteratureStore" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuLiteratureStore" title="المطبوعات والمستودع">
+          <div class="parent-icon"><i class="bi bi-box-seam"></i></div>
+          <div class="menu-title">المطبوعات والمستودع</div>
+        </a>
+        <div class="collapse" id="menuLiteratureStore">
+          <ul>
+            
+                        <li><a href="/store"><i class="bi bi-arrow-right-short"></i>مخزون المستودع</a></li>
+            <li><a href="/store/reports"><i class="bi bi-arrow-right-short"></i>تقارير المستودع</a></li>
+            <li><a href="/store/stocktaking"><i class="bi bi-arrow-right-short"></i>الجرد الفعلي</a></li>
+            
+            
+            
+            
+                        <li><a href="/slips"><i class="bi bi-arrow-right-short"></i>قسائم الصادر والوارد</a></li>
+            
+                        <li><a href="/lit/reconciliation"><i class="bi bi-arrow-right-short"></i>مطابقة واسترجاع المطبوعات</a></li>
+            
+                        <li><a href="/lit/ledger"><i class="bi bi-arrow-right-short"></i>دفتر الأستاذ وحركة المبيعات</a></li>
+            
+            
+                        <li><a href="/literature-requests/treasurer"><i class="bi bi-arrow-right-short"></i>لوحة تحكم أمين الصندوق</a></li>
+            
+                        <li><a href="/literature-requests/committee"><i class="bi bi-arrow-right-short"></i>طلبات المطبوعات</a></li>
+            
+                        <li><a href="/committee-literature"><i class="bi bi-arrow-right-short"></i>طلبات مطبوعات اللجان الخدمية</a></li>
+            
+                        <li><a href="/literature-requests/archive"><i class="bi bi-arrow-right-short"></i>أرشيف طلبات المطبوعات</a></li>
+                        <li><a href="/guidelines/inventory/" target="_blank" rel="noopener"><i class="bi bi-book-half"></i>دليل نظام المخزون</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+      
+      
+            <li class="menu-label">الخدمات والأدوات</li>
+
+      
+            <li>
+        <a href="#menuHelpline" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuHelpline" title="خطوط المساعدة">
+          <div class="parent-icon"><i class="bi bi-telephone-inbound-fill"></i></div>
+          <div class="menu-title">خطوط المساعدة</div>
+        </a>
+        <div class="collapse" id="menuHelpline">
+          <ul>
+            <li><a href="/helpline"><i class="bi bi-bar-chart-line"></i> تقارير المكالمات</a></li>
+            <li><a href="/helpline/volunteers"><i class="bi bi-people"></i> إدارة المتطوعين</a></li>
+            <li><a href="/forms/helpline" target="_blank"><i class="bi bi-box-arrow-up-right"></i> النموذج العام</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="#menuWhatsApp" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuWhatsApp" title="خدمة واتساب">
+          <div class="parent-icon"><i class="bi bi-whatsapp"></i></div>
+          <div class="menu-title">خدمة واتساب</div>
+        </a>
+        <div class="collapse" id="menuWhatsApp">
+          <ul>
+            <li><a href="/whatsapp/inbox"><i class="bi bi-chat-dots-fill"></i> صندوق محادثات واتساب</a></li>
+            <li><a href="/whatsapp/reports"><i class="bi bi-graph-up"></i> تقارير وتحليلات واتساب</a></li>
+                        <li><a href="/whatsapp/subscribers"><i class="bi bi-people-fill"></i> المشتركون والرسائل الجماعية</a></li>
+            <li><a href="/whatsapp/device"><i class="bi bi-qr-code-scan"></i> حالة الاتصال والباركود</a></li>
+                        <li><a href="/whatsapp/docs"><i class="bi bi-book-half"></i> دليل الاستخدام والتوثيق الفني</a></li>
+          </ul>
+        </div>
+      </li>
+      
+      
+            <li>
+        <a href="/forms" title="إدارة النماذج">
+          <div class="parent-icon"><i class="bi bi-input-cursor-text"></i></div>
+          <div class="menu-title">إدارة النماذج</div>
+        </a>
+      </li>
+      
+      
+            <li>
+        <a href="/change-requests" title="طلبات الدعم الفني والتعديل">
+          <div class="parent-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div class="menu-title">طلبات الدعم الفني والتعديل</div>
+        </a>
+      </li>
+      
+      
+            <li>
+        <a href="/facebook-targeting" title="استهداف فيسبوك">
+          <div class="parent-icon"><i class="bi bi-facebook"></i></div>
+          <div class="menu-title">استهداف فيسبوك</div>
+        </a>
+      </li>
+            
+      
+      
+      
+            <li class="menu-label">إدارة النظام</li>
+      <li>
+        <a href="#menuAdmin" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="menuAdmin" title="اعدادات مدير النظام">
+          <div class="parent-icon"><i class="bi bi-gear-fill admin-icon"></i></div>
+          <div class="menu-title">اعدادات مدير النظام</div>
+        </a>
+        <div class="collapse" id="menuAdmin">
+          <ul>
+            <li><a href="/users"><i class="bi bi-arrow-right-short"></i>المستخدمين</a></li>
+            <li><a href="/permissions"><i class="bi bi-arrow-right-short"></i>الاذونات</a></li>
+            <li><a href="/roles"><i class="bi bi-arrow-right-short"></i>الصلاحيات</a></li>
+            <li><a href="/subscribers"><i class="bi bi-arrow-right-short"></i>المشتركين</a></li>
+            <li><a href="/transactions"><i class="bi bi-arrow-right-short"></i>تفاصيل السجلات</a></li>
+            <li><a href="/admin/api-usage"><i class="bi bi-arrow-right-short"></i>تحليلات الـ API والتطبيق</a></li>
+            <li><a href="/admin/apk-requests"><i class="bi bi-arrow-right-short"></i>طلبات تحميل تطبيق Android</a></li>
+          </ul>
+        </div>
+      </li>
+      
+    </ul>
+    <!--end navigation-->
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var body = document.body;
+        var sidebar = document.querySelector(".sidebar-wrapper");
+        var pinBtn = document.getElementById("sidebarPinToggle");
+
+        if (pinBtn) {
+            pinBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                if (typeof window.toggleSidebarMenu === 'function') {
+                    window.toggleSidebarMenu();
+                }
+            });
+        }
+
+        // Auto-close mobile drawer on clicking direct navigation links
+        if (sidebar) {
+            sidebar.querySelectorAll("a[href]").forEach(function(link) {
+                var href = link.getAttribute("href");
+                if (href && href !== '#' && !href.startsWith('javascript:') && !link.hasAttribute("data-bs-toggle")) {
+                    link.addEventListener("click", function() {
+                        if (window.innerWidth <= 1025) {
+                            if (typeof window.toggleSidebarMenu === 'function') {
+                                window.toggleSidebarMenu(false);
+                            } else {
+                                body.classList.remove("sidebar-open");
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Single Accordion Behavior for Submenus
+        if (sidebar) {
+            var collapses = sidebar.querySelectorAll(".collapse");
+            collapses.forEach(function(collapseEl) {
+                collapseEl.addEventListener("show.bs.collapse", function() {
+                    collapses.forEach(function(other) {
+                        if (other !== collapseEl && other.classList.contains("show")) {
+                            var bsCollapse = (typeof bootstrap !== 'undefined' && bootstrap.Collapse)
+                                ? bootstrap.Collapse.getInstance(other)
+                                : null;
+                            if (bsCollapse) {
+                                bsCollapse.hide();
+                            } else {
+                                other.classList.remove("show");
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        // Active Route Parent Highlighting
+        var currentUrl = window.location.href.split('#')[0].split('?')[0];
+        var menuLinks = sidebar ? sidebar.querySelectorAll("a[href]") : [];
+        
+        menuLinks.forEach(function(link) {
+            var linkUrl = link.href.split('#')[0].split('?')[0];
+            if (linkUrl && linkUrl === currentUrl && linkUrl !== 'javascript:;' && linkUrl !== '#') {
+                var parentLi = link.closest("li");
+                if (parentLi) {
+                    parentLi.classList.add("mm-active");
+                }
+                
+                var parentCollapse = link.closest(".collapse");
+                if (parentCollapse) {
+                    parentCollapse.classList.add("show");
+                    var parentDropdownLi = parentCollapse.closest("li");
+                    if (parentDropdownLi) {
+                        parentDropdownLi.classList.add("mm-active-parent");
+                        var parentToggleA = parentDropdownLi.querySelector('[data-bs-toggle="collapse"]');
+                        if (parentToggleA) {
+                            parentToggleA.setAttribute("aria-expanded", "true");
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
+
+  </aside>
+  <div class="sidebar-overlay" onclick="typeof window.toggleSidebarMenu === 'function' ? window.toggleSidebarMenu(false) : document.body.classList.remove('sidebar-open')"></div>
+
+                <!-- 3. Real NA Egypt Page Content Container -->
+                <main class="page-content hanken-grotesk">
+                    <div class="container-fluid" id="scenesContainer">
+                            <!-- Scene 1: Real Meeting Form -->
+    <div class="tutorial-scene-box active" id="sceneBoxMeeting">
+        
+          <div class="container-fluid">
+            <div class="text-center w-100 mb-3">
+    <h2 class="text-center text-gradient d-inline-block mx-auto" style="line-height: 1.55; padding-bottom: 6px; padding-top: 2px; overflow: visible; font-weight: 700; text-align: center !important; margin: 0 auto; display: inline-block;">إضافة اجتماع</h2>
+</div>
+    <div class="container-fluid glass-card p-4 p-md-5 mt-4 mb-5 mx-auto" style="max-width: 900px;">
+        <form action="/meeting" method="post" class="meeting-form">
+                    <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">
+                                                                        <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Group Type</label>
+                                        <select id="group-type-selector" class="form-select rounded-pill shadow-sm">
+                                            <option value="legacy" selected>Standard Group</option>
+                                            <option value="direct_online">Direct Online Group</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="legacy-group-container">
+                                <div class="my-3">
+
+    <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="group_id" id = group_id>اسم المجموعة</label>
+</div>        
+                    <select data-allow-clear="true" class="select2" name="group_id" style="width: 100%;" data-placeholder="Choose Group">
+            <option></option>
+                                            <option value="175" >
+                    العباسية
+                </option>
+                                            <option value="176" >
+                    النمو
+                </option>
+                                            <option value="177" >
+                    ألف مسكن
+                </option>
+                                            <option value="178" >
+                    التقبل
+                </option>
+                                            <option value="179" >
+                    وسط البلد
+                </option>
+                                            <option value="180" >
+                    حدائق القبة
+                </option>
+                                            <option value="181" >
+                    خذ الأمور ببساطة
+                </option>
+                                            <option value="182" >
+                    المعادي
+                </option>
+                                            <option value="184" >
+                    مدينة نصر
+                </option>
+                                            <option value="185" >
+                    روكسي
+                </option>
+                                            <option value="186" >
+                    التجمع الأول
+                </option>
+                                            <option value="187" >
+                    المرج
+                </option>
+                                            <option value="188" >
+                    الدقي
+                </option>
+                                            <option value="189" >
+                    السكينة
+                </option>
+                                            <option value="190" >
+                    اكتوبر
+                </option>
+                                            <option value="191" >
+                    العاشر من رمضان
+                </option>
+                                            <option value="192" >
+                    الحلم
+                </option>
+                                            <option value="193" >
+                    العجمى
+                </option>
+                                            <option value="194" >
+                    رسالة
+                </option>
+                                            <option value="195" >
+                    الأمانة
+                </option>
+                                            <option value="197" >
+                    المنصورة
+                </option>
+                                            <option value="199" >
+                    دمياط
+                </option>
+                                            <option value="200" >
+                    الامل طنطا
+                </option>
+                                            <option value="201" >
+                    العيش ممتنعا طنطا
+                </option>
+                                            <option value="204" >
+                    الغردقة
+                </option>
+                                            <option value="205" >
+                    بني سويف
+                </option>
+                                            <option value="207" >
+                    المستقبل
+                </option>
+                                            <option value="208" >
+                    أسيوط
+                </option>
+                                            <option value="209" >
+                    جامعة القاهرة
+                </option>
+                                            <option value="210" >
+                    هليوبوليس
+                </option>
+                                            <option value="212" >
+                    المنوفية
+                </option>
+                                            <option value="214" >
+                    المنيا
+                </option>
+                                            <option value="215" >
+                    الأمل
+                </option>
+                                            <option value="216" >
+                    عباس العقاد
+                </option>
+                                            <option value="217" >
+                    الحرية اسكندرية
+                </option>
+                                            <option value="219" >
+                    المحلة
+                </option>
+                                            <option value="220" >
+                    سيناء
+                </option>
+                                            <option value="221" >
+                    حلوان
+                </option>
+                                            <option value="223" >
+                    حدائق الأهرام
+                </option>
+                                            <option value="224" >
+                    رسالة التعافي اكتوبر
+                </option>
+                                            <option value="225" >
+                    الشجاعة
+                </option>
+                                            <option value="226" >
+                    المعجزة
+                </option>
+                                            <option value="227" >
+                    الرحلة مستمرة
+                </option>
+                                            <option value="228" >
+                    سوهاج
+                </option>
+                                            <option value="229" >
+                    الجيزة
+                </option>
+                                            <option value="232" >
+                    الزقازيق
+                </option>
+                                            <option value="234" >
+                    المجموعة
+                </option>
+                                            <option value="235" >
+                    العيش ممتنعاً اكتوبر
+                </option>
+                                            <option value="239" >
+                    الهرم
+                </option>
+                                            <option value="242" >
+                    العبور
+                </option>
+                                            <option value="243" >
+                    الإسماعيلية الزهور
+                </option>
+                                            <option value="245" >
+                    التأمل
+                </option>
+                                            <option value="247" >
+                    العوده للأساسيات
+                </option>
+                                            <option value="248" >
+                    زايد
+                </option>
+                                            <option value="249" >
+                    طريق التعافي
+                </option>
+                                            <option value="250" >
+                    نساء في التعافي
+                </option>
+                                            <option value="251" >
+                    الحرية الإسماعيلية
+                </option>
+                                            <option value="252" >
+                    الصحوة
+                </option>
+                                            <option value="531" >
+                    المجموعة
+                </option>
+                                            <option value="536" >
+                    مش لوحدك
+                </option>
+                                            <option value="539" >
+                    سانت كاترين
+                </option>
+                                            <option value="540" >
+                    الشروق ٢
+                </option>
+                                            <option value="541" >
+                    نحن بالفعل نتعافى
+                </option>
+                                            <option value="542" >
+                    السويس
+                </option>
+                                            <option value="543" >
+                    الفيوم
+                </option>
+                                            <option value="547" >
+                    أبو حماد
+                </option>
+                                            <option value="548" >
+                    بورسعيد
+                </option>
+                                            <option value="558" >
+                    المنصورة ٢
+                </option>
+                                            <option value="562" >
+                    المنصورة ٣
+                </option>
+                                            <option value="563" >
+                    سيدي بشر
+                </option>
+                                            <option value="564" >
+                    الزمالك
+                </option>
+                                            <option value="565" >
+                    الهدف
+                </option>
+                                            <option value="566" >
+                    قنا
+                </option>
+                                            <option value="568" >
+                    المقطم
+                </option>
+                                            <option value="569" >
+                    الشروق
+                </option>
+                    </select>
+
+        
+            
+</div>
+
+                            </div>
+                            <div id="direct-online-group-container" style="display: none;">
+                                <div class="my-3">
+
+    <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="direct_online_group_id" id = direct_online_group_id>Direct Online Group Name</label>
+</div>        
+                    <select data-allow-clear="true" class="select2" name="direct_online_group_id" style="width: 100%;" data-placeholder="Choose Group">
+            <option></option>
+                                            <option value="1" >
+                    نحن نستطيع أونلاين
+                </option>
+                                            <option value="2" >
+                    ماراثون الوحدة العربية
+                </option>
+                                            <option value="3" >
+                    صناع الامل
+                </option>
+                                            <option value="4" >
+                    حب غير مشروط
+                </option>
+                                            <option value="5" >
+                    الوحدة أونلاين
+                </option>
+                                            <option value="6" >
+                    النمو أونلاين
+                </option>
+                                            <option value="7" >
+                    الحكمة أونلاين
+                </option>
+                                            <option value="8" >
+                    الحرية أونلاين
+                </option>
+                                            <option value="9" >
+                    التواضع أونلاين
+                </option>
+                                            <option value="10" >
+                    الاجتماع أونلاين
+                </option>
+                                            <option value="11" >
+                    الهضبة أونلاين
+                </option>
+                                            <option value="12" >
+                    الرحلة أونلاين
+                </option>
+                                            <option value="13" >
+                    لليوم فقط أونلاين
+                </option>
+                    </select>
+
+        
+            
+</div>
+
+                            </div>
+                                            
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-chat-left-text me-2 text-info"></i> موضوع الاجتماع</h6>
+                        <div class="d-flex flex-wrap align-items-center gap-3 glass-card p-3 rounded-4" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                            <div style="flex: 1; min-width: 200px;">
+                                <select id="topic-selector" class="form-select rounded-pill shadow-sm" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.7);">
+                                    <option value="">اختر الموضوع</option>
+                                                                            <option value="4" data-name="متحدث" data-is-business="false">
+                                            متحدث
+                                        </option>
+                                                                            <option value="5" data-name="تأمل" data-is-business="false">
+                                            تأمل
+                                        </option>
+                                                                            <option value="6" data-name="متنوع" data-is-business="false">
+                                            متنوع
+                                        </option>
+                                                                            <option value="7" data-name="دراسة خطوات" data-is-business="false">
+                                            دراسة خطوات
+                                        </option>
+                                                                            <option value="8" data-name="النص الأساسي" data-is-business="false">
+                                            النص الأساسي
+                                        </option>
+                                                                            <option value="9" data-name="دليل عمل الخطوات" data-is-business="false">
+                                            دليل عمل الخطوات
+                                        </option>
+                                                                            <option value="10" data-name="خطوات/متحدث" data-is-business="false">
+                                            خطوات/متحدث
+                                        </option>
+                                                                            <option value="11" data-name="مشاركات مفتوحة" data-is-business="false">
+                                            مشاركات مفتوحة
+                                        </option>
+                                                                            <option value="12" data-name="ستيك" data-is-business="false">
+                                            ستيك
+                                        </option>
+                                                                            <option value="13" data-name="موضوع من القائمة" data-is-business="false">
+                                            موضوع من القائمة
+                                        </option>
+                                                                            <option value="14" data-name="العيش ممتنعًا" data-is-business="false">
+                                            العيش ممتنعًا
+                                        </option>
+                                                                            <option value="15" data-name="سؤال وجواب" data-is-business="false">
+                                            سؤال وجواب
+                                        </option>
+                                                                            <option value="16" data-name="ستيك/موضوع من القائمة" data-is-business="false">
+                                            ستيك/موضوع من القائمة
+                                        </option>
+                                                                            <option value="17" data-name="كيف ولماذا" data-is-business="false">
+                                            كيف ولماذا
+                                        </option>
+                                                                            <option value="18" data-name="تأمل/موضوع من القائمة" data-is-business="false">
+                                            تأمل/موضوع من القائمة
+                                        </option>
+                                                                            <option value="19" data-name="متنوع/متحدث" data-is-business="false">
+                                            متنوع/متحدث
+                                        </option>
+                                                                            <option value="20" data-name="الكتيبات" data-is-business="false">
+                                            الكتيبات
+                                        </option>
+                                                                            <option value="21" data-name="لليوم فقط" data-is-business="false">
+                                            لليوم فقط
+                                        </option>
+                                                                            <option value="22" data-name="العضو الجديد" data-is-business="false">
+                                            العضو الجديد
+                                        </option>
+                                                                            <option value="23" data-name="النص الأساسي/متحدث" data-is-business="false">
+                                            النص الأساسي/متحدث
+                                        </option>
+                                                                            <option value="24" data-name="تأمل/متحدث" data-is-business="false">
+                                            تأمل/متحدث
+                                        </option>
+                                                                            <option value="25" data-name="تأمل/متنوع" data-is-business="false">
+                                            تأمل/متنوع
+                                        </option>
+                                                                            <option value="27" data-name="اجتماع عمل المجموعة" data-is-business="true">
+                                            اجتماع عمل المجموعة
+                                        </option>
+                                                                            <option value="28" data-name="روح تقاليدنا" data-is-business="false">
+                                            روح تقاليدنا
+                                        </option>
+                                                                    </select>
+                            </div>
+                            <div id="selected-topics-container" class="d-flex flex-wrap gap-2" style="flex: 2; min-width: 250px; min-height: 38px; align-items: center;">
+                                                                                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <div class="my-3">
+
+    <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="day_id" id = day_id>اليوم</label>
+</div>        
+                    <select data-allow-clear="true" class="select2" name="day_id" style="width: 100%;" data-placeholder="Choose Day">
+            <option></option>
+                                            <option value="1" >
+                    السبت
+                </option>
+                                            <option value="2" >
+                    الأحد
+                </option>
+                                            <option value="3" >
+                    الاثنين
+                </option>
+                                            <option value="4" >
+                    الثلاثاء
+                </option>
+                                            <option value="5" >
+                    الأربعاء
+                </option>
+                                            <option value="6" >
+                    الخميس
+                </option>
+                                            <option value="7" >
+                    الجمعة
+                </option>
+                    </select>
+
+        
+            
+</div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="col-12 my-2">
+            <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="start_time" id = start_time>من</label>
+</div>        <div data-vue-app="VueCtkDateTimePicker"
+         data-name="start_time"
+         data-id="start_time"
+         data-value=""
+         data-enable-time="false"
+         data-time-only="true"
+         data-placeholder=""
+         data-locale="ar">
+    </div>
+    </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="col-12 my-2">
+            <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="end_time" id = end_time>إلى</label>
+</div>        <div data-vue-app="VueCtkDateTimePicker"
+         data-name="end_time"
+         data-id="end_time"
+         data-value=""
+         data-enable-time="false"
+         data-time-only="true"
+         data-placeholder=""
+         data-locale="ar">
+    </div>
+    </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 mt-3">
+                        <h6 class="fw-bold mb-3" style="color: var(--text-primary);"><i class="bi bi-calendar-week me-2 text-warning"></i> Recurrence</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                                                                                        <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-weekly" value="weekly" checked style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-weekly" style="font-size: 0.9rem;">
+                                        أسبوعي
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-1st" value="1st"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-1st" style="font-size: 0.9rem;">
+                                        الأسبوع الأول
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-2nd" value="2nd"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-2nd" style="font-size: 0.9rem;">
+                                        الأسبوع الثاني
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-3rd" value="3rd"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-3rd" style="font-size: 0.9rem;">
+                                        الأسبوع الثالث
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-4th" value="4th"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-4th" style="font-size: 0.9rem;">
+                                        الأسبوع الرابع
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-5th" value="5th"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-5th" style="font-size: 0.9rem;">
+                                        الأسبوع الخامس
+                                    </label>
+                                </div>
+                                                            <div class="form-check form-check-inline glass-card p-2 rounded-3 m-0 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                                    <input class="form-check-input mt-0" type="checkbox" name="recurrence[]" id="recurrence-last" value="last"  style="margin-inline-end: 0.5rem; width: 1.2em; height: 1.2em;">
+                                    <label class="form-check-label text-secondary fw-medium mb-0" for="recurrence-last" style="font-size: 0.9rem;">
+                                        الأسبوع الأخير
+                                    </label>
+                                </div>
+                                                    </div>
+                    </div>
+    
+                    <div class="d-flex align-items-center justify-content-start mb-2 gap-2">
+    <span style="width: 0.5rem; height: 0.5rem; background-color: rgb(21, 0, 161); display: inline-block;"></span>
+    <label class="text-primary m-0 p-0" for="notes" id = notes>ملاحظات</label>
+</div>
+<textarea id="notes" name="notes" class="rounded-xl bg-white/10 border border-white/10  w-full" style="height:100px" >
+    
+</textarea>
+
+
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-sliders me-2 text-primary"></i> إعدادات الاجتماعات</h6>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+                        
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-door-closed"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">النوع</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="type" value="open">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="meeting-type" name="type" value="closed" checked>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-type" style="background-color: rgba(139, 92, 246, 0.1); color: #7c3aed;">
+                                    مغلق للمدمنين
+                                </span>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-globe"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">لغة الاجتماع</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="lang" value="english">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="lang-switch" name="lang" value="arabic" checked>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-lang" style="background-color: rgba(14, 165, 233, 0.1); color: #0284c7;">
+                                    اللغة العربية
+                                </span>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col">
+                            <div class="glass-card p-3 rounded-4 transition-hover h-100 d-flex flex-column align-items-center justify-content-center text-center" style="border: 1px solid var(--glass-border); background: rgba(0,0,0,0.01);">
+                                <div class="widgets-icons text-white mb-2 shadow-sm mx-auto" style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem;">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <span class="fw-bold text-secondary mb-2" style="font-size: 0.85rem;">الحالة (Status)</span>
+                                <div class="form-check form-switch fs-5 mb-2 d-flex justify-content-center m-0 p-0">
+                                    <input type="hidden" name="status" value="suspended">
+                                    <input class="form-check-input ms-0 mt-0" type="checkbox" id="status-switch" name="status" value="available" checked>
+                                </div>
+                                <span class="badge rounded-pill fw-medium" id="label-status" style="background-color: rgba(16, 185, 129, 0.1); color: #059669;">
+                                    متاح
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mb-3 mt-4" style="color: var(--text-primary);"><i class="bi bi-ui-checks-grid me-2 text-success"></i> ملاحظات</h6>
+                    <div class="row row-cols-2 row-cols-md-3 g-3 mb-5 options-section">
+                                                    <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-13">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="13" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-13" >
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                                                                            لذوي الهمم
+                                                                                    </span>
+                                    </div>
+                                </label>
+                            </div>
+                                                    <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-14">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="14" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-14" >
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                                                                            باركينج
+                                                                                    </span>
+                                    </div>
+                                </label>
+                            </div>
+                                                    <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-15">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="15" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-15" >
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                                                                            التدخين
+                                                                                    </span>
+                                    </div>
+                                </label>
+                            </div>
+                                                    <div class="col">
+                                <label class="glass-card p-2 rounded-3 transition-hover h-100 d-flex align-items-center" style="border: 1px solid var(--glass-border); background: rgba(255,255,255,0.4); cursor: pointer;" for="option-16">
+                                    <div class="form-check w-100 mb-0 d-flex align-items-center m-0 p-0">
+                                        <input type="checkbox" name="options[]" value="16" class="form-check-input mt-0" style="width: 1.2em; height: 1.2em; margin-inline-start: 0; margin-inline-end: 0.5rem;" id="option-16" >
+                                        <span class="text-secondary fw-medium" style="font-size: 0.9rem; flex: 1; margin-inline-start: 0.5rem;">
+                                                                                            شموع
+                                                                                    </span>
+                                    </div>
+                                </label>
+                            </div>
+                                            </div>
+
+                    <div class="d-flex justify-content-end">
+                        <div class="col-12 col-md-6 mt-4">
+    <button type="submit" class="btn btn-primary px-4 rounded-pill px-5 py-2 shadow-sm" >حفظ</button>
+</div>                    </div>
+                </form>
+    </div>
+
+    <script>
+        let translations = {
+            open: "\u0645\u0641\u062a\u0648\u062d \u0644\u0644\u0632\u0648\u0627\u0631",
+            closed: "\u0645\u063a\u0644\u0642 \u0644\u0644\u0645\u062f\u0645\u0646\u064a\u0646",
+            arabic: "\u0627\u0644\u0644\u063a\u0629 \u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+            english: "\u0627\u0644\u0644\u063a\u0629 \u0627\u0644\u0627\u0646\u062c\u0644\u064a\u0632\u064a\u0629",
+            Available: "\u0645\u062a\u0627\u062d",
+            Suspended: "\u0645\u0639\u0644\u0642",
+            group_business_meeting_exclusive: "\u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u062e\u062a\u064a\u0627\u0631 \u0627\u062c\u062a\u0645\u0627\u0639 \u0639\u0645\u0644 \u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629 \u0645\u0639 \u0645\u0648\u0627\u0636\u064a\u0639 \u0623\u062e\u0631\u0649.",
+        };
+        document.addEventListener('DOMContentLoaded', function () {
+            // Topics Tag Manager
+            const topicSelector = document.getElementById('topic-selector');
+            const container = document.getElementById('selected-topics-container');
+            const typeSwitch = document.getElementById('meeting-type');
+            const typeLabel = document.getElementById('label-type');
+
+            function syncMeetingTypeForBusiness() {
+                if (!container || !typeSwitch) return;
+                const businessTag = container.querySelector('.topic-tag[data-is-business="true"]');
+                if (businessTag) {
+                    typeSwitch.checked = true;
+                    typeSwitch.disabled = true;
+                    if (typeLabel) {
+                        typeLabel.textContent = translations.closed;
+                    }
+                } else {
+                    typeSwitch.disabled = false;
+                }
+            }
+
+            if(topicSelector && container) {
+                topicSelector.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    if (!selectedOption.value) return;
+
+                    const id = selectedOption.value;
+                    const name = selectedOption.getAttribute('data-name');
+                    const isBusiness = selectedOption.getAttribute('data-is-business') === 'true';
+
+                    // Check if there are already other topics selected
+                    const existingTags = container.querySelectorAll('.topic-tag');
+                    if (existingTags.length > 0) {
+                        const hasBusinessSelected = Array.from(existingTags).some(tag => tag.getAttribute('data-is-business') === 'true');
+                        if (isBusiness || hasBusinessSelected) {
+                            alert(translations.group_business_meeting_exclusive);
+                            this.value = '';
+                            return;
+                        }
+                    }
+
+                    // Check if already added
+                    if (!container.querySelector(`input[value="${id}"]`)) {
+                        // Create tag
+                        const tag = document.createElement('div');
+                        tag.className = 'badge rounded-pill p-2 d-flex align-items-center shadow-sm topic-tag';
+                        tag.style.background = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+                        tag.style.fontSize = '0.85rem';
+                        tag.setAttribute('data-is-business', isBusiness ? 'true' : 'false');
+                        tag.innerHTML = `
+                            <span style="margin-inline-end: 0.5rem;">${name}</span>
+                            <input type="hidden" name="topics[]" value="${id}">
+                            <button type="button" class="btn-close btn-close-white remove-topic" style="font-size: 0.5rem; margin-inline-start: 0.5rem;" aria-label="Close"></button>
+                        `;
+                        container.appendChild(tag);
+                        syncMeetingTypeForBusiness();
+                    }
+
+                    // Reset selector
+                    this.value = '';
+                });
+
+                // Event delegation for removing topics
+                container.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-topic')) {
+                        e.target.closest('.topic-tag').remove();
+                        syncMeetingTypeForBusiness();
+                    }
+                });
+            }
+
+            const switches = [
+                {
+                    input: document.getElementById('meeting-type'),
+                    label: document.getElementById('label-type'),
+                    on: translations.closed,
+                    off: translations.open
+                },
+                {
+                    input: document.getElementById('lang-switch'),
+                    label: document.getElementById('label-lang'),
+                    on: translations.arabic,
+                    off: translations.english
+                },
+                {
+                    input: document.getElementById('status-switch'),
+                    label: document.getElementById('label-status'),
+                    on: translations.Available,
+                    off: translations.Suspended
+                }
+            ];
+
+            switches.forEach(({input, label, on, off}) => {
+                // update on load
+                label.textContent = input.checked ? on : off;
+
+                // update when toggled
+                input.addEventListener('change', function() {
+                    label.textContent = input.checked ? on : off;
+                });
+            });
+
+            syncMeetingTypeForBusiness();
+
+            // Recurrence checkbox exclusivity logic
+            const weeklyCheckbox = document.getElementById('recurrence-weekly');
+            const monthlyCheckboxes = [
+                document.getElementById('recurrence-1st'),
+                document.getElementById('recurrence-2nd'),
+                document.getElementById('recurrence-3rd'),
+                document.getElementById('recurrence-4th'),
+                document.getElementById('recurrence-5th'),
+                document.getElementById('recurrence-last')
+            ];
+
+            function updateRecurrenceState(e) {
+                const trigger = e ? e.target : null;
+                const anyMonthlyChecked = monthlyCheckboxes.some(cb => cb && cb.checked);
+                
+                if (trigger === weeklyCheckbox && weeklyCheckbox.checked) {
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) {
+                            cb.checked = false;
+                            cb.disabled = true;
+                        }
+                    });
+                } else if (anyMonthlyChecked) {
+                    if (weeklyCheckbox) {
+                        weeklyCheckbox.checked = false;
+                        weeklyCheckbox.disabled = true;
+                    }
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) cb.disabled = false;
+                    });
+                } else {
+                    if (weeklyCheckbox) {
+                        weeklyCheckbox.disabled = false;
+                    }
+                    monthlyCheckboxes.forEach(cb => {
+                        if (cb) cb.disabled = false;
+                    });
+                }
+            }
+
+            if (weeklyCheckbox) {
+                weeklyCheckbox.addEventListener('change', updateRecurrenceState);
+            }
+            monthlyCheckboxes.forEach(cb => {
+                if (cb) {
+                    cb.addEventListener('change', updateRecurrenceState);
+                }
+            });
+
+            // Initialize state on load
+            if (weeklyCheckbox && weeklyCheckbox.checked) {
+                monthlyCheckboxes.forEach(cb => {
+                    if (cb) {
+                        cb.checked = false;
+                        cb.disabled = true;
+                    }
+                });
+            } else if (monthlyCheckboxes.some(cb => cb && cb.checked)) {
+                if (weeklyCheckbox) {
+                    weeklyCheckbox.checked = false;
+                    weeklyCheckbox.disabled = true;
+                }
+            }
+
+            // Group Type switching logic
+            const groupTypeSelector = document.getElementById('group-type-selector');
+            const legacyContainer = document.getElementById('legacy-group-container');
+            const directOnlineContainer = document.getElementById('direct-online-group-container');
+            const legacySelect = legacyContainer ? legacyContainer.querySelector('select') : null;
+            const directOnlineSelect = directOnlineContainer ? directOnlineContainer.querySelector('select') : null;
+
+            const optionsHeader = document.querySelector('h6 i.bi-ui-checks-grid') ? document.querySelector('h6 i.bi-ui-checks-grid').closest('h6') : null;
+            const optionsSection = document.querySelector('.options-section');
+            const langSwitch = document.getElementById('lang-switch');
+            const labelLang = document.getElementById('label-lang');
+            const hiddenLangInput = document.querySelector('input[type="hidden"][name="lang"]');
+
+            function handleGroupTypeChange() {
+                if (!groupTypeSelector) return;
+                
+                const businessTopicOption = document.querySelector('#topic-selector option[data-is-business="true"]');
+                const topicSelector = document.getElementById('topic-selector');
+
+                if (groupTypeSelector.value === 'direct_online') {
+                    if (legacyContainer) legacyContainer.style.display = 'none';
+                    if (directOnlineContainer) directOnlineContainer.style.display = 'block';
+                    if (legacySelect) legacySelect.value = '';
+                    
+                    // Hide meeting options
+                    if (optionsHeader) optionsHeader.style.display = 'none';
+                    if (optionsSection) {
+                        optionsSection.style.display = 'none';
+                        optionsSection.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                    }
+                    
+                    // Lock language to Arabic
+                    if (langSwitch) {
+                        langSwitch.checked = true;
+                        langSwitch.disabled = true;
+                        if (labelLang) labelLang.textContent = translations.arabic;
+                    }
+                    if (hiddenLangInput) {
+                        hiddenLangInput.value = 'arabic';
+                    }
+
+                    // Disable Group Business Meeting topic
+                    if (businessTopicOption) {
+                        businessTopicOption.disabled = true;
+                        businessTopicOption.style.display = 'none';
+                        if (topicSelector && topicSelector.value == businessTopicOption.value) {
+                            topicSelector.value = '';
+                        }
+                    }
+                    const businessTag = container ? container.querySelector('.topic-tag[data-is-business="true"]') : null;
+                    if (businessTag) {
+                        businessTag.remove();
+                        if (typeSwitch) {
+                            typeSwitch.disabled = false;
+                        }
+                    }
+                } else {
+                    if (legacyContainer) legacyContainer.style.display = 'block';
+                    if (directOnlineContainer) directOnlineContainer.style.display = 'none';
+                    if (directOnlineSelect) directOnlineSelect.value = '';
+                    
+                    // Show meeting options
+                    if (optionsHeader) optionsHeader.style.display = 'block';
+                    if (optionsSection) optionsSection.style.display = 'flex';
+                    
+                    // Unlock language switch
+                    if (langSwitch) {
+                        langSwitch.disabled = false;
+                    }
+                    if (hiddenLangInput) {
+                        hiddenLangInput.value = 'english';
+                    }
+
+                    // Enable Group Business Meeting topic
+                    if (businessTopicOption) {
+                        businessTopicOption.disabled = false;
+                        businessTopicOption.style.display = 'block';
+                    }
+                }
+            }
+
+            if (groupTypeSelector) {
+                groupTypeSelector.addEventListener('change', handleGroupTypeChange);
+                handleGroupTypeChange();
+            }
+        });
+    </script>
+          </div>
+        
+    </div>
+
+    <!-- Scene 2: Real Agenda Form -->
+    <div class="tutorial-scene-box" id="sceneBoxAgenda">
+        
+          <div class="container-fluid">
+            <div class="container-fluid px-0 px-sm-3 mt-4 mb-5 mx-auto" style="max-width: 900px; width: 100%;">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8 px-0 px-sm-2">
+            <div class="card shadow-lg" style="border: none; border-radius: 15px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
+                <div class="card-header text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                    <h4 class="mb-0">إنشاء أجندة - العباسية</h4>
+                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#gsrVideoModal" title="دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR)">
+                        <i class="bi bi-play-circle-fill text-warning"></i>
+                        <span>شاهد فيديو دليل GSR</span>
+                    </button>
+                </div>
+
+                <div class="card-body p-4">
+                    <form action="/agenda" method="POST" id="agendaForm">
+                        <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                        <input type="hidden" name="group_id" value="175">
+
+                        <!-- SECTION 1: Group's Data -->
+                        <div id="section1" class="form-section">
+                            <h5 class="mb-3 text-primary border-bottom pb-2">بيانات المجموعة</h5>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">عدد الاجتماعات في الأسبوع</label>
+                                <input type="number" name="meetings_per_week" class="form-control" value="8" readonly style="background-color: #e9ecef;">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">تاريخ الأجندة</label>
+                                <input type="date" name="agenda_date" class="form-control" value="2026-11-09" required readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label d-block">المنصب الخدمي *</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="service_position" id="pos_open" value="Open Position" required onchange="handlePositionChange()">
+                                    <label class="form-check-label" for="pos_open">ترشيحات</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="service_position" id="pos_alt_gsr" value="Alt. GSR" required onchange="handlePositionChange()">
+                                    <label class="form-check-label" for="pos_alt_gsr">نائب ممثل المجموعة</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="service_position" id="pos_gsr" value="GSR" required onchange="handlePositionChange()">
+                                    <label class="form-check-label" for="pos_gsr">ممثل المجموعة</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" id="submitterNameWrapper" style="display: none;">
+                                <label class="form-label">الاسم (ممثل المجموعة / نائب ممثل المجموعة / مندوب)</label>
+                                <input type="text" name="submitter_name" id="submitter_name" class="form-control" placeholder="الاسم الأول والحرف الأول من اسم العائلة">
+                            </div>
+
+                            <div class="row" id="gsrExtraWrapper" style="display: none;">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">نائب ممثل المجموعة</label>
+                                    <select name="alt_gsr_position" id="alt_gsr_position" class="form-select" onchange="handleAltGsrChange()">
+                                        <option value="">اختر خياراً</option>
+                                        <option value="Open Position">ترشيحات</option>
+                                        <option value="Alt. GSR">نائب ممثل المجموعة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3" id="altGsrNameWrapper" style="display: none;">
+                                    <label class="form-label">اسم نائب ممثل المجموعة</label>
+                                    <input type="text" name="alt_gsr_name" id="alt_gsr_name" class="form-control" placeholder="الاسم الأول والحرف الأول من اسم العائلة">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary" onclick="nextSection(1)">التالي <i class="bi bi-arrow-left"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: Group News -->
+                        <div id="section2" class="form-section" style="display: none;">
+                            <h5 class="mb-3 text-primary border-bottom pb-2">أخبار المجموعة</h5>
+
+                            <div class="mb-3">
+                                <label class="form-label">الأعضاء الجدد</label>
+                                <input type="number" name="new_comers" class="form-control" min="0">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">الترشيحات</label>
+                                <textarea name="open_positions" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">اجتماع العمل القادم</label>
+                                <input type="datetime-local" name="next_business_meeting" class="form-control" value="2026-11-14T11:51">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label d-block">هل هناك أي تغييرات في مواعيد اجتماعات التعافي؟ *</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="recovery_meetings_changes" id="changes_yes" value="1">
+                                    <label class="form-check-label" for="changes_yes">نعم</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="recovery_meetings_changes" id="changes_no" value="0" checked required>
+                                    <label class="form-check-label" for="changes_no">لا</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" onclick="prevSection(2)"><i class="bi bi-arrow-right"></i> رجوع</button>
+                                <button type="button" class="btn btn-primary" onclick="nextSection(2)">التالي <i class="bi bi-arrow-left"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: The Agenda -->
+                        <div id="section3" class="form-section" style="display: none;">
+                            <h5 class="mb-3 text-primary border-bottom pb-2">أجندة</h5>
+
+                            <!-- Recovery Atmosphere -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">حول جو التعافي *</label>
+                                <textarea name="recovery_atmosphere" class="form-control" rows="3" required placeholder="حول جو التعافي"></textarea>
+                            </div>
+
+                            <!-- Trusted Servants -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">عن الخدم المؤتمنون *</label>
+                                <textarea name="trusted_servants" class="form-control" rows="3" required placeholder="عن الخدم المؤتمنون"></textarea>
+                            </div>
+
+                            <!-- Financial Issues -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">مواضيع مالية *</label>
+                                <textarea name="financial_issues" class="form-control" rows="3" required placeholder="مواضيع مالية"></textarea>
+                            </div>
+
+                            <!-- Other Repeatable Topics -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">مواضيع أخرى</label>
+                                <div id="other_topics_container">
+                                    
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="addOtherTopicItem()"><i class="bi bi-plus-circle me-1"></i> إضافة قسم</button>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" onclick="prevSection(3)"><i class="bi bi-arrow-right"></i> رجوع</button>
+                                <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> حفظ</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quill Styles -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<script>
+    const quillEditors = {};
+
+    function handlePositionChange() {
+        const val = document.querySelector('input[name="service_position"]:checked').value;
+        const nameWrapper = document.getElementById('submitterNameWrapper');
+        const gsrWrapper = document.getElementById('gsrExtraWrapper');
+        
+        nameWrapper.style.display = 'block';
+
+        if (val === 'GSR') {
+            gsrWrapper.style.display = 'flex';
+        } else {
+            gsrWrapper.style.display = 'none';
+            document.getElementById('alt_gsr_position').value = "";
+            handleAltGsrChange();
+        }
+    }
+
+    function handleAltGsrChange() {
+        const val = document.getElementById('alt_gsr_position').value;
+        const wrapper = document.getElementById('altGsrNameWrapper');
+        
+        if (val === 'Alt. GSR') {
+            wrapper.style.display = 'block';
+        } else {
+            wrapper.style.display = 'none';
+            document.getElementById('alt_gsr_name').value = "";
+        }
+    }
+
+    function nextSection(current) {
+        // Only validate fields within the current section
+        const section = document.getElementById('section' + current);
+        const inputs = section.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        
+        for (const input of inputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                isValid = false;
+                break;
+            }
+        }
+        
+        if (!isValid) {
+            return;
+        }
+
+        document.getElementById('section' + current).style.display = 'none';
+        document.getElementById('section' + (current + 1)).style.display = 'block';
+    }
+
+    function prevSection(current) {
+        document.getElementById('section' + current).style.display = 'none';
+        document.getElementById('section' + (current - 1)).style.display = 'block';
+    }
+
+    document.getElementById('agendaForm').addEventListener('submit', function(e) {
+        
+        // Populate Quill editors to hidden inputs
+        document.querySelectorAll('.other-topic-row').forEach(row => {
+            const idx = row.dataset.index;
+            const contentInput = document.getElementById(`other-topic-content-${idx}`);
+            if (quillEditors[idx] && contentInput) {
+                contentInput.value = quillEditors[idx].root.innerHTML;
+            }
+        });
+    });
+
+    let otherTopicIndex = 0;
+    function addOtherTopicItem(title = '', content = '') {
+        const container = document.getElementById('other_topics_container');
+        const newRow = document.createElement('div');
+        newRow.className = 'card p-3 mb-3 other-topic-row position-relative border shadow-sm';
+        newRow.style.background = 'rgba(0, 0, 0, 0.01)';
+        newRow.dataset.index = otherTopicIndex;
+        
+        newRow.innerHTML = `
+            <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" onclick="deleteOtherTopicItem(this, ${otherTopicIndex})"><i class="bi bi-trash"></i></button>
+            <div class="mb-2 pe-4">
+                <label class="form-label fw-bold small">${"عنوان الموضوع"}</label>
+                <input type="text" name="other_topics[${otherTopicIndex}][title]" class="form-control form-control-sm" required value="${title}" placeholder="${"عنوان الموضوع"}">
+            </div>
+            <div>
+                <label class="form-label fw-bold small">${"موضوع"}</label>
+                <div class="quill-editor mb-2" id="quill-editor-${otherTopicIndex}" style="height: 200px;"></div>
+                <input type="hidden" name="other_topics[${otherTopicIndex}][content]" class="other-topic-content-input" id="other-topic-content-${otherTopicIndex}">
+                
+                <!-- Dynamic Table Action Controls -->
+                <div class="table-controls p-2 border rounded bg-light d-none align-items-center gap-2 flex-wrap mb-2" id="table-controls-${otherTopicIndex}">
+                    <span class="badge bg-secondary py-2"><i class="bi bi-table"></i> إجراءات الجدول</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-row-above-btn"><i class="bi bi-arrow-bar-up"></i> Row Above</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-row-below-btn"><i class="bi bi-arrow-bar-down"></i> Row Below</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-column-left-btn"><i class="bi bi-arrow-bar-left"></i> Column Left</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary insert-column-right-btn"><i class="bi bi-arrow-bar-right"></i> Column Right</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-row-btn ms-md-auto"><i class="bi bi-trash"></i> Delete Row</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-column-btn"><i class="bi bi-trash"></i> Delete Col</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-table-btn"><i class="bi bi-x-circle"></i> Delete Table</button>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(newRow);
+        
+        const editorId = `#quill-editor-${otherTopicIndex}`;
+        const quill = new Quill(editorId, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['table']
+                ],
+                table: true
+            }
+        });
+        
+        if (content) {
+            quill.root.innerHTML = content;
+        }
+        
+        quillEditors[otherTopicIndex] = quill;
+        
+        const currentIndex = otherTopicIndex;
+        const tableControls = newRow.querySelector('.table-controls');
+        const tableModule = quill.getModule('table');
+
+        newRow.querySelector('.insert-row-above-btn').addEventListener('click', () => tableModule.insertRowAbove());
+        newRow.querySelector('.insert-row-below-btn').addEventListener('click', () => tableModule.insertRowBelow());
+        newRow.querySelector('.insert-column-left-btn').addEventListener('click', () => tableModule.insertColumnLeft());
+        newRow.querySelector('.insert-column-right-btn').addEventListener('click', () => tableModule.insertColumnRight());
+        newRow.querySelector('.delete-row-btn').addEventListener('click', () => tableModule.deleteRow());
+        newRow.querySelector('.delete-column-btn').addEventListener('click', () => tableModule.deleteColumn());
+        newRow.querySelector('.delete-table-btn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete the entire table?')) {
+                tableModule.deleteTable();
+            }
+        });
+
+        function checkTableFocus(range) {
+            if (range) {
+                const formats = quill.getFormat(range);
+                if (formats.table || formats['table-cell']) {
+                    tableControls.classList.remove('d-none');
+                    tableControls.classList.add('d-flex');
+                } else {
+                    const [leaf] = quill.getLeaf(range.index);
+                    if (leaf && leaf.domNode && leaf.domNode.parentElement && leaf.domNode.parentElement.closest('table')) {
+                        tableControls.classList.remove('d-none');
+                        tableControls.classList.add('d-flex');
+                    } else {
+                        tableControls.classList.add('d-none');
+                        tableControls.classList.remove('d-flex');
+                    }
+                }
+            } else {
+                tableControls.classList.add('d-none');
+                tableControls.classList.remove('d-flex');
+            }
+        }
+
+        quill.on('selection-change', function(range) {
+            checkTableFocus(range);
+        });
+
+        quill.on('text-change', function() {
+            const range = quill.getSelection();
+            checkTableFocus(range);
+        });
+
+        otherTopicIndex++;
+    }
+
+    function deleteOtherTopicItem(btn, index) {
+        btn.closest('.other-topic-row').remove();
+        delete quillEditors[index];
+    }
+
+    // Add one initial empty item on load
+    document.addEventListener('DOMContentLoaded', function() {
+        addOtherTopicItem();
+    });
+</script>
+<div class="modal fade" id="gsrVideoModal" tabindex="-1" aria-labelledby="gsrVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: #090d16; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-info text-dark px-2.5 py-1 rounded-pill fw-bold">NA Egypt</span>
+                    <h6 class="modal-title fw-bold text-white mb-0" id="gsrVideoModalLabel">
+                        دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR)
+                    </h6>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/tutorials/gsr-guide-animation.html" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-inline-flex align-items-center gap-1.5" title="فتح في نافذة كاملة">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>فتح في نافذة كاملة</span>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh;">
+                <iframe src="/tutorials/gsr-guide-animation.html" style="width: 100%; height: 100%; border: none;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+          </div>
+        
+    </div>
+
+    <!-- Scene 3: Real Cart Form -->
+    <div class="tutorial-scene-box" id="sceneBoxCart">
+        
+          <div class="container-fluid">
+            <div class="container-fluid py-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h1 class="h2 text-gradient font-bold mb-0">
+                    طلب مطبوعات
+                </h1>
+                <p class="text-secondary mb-0">
+                    طلبية الأدبيات لـ نوفمبر 2026
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                                    <a href="/literature-requests/treasurer" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        العودة إلى لوحة تحكم أمين الصندوق
+                    </a>
+                                <button type="button" class="btn btn-outline-info rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#gsrVideoModal" title="دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR)">
+                    <i class="bi bi-play-circle-fill text-info"></i>
+                    <span>شاهد فيديو دليل GSR</span>
+                </button>
+                <a href="/literature-requests/archive" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-archive me-1"></i>
+                    أرشيف طلبات المطبوعات
+                </a>
+            </div>
+        </div>
+
+        
+                    <div class="card mb-4 border-0 shadow-sm p-3">
+                <form action="/literature-requests/cart" method="GET" class="row g-2 align-items-center">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label fw-bold text-secondary">طلب باسم المجموعة:</label>
+                        <select name="group_id" class="form-select rounded-pill" onchange="this.form.submit()">
+                                                            <option value="175" selected>
+                                    العباسية
+                                </option>
+                                                    </select>
+                    </div>
+                </form>
+            </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        <div class="card border-0 shadow-sm p-4">
+            <form action="/literature-requests/cart/update" method="POST" id="cart-form">
+                <input type="hidden" name="_token" value="3eIthhc6CNFOvrImqMBxihp3C0olj2UNDDISNgHb" autocomplete="off">                <input type="hidden" name="group_id" value="175">
+
+                
+                                                    <ul class="nav nav-pills flex-wrap sm:flex-nowrap overflow-x-auto mb-4 p-1 rounded-3 bg-light" id="categoryTabList" role="tablist" style="border: 1px solid var(--glass-border); -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 4px;">
+                        <li class="nav-item flex-shrink-0" role="presentation">
+                            <button class="nav-link active py-2 rounded-2 fw-bold category-tab-btn" data-category="all" type="button" style="font-size: 0.9rem;">
+                                الكل
+                            </button>
+                        </li>
+                                                    <li class="nav-item flex-shrink-0" role="presentation">
+                                <button class="nav-link py-2 rounded-2 fw-bold category-tab-btn" data-category="arabic-books" type="button" style="font-size: 0.9rem;">
+                                    أدبيات عربي
+                                </button>
+                            </li>
+                                            </ul>
+                
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>النوع</th>
+                                <th>الفئة</th>
+                                <th class="text-end">سعر البيع</th>
+                                <th class="text-center" style="width: 150px;">الكمية</th>
+                                <th class="text-end">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                                                                            <tr class="item-row" data-price="85.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">النص الاساسى</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">85.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[1]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="185.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">إنه يعمل - كيف ولماذا</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">185.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[2]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="175.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">دليل العمل بالخطوات</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">175.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[3]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="100.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">كتاب لليوم فقط</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">100.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[4]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="65.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">الدليل التمهيدى</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">65.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[5]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="70.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">روح تقاليدنا</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">70.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[6]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="65.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">العيش ممتنعًا</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">65.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[7]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                                                            <tr class="item-row" data-price="25.00" data-category="arabic-books">
+                                    <td>
+                                        <div class="fw-bold">النص الاساسى (جيب)</div>
+                                        <small class="text-muted"></small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            أدبيات عربي
+                                        </span>
+                                    </td>
+                                    <td class="text-end price-value">25.00 ج.م</td>
+                                    <td class="text-center">
+                                        <input type="number" 
+                                               name="quantities[8]" 
+                                               value="0" 
+                                               min="0" 
+                                               class="form-control text-center rounded-3 quantity-input"
+                                               
+                                               style="max-width: 100px; margin: 0 auto;">
+                                    </td>
+                                    <td class="text-end fw-bold row-total">
+                                        0.00 ج.م
+                                    </td>
+                                </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="d-flex justify-content-between align-items-center mt-4 border-top pt-4 flex-wrap gap-3">
+                    <div>
+                        <h4 class="mb-0 text-secondary">
+                            الإجمالي: <span id="cart-total-price" class="text-primary fw-bold">0.00</span> ج.م
+                        </h4>
+                    </div>
+                                            <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" name="action" value="draft" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-save me-1"></i>
+                                حفظ
+                            </button>
+                            <button type="submit" name="action" value="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-send-check me-1"></i>
+                                حفظ وإرسال الطلب
+                            </button>
+                        </form>
+                        
+                                                </div>
+                                    </div>
+        </div>
+    </div>
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const qtyInputs = document.querySelectorAll('.quantity-input');
+            const currencyText = "ج.م";
+
+            function recalculateCart() {
+                let overallTotal = 0;
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const price = parseFloat(row.getAttribute('data-price'));
+                    const qty = parseInt(row.querySelector('.quantity-input').value) || 0;
+                    const rowTotal = price * qty;
+                    row.querySelector('.row-total').innerText = rowTotal.toFixed(2) + ' ' + currencyText;
+                    overallTotal += rowTotal;
+                });
+                document.getElementById('cart-total-price').innerText = overallTotal.toFixed(2);
+            }
+
+            qtyInputs.forEach(input => {
+                input.addEventListener('input', recalculateCart);
+                input.addEventListener('change', recalculateCart);
+            });
+
+            recalculateCart();
+
+            // Tab filtering logic
+            const tabBtns = document.querySelectorAll('.category-tab-btn');
+            const itemRows = document.querySelectorAll('.item-row');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const selectedCategory = this.getAttribute('data-category');
+
+                    itemRows.forEach(row => {
+                        if (selectedCategory === 'all' || row.getAttribute('data-category') === selectedCategory) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <div class="modal fade" id="gsrVideoModal" tabindex="-1" aria-labelledby="gsrVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: #090d16; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center" style="background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-info text-dark px-2.5 py-1 rounded-pill fw-bold">NA Egypt</span>
+                    <h6 class="modal-title fw-bold text-white mb-0" id="gsrVideoModalLabel">
+                        دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR)
+                    </h6>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/tutorials/gsr-guide-animation.html" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 d-inline-flex align-items-center gap-1.5" title="فتح في نافذة كاملة">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        <span>فتح في نافذة كاملة</span>
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0 position-relative" style="height: 640px; max-height: 80vh;">
+                <iframe src="/tutorials/gsr-guide-animation.html" style="width: 100%; height: 100%; border: none;" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+          </div>
+        
+    </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Celebration Modal -->
+            <div class="celebration-modal" id="celebModal">
+                <div class="celebration-card-box">
+                    <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 32px; box-shadow: 0 0 25px rgba(16,185,129,0.5);">
+                        <i class="bi bi-check-lg text-white"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">اكتملت جميع الخطوات بنجاح!</h4>
+                    <p class="small text-light opacity-75 mb-4" id="celebText">
+                        تمت محاكاة جميع الإجراءات بنجاح في النظام الفعلي.
+                    </p>
+                    <button type="button" class="btn btn-outline-light rounded-pill px-4" onclick="seekTo(0)">
+                        <i class="bi bi-arrow-repeat me-1"></i> إعادة مشاهدة العرض
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating Explainer Banner -->
+            <div class="floating-explainer" id="explainerBanner">
+                <div class="floating-explainer-icon" id="explainerIcon">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1" id="explainerTitle" style="font-size: 14.5px;">عنوان الخطوة</h5>
+                    <p class="mb-0 text-light opacity-75 small" id="explainerDesc">وصف الخطوة التوضيحية.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="player-bottom-bar">
+            <div class="timeline-rail-wrap" id="timelineRail" onclick="onTimelineClick(event)">
+                <div class="timeline-rail-bar">
+                    <div class="timeline-rail-fill" id="timelineFill"></div>
+                </div>
+                <div class="timeline-rail-thumb" id="timelineThumb"></div>
+            </div>
+
+            <div class="controls-btn-row">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn-play-toggle" id="btnPlay" onclick="togglePlay()">
+                        <i class="bi bi-play-fill fs-5" id="playIcon"></i>
+                    </button>
+                    <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-variant-numeric: tabular-nums;">
+                        <span id="timeNow">00:00</span> / <span id="timeTotal">01:15</span>
+                    </div>
+                    <span class="badge rounded-pill bg-dark border border-secondary text-info px-3 py-1.5" id="sceneBadge">
+                        الخطوة 1
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="ctrl-pill-btn" onclick="cycleSpeed()" id="btnSpeed">
+                        <span>السرعة</span>
+                        <span class="badge bg-secondary text-white" id="speedTag">1.0x</span>
+                    </button>
+                    <button type="button" class="ctrl-pill-btn" onclick="seekTo(0)">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>إعادة</span>
+                    </button>
+                    <button type="button" class="ctrl-pill-btn" onclick="toggleFullscreen()">
+                        <i class="bi bi-fullscreen"></i>
+                        <span>ملء الشاشة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animation & Interactive Timeline Engine -->
+    <script>
+        const DURATION = 75;
+        let curTime = 0;
+        let isPlaying = false;
+        let playSpeed = 1.0;
+        let lastTs = null;
+        let animId = null;
+
+        const vCursor = document.getElementById('vCursor');
+        const clickWave = document.getElementById('clickWave');
+        const timelineFill = document.getElementById('timelineFill');
+        const timelineThumb = document.getElementById('timelineThumb');
+        const timeNow = document.getElementById('timeNow');
+        const playIcon = document.getElementById('playIcon');
+        const sceneBadge = document.getElementById('sceneBadge');
+        const speedTag = document.getElementById('speedTag');
+
+        const explainerBanner = document.getElementById('explainerBanner');
+        const explainerIcon = document.getElementById('explainerIcon');
+        const explainerTitle = document.getElementById('explainerTitle');
+        const explainerDesc = document.getElementById('explainerDesc');
+        const celebModal = document.getElementById('celebModal');
+
+        const scenes = [
+                {
+        start: 0,
+        end: 9,
+        chapterIdx: 0,
+        badge: "اجتماعات المجموعة",
+        title: "الفصل 1: إدارة وتحديث مواعيد واجتماعات المجموعة",
+        desc: "فتح نموذج إضافة وتحديث موعد الاجتماع الحقيقي لمجموعة العباسية (التابعة لمنتدى غرب القاهرة).",
+        icon: "bi-calendar-event-fill",
+        borderColor: "#0ea5e9",
+        iconColor: "#0ea5e9",
+        cursorPos: { x: 800, y: 180 },
+        action: (p) => {
+            showScene('sceneBoxMeeting');
+            celebModal.classList.remove('active');
+        }
+    },
+    {
+        start: 9,
+        end: 18,
+        chapterIdx: 0,
+        badge: "موضوع الاجتماع",
+        title: "اختيار الموضوع وتحديد يوم وتوقيت الاجتماع",
+        desc: "تحديد نمط الاجتماع من القائمة الرسمية مع مراعاة قفل موعد اجتماع العمل الشهري (Business Meeting Lock).",
+        icon: "bi-chat-left-quote-fill",
+        borderColor: "#0ea5e9",
+        iconColor: "#0ea5e9",
+        cursorPos: { x: 650, y: 320 },
+        action: (p) => {
+            showScene('sceneBoxMeeting');
+            const topicSel = document.getElementById('topic-selector');
+            if (topicSel && topicSel.options.length > 1) {
+                topicSel.selectedIndex = 1;
+            }
+        }
+    },
+    {
+        start: 18,
+        end: 25,
+        chapterIdx: 0,
+        badge: "حفظ الاجتماع",
+        title: "حفظ موعد الاجتماع واعتماده في الدليل العام",
+        desc: "الضغط على زر حفظ وتحديث الاجتماع ليظهر مباشرة في جدول مواعيد المجموعة ودليل الاجتماعات العام.",
+        icon: "bi-check-circle-fill",
+        borderColor: "#0ea5e9",
+        iconColor: "#0ea5e9",
+        cursorPos: { x: 500, y: 550 },
+        action: (p) => {
+            showScene('sceneBoxMeeting');
+            if (p > 0.5) doClick(500, 550);
+        }
+    },
+
+    // CHAPTER 2: AGENDAS (25s - 50s)
+    {
+        start: 25,
+        end: 34,
+        chapterIdx: 1,
+        badge: "أجندة المجموعة",
+        title: "الفصل 2: تجهيز تقرير وأجندة المجموعة لاجتماع المنطقة (ASC)",
+        desc: "الانتقال إلى نموذج الأجندة الرسمي، واختيار صفة مقدم التقرير (GSR - ممثل خدمة المجموعة).",
+        icon: "bi-journal-check",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 750, y: 220 },
+        action: (p) => {
+            showScene('sceneBoxAgenda');
+            const rGSR = document.getElementById('pos_gsr');
+            if (rGSR) rGSR.checked = true;
+            const wName = document.getElementById('submitterNameWrapper');
+            if (wName) wName.style.display = 'block';
+            const subInput = document.getElementById('submitter_name');
+            if (subInput) {
+                const name = "م. كريم - ممثل خدمة مجموعة العباسية";
+                subInput.value = name.slice(0, Math.floor(p * name.length));
+            }
+        }
+    },
+    {
+        start: 34,
+        end: 42,
+        chapterIdx: 1,
+        badge: "القادمون الجدد والمراكز",
+        title: "توثيق القادمين الجدد والمراكز الشاغرة",
+        desc: "تسجيل 14 قادم جديد خلال الشهر، وتوثيق المراكز الخدمية الشاغرة تمهيداً لعرضها في مؤتمر المنطقة.",
+        icon: "bi-people-fill",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 620, y: 380 },
+        action: (p) => {
+            showScene('sceneBoxAgenda');
+            const inNew = document.querySelector('input[name="new_comers"]');
+            if (inNew) inNew.value = "14";
+            const inOpen = document.querySelector('input[name="open_positions"]');
+            if (inOpen) inOpen.value = "خادم أدبيات شاغر بالمجموعة";
+        }
+    },
+    {
+        start: 42,
+        end: 50,
+        chapterIdx: 1,
+        badge: "ضمير المجموعة والماليات",
+        title: "توثيق ضمير المجموعة والمسائل المالية وتقديم الأجندة",
+        desc: "توثيق رصيد المجموعة المالي (1,250 ج.م) وتصويت المجموعة على بنود المنطقة، ثم الضغط على تقديم الأجندة.",
+        icon: "bi-send-check-fill",
+        borderColor: "#8b5cf6",
+        iconColor: "#8b5cf6",
+        cursorPos: { x: 450, y: 520 },
+        action: (p) => {
+            showScene('sceneBoxAgenda');
+            const inFin = document.querySelector('input[name="financial_issues"]');
+            if (inFin) inFin.value = "رصيد المجموعة: 1,250 ج.م - لا توجد التزامات متأخرة.";
+            if (p > 0.6) doClick(450, 520);
+        }
+    },
+
+    // CHAPTER 3: LITERATURE (50s - 75s)
+    {
+        start: 50,
+        end: 58,
+        chapterIdx: 2,
+        badge: "سلة الأدبيات",
+        title: "الفصل 3: طلب الأدبيات والميداليات عبر السلة الإلكترونية",
+        desc: "فتح سلة طلبات الأدبيات والمطبوعات الرسمية باسم (مجموعة العباسية) لتجهيز طلبية الشهر.",
+        icon: "bi-cart3",
+        borderColor: "#f59e0b",
+        iconColor: "#f59e0b",
+        cursorPos: { x: 700, y: 180 },
+        action: (p) => {
+            showScene('sceneBoxCart');
+            celebModal.classList.remove('active');
+        }
+    },
+    {
+        start: 58,
+        end: 67,
+        chapterIdx: 2,
+        badge: "بنود الطلبية",
+        title: "تحديد كميات الكتب والمطبوعات والميداليات",
+        desc: "تحديد 5 نسخ من النص الأساسي، 3 نسخ من كتاب لليوم فقط، و30 ميدالية تعافي وترحيب.",
+        icon: "bi-journal-bookmark-fill",
+        borderColor: "#f59e0b",
+        iconColor: "#f59e0b",
+        cursorPos: { x: 550, y: 320 },
+        action: (p) => {
+            showScene('sceneBoxCart');
+            const qtyInputs = document.querySelectorAll('#sceneBoxCart input[type="number"]');
+            if (qtyInputs.length > 0) qtyInputs[0].value = 5;
+            if (qtyInputs.length > 1) qtyInputs[1].value = 3;
+            if (qtyInputs.length > 2) qtyInputs[2].value = 30;
+        }
+    },
+    {
+        start: 67,
+        end: 75,
+        chapterIdx: 2,
+        badge: "اعتماد وإرسال الطلبية",
+        title: "إرسال طلب الأدبيات للجنة المنطقة واكتمال الدورة",
+        desc: "الضغط على زر إرسال الطلبية لتصل رسمياً إلى لجنة الأدبيات بالمنطقة لاعتمادها وإصدار إيصال الصرف.",
+        icon: "bi-check-all",
+        borderColor: "#10b981",
+        iconColor: "#10b981",
+        cursorPos: { x: 450, y: 550 },
+        action: (p) => {
+            showScene('sceneBoxCart');
+            if (p > 0.5) {
+                doClick(450, 550);
+                celebModal.classList.add('active');
+                document.getElementById('celebText').innerText = "تم إرسال طلب الأدبيات والميداليات بنجاح إلى لجنة خدمة المنطقة، وتحديث جدول الاجتماعات والأجندة في النظام الفعلي.";
+            } else {
+                celebModal.classList.remove('active');
+            }
+        }
+    }
+        ];
+
+        function showScene(sceneId) {
+            document.querySelectorAll('.tutorial-scene-box').forEach(s => {
+                if (s.id === sceneId) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        }
+
+        let lastClick = 0;
+        function doClick(x, y) {
+            const now = performance.now();
+            if (now - lastClick < 350) return;
+            lastClick = now;
+            clickWave.style.left = `${x}px`;
+            clickWave.style.top = `${y}px`;
+            clickWave.classList.remove('animate');
+            void clickWave.offsetWidth;
+            clickWave.classList.add('animate');
+        }
+
+        function loop(ts) {
+            if (!lastTs) lastTs = ts;
+            const dt = (ts - lastTs) / 1000;
+            lastTs = ts;
+
+            if (isPlaying) {
+                curTime += dt * playSpeed;
+                if (curTime >= DURATION) {
+                    curTime = DURATION;
+                    isPlaying = false;
+                    playIcon.className = "bi bi-arrow-counterclockwise fs-5";
+                }
+                render();
+            }
+
+            if (isPlaying) {
+                animId = requestAnimationFrame(loop);
+            }
+        }
+
+        function render() {
+            const ratio = Math.min(1, Math.max(0, curTime / DURATION));
+            timelineFill.style.width = `${ratio * 100}%`;
+            timelineThumb.style.right = `${(1 - ratio) * 100}%`;
+
+            const m = Math.floor(curTime / 60);
+            const s = Math.floor(curTime % 60);
+            timeNow.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+
+            const activeScene = scenes.find(s => curTime >= s.start && curTime < s.end) || scenes[scenes.length - 1];
+            const p = (curTime - activeScene.start) / (activeScene.end - activeScene.start);
+
+            activeScene.action(Math.min(1, Math.max(0, p)));
+
+            explainerIcon.innerHTML = `<i class="bi ${activeScene.icon}"></i>`;
+            explainerIcon.style.color = activeScene.iconColor;
+            explainerTitle.innerText = activeScene.title;
+            explainerDesc.innerText = activeScene.desc;
+            explainerBanner.style.borderRightColor = activeScene.borderColor;
+
+            sceneBadge.innerText = activeScene.badge;
+
+            if (activeScene.cursorPos) {
+                vCursor.style.transform = `translate(${activeScene.cursorPos.x}px, ${activeScene.cursorPos.y}px)`;
+            }
+
+            document.querySelectorAll('.ch-pill-btn').forEach((btn, idx) => {
+                if (idx === activeScene.chapterIdx) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                if (curTime >= DURATION) {
+                    curTime = 0;
+                    celebModal.classList.remove('active');
+                }
+                playIcon.className = "bi bi-pause-fill fs-5";
+                lastTs = performance.now();
+                animId = requestAnimationFrame(loop);
+            } else {
+                playIcon.className = "bi bi-play-fill fs-5";
+                if (animId) cancelAnimationFrame(animId);
+            }
+        }
+
+        function seekTo(sec) {
+            curTime = Math.min(DURATION, Math.max(0, sec));
+            celebModal.classList.remove('active');
+            render();
+            if (!isPlaying) togglePlay();
+        }
+
+        function cycleSpeed() {
+            const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
+            const idx = speeds.indexOf(playSpeed);
+            playSpeed = speeds[(idx + 1) % speeds.length];
+            speedTag.innerText = `${playSpeed}x`;
+        }
+
+        function onTimelineClick(e) {
+            const rect = document.getElementById('timelineRail').getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const rtlRatio = (rect.width - clickX) / rect.width;
+            seekTo(rtlRatio * DURATION);
+        }
+
+        function toggleFullscreen() {
+            const shell = document.getElementById('playerWrap');
+            if (!document.fullscreenElement) shell.requestFullscreen().catch(e => {});
+            else document.exitFullscreen();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            }
+        });
+
+        // Initialize & Play
+        render();
+        togglePlay();
+    </script>
+</body>
+</html>

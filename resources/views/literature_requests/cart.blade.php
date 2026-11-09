@@ -17,6 +17,10 @@
                         {{ __('messages.back_to_treasurer_dashboard') }}
                     </a>
                 @endif
+                <button type="button" class="btn btn-outline-info rounded-pill px-4 shadow-sm d-inline-flex align-items-center gap-1.5" data-bs-toggle="modal" data-bs-target="#gsrVideoModal" title="{{ __('messages.gsr_animated_guide_title') }}">
+                    <i class="bi bi-play-circle-fill text-info"></i>
+                    <span>{{ __('messages.gsr_video_tutorial_btn') }}</span>
+                </button>
                 <a href="{{ route('literature-requests.archive') }}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                     <i class="bi bi-archive me-1"></i>
                     {{ __('messages.literature_requests_archive') }}
@@ -254,4 +258,5 @@
             });
         });
     </script>
+    <x-gsr-video-modal />
 </x-layout>
