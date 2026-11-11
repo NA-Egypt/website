@@ -69,12 +69,22 @@ class ArabicSearchEngine {
     });
   }
 
+  // Check if item category matches selected filter
+  static matchesCategory(itemCat, filterCat) {
+    if (!filterCat || filterCat === 'all') return true;
+    if (itemCat === filterCat) return true;
+    if (filterCat === 'السياسات العامة' && (itemCat === 'مقدمة' || itemCat === 'السياسات العامة' || itemCat === 'المناطق والمنتديات')) return true;
+    if (filterCat === 'اللجان ومجموعات العمل' && (itemCat === 'اللجان الفرعية' || itemCat === 'مجموعات العمل المتخصصة' || itemCat === 'الهيكل والخدم المؤتمن')) return true;
+    if (filterCat === 'الإجراءات والاجتماعات' && (itemCat === 'الإجراءات التنظيمية' || itemCat === 'السياسات المالية والتعديل' || itemCat === 'الفعاليات والأحداث')) return true;
+    if (filterCat === 'الأدبيات والتوثيق' && (itemCat === 'الأدبيات والمبيعات' || itemCat === 'التوثيق والترجمة')) return true;
+    if (filterCat === 'قواعد روبرت' && (itemCat === 'القواعد البرلمانية وروبرت' || itemCat === 'المصطلحات والمفردات')) return true;
+    return itemCat.includes(filterCat) || filterCat.includes(itemCat);
+  }
+
   // Perform search
   search(query, filterCategory = 'all') {
     if (!query || !query.trim()) {
-      return filterCategory === 'all' 
-        ? this.sections 
-        : this.sections.filter(s => s.category === filterCategory);
+      return this.sections.filter(s => ArabicSearchEngine.matchesCategory(s.category, filterCategory));
     }
 
     const normalizedQuery = ArabicSearchEngine.normalizeArabic(query);
@@ -85,7 +95,7 @@ class ArabicSearchEngine {
     const results = [];
 
     this.index.forEach(item => {
-      if (filterCategory !== 'all' && item.category !== filterCategory) {
+      if (!ArabicSearchEngine.matchesCategory(item.category, filterCategory)) {
         return;
       }
 

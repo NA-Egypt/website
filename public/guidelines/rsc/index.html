@@ -8,27 +8,39 @@
   <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">
   <meta name="CCBot" content="nofollow, noindex">
   <meta name="GPTBot" content="noindex, nofollow">
-  <title>الخطوط الإرشادية للجنة خدمة الإقليم – مصر (2025)</title>
+  <title>الخطوط الإرشادية للجنة خدمة الإقليم – مصر (نسخة مصدق عليها 2025)</title>
   
-  <!-- Google Fonts: Cairo & Alexandria for Modern Arabic Typography -->
+  <!-- Google Font: Alyamama (اليمامة) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600;700;800&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   
   <!-- App Styles -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
+  <!-- Top Global Reading Progress Bar -->
+  <div id="reading-progress-bar" class="reading-progress-bar" aria-hidden="true"></div>
+
+  <!-- Toast Notification Center -->
+  <div id="toast-notification" class="toast-notification" role="status" aria-live="polite"></div>
+
   <div class="app-container">
     
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <div class="app-logo">NA</div>
+        <div class="app-logo" title="زمالة المدمنين المجهولين - مصر">
+          <svg viewBox="0 0 100 100" class="na-emblem-svg" aria-hidden="true">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="7" />
+            <polygon points="50,12 88,50 50,88 12,50" fill="none" stroke="currentColor" stroke-width="6" />
+            <text x="50" y="58" font-family="'Alyamama', sans-serif" font-size="28" font-weight="900" text-anchor="middle" fill="currentColor">NA</text>
+          </svg>
+        </div>
         <div class="app-title-box">
           <h1>لجنة خدمة الإقليم</h1>
-          <span>دليل الخطوط الإرشادية - مصر</span>
+          <span>دليل الخطوط الإرشادية – مصر 2025</span>
         </div>
         <button id="sidebar-close-btn" class="sidebar-close-btn" title="إغلاق القائمة" aria-label="إغلاق القائمة">✕</button>
       </div>
@@ -37,6 +49,7 @@
         <div class="search-input-wrapper">
           <span class="search-icon">🔍</span>
           <input type="text" id="search-input" placeholder="بحث ذكي في الدليل والمفاهيم..." autocomplete="off">
+          <span class="search-kbd-shortcut">Ctrl+K</span>
           <button id="clear-search-btn" class="clear-search-btn" title="مسح البحث">✕</button>
         </div>
       </div>
@@ -61,16 +74,21 @@
           </button>
           <div class="breadcrumbs">
             <span class="breadcrumb-root">الخطوط الإرشادية</span>
-            <span class="breadcrumb-separator">&gt;</span> 
-            <span class="current" id="breadcrumb-current">الغلاف</span>
+            <span class="breadcrumb-separator">›</span> 
+            <span class="current" id="breadcrumb-current">الغلاف والبيانات التمهيدية</span>
           </div>
         </div>
 
         <div class="header-right">
           <!-- Mobile search trigger button -->
           <button id="mobile-search-btn" class="header-btn mobile-search-btn" title="البحث الذكي" aria-label="البحث الذكي">🔍 <span class="btn-text">بحث</span></button>
-          <button id="font-decrease-btn" class="header-btn desktop-only-btn" title="تصغير الخط">A-</button>
-          <button id="font-increase-btn" class="header-btn desktop-only-btn" title="تكبير الخط">A+</button>
+          
+          <div class="font-size-control-header desktop-only-btn" title="التحكم في حجم الخط">
+            <button id="font-decrease-btn" class="header-btn" title="تصغير الخط" aria-label="تصغير الخط">A-</button>
+            <span id="font-size-badge" class="font-size-badge">17px</span>
+            <button id="font-increase-btn" class="header-btn" title="تكبير الخط" aria-label="تكبير الخط">A+</button>
+          </div>
+
           <button id="theme-toggle-btn" class="header-btn" title="تبديل المظهر">
             <span id="theme-btn-text">🌙 الوضع الداكن</span>
           </button>
@@ -95,8 +113,8 @@
             <button class="filter-pill active" data-category="all">الكل</button>
             <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
             <button class="filter-pill" data-category="إداريو الإقليم">إداريو الإقليم</button>
-            <button class="filter-pill" data-category="اللجان الفرعية">اللجان الفرعية</button>
-            <button class="filter-pill" data-category="الإجراءات التنظيمية">الإجراءات التنظيمية</button>
+            <button class="filter-pill" data-category="اللجان ومجموعات العمل">اللجان ومجموعات العمل</button>
+            <button class="filter-pill" data-category="الإجراءات والاجتماعات">الإجراءات والاجتماعات</button>
             <button class="filter-pill" data-category="المفاهيم الاثني عشر">المفاهيم الاثني عشر</button>
             <button class="filter-pill" data-category="القواعد البرلمانية وروبرت">قواعد روبرت</button>
           </div>
@@ -112,14 +130,15 @@
         <div id="search-results-pane" class="search-results-pane">
           <div class="search-results-header">
             <h3>نتائج البحث الذكي (<span id="search-count-badge">0</span>)</h3>
+            <button id="close-desktop-search-btn" class="close-desktop-search-btn" title="إغلاق النتائج">✕</button>
           </div>
           
           <div class="search-filter-pills">
             <button class="filter-pill active" data-category="all">الكل</button>
             <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
             <button class="filter-pill" data-category="إداريو الإقليم">إداريو الإقليم</button>
-            <button class="filter-pill" data-category="اللجان الفرعية">اللجان الفرعية</button>
-            <button class="filter-pill" data-category="الإجراءات التنظيمية">الإجراءات التنظيمية</button>
+            <button class="filter-pill" data-category="اللجان ومجموعات العمل">اللجان ومجموعات العمل</button>
+            <button class="filter-pill" data-category="الإجراءات والاجتماعات">الإجراءات والاجتماعات</button>
             <button class="filter-pill" data-category="المفاهيم الاثني عشر">المفاهيم الاثني عشر</button>
             <button class="filter-pill" data-category="القواعد البرلمانية وروبرت">قواعد روبرت</button>
           </div>
@@ -148,6 +167,31 @@
           <button id="bottom-font-decrease" class="bottom-bar-btn icon-only" title="تصغير الخط" aria-label="تصغير الخط">
             <span class="btn-icon">A-</span>
           </button>
+          <button id="bottom-font-increase" class="bottom-bar-btn icon-only" title="تكبير الخط" aria-label="تكبير الخط">
+            <span class="btn-icon">A+</span>
+          </button>
+        </div>
+        <button id="bottom-share-btn" class="bottom-bar-btn" title="مشاركة" aria-label="نسخ رابط المقطع">
+          <span class="btn-icon">🔗</span>
+          <span class="btn-label">مشاركة</span>
+        </button>
+        <button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
+          <span class="btn-icon">↑</span>
+          <span class="btn-label">للأعلى</span>
+        </button>
+      </nav>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="data/guideline_data.js"></script>
+  <script src="data/glossary_rules.js"></script>
+  <script src="js/search-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
           <button id="bottom-font-increase" class="bottom-bar-btn icon-only" title="تكبير الخط" aria-label="تكبير الخط">
             <span class="btn-icon">A+</span>
           </button>
