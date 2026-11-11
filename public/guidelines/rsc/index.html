@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +10,16 @@
   <meta name="CCBot" content="nofollow, noindex">
   <meta name="GPTBot" content="noindex, nofollow">
   <title>الخطوط الإرشادية للجنة خدمة الإقليم – مصر (نسخة مصدق عليها 2025)</title>
-  
+
   <!-- Google Font: Alyamama (اليمامة) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  
-  <!-- App Styles -->
-  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- App Styles (Versioned with cache-busting timestamp) -->
+  <link rel="stylesheet" href="css/styles.css?v=20250425">
 </head>
+
 <body>
 
   <!-- Top Global Reading Progress Bar -->
@@ -27,7 +29,7 @@
   <div id="toast-notification" class="toast-notification" role="status" aria-live="polite"></div>
 
   <div class="app-container">
-    
+
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
@@ -35,14 +37,16 @@
           <svg viewBox="0 0 100 100" class="na-emblem-svg" aria-hidden="true">
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="7" />
             <polygon points="50,12 88,50 50,88 12,50" fill="none" stroke="currentColor" stroke-width="6" />
-            <text x="50" y="58" font-family="'Alyamama', sans-serif" font-size="28" font-weight="900" text-anchor="middle" fill="currentColor">NA</text>
+            <text x="50" y="58" font-family="'Alyamama', sans-serif" font-size="28" font-weight="900"
+              text-anchor="middle" fill="currentColor">NA</text>
           </svg>
         </div>
         <div class="app-title-box">
           <h1>لجنة خدمة الإقليم</h1>
           <span>دليل الخطوط الإرشادية – مصر 2025</span>
         </div>
-        <button id="sidebar-close-btn" class="sidebar-close-btn" title="إغلاق القائمة" aria-label="إغلاق القائمة">✕</button>
+        <button id="sidebar-close-btn" class="sidebar-close-btn" title="إغلاق القائمة"
+          aria-label="إغلاق القائمة">✕</button>
       </div>
 
       <div class="sidebar-search-box">
@@ -64,7 +68,7 @@
 
     <!-- Main Content Area -->
     <main class="main-wrapper">
-      
+
       <!-- Top Sticky Header -->
       <header class="top-header">
         <div class="header-left">
@@ -74,15 +78,16 @@
           </button>
           <div class="breadcrumbs">
             <span class="breadcrumb-root">الخطوط الإرشادية</span>
-            <span class="breadcrumb-separator">›</span> 
+            <span class="breadcrumb-separator">›</span>
             <span class="current" id="breadcrumb-current">الغلاف والبيانات التمهيدية</span>
           </div>
         </div>
 
         <div class="header-right">
           <!-- Mobile search trigger button -->
-          <button id="mobile-search-btn" class="header-btn mobile-search-btn" title="البحث الذكي" aria-label="البحث الذكي">🔍 <span class="btn-text">بحث</span></button>
-          
+          <button id="mobile-search-btn" class="header-btn mobile-search-btn" title="البحث الذكي"
+            aria-label="البحث الذكي">🔍 <span class="btn-text">بحث</span></button>
+
           <div class="font-size-control-header desktop-only-btn" title="التحكم في حجم الخط">
             <button id="font-decrease-btn" class="header-btn" title="تصغير الخط" aria-label="تصغير الخط">A-</button>
             <span id="font-size-badge" class="font-size-badge">17px</span>
@@ -98,17 +103,20 @@
       </header>
 
       <!-- Mobile Search Modal Overlay -->
-      <div id="mobile-search-modal" class="mobile-search-modal" role="dialog" aria-modal="true" aria-label="البحث الذكي">
+      <div id="mobile-search-modal" class="mobile-search-modal" role="dialog" aria-modal="true"
+        aria-label="البحث الذكي">
         <div class="mobile-search-content">
           <div class="mobile-search-header">
             <div class="search-input-wrapper mobile-search-wrapper">
               <span class="search-icon">🔍</span>
-              <input type="text" id="mobile-search-input" placeholder="ابحث في الدليل والمفاهيم وقواعد روبرت..." autocomplete="off">
+              <input type="text" id="mobile-search-input" placeholder="ابحث في الدليل والمفاهيم وقواعد روبرت..."
+                autocomplete="off">
               <button id="mobile-clear-search-btn" class="clear-search-btn" title="مسح">✕</button>
             </div>
-            <button id="close-search-modal-btn" class="close-search-modal-btn" title="إغلاق البحث" aria-label="إغلاق البحث">✕</button>
+            <button id="close-search-modal-btn" class="close-search-modal-btn" title="إغلاق البحث"
+              aria-label="إغلاق البحث">✕</button>
           </div>
-          
+
           <div class="search-filter-pills mobile-search-filter-pills">
             <button class="filter-pill active" data-category="all">الكل</button>
             <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
@@ -126,13 +134,13 @@
 
       <!-- Search Results Overlay Pane (Desktop) -->
       <div class="content-container">
-        
+
         <div id="search-results-pane" class="search-results-pane">
           <div class="search-results-header">
             <h3>نتائج البحث الذكي (<span id="search-count-badge">0</span>)</h3>
             <button id="close-desktop-search-btn" class="close-desktop-search-btn" title="إغلاق النتائج">✕</button>
           </div>
-          
+
           <div class="search-filter-pills">
             <button class="filter-pill active" data-category="all">الكل</button>
             <button class="filter-pill" data-category="السياسات العامة">السياسات العامة</button>
@@ -171,49 +179,29 @@
             <span class="btn-icon">A+</span>
           </button>
         </div>
-        <button id="bottom-share-btn" class="bottom-bar-btn" title="مشاركة" aria-label="نسخ رابط المقطع">
-          <span class="btn-icon">🔗</span>
-          <span class="btn-label">مشاركة</span>
-        </button>
-        <button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
-          <span class="btn-icon">↑</span>
-          <span class="btn-label">للأعلى</span>
-        </button>
-      </nav>
-
-    </main>
-
-  </div>
-
-  <!-- Scripts -->
-  <script src="data/guideline_data.js"></script>
-  <script src="data/glossary_rules.js"></script>
-  <script src="js/search-engine.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>
-          <button id="bottom-font-increase" class="bottom-bar-btn icon-only" title="تكبير الخط" aria-label="تكبير الخط">
-            <span class="btn-icon">A+</span>
+          <button id="bottom-theme-btn" class="bottom-bar-btn" title="المظهر" aria-label="تبديل الوضع الداكن">
+            <span class="btn-icon" id="bottom-theme-icon">🌙</span>
+            <span class="btn-label" id="bottom-theme-label">داكن</span>
           </button>
-        </div>
-        <button id="bottom-share-btn" class="bottom-bar-btn" title="مشاركة" aria-label="نسخ رابط المقطع">
-          <span class="btn-icon">🔗</span>
-          <span class="btn-label">مشاركة</span>
-        </button>
-        <button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
-          <span class="btn-icon">↑</span>
-          <span class="btn-label">للأعلى</span>
-        </button>
-      </nav>
+<button id="bottom-share-btn" class="bottom-bar-btn" title="مشاركة" aria-label="نسخ رابط المقطع">
+  <span class="btn-icon">🔗</span>
+  <span class="btn-label">مشاركة</span>
+</button>
+<button id="scroll-to-top-btn" class="bottom-bar-btn" title="للأعلى" aria-label="الرجوع للأعلى">
+  <span class="btn-icon">↑</span>
+  <span class="btn-label">للأعلى</span>
+</button>
+</nav>
 
-    </main>
+</main>
 
-  </div>
+</div>
 
-  <!-- Scripts -->
-  <script src="data/guideline_data.js"></script>
-  <script src="data/glossary_rules.js"></script>
-  <script src="js/search-engine.js"></script>
-  <script src="js/app.js"></script>
+<!-- Scripts (Versioned with cache-busting timestamp) -->
+<script src="data/guideline_data.js?v=20250425"></script>
+<script src="data/glossary_rules.js?v=20250425"></script>
+<script src="js/search-engine.js?v=20250425"></script>
+<script src="js/app.js?v=20250425"></script>
 </body>
+
 </html>

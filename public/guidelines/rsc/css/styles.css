@@ -58,6 +58,8 @@
 }
 
 /* Polished High-Contrast Dark Theme */
+html[data-theme="dark"],
+:root[data-theme="dark"],
 [data-theme="dark"] {
   --primary-color: #2ecc71;
   --primary-hover: #4ade80;

@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchFilterPills = document.querySelectorAll('#search-results-pane .filter-pill');
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   const themeBtnText = document.getElementById('theme-btn-text');
+  const bottomThemeBtn = document.getElementById('bottom-theme-btn');
+  const bottomThemeIcon = document.getElementById('bottom-theme-icon');
+  const bottomThemeLabel = document.getElementById('bottom-theme-label');
   const menuToggleBtn = document.getElementById('menu-toggle-btn');
   const sidebar = document.getElementById('sidebar');
   const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
@@ -88,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Render Sidebar Table of Contents
   function renderSidebar() {
     sidebarNav.innerHTML = '';
-    
+
     // Group sections by category
     const categories = {};
     GUIDELINE_SECTIONS.forEach(sec => {
@@ -458,8 +461,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTable() {
       const q = ArabicSearchEngine.normalizeArabic(searchInput.value.trim());
       const filtered = ROBERTS_RULES_DATA.filter(item => {
-        const matchesQuery = !q || 
-          ArabicSearchEngine.normalizeArabic(item.type).includes(q) || 
+        const matchesQuery = !q ||
+          ArabicSearchEngine.normalizeArabic(item.type).includes(q) ||
           ArabicSearchEngine.normalizeArabic(item.purpose).includes(q);
         const matchesMaj = activeFilter === 'all' || item.majority.includes(activeFilter);
         return matchesQuery && matchesMaj;
@@ -667,125 +670,138 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 6. Theme Toggle
-  if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
+    // 6. Theme Toggle Handler
+    function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('na_theme', newTheme);
       updateThemeIcon(newTheme);
       showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الداكن' : '☀️ تم تفعيل الوضع الفاتح');
-    });
-  }
-
-  function updateThemeIcon(theme) {
-    const text = theme === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
-    if (themeBtnText) {
-      themeBtnText.textContent = text;
-    } else if (themeToggleBtn) {
-      themeToggleBtn.innerHTML = text;
     }
-  }
 
-  // 7. Font Sizing Controls
-  function adjustFontSize(delta) {
-    const newSize = currentFontSize + delta;
-    if (newSize >= 13 && newSize <= 25) {
-      currentFontSize = newSize;
-      document.body.style.fontSize = currentFontSize + 'px';
-      localStorage.setItem('na_font_size', currentFontSize);
-      if (fontSizeBadge) fontSizeBadge.textContent = currentFontSize + 'px';
-      showToast(`🔤 حجم الخط: ${currentFontSize}px`);
+    function updateThemeIcon(theme) {
+      const isDark = theme === 'dark';
+      const headerText = isDark ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+      if (themeBtnText) {
+        themeBtnText.textContent = headerText;
+      } else if (themeToggleBtn) {
+        themeToggleBtn.innerHTML = headerText;
+      }
+
+      if (bottomThemeIcon) {
+        bottomThemeIcon.textContent = isDark ? '☀️' : '🌙';
+      }
+      if (bottomThemeLabel) {
+        bottomThemeLabel.textContent = isDark ? 'فاتح' : 'داكن';
+      }
     }
-  }
 
-  if (fontIncreaseBtn) {
-    fontIncreaseBtn.addEventListener('click', () => adjustFontSize(1));
-  }
-  if (fontDecreaseBtn) {
-    fontDecreaseBtn.addEventListener('click', () => adjustFontSize(-1));
-  }
-  if (bottomFontIncrease) {
-    bottomFontIncrease.addEventListener('click', () => adjustFontSize(1));
-  }
-  if (bottomFontDecrease) {
-    bottomFontDecrease.addEventListener('click', () => adjustFontSize(-1));
-  }
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+    if (bottomThemeBtn) {
+      bottomThemeBtn.addEventListener('click', toggleTheme);
+    }
 
-  // 8. Print & Copy Link
-  if (printDocBtn) {
-    printDocBtn.addEventListener('click', () => {
-      window.print();
-    });
-  }
-
-  function handleCopyShare(btn) {
-    const currentUrl = window.location.origin + window.location.pathname + '#' + currentSectionId;
-    navigator.clipboard.writeText(currentUrl).then(() => {
-      showToast('🔗 تم نسخ رابط المقطع إلى الحافظة!');
-      if (btn) {
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '✓ تم النسخ';
-        setTimeout(() => {
-          btn.innerHTML = originalHtml;
-        }, 2000);
+    // 7. Font Sizing Controls
+    function adjustFontSize(delta) {
+      const newSize = currentFontSize + delta;
+      if (newSize >= 13 && newSize <= 25) {
+        currentFontSize = newSize;
+        document.body.style.fontSize = currentFontSize + 'px';
+        localStorage.setItem('na_font_size', currentFontSize);
+        if (fontSizeBadge) fontSizeBadge.textContent = currentFontSize + 'px';
+        showToast(`🔤 حجم الخط: ${currentFontSize}px`);
       }
-    }).catch(() => {
-      showToast('⚠️ تعذر النسخ المباشر');
-    });
-  }
+    }
 
-  if (copyLinkBtn) {
-    copyLinkBtn.addEventListener('click', () => handleCopyShare(copyLinkBtn));
-  }
+    if (fontIncreaseBtn) {
+      fontIncreaseBtn.addEventListener('click', () => adjustFontSize(1));
+    }
+    if (fontDecreaseBtn) {
+      fontDecreaseBtn.addEventListener('click', () => adjustFontSize(-1));
+    }
+    if (bottomFontIncrease) {
+      bottomFontIncrease.addEventListener('click', () => adjustFontSize(1));
+    }
+    if (bottomFontDecrease) {
+      bottomFontDecrease.addEventListener('click', () => adjustFontSize(-1));
+    }
 
-  if (bottomShareBtn) {
-    bottomShareBtn.addEventListener('click', () => handleCopyShare(bottomShareBtn));
-  }
+    // 8. Print & Copy Link
+    if (printDocBtn) {
+      printDocBtn.addEventListener('click', () => {
+        window.print();
+      });
+    }
 
-  // 9. Scroll to Top Button
-  if (scrollToTopBtn) {
-    scrollToTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-
-  // 10. Global Keyboard Shortcuts (Ctrl+K or '/' to focus search, Esc to dismiss)
-  window.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
-      e.preventDefault();
-      if (window.innerWidth <= 768) {
-        openMobileSearch();
-      } else {
-        if (searchInput) {
-          searchInput.focus();
-          searchInput.select();
+    function handleCopyShare(btn) {
+      const currentUrl = window.location.origin + window.location.pathname + '#' + currentSectionId;
+      navigator.clipboard.writeText(currentUrl).then(() => {
+        showToast('🔗 تم نسخ رابط المقطع إلى الحافظة!');
+        if (btn) {
+          const originalHtml = btn.innerHTML;
+          btn.innerHTML = '✓ تم النسخ';
+          setTimeout(() => {
+            btn.innerHTML = originalHtml;
+          }, 2000);
         }
-      }
-    } else if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-      e.preventDefault();
-      if (window.innerWidth <= 768) {
-        openMobileSearch();
-      } else {
-        if (searchInput) {
-          searchInput.focus();
-          searchInput.select();
+      }).catch(() => {
+        showToast('⚠️ تعذر النسخ المباشر');
+      });
+    }
+
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener('click', () => handleCopyShare(copyLinkBtn));
+    }
+
+    if (bottomShareBtn) {
+      bottomShareBtn.addEventListener('click', () => handleCopyShare(bottomShareBtn));
+    }
+
+    // 9. Scroll to Top Button
+    if (scrollToTopBtn) {
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // 10. Global Keyboard Shortcuts (Ctrl+K or '/' to focus search, Esc to dismiss)
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        if (window.innerWidth <= 768) {
+          openMobileSearch();
+        } else {
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+          }
         }
+      } else if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        if (window.innerWidth <= 768) {
+          openMobileSearch();
+        } else {
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+          }
+        }
+      } else if (e.key === 'Escape') {
+        closeMobileSearch();
+        closeSidebar();
+        if (searchResultsPane) searchResultsPane.style.display = 'none';
       }
-    } else if (e.key === 'Escape') {
-      closeMobileSearch();
-      closeSidebar();
-      if (searchResultsPane) searchResultsPane.style.display = 'none';
+    });
+
+    // Initial Load from URL Hash or default
+    renderSidebar();
+    const initialHash = window.location.hash.replace('#', '');
+    if (initialHash && GUIDELINE_SECTIONS.find(s => s.id === initialHash)) {
+      navigateToSection(initialHash);
+    } else {
+      navigateToSection(GUIDELINE_SECTIONS[0].id);
     }
   });
-
-  // Initial Load from URL Hash or default
-  renderSidebar();
-  const initialHash = window.location.hash.replace('#', '');
-  if (initialHash && GUIDELINE_SECTIONS.find(s => s.id === initialHash)) {
-    navigateToSection(initialHash);
-  } else {
-    navigateToSection(GUIDELINE_SECTIONS[0].id);
-  }
-});
