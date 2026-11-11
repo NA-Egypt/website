@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl" class="minimal-theme">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>دليل فيديو تفاعلي معمق: دورة إعداد ودمج تقارير اللجان ومجموعات العمل (النظام الفعلي)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>دليل فيديو تفاعلي: دورة تقارير اللجان ومجموعات العمل (متوافق مع الهواتف الذكية)</title>
 
     <!-- Real NA Egypt Fonts & Stylesheets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,14 +26,12 @@
             --neon-glow: 0 5px 20px rgba(0, 0, 0, 0.05);
             --text-primary: #1a202c !important;
             --text-secondary: #4a5568 !important;
-            background-color: #f8fafc !important;
-            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%) !important;
-            background-attachment: fixed !important;
-            color: var(--text-primary) !important;
+            background-color: #0b1120 !important;
             margin: 0;
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: pan-y;
         }
 
         .text-gradient {
@@ -55,62 +53,110 @@
             color: var(--text-primary) !important;
         }
 
+        /* Master Player Wrapper */
         .tutorial-player-container {
             width: 100%;
-            max-width: 1380px;
-            margin: 12px auto;
+            max-width: 1400px;
+            margin: 10px auto;
             background: #0f172a;
-            border-radius: 20px;
+            border-radius: 24px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.12);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: all 0.3s ease;
         }
 
-        /* Top Header Bar */
+        /* Top Header Navigation Bar */
         .player-header-bar {
             background: #1e293b;
-            padding: 12px 24px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             z-index: 1050;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .player-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .player-badge {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: white;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 12px;
             padding: 4px 10px;
             border-radius: 6px;
         }
 
         .player-title-text {
             color: #f1f5f9;
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 700;
-            margin-right: 8px;
+        }
+
+        .player-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* View Mode Toggle: Mobile Phone vs Desktop */
+        .view-mode-toggle-group {
+            display: flex;
+            background: #090d16;
+            padding: 3px;
+            border-radius: 30px;
+            border: 1px solid #334155;
+        }
+
+        .view-mode-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .view-mode-btn.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
         }
 
         .ch-pills-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            overflow-x: auto;
         }
 
         .ch-pill-btn {
             background: #0f172a;
             color: #94a3b8;
             border: 1px solid #334155;
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .ch-pill-btn:hover {
@@ -127,14 +173,18 @@
         /* Stepper Dots Bar */
         .stepper-dots-bar {
             background: #131c2e;
-            padding: 8px 24px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
+            gap: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             overflow-x: auto;
+            scrollbar-width: none;
             z-index: 1040;
+        }
+
+        .stepper-dots-bar::-webkit-scrollbar {
+            display: none;
         }
 
         .step-dot-item {
@@ -142,24 +192,26 @@
             align-items: center;
             gap: 6px;
             color: #64748b;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 20px;
             transition: all 0.2s ease;
             white-space: nowrap;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
         }
 
         .step-dot-item:hover {
             color: #cbd5e1;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .step-dot-item.active {
             color: #38bdf8;
             background: rgba(56, 189, 248, 0.15);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-color: rgba(56, 189, 248, 0.3);
         }
 
         .step-dot-item.completed {
@@ -186,141 +238,257 @@
             background: #10b981;
         }
 
+        /* Viewport Stage Area */
+        .stage-viewport-area {
+            width: 100%;
+            background: #090d16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            min-height: 680px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Phone Device Frame (Active in Mobile Mode on Desktop) */
+        .mode-mobile .phone-frame-wrapper {
+            width: 395px;
+            height: 680px;
+            background: #f8fafc;
+            border: 10px solid #1e293b;
+            border-radius: 42px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Smartphone Status Bar Notch */
+        .phone-status-bar {
+            height: 28px;
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 0 18px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+            z-index: 1060;
+        }
+
+        .mode-mobile .phone-status-bar {
+            display: flex;
+        }
+
         /* Real System Viewport */
         .real-system-viewport {
+            flex: 1;
             width: 100%;
-            height: 670px;
+            height: 100%;
             background: #f8fafc;
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-        .v-cursor {
+        /* Desktop View mode expansion */
+        .mode-desktop .phone-frame-wrapper {
+            width: 100% !important;
+            height: 680px !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .mode-desktop .phone-status-bar {
+            display: none !important;
+        }
+
+        /* Responsive Mobile Behavior of the Real System */
+        .mode-mobile .real-system-viewport .page-content {
+            margin-right: 0 !important;
+            padding: 12px 14px 140px 14px !important;
+            width: 100% !important;
+        }
+
+        .mode-mobile .real-system-viewport .sidebar-wrapper {
+            position: absolute !important;
+            top: 60px;
+            bottom: 0;
+            right: 0;
+            width: 270px !important;
+            transform: translateX(100%) !important;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            z-index: 1040 !important;
+        }
+
+        .mode-mobile .real-system-viewport.sidebar-drawer-open .sidebar-wrapper {
+            transform: translateX(0) !important;
+            box-shadow: -6px 0 25px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .mode-desktop .real-system-viewport .page-content {
+            margin-right: 260px !important;
+            padding: 20px 24px 140px 24px !important;
+        }
+
+        .mode-desktop .real-system-viewport .sidebar-wrapper {
+            position: absolute !important;
+            top: 60px;
+            bottom: 0;
+            right: 0;
+            width: 260px !important;
+            transform: translateX(0) !important;
+        }
+
+        /* Touch Tap Ring Indicator */
+        .touch-tap-ring {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 24px;
-            height: 24px;
-            z-index: 99999;
-            pointer-events: none;
-            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: translate(500px, 250px);
-            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
-        }
-
-        .v-cursor svg {
-            width: 100%;
-            height: 100%;
-            fill: #0f172a;
-            stroke: #ffffff;
-            stroke-width: 1.8;
-        }
-
-        .click-pulse-ring {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: rgba(37, 99, 235, 0.7);
-            transform: translate(-50%, -50%) scale(0);
+            background: rgba(14, 165, 233, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
             pointer-events: none;
-            z-index: 99998;
+            z-index: 99999;
+            transform: translate(-50%, -50%) scale(1);
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1), top 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
         }
 
-        .click-pulse-ring.animate {
-            animation: pulseWaveRing 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        .touch-tap-ring.pulse {
+            animation: touchPulseWave 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
 
-        @keyframes pulseWaveRing {
-            0% { transform: scale(0.2); opacity: 1; }
-            100% { transform: scale(3.5); opacity: 0; }
+        @keyframes touchPulseWave {
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
-        /* Floating Explainer Banner */
-        .floating-explainer {
+        /* Collapsible Mobile Bottom Sheet */
+        .mobile-bottom-sheet {
             position: absolute;
-            bottom: 24px;
-            right: 32px;
-            left: 32px;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: rgba(15, 23, 42, 0.96);
-            backdrop-filter: blur(12px);
-            border-radius: 14px;
-            padding: 16px 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 12px 16px;
+            color: white;
+            z-index: 2000;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            transition: max-height 0.3s ease, transform 0.3s ease;
+            max-height: 240px;
+        }
+
+        .sheet-drag-handle {
+            width: 36px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 0 auto 8px auto;
+            cursor: pointer;
+        }
+
+        .sheet-main-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
-            color: white;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
-            z-index: 2000;
-            border-right: 5px solid #3b82f6;
-            transition: all 0.3s ease;
+            gap: 12px;
         }
 
-        .explainer-left {
+        .sheet-info-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 10px;
+            flex: 1;
+            overflow: hidden;
         }
 
-        .floating-explainer-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+        .sheet-step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 18px;
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
             flex-shrink: 0;
-            background: rgba(37, 99, 235, 0.15);
-            color: #3b82f6;
         }
 
-        .explainer-quick-controls {
+        .sheet-title-text {
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .sheet-desc-text {
+            font-size: 11.5px;
+            color: #cbd5e1;
+            margin: 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .sheet-actions-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
-        .btn-step-nav {
+        .btn-sheet-nav {
             background: #1e293b;
             color: white;
             border: 1px solid #334155;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.2s;
             font-family: inherit;
         }
 
-        .btn-step-nav:hover {
+        .btn-sheet-nav:hover {
             background: #2563eb;
             border-color: #2563eb;
         }
 
-        /* Bottom Controls Bar */
+        /* Bottom Player Controls Bar */
         .player-bottom-bar {
-            background: #0f172a;
-            padding: 14px 24px;
+            background: #1e293b;
+            padding: 10px 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             z-index: 1050;
         }
 
         .timeline-rail-wrap {
             width: 100%;
-            height: 20px;
+            height: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -329,7 +497,7 @@
 
         .timeline-rail-bar {
             width: 100%;
-            height: 6px;
+            height: 5px;
             background: #334155;
             border-radius: 3px;
             position: relative;
@@ -339,7 +507,7 @@
         .timeline-rail-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #10b981 0%, #2563eb 50%, #8b5cf6 100%);
+            background: linear-gradient(90deg, #10b981 0%, #0ea5e9 50%, #8b5cf6 100%);
             border-radius: 3px;
             transition: width 0.1s linear;
         }
@@ -348,11 +516,11 @@
             position: absolute;
             top: 50%;
             transform: translate(50%, -50%);
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
             pointer-events: none;
             right: 0%;
         }
@@ -361,35 +529,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn-play-toggle {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: #2563eb;
+            background: #0ea5e9;
             color: white;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.2s;
         }
 
         .btn-play-toggle:hover {
-            background: #3b82f6;
-            transform: scale(1.06);
+            background: #0284c7;
+            transform: scale(1.05);
         }
 
         .ctrl-pill-btn {
-            background: #1e293b;
+            background: #0f172a;
             color: #cbd5e1;
             border: 1px solid #334155;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -404,45 +574,27 @@
             color: white;
         }
 
-        .real-system-viewport .wrapper {
-            background: transparent !important;
-            min-height: 100%;
-        }
-
-        .real-system-viewport .sidebar-wrapper {
-            position: absolute !important;
-            top: 60px;
-            bottom: 0;
-            right: 0;
-            height: auto !important;
-            z-index: 100;
-        }
-
-        .real-system-viewport .page-content {
-            margin-right: 260px !important;
-            padding: 20px 24px !important;
-            min-height: 580px;
-        }
-
+        /* Scenes Visibility */
         .tutorial-scene-box {
             display: none;
         }
 
         .tutorial-scene-box.active {
             display: block;
-            animation: fadeIn 0.35s ease;
+            animation: sceneFadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+        @keyframes sceneFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Celebration Screen */
         .celebration-modal {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(6px);
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -450,6 +602,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
+            padding: 20px;
         }
 
         .celebration-modal.active {
@@ -461,46 +614,96 @@
             background: #1e293b;
             border: 2px solid #10b981;
             border-radius: 20px;
-            padding: 32px;
+            padding: 28px 20px;
             text-align: center;
-            max-width: 560px;
+            max-width: 480px;
+            width: 100%;
             color: white;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Fluid full-screen on actual smartphone screens */
+        @media (max-width: 768px) {
+            .tutorial-player-container {
+                margin: 0 !important;
+                border-radius: 0 !important;
+                max-width: 100vw !important;
+                height: 100vh !important;
+            }
+            .stage-viewport-area {
+                padding: 0 !important;
+                height: 100% !important;
+                min-height: auto !important;
+            }
+            .phone-frame-wrapper {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+            .phone-status-bar {
+                display: none !important;
+            }
+            .view-mode-toggle-group {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body class="hanken-grotesk has-sidebar">
 
-    <div class="tutorial-player-container" id="playerWrap">
-        <!-- Top Controls -->
+    <div class="tutorial-player-container mode-mobile" id="playerWrap">
+        <!-- Top Bar with Device Toggle & Chapters -->
         <div class="player-header-bar">
-            <div class="d-flex align-items-center gap-2">
-                <span class="player-badge">Reports Real System</span>
-                <span class="player-title-text">دليل فيديو تفاعلي معمق: دورة إعداد ودمج تقارير اللجان ومجموعات العمل (النظام الفعلي)</span>
+            <div class="player-header-left">
+                <span class="player-badge">Reports Mobile</span>
+                <span class="player-title-text d-none d-sm-inline">دليل فيديو تفاعلي: دورة تقارير اللجان ومجموعات العمل (متوافق مع الهواتف الذكية)</span>
             </div>
-            <div class="ch-pills-row">
-                <button type='button' class='ch-pill-btn active' id='chPill0' onclick='jumpToChapter(0)'>الجزء 1: تقرير مجموعة العمل (Workgroup Draft)</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='jumpToChapter(1)'>الجزء 2: تقرير لجنة الخدمة وتضمين المسودات (Committee & RSC)</button>
+            
+            <div class="player-header-right">
+                <!-- Device Mode Toggle: Mobile Phone Frame vs Desktop Portal -->
+                <div class="view-mode-toggle-group" id="viewModeToggle">
+                    <button type="button" class="view-mode-btn active" id="btnModeMobile" onclick="setViewMode('mobile')">
+                        <i class="bi bi-phone"></i>
+                        <span>شاشة الهاتف</span>
+                    </button>
+                    <button type="button" class="view-mode-btn" id="btnModeDesktop" onclick="setViewMode('desktop')">
+                        <i class="bi bi-display"></i>
+                        <span>سطح المكتب</span>
+                    </button>
+                </div>
+
+                <div class="ch-pills-row">
+                    <button type='button' class='ch-pill-btn active' id='chPill0' onclick='jumpToChapter(0)'>الجزء 1: تقرير مجموعة العمل (Draft)</button><button type='button' class='ch-pill-btn ' id='chPill1' onclick='jumpToChapter(1)'>الجزء 2: تقرير اللجنة وتضمين المسودة (RSC)</button>
+                </div>
             </div>
         </div>
 
-        <!-- Stepper Dots Bar for Granular Navigation -->
-        <div class="stepper-dots-bar" id="stepperDotsBar">
-            <!-- Populated dynamically via JS -->
-        </div>
+        <!-- Stepper Dots Bar for Granular Step Selection -->
+        <div class="stepper-dots-bar" id="stepperDotsBar"></div>
 
-        <!-- Real System Viewport -->
-        <div class="real-system-viewport" id="sysViewport">
-            <!-- Virtual Cursor -->
-            <div class="v-cursor" id="vCursor">
-                <svg viewBox="0 0 24 24">
-                    <path d="M4 2l16 12-8.5 1.5L8 22z" />
-                </svg>
-            </div>
-            <div class="click-pulse-ring" id="clickWave"></div>
+        <!-- Viewport Stage Area -->
+        <div class="stage-viewport-area">
+            <div class="phone-frame-wrapper" id="phoneWrapper">
+                <!-- Smartphone Status Bar (Simulated Notch & Clock) -->
+                <div class="phone-status-bar">
+                    <span>09:41</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-wifi"></i>
+                        <i class="bi bi-reception-4"></i>
+                        <i class="bi bi-battery-full"></i>
+                    </div>
+                </div>
 
-            <!-- Authentic Application Shell -->
-            <div class="wrapper">
-                <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
+                <!-- Real System Viewport (Authentic NA Egypt DOM) -->
+                <div class="real-system-viewport" id="sysViewport">
+                    <!-- Touch Tap Ring Indicator (Finger Tap Simulation) -->
+                    <div class="touch-tap-ring" id="touchRing"></div>
+
+                    <!-- Authentic Application Shell -->
+                    <div class="wrapper">
+                        <header class="top-header position-sticky top-0" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); z-index: 1020;">        
     <nav class="navbar navbar-expand">
             <div class="top-navbar d-flex align-items-center gap-2">
                 <div class="toggle-sidebar-btn p-2 rounded-3 text-dark d-flex align-items-center justify-content-center" id="sidebarCollapseToggle" style="cursor: pointer; transition: background 0.2s;" title="تصغير/توسيع القائمة">
@@ -555,7 +758,7 @@
                 </div>
               </li>
               <li class="p-1">
-                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="#" style="color: var(--text-primary);">
+                  <a class="dropdown-item py-2 px-3 rounded-3 mb-1 d-flex align-items-center gap-3 neo-list-item" href="/" style="color: var(--text-primary);">
                       <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6;">
                           <i class="bi bi-globe fs-6"></i>
                       </div>
@@ -573,7 +776,7 @@
                             <li><hr class="dropdown-divider my-1" style="border-color: var(--glass-border);"></li>
               <li class="p-1">
                                   <form method="POST" action="/logout">
-                    <input type="hidden" name="_token" value="YCRkXUvHkkbJdCDpxl9vMw09CGBm0OergX47Krru" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <input type="hidden" name="_token" value="BeWr4dIqrdeW1s9i91DnO1EbX93deVn3TwkALtwm" autocomplete="off">                    <a class="dropdown-item py-2 px-3 rounded-3 d-flex align-items-center gap-3 text-danger neo-list-item" href="#" onclick="event.preventDefault(); this.closest('form').submit();">
                       <div class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444;">
                           <i class="bi bi-box-arrow-right fs-6"></i>
                       </div>
@@ -589,7 +792,7 @@
       </div>
     </nav>
 </header>
-                <style>
+                        <style>
 /* Sidebar Wrapper Enhancement - Light/Dark Theme aware */
 .sidebar-wrapper,
 .sidebar-wrapper [data-simplebar],
@@ -1098,9 +1301,9 @@
   </aside>
   <div class="sidebar-overlay" onclick="typeof window.toggleSidebarMenu === 'function' ? window.toggleSidebarMenu(false) : document.body.classList.remove('sidebar-open')"></div>
 
-                <main class="page-content hanken-grotesk">
-                    <div class="container-fluid" id="scenesContainer">
-                            <div class="tutorial-scene-box active" id="sceneBoxWgCreate">
+                        <main class="page-content hanken-grotesk">
+                            <div class="container-fluid" id="scenesContainer">
+                                    <div class="tutorial-scene-box active" id="sceneBoxWgCreate">
         
           <div class="container-fluid">
             <div class="text-center w-100 mb-3">
@@ -1125,7 +1328,7 @@
             </div>
         
         <form action="/committee-reports" method="POST" id="reportForm" enctype="multipart/form-data">
-            <input type="hidden" name="_token" value="C9ZKdT0g9bf6gDkmxdOLpAKQdVQPV7DV8BkhBDoc" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
+            <input type="hidden" name="_token" value="14Ai8RZKBx6LvaldHj6UrN83Lwnn4vrO411bf1C5" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
 
             <!-- Container for embedded workgroup report IDs -->
             <div id="embeddedWorkgroupReportsInputs"></div>
@@ -1152,7 +1355,7 @@
                     <div class="row mb-3 align-items-end g-3">
                         <div class="col-md-4">
                             <label class="form-label fw-bold">تاريخ كتابة التقرير</label>
-                            <input type="text" class="form-control bg-light" readonly value="2026-11-09">
+                            <input type="text" class="form-control bg-light" readonly value="2026-11-11">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">تاريخ الاجتماع <span class="text-danger">*</span></label>
@@ -1602,14 +1805,14 @@
                 </button>
             </div>
             
-            <form action="/committee-reports" method="GET" class="d-flex">
-                                                <input type="text" name="search" class="form-control me-2" placeholder="بحث..." value="">
+            <form action="/committee-reports" method="GET" class="d-flex flex-wrap gap-2">
+                                                <input type="text" name="search" class="form-control" style="width: 170px;" placeholder="بحث..." value="">
                 <button type="submit" class="btn btn-outline-secondary">بحث</button>
-            </form>
+                            </form>
         </div>
 
         <form action="/committee-reports/export" method="POST">
-            <input type="hidden" name="_token" value="Vk9IlHUqrK75DjdtSSSsZQS7KwuvFRpISGPAg8mM" autocomplete="off">            <div class="mb-3">
+            <input type="hidden" name="_token" value="K6MHH7AYPE70FxW3elsFn0A4sWIJmS58ozYScTwl" autocomplete="off">            <div class="mb-3">
                 <button type="submit" class="btn btn-outline-danger">
                     <i class="bi bi-file-earmark-pdf"></i> تصدير المحدد إلى PDF
                 </button>
@@ -1656,7 +1859,7 @@
                                             <i class="bi bi-pencil"></i> تعديل
                                         </a>
                                                                                     <form action="/committee-reports/80/send" method="POST" class="d-inline me-1" onsubmit="return confirm('هل أنت متأكد من الموافقة وإرسال هذا التقرير إلى لجنة خدمة الإقليم؟')">
-                                                <input type="hidden" name="_token" value="Vk9IlHUqrK75DjdtSSSsZQS7KwuvFRpISGPAg8mM" autocomplete="off">                                                <button class="btn btn-sm btn-success">
+                                                <input type="hidden" name="_token" value="K6MHH7AYPE70FxW3elsFn0A4sWIJmS58ozYScTwl" autocomplete="off">                                                <button class="btn btn-sm btn-success">
                                                     <i class="bi bi-check-circle"></i> إرسال إلى سكرتير المنطقة
                                                 </button>
                                             </form>
@@ -1830,7 +2033,7 @@
         
         
         <form action="/committee-reports" method="POST" id="reportForm" enctype="multipart/form-data">
-            <input type="hidden" name="_token" value="Vk9IlHUqrK75DjdtSSSsZQS7KwuvFRpISGPAg8mM" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
+            <input type="hidden" name="_token" value="K6MHH7AYPE70FxW3elsFn0A4sWIJmS58ozYScTwl" autocomplete="off">            <input type="hidden" name="status" id="statusInput" value="draft">
 
             <!-- Container for embedded workgroup report IDs -->
             <div id="embeddedWorkgroupReportsInputs"></div>
@@ -1857,7 +2060,7 @@
                     <div class="row mb-3 align-items-end g-3">
                         <div class="col-md-4">
                             <label class="form-label fw-bold">تاريخ كتابة التقرير</label>
-                            <input type="text" class="form-control bg-light" readonly value="2026-11-09">
+                            <input type="text" class="form-control bg-light" readonly value="2026-11-11">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">تاريخ الاجتماع <span class="text-danger">*</span></label>
@@ -2051,7 +2254,7 @@
                                         <span class="badge bg-success text-white rounded-pill small">0 أقسام</span>
                                     </div>
                                     <div class="text-muted small mb-2">
-                                        <i class="bi bi-calendar3 me-1"></i> 2026-11-09
+                                        <i class="bi bi-calendar3 me-1"></i> 2026-11-11
                                                                                     &bull; اجتماع الجمعة الأول
                                                                             </div>
                                     <div class="d-flex align-items-center justify-content-between">
@@ -2311,7 +2514,7 @@
             });
 
             // Offcanvas Workgroup Drawer & Embedding Logic
-                            const availableDrafts = [{"id":null,"wg_name":"\u0645\u062c\u0645\u0648\u0639\u0629 \u062e\u0637\u0648\u0637 \u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629","meeting_date":"2026-11-09","meeting_day_description":"\u0627\u062c\u062a\u0645\u0627\u0639 \u0627\u0644\u062c\u0645\u0639\u0629 \u0627\u0644\u0623\u0648\u0644","sections":[],"positions":null,"attended_members":null,"attachments":[]}];
+                            const availableDrafts = [{"id":null,"wg_name":"\u0645\u062c\u0645\u0648\u0639\u0629 \u062e\u0637\u0648\u0637 \u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629","meeting_date":"2026-11-11","meeting_day_description":"\u0627\u062c\u062a\u0645\u0627\u0639 \u0627\u0644\u062c\u0645\u0639\u0629 \u0627\u0644\u0623\u0648\u0644","sections":[],"positions":null,"attended_members":null,"attachments":[]}];
                 const embeddedReportIds = new Set();
                 let activeSelectedReportId = availableDrafts.length > 0 ? availableDrafts[0].id : null;
 
@@ -2553,49 +2756,54 @@
           </div>
         
     </div>
+                            </div>
+                        </main>
                     </div>
-                </main>
-            </div>
 
-            <!-- Celebration Screen -->
-            <div class="celebration-modal" id="celebModal">
-                <div class="celebration-card-box">
-                    <div style="width: 64px; height: 64px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 32px; box-shadow: 0 0 25px rgba(16,185,129,0.5);">
-                        <i class="bi bi-check-lg text-white"></i>
+                    <!-- Celebration Modal -->
+                    <div class="celebration-modal" id="celebModal">
+                        <div class="celebration-card-box">
+                            <div style="width: 54px; height: 54px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; font-size: 26px; box-shadow: 0 0 20px rgba(16,185,129,0.5);">
+                                <i class="bi bi-check-lg text-white"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2">اكتملت جميع الخطوات بنجاح!</h5>
+                            <p class="small text-light opacity-75 mb-3" id="celebText">
+                                تمت محاكاة جميع الإجراءات بنجاح في النظام الفعلي.
+                            </p>
+                            <button type="button" class="btn btn-outline-light rounded-pill px-4 btn-sm" onclick="seekToStep(0)">
+                                <i class="bi bi-arrow-repeat me-1"></i> إعادة مشاهدة العرض
+                            </button>
+                        </div>
                     </div>
-                    <h4 class="fw-bold mb-2">اكتملت جميع الخطوات بنجاح!</h4>
-                    <p class="small text-light opacity-75 mb-4" id="celebText">
-                        تمت محاكاة جميع الإجراءات بنجاح في النظام الفعلي.
-                    </p>
-                    <button type="button" class="btn btn-outline-light rounded-pill px-4" onclick="seekToStep(0)">
-                        <i class="bi bi-arrow-repeat me-1"></i> إعادة مشاهدة العرض
-                    </button>
-                </div>
-            </div>
 
-            <!-- Floating Explainer Banner with Step Controls -->
-            <div class="floating-explainer" id="explainerBanner">
-                <div class="explainer-left">
-                    <div class="floating-explainer-icon" id="explainerIcon">
-                        <i class="bi bi-info-circle-fill"></i>
+                    <!-- Collapsible Mobile Bottom Sheet -->
+                    <div class="mobile-bottom-sheet" id="mobileSheet">
+                        <div class="sheet-drag-handle" onclick="toggleSheetExpand()"></div>
+                        <div class="sheet-main-row">
+                            <div class="sheet-info-left">
+                                <div class="sheet-step-icon" id="sheetIcon">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </div>
+                                <div style="overflow: hidden;">
+                                    <div class="sheet-title-text" id="sheetTitle">عنوان الخطوة</div>
+                                    <p class="sheet-desc-text" id="sheetDesc">وصف الخطوة التوضيحية.</p>
+                                </div>
+                            </div>
+                            <div class="sheet-actions-right">
+                                <button type="button" class="btn-sheet-nav" onclick="prevStep()" title="الخطوة السابقة">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                                <button type="button" class="btn-sheet-nav" onclick="nextStep()" style="background: #0ea5e9; border-color: #0ea5e9;" title="الخطوة التالية">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold mb-1" id="explainerTitle" style="font-size: 14.5px;">عنوان الخطوة</h5>
-                        <p class="mb-0 text-light opacity-75 small" id="explainerDesc">وصف الخطوة التوضيحية.</p>
-                    </div>
-                </div>
-                <div class="explainer-quick-controls">
-                    <button type="button" class="btn-step-nav" onclick="prevStep()">
-                        <i class="bi bi-chevron-right"></i> الخطوة السابقة
-                    </button>
-                    <button type="button" class="btn-step-nav" onclick="nextStep()" style="background: #2563eb;">
-                        الخطوة التالية <i class="bi bi-chevron-left"></i>
-                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Controls -->
+        <!-- Bottom Controls Bar -->
         <div class="player-bottom-bar">
             <div class="timeline-rail-wrap" id="timelineRail" onclick="onTimelineClick(event)">
                 <div class="timeline-rail-bar">
@@ -2607,15 +2815,15 @@
             <div class="controls-btn-row">
                 <div class="d-flex align-items-center gap-3">
                     <button type="button" class="btn-play-toggle" id="btnPlay" onclick="togglePlay()" title="تشغيل / إيقاف (مسافة)">
-                        <i class="bi bi-play-fill fs-5" id="playIcon"></i>
+                        <i class="bi bi-play-fill" id="playIcon"></i>
                     </button>
-                    <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-variant-numeric: tabular-nums;">
+                    <div style="font-size: 12px; font-weight: 700; color: #94a3b8; font-variant-numeric: tabular-nums;">
                         <span id="timeNow">00:00</span> / <span id="timeTotal">02:30</span>
                     </div>
-                    <span class="badge rounded-pill bg-dark border border-secondary text-info px-3 py-1.5" id="sceneBadge">
-                        الخطوة 1 من 12
+                    <span class="badge rounded-pill bg-dark border border-secondary text-info px-2.5 py-1" id="sceneBadge">
+                        الخطوة 1
                     </span>
-                    <button type="button" class="ctrl-pill-btn" id="btnTourMode" onclick="toggleTourMode()" style="border-color: #0ea5e9; color: #38bdf8;">
+                    <button type="button" class="ctrl-pill-btn d-none d-md-flex" id="btnTourMode" onclick="toggleTourMode()" style="border-color: #0ea5e9; color: #38bdf8;">
                         <i class="bi bi-compass"></i> وضع الجولة (توقف تلقائي)
                     </button>
                 </div>
@@ -2627,11 +2835,11 @@
                     </button>
                     <button type="button" class="ctrl-pill-btn" onclick="seekToStep(0)">
                         <i class="bi bi-arrow-counterclockwise"></i>
-                        <span>إعادة</span>
+                        <span class="d-none d-sm-inline">إعادة</span>
                     </button>
                     <button type="button" class="ctrl-pill-btn" onclick="toggleFullscreen()">
                         <i class="bi bi-fullscreen"></i>
-                        <span>ملء الشاشة</span>
+                        <span class="d-none d-sm-inline">ملء الشاشة</span>
                     </button>
                 </div>
             </div>
@@ -2649,8 +2857,7 @@
         let animId = null;
         let currentStepIdx = 0;
 
-        const vCursor = document.getElementById('vCursor');
-        const clickWave = document.getElementById('clickWave');
+        const touchRing = document.getElementById('touchRing');
         const timelineFill = document.getElementById('timelineFill');
         const timelineThumb = document.getElementById('timelineThumb');
         const timeNow = document.getElementById('timeNow');
@@ -2658,11 +2865,12 @@
         const sceneBadge = document.getElementById('sceneBadge');
         const speedTag = document.getElementById('speedTag');
         const btnTourMode = document.getElementById('btnTourMode');
+        const playerWrap = document.getElementById('playerWrap');
+        const sysViewport = document.getElementById('sysViewport');
 
-        const explainerBanner = document.getElementById('explainerBanner');
-        const explainerIcon = document.getElementById('explainerIcon');
-        const explainerTitle = document.getElementById('explainerTitle');
-        const explainerDesc = document.getElementById('explainerDesc');
+        const sheetIcon = document.getElementById('sheetIcon');
+        const sheetTitle = document.getElementById('sheetTitle');
+        const sheetDesc = document.getElementById('sheetDesc');
         const celebModal = document.getElementById('celebModal');
         const stepperDotsBar = document.getElementById('stepperDotsBar');
 
@@ -2672,15 +2880,17 @@
         end: 10,
         chapterIdx: 0,
         shortTitle: "بانر مجموعة العمل",
-        title: "الخطوة 1: مدخل تقرير مجموعة العمل وتحديد اللجنة الأم التابعة لها",
-        desc: "يفتح خادم مجموعة خطوط المساعدة نموذج التقرير الحقيقي، مع استعراض بانر الإرشادات باللون الأخضر المميز والتأكد من التبعية للجنة العلاقات العامة.",
+        title: "الخطوة 1: مدخل تقرير مجموعة العمل وتحديد اللجنة التابعة لها",
+        desc: "استعراض بانر إرشادات مجموعة العمل باللون الأخضر والتأكد من تبعية المجموعة للجنة العلاقات العامة.",
         icon: "bi-diagram-3-fill",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 780, y: 170 },
+        touchPos: { x: 200, y: 140 },
+        scrollTo: 0,
         action: (p) => {
             showScene('sceneBoxWgCreate');
             celebModal.classList.remove('active');
+            sysViewport.classList.remove('sidebar-drawer-open');
         }
     },
     {
@@ -2688,12 +2898,13 @@
         end: 20,
         chapterIdx: 0,
         shortTitle: "التاريخ والوصف",
-        title: "الخطوة 2: ملء تاريخ التقرير وتاريخ الاجتماع ووصف الدورة",
+        title: "الخطوة 2: تحديد تاريخ الاجتماع ووصف دورة الاجتماع",
         desc: "إدخال تاريخ الاجتماع الفعلي (2026-11-07)، وكتابة وصف دورة الاجتماع (اجتماع الجمعة الأول من كل شهر).",
         icon: "bi-calendar-check-fill",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 640, y: 270 },
+        touchPos: { x: 190, y: 220 },
+        scrollTo: 120,
         action: (p) => {
             showScene('sceneBoxWgCreate');
             const dateIn = document.querySelector('#sceneBoxWgCreate input[name="meeting_date"]');
@@ -2710,12 +2921,13 @@
         end: 32,
         chapterIdx: 0,
         shortTitle: "حضور الخدام",
-        title: "الخطوة 3: جدول الخدام المؤتمنين والمراكز الخدمية والحضور",
-        desc: "مراجعة صفوف الخدام المؤتمنين (خادم خط المساعدة، مقرر المجموعة، أمين الصندوق) وتحديد حالتهم (حاضر / غائب / معتذر).",
+        title: "الخطوة 3: جدول الخدام المؤتمنين والمراكز والحضور",
+        desc: "مراجعة صفوف الخدام المؤتمنين (خادم خط المساعدة، مقرر المجموعة، أمين الصندوق) وتحديد حالتهم (حاضر).",
         icon: "bi-people-fill",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 550, y: 400 },
+        touchPos: { x: 190, y: 340 },
+        scrollTo: 260,
         action: (p) => {
             showScene('sceneBoxWgCreate');
         }
@@ -2725,12 +2937,13 @@
         end: 44,
         chapterIdx: 0,
         shortTitle: "أقسام التقرير",
-        title: "الخطوة 4: تدوين أقسام التقرير والأنشطة الميدانية المنفذة",
-        desc: "كتابة إنجازات الشهر: الرد على 142 مكالمة مساعدة، تحديث خطوط الدعم الإلكتروني، وحل مشكلات التغطية.",
+        title: "الخطوة 4: تدوين أقسام التقرير والأنشطة المنفذة",
+        desc: "كتابة إنجازات الشهر: الرد على 142 مكالمة مساعدة، وتحديث خطوط الدعم الإلكتروني.",
         icon: "bi-pencil-square",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 500, y: 520 },
+        touchPos: { x: 180, y: 440 },
+        scrollTo: 380,
         action: (p) => {
             showScene('sceneBoxWgCreate');
             const txt = document.querySelector('#sceneBoxWgCreate textarea');
@@ -2746,11 +2959,12 @@
         chapterIdx: 0,
         shortTitle: "الموقف المالي",
         title: "الخطوة 5: تقرير الخزينة والموقف المالي والعهد المنصرفة",
-        desc: "تسجيل الموقف المالي للمجموعة: الرصيد الافتتاحي، المنصرفات المعتمدة، والرصيد المتبقي (450 ج.م).",
+        desc: "تسجيل الموقف المالي: الرصيد الافتتاحي، المنصرفات، والرصيد المتبقي (450 ج.م).",
         icon: "bi-cash-coin",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 420, y: 620 },
+        touchPos: { x: 180, y: 520 },
+        scrollTo: 480,
         action: (p) => {
             showScene('sceneBoxWgCreate');
         }
@@ -2761,11 +2975,12 @@
         chapterIdx: 0,
         shortTitle: "المرفقات (5 ملفات)",
         title: "الخطوة 6: إرفاق المستندات ومحاضر الاجتماع (بحد أقصى 5 ملفات)",
-        desc: "رفع محضر الاجتماع وفواتير الاتصالات بصيغة PDF مع الالتزام بالحد الأقصى للنظام (5 ملفات مرفقة).",
+        desc: "رفع محضر الاجتماع وفواتير الاتصالات مع الالتزام بالحد الأقصى للنظام (5 ملفات مرفقة).",
         icon: "bi-paperclip",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 480, y: 690 },
+        touchPos: { x: 180, y: 580 },
+        scrollTo: 540,
         action: (p) => {
             showScene('sceneBoxWgCreate');
         }
@@ -2780,10 +2995,11 @@
         icon: "bi-shield-exclamation",
         borderColor: "#f59e0b",
         iconColor: "#f59e0b",
-        cursorPos: { x: 380, y: 740 },
+        touchPos: { x: 190, y: 640 },
+        scrollTo: 600,
         action: (p) => {
             showScene('sceneBoxWgCreate');
-            if (p > 0.5) doClick(380, 740);
+            if (p > 0.5) triggerTouch(190, 640);
         }
     },
 
@@ -2794,11 +3010,12 @@
         chapterIdx: 1,
         shortTitle: "إشعار المسودة المعلقة",
         title: "الخطوة 8: تسجيل دخول رئيس لجنة الخدمة وإشعار المسودة المعلقة",
-        desc: "يدخل رئيس لجنة العلاقات العامة، فيظهر التنبيه الأصفر: (يوجد عدد 1 تقرير غير مضمن لمجموعات العمل التابعة - مجموعة خطوط المساعدة).",
+        desc: "يدخل رئيس لجنة العلاقات العامة، فيظهر التنبيه الأصفر: (يوجد عدد 1 تقرير غير مضمن لمجموعات العمل التابعة).",
         icon: "bi-bell-fill",
         borderColor: "#2563eb",
         iconColor: "#2563eb",
-        cursorPos: { x: 750, y: 180 },
+        touchPos: { x: 190, y: 150 },
+        scrollTo: 0,
         action: (p) => {
             showScene('sceneBoxCommIndex');
             celebModal.classList.remove('active');
@@ -2814,10 +3031,11 @@
         icon: "bi-plus-circle-fill",
         borderColor: "#2563eb",
         iconColor: "#2563eb",
-        cursorPos: { x: 420, y: 220 },
+        touchPos: { x: 260, y: 180 },
+        scrollTo: 0,
         action: (p) => {
             if (p > 0.6) {
-                doClick(420, 220);
+                triggerTouch(260, 180);
                 showScene('sceneBoxCommCreate');
             } else {
                 showScene('sceneBoxCommIndex');
@@ -2834,12 +3052,13 @@
         icon: "bi-box-arrow-in-left",
         borderColor: "#2563eb",
         iconColor: "#2563eb",
-        cursorPos: { x: 500, y: 360 },
+        touchPos: { x: 190, y: 310 },
+        scrollTo: 220,
         action: (p) => {
             showScene('sceneBoxCommCreate');
             const drawerBtn = document.querySelector('#sceneBoxCommCreate [data-bs-target="#workgroupReportsOffcanvas"]');
             if (drawerBtn && p > 0.4) {
-                doClick(500, 360);
+                triggerTouch(190, 310);
                 const offcanvasEl = document.getElementById('workgroupReportsOffcanvas');
                 if (offcanvasEl) {
                     const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
@@ -2854,15 +3073,16 @@
         chapterIdx: 1,
         shortTitle: "التضمين الفوري",
         title: "الخطوة 11: التضمين الرسمي وتحول الحالة الفوري إلى مُضمّن (Embedded)",
-        desc: "الضغط على زر تضمين في التقرير، فتتحول حالة تقرير مجموعة العمل فوراً من (مسودة) إلى (مُضمّن - Embedded) باللون الأخضر.",
+        desc: "الضغط على زر تضمين في التقرير، فتتحول حالة تقرير مجموعة العمل فوراً إلى (مُضمّن - Embedded) باللون الأخضر.",
         icon: "bi-link-45deg",
         borderColor: "#8b5cf6",
         iconColor: "#8b5cf6",
-        cursorPos: { x: 300, y: 410 },
+        touchPos: { x: 200, y: 350 },
+        scrollTo: 260,
         action: (p) => {
             showScene('sceneBoxCommCreate');
             if (p > 0.5) {
-                doClick(300, 410);
+                triggerTouch(200, 350);
                 const offcanvasEl = document.getElementById('workgroupReportsOffcanvas');
                 if (offcanvasEl) {
                     const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
@@ -2881,19 +3101,20 @@
         icon: "bi-send-check-fill",
         borderColor: "#10b981",
         iconColor: "#10b981",
-        cursorPos: { x: 350, y: 520 },
+        touchPos: { x: 190, y: 460 },
+        scrollTo: 420,
         action: (p) => {
             showScene('sceneBoxCommCreate');
             if (p > 0.5) {
-                doClick(350, 520);
+                triggerTouch(190, 460);
                 celebModal.classList.add('active');
-                document.getElementById('celebText').innerText = "تم إكمال دورة تقارير اللجان ومجموعات العمل بنجاح: تم حفظ مسودة مجموعة العمل، ومراجعتها وتضمينها من قِبل لجنة العلاقات العامة، ثم إرسال التقرير الشامل لخدمة الإقليم (RSC).";
+                document.getElementById('celebText').innerText = "تم إكمال دورة تقارير اللجان ومجموعات العمل بنجاح على واجهة الهاتف المحمول.";
             }
         }
     }
 ];
 
-        // Render Stepper Dots
+        // Initialize Stepper Dots
         function initStepperDots() {
             stepperDotsBar.innerHTML = '';
             steps.forEach((s, idx) => {
@@ -2909,6 +3130,18 @@
             });
         }
 
+        function setViewMode(mode) {
+            if (mode === 'mobile') {
+                playerWrap.className = 'tutorial-player-container mode-mobile';
+                document.getElementById('btnModeMobile').classList.add('active');
+                document.getElementById('btnModeDesktop').classList.remove('active');
+            } else {
+                playerWrap.className = 'tutorial-player-container mode-desktop';
+                document.getElementById('btnModeMobile').classList.remove('active');
+                document.getElementById('btnModeDesktop').classList.add('active');
+            }
+        }
+
         function showScene(sceneId) {
             document.querySelectorAll('.tutorial-scene-box').forEach(s => {
                 if (s.id === sceneId) s.classList.add('active');
@@ -2916,16 +3149,29 @@
             });
         }
 
-        let lastClick = 0;
-        function doClick(x, y) {
+        // Smooth Auto-Scroll Helper inside the Real Viewport
+        function autoScrollTo(targetSelectorOrY) {
+            if (typeof targetSelectorOrY === 'number') {
+                sysViewport.scrollTo({ top: targetSelectorOrY, behavior: 'smooth' });
+                return;
+            }
+            const el = document.querySelector(targetSelectorOrY);
+            if (el) {
+                const offset = el.offsetTop - 70;
+                sysViewport.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
+            }
+        }
+
+        let lastTouchTime = 0;
+        function triggerTouch(x, y) {
             const now = performance.now();
-            if (now - lastClick < 350) return;
-            lastClick = now;
-            clickWave.style.left = `${x}px`;
-            clickWave.style.top = `${y}px`;
-            clickWave.classList.remove('animate');
-            void clickWave.offsetWidth;
-            clickWave.classList.add('animate');
+            if (now - lastTouchTime < 300) return;
+            lastTouchTime = now;
+            touchRing.style.left = `${x}px`;
+            touchRing.style.top = `${y}px`;
+            touchRing.classList.remove('pulse');
+            void touchRing.offsetWidth;
+            touchRing.classList.add('pulse');
         }
 
         function loop(ts) {
@@ -2938,7 +3184,7 @@
                 if (curTime >= DURATION) {
                     curTime = DURATION;
                     isPlaying = false;
-                    playIcon.className = "bi bi-arrow-counterclockwise fs-5";
+                    playIcon.className = "bi bi-arrow-counterclockwise";
                 }
                 render();
             }
@@ -2962,25 +3208,30 @@
             const activeStep = steps[stepIdx];
             const p = (curTime - activeStep.start) / (activeStep.end - activeStep.start);
 
-            if (currentStepIdx !== stepIdx && tourMode && isPlaying && stepIdx > currentStepIdx) {
-                // Pause at next step in tour mode
-                togglePlay();
+            if (currentStepIdx !== stepIdx) {
+                if (tourMode && isPlaying && stepIdx > currentStepIdx) {
+                    togglePlay();
+                }
+                if (activeStep.scrollTo) {
+                    autoScrollTo(activeStep.scrollTo);
+                }
             }
             currentStepIdx = stepIdx;
 
             // Execute step action
             activeStep.action(Math.min(1, Math.max(0, p)));
 
-            explainerIcon.innerHTML = `<i class="bi ${activeStep.icon}"></i>`;
-            explainerIcon.style.color = activeStep.iconColor;
-            explainerTitle.innerText = activeStep.title;
-            explainerDesc.innerText = activeStep.desc;
-            explainerBanner.style.borderRightColor = activeStep.borderColor;
+            sheetIcon.innerHTML = `<i class="bi ${activeStep.icon}"></i>`;
+            sheetIcon.style.color = activeStep.iconColor;
+            sheetTitle.innerText = activeStep.title;
+            sheetDesc.innerText = activeStep.desc;
+            document.getElementById('mobileSheet').style.borderTopColor = activeStep.borderColor;
 
             sceneBadge.innerText = `الخطوة ${stepIdx + 1} من ${steps.length}`;
 
-            if (activeStep.cursorPos) {
-                vCursor.style.transform = `translate(${activeStep.cursorPos.x}px, ${activeStep.cursorPos.y}px)`;
+            if (activeStep.touchPos) {
+                touchRing.style.left = `${activeStep.touchPos.x}px`;
+                touchRing.style.top = `${activeStep.touchPos.y}px`;
             }
 
             // Update Chapter Pills
@@ -3012,11 +3263,11 @@
                     curTime = 0;
                     celebModal.classList.remove('active');
                 }
-                playIcon.className = "bi bi-pause-fill fs-5";
+                playIcon.className = "bi bi-pause-fill";
                 lastTs = performance.now();
                 animId = requestAnimationFrame(loop);
             } else {
-                playIcon.className = "bi bi-play-fill fs-5";
+                playIcon.className = "bi bi-play-fill";
                 if (animId) cancelAnimationFrame(animId);
             }
         }
@@ -3055,7 +3306,7 @@
                 btnTourMode.style.background = "rgba(14, 165, 233, 0.2)";
             } else {
                 btnTourMode.innerHTML = `<i class="bi bi-compass"></i> وضع الجولة (توقف تلقائي)`;
-                btnTourMode.style.background = "#1e293b";
+                btnTourMode.style.background = "#0f172a";
             }
         }
 
@@ -3080,6 +3331,16 @@
             else document.exitFullscreen();
         }
 
+        function toggleSheetExpand() {
+            const sheet = document.getElementById('mobileSheet');
+            if (sheet.style.maxHeight === '400px') {
+                sheet.style.maxHeight = '240px';
+            } else {
+                sheet.style.maxHeight = '400px';
+            }
+        }
+
+        // Keyboard & Swipe Handlers
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
@@ -3090,6 +3351,23 @@
                 prevStep();
             }
         });
+
+        // Touch Swipe Navigation on Viewport
+        let touchStartX = 0;
+        sysViewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        sysViewport.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                // Swipe Left -> Next in RTL
+                nextStep();
+            } else if (touchEndX - touchStartX > 50) {
+                // Swipe Right -> Prev in RTL
+                prevStep();
+            }
+        }, { passive: true });
 
         // Initialize
         initStepperDots();
