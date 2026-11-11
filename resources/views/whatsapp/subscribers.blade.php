@@ -512,7 +512,7 @@
                                                 {{ __('messages.whatsapp_mode_custom_row') }}
                                             </label>
                                             <span class="text-muted d-block" style="font-size: 0.75rem;">
-                                                {{ __('Sends the custom message specified in the "message" column of each CSV row.') }}
+                                                {{ __('messages.Sends the custom message specified in the "message" column of each CSV row.') }}
                                             </span>
                                         </div>
                                     </div>

@@ -63,7 +63,7 @@
                             <div class="form-check form-switch mb-1">
                                 <input class="form-check-input" type="checkbox" name="include_dev" id="includeDevSwitch" value="1" {{ $includeDev ? 'checked' : '' }} onchange="this.form.submit()">
                                 <label class="form-check-label small text-muted" for="includeDevSwitch">
-                                    {{ __('Include egyptna.org Dev Logs') }}
+                                    {{ __('messages.Include egyptna.org Dev Logs') }}
                                 </label>
                             </div>
                         </div>

@@ -12,10 +12,10 @@
                             <div class="row mb-4">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold">{{ __('Group Type') }}</label>
+                                        <label class="form-label fw-bold">{{ __('messages.Group Type') }}</label>
                                         <select id="group-type-selector" class="form-select rounded-pill shadow-sm">
-                                            <option value="legacy" {{ $meeting->direct_online_group_id ? '' : 'selected' }}>{{ __('Standard Group') }}</option>
-                                            <option value="direct_online" {{ $meeting->direct_online_group_id ? 'selected' : '' }}>{{ __('Direct Online Group') }}</option>
+                                            <option value="legacy" {{ $meeting->direct_online_group_id ? '' : 'selected' }}>{{ __('messages.Standard Group') }}</option>
+                                            <option value="direct_online" {{ $meeting->direct_online_group_id ? 'selected' : '' }}>{{ __('messages.Direct Online Group') }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -24,7 +24,7 @@
                                 <x-forms.select :$groups name="group_id" label="{{ __('messages.Group Name') }}" value="{{ $meeting->group_id }}" />
                             </div>
                             <div id="direct-online-group-container" style="display: {{ $meeting->direct_online_group_id ? 'block' : 'none' }};">
-                                <x-forms.select :groups="$directOnlineGroups" name="direct_online_group_id" label="Direct Online Group Name" value="{{ $meeting->direct_online_group_id }}" />
+                                <x-forms.select :groups="$directOnlineGroups" name="direct_online_group_id" label="{{ __('messages.Direct Online Group Name') }}" value="{{ $meeting->direct_online_group_id }}" />
                             </div>
                         @else
                             <input type="hidden" name="group_id"  value="{{ $meeting->group_id }}"/>
@@ -77,7 +77,7 @@
                     </div>
                     
                     <div class="mb-4 mt-3">
-                        <h6 class="fw-bold mb-3" style="color: var(--text-primary);"><i class="bi bi-calendar-week me-2 text-warning"></i> {{ __('Recurrence') }}</h6>
+                        <h6 class="fw-bold mb-3" style="color: var(--text-primary);"><i class="bi bi-calendar-week me-2 text-warning"></i> {{ __('messages.Recurrence') }}</h6>
                         <div class="d-flex flex-wrap gap-2">
                             @php
                                 $recurrences = [

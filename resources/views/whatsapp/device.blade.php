@@ -73,7 +73,7 @@
                 <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-2 font-monospace">{{ count($devices) }}</span>
             </h5>
             <span class="text-muted small d-none d-md-inline">
-                <i class="bi bi-info-circle me-1"></i>{{ __('Click "Scan Pairing QR" on any device to link or re-authenticate.') }}
+                <i class="bi bi-info-circle me-1"></i>{{ __('messages.Click "Scan Pairing QR" on any device to link or re-authenticate.') }}
             </span>
         </div>
 

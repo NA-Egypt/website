@@ -554,9 +554,9 @@
       {{-- Facebook Targeting --}}
       @if($canFacebook)
       <li>
-        <a href="{{ route('facebook-targeting.index') }}" title="{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}">
+        <a href="{{ route('facebook-targeting.index') }}" title="{{ __('messages.Facebook Targeting') }}">
           <div class="parent-icon"><i class="bi bi-facebook"></i></div>
-          <div class="menu-title">{{ app()->getLocale() === 'ar' ? 'استهداف فيسبوك' : 'Facebook Targeting' }}</div>
+          <div class="menu-title">{{ __('messages.Facebook Targeting') }}</div>
         </a>
       </li>
       @endif

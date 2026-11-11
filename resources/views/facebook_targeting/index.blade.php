@@ -1,5 +1,5 @@
 <x-layout>
-    <x-backhead>{{ __('Facebook Targeting Area Mapper') }}</x-backhead>
+    <x-backhead>{{ __('messages.Facebook Targeting Area Mapper') }}</x-backhead>
 
     <!-- Google Maps JS SDK -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJ15C_GQbFUD1oqhVSZQDsVamHRoPkmhE" async defer></script>

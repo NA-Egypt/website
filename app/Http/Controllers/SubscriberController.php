@@ -95,11 +95,11 @@ class SubscriberController extends Controller
         if (config('laravel-subscribers.verify')) {
             $subscriber->sendEmailVerificationNotification();
             return redirect()->route(config('laravel-subscribers.redirect_url'))
-                ->with('subscribed', __('Please verify your email address!'));
+                ->with('subscribed', __('messages.Please verify your email address!'));
         }
 
         return redirect()->route(config('laravel-subscribers.redirect_url'))
-            ->with('subscribed', __('You are successfully subscribed to our list!'));
+            ->with('subscribed', __('messages.You are successfully subscribed to our list!'));
     }
 
     public function toggleVerification(Subscriber $subscriber)

@@ -243,7 +243,7 @@ class FacebookTargetingController extends Controller
 
         $this->saveCache($cached);
 
-        return redirect()->route('facebook-targeting.index')->with('success', __('Coordinates synchronized successfully.'));
+        return redirect()->route('facebook-targeting.index')->with('success', __('messages.Coordinates synchronized successfully.'));
     }
 
     public function download(Request $request)

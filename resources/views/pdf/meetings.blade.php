@@ -32,7 +32,7 @@ $filters = request()->only(['day', 'serviceBody', 'group', 'neighborhood', 'type
 <body>
     <h2 style="text-align:center">
         {{ __('messages.Recovery Meetings') }} 
-        {{ isset($filters['day']) && $filters['day'] !== '' ? trans(strtolower($filters['day'])) : __('messages.All Days') }}
+        {{ isset($filters['day']) && $filters['day'] !== '' ? trans('messages.' . strtolower($filters['day'])) : __('messages.All Days') }}
             @if(!empty($filters['group']))
                 - {{ __('messages.Group') }}: {{ $filters['group'] }}
             @endif

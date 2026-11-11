@@ -30,32 +30,32 @@
                 <ul class="nav nav-pills nav-fill gap-2" id="docTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active rounded-pill py-2 px-3 fw-semibold small" id="executive-tab" data-bs-toggle="pill" data-bs-target="#executive" type="button" role="tab">
-                            <i class="bi bi-shield-check me-1"></i> {{ __('1. Executive & Anonymity') }}
+                            <i class="bi bi-shield-check me-1"></i> {{ __('messages.1. Executive & Anonymity') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill py-2 px-3 fw-semibold small" id="volunteer-tab" data-bs-toggle="pill" data-bs-target="#volunteer" type="button" role="tab">
-                            <i class="bi bi-headset me-1"></i> {{ __('2. Volunteer User Manual') }}
+                            <i class="bi bi-headset me-1"></i> {{ __('messages.2. Volunteer User Manual') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill py-2 px-3 fw-semibold small" id="keywords-tab" data-bs-toggle="pill" data-bs-target="#keywords" type="button" role="tab">
-                            <i class="bi bi-card-checklist me-1"></i> {{ __('3. Keyword Dictionary') }}
+                            <i class="bi bi-card-checklist me-1"></i> {{ __('messages.3. Keyword Dictionary') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill py-2 px-3 fw-semibold small" id="dev-tab" data-bs-toggle="pill" data-bs-target="#dev" type="button" role="tab">
-                            <i class="bi bi-tools me-1"></i> {{ __('4. Development (egyptna.org)') }}
+                            <i class="bi bi-tools me-1"></i> {{ __('messages.4. Development (egyptna.org)') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill py-2 px-3 fw-semibold small" id="architecture-tab" data-bs-toggle="pill" data-bs-target="#architecture" type="button" role="tab">
-                            <i class="bi bi-diagram-3-fill me-1"></i> {{ __('5. Technical Architecture') }}
+                            <i class="bi bi-diagram-3-fill me-1"></i> {{ __('messages.5. Technical Architecture') }}
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link rounded-pill py-2 px-3 fw-semibold small" id="faq-tab" data-bs-toggle="pill" data-bs-target="#faq" type="button" role="tab">
-                            <i class="bi bi-question-circle-fill me-1"></i> {{ __('6. Troubleshooting & FAQ') }}
+                            <i class="bi bi-question-circle-fill me-1"></i> {{ __('messages.6. Troubleshooting & FAQ') }}
                         </button>
                     </li>
                 </ul>
@@ -236,7 +236,7 @@
                             <i class="bi bi-tools me-2"></i>دليل الاختبار والتطوير الآمن لبيئة egyptna.org
                         </h4>
                         <div class="alert alert-warning border-0 rounded-4 p-3 mb-4">
-                            <strong>{{ __('موقع egyptna.org هو بوابة المعاينة والتطوير الرسمية:') }}</strong>
+                            <strong>{{ __('messages.موقع egyptna.org هو بوابة المعاينة والتطوير الرسمية:') }}</strong>
                             لحماية خصوصية أعضاء الزمالة وتجنب إرسال أي رسائل تجريبية لأرقام حقيقية، تم تجهيز النظام بضوابط أمان مشددة عند العمل على بيئة <code>egyptna.org</code>.
                         </div>
 
