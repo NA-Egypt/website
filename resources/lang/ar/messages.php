@@ -3258,4 +3258,13 @@ return [
     'gsr_animated_guide_title' => 'دليل فيديو تفاعلي: إجراءات ممثل خدمة المجموعة (GSR)',
     'gsr_animated_guide_desc' => 'شاهد محاكاة تفاعلية من النظام الحقيقي توضح خطوات إدارة وتحديث مواعيد الاجتماعات، تجهيز أجندة وتقرير المجموعة لاجتماع المنطقة (ASC)، وطلب الأدبيات والميداليات عبر السلة.',
     'gsr_video_tutorial_btn' => 'شاهد فيديو دليل GSR',
+    'all_statuses' => 'جميع الحالات',
+    'status_draft' => 'مسودة',
+    'status_submitted' => 'تم التقديم للجنة الخدمة',
+    'status_approved' => 'معتمد ومنشور',
+    'status_embedded' => 'مدرج في تقرير',
+    'all_workgroups' => 'جميع فرق العمل',
+    'committee_drafts' => 'مسودات اللجان',
+    'pending_drafts_super_admin_notice' => 'توجد مسودات تقارير معلقة: :committees مسودة لجان، :workgroups مسودة فرق عمل.',
+    'clear_filters' => 'إلغاء التصفية',
 ];

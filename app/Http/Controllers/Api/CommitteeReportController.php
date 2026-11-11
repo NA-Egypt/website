@@ -41,6 +41,14 @@ class CommitteeReportController extends Controller
 
         $item = CommitteeReport::create($validated);
 
+        if ($item->status === 'submitted') {
+            try {
+                \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($item->id);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to dispatch report notification from API: " . $e->getMessage());
+            }
+        }
+
         CommitteeReportLog::record(
             'created',
             $item,
@@ -88,6 +96,14 @@ class CommitteeReportController extends Controller
 
         $oldStatus = $committeeReport->status;
         $committeeReport->update($validated);
+
+        if ($oldStatus === 'draft' && $committeeReport->status === 'submitted') {
+            try {
+                \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($committeeReport->id);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to dispatch report notification from API update: " . $e->getMessage());
+            }
+        }
 
         CommitteeReportLog::record(
             'updated',

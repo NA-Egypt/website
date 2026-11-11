@@ -106,4 +106,15 @@ return [
     'dev_mode' => (bool) env('WHATSAPP_DEV_MODE', false),
     'dev_whitelist' => array_filter(array_map('trim', explode(',', env('WHATSAPP_DEV_WHITELIST', '')))),
 
+    /*
+    |--------------------------------------------------------------------------
+    | RSC Notification Recipients
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of WhatsApp phone numbers to receive alerts when
+    | committee reports are submitted. Bypass WhatsApp if empty/unavailable.
+    |
+    */
+    'rsc_notification_numbers' => array_filter(array_map('trim', explode(',', env('WHATSAPP_RSC_NOTIFICATION_NUMBERS', '')))),
+
 ];

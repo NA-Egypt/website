@@ -3254,4 +3254,13 @@ return [
     'gsr_animated_guide_title' => 'Interactive Video Guide: GSR Processes (Meetings, Agendas & Literature)',
     'gsr_animated_guide_desc' => 'Watch an interactive simulation from the real system demonstrating meeting management, ASC group agenda preparation, and literature & keytags ordering.',
     'gsr_video_tutorial_btn' => 'Watch GSR Video Guide',
+    'all_statuses' => 'All Statuses',
+    'status_draft' => 'Draft',
+    'status_submitted' => 'Submitted',
+    'status_approved' => 'Approved',
+    'status_embedded' => 'Embedded in Report',
+    'all_workgroups' => 'All Workgroups',
+    'committee_drafts' => 'Committee Drafts',
+    'pending_drafts_super_admin_notice' => 'Pending drafts awaiting review: :committees committee draft(s), :workgroups workgroup draft(s).',
+    'clear_filters' => 'Clear Filters',
 ];

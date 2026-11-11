@@ -9,7 +9,28 @@
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        @if(!$isRsc && $childWorkgroups->isNotEmpty() && $unembeddedDraftsCount > 0)
+        @if($isSuperAdmin && ($unembeddedDraftsCount > 0 || $committeeDraftsCount > 0))
+            <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4 shadow-sm border-0">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell-fill fs-4 text-warning"></i>
+                    <div>
+                        <strong>{{ __('messages.pending_drafts_super_admin_notice', ['workgroups' => $unembeddedDraftsCount, 'committees' => $committeeDraftsCount]) }}</strong>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    @if($committeeDraftsCount > 0)
+                        <a href="{{ route('committee-reports.index', ['tab' => 'committee', 'status' => 'draft']) }}" class="btn btn-sm btn-outline-primary fw-bold">
+                            <i class="bi bi-building"></i> {{ __('messages.committee_drafts') }} ({{ $committeeDraftsCount }})
+                        </a>
+                    @endif
+                    @if($unembeddedDraftsCount > 0)
+                        <a href="{{ route('committee-reports.index', ['tab' => 'workgroups', 'status' => 'draft']) }}" class="btn btn-sm btn-outline-dark fw-bold">
+                            <i class="bi bi-people"></i> {{ __('messages.Workgroup Drafts') }} ({{ $unembeddedDraftsCount }})
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @elseif(!$isRsc && $childWorkgroups->isNotEmpty() && $unembeddedDraftsCount > 0)
             <div class="alert alert-warning d-flex align-items-center justify-content-between mb-4 shadow-sm border-0">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-bell-fill fs-4 text-warning"></i>
@@ -28,7 +49,26 @@
             </div>
         @endif
 
-        @if(!$isRsc && $childWorkgroups->isNotEmpty())
+        @if($isSuperAdmin)
+            <ul class="nav nav-pills mb-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ $activeTab === 'committee' ? 'active' : '' }}" href="{{ route('committee-reports.index', array_merge(request()->except(['tab', 'page', 'workgroup_id']), ['tab' => 'committee'])) }}">
+                        <i class="bi bi-building me-1"></i> {{ __('messages.Committee Reports') }}
+                        @if($committeeDraftsCount > 0)
+                            <span class="badge bg-warning text-dark rounded-pill ms-1">{{ $committeeDraftsCount }}</span>
+                        @endif
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $activeTab === 'workgroups' ? 'active' : '' }}" href="{{ route('committee-reports.index', array_merge(request()->except(['tab', 'page', 'committee_id']), ['tab' => 'workgroups'])) }}">
+                        <i class="bi bi-people me-1"></i> {{ __('messages.Workgroup Drafts') }}
+                        @if($unembeddedDraftsCount > 0)
+                            <span class="badge bg-danger text-white rounded-pill ms-1">{{ $unembeddedDraftsCount }}</span>
+                        @endif
+                    </a>
+                </li>
+            </ul>
+        @elseif(!$isRsc && $childWorkgroups->isNotEmpty())
             <ul class="nav nav-pills mb-3">
                 <li class="nav-item">
                     <a class="nav-link {{ $activeTab === 'committee' ? 'active' : '' }}" href="{{ route('committee-reports.index', ['tab' => 'committee']) }}">
@@ -71,12 +111,39 @@
                 </button>
             </div>
             
-            <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex">
+            <form action="{{ route('committee-reports.index') }}" method="GET" class="d-flex flex-wrap gap-2">
                 @if(request('tab'))
                     <input type="hidden" name="tab" value="{{ request('tab') }}">
                 @endif
-                @if($isRsc)
-                    <select name="committee_id" class="form-select me-2" style="width: 200px;">
+                @if($isSuperAdmin)
+                    <select name="status" class="form-select" style="width: 150px;">
+                        <option value="">{{ __('messages.all_statuses') }}</option>
+                        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>{{ __('messages.status_draft') }}</option>
+                        <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>{{ __('messages.status_submitted') }}</option>
+                        <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>{{ __('messages.status_approved') }}</option>
+                        <option value="embedded" {{ request('status') === 'embedded' ? 'selected' : '' }}>{{ __('messages.status_embedded') }}</option>
+                    </select>
+                    @if($activeTab === 'workgroups')
+                        <select name="workgroup_id" class="form-select" style="width: 200px;">
+                            <option value="">{{ __('messages.all_workgroups') }}</option>
+                            @foreach($allWorkgroups as $wg)
+                                <option value="{{ $wg->id }}" {{ request('workgroup_id') == $wg->id ? 'selected' : '' }}>
+                                    {{ $wg->ar_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    @else
+                        <select name="committee_id" class="form-select" style="width: 200px;">
+                            <option value="">{{ __('messages.All Committees') }}</option>
+                            @foreach($committees as $c)
+                                <option value="{{ $c->id }}" {{ request('committee_id') == $c->id ? 'selected' : '' }}>
+                                    {{ $c->ar_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    @endif
+                @elseif($isRsc)
+                    <select name="committee_id" class="form-select" style="width: 200px;">
                         <option value="">{{ __('messages.All Committees') }}</option>
                         @foreach($committees as $c)
                             <option value="{{ $c->id }}" {{ request('committee_id') == $c->id ? 'selected' : '' }}>
@@ -85,8 +152,13 @@
                         @endforeach
                     </select>
                 @endif
-                <input type="text" name="search" class="form-control me-2" placeholder="{{ __('messages.Search...') }}" value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" style="width: 170px;" placeholder="{{ __('messages.Search...') }}" value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-secondary">{{ __('messages.Search') }}</button>
+                @if(request()->hasAny(['status', 'committee_id', 'workgroup_id', 'search']))
+                    <a href="{{ route('committee-reports.index', ['tab' => $activeTab]) }}" class="btn btn-outline-danger" title="{{ __('messages.clear_filters') }}">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                @endif
             </form>
         </div>
 
@@ -163,7 +235,7 @@
                                             </button>
                                         </form>
                                     @endif
-                                    @if(!$isRsc && $report->status === 'draft')
+                                    @if(($isSuperAdmin || !$isRsc) && $report->status === 'draft')
                                         <a href="{{ route('committee-reports.edit', $report->id) }}" class="btn btn-sm btn-primary me-1">
                                             <i class="bi bi-pencil"></i> {{ __('messages.Edit') }}
                                         </a>

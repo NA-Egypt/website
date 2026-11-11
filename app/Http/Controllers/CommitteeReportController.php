@@ -47,11 +47,14 @@ class CommitteeReportController extends Controller
     public function index(Request $request)
     {
         $isRsc = $this->isRsc();
+        $isSuperAdmin = Auth::check() && Auth::user()->hasRole('super admin');
         $query = CommitteeReport::with(['serviceCommittee', 'parentReport', 'embeddedWorkgroupReports']);
         $user = Auth::user();
         $activeTab = $request->get('tab', 'committee');
         $childWorkgroups = collect();
+        $allWorkgroups = collect();
         $unembeddedDraftsCount = 0;
+        $committeeDraftsCount = 0;
 
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
@@ -92,15 +95,42 @@ class CommitteeReportController extends Controller
                     $query->where('service_committee_id', $committee->id);
                 }
             }
-        } else {
-            // RSC can see both submitted and approved reports in their management dashboard.
-            // Super admins can also see draft reports.
-            if (Auth::user()->hasRole('super admin')) {
-                $query->whereIn('status', ['draft', 'submitted', 'approved', 'embedded']);
+        } elseif ($isSuperAdmin) {
+            // Super Admin can see drafts, submitted, approved, embedded reports across all committees and workgroups
+            $unembeddedDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn($q) => $q->whereNotNull('parent_id'))
+                ->unembeddedDrafts()
+                ->count();
+
+            $committeeDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn($q) => $q->whereNull('parent_id'))
+                ->where('status', 'draft')
+                ->count();
+
+            $allWorkgroups = ServiceCommittee::whereNotNull('parent_id')->orderBy('ar_name')->get();
+
+            // Status filter
+            if ($request->filled('status') && in_array($request->status, ['draft', 'submitted', 'approved', 'embedded'])) {
+                $query->where('status', $request->status);
             } else {
-                // RSC review queue should only show official committee reports (not standalone workgroup drafts)
-                $query->committeesOnly()->whereIn('status', ['submitted', 'approved']);
+                $query->whereIn('status', ['draft', 'submitted', 'approved', 'embedded']);
             }
+
+            // Tab separation
+            if ($activeTab === 'workgroups') {
+                $query->whereHas('serviceCommittee', fn($q) => $q->whereNotNull('parent_id'));
+                if ($request->filled('workgroup_id')) {
+                    $query->where('service_committee_id', (int)$request->workgroup_id);
+                } elseif ($request->filled('committee_id')) {
+                    $query->whereHas('serviceCommittee', fn($q) => $q->where('parent_id', (int)$request->committee_id));
+                }
+            } else {
+                $query->whereHas('serviceCommittee', fn($q) => $q->whereNull('parent_id'));
+                if ($request->filled('committee_id')) {
+                    $query->where('service_committee_id', (int)$request->committee_id);
+                }
+            }
+        } else {
+            // RSC review queue should only show official committee reports (not standalone workgroup drafts)
+            $query->committeesOnly()->whereIn('status', ['submitted', 'approved']);
             
             // RSC Filters
             if ($request->has('committee_id') && $request->committee_id) {
@@ -120,7 +150,17 @@ class CommitteeReportController extends Controller
         
         $committees = $isRsc ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
 
-        return view('reports.index', compact('reports', 'isRsc', 'committees', 'childWorkgroups', 'activeTab', 'unembeddedDraftsCount'));
+        return view('reports.index', compact(
+            'reports',
+            'isRsc',
+            'isSuperAdmin',
+            'committees',
+            'childWorkgroups',
+            'allWorkgroups',
+            'activeTab',
+            'unembeddedDraftsCount',
+            'committeeDraftsCount'
+        ));
     }
 
     public function create()
@@ -1141,21 +1181,9 @@ class CommitteeReportController extends Controller
     protected function sendNotificationEmail($report)
     {
         try {
-            $committeeName = $report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'Unknown Committee';
-            $meetingDate = $report->meeting_date->format('Y-m-d');
-            
-            Mail::send([], [], function ($message) use ($committeeName, $meetingDate) {
-                $message->to(['rsc@naegypt.org', 'arsc@naegypt.org'])
-                        ->subject("New Committee Report: {$committeeName} ({$meetingDate})")
-                        ->html("
-                            <p>Dear RSC,</p>
-                            <p>A new committee report has been submitted by the committee <strong>{$committeeName}</strong> for the meeting date <strong>{$meetingDate}</strong>.</p>
-                            <p>You can view and review this report in the management dashboard or archive.</p>
-                            <p>Regards,<br>NA Egypt System</p>
-                        ");
-            });
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to send committee report email alert: " . $e->getMessage());
+            \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($report->id);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to dispatch committee report submission notification: " . $e->getMessage());
         }
     }
 }
