@@ -446,6 +446,8 @@
                                 <div class="text-muted small mb-1">{{ __('messages.onedrive_remote_label') }}</div>
                                 @if(!empty($diagnostics['remote_configured']))
                                     <div class="fw-bold text-success"><i class="bi bi-check-circle-fill me-1"></i>{{ $diagnostics['remote_target'] ?? 'onedrive:Archives' }}</div>
+                                @elseif(!empty($diagnostics['remote_section_exists']))
+                                    <div class="fw-bold text-primary"><i class="bi bi-hdd-network-fill me-1"></i>{{ $diagnostics['remote_target'] ?? 'onedrive:Archives' }} (Ready for OAuth)</div>
                                 @else
                                     <div class="fw-bold text-warning-emphasis"><i class="bi bi-clock-fill me-1"></i>{{ __('messages.not_configured_yet') }}</div>
                                 @endif
@@ -456,14 +458,28 @@
                         </div>
                     </div>
 
-                    @if(empty($diagnostics['remote_configured']))
-                        <div class="alert alert-info rounded-3 border-0 small mb-4">
-                            <div class="fw-bold mb-2"><i class="bi bi-terminal-fill me-1"></i>{{ __('messages.onedrive_setup_guide_title') }}</div>
-                            <ol class="mb-0 ps-3">
-                                <li class="mb-1">Run <code>rclone config --config={{ $diagnostics['rclone_config'] ?? storage_path('app/private/rclone.conf') }}</code> on the server and create a remote named <code>{{ $diagnostics['remote_name'] ?? 'onedrive' }}</code> of type <code>onedrive</code>.</li>
-                                <li class="mb-1">Ensure <code>chown www-data:www-data {{ $diagnostics['rclone_config'] ?? storage_path('app/private/rclone.conf') }}</code> so the web server and scheduler can read/refresh the OAuth token.</li>
-                                <li>Run <code>php artisan onedrive:sync-archives --force-resync</code> or click <strong>{{ __('messages.sync_now_btn') }}</strong>.</li>
-                            </ol>
+                    @if(empty($diagnostics['remote_configured']) && $canManage)
+                        <div class="card border-primary-subtle bg-primary-subtle bg-opacity-25 rounded-3 mb-4">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                                    <div class="fw-bold text-dark small">
+                                        <i class="bi bi-microsoft text-primary me-1"></i>Microsoft OneDrive OAuth Authorization
+                                    </div>
+                                    <a href="{{ route('committee-reports.archive.onedriveConnect') }}" class="btn btn-sm btn-primary rounded-pill px-3">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i>Connect Microsoft OneDrive (1-Click OAuth)
+                                    </a>
+                                </div>
+                                <form action="{{ route('committee-reports.archive.onedriveToken') }}" method="POST" class="mt-2 pt-2 border-top border-primary-subtle">
+                                    @csrf
+                                    <label class="form-label small text-muted mb-1">
+                                        Or paste token JSON from <code>rclone authorize "onedrive"</code>:
+                                    </label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="token_json" class="form-control font-monospace" placeholder='{"access_token":"...","token_type":"Bearer","refresh_token":"...","expiry":"..."}' required>
+                                        <button type="submit" class="btn btn-outline-primary">Save Token & Sync</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     @endif
 

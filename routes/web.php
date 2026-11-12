@@ -401,6 +401,8 @@ Route::group(
             Route::get('committee-reports/archive', [\App\Http\Controllers\CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
             Route::get('committee-reports/archive/sync-status', [\App\Http\Controllers\CommitteeReportController::class, 'archiveSyncStatus'])->name('committee-reports.archive.syncStatus');
             Route::post('committee-reports/archive/sync', [\App\Http\Controllers\CommitteeReportController::class, 'triggerArchiveSync'])->name('committee-reports.archive.sync');
+            Route::get('committee-reports/archive/onedrive-connect', [\App\Http\Controllers\CommitteeReportController::class, 'connectOneDrive'])->name('committee-reports.archive.onedriveConnect');
+            Route::post('committee-reports/archive/onedrive-token', [\App\Http\Controllers\CommitteeReportController::class, 'saveOneDriveToken'])->name('committee-reports.archive.onedriveToken');
             Route::post('committee-reports/archive/download-zip', [\App\Http\Controllers\CommitteeReportController::class, 'downloadArchiveZip'])->name('committee-reports.archive.downloadZip');
             Route::post('committee-reports/archive/upload', [\App\Http\Controllers\CommitteeReportController::class, 'uploadArchiveFiles'])->name('committee-reports.archive.upload');
             Route::post('committee-reports/archive/folder', [\App\Http\Controllers\CommitteeReportController::class, 'createArchiveFolder'])->name('committee-reports.archive.createFolder');

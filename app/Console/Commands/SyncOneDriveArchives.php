@@ -14,6 +14,7 @@ class SyncOneDriveArchives extends Command
      */
     protected $signature = 'onedrive:sync-archives
                             {--resync : Force initial rclone bisync resync}
+                            {--force-resync : Alias for --resync to force initial rclone bisync resync}
                             {--skip-db : Skip archiving unarchived approved DB reports before syncing}
                             {--path= : Optional relative subpath to sync}';
 
@@ -41,7 +42,7 @@ class SyncOneDriveArchives extends Command
         ));
 
         $archiveDb = !$this->option('skip-db');
-        $forceResync = (bool) $this->option('resync');
+        $forceResync = (bool) ($this->option('resync') || $this->option('force-resync'));
         $subPath = $this->option('path') ? (string) $this->option('path') : null;
 
         $state = $syncService->syncAndIndex($archiveDb, $subPath, $forceResync);

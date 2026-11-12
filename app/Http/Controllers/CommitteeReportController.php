@@ -1242,6 +1242,47 @@ class CommitteeReportController extends Controller
         return response()->json($syncService->getSyncState());
     }
 
+    public function connectOneDrive()
+    {
+        if (!$this->isRsc()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $state = 'onedrive_rclone_' . Str::random(32);
+        \Illuminate\Support\Facades\Cache::put('onedrive_oauth_state_' . $state, Auth::id(), 600);
+
+        $syncService = app(\App\Services\OneDriveSyncService::class);
+        return redirect()->away($syncService->buildMicrosoftOAuthUrl($state));
+    }
+
+    public function saveOneDriveToken(Request $request)
+    {
+        if (!$this->isRsc()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'token_json' => 'required|string',
+            'drive_id' => 'nullable|string|max:255',
+            'drive_type' => 'nullable|string|max:50',
+        ]);
+
+        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $res = $syncService->saveTokenAndConfigureRemote(
+            $request->input('token_json'),
+            $request->input('drive_id'),
+            $request->input('drive_type')
+        );
+
+        if (empty($res['success'])) {
+            return redirect()->back()->with('error', $res['error'] ?? 'Invalid token JSON.');
+        }
+
+        exec('php ' . escapeshellarg(base_path('artisan')) . ' onedrive:sync-archives --force-resync > /dev/null 2>&1 &');
+
+        return redirect()->route('committee-reports.archive')->with('success', __('messages.sync_started_background'));
+    }
+
     public function triggerArchiveSync(Request $request)
     {
         if (!$this->isRsc()) {

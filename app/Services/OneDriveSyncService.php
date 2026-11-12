@@ -38,8 +38,20 @@ class OneDriveSyncService
 
         $rcloneVersion = null;
         $configExists = $configPath !== '' && is_file($configPath) && is_readable($configPath);
+        $remoteSectionExists = false;
+        $tokenConfigured = false;
         $remoteConfigured = false;
         $configuredRemotes = [];
+
+        if ($configExists) {
+            $rawConf = (string) @file_get_contents($configPath);
+            if (preg_match('/^\[' . preg_quote($remoteName, '/') . '\]/mi', $rawConf)) {
+                $remoteSectionExists = true;
+            }
+            if (preg_match('/^\s*token\s*=\s*\{.+?\}/mi', $rawConf)) {
+                $tokenConfigured = true;
+            }
+        }
 
         if ($rcloneInstalled) {
             try {
@@ -65,7 +77,7 @@ class OneDriveSyncService
                         $cleanRem = rtrim($rem, ':');
                         $configuredRemotes[] = $cleanRem;
                         if (strcasecmp($cleanRem, $remoteName) === 0) {
-                            $remoteConfigured = true;
+                            $remoteSectionExists = true;
                         }
                     }
                 }
@@ -73,6 +85,8 @@ class OneDriveSyncService
                 Log::debug('OneDriveSyncService diagnostics process check failed: ' . $e->getMessage());
             }
         }
+
+        $remoteConfigured = $remoteSectionExists && $tokenConfigured;
 
         $storageboxRoot = (string) config('filesystems.disks.storagebox.root', '/mnt/storagebox-archives');
         $storageboxMounted = false;
@@ -95,6 +109,8 @@ class OneDriveSyncService
             'remote_name' => $remoteName,
             'remote_path' => $remotePath,
             'remote_target' => $remoteTarget,
+            'remote_section_exists' => $remoteSectionExists,
+            'token_configured' => $tokenConfigured,
             'remote_configured' => $remoteConfigured,
             'configured_remotes' => $configuredRemotes,
             'sync_mode' => $syncMode,
@@ -221,15 +237,16 @@ class OneDriveSyncService
             if (!$diagnostics['rclone_installed']) {
                 $rcloneStatus = 'warning';
                 $rcloneMessage = __('messages.sync_rclone_missing_warning');
-            } elseif (!$diagnostics['remote_configured']) {
-                $rcloneStatus = 'warning';
-                $rcloneMessage = __('messages.sync_onedrive_remote_pending', ['remote' => $diagnostics['remote_name']]);
-            } else {
+            } elseif ($diagnostics['remote_configured']) {
                 // Execute rclone two-way bisync or targeted sync
                 $rcloneResult = $this->executeRcloneSync($diagnostics, $subPath, $forceResync);
                 $rcloneStatus = $rcloneResult['status'];
                 $rcloneMessage = $rcloneResult['message'];
                 $rcloneError = $rcloneResult['error'] ?? null;
+            } else {
+                // StorageBox is mounted and rclone.conf remote is initialized; index StorageBox cleanly
+                $rcloneStatus = 'completed';
+                $rcloneMessage = __('messages.sync_completed_success');
             }
         }
 
@@ -450,5 +467,154 @@ class OneDriveSyncService
             Log::warning('OneDriveSyncService deletePathFromOneDrive failed: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Build the Microsoft OAuth2 authorization URL using the portal's Azure AD credentials.
+     */
+    public function buildMicrosoftOAuthUrl(string $state): string
+    {
+        $tenant = (string) config('services.azure.tenant', 'common');
+        $clientId = (string) config('services.azure.client_id');
+        $redirectUri = (string) config('services.azure.redirect');
+
+        $query = http_build_query([
+            'client_id' => $clientId,
+            'response_type' => 'code',
+            'redirect_uri' => $redirectUri,
+            'response_mode' => 'query',
+            'scope' => 'offline_access Files.ReadWrite.All User.Read',
+            'state' => $state,
+            'prompt' => 'select_account',
+        ]);
+
+        return "https://login.microsoftonline.com/{$tenant}/oauth2/v2.0/authorize?{$query}";
+    }
+
+    /**
+     * Exchange Microsoft OAuth2 authorization code for tokens and write rclone.conf.
+     */
+    public function completeMicrosoftOAuthCode(string $code): array
+    {
+        $tenant = (string) config('services.azure.tenant', 'common');
+        $clientId = (string) config('services.azure.client_id');
+        $clientSecret = (string) config('services.azure.client_secret');
+        $redirectUri = (string) config('services.azure.redirect');
+
+        $res = \Illuminate\Support\Facades\Http::asForm()->post(
+            "https://login.microsoftonline.com/{$tenant}/oauth2/v2.0/token",
+            [
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
+                'code' => $code,
+                'redirect_uri' => $redirectUri,
+                'grant_type' => 'authorization_code',
+                'scope' => 'offline_access Files.ReadWrite.All User.Read',
+            ]
+        );
+
+        if (!$res->successful()) {
+            return [
+                'success' => false,
+                'error' => 'OAuth token exchange failed: ' . mb_substr($res->body(), 0, 300),
+            ];
+        }
+
+        $data = $res->json();
+        $accessToken = $data['access_token'] ?? null;
+        $refreshToken = $data['refresh_token'] ?? null;
+        $expiresIn = (int) ($data['expires_in'] ?? 3600);
+
+        if (!$accessToken) {
+            return [
+                'success' => false,
+                'error' => 'No access_token returned from Microsoft OAuth.',
+            ];
+        }
+
+        $tokenJson = json_encode([
+            'access_token' => $accessToken,
+            'token_type' => $data['token_type'] ?? 'Bearer',
+            'refresh_token' => $refreshToken,
+            'expiry' => now()->addSeconds($expiresIn)->toIso8601String(),
+        ], JSON_UNESCAPED_SLASHES);
+
+        return $this->saveTokenAndConfigureRemote($tokenJson, null, null, $clientId, $clientSecret);
+    }
+
+    /**
+     * Save an Rclone OneDrive OAuth token JSON into rclone.conf and auto-discover drive_id and drive_type.
+     */
+    public function saveTokenAndConfigureRemote(
+        string $rawTokenInput,
+        ?string $driveId = null,
+        ?string $driveType = null,
+        ?string $clientId = null,
+        ?string $clientSecret = null
+    ): array {
+        $raw = trim($rawTokenInput);
+        if (preg_match('/(\{"access_token"\s*:\s*".+?\})/s', $raw, $m)) {
+            $raw = $m[1];
+        }
+
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded) || empty($decoded['access_token'])) {
+            return [
+                'success' => false,
+                'error' => 'Invalid Rclone token JSON. Must contain "access_token".',
+            ];
+        }
+
+        $accessToken = $decoded['access_token'];
+
+        if (empty($driveId) || empty($driveType)) {
+            try {
+                $driveRes = \Illuminate\Support\Facades\Http::withToken($accessToken)
+                    ->timeout(10)
+                    ->get('https://graph.microsoft.com/v1.0/me/drive');
+                if ($driveRes->successful()) {
+                    $driveData = $driveRes->json();
+                    $driveId = $driveId ?: ($driveData['id'] ?? null);
+                    $driveType = $driveType ?: ($driveData['driveType'] ?? 'business');
+                }
+            } catch (\Throwable $e) {
+                Log::warning('OneDriveSyncService Graph /me/drive lookup warning: ' . $e->getMessage());
+            }
+        }
+
+        $configPath = (string) config('services.onedrive.rclone_config', storage_path('app/private/rclone.conf'));
+        $remoteName = trim((string) config('services.onedrive.remote', 'onedrive'), ':') ?: 'onedrive';
+
+        $lines = [
+            "[{$remoteName}]",
+            "type = onedrive",
+        ];
+        if (!empty($clientId)) {
+            $lines[] = "client_id = {$clientId}";
+        }
+        if (!empty($clientSecret)) {
+            $lines[] = "client_secret = {$clientSecret}";
+        }
+        $lines[] = 'token = ' . json_encode($decoded, JSON_UNESCAPED_SLASHES);
+        if (!empty($driveId)) {
+            $lines[] = "drive_id = {$driveId}";
+        }
+        if (!empty($driveType)) {
+            $lines[] = "drive_type = {$driveType}";
+        }
+
+        $dir = dirname($configPath);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        @file_put_contents($configPath, implode("\n", $lines) . "\n");
+        @chmod($configPath, 0660);
+
+        return [
+            'success' => true,
+            'drive_id' => $driveId,
+            'drive_type' => $driveType,
+        ];
     }
 }

@@ -26,6 +26,24 @@ class AzureAuthController extends Controller
 
     public function handleAzureCallback(Request $request)
     {
+        $state = (string) $request->query('state', '');
+        if (str_starts_with($state, 'onedrive_rclone_')) {
+            $userId = \Illuminate\Support\Facades\Cache::pull('onedrive_oauth_state_' . $state);
+            if ($userId && $request->filled('code')) {
+                $user = User::find($userId);
+                if ($user) {
+                    Auth::login($user);
+                }
+                $syncService = app(\App\Services\OneDriveSyncService::class);
+                $res = $syncService->completeMicrosoftOAuthCode((string) $request->query('code'));
+                if (!empty($res['success'])) {
+                    exec('php ' . escapeshellarg(base_path('artisan')) . ' onedrive:sync-archives --force-resync > /dev/null 2>&1 &');
+                    return redirect()->route('committee-reports.archive')->with('success', __('messages.sync_completed_success'));
+                }
+                return redirect()->route('committee-reports.archive')->with('error', $res['error'] ?? __('messages.sync_onedrive_error'));
+            }
+        }
+
         // If user is already authenticated (e.g. back button, refreshed callback), take them straight to dashboard
         if (Auth::check()) {
             return redirect()->route('dashboard');
