@@ -62,7 +62,7 @@ return [
         'rclone_binary' => env('ONEDRIVE_RCLONE_BINARY', '/usr/bin/rclone'),
         'rclone_config' => env('ONEDRIVE_RCLONE_CONFIG', storage_path('app/private/rclone.conf')),
         'remote' => env('ONEDRIVE_RCLONE_REMOTE', 'onedrive'),
-        'remote_path' => env('ONEDRIVE_REMOTE_PATH', 'Archives'),
+        'remote_path' => env('ONEDRIVE_REMOTE_PATH', ''),
         'sync_mode' => env('ONEDRIVE_SYNC_MODE', 'bisync'),
     ],
 ];

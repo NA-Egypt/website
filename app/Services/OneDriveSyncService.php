@@ -22,7 +22,7 @@ class OneDriveSyncService
         $binary = (string) config('services.onedrive.rclone_binary', '/usr/bin/rclone');
         $configPath = (string) config('services.onedrive.rclone_config', storage_path('app/private/rclone.conf'));
         $remoteName = trim((string) config('services.onedrive.remote', 'onedrive'), ':');
-        $remotePath = trim((string) config('services.onedrive.remote_path', 'Archives'), '/');
+        $remotePath = trim((string) config('services.onedrive.remote_path', ''), '/');
         $syncMode = (string) config('services.onedrive.sync_mode', 'bisync');
 
         $rcloneInstalled = is_file($binary) && is_executable($binary);
@@ -304,7 +304,8 @@ class OneDriveSyncService
     }
 
     /**
-     * Execute the Rclone CLI process safely.
+     * Execute the Rclone two-way synchronization (OneDrive <-> StorageBox) safely.
+     * Compatible with Rclone v1.60+ without experimental bisync lock failures.
      */
     protected function executeRcloneSync(array $diagnostics, ?string $subPath = null, bool $forceResync = false): array
     {
@@ -314,72 +315,98 @@ class OneDriveSyncService
 
         if ($subPath !== null && trim($subPath, '/') !== '') {
             $cleanSub = trim(str_replace('\\', '/', $subPath), '/');
-            $localRoot .= '/' . $cleanSub;
-            $remoteTarget .= '/' . $cleanSub;
-        }
-
-        $workDir = storage_path('app/private/rclone-bisync');
-        if (!is_dir($workDir)) {
-            @mkdir($workDir, 0775, true);
-        }
-
-        $mode = $diagnostics['sync_mode'] ?: 'bisync';
-        $args = [$binary];
-
-        if ($diagnostics['config_exists']) {
-            $args[] = '--config';
-            $args[] = $diagnostics['rclone_config'];
-        }
-
-        if ($mode === 'bisync' && $subPath === null) {
-            $args[] = 'bisync';
-            $args[] = $localRoot;
-            $args[] = $remoteTarget;
-            $args[] = '--workdir';
-            $args[] = $workDir;
-            $args[] = '--resilient';
-            $args[] = '--recover';
-            $args[] = '--create-empty-src-dirs';
-            $args[] = '--conflict-resolve';
-            $args[] = 'newer';
-            $args[] = '--timeout';
-            $args[] = '120s';
-
-            // Check if bisync workdir has prior listing files; if not, pass --resync
-            $existingListings = glob($workDir . '/*.lst') ?: [];
-            if ($forceResync || empty($existingListings)) {
-                $args[] = '--resync';
+            if (str_starts_with($cleanSub, 'Archives/')) {
+                $cleanSub = substr($cleanSub, strlen('Archives/'));
             }
-        } else {
-            // For targeted subPath or copy mode
-            $args[] = 'copy';
-            $args[] = $localRoot;
-            $args[] = $remoteTarget;
-            $args[] = '--create-empty-src-dirs';
-            $args[] = '--timeout';
-            $args[] = '120s';
+            if ($cleanSub !== '' && $cleanSub !== 'Archives') {
+                $localRoot .= '/' . $cleanSub;
+                $remoteTarget = rtrim($remoteTarget, ':') === $diagnostics['remote_name']
+                    ? $diagnostics['remote_name'] . ':' . $cleanSub
+                    : $remoteTarget . '/' . $cleanSub;
+            }
+        }
+
+        $baseArgs = [$binary];
+        if ($diagnostics['config_exists']) {
+            $baseArgs[] = '--config';
+            $baseArgs[] = $diagnostics['rclone_config'];
+        }
+
+        // Common flags for high-speed CIFS <-> OneDrive sync
+        $commonFlags = [
+            '--update',
+            '--transfers', '8',
+            '--checkers', '16',
+            '--contimeout', '30s',
+            '--timeout', '120s',
+            '--exclude', '.*',
+            '--exclude', '*/.*',
+        ];
+
+        // When syncing at the root level, exclude non-archive personal/legacy OneDrive root folders
+        if ($subPath === null) {
+            $rootExcludes = [
+                '/Archives/**',
+                '/Attachments/**',
+                '/Documents/**',
+                '/Microsoft Copilot Chat Files/**',
+                '/New Email Attchments/**',
+                '/RSC Archive/**',
+                '/الصور الممسوحة ضوئيًا/**',
+            ];
+            foreach ($rootExcludes as $ex) {
+                $commonFlags[] = '--exclude';
+                $commonFlags[] = $ex;
+            }
+
+            // For routine fast sync (when not force-resyncing all historical years), skip frozen 2019-2024 trees
+            if (!$forceResync) {
+                foreach (['2019', '2020', '2021', '2022', '2023', '2024'] as $frozenYear) {
+                    $commonFlags[] = '--exclude';
+                    $commonFlags[] = "*/{$frozenYear}/**";
+                }
+            }
         }
 
         try {
-            $process = new Process($args);
-            $process->setTimeout(70);
-            $process->run();
+            // Step 1: Pull newer/missing files from OneDrive -> StorageBox
+            $pullArgs = array_merge($baseArgs, ['copy', $remoteTarget, $localRoot], $commonFlags);
+            $pullProc = new Process($pullArgs);
+            $pullProc->setTimeout(300);
+            $pullProc->run();
 
-            if ($process->isSuccessful()) {
+            if (!$pullProc->isSuccessful()) {
+                $errOut = trim($pullProc->getErrorOutput() ?: $pullProc->getOutput());
+                Log::error('OneDriveSyncService rclone pull failed: ' . $errOut);
+
                 return [
-                    'status' => 'completed',
-                    'message' => __('messages.sync_completed_success'),
-                    'error' => null,
+                    'status' => 'failed',
+                    'message' => __('messages.sync_onedrive_error'),
+                    'error' => mb_substr($errOut, 0, 500),
                 ];
             }
 
-            $errOut = trim($process->getErrorOutput() ?: $process->getOutput());
-            Log::error('OneDriveSyncService rclone command failed: ' . $errOut);
+            // Step 2: Push newer/missing files from StorageBox -> OneDrive
+            $pushArgs = array_merge($baseArgs, ['copy', $localRoot, $remoteTarget], $commonFlags);
+            $pushProc = new Process($pushArgs);
+            $pushProc->setTimeout(300);
+            $pushProc->run();
+
+            if (!$pushProc->isSuccessful()) {
+                $errOut = trim($pushProc->getErrorOutput() ?: $pushProc->getOutput());
+                Log::error('OneDriveSyncService rclone push failed: ' . $errOut);
+
+                return [
+                    'status' => 'failed',
+                    'message' => __('messages.sync_onedrive_error'),
+                    'error' => mb_substr($errOut, 0, 500),
+                ];
+            }
 
             return [
-                'status' => 'failed',
-                'message' => __('messages.sync_onedrive_error'),
-                'error' => mb_substr($errOut, 0, 500),
+                'status' => 'completed',
+                'message' => __('messages.sync_completed_success'),
+                'error' => null,
             ];
         } catch (\Throwable $e) {
             Log::error('OneDriveSyncService rclone process exception: ' . $e->getMessage());
@@ -404,7 +431,8 @@ class OneDriveSyncService
 
         $cleanRel = ltrim(str_replace('\\', '/', $diskRelativePath), '/');
         $localPath = rtrim($diagnostics['storagebox_root'], '/') . '/' . $cleanRel;
-        $remoteTarget = rtrim($diagnostics['remote_target'], '/') . '/' . $cleanRel;
+        $baseRemote = rtrim($diagnostics['remote_target'], '/');
+        $remoteTarget = str_ends_with($baseRemote, ':') ? ($baseRemote . $cleanRel) : ($baseRemote . '/' . $cleanRel);
 
         if (!file_exists($localPath)) {
             return false;
@@ -447,7 +475,8 @@ class OneDriveSyncService
         }
 
         $cleanRel = ltrim(str_replace('\\', '/', $diskRelativePath), '/');
-        $remoteTarget = rtrim($diagnostics['remote_target'], '/') . '/' . $cleanRel;
+        $baseRemote = rtrim($diagnostics['remote_target'], '/');
+        $remoteTarget = str_ends_with($baseRemote, ':') ? ($baseRemote . $cleanRel) : ($baseRemote . '/' . $cleanRel);
 
         $args = [$diagnostics['rclone_binary']];
         if ($diagnostics['config_exists']) {
