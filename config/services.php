@@ -56,4 +56,13 @@ return [
     'reports_guide' => [
         'token' => env('REPORTS_GUIDE_ACCESS_TOKEN', 'naegypt-reports-guide-secret-key-2025'),
     ],
+
+    'onedrive' => [
+        'enabled' => env('ONEDRIVE_SYNC_ENABLED', true),
+        'rclone_binary' => env('ONEDRIVE_RCLONE_BINARY', '/usr/bin/rclone'),
+        'rclone_config' => env('ONEDRIVE_RCLONE_CONFIG', storage_path('app/private/rclone.conf')),
+        'remote' => env('ONEDRIVE_RCLONE_REMOTE', 'onedrive'),
+        'remote_path' => env('ONEDRIVE_REMOTE_PATH', 'Archives'),
+        'sync_mode' => env('ONEDRIVE_SYNC_MODE', 'bisync'),
+    ],
 ];

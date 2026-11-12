@@ -678,7 +678,7 @@ class CommitteeReportWorkflowTest extends TestCase
         $archiver = new \App\Services\ReportArchiver();
         $this->assertTrue($archiver->archive($report1));
 
-        $baseFolder = 'Archives/أجندة إجتماع لجنة خدمة الاقليم/2026/أجندة أغسطس 2026/التقارير الشهرية حتى 10 أغسطس 2026/اللجنة الفنية المشتركة';
+        $baseFolder = 'Archives/أجندة إجتماع لجنة خدمة الاقليم/2026/أجندة أغسطس ٢٠٢٦/التقارير الشهرية حتى ١٠ يوليو ٢٠٢٦/اللجنة الفنية المشتركة';
 
         // Since there is only one report for this committee in June 2026, it should not have a suffix
         $expectedPath1 = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
@@ -703,6 +703,71 @@ class CommitteeReportWorkflowTest extends TestCase
 
         Storage::disk('storagebox')->assertExists($expectedPath1Suffix);
         Storage::disk('storagebox')->assertExists($expectedPath2Suffix);
+    }
+
+    public function test_archive_cloud_management_and_onedrive_sync_endpoints()
+    {
+        Storage::fake('storagebox');
+
+        $rscUser = User::factory()->create(['email' => 'rsc-cloud@naegypt.org']);
+        $rscUser->assignRole('rsc');
+
+        $regularUser = User::factory()->create(['email' => 'comm-cloud@naegypt.org']);
+        $this->createCommittee($regularUser);
+
+        // 1. Regular user cannot create folders, upload, rename, delete, or trigger sync
+        $this->actingAs($regularUser);
+        $this->post(route('committee-reports.archive.createFolder'), [
+            'parent_path' => 'Archives',
+            'folder_name' => 'Forbidden Folder',
+        ])->assertStatus(403);
+        $this->post(route('committee-reports.archive.sync'))->assertStatus(403);
+
+        // 2. RSC officer can create folder, upload files, rename, download zip, delete, and check sync status
+        $this->actingAs($rscUser);
+
+        $this->getJson(route('committee-reports.archive.syncStatus'))
+            ->assertStatus(200)
+            ->assertJsonStructure(['status', 'total_files', 'total_dirs', 'diagnostics']);
+
+        // Create folder
+        $this->postJson(route('committee-reports.archive.createFolder'), [
+            'parent_path' => 'Archives',
+            'folder_name' => 'لجنة التجربة السحابية',
+        ])->assertStatus(200)->assertJson(['success' => true]);
+
+        Storage::disk('storagebox')->assertExists('Archives/لجنة التجربة السحابية');
+
+        // Upload file into folder
+        $uploadFile = UploadedFile::fake()->create('agenda_notes.pdf', 120, 'application/pdf');
+        $this->postJson(route('committee-reports.archive.upload'), [
+            'target_path' => 'Archives/لجنة التجربة السحابية',
+            'files' => [$uploadFile],
+        ])->assertStatus(200)->assertJson(['success' => true]);
+
+        Storage::disk('storagebox')->assertExists('Archives/لجنة التجربة السحابية/agenda_notes.pdf');
+
+        // Rename file
+        $this->postJson(route('committee-reports.archive.rename'), [
+            'path' => 'Archives/لجنة التجربة السحابية/agenda_notes.pdf',
+            'new_name' => 'agenda_final.pdf',
+        ])->assertStatus(200)->assertJson(['success' => true]);
+
+        Storage::disk('storagebox')->assertExists('Archives/لجنة التجربة السحابية/agenda_final.pdf');
+
+        // Download folder as ZIP
+        $zipResp = $this->post(route('committee-reports.archive.downloadZip'), [
+            'folder_path' => 'Archives/لجنة التجربة السحابية',
+        ]);
+        $zipResp->assertStatus(200);
+
+        // Delete file
+        $this->deleteJson(route('committee-reports.archive.delete'), [
+            'path' => 'Archives/لجنة التجربة السحابية/agenda_final.pdf',
+            'is_dir' => false,
+        ])->assertStatus(200)->assertJson(['success' => true]);
+
+        Storage::disk('storagebox')->assertMissing('Archives/لجنة التجربة السحابية/agenda_final.pdf');
     }
 
     public function test_servicebody_cannot_see_add_report_button_and_review_notes()
