@@ -610,7 +610,11 @@ Route::group(
                 return \App\Models\CalendarEvent::orderBy('start', 'desc')->take(3)->get();
             });
 
-            return view('frontend.home', compact('homeStats', 'jftContent', 'jftReading', 'cities', 'days', 'previewMeetings', 'announcements', 'locations', 'allMeetingsJson'));
+            $heroEvent = Cache::remember('frontend_home_hero_event', 1800, function() {
+                return \App\Models\CalendarEvent::where('is_hero', true)->latest('updated_at')->first();
+            });
+
+            return view('frontend.home', compact('homeStats', 'jftContent', 'jftReading', 'cities', 'days', 'previewMeetings', 'announcements', 'heroEvent', 'locations', 'allMeetingsJson'));
         })->name('frontend.home');
 
         Route::get('/literature', function(){

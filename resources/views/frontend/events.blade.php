@@ -135,6 +135,11 @@
                                                             <h5 class="card-title fw-bold mb-0" style="color: {{ $event->color ?? '#00698f' }};">
                                                                 {{ $event->title }}
                                                             </h5>
+                                                            @if($event->is_hero)
+                                                                <span class="badge rounded-pill px-2.5 py-1 shadow-xs font-semibold" style="background-color: #e0e7ff; color: #3730a3; font-size: 0.75rem;">
+                                                                    🏛️ {{ __('messages.hero_banner_badge') }}
+                                                                </span>
+                                                            @endif
                                                             @if($event->is_featured)
                                                                 <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 shadow-xs font-semibold" style="font-size: 0.75rem;">
                                                                     ⭐ {{ __('messages.Featured') }}
@@ -172,10 +177,20 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row g-2 my-2 text-muted small">
+                                                    <div class="row g-2 my-2 text-muted small align-items-center">
                                                         @if($event->location)
+                                                            @php
+                                                                $locInfo = $event->location_link_info;
+                                                            @endphp
                                                             <div class="col-12 col-sm-auto me-3">
-                                                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $event->location }}
+                                                                @if($locInfo['is_link'])
+                                                                    <a href="{{ $locInfo['url'] }}" target="_blank" rel="noopener noreferrer" class="badge rounded-pill text-decoration-none px-3 py-1.5 d-inline-flex align-items-center gap-1 shadow-xs" style="background-color: {{ $locInfo['type'] === 'map' ? '#ecfdf5' : '#eff6ff' }}; color: {{ $locInfo['type'] === 'map' ? '#047857' : '#1d4ed8' }}; border: 1px solid {{ $locInfo['type'] === 'map' ? '#a7f3d0' : '#bfdbfe' }}; font-size: 0.8rem;">
+                                                                        <i class="bi {{ $locInfo['type'] === 'zoom' ? 'bi-camera-video-fill' : ($locInfo['type'] === 'map' ? 'bi-geo-alt-fill' : 'bi-box-arrow-up-right') }}"></i>
+                                                                        <span>{{ $locInfo['label'] }}</span>
+                                                                    </a>
+                                                                @else
+                                                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $event->location }}
+                                                                @endif
                                                             </div>
                                                         @endif
 
@@ -220,6 +235,8 @@
                         data-store-url="{{ route('web-calendar-events.store') }}"
                         data-locale="{{ app()->getLocale() }}"
                         data-initial-events='{!! $allEventsJSON ?? "[]" !!}'
+                        data-organizer-groups='@json($organizerGroups ?? [])'
+                        data-default-organizer="{{ $defaultOrganizer ?? '' }}"
                         @if($canCreateEvent) data-can-create @endif
                         @if($canManageAllEvents) data-can-manage @endif
                         @if(auth()->check()) data-user-id="{{ auth()->id() }}" @endif
@@ -262,8 +279,45 @@
                                 </div>
 
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label fw-semibold small text-dark">{{ __('messages.Organizer') ?? 'Organizer' }}</label>
-                                    <input type="text" name="organizer" class="form-control rounded-pill border-secondary-subtle px-3" placeholder="{{ __('messages.Organizer') ?? 'e.g. Literature Committee / Cairo ASC' }}">
+                                    <label class="form-label fw-semibold small text-dark">{{ __('messages.Organizer') ?? 'Organizer' }} <span class="text-danger">*</span></label>
+                                    <div class="position-relative organizer-combobox-wrap" id="createOrganizerCombobox">
+                                        <input type="hidden" name="organizer" id="createEventOrganizer" value="{{ $defaultOrganizer ?? '' }}" required>
+                                        <button type="button" class="form-select rounded-pill border-secondary-subtle px-3 text-start d-flex align-items-center justify-content-between organizer-combobox-btn" onclick="toggleBladeOrganizerDropdown('create')">
+                                            <span id="createOrganizerLabel" class="text-truncate {{ empty($defaultOrganizer) ? 'text-muted' : 'text-dark' }}">
+                                                {{ !empty($defaultOrganizer) ? $defaultOrganizer : __('messages.select_organizer') }}
+                                            </span>
+                                        </button>
+                                        <div id="createOrganizerMenu" class="organizer-combobox-menu shadow-lg rounded-4 border bg-white d-none position-absolute w-100 mt-1" style="z-index: 1060; max-height: 280px; overflow: hidden; display: flex; flex-direction: column;">
+                                            <div class="p-2 border-bottom bg-light">
+                                                <input type="text" id="createOrganizerSearch" class="form-control form-control-sm rounded-pill px-3" placeholder="{{ __('messages.search_organizer') }}" oninput="filterBladeOrganizerOptions('create', this.value)">
+                                            </div>
+                                            <div class="overflow-y-auto p-1" style="max-height: 220px;" id="createOrganizerList">
+                                                @foreach(($organizerGroups ?? []) as $group)
+                                                    @if(!empty($group['options']))
+                                                        <div class="organizer-group-block" data-group-key="{{ $group['key'] }}">
+                                                            <div class="px-3 py-1 small fw-bold text-uppercase" style="color: #00698f; background: #f0f9ff; font-size: 0.72rem;">
+                                                                {{ $group['label'] }}
+                                                            </div>
+                                                            @foreach($group['options'] as $opt)
+                                                                <button type="button"
+                                                                    class="dropdown-item rounded-2 py-1.5 px-3 small d-flex flex-column text-start organizer-opt-item {{ ($defaultOrganizer ?? '') === $opt['value'] ? 'active' : '' }}"
+                                                                    data-value="{{ $opt['value'] }}"
+                                                                    data-ar="{{ $opt['ar_name'] }}"
+                                                                    data-en="{{ $opt['en_name'] }}"
+                                                                    data-search="{{ $opt['search_text'] }}"
+                                                                    onclick="selectBladeOrganizer('create', this.getAttribute('data-value'))">
+                                                                    <span class="fw-semibold">{{ $opt['label'] }}</span>
+                                                                    @if(!empty($opt['secondary']))
+                                                                        <span class="text-muted" style="font-size: 0.72rem;">{{ $opt['secondary'] }}</span>
+                                                                    @endif
+                                                                </button>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-12 col-md-6">
@@ -302,6 +356,17 @@
                                         </label>
                                     </div>
                                 </div>
+
+                                @if($canManageAllEvents)
+                                    <div class="col-12">
+                                        <div class="form-check form-switch mt-1 p-2 px-3 rounded-3 bg-light border">
+                                            <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="is_hero" id="createIsHero" value="1">
+                                            <label class="form-check-label fw-semibold text-dark" for="createIsHero">
+                                                🏛️ {{ __('messages.display_as_hero_banner') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="modal-footer border-top bg-light px-4 py-3 d-flex justify-content-between">
@@ -348,8 +413,45 @@
                                 </div>
 
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label fw-semibold small text-dark">{{ __('messages.Organizer') ?? 'Organizer' }}</label>
-                                    <input type="text" id="editEventOrganizer" name="organizer" class="form-control rounded-pill border-secondary-subtle px-3">
+                                    <label class="form-label fw-semibold small text-dark">{{ __('messages.Organizer') ?? 'Organizer' }} <span class="text-danger">*</span></label>
+                                    <div class="position-relative organizer-combobox-wrap" id="editOrganizerCombobox">
+                                        <input type="hidden" id="editEventOrganizer" name="organizer" required>
+                                        <button type="button" class="form-select rounded-pill border-secondary-subtle px-3 text-start d-flex align-items-center justify-content-between organizer-combobox-btn" onclick="toggleBladeOrganizerDropdown('edit')">
+                                            <span id="editOrganizerLabel" class="text-truncate text-muted">
+                                                {{ __('messages.select_organizer') }}
+                                            </span>
+                                        </button>
+                                        <div id="editOrganizerMenu" class="organizer-combobox-menu shadow-lg rounded-4 border bg-white d-none position-absolute w-100 mt-1" style="z-index: 1060; max-height: 280px; overflow: hidden; display: flex; flex-direction: column;">
+                                            <div class="p-2 border-bottom bg-light">
+                                                <input type="text" id="editOrganizerSearch" class="form-control form-control-sm rounded-pill px-3" placeholder="{{ __('messages.search_organizer') }}" oninput="filterBladeOrganizerOptions('edit', this.value)">
+                                            </div>
+                                            <div class="overflow-y-auto p-1" style="max-height: 220px;" id="editOrganizerList">
+                                                @foreach(($organizerGroups ?? []) as $group)
+                                                    @if(!empty($group['options']))
+                                                        <div class="organizer-group-block" data-group-key="{{ $group['key'] }}">
+                                                            <div class="px-3 py-1 small fw-bold text-uppercase" style="color: #00698f; background: #f0f9ff; font-size: 0.72rem;">
+                                                                {{ $group['label'] }}
+                                                            </div>
+                                                            @foreach($group['options'] as $opt)
+                                                                <button type="button"
+                                                                    class="dropdown-item rounded-2 py-1.5 px-3 small d-flex flex-column text-start organizer-opt-item"
+                                                                    data-value="{{ $opt['value'] }}"
+                                                                    data-ar="{{ $opt['ar_name'] }}"
+                                                                    data-en="{{ $opt['en_name'] }}"
+                                                                    data-search="{{ $opt['search_text'] }}"
+                                                                    onclick="selectBladeOrganizer('edit', this.getAttribute('data-value'))">
+                                                                    <span class="fw-semibold">{{ $opt['label'] }}</span>
+                                                                    @if(!empty($opt['secondary']))
+                                                                        <span class="text-muted" style="font-size: 0.72rem;">{{ $opt['secondary'] }}</span>
+                                                                    @endif
+                                                                </button>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-12 col-md-6">
@@ -388,6 +490,17 @@
                                         </label>
                                     </div>
                                 </div>
+
+                                @if($canManageAllEvents)
+                                    <div class="col-12">
+                                        <div class="form-check form-switch mt-1 p-2 px-3 rounded-3 bg-light border">
+                                            <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="is_hero" id="editIsHero" value="1">
+                                            <label class="form-check-label fw-semibold text-dark" for="editIsHero">
+                                                🏛️ {{ __('messages.display_as_hero_banner') }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="modal-footer border-top bg-light px-4 py-3 d-flex justify-content-between">
@@ -491,19 +604,96 @@
             if (monthSelect) {
                 monthSelect.addEventListener('change', filterEvents);
             }
+
+            document.addEventListener('click', function(e) {
+                ['create', 'edit'].forEach(function(prefix) {
+                    var wrap = document.getElementById(prefix + 'OrganizerCombobox');
+                    var menu = document.getElementById(prefix + 'OrganizerMenu');
+                    if (wrap && menu && !menu.classList.contains('d-none') && !wrap.contains(e.target)) {
+                        menu.classList.add('d-none');
+                    }
+                });
+            });
         });
+
+        function toggleBladeOrganizerDropdown(prefix) {
+            var menu = document.getElementById(prefix + 'OrganizerMenu');
+            var search = document.getElementById(prefix + 'OrganizerSearch');
+            if (!menu) return;
+            var isHidden = menu.classList.contains('d-none');
+            if (isHidden) {
+                menu.classList.remove('d-none');
+                if (search) {
+                    search.value = '';
+                    filterBladeOrganizerOptions(prefix, '');
+                    setTimeout(function() { search.focus(); }, 30);
+                }
+            } else {
+                menu.classList.add('d-none');
+            }
+        }
+
+        function selectBladeOrganizer(prefix, val) {
+            var input = document.getElementById(prefix + 'EventOrganizer');
+            var label = document.getElementById(prefix + 'OrganizerLabel');
+            var menu = document.getElementById(prefix + 'OrganizerMenu');
+            var list = document.getElementById(prefix + 'OrganizerList');
+
+            if (input) input.value = val || '';
+            if (label) {
+                label.textContent = val || "{{ __('messages.select_organizer') }}";
+                if (val) {
+                    label.classList.remove('text-muted');
+                    label.classList.add('text-dark');
+                } else {
+                    label.classList.add('text-muted');
+                    label.classList.remove('text-dark');
+                }
+            }
+            if (list) {
+                list.querySelectorAll('.organizer-opt-item').forEach(function(btn) {
+                    var matches = btn.getAttribute('data-value') === val || btn.getAttribute('data-ar') === val || btn.getAttribute('data-en') === val;
+                    btn.classList.toggle('active', Boolean(val && matches));
+                });
+            }
+            if (menu) menu.classList.add('d-none');
+        }
+
+        function filterBladeOrganizerOptions(prefix, query) {
+            var list = document.getElementById(prefix + 'OrganizerList');
+            if (!list) return;
+            var q = (query || '').trim().toLowerCase();
+
+            list.querySelectorAll('.organizer-group-block').forEach(function(groupEl) {
+                var visibleCount = 0;
+                groupEl.querySelectorAll('.organizer-opt-item').forEach(function(optEl) {
+                    var haystack = (optEl.getAttribute('data-search') || '') + ' ' + (optEl.getAttribute('data-value') || '').toLowerCase();
+                    if (!q || haystack.indexOf(q) !== -1) {
+                        optEl.classList.remove('d-none');
+                        visibleCount++;
+                    } else {
+                        optEl.classList.add('d-none');
+                    }
+                });
+                groupEl.classList.toggle('d-none', visibleCount === 0);
+            });
+        }
 
         // Event creation submit handler
         async function handleCreateEventSubmit(e) {
             e.preventDefault();
             var form = e.target;
+            var formData = new FormData(form);
+            if (!formData.get('organizer')) {
+                toggleBladeOrganizerDropdown('create');
+                return;
+            }
             var submitBtn = document.getElementById('createEventSubmitBtn');
             var originalText = submitBtn.innerHTML;
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
 
-            var formData = new FormData(form);
             var payload = {
                 title: formData.get('title'),
                 start: formData.get('start'),
@@ -513,7 +703,8 @@
                 recurrence: [formData.get('recurrence') || 'once'],
                 color: formData.get('color') || '#00698f',
                 description: formData.get('description'),
-                is_featured: formData.get('is_featured') === '1'
+                is_featured: formData.get('is_featured') === '1',
+                is_hero: formData.get('is_hero') === '1'
             };
 
             try {
@@ -564,11 +755,15 @@
 
             document.getElementById('editEventStart').value = formatLocal(event.start);
             document.getElementById('editEventEnd').value = formatLocal(event.end);
-            document.getElementById('editEventOrganizer').value = event.organizer || '';
+            selectBladeOrganizer('edit', event.organizer || "{{ $defaultOrganizer ?? '' }}");
             document.getElementById('editEventLocation').value = event.location || '';
             document.getElementById('editEventColor').value = event.color || '#00698f';
             document.getElementById('editEventDescription').value = event.description || '';
             document.getElementById('editIsFeatured').checked = Boolean(event.is_featured);
+            var editIsHeroEl = document.getElementById('editIsHero');
+            if (editIsHeroEl) {
+                editIsHeroEl.checked = Boolean(event.is_hero);
+            }
 
             if (event.recurrence && Array.isArray(event.recurrence) && event.recurrence.length > 0) {
                 document.getElementById('editEventRecurrence').value = event.recurrence[0];
@@ -584,6 +779,11 @@
         async function handleEditEventSubmit(e) {
             e.preventDefault();
             var form = e.target;
+            var formData = new FormData(form);
+            if (!formData.get('organizer')) {
+                toggleBladeOrganizerDropdown('edit');
+                return;
+            }
             var eventId = document.getElementById('editEventId').value;
             var submitBtn = document.getElementById('editEventSubmitBtn');
             var originalText = submitBtn.innerHTML;
@@ -591,7 +791,6 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Updating...';
 
-            var formData = new FormData(form);
             var payload = {
                 title: formData.get('title'),
                 start: formData.get('start'),
@@ -601,7 +800,8 @@
                 recurrence: [formData.get('recurrence') || 'once'],
                 color: formData.get('color') || '#00698f',
                 description: formData.get('description'),
-                is_featured: formData.get('is_featured') === '1'
+                is_featured: formData.get('is_featured') === '1',
+                is_hero: formData.get('is_hero') === '1'
             };
 
             try {

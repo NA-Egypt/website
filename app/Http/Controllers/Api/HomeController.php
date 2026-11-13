@@ -71,8 +71,9 @@ class HomeController extends Controller
                 'email' => 'pr@naegypt.org',
             ];
 
-            // Upcoming events (up to 5 upcoming calendar events)
+            // Upcoming events (up to 5 upcoming calendar events) & Hero event
             $upcomingEvents = [];
+            $heroEvent = null;
             try {
                 if (class_exists(CalendarEvent::class)) {
                     $events = CalendarEvent::where('start', '>=', now())
@@ -80,9 +81,15 @@ class HomeController extends Controller
                         ->limit(5)
                         ->get();
                     $upcomingEvents = CalendarEventResource::collection($events)->resolve();
+
+                    $heroModel = CalendarEvent::where('is_hero', true)->latest('updated_at')->first();
+                    if ($heroModel) {
+                        $heroEvent = (new CalendarEventResource($heroModel))->resolve();
+                    }
                 }
             } catch (\Exception $e) {
                 $upcomingEvents = [];
+                $heroEvent = null;
             }
 
             return [
@@ -90,6 +97,7 @@ class HomeController extends Controller
                 'jft' => $jft,
                 'helplines' => $helplineNumbers,
                 'social_links' => $socialLinks,
+                'hero_event' => $heroEvent,
                 'upcoming_events' => $upcomingEvents,
             ];
         });

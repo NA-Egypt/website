@@ -24,9 +24,11 @@ class CalendarEventResource extends JsonResource
             'color' => $this->color ?? '#00698f',
             'organizer' => $this->organizer,
             'location' => $this->location,
+            'location_info' => $this->location_link_info,
             'recurrence' => $this->recurrence ?? ['once'],
             'formatted_recurrence' => $this->formatted_recurrence,
-            'is_featured' => (bool)$this->is_featured,
+            'is_featured' => (bool) $this->is_featured,
+            'is_hero' => (bool) $this->is_hero,
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
             'updated_at' => $this->updated_at ? $this->updated_at->toIso8601String() : null,
         ];

@@ -22,6 +22,12 @@ class CalendarEventApiTest extends TestCase
         $role = Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
         $this->user = User::factory()->create();
         $this->user->assignRole($role);
+
+        \App\Models\ServiceCommittee::create([
+            'ar_name' => 'لجنة العلاقات العامة',
+            'en_name' => 'PR Subcommittee',
+            'status' => 'active',
+        ]);
     }
 
     public function test_public_can_list_calendar_events(): void
@@ -181,7 +187,7 @@ class CalendarEventApiTest extends TestCase
         $response = $this->postJson('/api/v1/calendar-events', []);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'start', 'end']);
+            ->assertJsonValidationErrors(['title', 'start', 'end', 'organizer']);
     }
 
     public function test_authenticated_user_can_update_calendar_event(): void

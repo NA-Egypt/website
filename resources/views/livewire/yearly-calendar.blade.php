@@ -22,6 +22,8 @@
             data-fetch-url="{{ route('web-calendar-events.index') }}"
             data-store-url="{{ route('web-calendar-events.store') }}"
             data-locale="{{ app()->getLocale() }}"
+            data-organizer-groups='@json($organizerGroups ?? [])'
+            data-default-organizer="{{ $defaultOrganizer ?? '' }}"
             @if($canCreateEvent) data-can-create @endif
             @if($canManageAllEvents) data-can-manage @endif
             @if(auth()->check()) data-user-id="{{ auth()->id() }}" @endif

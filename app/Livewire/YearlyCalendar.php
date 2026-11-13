@@ -3,7 +3,9 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\CalendarEvent;
 use App\Traits\EventRecurrenceTrait;
+use Illuminate\Validation\Rule;
 
 class YearlyCalendar extends Component
 {
@@ -18,22 +20,27 @@ class YearlyCalendar extends Component
     public $location;
     public $recurrence = ['once'];
     public $is_featured = false;
+    public $is_hero = false;
 
-    protected $rules = [
-        'title' => 'required|string|max:255',
-        'start' => 'required|date',
-        'end' => 'required|date|after_or_equal:start',
-        'description' => 'nullable|string',
-        'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
-        'organizer' => 'nullable|string|max:255',
-        'location' => 'nullable|string|max:255',
-        'recurrence' => 'nullable|array',
-        'is_featured' => 'nullable|boolean',
-    ];
+    protected function rules()
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'start' => 'required|date',
+            'end' => 'required|date|after_or_equal:start',
+            'description' => 'nullable|string',
+            'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'organizer' => ['required', 'string', 'max:255', Rule::in(CalendarEvent::getValidOrganizerNames())],
+            'location' => 'nullable|string|max:255',
+            'recurrence' => 'nullable|array',
+            'is_featured' => 'nullable|boolean',
+            'is_hero' => 'nullable|boolean',
+        ];
+    }
 
     public function fetchEvents($start, $end)
     {
-        $baseEvents = \App\Models\CalendarEvent::query()
+        $baseEvents = CalendarEvent::query()
             ->where('start', '<=', $end) // Allow recurring events that started in the past
             ->get();
             
@@ -53,7 +60,10 @@ class YearlyCalendar extends Component
                         'user_id' => $event->user_id,
                         'organizer' => $event->organizer,
                         'location' => $event->location,
+                        'location_info' => $event->location_link_info,
                         'recurrence' => $event->recurrence,
+                        'is_featured' => (bool) $event->is_featured,
+                        'is_hero' => (bool) $event->is_hero,
                     ],
                 ]);
             }
@@ -69,39 +79,45 @@ class YearlyCalendar extends Component
         }
 
         $validatedData = $this->validate();
+        $canManageHero = $this->isRsc() || (auth()->check() && auth()->user()->can('manage calendar events'));
 
         if ($this->eventId) {
-            $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
+            $event = CalendarEvent::findOrFail($this->eventId);
             if (!$this->isRsc() && $event->user_id !== auth()->id()) {
                  abort(403, 'Unauthorized action.');
             }
-            $event->update([
+            $updateData = [
                 'title' => $validatedData['title'],
                 'start' => $validatedData['start'],
                 'end' => $validatedData['end'],
                 'description' => $validatedData['description'],
                 'color' => $validatedData['color'],
-                'organizer' => $validatedData['organizer'] ?? null,
+                'organizer' => $validatedData['organizer'],
                 'location' => $validatedData['location'] ?? null,
                 'recurrence' => $validatedData['recurrence'] ?? ['once'],
                 'is_featured' => $validatedData['is_featured'] ?? false,
-            ]);
+            ];
+            if ($canManageHero) {
+                $updateData['is_hero'] = (bool) ($validatedData['is_hero'] ?? false);
+            }
+            $event->update($updateData);
         } else {
-            \App\Models\CalendarEvent::create([
+            CalendarEvent::create([
                 'title' => $validatedData['title'],
                 'start' => $validatedData['start'],
                 'end' => $validatedData['end'],
                 'description' => $validatedData['description'],
                 'color' => $validatedData['color'],
-                'organizer' => $validatedData['organizer'] ?? null,
+                'organizer' => $validatedData['organizer'],
                 'location' => $validatedData['location'] ?? null,
                 'user_id' => auth()->id(),
                 'recurrence' => $validatedData['recurrence'] ?? ['once'],
                 'is_featured' => $validatedData['is_featured'] ?? false,
+                'is_hero' => $canManageHero ? (bool) ($validatedData['is_hero'] ?? false) : false,
             ]);
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured', 'is_hero']);
         $this->dispatch('event-saved');
     }
 
@@ -111,7 +127,7 @@ class YearlyCalendar extends Component
             abort(403, 'Unauthorized action.');
         }
 
-        $event = \App\Models\CalendarEvent::findOrFail($id);
+        $event = CalendarEvent::findOrFail($id);
         
         if (!$this->isRsc() && $event->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
@@ -119,7 +135,6 @@ class YearlyCalendar extends Component
 
         $this->eventId = $event->id;
         $this->title = $event->title;
-        // Format to YYYY-MM-DDTHH:MM which datetime-local expects
         $this->start = $event->start->format('Y-m-d\TH:i');
         $this->end = $event->end->format('Y-m-d\TH:i');
         $this->description = $event->description;
@@ -128,6 +143,7 @@ class YearlyCalendar extends Component
         $this->location = $event->location;
         $this->recurrence = $event->recurrence ?? ['once'];
         $this->is_featured = (bool) $event->is_featured;
+        $this->is_hero = (bool) $event->is_hero;
 
         $this->dispatch('open-modal');
     }
@@ -139,20 +155,20 @@ class YearlyCalendar extends Component
         }
 
         if ($this->eventId) {
-            $event = \App\Models\CalendarEvent::findOrFail($this->eventId);
+            $event = CalendarEvent::findOrFail($this->eventId);
             if (!$this->isRsc() && $event->user_id !== auth()->id()) {
                  abort(403, 'Unauthorized action.');
             }
             $event->delete();
         }
 
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured', 'is_hero']);
         $this->dispatch('event-saved');
     }
 
     public function resetModal()
     {
-        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured']);
+        $this->reset(['eventId', 'title', 'start', 'end', 'description', 'color', 'organizer', 'location', 'recurrence', 'is_featured', 'is_hero']);
     }
 
     public function selectDateRange($start, $end)
@@ -170,8 +186,6 @@ class YearlyCalendar extends Component
 
         $endStr = $end;
         if (!str_contains($endStr, 'T')) {
-            // FullCalendar date-only selection ends are exclusive. If they selected a single day,
-            // the difference is 1 day. In this case we set the end time on the same day.
             $startDate = \Carbon\Carbon::parse($start);
             $endDate = \Carbon\Carbon::parse($end);
             if ((int) $endDate->diffInDays($startDate, true) === 1) {
@@ -212,13 +226,16 @@ class YearlyCalendar extends Component
 
     public function render()
     {
-        // Initial load for current year (or roughly visible window)
         $start = \Carbon\Carbon::now()->startOfYear()->toIso8601String();
         $end = \Carbon\Carbon::now()->endOfYear()->toIso8601String();
         
         $events = $this->fetchEvents($start, $end);
+        $organizerCatalog = CalendarEvent::getOrganizerCatalog(auth()->user(), app()->getLocale());
 
-        return view('livewire.yearly-calendar', ['events' => $events])
-            ->layout('components.layout');
+        return view('livewire.yearly-calendar', [
+            'events' => $events,
+            'organizerGroups' => $organizerCatalog['groups'],
+            'defaultOrganizer' => $organizerCatalog['default_organizer'],
+        ])->layout('components.layout');
     }
 }

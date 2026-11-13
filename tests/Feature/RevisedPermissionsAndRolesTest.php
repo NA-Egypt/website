@@ -143,11 +143,18 @@ class RevisedPermissionsAndRolesTest extends TestCase
      */
     public function test_event_creation_allowed_for_committees_servicebodies_rsc_and_superadmin_only()
     {
+        \App\Models\ServiceCommittee::create([
+            'ar_name' => 'لجنة الأنشطة',
+            'en_name' => 'Activities Committee',
+            'status' => 'active',
+        ]);
+
         $payload = [
             'title' => 'Regional Convention',
             'start' => Carbon::now()->addDays(10)->toIso8601String(),
             'end' => Carbon::now()->addDays(12)->toIso8601String(),
             'description' => 'A convention for recovery',
+            'organizer' => 'Activities Committee',
             'color' => '#00698f',
         ];
 

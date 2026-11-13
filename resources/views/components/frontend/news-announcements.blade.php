@@ -1,5 +1,6 @@
 @props([
     'announcements' => [],
+    'heroEvent' => null,
 ])
 
 <section class="na-section-shell mb-5" aria-labelledby="news-heading">
@@ -23,29 +24,72 @@
     </a>
   </div>
 
-  <!-- Featured Regional Convention Banner -->
-  <div class="p-4 rounded-4 mb-4 text-white position-relative overflow-hidden shadow-md" style="background: linear-gradient(135deg, #101b30 0%, #1b2a4a 55%, #32557f 100%);">
-    <div class="row align-items-center">
-      <div class="col-12 col-md-8">
-        <span class="badge rounded-pill bg-warning text-dark fw-bold px-3 py-1.5 mb-2 shadow-xs">
-          <i class="bi bi-star-fill me-1"></i> {{ __('messages.featured_fellowship_event') ?? 'الحدث الإقليمي البارز' }}
-        </span>
-        <h3 class="fw-bold fs-4 text-white mb-2">
-          {{ __('messages.annual_egypt_convention_title') ?? 'المؤتمر السنوي لزمالة المدمنين المجهولين بمصر (مسار يجمعنا)' }}
-        </h3>
-        <p class="text-white-50 small mb-3 mb-md-0" style="max-width: 620px; line-height: 1.6;">
-          {{ __('messages.convention_banner_desc') ?? 'تجمع  سنوي يضم أعضاء الزمالة من كافة المحافظات والزوار من حول العالم لمشاركة الأمل والقوة والتعافي.' }}
-        </p>
-      </div>
+  <!-- Dynamic Featured Hero Event Banner -->
+  @if($heroEvent)
+    @php
+      $heroStartDate = $heroEvent->start ? \Carbon\Carbon::parse($heroEvent->start)->locale(app()->getLocale())->translatedFormat('j M Y - h:i A') : null;
+      $heroEndDate = $heroEvent->end ? \Carbon\Carbon::parse($heroEvent->end)->locale(app()->getLocale())->translatedFormat('j M Y - h:i A') : null;
+      $heroLocInfo = $heroEvent->location_link_info;
+    @endphp
+    <div id="homepage-hero-event-banner" class="p-4 rounded-4 mb-4 text-white position-relative overflow-hidden shadow-md" style="background: linear-gradient(135deg, #101b30 0%, #1b2a4a 55%, #32557f 100%);">
+      <div class="row align-items-center g-3">
+        <div class="col-12 col-md-8">
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <span class="badge rounded-pill bg-warning text-dark fw-bold px-3 py-1.5 shadow-xs">
+              <i class="bi bi-star-fill me-1"></i> {{ __('messages.featured_fellowship_event') ?? 'الحدث الإقليمي البارز' }}
+            </span>
 
-      <div class="col-12 col-md-4 text-md-end">
-        <a href="{{ route('frontend.events') }}" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-primary shadow-sm d-inline-flex align-items-center gap-2">
-          <i class="bi bi-calendar2-check-fill text-primary"></i>
-          <span>{{ __('messages.convention_details_btn') ?? 'تفاصيل وجدول المؤتمر' }}</span>
-        </a>
+            @if($heroStartDate)
+              <span class="badge rounded-pill fw-semibold px-3 py-1.5 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.14); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.22);">
+                <i class="bi bi-calendar-event text-warning"></i>
+                <span>{{ $heroStartDate }}{{ ($heroEndDate && $heroEndDate !== $heroStartDate) ? ' — ' . $heroEndDate : '' }}</span>
+              </span>
+            @endif
+          </div>
+
+          <h3 class="fw-bold fs-4 text-white mb-2">
+            {{ $heroEvent->title }}
+          </h3>
+
+          @if(!empty($heroEvent->description))
+            <p class="text-white-50 small mb-3" style="max-width: 680px; line-height: 1.6;">
+              {{ $heroEvent->description }}
+            </p>
+          @endif
+
+          <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+            @if(!empty($heroEvent->organizer))
+              <span class="badge rounded-pill fw-semibold px-3 py-1.5 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.12); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.2);">
+                <i class="bi bi-person-badge text-info"></i>
+                <span>{{ $heroEvent->organizer }}</span>
+              </span>
+            @endif
+
+            @if(!empty($heroEvent->location))
+              @if($heroLocInfo['is_link'])
+                <a href="{{ $heroLocInfo['url'] }}" target="_blank" rel="noopener noreferrer" class="badge rounded-pill fw-bold px-3 py-1.5 text-decoration-none d-inline-flex align-items-center gap-1 shadow-xs" style="background: {{ $heroLocInfo['type'] === 'map' ? '#10b981' : '#3b82f6' }}; color: #ffffff;">
+                  <i class="bi {{ $heroLocInfo['type'] === 'zoom' ? 'bi-camera-video-fill' : ($heroLocInfo['type'] === 'map' ? 'bi-geo-alt-fill' : 'bi-box-arrow-up-right') }}"></i>
+                  <span>{{ $heroLocInfo['label'] }}</span>
+                </a>
+              @else
+                <span class="badge rounded-pill fw-semibold px-3 py-1.5 d-inline-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.12); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.2);">
+                  <i class="bi bi-geo-alt-fill text-warning"></i>
+                  <span>{{ $heroEvent->location }}</span>
+                </span>
+              @endif
+            @endif
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 text-md-end">
+          <a href="{{ route('frontend.events') }}" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-primary shadow-sm d-inline-flex align-items-center gap-2">
+            <i class="bi bi-calendar2-check-fill text-primary"></i>
+            <span>{{ __('messages.event_details_btn') ?? 'تفاصيل وجدول الحدث' }}</span>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
+  @endif
 
   <!-- Announcements Grid -->
   <div class="row g-3">
@@ -53,6 +97,7 @@
       @php
         $startDate = $event->start ? \Carbon\Carbon::parse($event->start)->locale(app()->getLocale())->translatedFormat('j M Y') : 'قريباً';
         $location = $event->location ?: 'محدد في الإعلان';
+        $locInfo = $event->location_link_info;
       @endphp
       <div class="col-12 col-md-4">
         <div class="na-event-card">
@@ -80,13 +125,20 @@
             @endif
           </div>
 
-          <div class="pt-2 border-top d-flex align-items-center justify-content-between">
+          <div class="pt-2 border-top d-flex align-items-center justify-content-between gap-2">
             <div class="d-flex align-items-center gap-1 text-muted small text-truncate">
-              <i class="bi bi-geo-alt text-primary"></i>
-              <span class="text-truncate">{{ $location }}</span>
+              @if($locInfo['is_link'])
+                <a href="{{ $locInfo['url'] }}" target="_blank" rel="noopener noreferrer" class="text-primary fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">
+                  <i class="bi {{ $locInfo['type'] === 'zoom' ? 'bi-camera-video-fill' : ($locInfo['type'] === 'map' ? 'bi-geo-alt-fill' : 'bi-box-arrow-up-right') }}"></i>
+                  <span>{{ $locInfo['label'] }}</span>
+                </a>
+              @else
+                <i class="bi bi-geo-alt text-primary"></i>
+                <span class="text-truncate">{{ $location }}</span>
+              @endif
             </div>
 
-            <a href="{{ route('frontend.events') }}" class="btn btn-sm btn-link text-primary text-decoration-none fw-bold p-0">
+            <a href="{{ route('frontend.events') }}" class="btn btn-sm btn-link text-primary text-decoration-none fw-bold p-0 shrink-0">
               <span>{{ __('messages.read_more') ?? 'المزيد' }} &larr;</span>
             </a>
           </div>

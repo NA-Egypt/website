@@ -115,6 +115,8 @@ const mountVueApps = () => {
         const locale = el.getAttribute('data-locale') || document.documentElement.lang || 'ar';
         const csrfToken = el.getAttribute('data-csrf-token') || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         const initialEvents = JSON.parse(el.getAttribute('data-initial-events') || '[]');
+        const organizerGroups = JSON.parse(el.getAttribute('data-organizer-groups') || '[]');
+        const defaultOrganizer = el.getAttribute('data-default-organizer') || '';
 
         const app = createApp({
             render: () => h(EventsCalendar, {
@@ -125,7 +127,9 @@ const mountVueApps = () => {
                 canCreate,
                 currentUserId,
                 locale,
-                csrfToken
+                csrfToken,
+                organizerGroups,
+                defaultOrganizer
             })
         });
         app.use(createPinia());

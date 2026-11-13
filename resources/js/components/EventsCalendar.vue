@@ -85,7 +85,8 @@
                 class="event-pill"
                 :style="{ backgroundColor: ev.color || '#00698f' }"
               >
-                <span v-if="ev.is_featured" class="featured-star">★</span>
+                <span v-if="ev.is_hero" class="featured-star" :title="isRtl ? 'الحدث الرئيسي' : 'Hero Banner'">🏛️</span>
+                <span v-else-if="ev.is_featured" class="featured-star">★</span>
                 <span class="event-title-text">{{ ev.title }}</span>
               </div>
             </div>
@@ -147,7 +148,21 @@
               <h4 class="day-event-title">{{ ev.title }}</h4>
               <p v-if="ev.description" class="day-event-desc">{{ ev.description }}</p>
               <div class="day-event-meta">
-                <span v-if="ev.location">📍 {{ ev.location }}</span>
+                <span v-if="ev.location">
+                  <a
+                    v-if="getLocationInfo(ev).is_link"
+                    :href="getLocationInfo(ev).url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop
+                    class="location-link-badge"
+                    :class="'location-link-' + getLocationInfo(ev).type"
+                  >
+                    <span>{{ getLocationInfo(ev).type === 'zoom' ? '🎥' : (getLocationInfo(ev).type === 'map' ? '📍' : '🔗') }}</span>
+                    <span>{{ getLocationInfo(ev).label }}</span>
+                  </a>
+                  <template v-else>📍 {{ ev.location }}</template>
+                </span>
                 <span v-if="ev.organizer">👤 {{ ev.organizer }}</span>
               </div>
             </div>
@@ -175,11 +190,26 @@
             <div class="list-card-body">
               <div class="list-card-header">
                 <h4 class="list-card-title">{{ ev.title }}</h4>
+                <span v-if="ev.is_hero" class="hero-badge">🏛️ {{ isRtl ? 'الحدث الرئيسي' : 'Hero Banner' }}</span>
                 <span v-if="ev.is_featured" class="featured-badge">★ {{ isRtl ? 'مميز' : 'Featured' }}</span>
               </div>
               <p v-if="ev.description" class="list-card-desc">{{ ev.description }}</p>
               <div class="list-card-tags">
-                <span v-if="ev.location">📍 {{ ev.location }}</span>
+                <span v-if="ev.location">
+                  <a
+                    v-if="getLocationInfo(ev).is_link"
+                    :href="getLocationInfo(ev).url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    @click.stop
+                    class="location-link-badge"
+                    :class="'location-link-' + getLocationInfo(ev).type"
+                  >
+                    <span>{{ getLocationInfo(ev).type === 'zoom' ? '🎥' : (getLocationInfo(ev).type === 'map' ? '📍' : '🔗') }}</span>
+                    <span>{{ getLocationInfo(ev).label }}</span>
+                  </a>
+                  <template v-else>📍 {{ ev.location }}</template>
+                </span>
                 <span v-if="ev.organizer">👤 {{ ev.organizer }}</span>
                 <span v-if="ev.formatted_recurrence">🔄 {{ ev.formatted_recurrence }}</span>
               </div>
@@ -203,7 +233,10 @@
           <div class="modal-color-strip" :style="{ backgroundColor: activeEvent?.color || '#00698f' }"></div>
           <div>
             <h3 class="modal-event-title">{{ activeEvent?.title }}</h3>
-            <span v-if="activeEvent?.is_featured" class="featured-text">★ {{ isRtl ? 'حدث مميز' : 'Featured Event' }}</span>
+            <div class="modal-badges-row">
+              <span v-if="activeEvent?.is_hero" class="hero-text">🏛️ {{ isRtl ? 'الحدث الرئيسي (الصفحة الرئيسية)' : 'Homepage Hero Banner' }}</span>
+              <span v-if="activeEvent?.is_featured" class="featured-text">★ {{ isRtl ? 'حدث مميز' : 'Featured Event' }}</span>
+            </div>
           </div>
         </div>
 
@@ -215,7 +248,20 @@
 
           <div v-if="activeEvent?.location" class="info-row">
             <span class="info-label">📍 {{ isRtl ? 'الموقع:' : 'Location:' }}</span>
-            <span class="info-val">{{ activeEvent.location }}</span>
+            <span class="info-val">
+              <a
+                v-if="getLocationInfo(activeEvent).is_link"
+                :href="getLocationInfo(activeEvent).url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="location-link-badge"
+                :class="'location-link-' + getLocationInfo(activeEvent).type"
+              >
+                <span>{{ getLocationInfo(activeEvent).type === 'zoom' ? '🎥' : (getLocationInfo(activeEvent).type === 'map' ? '📍' : '🔗') }}</span>
+                <span>{{ getLocationInfo(activeEvent).label }}</span>
+              </a>
+              <template v-else>{{ activeEvent.location }}</template>
+            </span>
           </div>
 
           <div v-if="activeEvent?.organizer" class="info-row">
@@ -282,14 +328,73 @@
           </div>
 
           <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label">{{ isRtl ? 'المنظم' : 'Organizer' }}</label>
-              <input v-model="form.organizer" type="text" class="form-control" />
+            <div class="form-group combobox-group" ref="organizerCombobox">
+              <label class="form-label">{{ isRtl ? 'المنظم' : 'Organizer' }} *</label>
+              <div class="combobox-wrapper">
+                <button
+                  type="button"
+                  class="form-control combobox-trigger"
+                  :class="{ 'is-placeholder': !form.organizer }"
+                  @click="toggleOrganizerDropdown"
+                >
+                  <span class="combobox-selected-text">
+                    {{ form.organizer || (isRtl ? 'اختر الجهة المنظمة...' : 'Select Organizer...') }}
+                  </span>
+                  <span class="combobox-chevron">▾</span>
+                </button>
+                <input
+                  type="text"
+                  :value="form.organizer"
+                  required
+                  tabindex="-1"
+                  class="combobox-hidden-required"
+                  @invalid="organizerDropdownOpen = true"
+                />
+
+                <div v-if="organizerDropdownOpen" class="combobox-dropdown">
+                  <div class="combobox-search-box">
+                    <input
+                      ref="organizerSearchInput"
+                      v-model="organizerSearchQuery"
+                      type="text"
+                      class="combobox-search-input"
+                      :placeholder="isRtl ? 'ابحث عن لجنة أو مجموعة عمل أو منطقة...' : 'Search committee, workgroup, or service body...'"
+                      @keydown.esc.stop="organizerDropdownOpen = false"
+                    />
+                  </div>
+                  <div class="combobox-options-list">
+                    <template v-for="group in filteredOrganizerGroups" :key="group.key">
+                      <div v-if="group.options.length > 0" class="combobox-optgroup">
+                        <div class="combobox-optgroup-label">{{ group.label }}</div>
+                        <button
+                          v-for="opt in group.options"
+                          :key="opt.value"
+                          type="button"
+                          class="combobox-option"
+                          :class="{ active: form.organizer === opt.value || form.organizer === opt.ar_name || form.organizer === opt.en_name }"
+                          @click="selectOrganizer(opt.value)"
+                        >
+                          <span class="opt-primary">{{ opt.label }}</span>
+                          <span v-if="opt.secondary" class="opt-secondary">{{ opt.secondary }}</span>
+                        </button>
+                      </div>
+                    </template>
+                    <div v-if="filteredOrganizerGroups.every(g => g.options.length === 0)" class="combobox-empty">
+                      {{ isRtl ? 'لا توجد نتائج مطابقة' : 'No matching organizers found' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">{{ isRtl ? 'الموقع' : 'Location' }}</label>
-              <input v-model="form.location" type="text" class="form-control" />
+              <input
+                v-model="form.location"
+                type="text"
+                class="form-control"
+                :placeholder="isRtl ? 'عنوان أو رابط زووم / خرائط جوجل' : 'Address, Zoom link, or Google Maps URL'"
+              />
             </div>
           </div>
 
@@ -327,6 +432,13 @@
           <div class="form-checkbox-row">
             <input v-model="form.is_featured" type="checkbox" id="is_featured_cb" class="form-checkbox" />
             <label for="is_featured_cb" class="checkbox-label">{{ isRtl ? 'حدث مميز (يظهر في المقدمة)' : 'Featured Event' }}</label>
+          </div>
+
+          <div v-if="canManage" class="form-checkbox-row hero-checkbox-row">
+            <input v-model="form.is_hero" type="checkbox" id="is_hero_cb" class="form-checkbox" />
+            <label for="is_hero_cb" class="checkbox-label hero-checkbox-label">
+              🏛️ {{ isRtl ? 'عرض كحدث رئيسي في الصفحة الرئيسية (Hero Banner - يستبدل الحدث الحالي)' : 'Display as Homepage Hero Banner (replaces current hero event)' }}
+            </label>
           </div>
 
           <div class="modal-footer-actions">
@@ -379,6 +491,14 @@ export default {
     csrfToken: {
       type: String,
       default: ''
+    },
+    organizerGroups: {
+      type: Array,
+      default: () => []
+    },
+    defaultOrganizer: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -390,6 +510,8 @@ export default {
       activeFormModal: false,
       activeEvent: null,
       saving: false,
+      organizerDropdownOpen: false,
+      organizerSearchQuery: '',
       colorPresets: ['#00698f', '#28a745', '#dc3545', '#fd7e14', '#6f42c1', '#17a2b8'],
       formRecurrenceSelect: 'once',
       form: {
@@ -402,7 +524,8 @@ export default {
         organizer: '',
         location: '',
         recurrence: ['once'],
-        is_featured: false
+        is_featured: false,
+        is_hero: false
       },
       availableViews: [
         { id: 'month', labelEn: 'Month', labelAr: 'شهري' },
@@ -532,6 +655,17 @@ export default {
     },
     sortedEvents() {
       return [...this.events].sort((a, b) => new Date(a.start) - new Date(b.start));
+    },
+    filteredOrganizerGroups() {
+      const q = (this.organizerSearchQuery || '').trim().toLowerCase();
+      if (!q) return this.organizerGroups;
+      return this.organizerGroups.map(group => ({
+        ...group,
+        options: (group.options || []).filter(opt => {
+          const haystack = `${opt.label || ''} ${opt.ar_name || ''} ${opt.en_name || ''} ${opt.search_text || ''}`.toLowerCase();
+          return haystack.includes(q);
+        })
+      }));
     }
   },
   watch: {
@@ -547,8 +681,84 @@ export default {
       this.events = this.initialEvents;
     }
     this.loadEvents();
+    document.addEventListener('click', this.handleOutsideComboboxClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleOutsideComboboxClick);
   },
   methods: {
+    handleOutsideComboboxClick(e) {
+      if (this.organizerDropdownOpen && this.$refs.organizerCombobox && !this.$refs.organizerCombobox.contains(e.target)) {
+        this.organizerDropdownOpen = false;
+      }
+    },
+    toggleOrganizerDropdown() {
+      this.organizerDropdownOpen = !this.organizerDropdownOpen;
+      if (this.organizerDropdownOpen) {
+        this.organizerSearchQuery = '';
+        this.$nextTick(() => {
+          if (this.$refs.organizerSearchInput) {
+            this.$refs.organizerSearchInput.focus();
+          }
+        });
+      }
+    },
+    selectOrganizer(val) {
+      this.form.organizer = val;
+      this.organizerDropdownOpen = false;
+      this.organizerSearchQuery = '';
+    },
+    getLocationInfo(ev) {
+      if (!ev) return { type: 'empty', is_link: false, url: null, label: '' };
+      if (ev.location_info && typeof ev.location_info === 'object') {
+        return ev.location_info;
+      }
+      const loc = (ev.location || '').trim();
+      if (!loc) return { type: 'empty', is_link: false, url: null, label: '' };
+
+      let url = null;
+      const httpMatch = loc.match(/https?:\/\/[^\s"'<>]+/i);
+      if (httpMatch) {
+        url = httpMatch[0];
+      } else {
+        const bareMatch = loc.match(/^(?:www\.|(?:[\w-]+\.)*zoom\.us\/|maps\.app\.goo\.gl\/|(?:www\.)?google\.[a-z.]+\/maps|goo\.gl\/maps|maps\.google\.[a-z.]+\/|maps\.apple\.com\/|waze\.com\/)[^\s"'<>]*/i);
+        if (bareMatch) {
+          url = 'https://' + bareMatch[0];
+        }
+      }
+
+      if (url) {
+        if (/zoom\.us/i.test(url)) {
+          return {
+            type: 'zoom',
+            is_link: true,
+            url,
+            label: this.isRtl ? 'انضم لاجتماع زووم' : 'Join Zoom Meeting'
+          };
+        }
+        if (/(maps\.app\.goo\.gl|google\.[a-z.]+\/maps|maps\.google\.[a-z.]+|goo\.gl\/maps|maps\.apple\.com|waze\.com)/i.test(url)) {
+          return {
+            type: 'map',
+            is_link: true,
+            url,
+            label: this.isRtl ? 'عرض على الخريطة' : 'View on Map'
+          };
+        }
+        return {
+          type: 'link',
+          is_link: true,
+          url,
+          label: this.isRtl ? 'فتح رابط الموقع' : 'Open Location Link'
+        };
+      }
+
+      return {
+        type: 'text',
+        is_link: false,
+        url: null,
+        label: loc
+      };
+    },
     async loadEvents() {
       try {
         const year = this.currentDate.getFullYear();
@@ -636,6 +846,8 @@ export default {
     },
     openCreateModal(dateStr = null) {
       const dStr = dateStr || this.formatDateISO(new Date());
+      this.organizerDropdownOpen = false;
+      this.organizerSearchQuery = '';
       this.form = {
         id: null,
         title: '',
@@ -643,16 +855,19 @@ export default {
         end: `${dStr}T10:00`,
         description: '',
         color: '#00698f',
-        organizer: '',
+        organizer: this.defaultOrganizer || '',
         location: '',
         recurrence: ['once'],
-        is_featured: false
+        is_featured: false,
+        is_hero: false
       };
       this.formRecurrenceSelect = 'once';
       this.activeFormModal = true;
     },
     openEditModal(ev) {
       this.activeViewModal = false;
+      this.organizerDropdownOpen = false;
+      this.organizerSearchQuery = '';
       const formatDTLocal = (str) => {
         if (!str) return '';
         const d = new Date(str);
@@ -671,15 +886,20 @@ export default {
         end: formatDTLocal(ev.end),
         description: ev.description || '',
         color: ev.color || '#00698f',
-        organizer: ev.organizer || '',
+        organizer: ev.organizer || this.defaultOrganizer || '',
         location: ev.location || '',
         recurrence: ev.recurrence || ['once'],
-        is_featured: Boolean(ev.is_featured)
+        is_featured: Boolean(ev.is_featured),
+        is_hero: Boolean(ev.is_hero)
       };
       this.formRecurrenceSelect = (ev.recurrence && ev.recurrence[0]) ? ev.recurrence[0] : 'once';
       this.activeFormModal = true;
     },
     async saveForm() {
+      if (!this.form.organizer) {
+        this.organizerDropdownOpen = true;
+        return;
+      }
       this.saving = true;
       try {
         const token = this.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -1481,5 +1701,209 @@ export default {
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
+}
+
+/* Location Link Badges */
+.location-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.location-link-badge:hover {
+  background: #dbeafe;
+  color: #1e40af;
+  transform: translateY(-1px);
+}
+
+.location-link-zoom {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+.location-link-map {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.location-link-map:hover {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Hero Badges */
+.hero-badge {
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.modal-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.hero-text {
+  font-size: 0.75rem;
+  color: #3730a3;
+  font-weight: 700;
+}
+
+.hero-checkbox-row {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+}
+
+.hero-checkbox-label {
+  color: #1e293b;
+}
+
+/* Searchable Organizer Combobox */
+.combobox-group {
+  position: relative;
+}
+
+.combobox-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.combobox-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: start;
+  background: #ffffff;
+  cursor: pointer;
+  min-height: 38px;
+}
+
+.combobox-trigger.is-placeholder {
+  color: #9ca3af;
+}
+
+.combobox-selected-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.combobox-chevron {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-inline-start: 0.5rem;
+}
+
+.combobox-hidden-required {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  bottom: 0;
+  inset-inline-start: 50%;
+}
+
+.combobox-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  inset-inline: 0;
+  z-index: 1050;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.combobox-search-box {
+  padding: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+
+.combobox-search-input {
+  width: 100%;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.combobox-search-input:focus {
+  border-color: #00698f;
+  box-shadow: 0 0 0 2px rgba(0, 105, 143, 0.15);
+}
+
+.combobox-options-list {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0.25rem 0;
+}
+
+.combobox-optgroup-label {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #00698f;
+  background: #f0f9ff;
+}
+
+.combobox-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0.45rem 0.75rem;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: #1f2937;
+  transition: background 0.15s ease;
+}
+
+.combobox-option:hover,
+.combobox-option.active {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.opt-primary {
+  font-weight: 600;
+}
+
+.opt-secondary {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.combobox-empty {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #9ca3af;
 }
 </style>

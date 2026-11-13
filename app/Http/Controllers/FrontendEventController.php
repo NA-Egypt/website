@@ -36,7 +36,7 @@ class FrontendEventController extends Controller
             }
 
             // Sort by featured status first (featured events on top), then by start date
-            $expandedEvents = $expandedEvents->sort(function($a, $b) {
+            $expandedEvents = $expandedEvents->sort(function ($a, $b) {
                 $aFeatured = $a->is_featured ? 1 : 0;
                 $bFeatured = $b->is_featured ? 1 : 0;
                 if ($aFeatured !== $bFeatured) {
@@ -45,11 +45,11 @@ class FrontendEventController extends Controller
                 return $a->start <=> $b->start;
             })->values();
 
-            $events = $expandedEvents->groupBy(function($event) {
+            $events = $expandedEvents->groupBy(function ($event) {
                 return \Carbon\Carbon::parse($event->start)->translatedFormat('F Y');
             });
 
-            $allEventsJSON = $expandedEvents->map(function($event) {
+            $allEventsJSON = $expandedEvents->map(function ($event) {
                 return [
                     'id' => $event->id,
                     'title' => $event->title,
@@ -59,9 +59,11 @@ class FrontendEventController extends Controller
                     'description' => $event->description,
                     'organizer' => $event->organizer,
                     'location' => $event->location,
+                    'location_info' => $event->location_link_info,
                     'recurrence' => $event->recurrence ?? ['once'],
                     'formatted_recurrence' => $event->formatted_recurrence,
-                    'is_featured' => (bool)$event->is_featured,
+                    'is_featured' => (bool) $event->is_featured,
+                    'is_hero' => (bool) $event->is_hero,
                     'user_id' => $event->user_id,
                 ];
             })->toJson();
@@ -72,6 +74,11 @@ class FrontendEventController extends Controller
             ];
         });
 
-        return view('frontend.events', $cachedData);
+        $organizerCatalog = CalendarEvent::getOrganizerCatalog(auth()->user(), $locale);
+
+        return view('frontend.events', array_merge($cachedData, [
+            'organizerGroups' => $organizerCatalog['groups'],
+            'defaultOrganizer' => $organizerCatalog['default_organizer'],
+        ]));
     }
 }

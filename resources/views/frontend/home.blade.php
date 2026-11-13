@@ -208,7 +208,7 @@
   <!-- ======================================================================
        SECTION 5: Fellowship News, Conventions & Announcements
        ====================================================================== -->
-  <x-frontend.news-announcements :announcements="$announcements" />
+  <x-frontend.news-announcements :announcements="$announcements" :heroEvent="$heroEvent ?? null" />
 
   {{-- ======================================================================
        SECTION 6: Sanctuary Footer is rendered automatically via layout footer

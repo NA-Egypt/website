@@ -23,6 +23,12 @@ class YearlyCalendarTest extends TestCase
         Role::firstOrCreate(['name' => 'Committees']);
         Role::firstOrCreate(['name' => 'ServiceBody']);
         Role::firstOrCreate(['name' => 'rsc']);
+
+        \App\Models\ServiceCommittee::create([
+            'ar_name' => 'لجنة العلاقات العامة',
+            'en_name' => 'Public Relations Committee',
+            'status' => 'active',
+        ]);
     }
 
     public function test_component_renders_correctly()
@@ -84,6 +90,7 @@ class YearlyCalendarTest extends TestCase
             ->set('start', '2026-01-01 10:00:00')
             ->set('end', '2026-01-01 12:00:00')
             ->set('description', 'Description')
+            ->set('organizer', 'Public Relations Committee')
             ->set('color', '#ff0000')
             ->call('saveEvent')
             ->assertDispatched('event-saved');
@@ -124,6 +131,7 @@ class YearlyCalendarTest extends TestCase
             ->set('title', 'Super Admin Event')
             ->set('start', '2026-06-01 10:00:00')
             ->set('end', '2026-06-01 12:00:00')
+            ->set('organizer', 'Public Relations Committee')
             ->set('color', '#00ff00')
             ->call('saveEvent')
             ->assertDispatched('event-saved');
@@ -146,6 +154,7 @@ class YearlyCalendarTest extends TestCase
             'title' => 'Other User Event',
             'start' => '2026-06-01 10:00:00',
             'end' => '2026-06-01 12:00:00',
+            'organizer' => 'Public Relations Committee',
             'color' => '#3788d8',
             'user_id' => $otherUser->id,
         ]);
@@ -167,6 +176,7 @@ class YearlyCalendarTest extends TestCase
             'title' => 'My Event',
             'start' => '2026-06-01 10:00:00',
             'end' => '2026-06-01 12:00:00',
+            'organizer' => 'Public Relations Committee',
             'color' => '#3788d8',
             'user_id' => $user->id,
         ]);
@@ -199,6 +209,7 @@ class YearlyCalendarTest extends TestCase
             'title' => 'Other User Event',
             'start' => '2026-06-01 10:00:00',
             'end' => '2026-06-01 12:00:00',
+            'organizer' => 'Public Relations Committee',
             'color' => '#3788d8',
             'user_id' => $otherUser->id,
         ]);
@@ -230,6 +241,7 @@ class YearlyCalendarTest extends TestCase
             ->set('title', 'ServiceBody Event')
             ->set('start', '2026-06-01 10:00:00')
             ->set('end', '2026-06-01 12:00:00')
+            ->set('organizer', 'Public Relations Committee')
             ->set('color', '#3788d8')
             ->call('saveEvent')
             ->assertDispatched('event-saved');
@@ -290,6 +302,7 @@ class YearlyCalendarTest extends TestCase
             'title' => 'Other User Event',
             'start' => '2026-06-01 10:00:00',
             'end' => '2026-06-01 12:00:00',
+            'organizer' => 'Public Relations Committee',
             'color' => '#3788d8',
             'user_id' => $otherUser->id,
         ]);

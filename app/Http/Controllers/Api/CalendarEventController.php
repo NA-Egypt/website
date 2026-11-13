@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CalendarEvent;
+use App\Models\User;
 use App\Http\Resources\CalendarEventResource;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CalendarEventController extends Controller
 {
@@ -49,23 +51,27 @@ class CalendarEventController extends Controller
     {
         \Illuminate\Support\Facades\Gate::authorize('create', CalendarEvent::class);
 
+        $validOrganizers = CalendarEvent::getValidOrganizerNames();
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'start' => 'required|date',
             'end' => 'required|date|after_or_equal:start',
             'description' => 'nullable|string',
             'color' => 'nullable|string|max:50',
-            'organizer' => 'nullable|string|max:255',
+            'organizer' => ['required', 'string', 'max:255', Rule::in($validOrganizers)],
             'location' => 'nullable|string|max:255',
             'recurrence' => 'nullable|array',
             'recurrence.*' => 'string',
             'is_featured' => 'nullable|boolean',
+            'is_hero' => 'nullable|boolean',
         ]);
 
         $validated['user_id'] = auth()->id() ?? $request->input('user_id');
         $validated['color'] = $validated['color'] ?? '#00698f';
         $validated['recurrence'] = $validated['recurrence'] ?? ['once'];
         $validated['is_featured'] = $validated['is_featured'] ?? false;
+        $validated['is_hero'] = $this->canManageHero(auth()->user()) ? (bool) ($validated['is_hero'] ?? false) : false;
 
         $item = CalendarEvent::create($validated);
         return (new CalendarEventResource($item))->response()->setStatusCode(201);
@@ -86,21 +92,28 @@ class CalendarEventController extends Controller
     {
         \Illuminate\Support\Facades\Gate::authorize('update', $calendarEvent);
 
+        $validOrganizers = CalendarEvent::getValidOrganizerNames();
+
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'start' => 'sometimes|required|date',
             'end' => 'sometimes|required|date|after_or_equal:start',
             'description' => 'nullable|string',
             'color' => 'nullable|string|max:50',
-            'organizer' => 'nullable|string|max:255',
+            'organizer' => ['sometimes', 'required', 'string', 'max:255', Rule::in($validOrganizers)],
             'location' => 'nullable|string|max:255',
             'recurrence' => 'nullable|array',
             'recurrence.*' => 'string',
             'is_featured' => 'nullable|boolean',
+            'is_hero' => 'nullable|boolean',
         ]);
 
+        if (array_key_exists('is_hero', $validated) && !$this->canManageHero(auth()->user())) {
+            unset($validated['is_hero']);
+        }
+
         $calendarEvent->update($validated);
-        return new CalendarEventResource($calendarEvent);
+        return new CalendarEventResource($calendarEvent->fresh());
     }
 
     /**
@@ -113,5 +126,15 @@ class CalendarEventController extends Controller
         $calendarEvent->delete();
         return response()->noContent();
     }
-}
 
+    protected function canManageHero(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $user->hasRole('super admin')
+            || $user->hasRole('rsc')
+            || $user->can('manage calendar events');
+    }
+}
