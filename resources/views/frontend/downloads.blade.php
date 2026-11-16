@@ -30,7 +30,7 @@
           <div class="col-12 col-lg-8">
             <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill mb-3" style="background: rgba(50, 85, 127, 0.08); color: #32557f; font-weight: 700; font-size: 0.88rem;">
               <i class="bi bi-android2 fs-5"></i>
-              <span>v1.2.0-Hope • {{ app()->getLocale() === 'ar' ? 'تطبيق الزمالة الرسمي للأجهزة الذكية' : 'Official Fellowship Mobile App' }}</span>
+              <span>v1.2.3-Hope • {{ app()->getLocale() === 'ar' ? 'تطبيق الزمالة الرسمي للأجهزة الذكية' : 'Official Fellowship Mobile App' }}</span>
             </div>
             <h1 class="display-6 fw-black text-dark mb-3 lh-sm">
               {{ __('messages.apk_hub_title') }}
@@ -58,7 +58,7 @@
             <div class="p-3 rounded-4 bg-white shadow-sm border d-inline-block">
               <img src="{{ asset('assets/images/icons/icon-192.png') }}" alt="NA App Icon" width="100" height="100" class="img-fluid rounded-4 mb-2 shadow-xs">
               <div class="fw-bold small text-dark">{{ __('messages.na_egypt_full_name') ?? 'زمالة المدمنين المجهولين - مصر' }}</div>
-              <div class="x-small text-muted font-monospace mt-1">Version 1.2.0 (Build 2026)</div>
+              <div class="x-small text-muted font-monospace mt-1">Version 1.2.3 (Build 2026)</div>
             </div>
           </div>
         </div>

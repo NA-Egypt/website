@@ -725,7 +725,8 @@ Route::get('/apk/download/{token}', [ApkDownloadController::class, 'download'])
 
 // Direct & Transparent Android APK Hub Routes (No personal data, immediate download)
 Route::get('/apk/direct-download', [ApkDownloadController::class, 'directDownload'])->name('apk.direct_download');
-Route::get('/apk/naegypt-v1.2.0-hope.apk', [ApkDownloadController::class, 'directDownload'])->name('apk.direct_download.file');
+Route::get('/apk/naegypt-v1.2.3-hope.apk', [ApkDownloadController::class, 'directDownload'])->name('apk.direct_download.file');
+Route::get('/apk/naegypt-v1.2.0-hope.apk', [ApkDownloadController::class, 'directDownload']);
 
 // Fixed Public Helpline Form (Clean direct access)
 Route::get('/forms/helpline', [\App\Http\Controllers\HelplinePublicFormController::class, 'show'])->name('forms.helpline.show');

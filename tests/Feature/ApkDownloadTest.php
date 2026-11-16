@@ -40,7 +40,7 @@ class ApkDownloadTest extends TestCase
         $responseAr->assertSee('apkSuccessView');
         $responseAr->assertSee('apkRequestForm');
         $responseAr->assertSee('your.email@example.com');
-        $responseAr->assertSee('v1.2.0-Hope');
+        $responseAr->assertSee('v1.2.3-Hope');
         // Verify absence of prohibited words in APK modal
         $responseAr->assertDontSee('البريد الإلكتروني الرسمي');
         $responseAr->assertDontSee('رابط التحميل السري');
@@ -53,7 +53,7 @@ class ApkDownloadTest extends TestCase
         $responseEn->assertSee('btn-apk-hero');
         $responseEn->assertSee('apkDownloadModal');
         $responseEn->assertSee('apk-modal-content');
-        $responseEn->assertSee('v1.2.0-Hope');
+        $responseEn->assertSee('v1.2.3-Hope');
         // Verify absence of prohibited English words in APK modal context
         $responseEn->assertDontSee('Official Email Address');
         $responseEn->assertDontSee('Secret Download Link');
@@ -223,7 +223,7 @@ class ApkDownloadTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/vnd.android.package-archive');
-        $response->assertHeader('Content-Disposition', 'attachment; filename="' . config('services.apk.filename', 'na-egypt-1.2.0.apk') . '"');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="' . config('services.apk.filename', 'na-egypt-1.2.3.apk') . '"');
 
         $apkRequest->refresh();
         $this->assertEquals(1, $apkRequest->download_count);

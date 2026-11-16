@@ -138,7 +138,7 @@ class ApkDownloadController extends Controller
         }
 
         $releaseUrl = config('services.apk.release_url');
-        $filename = config('services.apk.filename', 'na-egypt-1.2.0.apk');
+        $filename = config('services.apk.filename', 'na-egypt-1.2.3.apk');
 
         if (empty($releaseUrl)) {
             Log::critical('APK release URL is not configured in services.apk.release_url');
@@ -203,7 +203,7 @@ class ApkDownloadController extends Controller
     public function directDownload(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $releaseUrl = config('services.apk.release_url');
-        $filename = 'naegypt-v1.2.0-hope.apk';
+        $filename = 'naegypt-v1.2.3-hope.apk';
 
         if (empty($releaseUrl)) {
             Log::critical('APK release URL is not configured in services.apk.release_url');

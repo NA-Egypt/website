@@ -34,7 +34,7 @@ class MobilePwaAndDirectApkHubTest extends TestCase
         $this->assertTrue(in_array($response->getStatusCode(), [200, 302]));
         if ($response->getStatusCode() === 200) {
             $response->assertHeader('Content-Type', 'application/vnd.android.package-archive');
-            $response->assertHeader('Content-Disposition', 'attachment; filename="naegypt-v1.2.0-hope.apk"');
+            $response->assertHeader('Content-Disposition', 'attachment; filename="naegypt-v1.2.3-hope.apk"');
         }
     }
 
@@ -47,9 +47,9 @@ class MobilePwaAndDirectApkHubTest extends TestCase
         $response = $this->get(route('frontend.app'));
 
         $response->assertStatus(200);
-        $response->assertSee('naegypt-v1.2.0-hope.apk');
-        $response->assertSee('a3f89b6c429d71e289e631df8435d10d65b1c90538743128c11e5f80b2d69941');
-        $response->assertSee('28.4 MB');
+        $response->assertSee('naegypt-v1.2.3-hope.apk');
+        $response->assertSee('c24a1a4e21d4f63d95cf80a2b42e100d582787a0d830bec4389e5a42047dd8d2');
+        $response->assertSee('34.2 MB');
         $response->assertSee('دليل التثبيت الآمن في 3 خطوات بسيطة');
         $response->assertSee('apk-download-qr.svg');
     }
@@ -63,7 +63,7 @@ class MobilePwaAndDirectApkHubTest extends TestCase
         $response = $this->get(route('frontend.app'));
 
         $response->assertStatus(200);
-        $response->assertSee('naegypt-v1.2.0-hope.apk');
+        $response->assertSee('naegypt-v1.2.3-hope.apk');
         $response->assertSee('NA Fellowship Android App');
         $response->assertSee('Safe 3-Step Installation Guide');
     }

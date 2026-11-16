@@ -2350,7 +2350,7 @@ return [
     'Never' => 'Never',
 
     // Pre-release APK
-    'apk_beta_badge' => 'v1.2.0-Hope',
+    'apk_beta_badge' => 'v1.2.3-Hope',
     'apk_badge_caption' => 'AVAILABLE NOW',
     'apk_badge_title' => 'Android App',
     'apk_cta_download' => 'Download',
@@ -2890,7 +2890,7 @@ return [
     'apk_checksum_copied' => 'SHA-256 Checksum copied successfully!',
     'apk_guide_title' => 'Safe 3-Step Installation Guide',
     'apk_step1_title' => '1. Direct Download',
-    'apk_step1_desc' => 'Click "Download naegypt-v1.2.0-hope.apk" to download the file directly to your device.',
+    'apk_step1_desc' => 'Click "Download naegypt-v1.2.3-hope.apk" to download the file directly to your device.',
     'apk_step2_title' => '2. Allow Installation',
     'apk_step2_desc' => 'Open the APK file. If a browser security warning appears, tap Settings and enable "Allow from this source".',
     'apk_step3_title' => '3. Install & Launch',
