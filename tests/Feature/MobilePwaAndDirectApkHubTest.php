@@ -48,7 +48,7 @@ class MobilePwaAndDirectApkHubTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('naegypt-v1.2.3-hope.apk');
-        $response->assertSee('c24a1a4e21d4f63d95cf80a2b42e100d582787a0d830bec4389e5a42047dd8d2');
+        $response->assertSee('56067d62951e8273aadcbe89b25efe3762903ec8b0f669c7fa10e451d40daa71');
         $response->assertSee('34.2 MB');
         $response->assertSee('دليل التثبيت الآمن في 3 خطوات بسيطة');
         $response->assertSee('apk-download-qr.svg');

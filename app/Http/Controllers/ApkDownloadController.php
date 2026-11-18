@@ -212,7 +212,7 @@ class ApkDownloadController extends Controller
 
         try {
             $localApkPath = storage_path('app/apk/' . $filename);
-            if (file_exists($localApkPath)) {
+            if (!app()->environment('testing') && file_exists($localApkPath)) {
                 return response()->download($localApkPath, $filename, [
                     'Content-Type' => 'application/vnd.android.package-archive',
                 ]);

@@ -76,7 +76,7 @@
     </div>
 
     <div class="p-2.5 rounded-3 bg-light border font-monospace x-small text-break text-secondary text-center select-all mb-2" id="apkChecksumVal">
-      c24a1a4e21d4f63d95cf80a2b42e100d582787a0d830bec4389e5a42047dd8d2
+      56067d62951e8273aadcbe89b25efe3762903ec8b0f669c7fa10e451d40daa71
     </div>
 
     <!-- Metadata Details Grid -->
@@ -91,7 +91,7 @@
       </div>
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ __('messages.apk_released_label') }}</span>
-        <div class="text-secondary">16 نوفمبر 2026</div>
+        <div class="text-secondary">18 نوفمبر 2026</div>
       </div>
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ app()->getLocale() === 'ar' ? 'التوافق:' : 'Compatibility:' }}</span>
@@ -209,7 +209,7 @@
 
 <script>
 function copyApkChecksum() {
-  const checksum = 'c24a1a4e21d4f63d95cf80a2b42e100d582787a0d830bec4389e5a42047dd8d2';
+  const checksum = '56067d62951e8273aadcbe89b25efe3762903ec8b0f669c7fa10e451d40daa71';
   navigator.clipboard.writeText(checksum).then(() => {
     const toast = document.getElementById('checksumToast');
     if (toast) {
