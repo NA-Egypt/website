@@ -326,6 +326,127 @@
             font-variant-numeric: tabular-nums;
         }
 
+        /* Date Picker & Quick-Select Cards */
+        .date-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .date-option-card {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 4px;
+            padding: 12px 14px;
+            min-height: 58px;
+        }
+
+        .date-option-card.active-date-card {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: #1e3a8a;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+        }
+
+        .date-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .date-card-dot {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #94a3b8;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .date-option-card.active-date-card .date-card-dot {
+            border-color: var(--primary);
+            background-color: var(--primary);
+        }
+
+        .date-option-card.active-date-card .date-card-dot::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .date-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .date-card-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            direction: ltr;
+            unicode-bidi: isolate;
+            font-variant-numeric: tabular-nums;
+            padding-right: 26px;
+        }
+
+        .date-option-card.active-date-card .date-card-sub {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .date-picker-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 320px;
+            cursor: pointer;
+        }
+
+        .date-picker-icon {
+            position: absolute;
+            right: 14px;
+            color: var(--primary);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-picker-input {
+            padding-right: 42px !important;
+            cursor: pointer;
+            font-weight: 700;
+            direction: ltr;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            caret-color: transparent;
+        }
+
+        .date-picker-input::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.85;
+            padding: 4px;
+        }
+
+        .date-range-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         /* Conditional Other input */
         .other-input-container {
             margin-top: 12px;
@@ -650,6 +771,13 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
             }
+            .date-quick-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .date-picker-wrapper {
+                max-width: 100%;
+            }
             .option-card {
                 min-height: 50px;
                 padding: 12px 14px;
@@ -712,14 +840,57 @@
                 @enderror
             </div>
 
-            <!-- 2. Call Date (Today by default, editable) -->
+            <!-- 2. Call Date (Today by default, restricted to [Today - 3 days .. Today]) -->
+            @php
+                $computedMinDate = $minDate ?? \Carbon\Carbon::parse($today)->subDays(3)->format('Y-m-d');
+                $quickDates = [
+                    ['offset' => 0, 'label' => 'اليوم', 'date' => $today],
+                    ['offset' => 1, 'label' => 'أمس', 'date' => \Carbon\Carbon::parse($today)->subDays(1)->format('Y-m-d')],
+                    ['offset' => 2, 'label' => 'منذ يومين', 'date' => \Carbon\Carbon::parse($today)->subDays(2)->format('Y-m-d')],
+                    ['offset' => 3, 'label' => 'منذ 3 أيام', 'date' => $computedMinDate],
+                ];
+            @endphp
             <div class="field-group" id="group_call_date">
                 <label class="field-label" for="call_date">
                     <span class="field-badge-number">2</span>
                     تاريخ المكالمة
                     <span class="required-star">*</span>
                 </label>
-                <input type="date" id="call_date" name="call_date" class="form-control" value="{{ old('call_date', $today) }}" max="{{ $today }}" required style="max-width: 260px;">
+                <div class="date-quick-grid" id="dateQuickCards" role="group" aria-label="اختيار سريع لتاريخ المكالمة">
+                    @foreach($quickDates as $qd)
+                    <div class="option-card date-option-card {{ $qd['offset'] === 0 ? 'active-date-card' : '' }}"
+                         data-date-offset="{{ $qd['offset'] }}"
+                         data-date-value="{{ $qd['date'] }}"
+                         role="button"
+                         tabindex="0"
+                         onclick="selectQuickDateCard(this.getAttribute('data-date-value'))"
+                         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectQuickDateCard(this.getAttribute('data-date-value'));}">
+                        <div class="date-card-header">
+                            <span class="date-card-dot"></span>
+                            <span class="date-card-title">{{ $qd['label'] }}</span>
+                        </div>
+                        <span class="date-card-sub" data-date-display>{{ $qd['date'] }}</span>
+                    </div>
+                    @endforeach
+                </div>
+                <div class="date-picker-wrapper" onclick="openCallDatePicker()">
+                    <span class="date-picker-icon" aria-hidden="true">
+                        <svg class="svg-icon" width="18" height="18" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>
+                    </span>
+                    <input type="date"
+                           id="call_date"
+                           name="call_date"
+                           class="form-control date-picker-input"
+                           value="{{ $today }}"
+                           min="{{ $computedMinDate }}"
+                           max="{{ $today }}"
+                           autocomplete="off"
+                           required>
+                </div>
+                <div class="date-range-hint">
+                    <svg class="svg-icon" width="14" height="14" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+                    <span>متاح تسجيل المكالمات لتاريخ اليوم أو حتى 3 أيام سابقة كحد أقصى.</span>
+                </div>
                 @error('call_date')
                     <div class="error-message">
                         <svg class="svg-icon" width="16" height="16" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/></svg>
@@ -1236,16 +1407,127 @@
         return null;
     }
 
+    // Date bounds & quick-select card helpers (Today .. Today - 3 days)
+    function formatLocalDate(dateObj) {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function getCallDateBounds() {
+        const now = new Date();
+        const datesByOffset = {};
+        for (let offset = 0; offset <= 3; offset++) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
+            datesByOffset[offset] = formatLocalDate(d);
+        }
+        return {
+            today: datesByOffset[0],
+            minDate: datesByOffset[3],
+            datesByOffset: datesByOffset
+        };
+    }
+
+    function syncQuickDateCards(selectedDate) {
+        const cards = document.querySelectorAll('#dateQuickCards .date-option-card');
+        cards.forEach(card => {
+            if (card.getAttribute('data-date-value') === selectedDate) {
+                card.classList.add('active-date-card');
+                card.setAttribute('aria-pressed', 'true');
+            } else {
+                card.classList.remove('active-date-card');
+                card.setAttribute('aria-pressed', 'false');
+            }
+        });
+    }
+
+    function selectQuickDateCard(dateValue) {
+        const dateInput = document.getElementById('call_date');
+        if (!dateInput || !dateValue) return;
+        const bounds = getCallDateBounds();
+        dateInput.min = bounds.minDate;
+        dateInput.max = bounds.today;
+        dateInput.value = dateValue;
+        syncQuickDateCards(dateValue);
+        hideFormAlert();
+    }
+
+    function openCallDatePicker() {
+        const dateInput = document.getElementById('call_date');
+        if (!dateInput) return;
+        if (typeof dateInput.showPicker === 'function') {
+            try {
+                dateInput.showPicker();
+            } catch (e) {
+                dateInput.focus();
+            }
+        } else {
+            dateInput.focus();
+        }
+    }
+
+    function initCallDateToToday() {
+        const bounds = getCallDateBounds();
+        const dateInput = document.getElementById('call_date');
+
+        // Refresh quick-select cards with client's exact local dates
+        const cards = document.querySelectorAll('#dateQuickCards .date-option-card');
+        cards.forEach(card => {
+            const offset = parseInt(card.getAttribute('data-date-offset'), 10);
+            if (!isNaN(offset) && bounds.datesByOffset[offset]) {
+                const dateStr = bounds.datesByOffset[offset];
+                card.setAttribute('data-date-value', dateStr);
+                const subEl = card.querySelector('[data-date-display]');
+                if (subEl) subEl.textContent = dateStr;
+            }
+        });
+
+        if (dateInput) {
+            dateInput.min = bounds.minDate;
+            dateInput.max = bounds.today;
+            dateInput.value = bounds.today;
+        }
+
+        syncQuickDateCards(bounds.today);
+    }
+
     // Initialize pill states and dynamic fields on page load
     document.addEventListener('DOMContentLoaded', () => {
-        // Dynamic date bounds: initialize max and value to today's local date
-        const todayLocal = new Date().toLocaleDateString('en-CA');
+        initCallDateToToday();
+
         const dateInput = document.getElementById('call_date');
         if (dateInput) {
-            dateInput.max = todayLocal;
-            if (!dateInput.value) {
-                dateInput.value = todayLocal;
-            }
+            // Prevent manual text typing while allowing keyboard navigation and opening picker
+            dateInput.addEventListener('keydown', (e) => {
+                const allowedKeys = ['Tab', 'Escape', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '];
+                if (!allowedKeys.includes(e.key)) {
+                    e.preventDefault();
+                }
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openCallDatePicker();
+                }
+            });
+
+            dateInput.addEventListener('change', () => {
+                const bounds = getCallDateBounds();
+                dateInput.min = bounds.minDate;
+                dateInput.max = bounds.today;
+
+                if (!dateInput.value) {
+                    dateInput.value = bounds.today;
+                } else if (dateInput.value > bounds.today) {
+                    dateInput.value = bounds.today;
+                    showFormAlert('لا يمكن تسجيل مكالمة بتاريخ مستقبلي.', 'تنبيه في التاريخ', dateInput);
+                } else if (dateInput.value < bounds.minDate) {
+                    dateInput.value = bounds.minDate;
+                    showFormAlert('لا يمكن تسجيل مكالمة بتاريخ أقدم من 3 أيام.', 'تنبيه في التاريخ', dateInput);
+                } else {
+                    hideFormAlert();
+                }
+                syncQuickDateCards(dateInput.value);
+            });
         }
 
         const step12Val = document.querySelector('input[name="is_step_12"]:checked')?.value;
@@ -1271,6 +1553,11 @@
         @endif
     });
 
+    // Ensure today's date is always set when returning to the form via browser back/forward cache
+    window.addEventListener('pageshow', () => {
+        initCallDateToToday();
+    });
+
     // AJAX Submission with 5s countdown
     const form = document.getElementById('helplineForm');
     const overlay = document.getElementById('successOverlay');
@@ -1283,16 +1570,28 @@
         e.preventDefault();
         hideFormAlert();
 
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
+        // Validate call date bounds before checkValidity so custom Arabic alert is shown
+        const dateInput = document.getElementById('call_date');
+        const bounds = getCallDateBounds();
+        if (dateInput) {
+            dateInput.min = bounds.minDate;
+            dateInput.max = bounds.today;
+            if (!dateInput.value) {
+                showFormAlert('يرجى تحديد تاريخ المكالمة.', 'تنبيه في التاريخ', dateInput);
+                return;
+            }
+            if (dateInput.value > bounds.today) {
+                showFormAlert('لا يمكن تسجيل مكالمة بتاريخ مستقبلي.', 'تنبيه في التاريخ', dateInput);
+                return;
+            }
+            if (dateInput.value < bounds.minDate) {
+                showFormAlert('لا يمكن تسجيل مكالمة بتاريخ أقدم من 3 أيام.', 'تنبيه في التاريخ', dateInput);
+                return;
+            }
         }
 
-        // Validate call date bounds (prevent future dates)
-        const dateInput = document.getElementById('call_date');
-        const todayLocal = new Date().toLocaleDateString('en-CA');
-        if (dateInput && dateInput.value && dateInput.value > todayLocal) {
-            showFormAlert('لا يمكن تسجيل مكالمة بتاريخ مستقبلي.', 'تنبيه في التاريخ', dateInput);
+        if (!form.checkValidity()) {
+            form.reportValidity();
             return;
         }
 
@@ -1446,12 +1745,7 @@
             try { turnstile.reset(); } catch (e) {}
         }
 
-        const freshToday = new Date().toLocaleDateString('en-CA');
-        const dateInput = document.getElementById('call_date');
-        if (dateInput) {
-            dateInput.value = freshToday;
-            dateInput.max = freshToday;
-        }
+        initCallDateToToday();
 
         updatePillState('step12', 'no');
         updatePillState('meeting', 'no');

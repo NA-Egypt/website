@@ -27,9 +27,10 @@ class HelplinePublicFormController extends Controller
         $callerTypes = HelplineReportService::CALLER_TYPES;
         $referralSources = HelplineReportService::REFERRAL_SOURCES;
         $today = Carbon::today()->format('Y-m-d');
+        $minDate = Carbon::today()->subDays(3)->format('Y-m-d');
 
         return response()
-            ->view('forms.helpline', compact('volunteers', 'shifts', 'callerTypes', 'referralSources', 'today'))
+            ->view('forms.helpline', compact('volunteers', 'shifts', 'callerTypes', 'referralSources', 'today', 'minDate'))
             ->header('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet')
             ->header('Permissions-Policy', 'unload=*')
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
@@ -53,9 +54,11 @@ class HelplinePublicFormController extends Controller
         }
 
 
+        $minDate = Carbon::today()->subDays(3)->format('Y-m-d');
+
         $validated = $request->validate([
             'duration' => 'required|in:less_than_5,more_than_5',
-            'call_date' => 'required|date|before_or_equal:today',
+            'call_date' => 'required|date|after_or_equal:' . $minDate . '|before_or_equal:today',
             'call_time_shift' => 'required|string|max:100',
             'caller_type' => 'required|string|max:100',
             'caller_type_other' => 'nullable|string|max:255',
@@ -72,6 +75,8 @@ class HelplinePublicFormController extends Controller
         ], [
             'duration.required' => 'يرجى اختيار مدة المكالمة.',
             'call_date.required' => 'يرجى تحديد تاريخ المكالمة.',
+            'call_date.date' => 'يرجى إدخال تاريخ صحيح للمكالمة.',
+            'call_date.after_or_equal' => 'لا يمكن تسجيل مكالمة بتاريخ أقدم من 3 أيام.',
             'call_date.before_or_equal' => 'لا يمكن تسجيل مكالمة بتاريخ مستقبلي.',
             'call_time_shift.required' => 'يرجى اختيار الوردية / توقيت المكالمة.',
             'caller_type.required' => 'يرجى اختيار فئة المتصل.',

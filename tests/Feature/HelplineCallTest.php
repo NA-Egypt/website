@@ -563,6 +563,50 @@ class HelplineCallTest extends TestCase
         $response->assertJsonValidationErrors(['call_date']);
     }
 
+    public function test_public_form_allows_call_date_up_to_three_days_ago_and_rejects_older()
+    {
+        $volunteer = HelplineVolunteer::create(['name' => 'أحمد ع.', 'is_active' => true]);
+
+        // 1. Verify form HTML has today's date, min (today - 3 days), max (today), and quick-select cards
+        $today = Carbon::today()->toDateString();
+        $threeDaysAgo = Carbon::today()->subDays(3)->toDateString();
+        $fourDaysAgo = Carbon::today()->subDays(4)->toDateString();
+
+        $formResponse = $this->get('/forms/helpline');
+        $formResponse->assertStatus(200);
+        $formResponse->assertSee('type="date"', false);
+        $formResponse->assertSee('value="' . $today . '"', false);
+        $formResponse->assertSee('min="' . $threeDaysAgo . '"', false);
+        $formResponse->assertSee('max="' . $today . '"', false);
+        $formResponse->assertSee('منذ 3 أيام');
+
+        // 2. Submitting with call_date = 3 days ago succeeds
+        $validPayload = [
+            'duration' => 'less_than_5',
+            'call_date' => $threeDaysAgo,
+            'call_time_shift' => '10:00 AM - 12:00 PM',
+            'caller_type' => 'أعضاء محتملة',
+            'referral_source' => 'الموقع الالكتروني',
+            'volunteer_name' => $volunteer->name,
+            'is_step_12' => '0',
+            'call_brief' => 'مكالمة منذ 3 أيام',
+            'discuss_in_meeting' => '0',
+        ];
+
+        $validResponse = $this->postJson('/forms/helpline', $validPayload);
+        $validResponse->assertStatus(201);
+
+        // 3. Submitting with call_date = 4 days ago fails with 422 validation error
+        $invalidPayload = array_merge($validPayload, [
+            'call_date' => $fourDaysAgo,
+            'call_brief' => 'مكالمة منذ 4 أيام',
+        ]);
+
+        $invalidResponse = $this->postJson('/forms/helpline', $invalidPayload);
+        $invalidResponse->assertStatus(422);
+        $invalidResponse->assertJsonValidationErrors(['call_date']);
+    }
+
     public function test_call_date_serializes_without_utc_day_shifting()
     {
         $call = HelplineCall::create([
