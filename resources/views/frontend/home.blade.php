@@ -226,7 +226,7 @@
             </div>
             <div class="text-start">
               <h5 class="modal-title fw-bold m-0 text-white lh-sm" id="apkDownloadModalLabel">{{ __('messages.apk_hub_title') }}</h5>
-              <span class="badge bg-white-20 text-white rounded-pill mt-1" style="background: rgba(255,255,255,0.22); font-size: 0.72rem;">v1.2.3-Hope</span>
+              <span class="badge bg-white-20 text-white rounded-pill mt-1" style="background: rgba(255,255,255,0.22); font-size: 0.72rem;">v1.2.10-Honesty</span>
               <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill mt-1" style="font-size: 0.72rem;">APK Direct</span>
             </div>
           </div>

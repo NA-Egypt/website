@@ -2355,7 +2355,7 @@ return [
     'Never' => 'أبداً',
 
     // Pre-release APK
-    'apk_beta_badge' => 'v1.2.3-Hope',
+    'apk_beta_badge' => 'v1.2.10-Honesty',
     'apk_badge_caption' => 'متاح الآن',
     'apk_badge_title' => 'تطبيق Android',
     'apk_cta_download' => 'تحميل',
@@ -2894,7 +2894,7 @@ return [
     'apk_checksum_copied' => 'تم نسخ بصمة SHA-256 بنجاح!',
     'apk_guide_title' => 'دليل التثبيت الآمن في 3 خطوات بسيطة',
     'apk_step1_title' => '1. التنزيل المباشر',
-    'apk_step1_desc' => 'اضغط على زر "تحميل naegypt-v1.2.3-hope.apk" وسيبدأ التنزيل فوراً على هاتفك.',
+    'apk_step1_desc' => 'اضغط على زر "تحميل naegypt-v1.2.10-honesty.apk" وسيبدأ التنزيل فوراً على هاتفك.',
     'apk_step2_title' => '2. السماح بالتثبيت',
     'apk_step2_desc' => 'افتح الملف، وإذا ظهر تحذير أمان المتصفح، اختر "الإعدادات" ثم فعّل "السماح بالتثبيت من هذا المصدر".',
     'apk_step3_title' => '3. التثبيت والبدء',

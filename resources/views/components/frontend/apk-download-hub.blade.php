@@ -25,8 +25,8 @@
     <div class="row align-items-center g-3">
       <div class="col-12 col-md-8">
         <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill font-monospace px-2.5 py-1">v1.2.3-Hope</span>
-          <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1">34.2 MB</span>
+          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill font-monospace px-2.5 py-1">v1.2.10-Honesty</span>
+          <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1">34.3 MB</span>
           <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1">
             {{ app()->getLocale() === 'ar' ? 'إصدار رسمي ومستقر' : 'Official Release' }}
           </span>
@@ -41,7 +41,7 @@
         <!-- Primary Direct Download CTA Button -->
         <a href="{{ route('apk.direct_download.file') }}" class="btn btn-primary btn-lg rounded-pill px-4 py-3 fw-black d-inline-flex align-items-center gap-2 shadow-sm na-btn-direct-apk" id="btnDirectApkDownload">
           <i class="bi bi-android2 fs-3 text-white"></i>
-          <span>تحميل naegypt-v1.2.3-hope.apk</span>
+          <span>تحميل naegypt-v1.2.10-honesty.apk</span>
           <i class="bi bi-arrow-down-circle-fill fs-5 text-white-50 ms-2"></i>
         </a>
       </div>
@@ -76,22 +76,22 @@
     </div>
 
     <div class="p-2.5 rounded-3 bg-light border font-monospace x-small text-break text-secondary text-center select-all mb-2" id="apkChecksumVal">
-      56067d62951e8273aadcbe89b25efe3762903ec8b0f669c7fa10e451d40daa71
+      c8e96c2a52cd428488186254056ef254d8ba874b2fbcf78c76ef39538b580547
     </div>
 
     <!-- Metadata Details Grid -->
     <div class="row g-2 text-muted x-small pt-1 border-top border-light-subtle">
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ __('messages.apk_filename_label') }}</span>
-        <div class="font-monospace text-secondary">naegypt-v1.2.3-hope.apk</div>
+        <div class="font-monospace text-secondary">naegypt-v1.2.10-honesty.apk</div>
       </div>
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ __('messages.apk_filesize_label') }}</span>
-        <div class="font-monospace text-secondary">34.2 MB</div>
+        <div class="font-monospace text-secondary">34.3 MB</div>
       </div>
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ __('messages.apk_released_label') }}</span>
-        <div class="text-secondary">18 نوفمبر 2026</div>
+        <div class="text-secondary">19 نوفمبر 2026</div>
       </div>
       <div class="col-6 col-sm-3">
         <span class="fw-bold text-dark">{{ app()->getLocale() === 'ar' ? 'التوافق:' : 'Compatibility:' }}</span>
@@ -209,7 +209,7 @@
 
 <script>
 function copyApkChecksum() {
-  const checksum = '56067d62951e8273aadcbe89b25efe3762903ec8b0f669c7fa10e451d40daa71';
+  const checksum = 'c8e96c2a52cd428488186254056ef254d8ba874b2fbcf78c76ef39538b580547';
   navigator.clipboard.writeText(checksum).then(() => {
     const toast = document.getElementById('checksumToast');
     if (toast) {
