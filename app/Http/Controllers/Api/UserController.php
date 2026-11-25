@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,11 +38,12 @@ class UserController extends Controller
             'service_body_id' => 'nullable|exists:service_bodies,id',
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
         }
 
         $item = User::create($validated);
+
         return (new UserResource($item))->response()->setStatusCode(201);
     }
 
@@ -52,16 +62,17 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'email' => 'sometimes|required|email|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8',
             'service_body_id' => 'nullable|exists:service_bodies,id',
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
         }
 
         $user->update($validated);
+
         return new UserResource($user);
     }
 
@@ -71,6 +82,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return response()->json(null, 204);
     }
 }

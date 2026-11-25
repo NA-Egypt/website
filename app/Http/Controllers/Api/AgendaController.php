@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AgendaResource;
 use App\Models\Agenda;
 use App\Models\Group;
-use App\Http\Resources\AgendaResource;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AgendaController extends Controller
 {
@@ -24,6 +25,11 @@ class AgendaController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+        if (! $user || (! $user->hasRole('super admin') && ! $user->hasRole('rsc') && ! $user->hasRole('ServiceBody') && ! $user->hasRole('gsr'))) {
+            abort(403, 'Unauthorized');
+        }
+
         $validatedData = $request->validate([
             'group_id' => 'required|exists:groups,id',
             'meetings_per_week' => 'nullable|integer|min:0',
@@ -45,17 +51,17 @@ class AgendaController extends Controller
             'other_topics.*.content' => 'required|string',
         ]);
 
-        if (!isset($validatedData['recovery_meetings_changes'])) {
+        if (! isset($validatedData['recovery_meetings_changes'])) {
             $validatedData['recovery_meetings_changes'] = false;
         }
 
         $otherTopics = [];
         if ($request->has('other_topics')) {
             foreach ($request->input('other_topics') as $item) {
-                if (is_array($item) && !empty($item['title']) && !empty($item['content'])) {
+                if (is_array($item) && ! empty($item['title']) && ! empty($item['content'])) {
                     $otherTopics[] = [
                         'title' => $item['title'],
-                        'content' => $item['content']
+                        'content' => $item['content'],
                     ];
                 }
             }
@@ -63,6 +69,9 @@ class AgendaController extends Controller
         $validatedData['other_topics'] = $otherTopics;
 
         $group = Group::findOrFail($validatedData['group_id']);
+        if (! $user->hasRole('super admin') && ! $user->hasRole('rsc')) {
+            Gate::authorize('view', $group);
+        }
         $agendaDate = Carbon::parse($validatedData['agenda_date']);
         $group->agendas()
             ->whereYear('agenda_date', $agendaDate->year)
@@ -70,6 +79,7 @@ class AgendaController extends Controller
             ->delete();
 
         $item = Agenda::create($validatedData);
+
         return (new AgendaResource($item))->response()->setStatusCode(201);
     }
 
@@ -86,6 +96,15 @@ class AgendaController extends Controller
      */
     public function update(Request $request, Agenda $agenda)
     {
+        $user = $request->user();
+        if (! $user || (! $user->hasRole('super admin') && ! $user->hasRole('rsc') && ! $user->hasRole('ServiceBody') && ! $user->hasRole('gsr'))) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (! $user->hasRole('super admin') && ! $user->hasRole('rsc')) {
+            Gate::authorize('view', $agenda->group);
+        }
+
         $validatedData = $request->validate([
             'group_id' => 'required|exists:groups,id',
             'meetings_per_week' => 'nullable|integer|min:0',
@@ -106,17 +125,17 @@ class AgendaController extends Controller
             'other_topics.*.content' => 'required|string',
         ]);
 
-        if (!isset($validatedData['recovery_meetings_changes'])) {
+        if (! isset($validatedData['recovery_meetings_changes'])) {
             $validatedData['recovery_meetings_changes'] = false;
         }
 
         $otherTopics = [];
         if ($request->has('other_topics')) {
             foreach ($request->input('other_topics') as $item) {
-                if (is_array($item) && !empty($item['title']) && !empty($item['content'])) {
+                if (is_array($item) && ! empty($item['title']) && ! empty($item['content'])) {
                     $otherTopics[] = [
                         'title' => $item['title'],
-                        'content' => $item['content']
+                        'content' => $item['content'],
                     ];
                 }
             }
@@ -124,15 +143,22 @@ class AgendaController extends Controller
         $validatedData['other_topics'] = $otherTopics;
 
         $agenda->update($validatedData);
+
         return new AgendaResource($agenda);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Agenda $agenda)
+    public function destroy(Request $request, Agenda $agenda)
     {
+        $user = $request->user();
+        if (! $user || ! $user->hasRole('super admin')) {
+            abort(403, 'Unauthorized');
+        }
+
         $agenda->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -14,6 +14,7 @@ use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class MeetingApiTest extends TestCase
@@ -21,13 +22,21 @@ class MeetingApiTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Day $saturday;
+
     private Day $friday;
+
     private Topic $stepTopic;
+
     private Option $openOption;
+
     private City $cairo;
+
     private Neighborhood $downtown;
+
     private ServiceBody $cairoServiceBody;
+
     private Group $hopeGroup;
 
     protected function setUp(): void
@@ -35,6 +44,7 @@ class MeetingApiTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
+        $this->user->assignRole(Role::firstOrCreate(['name' => 'gsr']));
 
         $this->saturday = Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
         $this->friday = Day::create(['ar_name' => 'الجمعة', 'en_name' => 'Friday']);
@@ -133,8 +143,8 @@ class MeetingApiTest extends TestCase
                         'day',
                         'topics',
                         'options',
-                    ]
-                ]
+                    ],
+                ],
             ])
             ->assertJsonPath('data.0.id', $meeting->id)
             ->assertJsonPath('data.0.group_name_ar', 'مجموعة الأمل')

@@ -2,16 +2,17 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Group;
-use App\Models\Day;
+use App\Models\Agenda;
 use App\Models\City;
+use App\Models\Day;
+use App\Models\Group;
 use App\Models\Neighborhood;
 use App\Models\ServiceBody;
-use App\Models\Agenda;
 use App\Models\ServiceBodyAgenda;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ApiAgendasTest extends TestCase
@@ -22,14 +23,15 @@ class ApiAgendasTest extends TestCase
     {
         parent::setUp();
 
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin']);
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'rsc']);
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'ServiceBody']);
+        Role::firstOrCreate(['name' => 'super admin']);
+        Role::firstOrCreate(['name' => 'rsc']);
+        Role::firstOrCreate(['name' => 'ServiceBody']);
     }
 
     protected function createServiceBody($attributes = [])
     {
         $day = Day::first() ?? Day::create(['ar_name' => 'السبت', 'en_name' => 'Saturday']);
+
         return ServiceBody::create(array_merge([
             'ar_name' => 'منطقة تجريبية',
             'en_name' => 'Test Service Body',
@@ -52,6 +54,7 @@ class ApiAgendasTest extends TestCase
             'en_name' => 'Test Neighborhood',
             'city_id' => $city->id,
         ]);
+
         return Group::create([
             'ar_name' => 'مجموعة الاختبار',
             'en_name' => 'Test Group',
@@ -121,6 +124,8 @@ class ApiAgendasTest extends TestCase
     public function test_authenticated_can_create_and_delete_group_agendas()
     {
         $user = User::factory()->create();
+        $user->assignRole(Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']));
+        $user->assignRole(Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']));
         Sanctum::actingAs($user);
 
         $sb = $this->createServiceBody();

@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class HelplineCallApiTest extends TestCase
@@ -20,6 +21,7 @@ class HelplineCallApiTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        $this->user->assignRole(Role::firstOrCreate(['name' => 'Phoneline']));
     }
 
     public function test_public_can_fetch_helpline_schema_and_options(): void
@@ -227,7 +229,7 @@ class HelplineCallApiTest extends TestCase
                         'call_brief',
                         'discuss_in_meeting',
                         'entry_time',
-                    ]
+                    ],
                 ],
                 'links',
                 'meta',

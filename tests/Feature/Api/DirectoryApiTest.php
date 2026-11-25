@@ -7,13 +7,12 @@ use App\Models\Day;
 use App\Models\Group;
 use App\Models\Neighborhood;
 use App\Models\Option;
-use App\Models\ScMeeting;
 use App\Models\ServiceBody;
-use App\Models\ServiceCommittee;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class DirectoryApiTest extends TestCase
@@ -21,9 +20,13 @@ class DirectoryApiTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Day $saturday;
+
     private City $cairo;
+
     private Neighborhood $downtown;
+
     private ServiceBody $cairoArea;
 
     protected function setUp(): void
@@ -31,6 +34,7 @@ class DirectoryApiTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
+        $this->user->assignRole(Role::firstOrCreate(['name' => 'super admin']));
 
         $this->saturday = Day::create([
             'ar_name' => 'السبت',

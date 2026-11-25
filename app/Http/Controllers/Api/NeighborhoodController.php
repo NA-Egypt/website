@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Neighborhood;
 use App\Http\Resources\NeighborhoodResource;
+use App\Models\Neighborhood;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class NeighborhoodController extends Controller
+class NeighborhoodController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['store', 'update', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,11 +32,11 @@ class NeighborhoodController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'ar_name'   => 'sometimes|required|string|max:255',
-            'en_name'   => 'sometimes|required|string|max:255',
-            'name'      => 'sometimes|required|string|max:255',
-            'city_id'   => 'required|exists:cities,id',
-            'latitude'  => 'nullable|numeric',
+            'ar_name' => 'sometimes|required|string|max:255',
+            'en_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
+            'city_id' => 'required|exists:cities,id',
+            'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
 
@@ -42,6 +51,7 @@ class NeighborhoodController extends Controller
         }
 
         $item = Neighborhood::create($validated);
+
         return (new NeighborhoodResource($item))->response()->setStatusCode(201);
     }
 
@@ -59,11 +69,11 @@ class NeighborhoodController extends Controller
     public function update(Request $request, Neighborhood $neighborhood)
     {
         $validated = $request->validate([
-            'ar_name'   => 'sometimes|required|string|max:255',
-            'en_name'   => 'sometimes|required|string|max:255',
-            'name'      => 'sometimes|required|string|max:255',
-            'city_id'   => 'sometimes|required|exists:cities,id',
-            'latitude'  => 'nullable|numeric',
+            'ar_name' => 'sometimes|required|string|max:255',
+            'en_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
+            'city_id' => 'sometimes|required|exists:cities,id',
+            'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
 
@@ -74,6 +84,7 @@ class NeighborhoodController extends Controller
         }
 
         $neighborhood->update($validated);
+
         return new NeighborhoodResource($neighborhood);
     }
 
@@ -83,6 +94,7 @@ class NeighborhoodController extends Controller
     public function destroy(Neighborhood $neighborhood)
     {
         $neighborhood->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -3,20 +3,25 @@
 namespace Tests\Feature;
 
 use App\Models\ContactUs;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ContactUsTest extends TestCase
 {
-    use \Illuminate\Foundation\Testing\RefreshDatabase;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->withoutMiddleware([
-            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
-            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+            LocaleSessionRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
         ]);
     }
 
@@ -68,8 +73,9 @@ class ContactUsTest extends TestCase
      */
     public function test_contact_us_api_endpoints()
     {
-        $user = \App\Models\User::first() ?? \App\Models\User::factory()->create();
-        \Laravel\Sanctum\Sanctum::actingAs($user);
+        $user = User::first() ?? User::factory()->create();
+        $user->assignRole(Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']));
+        Sanctum::actingAs($user);
 
         // Store
         $response = $this->postJson('/api/v1/contact-requests', [
@@ -77,7 +83,7 @@ class ContactUsTest extends TestCase
             'email' => 'john@example.com',
             'phone' => '01000000000',
             'subject' => 'General Inquiry',
-            'message' => 'Hello, I have an inquiry.'
+            'message' => 'Hello, I have an inquiry.',
         ]);
         $response->assertStatus(201);
         $response->assertJsonPath('data.phone', '01000000000');

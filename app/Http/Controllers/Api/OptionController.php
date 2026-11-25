@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Option;
 use App\Http\Resources\OptionResource;
+use App\Models\Option;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class OptionController extends Controller
+class OptionController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['store', 'update', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,6 +37,7 @@ class OptionController extends Controller
         ]);
 
         $item = Option::create($validated);
+
         return (new OptionResource($item))->response()->setStatusCode(201);
     }
 
@@ -50,6 +60,7 @@ class OptionController extends Controller
         ]);
 
         $option->update($validated);
+
         return new OptionResource($option);
     }
 
@@ -59,6 +70,7 @@ class OptionController extends Controller
     public function destroy(Option $option)
     {
         $option->delete();
+
         return response()->noContent();
     }
 }

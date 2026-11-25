@@ -3,20 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\City;
 use App\Http\Resources\CityResource;
+use App\Models\City;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Cache;
 
-class CityController extends Controller
+class CityController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['store', 'update', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $cities = \Illuminate\Support\Facades\Cache::remember('api_cities_all', 86400, function () {
+        $cities = Cache::remember('api_cities_all', 86400, function () {
             return City::all();
         });
+
         return CityResource::collection($cities);
     }
 
@@ -26,10 +37,10 @@ class CityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'ar_name'   => 'sometimes|required|string|max:255',
-            'en_name'   => 'sometimes|required|string|max:255',
-            'name'      => 'sometimes|required|string|max:255',
-            'latitude'  => 'nullable|numeric',
+            'ar_name' => 'sometimes|required|string|max:255',
+            'en_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
+            'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
 
@@ -44,7 +55,8 @@ class CityController extends Controller
         }
 
         $item = City::create($validated);
-        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
+        Cache::forget('api_cities_all');
+
         return (new CityResource($item))->response()->setStatusCode(201);
     }
 
@@ -62,10 +74,10 @@ class CityController extends Controller
     public function update(Request $request, City $city)
     {
         $validated = $request->validate([
-            'ar_name'   => 'sometimes|required|string|max:255',
-            'en_name'   => 'sometimes|required|string|max:255',
-            'name'      => 'sometimes|required|string|max:255',
-            'latitude'  => 'nullable|numeric',
+            'ar_name' => 'sometimes|required|string|max:255',
+            'en_name' => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
+            'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
 
@@ -76,7 +88,8 @@ class CityController extends Controller
         }
 
         $city->update($validated);
-        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
+        Cache::forget('api_cities_all');
+
         return new CityResource($city);
     }
 
@@ -86,7 +99,8 @@ class CityController extends Controller
     public function destroy(City $city)
     {
         $city->delete();
-        \Illuminate\Support\Facades\Cache::forget('api_cities_all');
+        Cache::forget('api_cities_all');
+
         return response()->json(null, 204);
     }
 }

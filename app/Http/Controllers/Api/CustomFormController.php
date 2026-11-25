@@ -3,19 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\CustomForm;
-use App\Models\CustomFormField;
-use App\Models\CustomFormSubmission;
 use App\Http\Resources\CustomFormResource;
 use App\Http\Resources\CustomFormSubmissionResource;
+use App\Models\CustomForm;
+use App\Models\CustomFormSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-class CustomFormController extends Controller
+class CustomFormController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:manage own forms', only: ['index', 'store', 'show', 'update', 'destroy', 'submissions']),
+        ];
+    }
+
     /**
      * Display a listing of custom forms (Authenticated).
      */
@@ -24,7 +30,7 @@ class CustomFormController extends Controller
         $user = Auth::user();
         $query = CustomForm::with(['fields'])->withCount('submissions')->latest();
 
-        if ($user && !$user->hasRole('super admin')) {
+        if ($user && ! $user->hasRole('super admin')) {
             $query->where('user_id', $user->id);
         }
 
@@ -33,6 +39,7 @@ class CustomFormController extends Controller
         }
 
         $perPage = min((int) $request->get('per_page', 15), 100);
+
         return CustomFormResource::collection($query->paginate($perPage));
     }
 
@@ -42,36 +49,36 @@ class CustomFormController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'              => 'required|string|max:255',
-            'type'               => 'nullable|string|max:50',
-            'status'             => 'required|in:draft,published,archived',
-            'slug'               => 'nullable|string|max:255|unique:custom_forms,slug',
-            'settings'           => 'nullable|array',
-            'fields'             => 'nullable|array',
-            'fields.*.label'     => 'required_with:fields|string|max:255',
-            'fields.*.type'      => 'required_with:fields|string',
-            'fields.*.required'  => 'nullable|boolean',
-            'fields.*.options'   => 'nullable|array',
-            'fields.*.sort_order'=> 'nullable|integer',
+            'title' => 'required|string|max:255',
+            'type' => 'nullable|string|max:50',
+            'status' => 'required|in:draft,published,archived',
+            'slug' => 'nullable|string|max:255|unique:custom_forms,slug',
+            'settings' => 'nullable|array',
+            'fields' => 'nullable|array',
+            'fields.*.label' => 'required_with:fields|string|max:255',
+            'fields.*.type' => 'required_with:fields|string',
+            'fields.*.required' => 'nullable|boolean',
+            'fields.*.options' => 'nullable|array',
+            'fields.*.sort_order' => 'nullable|integer',
         ]);
 
         $form = CustomForm::create([
-            'title'    => $validated['title'],
-            'type'     => $validated['type'] ?? 'general',
-            'status'   => $validated['status'],
-            'slug'     => $validated['slug'] ?? Str::random(12),
-            'views'    => 0,
-            'user_id'  => Auth::id(),
+            'title' => $validated['title'],
+            'type' => $validated['type'] ?? 'general',
+            'status' => $validated['status'],
+            'slug' => $validated['slug'] ?? Str::random(12),
+            'views' => 0,
+            'user_id' => Auth::id(),
             'settings' => $validated['settings'] ?? [],
         ]);
 
-        if (!empty($validated['fields'])) {
+        if (! empty($validated['fields'])) {
             foreach ($validated['fields'] as $index => $fieldData) {
                 $form->fields()->create([
-                    'label'      => $fieldData['label'],
-                    'type'       => $fieldData['type'],
-                    'required'   => $fieldData['required'] ?? false,
-                    'options'    => $fieldData['options'] ?? null,
+                    'label' => $fieldData['label'],
+                    'type' => $fieldData['type'],
+                    'required' => $fieldData['required'] ?? false,
+                    'options' => $fieldData['options'] ?? null,
                     'sort_order' => $fieldData['sort_order'] ?? ($index + 1),
                 ]);
             }
@@ -88,7 +95,7 @@ class CustomFormController extends Controller
     public function show(CustomForm $form)
     {
         $user = Auth::user();
-        if ($user && !$user->hasRole('super admin') && $form->user_id !== $user->id) {
+        if ($user && ! $user->hasRole('super admin') && $form->user_id !== $user->id) {
             abort(403, 'Unauthorized to access this form.');
         }
 
@@ -101,15 +108,15 @@ class CustomFormController extends Controller
     public function update(Request $request, CustomForm $form)
     {
         $user = Auth::user();
-        if ($user && !$user->hasRole('super admin') && $form->user_id !== $user->id) {
+        if ($user && ! $user->hasRole('super admin') && $form->user_id !== $user->id) {
             abort(403, 'Unauthorized to modify this form.');
         }
 
         $validated = $request->validate([
-            'title'    => 'sometimes|required|string|max:255',
-            'type'     => 'nullable|string|max:50',
-            'status'   => 'sometimes|required|in:draft,published,archived',
-            'slug'     => 'nullable|string|max:255|unique:custom_forms,slug,' . $form->id,
+            'title' => 'sometimes|required|string|max:255',
+            'type' => 'nullable|string|max:50',
+            'status' => 'sometimes|required|in:draft,published,archived',
+            'slug' => 'nullable|string|max:255|unique:custom_forms,slug,'.$form->id,
             'settings' => 'nullable|array',
         ]);
 
@@ -124,7 +131,7 @@ class CustomFormController extends Controller
     public function destroy(CustomForm $form)
     {
         $user = Auth::user();
-        if ($user && !$user->hasRole('super admin') && $form->user_id !== $user->id) {
+        if ($user && ! $user->hasRole('super admin') && $form->user_id !== $user->id) {
             abort(403, 'Unauthorized to delete this form.');
         }
 
@@ -139,7 +146,7 @@ class CustomFormController extends Controller
     public function submissions(Request $request, CustomForm $form)
     {
         $user = Auth::user();
-        if ($user && !$user->hasRole('super admin') && $form->user_id !== $user->id) {
+        if ($user && ! $user->hasRole('super admin') && $form->user_id !== $user->id) {
             abort(403, 'Unauthorized to view submissions for this form.');
         }
 
@@ -187,13 +194,13 @@ class CustomFormController extends Controller
                 continue;
             }
 
-            $inputKey = $request->has('field_' . $field->id)
-                ? 'field_' . $field->id
-                : ($request->has($field->id) ? (string)$field->id : 'field_' . $field->id);
+            $inputKey = $request->has('field_'.$field->id)
+                ? 'field_'.$field->id
+                : ($request->has($field->id) ? (string) $field->id : 'field_'.$field->id);
 
             if ($field->required) {
                 $rules[$inputKey] = 'required';
-                $messages[$inputKey . '.required'] = "Field '{$field->label}' is required.";
+                $messages[$inputKey.'.required'] = "Field '{$field->label}' is required.";
             } else {
                 $rules[$inputKey] = 'nullable';
             }
@@ -216,17 +223,17 @@ class CustomFormController extends Controller
                 continue;
             }
 
-            $key = $request->has('field_' . $field->id)
-                ? 'field_' . $field->id
-                : ($request->has((string)$field->id) ? (string)$field->id : null);
+            $key = $request->has('field_'.$field->id)
+                ? 'field_'.$field->id
+                : ($request->has((string) $field->id) ? (string) $field->id : null);
 
             $submissionData[$field->id] = $key !== null ? $request->input($key) : null;
         }
 
         $submission = CustomFormSubmission::create([
             'custom_form_id' => $form->id,
-            'user_id'        => Auth::id(),
-            'data'           => $submissionData,
+            'user_id' => Auth::id(),
+            'data' => $submissionData,
         ]);
 
         return (new CustomFormSubmissionResource($submission))

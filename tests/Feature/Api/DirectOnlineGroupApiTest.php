@@ -6,6 +6,7 @@ use App\Models\DirectOnlineGroup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class DirectOnlineGroupApiTest extends TestCase
@@ -18,16 +19,17 @@ class DirectOnlineGroupApiTest extends TestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
+        $this->user->assignRole(Role::firstOrCreate(['name' => 'rsc']));
     }
 
     public function test_public_can_list_direct_online_groups(): void
     {
         DirectOnlineGroup::create([
-            'ar_name'     => 'مجموعة التعافي أونلاين',
-            'en_name'     => 'Online Recovery Group',
-            'phone'       => '+201000000001',
-            'location'    => 'https://zoom.us/j/123456789',
-            'user_id'     => $this->user->id,
+            'ar_name' => 'مجموعة التعافي أونلاين',
+            'en_name' => 'Online Recovery Group',
+            'phone' => '+201000000001',
+            'location' => 'https://zoom.us/j/123456789',
+            'user_id' => $this->user->id,
         ]);
 
         $response = $this->getJson('/api/v1/direct-online-groups');
@@ -46,13 +48,13 @@ class DirectOnlineGroupApiTest extends TestCase
     public function test_public_can_get_single_direct_online_group(): void
     {
         $group = DirectOnlineGroup::create([
-            'ar_name'     => 'مجموعة الأمل أونلاين',
-            'en_name'     => 'Hope Online Group',
+            'ar_name' => 'مجموعة الأمل أونلاين',
+            'en_name' => 'Hope Online Group',
             'ar_gsr_name' => 'محمود',
             'en_gsr_name' => 'Mahmoud',
-            'phone'       => '+201000000002',
-            'location'    => 'https://zoom.us/j/987654321',
-            'user_id'     => $this->user->id,
+            'phone' => '+201000000002',
+            'location' => 'https://zoom.us/j/987654321',
+            'user_id' => $this->user->id,
         ]);
 
         $response = $this->getJson("/api/v1/direct-online-groups/{$group->id}");
@@ -82,12 +84,12 @@ class DirectOnlineGroupApiTest extends TestCase
         Sanctum::actingAs($this->user);
 
         $payload = [
-            'ar_name'     => 'مجموعة النور',
-            'en_name'     => 'Noor Online Group',
+            'ar_name' => 'مجموعة النور',
+            'en_name' => 'Noor Online Group',
             'ar_gsr_name' => 'خالد',
             'en_gsr_name' => 'Khaled',
-            'phone'       => '+201011122233',
-            'location'    => 'https://zoom.us/j/555444333',
+            'phone' => '+201011122233',
+            'location' => 'https://zoom.us/j/555444333',
         ];
 
         $response = $this->postJson('/api/v1/direct-online-groups', $payload);
@@ -118,10 +120,10 @@ class DirectOnlineGroupApiTest extends TestCase
         Sanctum::actingAs($this->user);
 
         $group = DirectOnlineGroup::create([
-            'ar_name'  => 'الاسم القديم',
-            'en_name'  => 'Old Name',
+            'ar_name' => 'الاسم القديم',
+            'en_name' => 'Old Name',
             'location' => 'https://zoom.us/j/111222333',
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
         ]);
 
         $response = $this->putJson("/api/v1/direct-online-groups/{$group->id}", [
@@ -134,7 +136,7 @@ class DirectOnlineGroupApiTest extends TestCase
             ->assertJsonPath('data.en_name', 'Updated Name');
 
         $this->assertDatabaseHas('direct_online_groups', [
-            'id'      => $group->id,
+            'id' => $group->id,
             'ar_name' => 'الاسم الجديد',
         ]);
     }
@@ -144,10 +146,10 @@ class DirectOnlineGroupApiTest extends TestCase
         Sanctum::actingAs($this->user);
 
         $group = DirectOnlineGroup::create([
-            'ar_name'  => 'للحذف',
-            'en_name'  => 'To Delete',
+            'ar_name' => 'للحذف',
+            'en_name' => 'To Delete',
             'location' => 'https://zoom.us/j/999888777',
-            'user_id'  => $this->user->id,
+            'user_id' => $this->user->id,
         ]);
 
         $response = $this->deleteJson("/api/v1/direct-online-groups/{$group->id}");

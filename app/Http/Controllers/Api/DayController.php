@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Day;
 use App\Http\Resources\DayResource;
+use App\Models\Day;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class DayController extends Controller
+class DayController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin', only: ['store', 'update', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +32,7 @@ class DayController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'    => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
             'ar_name' => 'nullable|string|max:255',
             'en_name' => 'nullable|string|max:255',
         ]);
@@ -33,6 +42,7 @@ class DayController extends Controller
         }
 
         $item = Day::create($validated);
+
         return (new DayResource($item))->response()->setStatusCode(201);
     }
 
@@ -50,12 +60,13 @@ class DayController extends Controller
     public function update(Request $request, Day $day)
     {
         $validated = $request->validate([
-            'name'    => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
             'ar_name' => 'nullable|string|max:255',
             'en_name' => 'nullable|string|max:255',
         ]);
 
         $day->update($validated);
+
         return new DayResource($day);
     }
 
@@ -65,6 +76,7 @@ class DayController extends Controller
     public function destroy(Day $day)
     {
         $day->delete();
+
         return response()->noContent();
     }
 }

@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,13 +32,14 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'guard_name' => 'nullable|string|max:255',
         ]);
 
         $validated['guard_name'] = $validated['guard_name'] ?? 'web';
 
         $item = Role::create($validated);
+
         return (new RoleResource($item))->response()->setStatusCode(201);
     }
 
@@ -47,11 +57,12 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $validated = $request->validate([
-            'name'       => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'guard_name' => 'nullable|string|max:255',
         ]);
 
         $role->update($validated);
+
         return new RoleResource($role);
     }
 
@@ -61,6 +72,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
+
         return response()->noContent();
     }
 }

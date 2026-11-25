@@ -3,20 +3,68 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommitteeReportResource;
+use App\Jobs\SendCommitteeReportSubmissionNotification;
 use App\Models\CommitteeReport;
 use App\Models\CommitteeReportLog;
-use App\Http\Resources\CommitteeReportResource;
+use App\Models\ServiceCommittee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CommitteeReportController extends Controller
 {
+    protected function isRsc($user): bool
+    {
+        return $user && ($user->hasRole('super admin') || $user->hasRole('rsc'));
+    }
+
+    protected function getServiceCommittee($user): ?ServiceCommittee
+    {
+        if (! $user) {
+            return null;
+        }
+
+        if ($user->hasRole('rsc')) {
+            $rscCommittee = ServiceCommittee::find(83) ?: ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
+            if ($rscCommittee) {
+                return $rscCommittee;
+            }
+        }
+
+        return ServiceCommittee::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->first();
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return CommitteeReportResource::collection(CommitteeReport::whereIn('status', ['submitted', 'approved'])->get());
+        $user = $request->user();
+        $isRsc = $this->isRsc($user);
+        $committee = $this->getServiceCommittee($user);
+
+        if (! $isRsc && ! $committee) {
+            abort(403, 'Unauthorized');
+        }
+
+        $query = CommitteeReport::query();
+
+        if ($user->hasRole('super admin')) {
+            // Super admin can view all reports
+        } elseif ($isRsc) {
+            $query->whereIn('status', ['submitted', 'approved']);
+        } else {
+            $allowedCommitteeIds = [$committee->id];
+            if ($committee->isCommittee()) {
+                $allowedCommitteeIds = array_merge($allowedCommitteeIds, $committee->workgroups()->pluck('id')->all());
+            }
+            $query->whereIn('service_committee_id', $allowedCommitteeIds);
+        }
+
+        return CommitteeReportResource::collection($query->get());
     }
 
     /**
@@ -24,28 +72,40 @@ class CommitteeReportController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+        $isRsc = $this->isRsc($user);
+        $committee = $this->getServiceCommittee($user);
+
+        if (! $isRsc && ! $committee) {
+            abort(403, 'Unauthorized');
+        }
+
         $validated = $request->validate([
-            'service_committee_id'    => 'required|exists:service_committees,id',
-            'parent_report_id'        => 'nullable|exists:committee_reports,id',
-            'meeting_date'            => 'nullable|date',
-            'report_date'             => 'nullable|date',
+            'service_committee_id' => 'required|exists:service_committees,id',
+            'parent_report_id' => 'nullable|exists:committee_reports,id',
+            'meeting_date' => 'nullable|date',
+            'report_date' => 'nullable|date',
             'meeting_day_description' => 'nullable|string',
-            'body'                    => 'nullable|string',
-            'positions_status'        => 'nullable|array',
-            'status'                  => 'nullable|string|in:draft,submitted,approved,returned,embedded',
-            'review_notes'            => 'nullable|string',
-            'is_exceptional'          => 'nullable|boolean',
-            'attended_members'        => 'nullable|string',
-            'footer'                  => 'nullable|string',
+            'body' => 'nullable|string',
+            'positions_status' => 'nullable|array',
+            'status' => 'nullable|string|in:draft,submitted,approved,returned,embedded',
+            'review_notes' => 'nullable|string',
+            'is_exceptional' => 'nullable|boolean',
+            'attended_members' => 'nullable|string',
+            'footer' => 'nullable|string',
         ]);
+
+        if (! $isRsc && (int) $validated['service_committee_id'] !== (int) $committee->id) {
+            abort(403, 'Unauthorized');
+        }
 
         $item = CommitteeReport::create($validated);
 
         if ($item->status === 'submitted') {
             try {
-                \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($item->id);
+                SendCommitteeReportSubmissionNotification::dispatch($item->id);
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error("Failed to dispatch report notification from API: " . $e->getMessage());
+                Log::error('Failed to dispatch report notification from API: '.$e->getMessage());
             }
         }
 
@@ -66,12 +126,36 @@ class CommitteeReportController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CommitteeReport $committeeReport)
+    public function show(Request $request, CommitteeReport $committeeReport)
     {
-        if (!in_array($committeeReport->status, ['submitted', 'approved'])) {
-            abort(403, 'Unauthorized');
+        $user = $request->user();
+        $isRsc = $this->isRsc($user);
+        $committee = $this->getServiceCommittee($user);
+
+        if ($user && $user->hasRole('super admin')) {
+            return new CommitteeReportResource($committeeReport);
         }
-        return new CommitteeReportResource($committeeReport);
+
+        if ($isRsc) {
+            if (! in_array($committeeReport->status, ['submitted', 'approved'])) {
+                abort(403, 'Unauthorized');
+            }
+
+            return new CommitteeReportResource($committeeReport);
+        }
+
+        if ($committee) {
+            $isOwn = (int) $committeeReport->service_committee_id === (int) $committee->id;
+            $isChildWorkgroup = $committee->isCommittee()
+                && $committeeReport->serviceCommittee
+                && (int) $committeeReport->serviceCommittee->parent_id === (int) $committee->id;
+
+            if ($isOwn || $isChildWorkgroup) {
+                return new CommitteeReportResource($committeeReport);
+            }
+        }
+
+        abort(403, 'Unauthorized');
     }
 
     /**
@@ -79,29 +163,43 @@ class CommitteeReportController extends Controller
      */
     public function update(Request $request, CommitteeReport $committeeReport)
     {
+        $user = $request->user();
+        $isRsc = $this->isRsc($user);
+        $committee = $this->getServiceCommittee($user);
+
+        if (! $isRsc) {
+            if (! $committee || (int) $committee->id !== (int) $committeeReport->service_committee_id || $committeeReport->status !== 'draft') {
+                abort(403, 'Unauthorized');
+            }
+        }
+
         $validated = $request->validate([
-            'service_committee_id'    => 'sometimes|required|exists:service_committees,id',
-            'parent_report_id'        => 'nullable|exists:committee_reports,id',
-            'meeting_date'            => 'nullable|date',
-            'report_date'             => 'nullable|date',
+            'service_committee_id' => 'sometimes|required|exists:service_committees,id',
+            'parent_report_id' => 'nullable|exists:committee_reports,id',
+            'meeting_date' => 'nullable|date',
+            'report_date' => 'nullable|date',
             'meeting_day_description' => 'nullable|string',
-            'body'                    => 'nullable|string',
-            'positions_status'        => 'nullable|array',
-            'status'                  => 'nullable|string|in:draft,submitted,approved,returned,embedded',
-            'review_notes'            => 'nullable|string',
-            'is_exceptional'          => 'nullable|boolean',
-            'attended_members'        => 'nullable|string',
-            'footer'                  => 'nullable|string',
+            'body' => 'nullable|string',
+            'positions_status' => 'nullable|array',
+            'status' => 'nullable|string|in:draft,submitted,approved,returned,embedded',
+            'review_notes' => 'nullable|string',
+            'is_exceptional' => 'nullable|boolean',
+            'attended_members' => 'nullable|string',
+            'footer' => 'nullable|string',
         ]);
+
+        if (! $isRsc && isset($validated['service_committee_id']) && (int) $validated['service_committee_id'] !== (int) $committee->id) {
+            abort(403, 'Unauthorized');
+        }
 
         $oldStatus = $committeeReport->status;
         $committeeReport->update($validated);
 
         if ($oldStatus === 'draft' && $committeeReport->status === 'submitted') {
             try {
-                \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($committeeReport->id);
+                SendCommitteeReportSubmissionNotification::dispatch($committeeReport->id);
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error("Failed to dispatch report notification from API update: " . $e->getMessage());
+                Log::error('Failed to dispatch report notification from API update: '.$e->getMessage());
             }
         }
 
@@ -126,15 +224,15 @@ class CommitteeReportController extends Controller
     public function destroy(Request $request, CommitteeReport $committeeReport)
     {
         $user = $request->user();
-        if (!$user || !$user->hasRole('super admin')) {
+        if (! $user || ! $user->hasRole('super admin')) {
             return response()->json([
-                'message' => 'Unauthorized. Only Super Admin can delete committee reports.'
+                'message' => 'Unauthorized. Only Super Admin can delete committee reports.',
             ], 403);
         }
 
         if ($committeeReport->status !== 'draft') {
             return response()->json([
-                'message' => 'Only draft or returned reports can be deleted.'
+                'message' => 'Only draft or returned reports can be deleted.',
             ], 422);
         }
 

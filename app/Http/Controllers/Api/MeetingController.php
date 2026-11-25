@@ -3,19 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Meeting;
 use App\Http\Resources\MeetingResource;
+use App\Models\Group;
+use App\Models\Meeting;
+use App\Services\MeetingFilterService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class MeetingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, \App\Services\MeetingFilterService $filterService)
+    public function index(Request $request, MeetingFilterService $filterService)
     {
         $perPage = $request->query('per_page');
-        $perPageInt = ($perPage && is_numeric($perPage) && (int)$perPage > 0) ? (int)$perPage : null;
+        $perPageInt = ($perPage && is_numeric($perPage) && (int) $perPage > 0) ? (int) $perPage : null;
 
         if ($request->hasAny(['day', 'city', 'serviceBody', 'group', 'neighborhood', 'type', 'search', 'virtualOnly', 'englishOnly'])) {
             $meetings = $filterService->filterMeetings($request->all(), $perPageInt);
@@ -33,20 +36,29 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Meeting::class);
+
         $fields = $request->validate([
-            'group_id'      => 'required|exists:groups,id',
-            'topics'        => 'nullable|array|max:3',
-            'topics.*'      => 'exists:topics,id',
-            'day_id'        => 'required|exists:days,id',
-            'start_time'    => 'required',
-            'end_time'      => 'required|after:start_time',
-            'notes'         => 'nullable|string',
-            'type'          => 'required',
-            'lang'          => 'required|in:arabic,english',
-            'status'        => 'required|in:suspended,available',
-            'options'       => 'nullable|array',
-            'options.*'     => 'exists:options,id',
+            'group_id' => 'required|exists:groups,id',
+            'topics' => 'nullable|array|max:3',
+            'topics.*' => 'exists:topics,id',
+            'day_id' => 'required|exists:days,id',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'notes' => 'nullable|string',
+            'type' => 'required',
+            'lang' => 'required|in:arabic,english',
+            'status' => 'required|in:suspended,available',
+            'options' => 'nullable|array',
+            'options.*' => 'exists:options,id',
         ]);
+
+        if (isset($fields['group_id']) && ! $request->user()->hasRole('super admin')) {
+            $group = Group::findOrFail($fields['group_id']);
+            if ($group->user_id !== $request->user()->id) {
+                abort(403, 'Unauthorized');
+            }
+        }
 
         $options = $fields['options'] ?? null;
         $topics = empty($fields['topics']) ? [6] : $fields['topics'];
@@ -56,7 +68,7 @@ class MeetingController extends Controller
 
         $item = Meeting::create($fields);
 
-        if (!empty($options)) {
+        if (! empty($options)) {
             $item->options()->sync($options);
         }
 
@@ -78,25 +90,34 @@ class MeetingController extends Controller
      */
     public function update(Request $request, Meeting $meeting)
     {
+        Gate::authorize('update', $meeting);
+
         $fields = $request->validate([
-            'group_id'      => 'sometimes|required|exists:groups,id',
-            'topics'        => 'nullable|array|max:3',
-            'topics.*'      => 'exists:topics,id',
-            'day_id'        => 'sometimes|required|exists:days,id',
-            'start_time'    => 'sometimes|required',
-            'end_time'      => 'sometimes|required|after:start_time',
-            'notes'         => 'nullable|string',
-            'type'          => 'sometimes|required',
-            'lang'          => 'sometimes|required|in:arabic,english',
-            'status'        => 'sometimes|required|in:suspended,available',
-            'options'       => 'nullable|array',
-            'options.*'     => 'exists:options,id',
+            'group_id' => 'sometimes|required|exists:groups,id',
+            'topics' => 'nullable|array|max:3',
+            'topics.*' => 'exists:topics,id',
+            'day_id' => 'sometimes|required|exists:days,id',
+            'start_time' => 'sometimes|required',
+            'end_time' => 'sometimes|required|after:start_time',
+            'notes' => 'nullable|string',
+            'type' => 'sometimes|required',
+            'lang' => 'sometimes|required|in:arabic,english',
+            'status' => 'sometimes|required|in:suspended,available',
+            'options' => 'nullable|array',
+            'options.*' => 'exists:options,id',
         ]);
 
         if ($request->has('topics')) {
             $topics = empty($fields['topics']) ? [6] : $fields['topics'];
             $fields['topic_id'] = $topics[0];
             $meeting->topics()->sync($topics);
+        }
+
+        if (isset($fields['group_id']) && ! $request->user()->hasRole('super admin')) {
+            $group = Group::findOrFail($fields['group_id']);
+            if ($group->user_id !== $request->user()->id) {
+                abort(403, 'Unauthorized');
+            }
         }
 
         $options = $fields['options'] ?? null;
@@ -116,7 +137,10 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
+        Gate::authorize('delete', $meeting);
+
         $meeting->delete();
+
         return response()->json(null, 204);
     }
 }

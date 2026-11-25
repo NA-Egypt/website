@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ContactUs;
 use App\Http\Resources\ContactUsResource;
+use App\Models\ContactUs;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class ContactUsController extends Controller
+class ContactUsController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -30,6 +39,7 @@ class ContactUsController extends Controller
             'message' => 'required|string',
         ]);
         $item = ContactUs::create($validated);
+
         return (new ContactUsResource($item))->response()->setStatusCode(201);
     }
 
@@ -39,6 +49,7 @@ class ContactUsController extends Controller
     public function show($id)
     {
         $contactUs = $id instanceof ContactUs ? $id : ContactUs::findOrFail($id);
+
         return new ContactUsResource($contactUs);
     }
 
@@ -57,6 +68,7 @@ class ContactUsController extends Controller
             'message' => 'sometimes|required|string',
         ]);
         $contactUs->update($validated);
+
         return new ContactUsResource($contactUs);
     }
 
@@ -67,6 +79,7 @@ class ContactUsController extends Controller
     {
         $contactUs = $id instanceof ContactUs ? $id : ContactUs::findOrFail($id);
         $contactUs->delete();
+
         return response()->json(null, 204);
     }
 }

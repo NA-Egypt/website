@@ -10,10 +10,8 @@ use App\Models\Neighborhood;
 use App\Models\ServiceBody;
 use App\Models\ServiceBodyAgenda;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -22,18 +20,26 @@ class AgendaApiTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private User $superAdmin;
+
     private Day $saturday;
+
     private City $cairo;
+
     private Neighborhood $downtown;
+
     private ServiceBody $cairoArea;
+
     private Group $hopeGroup;
 
     protected function setUp(): void
     {
         parent::setUp();
 
+        $gsrRole = Role::firstOrCreate(['name' => 'gsr']);
         $this->user = User::factory()->create();
+        $this->user->assignRole($gsrRole);
 
         $superAdminRole = Role::firstOrCreate(['name' => 'super admin']);
         $this->superAdmin = User::factory()->create();
@@ -96,7 +102,7 @@ class AgendaApiTest extends TestCase
             'trusted_servants' => 'Active',
             'financial_issues' => 'None',
             'other_topics' => [
-                ['title' => 'Literature', 'content' => 'Need more books']
+                ['title' => 'Literature', 'content' => 'Need more books'],
             ],
         ]);
 
@@ -125,7 +131,7 @@ class AgendaApiTest extends TestCase
             'trusted_servants' => 'Full',
             'financial_issues' => 'Healthy',
             'other_topics' => [
-                ['title' => 'Workshop', 'content' => 'Traditions workshop planned']
+                ['title' => 'Workshop', 'content' => 'Traditions workshop planned'],
             ],
         ]);
         $createRes->assertStatus(201);
@@ -141,6 +147,7 @@ class AgendaApiTest extends TestCase
         ]);
         $updateRes->assertStatus(200);
 
+        Sanctum::actingAs($this->superAdmin);
         $this->deleteJson("/api/v1/agendas/{$newId}")->assertStatus(204);
     }
 
@@ -185,7 +192,7 @@ class AgendaApiTest extends TestCase
             'service_body_id' => $this->cairoArea->id,
             'meeting_date' => '2026-10-05',
             'sections' => [
-                ['headline' => 'October Agenda', 'content' => 'Agenda items']
+                ['headline' => 'October Agenda', 'content' => 'Agenda items'],
             ],
             'status' => 'draft',
         ]);

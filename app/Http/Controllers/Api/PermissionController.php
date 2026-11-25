@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Permission;
 use App\Http\Resources\PermissionResource;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Models\Permission;
 
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,13 +32,14 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'guard_name' => 'nullable|string|max:255',
         ]);
 
         $validated['guard_name'] = $validated['guard_name'] ?? 'web';
 
         $item = Permission::create($validated);
+
         return (new PermissionResource($item))->response()->setStatusCode(201);
     }
 
@@ -47,11 +57,12 @@ class PermissionController extends Controller
     public function update(Request $request, Permission $permission)
     {
         $validated = $request->validate([
-            'name'       => 'sometimes|required|string|max:255',
+            'name' => 'sometimes|required|string|max:255',
             'guard_name' => 'nullable|string|max:255',
         ]);
 
         $permission->update($validated);
+
         return new PermissionResource($permission);
     }
 
@@ -61,6 +72,7 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
+
         return response()->noContent();
     }
 }

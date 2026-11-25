@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Transaction;
 use App\Http\Resources\TransactionResource;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TransactionController extends Controller
+class TransactionController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:super admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,9 +29,9 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'model'      => 'required|string|max:255',
-            'operation'  => 'required|string|max:50',
-            'details'    => 'required|array',
+            'model' => 'required|string|max:255',
+            'operation' => 'required|string|max:50',
+            'details' => 'required|array',
             'old_values' => 'nullable|array',
             'new_values' => 'nullable|array',
         ]);
@@ -32,6 +41,7 @@ class TransactionController extends Controller
         $validated['user_agent'] = $request->userAgent();
 
         $item = Transaction::create($validated);
+
         return (new TransactionResource($item))->response()->setStatusCode(201);
     }
 
@@ -49,14 +59,15 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $validated = $request->validate([
-            'model'      => 'sometimes|required|string|max:255',
-            'operation'  => 'sometimes|required|string|max:50',
-            'details'    => 'sometimes|required|array',
+            'model' => 'sometimes|required|string|max:255',
+            'operation' => 'sometimes|required|string|max:50',
+            'details' => 'sometimes|required|array',
             'old_values' => 'nullable|array',
             'new_values' => 'nullable|array',
         ]);
 
         $transaction->update($validated);
+
         return new TransactionResource($transaction);
     }
 
@@ -66,6 +77,7 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
+
         return response()->noContent();
     }
 }

@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\ServiceCommittee;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ServiceCommitteeTest extends TestCase
@@ -14,14 +17,14 @@ class ServiceCommitteeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Disable localization redirect middlewares to prevent redirects to /ar in test environment
         $this->withoutMiddleware([
-            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
-            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+            LocaleSessionRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
         ]);
 
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
     }
 
     public function test_store_service_committee_with_numeric_email_maps_user_correctly()
@@ -36,7 +39,7 @@ class ServiceCommitteeTest extends TestCase
         $response = $this->post(route('serviceCommittee.store'), [
             'ar_name' => 'اللجنة التقنية',
             'en_name' => 'Technical Committee',
-            'email' => (string)$targetUser->id, // submits numeric user ID
+            'email' => (string) $targetUser->id, // submits numeric user ID
             'chairman_name' => 'Chairman Name',
             'chairman_phone' => '12345678',
             'location' => 'Cairo',
@@ -80,7 +83,7 @@ class ServiceCommitteeTest extends TestCase
         $response = $this->put(route('serviceCommittee.update', $committee->id), [
             'ar_name' => 'اللجنة المحدثة',
             'en_name' => 'Updated Committee',
-            'email' => (string)$targetUser2->id, // update to targetUser2 ID
+            'email' => (string) $targetUser2->id, // update to targetUser2 ID
             'chairman_name' => 'New Chairman',
             'chairman_phone' => '87654321',
             'location' => 'Giza',
@@ -102,6 +105,8 @@ class ServiceCommitteeTest extends TestCase
     public function test_api_store_and_update_service_committee_maps_user_correctly()
     {
         $admin = User::factory()->create();
+        $admin->assignRole(Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']));
+        $admin->assignRole(Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']));
         // Sanctum authentication
         $this->actingAs($admin, 'sanctum');
 
@@ -111,7 +116,7 @@ class ServiceCommitteeTest extends TestCase
         $response = $this->postJson('/api/v1/service-committees', [
             'ar_name' => 'لجنة API',
             'en_name' => 'API Committee',
-            'email' => (string)$targetUser->id,
+            'email' => (string) $targetUser->id,
             'chairman_name' => 'API Chairman',
             'chairman_phone' => '11111111',
             'location' => 'Cairo API',
@@ -134,7 +139,7 @@ class ServiceCommitteeTest extends TestCase
         $response = $this->putJson("/api/v1/service-committees/{$committeeId}", [
             'ar_name' => 'لجنة API محدثة',
             'en_name' => 'API Committee Updated',
-            'email' => (string)$targetUser2->id,
+            'email' => (string) $targetUser2->id,
             'chairman_name' => 'API Chairman 2',
             'chairman_phone' => '22222222',
             'location' => 'Cairo API 2',

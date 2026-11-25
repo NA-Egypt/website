@@ -11,9 +11,18 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class HelplineCallApiController extends Controller
+class HelplineCallApiController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role_or_permission:super admin|Phoneline|manage helpline', only: ['index']),
+        ];
+    }
+
     /**
      * Get the public helpline form schema, options, and active volunteers.
      */
@@ -97,35 +106,35 @@ class HelplineCallApiController extends Controller
         if ($validated['caller_type'] === 'أخرى' && empty($validated['caller_type_other'])) {
             return response()->json([
                 'message' => 'The caller_type_other field is required when caller_type is أخرى.',
-                'errors' => ['caller_type_other' => ['Please specify caller type.']]
+                'errors' => ['caller_type_other' => ['Please specify caller type.']],
             ], 422);
         }
 
         if ($validated['referral_source'] === 'أخرى' && empty($validated['referral_source_other'])) {
             return response()->json([
                 'message' => 'The referral_source_other field is required when referral_source is أخرى.',
-                'errors' => ['referral_source_other' => ['Please specify referral source.']]
+                'errors' => ['referral_source_other' => ['Please specify referral source.']],
             ], 422);
         }
 
         if ($validated['referral_source'] === 'لجنة المستشفيات' && empty($validated['hospital_name'])) {
             return response()->json([
                 'message' => 'The hospital_name field is required when referral_source is لجنة المستشفيات.',
-                'errors' => ['hospital_name' => ['Please specify hospital name.']]
+                'errors' => ['hospital_name' => ['Please specify hospital name.']],
             ], 422);
         }
 
         if ($validated['referral_source'] === 'ملصقات الزمالة' && empty($validated['poster_location'])) {
             return response()->json([
                 'message' => 'The poster_location field is required when referral_source is ملصقات الزمالة.',
-                'errors' => ['poster_location' => ['Please specify poster location.']]
+                'errors' => ['poster_location' => ['Please specify poster location.']],
             ], 422);
         }
 
         if ($validated['volunteer_name'] === 'أخرى' && empty($validated['volunteer_name_other'])) {
             return response()->json([
                 'message' => 'The volunteer_name_other field is required when volunteer_name is أخرى.',
-                'errors' => ['volunteer_name_other' => ['Please specify volunteer name.']]
+                'errors' => ['volunteer_name_other' => ['Please specify volunteer name.']],
             ], 422);
         }
 
