@@ -2351,3 +2351,21 @@ textarea:focus-visible,
     content-visibility: auto;
     contain-intrinsic-size: 1px 500px;
 }
+
+/* Keep button groups LTR in Arabic (RTL) so Bootstrap borders, radii, and visual order stay intact */
+[dir="rtl"] .btn-group,
+[dir="rtl"] .dt-buttons.btn-group {
+    direction: ltr !important;
+}
+
+[dir="rtl"] .btn-group > .btn,
+[dir="rtl"] .btn-group > .btn-group > .btn,
+[dir="rtl"] .dt-buttons.btn-group > .btn {
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
+[dir="rtl"] .btn-group .dropdown-menu {
+    direction: rtl;
+    text-align: right;
+}

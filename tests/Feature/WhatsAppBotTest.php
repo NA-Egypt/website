@@ -119,38 +119,116 @@ class WhatsAppBotTest extends TestCase
         $this->assertStringContainsString('01503884411', $outgoing->body);
     }
 
-    public function test_live_agent_takeover_pauses_bot(): void
+    public function test_option_zero_returns_android_app_direct_download_link(): void
     {
         $bot = $this->app->make(WhatsAppBotService::class);
 
-        // User requests volunteer
         $bot->handleIncomingMessage([
             'sender' => '201055556666@s.whatsapp.net',
-            'message' => 'متطوع',
+            'message' => '0',
         ]);
 
         $conv = WhatsAppConversation::where('jid', '201055556666@s.whatsapp.net')->first();
-        $this->assertTrue($conv->isLiveAgentActive());
+        $this->assertFalse($conv->isLiveAgentActive());
 
-        $outgoingCountBefore = WhatsAppMessage::where('conversation_id', $conv->id)->where('direction', 'outgoing')->count();
+        $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('direction', 'outgoing')
+            ->where('category', 'app')
+            ->first();
+
+        $this->assertNotNull($outgoing);
+        $this->assertStringContainsString('https://naegypt.org/apk/direct-download', $outgoing->body);
+    }
+
+    public function test_main_menu_shows_android_app_instead_of_live_agent(): void
+    {
+        $bot = $this->app->make(WhatsAppBotService::class);
+
+        $bot->handleIncomingMessage([
+            'sender' => '201055557777@s.whatsapp.net',
+            'message' => 'مرحبا',
+        ]);
+
+        $conv = WhatsAppConversation::where('jid', '201055557777@s.whatsapp.net')->first();
+        $outgoing = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('direction', 'outgoing')
+            ->where('category', 'menu')
+            ->first();
+
+        $this->assertNotNull($outgoing);
+        $this->assertStringContainsString('تحميل تطبيق الأندرويد', $outgoing->body);
+        $this->assertStringNotContainsString('التحدث مع متطوع خط المساعدة', $outgoing->body);
+
+        // User typing 'متطوع' no longer triggers live agent takeover
+        $bot->handleIncomingMessage([
+            'sender' => '201055557777@s.whatsapp.net',
+            'message' => 'متطوع',
+        ]);
+        $conv->refresh();
+        $this->assertFalse($conv->isLiveAgentActive());
+    }
+
+    public function test_agent_takeover_pauses_bot_and_agent_can_stop_it_from_phone_silently(): void
+    {
+        $bot = $this->app->make(WhatsAppBotService::class);
+
+        // Agent replies from paired phone -> activates takeover
+        $bot->handleIncomingMessage([
+            'event' => 'message',
+            'payload' => [
+                'id' => 'AGENT_TAKEOVER_1',
+                'from' => '201006979198@s.whatsapp.net',
+                'chat' => '201055558888@s.whatsapp.net',
+                'body' => 'أهلاً بك، معك متطوع',
+                'is_from_me' => true,
+            ],
+        ]);
+
+        $conv = WhatsAppConversation::where('jid', '201055558888@s.whatsapp.net')->first();
+        $this->assertTrue($conv->isLiveAgentActive());
 
         // While active, user sends another message -> bot should NOT auto-reply
         $bot->handleIncomingMessage([
-            'sender' => '201055556666@s.whatsapp.net',
+            'sender' => '201055558888@s.whatsapp.net',
             'message' => 'هل هناك أحد هنا؟',
         ]);
 
-        $outgoingCountAfter = WhatsAppMessage::where('conversation_id', $conv->id)->where('direction', 'outgoing')->count();
-        $this->assertEquals($outgoingCountBefore, $outgoingCountAfter);
+        $botReplies = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('sender_type', 'bot')
+            ->count();
+        $this->assertEquals(0, $botReplies);
 
-        // User sends 'انهاء' -> resumes bot mode
+        // Agent sends '#bot' from phone -> stops takeover silently
         $bot->handleIncomingMessage([
-            'sender' => '201055556666@s.whatsapp.net',
-            'message' => 'انهاء',
+            'event' => 'message',
+            'payload' => [
+                'id' => 'AGENT_STOP_1',
+                'from' => '201006979198@s.whatsapp.net',
+                'chat' => '201055558888@s.whatsapp.net',
+                'body' => '#bot',
+                'is_from_me' => true,
+            ],
         ]);
 
         $conv->refresh();
         $this->assertFalse($conv->isLiveAgentActive());
+
+        // Still 0 bot replies (resumed silently)
+        $botRepliesAfterStop = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('sender_type', 'bot')
+            ->count();
+        $this->assertEquals(0, $botRepliesAfterStop);
+
+        // Next user message gets bot autoreply again
+        $bot->handleIncomingMessage([
+            'sender' => '201055558888@s.whatsapp.net',
+            'message' => 'مرحبا',
+        ]);
+
+        $botRepliesFinal = WhatsAppMessage::where('conversation_id', $conv->id)
+            ->where('sender_type', 'bot')
+            ->count();
+        $this->assertEquals(1, $botRepliesFinal);
     }
 
     public function test_subscription_opt_in_and_opt_out(): void

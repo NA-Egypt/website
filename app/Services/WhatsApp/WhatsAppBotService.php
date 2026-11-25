@@ -98,6 +98,14 @@ class WhatsAppBotService
                 'raw_payload' => $payload,
             ]);
 
+            $normalizedAgentBody = mb_strtolower(trim($this->normalizeArabicIndicDigits($body)));
+            if (in_array($normalizedAgentBody, ['إنهاء المحادثة', 'انهاء المحادثة', 'انهاء', 'إنهاء', '#bot', 'bot', 'الروبوت', 'خروج'])) {
+                $conversation->disableLiveAgent();
+                $conversation->update(['current_step' => null, 'step_data' => null]);
+                Log::info("[WhatsAppBot] Volunteer ended Live Agent takeover from phone for {$phone}; autoreply resumed silently.");
+                return;
+            }
+
             // Automatically pause the bot (Live Agent active for 30 minutes)
             $conversation->enableLiveAgent();
             $conversation->update(['last_interaction_at' => Carbon::now()]);
@@ -157,18 +165,7 @@ class WhatsAppBotService
             return;
         }
 
-        // 4. Check for Live Agent Request
-        if (in_array($lowerBody, ['0', 'متطوع', 'تحدث مع متطوع', 'تحدث مع شخص', 'agent', 'volunteer', 'مساعدة'])) {
-            $conversation->enableLiveAgent();
-            $this->replyAndLog(
-                $conversation,
-                "تم تحويل محادثتك إلى أحد متطوعي خدمة خط المساعدة 🤝\n\nسيتواصل معك متطوع في أقرب وقت ممكن بسرية تامة لمساعدتك في التعافي.\n(للعودة إلى الرد الآلي في أي وقت، أرسل كلمة: *انهاء*)",
-                'helpline'
-            );
-            return;
-        }
-
-        // 5. Check for Broadcast Subscription commands
+        // 4. Check for Broadcast Subscription commands
         if (in_array($lowerBody, ['7', 'اشتراك', 'اشتراك يومي', 'subscribe', 'اشتراك لليوم فقط', 'اشتراك فقط لليوم'])) {
             WhatsAppSubscriber::updateOrCreate(
                 ['jid' => $formattedJid],
@@ -239,6 +236,11 @@ class WhatsAppBotService
             return;
         }
 
+        if (in_array($lowerBody, ['0', 'app', 'android', 'apk', 'تطبيق', 'التطبيق', 'اندرويد', 'أندرويد', 'تحميل التطبيق'])) {
+            $this->handleAndroidAppInfo($conversation);
+            return;
+        }
+
         // Default: Show main interactive menu
         $conversation->update(['current_step' => null, 'step_data' => null]);
         $this->replyAndLog($conversation, $this->getMainMenuText(), 'menu');
@@ -260,7 +262,7 @@ class WhatsAppBotService
             . "6️⃣ *وسائل التواصل والموقع الرسمي* (Social Media & Website)\n"
             . "7️⃣ *الاشتراك في رسائل لليوم فقط يومياً* (Daily JFT Broadcast)\n";
 
-        $menu .= "0️⃣ *التحدث مع متطوع خط المساعدة* (Talk to Volunteer)\n\n"
+        $menu .= "0️⃣ *تحميل تطبيق الأندرويد* (Download Android App)\n\n"
             . "🌐 موقعنا الرسمي: https://naegypt.org";
 
         return $menu;
@@ -574,6 +576,19 @@ class WhatsAppBotService
             . "info@naegypt.org";
 
         $this->replyAndLog($conversation, $message, 'social');
+    }
+
+    /**
+     * Handle Android App direct APK download request.
+     */
+    protected function handleAndroidAppInfo(WhatsAppConversation $conversation): void
+    {
+        $message = "📱 *تطبيق زمالة المدمنين المجهولين - مصر للأندرويد*\n"
+            . "NA Egypt Android App\n\n"
+            . "⬇️ رابط التحميل المباشر (APK):\n"
+            . "https://naegypt.org/apk/direct-download";
+
+        $this->replyAndLog($conversation, $message, 'app');
     }
 
     /**

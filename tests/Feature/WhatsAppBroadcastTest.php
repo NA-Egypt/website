@@ -29,6 +29,10 @@ class WhatsAppBroadcastTest extends TestCase
     public function test_broadcast_job_iterates_active_subscribers(): void
     {
         $mockClient = Mockery::mock(WhatsAppClient::class);
+        $mockClient->shouldReceive('getDeviceStatus')->once()->andReturn([
+            'success' => true,
+            'connected' => true,
+        ]);
         $mockClient->shouldReceive('sendTextMessage')->andReturn([
             'success' => true,
             'data' => ['results' => ['message_id' => 'BROADCAST_MSG_1']],
@@ -64,6 +68,74 @@ class WhatsAppBroadcastTest extends TestCase
             'direction' => 'outgoing',
             'category' => 'broadcast',
             'body' => 'Daily reading message',
+        ]);
+    }
+
+    public function test_broadcast_job_pauses_when_device_disconnected(): void
+    {
+        $mockClient = Mockery::mock(WhatsAppClient::class);
+        $mockClient->shouldReceive('getDeviceStatus')->once()->andReturn([
+            'success' => true,
+            'connected' => false,
+        ]);
+        $mockClient->shouldNotReceive('sendTextMessage');
+        $this->app->instance(WhatsAppClient::class, $mockClient);
+
+        WhatsAppSubscriber::create([
+            'jid' => '201011111111@s.whatsapp.net',
+            'phone' => '201011111111',
+            'channel' => 'jft',
+            'is_active' => true,
+        ]);
+
+        $job = new SendWhatsAppBroadcast('jft', 'Disconnected Broadcast', 'Daily reading');
+        $job->handle($mockClient);
+
+        $this->assertDatabaseHas('whatsapp_broadcast_logs', [
+            'channel' => 'jft',
+            'title' => 'Disconnected Broadcast',
+            'status' => 'paused',
+            'successful_count' => 0,
+            'failed_count' => 0,
+        ]);
+    }
+
+    public function test_broadcast_job_triggers_circuit_breaker_on_invalid_wa_cli(): void
+    {
+        $mockClient = Mockery::mock(WhatsAppClient::class);
+        $mockClient->shouldReceive('getDeviceStatus')->once()->andReturn([
+            'success' => true,
+            'connected' => true,
+        ]);
+        $mockClient->shouldReceive('sendTextMessage')->once()->andReturn([
+            'success' => false,
+            'status' => 500,
+            'error' => '{"code":"INVALID_WA_CLI","message":"your WhatsApp CLI is invalid or empty"}',
+        ]);
+        $this->app->instance(WhatsAppClient::class, $mockClient);
+
+        WhatsAppSubscriber::create([
+            'jid' => '201011111111@s.whatsapp.net',
+            'phone' => '201011111111',
+            'channel' => 'jft',
+            'is_active' => true,
+        ]);
+        WhatsAppSubscriber::create([
+            'jid' => '201033333333@s.whatsapp.net',
+            'phone' => '201033333333',
+            'channel' => 'jft',
+            'is_active' => true,
+        ]);
+
+        $job = new SendWhatsAppBroadcast('jft', 'Circuit Breaker Broadcast', 'Daily reading');
+        $job->handle($mockClient);
+
+        $this->assertDatabaseHas('whatsapp_broadcast_logs', [
+            'channel' => 'jft',
+            'title' => 'Circuit Breaker Broadcast',
+            'status' => 'paused',
+            'successful_count' => 0,
+            'failed_count' => 1,
         ]);
     }
 }

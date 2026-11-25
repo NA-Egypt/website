@@ -68,13 +68,27 @@ class SendWhatsAppBroadcast implements ShouldQueue
             return;
         }
 
+        // Pre-flight device connection check
+        $deviceStatus = $client->getDeviceStatus();
+        if (!($deviceStatus['connected'] ?? false)) {
+            $errorMsg = 'WhatsApp device is disconnected (' . config('whatsapp.device_id', 'default') . '). Broadcast paused.';
+            $log->update([
+                'status' => 'paused',
+                'metadata' => ['last_error' => $errorMsg],
+            ]);
+            Log::warning("[SendWhatsAppBroadcast] {$errorMsg}");
+            return;
+        }
+
         $minDelay = config('whatsapp.broadcast_delay_min_seconds', 2);
         $maxDelay = config('whatsapp.broadcast_delay_max_seconds', 5);
 
         $successCount = 0;
         $failedCount = 0;
+        $circuitBroken = false;
+        $circuitError = null;
 
-        $query->chunk(50, function ($subscribers) use ($client, &$successCount, &$failedCount, $minDelay, $maxDelay, $isDev) {
+        $query->chunk(50, function ($subscribers) use ($client, &$successCount, &$failedCount, &$circuitBroken, &$circuitError, $minDelay, $maxDelay, $isDev) {
             foreach ($subscribers as $subscriber) {
                 // Send message via client
                 $res = $client->sendTextMessage($subscriber->jid, $this->messageText);
@@ -110,13 +124,39 @@ class SendWhatsAppBroadcast implements ShouldQueue
                     'raw_payload' => $res,
                 ]);
 
+                // Circuit-breaker on disconnected WhatsApp client
+                if ($status === 'failed') {
+                    $errorStr = (string) ($res['error'] ?? '');
+                    if (
+                        str_contains($errorStr, 'INVALID_WA_CLI')
+                        || stripos($errorStr, 'not logged in') !== false
+                        || stripos($errorStr, 'disconnected') !== false
+                    ) {
+                        $circuitBroken = true;
+                        $circuitError = $errorStr;
+                        return false;
+                    }
+                }
+
                 // Anti-spam jitter delay
                 $jitterSeconds = random_int($minDelay, $maxDelay);
                 sleep($jitterSeconds);
             }
         });
 
+        if ($circuitBroken) {
+            $log->update([
+                'status' => 'paused',
+                'successful_count' => $successCount,
+                'failed_count' => $failedCount,
+                'metadata' => ['last_error' => $circuitError],
+            ]);
+            Log::error("[SendWhatsAppBroadcast] Circuit-breaker triggered for '{$this->title}': {$circuitError}");
+            return;
+        }
+
         $log->update([
+            'status' => 'completed',
             'successful_count' => $successCount,
             'failed_count' => $failedCount,
             'completed_at' => Carbon::now(),
