@@ -92,12 +92,21 @@ class ApiAgendasTest extends TestCase
         $response = $this->getJson('/api/v1/agendas');
         $response->assertStatus(200);
         $response->assertJsonFragment([
+            'recovery_atmosphere' => 'Great atmosphere',
+        ]);
+        $response->assertJsonMissing([
             'submitter_name' => 'Test Submitter',
         ]);
 
         $response = $this->getJson("/api/v1/agendas/{$agenda->id}");
         $response->assertStatus(200);
-        $response->assertJsonPath('data.submitter_name', 'Test Submitter');
+        $response->assertJsonPath('data.recovery_atmosphere', 'Great atmosphere');
+        $response->assertJsonMissingPath('data.submitter_name');
+
+        Sanctum::actingAs(User::factory()->create());
+        $authResponse = $this->getJson("/api/v1/agendas/{$agenda->id}");
+        $authResponse->assertStatus(200);
+        $authResponse->assertJsonPath('data.submitter_name', 'Test Submitter');
     }
 
     public function test_non_authenticated_cannot_write_group_agendas()

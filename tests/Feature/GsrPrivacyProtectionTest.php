@@ -137,13 +137,13 @@ class GsrPrivacyProtectionTest extends TestCase
     {
         $ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15';
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 15; $i++) {
             $this->withHeaders(['User-Agent' => $ua])
                 ->postJson(route('meetings.group.contact', ['group' => $this->group->id]))
                 ->assertStatus(200);
         }
 
-        // 6th request within 1 minute must be throttled
+        // 16th request within 1 minute must be throttled
         $this->withHeaders(['User-Agent' => $ua])
             ->postJson(route('meetings.group.contact', ['group' => $this->group->id]))
             ->assertStatus(429);

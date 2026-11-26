@@ -28,7 +28,7 @@ class FrontendHomeRevampTest extends TestCase
         $response->assertSee('أهلاً بك في زمالة المدمنين المجهولين - مصر');
         $response->assertSee('أنا أبحث عن مساعدة لنفسي');
         $response->assertSee('أبحث عن مساعدة لشخص آخر');
-        $response->assertSee('أنا عضو بالزمالة');
+        $response->assertSee('أنا عضو بالمدمنين المجهولين');
 
         // Section 2: Meeting Finder
         $response->assertSee('ابحث عن اجتماع تعافي الآن');
