@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GroupsRequest;
 use App\Models\Group;
+use App\Models\Meeting;
 use App\Models\Neighborhood;
 use App\Models\ServiceBody;
 use App\Models\User;
+use App\Traits\PaginatesDataTables;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-
-use App\Traits\PaginatesDataTables;
+use Illuminate\Support\Facades\Gate;
 
 class GroupController extends Controller implements HasMiddleware
 {
@@ -21,7 +21,7 @@ class GroupController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('role:super admin', only: ['create', 'store', 'destroy']),
+            new Middleware('role:super admin', only: ['create', 'store', 'destroy', 'restore']),
         ];
     }
 
@@ -61,13 +61,13 @@ class GroupController extends Controller implements HasMiddleware
             }
 
             $groups = $this->paginateDataTable($query, $request, [
-                'ar_name', 'en_name', 'user.email', 
-                'serviceBody.ar_name', 'serviceBody.en_name', 
-                'neighborhood.ar_name', 'neighborhood.en_name'
+                'ar_name', 'en_name', 'user.email',
+                'serviceBody.ar_name', 'serviceBody.en_name',
+                'neighborhood.ar_name', 'neighborhood.en_name',
             ]);
 
             $locale = app()->getLocale();
-            $groups->getCollection()->transform(function($g) use ($locale) {
+            $groups->getCollection()->transform(function ($g) use ($locale) {
                 $g->primary_name = $locale === 'ar' ? ($g->ar_name ?: $g->en_name) : ($g->en_name ?: $g->ar_name);
                 $g->secondary_name = $locale === 'ar' ? $g->en_name : $g->ar_name;
                 $g->service_body_name = $g->serviceBody ? ($locale === 'ar' ? ($g->serviceBody->ar_name ?: $g->serviceBody->en_name) : ($g->serviceBody->en_name ?: $g->serviceBody->ar_name)) : 'N/A';
@@ -77,13 +77,13 @@ class GroupController extends Controller implements HasMiddleware
                 $g->gsr_name = $locale === 'ar' ? ($g->ar_gsr_name ?: $g->en_gsr_name) : ($g->en_gsr_name ?: $g->ar_gsr_name);
                 $g->gsr_email = $g->user ? $g->user->email : null;
                 $g->address_display = $locale === 'ar' ? ($g->ar_address ?: $g->en_address) : ($g->en_address ?: $g->ar_address);
-                $g->meetings_summary = $g->meetings ? $g->meetings->map(function($m) use ($locale) {
+                $g->meetings_summary = $g->meetings ? $g->meetings->map(function ($m) use ($locale) {
                     return [
                         'id' => $m->id,
                         'day' => $m->day ? ($locale === 'ar' ? $m->day->ar_name : $m->day->en_name) : 'N/A',
                         'time' => $m->formatted_start_time,
                         'topic' => $m->topic ? ($locale === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A',
-                        'status' => $m->status
+                        'status' => $m->status,
                     ];
                 }) : [];
 
@@ -95,18 +95,18 @@ class GroupController extends Controller implements HasMiddleware
 
         $baseQuery = clone $query;
         $kpiStats = [
-            'total_groups'         => (clone $baseQuery)->count(),
-            'total_meetings'       => \App\Models\Meeting::whereNotNull('group_id')->count(),
-            'service_bodies_count' => \App\Models\ServiceBody::count(),
-            'active_gsrs_count'    => (clone $baseQuery)->whereNotNull('user_id')->distinct('user_id')->count('user_id'),
+            'total_groups' => (clone $baseQuery)->count(),
+            'total_meetings' => Meeting::whereNotNull('group_id')->count(),
+            'service_bodies_count' => ServiceBody::count(),
+            'active_gsrs_count' => (clone $baseQuery)->whereNotNull('user_id')->distinct('user_id')->count('user_id'),
         ];
 
         $serviceBodies = ServiceBody::all(['id', 'ar_name', 'en_name']);
 
         return view('group.index', [
-            'groups'         => collect(),
-            'kpiStats'       => $kpiStats,
-            'serviceBodies'  => $serviceBodies
+            'groups' => collect(),
+            'kpiStats' => $kpiStats,
+            'serviceBodies' => $serviceBodies,
         ]);
     }
 
@@ -124,7 +124,7 @@ class GroupController extends Controller implements HasMiddleware
         return view('group.create', [
             'serviceBodies' => $serviceBodies,
             'neighborhoods' => $neighborhoods,
-            'users'         =>$users
+            'users' => $users,
         ]);
     }
 
@@ -133,7 +133,6 @@ class GroupController extends Controller implements HasMiddleware
      */
     public function store(GroupsRequest $request)
     {
-
 
         $validatedData = $request->validated();
 
@@ -155,10 +154,10 @@ class GroupController extends Controller implements HasMiddleware
         $users = User::all();
 
         return view('group.edit', [
-            'group'         => $group,
+            'group' => $group,
             'serviceBodies' => $serviceBodies,
             'neighborhoods' => $neighborhoods,
-            'users'         =>$users
+            'users' => $users,
         ]);
     }
 
@@ -179,17 +178,17 @@ class GroupController extends Controller implements HasMiddleware
     public function show(Group $group)
     {
         Gate::authorize('view', $group);
-//        return view('group.show', ['group'=>$group]);
+        //        return view('group.show', ['group'=>$group]);
         // Eager load meetings with days relationship and ordering
-        $group->load(['meetings' => function($query) {
+        $group->load(['meetings' => function ($query) {
             $query->with('day', 'options') // Load the day relationship
-            ->orderBy('day_id') // Order by day_id
-            ->orderBy('start_time');
+                ->orderBy('day_id') // Order by day_id
+                ->orderBy('start_time');
         }]);
 
         return view('group.show', [
             'group' => $group,
-            'meetings' => $group->meetings
+            'meetings' => $group->meetings,
         ]);
     }
 
@@ -200,10 +199,33 @@ class GroupController extends Controller implements HasMiddleware
     {
         $group->delete();
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json(['success' => true, 'message' => __('messages.group_deleted_success')]);
+        $undoUrl = route('group.restore', $group->id);
+        if ($request->hasSession()) {
+            $request->session()->flash('undo_url', $undoUrl);
         }
 
-        return redirect()->route('group.index')->with('success', __('messages.group_deleted_success'));
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.group_deleted_success'),
+                'undo_url' => $undoUrl,
+            ]);
+        }
+
+        return redirect()->route('group.index')
+            ->with('success', __('messages.group_deleted_success'))
+            ->with('undo_url', $undoUrl);
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $group = Group::withTrashed()->findOrFail($id);
+        $group->restore();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.flash.undo.restored_success')]);
+        }
+
+        return redirect()->route('group.index')->with('success', __('messages.flash.undo.restored_success'));
     }
 }

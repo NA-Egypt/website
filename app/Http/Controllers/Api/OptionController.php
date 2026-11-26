@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OptionResource;
 use App\Models\Option;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class OptionController extends Controller implements HasMiddleware
 {
+    use PaginatesApi;
+
     public static function middleware(): array
     {
         return [
@@ -21,9 +24,11 @@ class OptionController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return OptionResource::collection(Option::all());
+        return OptionResource::collection(
+            $this->paginateOrAll($request, Option::query())
+        );
     }
 
     /**

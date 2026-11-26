@@ -6,10 +6,12 @@ use App\Traits\HasNormalizedSearchText;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DirectOnlineGroup extends Model
 {
     use HasNormalizedSearchText;
+    use SoftDeletes;
 
     protected $table = 'direct_online_groups';
 

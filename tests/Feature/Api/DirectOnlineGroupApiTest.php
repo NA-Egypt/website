@@ -155,6 +155,6 @@ class DirectOnlineGroupApiTest extends TestCase
         $response = $this->deleteJson("/api/v1/direct-online-groups/{$group->id}");
 
         $response->assertStatus(204);
-        $this->assertDatabaseMissing('direct_online_groups', ['id' => $group->id]);
+        $this->assertSoftDeleted('direct_online_groups', ['id' => $group->id]);
     }
 }

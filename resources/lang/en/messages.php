@@ -3443,5 +3443,41 @@ return [
         'whatsapp' => [
             'send_message_failed' => 'Failed to send message.',
         ],
+
+        'undo' => [
+            'restored_success' => 'Record restored successfully.',
+            'slug_taken' => 'Cannot restore form because its slug is already in use by another active form.',
+        ],
+
+        'notifications' => [
+            'marked_read' => 'Notification marked as read.',
+            'all_marked_read' => 'All notifications marked as read.',
+        ],
+    ],
+
+    'notifications' => [
+        'committee_report_submitted_title' => 'Committee Report Submitted',
+        'committee_report_submitted_body' => 'A report from :committee has been submitted for RSC review.',
+        'committee_report_returned_title' => 'Committee Report Returned to Draft',
+        'committee_report_returned_body' => 'Your report for :committee was returned to draft. Notes: :notes',
+        'committee_report_approved_title' => 'Committee Report Approved',
+        'committee_report_approved_body' => 'Your report for :committee has been approved and published.',
+
+        'literature_request_submitted_title' => 'Literature Request Submitted',
+        'literature_request_submitted_body' => 'Group :group submitted a literature request.',
+        'literature_request_approved_title' => 'Literature Request Approved',
+        'literature_request_approved_body' => 'Accumulated literature request for :service_body was approved and sent to the Literature Committee.',
+        'literature_request_returned_title' => 'Literature Invoice Updated',
+        'literature_request_returned_body' => 'Literature request #:id invoice was updated and returned.',
+        'literature_request_dispatched_title' => 'Literature Request Dispatched',
+        'literature_request_dispatched_body' => 'Delivery slip #:slip was issued for literature request #:id.',
+
+        'inventory_slip_pending_title' => 'Inventory Slip Awaiting Acknowledgement',
+        'inventory_slip_pending_body' => 'Inventory slip #:slip (:type) is waiting for your acknowledgement.',
+
+        'change_request_status_title' => 'Change Request Status Updated',
+        'change_request_status_body' => 'Your change request ":subject" status is now :status.',
+
+        'view_action' => 'View Details',
     ],
 ];

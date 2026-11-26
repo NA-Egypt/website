@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServiceBodyAgenda;
 use App\Models\ServiceBody;
+use App\Models\ServiceBodyAgenda;
 use App\Models\ServiceBodyAgendaAttachment;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use App\Services\MpdfService;
+use App\Services\ServiceBodyAgendaArchiver;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceBodyAgendaController extends Controller
 {
@@ -30,32 +32,35 @@ class ServiceBodyAgendaController extends Controller
         9 => 'سبتمبر',
         10 => 'أكتوبر',
         11 => 'نوفمبر',
-        12 => 'ديسمبر'
+        12 => 'ديسمبر',
     ];
 
     protected function getServiceBody()
     {
         $user = Auth::user();
-        if (!$user) return null;
-        
+        if (! $user) {
+            return null;
+        }
+
         return ServiceBody::find($user->service_body_id);
     }
 
     protected function isRsc()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return false;
         }
         $user = Auth::user();
+
         return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
     protected function isRestrictedConsumer($user)
     {
-        if (!$user) {
+        if (! $user) {
             return true;
         }
-        
+
         // Super Admin and RSC are never restricted
         if ($user->hasRole('super admin') || $user->hasRole('rsc')) {
             return false;
@@ -116,55 +121,55 @@ class ServiceBodyAgendaController extends Controller
         if ($this->isRestrictedConsumer($user)) {
             // Only approved and released
             $query->where('status', 'approved');
-            
-            $daySql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
-                ? "cast(strftime('%d', meeting_date) as integer)"
-                : "DAY(meeting_date)";
 
-            $query->where(function($q) use ($daySql) {
+            $daySql = DB::getDriverName() === 'sqlite'
+                ? "cast(strftime('%d', meeting_date) as integer)"
+                : 'DAY(meeting_date)';
+
+            $query->where(function ($q) use ($daySql) {
                 // Exceptional are visible immediately
                 $q->where('is_exceptional', true)
-                  ->orWhere(function($subQ) use ($daySql) {
-                      $now = now();
-                      $subQ->where(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} <= 10")
-                                ->where(function($dateQ) use ($now) {
+                    ->orWhere(function ($subQ) use ($daySql) {
+                        $now = now();
+                        $subQ->where(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} <= 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->whereMonth('meeting_date', '<', $now->month)
-                                                        ->orWhere(function($dQ) use ($now) {
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) use ($now) {
+                                                    $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                        ->orWhere(function ($dQ) use ($now) {
                                                             $dQ->whereMonth('meeting_date', $now->month)
-                                                               ->whereDay('meeting_date', '<=', $now->day);
+                                                                ->whereDay('meeting_date', '<=', $now->day);
                                                         });
-                                                 });
-                                          });
-                                  });
-                      })->orWhere(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} > 10")
-                                ->where(function($dateQ) use ($now) {
+                                                });
+                                        });
+                                });
+                        })->orWhere(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} > 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
-                                                 });
-                                          });
-                                  });
-                      });
-                  });
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) {
+                                                    $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                });
+                                        });
+                                });
+                        });
+                    });
             });
-        } elseif (!$isRsc) {
+        } elseif (! $isRsc) {
             $sb = $this->getServiceBody();
-            if (!$sb) {
+            if (! $sb) {
                 abort(403, 'You are not assigned to any Service Body.');
             }
             $query->where('service_body_id', $sb->id);
         } else {
             // RSC and Super Admin see all states (draft, submitted, approved)
             $query->whereIn('status', ['draft', 'submitted', 'approved']);
-            
+
             if ($request->has('service_body_id') && $request->service_body_id) {
                 $query->where('service_body_id', $request->service_body_id);
             }
@@ -172,9 +177,9 @@ class ServiceBodyAgendaController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('body', 'like', "%$search%")
-                  ->orWhereDate('meeting_date', $search);
+                    ->orWhereDate('meeting_date', $search);
             });
         }
 
@@ -194,7 +199,7 @@ class ServiceBodyAgendaController extends Controller
         if ($isRsc) {
             $serviceBodies = ServiceBody::with('groups')->get();
         } else {
-            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sb) {
+            if (! $user || ! $user->hasPermissionTo('create sb agenda') || ! $sb) {
                 abort(403, 'Only users with create sb agenda permission can create agendas.');
             }
             $sb->load('groups');
@@ -209,8 +214,8 @@ class ServiceBodyAgendaController extends Controller
         $isRsc = $this->isRsc();
         $sb = $this->getServiceBody();
 
-        if (!$isRsc) {
-            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sb) {
+        if (! $isRsc) {
+            if (! $user || ! $user->hasPermissionTo('create sb agenda') || ! $sb) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -259,7 +264,7 @@ class ServiceBodyAgendaController extends Controller
         }
 
         if ($agenda->status === 'approved') {
-            app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda);
+            app(ServiceBodyAgendaArchiver::class)->archive($agenda);
         }
 
         return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_created_success'));
@@ -268,8 +273,8 @@ class ServiceBodyAgendaController extends Controller
     public function show($id)
     {
         $agenda = ServiceBodyAgenda::with(['serviceBody', 'attachments'])->findOrFail($id);
-        
-        if (!$this->isAgendaVisibleToUser($agenda)) {
+
+        if (! $this->isAgendaVisibleToUser($agenda)) {
             abort(403, 'Unauthorized');
         }
 
@@ -282,9 +287,9 @@ class ServiceBodyAgendaController extends Controller
         $isRsc = $this->isRsc();
         $agenda = ServiceBodyAgenda::with(['serviceBody', 'attachments'])->findOrFail($id);
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('edit sb agenda')) {
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('edit sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -294,7 +299,7 @@ class ServiceBodyAgendaController extends Controller
         }
 
         $serviceBodies = $isRsc ? ServiceBody::with('groups')->get() : [];
-        $sb = !$isRsc ? $this->getServiceBody()->load('groups') : null;
+        $sb = ! $isRsc ? $this->getServiceBody()->load('groups') : null;
 
         return view('service-body-agendas.edit', compact('agenda', 'sb', 'serviceBodies', 'isRsc'));
     }
@@ -304,9 +309,9 @@ class ServiceBodyAgendaController extends Controller
         $agenda = ServiceBodyAgenda::findOrFail($id);
         $user = Auth::user();
 
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('edit sb agenda')) {
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('edit sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -365,7 +370,7 @@ class ServiceBodyAgendaController extends Controller
         }
 
         if ($agenda->status === 'approved') {
-            app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda->fresh());
+            app(ServiceBodyAgendaArchiver::class)->archive($agenda->fresh());
         }
 
         return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_updated_success'));
@@ -376,9 +381,9 @@ class ServiceBodyAgendaController extends Controller
         $agenda = ServiceBodyAgenda::findOrFail($id);
         $user = Auth::user();
 
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('delete sb agenda')) {
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('delete sb agenda')) {
                 abort(403, 'Unauthorized');
             }
             if ($agenda->status !== 'draft') {
@@ -386,24 +391,35 @@ class ServiceBodyAgendaController extends Controller
             }
         }
 
-        // Delete physical files
-        foreach ($agenda->attachments as $attachment) {
-            if (Storage::disk('storagebox')->exists($attachment->file_path)) {
-                Storage::disk('storagebox')->delete($attachment->file_path);
-            }
-            $attachment->delete();
-        }
-
         $agenda->delete();
 
-        return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_deleted_success'));
+        return redirect()->route('service-body-agendas.index')
+            ->with('success', __('messages.agenda_deleted_success'))
+            ->with('undo_url', route('service-body-agendas.restore', $agenda->id));
+    }
+
+    public function restore($id)
+    {
+        $agenda = ServiceBodyAgenda::withTrashed()->findOrFail($id);
+        $user = Auth::user();
+
+        if (! $this->isRsc()) {
+            $sb = $this->getServiceBody();
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('delete sb agenda')) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
+        $agenda->restore();
+
+        return redirect()->route('service-body-agendas.index')->with('success', __('messages.flash.undo.restored_success'));
     }
 
     public function pdf($id)
     {
         $agenda = ServiceBodyAgenda::with('serviceBody')->findOrFail($id);
 
-        if (!$this->isAgendaVisibleToUser($agenda)) {
+        if (! $this->isAgendaVisibleToUser($agenda)) {
             abort(403, 'Unauthorized');
         }
 
@@ -414,7 +430,7 @@ class ServiceBodyAgendaController extends Controller
         $mpdf->WriteHTML($html);
 
         $year = $agenda->meeting_date->format('Y');
-        $monthNum = (int)$agenda->meeting_date->format('m');
+        $monthNum = (int) $agenda->meeting_date->format('m');
         $monthStr = $agenda->meeting_date->format('m');
         $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
 
@@ -426,13 +442,13 @@ class ServiceBodyAgendaController extends Controller
         $filename = sprintf('%s_%s_%s%s.pdf', $cleanedSbName, $monthArabicName, $year, $suffix);
 
         $disposition = request()->query('disposition', 'attachment');
-        if (!in_array($disposition, ['attachment', 'inline'])) {
+        if (! in_array($disposition, ['attachment', 'inline'])) {
             $disposition = 'attachment';
         }
 
         return response($mpdf->Output($filename, 'S'), 200)
-               ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', $disposition . '; filename="' . $filename . '"');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
     }
 
     public function approve($id)
@@ -441,20 +457,20 @@ class ServiceBodyAgendaController extends Controller
         $user = Auth::user();
         $isRsc = $this->isRsc();
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('approve sb agenda')) {
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('approve sb agenda')) {
                 abort(403, 'Unauthorized');
             }
         }
-        
+
         if ($agenda->status !== 'submitted') {
             return redirect()->back()->with('error', __('messages.only_submitted_agendas_approved'));
         }
 
         $agenda->update(['status' => 'approved']);
 
-        app(\App\Services\ServiceBodyAgendaArchiver::class)->archive($agenda);
+        app(ServiceBodyAgendaArchiver::class)->archive($agenda);
 
         return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_approved_archived'));
     }
@@ -465,9 +481,9 @@ class ServiceBodyAgendaController extends Controller
         $user = Auth::user();
         $isRsc = $this->isRsc();
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id || !$user || !$user->hasPermissionTo('approve sb agenda')) {
+            if (! $sb || $sb->id !== $agenda->service_body_id || ! $user || ! $user->hasPermissionTo('approve sb agenda')) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -477,6 +493,7 @@ class ServiceBodyAgendaController extends Controller
         }
 
         $agenda->update(['status' => 'draft']);
+
         return redirect()->route('service-body-agendas.index')->with('success', __('messages.agenda_returned_draft'));
     }
 
@@ -485,91 +502,91 @@ class ServiceBodyAgendaController extends Controller
         $user = auth()->user();
         $query = ServiceBodyAgenda::with('serviceBody');
 
-        $daySql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+        $daySql = DB::getDriverName() === 'sqlite'
             ? "cast(strftime('%d', meeting_date) as integer)"
-            : "DAY(meeting_date)";
+            : 'DAY(meeting_date)';
 
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
-            $query->where(function($q) use ($daySql) {
+            $query->where(function ($q) use ($daySql) {
                 $q->where('is_exceptional', true)
-                  ->orWhere(function($subQ) use ($daySql) {
-                      $now = now();
-                      $subQ->where(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} <= 10")
-                                ->where(function($dateQ) use ($now) {
+                    ->orWhere(function ($subQ) use ($daySql) {
+                        $now = now();
+                        $subQ->where(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} <= 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->whereMonth('meeting_date', '<', $now->month)
-                                                        ->orWhere(function($dQ) use ($now) {
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) use ($now) {
+                                                    $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                        ->orWhere(function ($dQ) use ($now) {
                                                             $dQ->whereMonth('meeting_date', $now->month)
-                                                               ->whereDay('meeting_date', '<=', $now->day);
+                                                                ->whereDay('meeting_date', '<=', $now->day);
                                                         });
-                                                 });
-                                          });
-                                  });
-                      })->orWhere(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} > 10")
-                                ->where(function($dateQ) use ($now) {
+                                                });
+                                        });
+                                });
+                        })->orWhere(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} > 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
-                                                 });
-                                          });
-                                  });
-                      });
-                  });
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) {
+                                                    $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                });
+                                        });
+                                });
+                        });
+                    });
             });
         } else {
             // RSC / Super Admin / RCM
-            if (!$this->isRsc()) {
+            if (! $this->isRsc()) {
                 $sb = $this->getServiceBody();
                 $sbId = $sb ? $sb->id : 0;
-                $query->where(function($q) use ($sbId, $daySql) {
+                $query->where(function ($q) use ($sbId, $daySql) {
                     if ($sbId) {
                         $q->where('service_body_id', $sbId);
                     }
-                    $q->orWhere(function($otherQ) use ($sbId, $daySql) {
+                    $q->orWhere(function ($otherQ) use ($sbId, $daySql) {
                         if ($sbId) {
                             $otherQ->where('service_body_id', '!=', $sbId);
                         }
                         $otherQ->where('status', 'approved');
-                        $otherQ->where(function($releaseQ) use ($daySql) {
+                        $otherQ->where(function ($releaseQ) use ($daySql) {
                             $releaseQ->where('is_exceptional', true)
-                                     ->orWhere(function($subQ) use ($daySql) {
-                                         $now = now();
-                                         $subQ->where(function($inner) use ($now, $daySql) {
-                                             $inner->whereRaw("{$daySql} <= 10")
-                                                   ->where(function($dateQ) use ($now) {
-                                                       $dateQ->whereYear('meeting_date', '<', $now->year)
-                                                             ->orWhere(function($yQ) use ($now) {
-                                                                 $yQ->whereYear('meeting_date', $now->year)
-                                                                    ->where(function($mQ) use ($now) {
-                                                                        $mQ->whereMonth('meeting_date', '<', $now->month)
-                                                                           ->orWhere(function($dQ) use ($now) {
-                                                                               $dQ->whereMonth('meeting_date', $now->month)
-                                                                                  ->whereDay('meeting_date', '<=', $now->day);
-                                                                           });
+                                ->orWhere(function ($subQ) use ($daySql) {
+                                    $now = now();
+                                    $subQ->where(function ($inner) use ($now, $daySql) {
+                                        $inner->whereRaw("{$daySql} <= 10")
+                                            ->where(function ($dateQ) use ($now) {
+                                                $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                    ->orWhere(function ($yQ) use ($now) {
+                                                        $yQ->whereYear('meeting_date', $now->year)
+                                                            ->where(function ($mQ) use ($now) {
+                                                                $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                                    ->orWhere(function ($dQ) use ($now) {
+                                                                        $dQ->whereMonth('meeting_date', $now->month)
+                                                                            ->whereDay('meeting_date', '<=', $now->day);
                                                                     });
-                                                             });
-                                                     });
-                                         })->orWhere(function($inner) use ($now, $daySql) {
-                                             $inner->whereRaw("{$daySql} > 10")
-                                                   ->where(function($dateQ) use ($now) {
-                                                       $dateQ->whereYear('meeting_date', '<', $now->year)
-                                                             ->orWhere(function($yQ) use ($now) {
-                                                                 $yQ->whereYear('meeting_date', $now->year)
-                                                                    ->where(function($mQ) use ($now) {
-                                                                        $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
-                                                                    });
-                                                             });
-                                                     });
-                                         });
-                                     });
+                                                            });
+                                                    });
+                                            });
+                                    })->orWhere(function ($inner) use ($now, $daySql) {
+                                        $inner->whereRaw("{$daySql} > 10")
+                                            ->where(function ($dateQ) use ($now) {
+                                                $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                    ->orWhere(function ($yQ) use ($now) {
+                                                        $yQ->whereYear('meeting_date', $now->year)
+                                                            ->where(function ($mQ) {
+                                                                $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                            });
+                                                    });
+                                            });
+                                    });
+                                });
                         });
                     });
                 });
@@ -581,12 +598,12 @@ class ServiceBodyAgendaController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('body', 'like', "%$search%")
-                  ->orWhereHas('serviceBody', function ($sbQ) use ($search) {
-                      $sbQ->where('ar_name', 'like', "%$search%")
-                          ->orWhere('en_name', 'like', "%$search%");
-                  });
+                    ->orWhereHas('serviceBody', function ($sbQ) use ($search) {
+                        $sbQ->where('ar_name', 'like', "%$search%")
+                            ->orWhere('en_name', 'like', "%$search%");
+                    });
             });
         }
 
@@ -607,20 +624,20 @@ class ServiceBodyAgendaController extends Controller
         // Build list of allowed filenames for physical files based on user access
         $allowedFilenames = [];
         $userSb = null;
-        if (!$this->isRsc() && !$this->isRestrictedConsumer($user)) {
+        if (! $this->isRsc() && ! $this->isRestrictedConsumer($user)) {
             $userSb = $this->getServiceBody();
         }
 
         // Build storage box files list under Archives/service_body_agendas/
         $cacheKey = 'storagebox_agendas_files_list';
         if ($request->query('refresh') == '1') {
-            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            exec('php '.escapeshellarg(base_path('artisan')).' storagebox:cache-archives > /dev/null 2>&1 &');
             session()->flash('info', 'جاري تحديث قائمة الأجندات المؤرشفة في الخلفية...');
         }
 
         $allStorageboxFiles = Cache::get($cacheKey);
         if ($allStorageboxFiles === null) {
-            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            exec('php '.escapeshellarg(base_path('artisan')).' storagebox:cache-archives > /dev/null 2>&1 &');
             $allStorageboxFiles = [];
         }
 
@@ -628,16 +645,16 @@ class ServiceBodyAgendaController extends Controller
         $filesAndDirs = [];
 
         // Build mapping of allowed filenames for restricted consumers / other Service Bodies' agendas from the dbAgendas (which only has approved, released agendas for others/restricted consumers)
-        if ($this->isRestrictedConsumer($user) || (!$this->isRsc() && $userSb)) {
+        if ($this->isRestrictedConsumer($user) || (! $this->isRsc() && $userSb)) {
             foreach ($dbAgendas as $agenda) {
                 // If user is RCM, only add it to allowedFilenames if it's NOT their own (own is already allowed unconditionally by folder name matching)
-                if (!$this->isRestrictedConsumer($user) && $agenda->service_body_id === $userSb->id) {
+                if (! $this->isRestrictedConsumer($user) && $agenda->service_body_id === $userSb->id) {
                     continue;
                 }
-                
+
                 if ($agenda->status === 'approved') {
                     $year = $agenda->meeting_date->format('Y');
-                    $monthNum = (int)$agenda->meeting_date->format('m');
+                    $monthNum = (int) $agenda->meeting_date->format('m');
                     $monthStr = $agenda->meeting_date->format('m');
                     $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
                     $sbName = $agenda->serviceBody ? $agenda->serviceBody->ar_name : 'خدمة';
@@ -660,7 +677,7 @@ class ServiceBodyAgendaController extends Controller
                     $arName = $selectedSb->ar_name ? mb_strtolower($selectedSb->ar_name, 'UTF-8') : null;
                     $enName = $selectedSb->en_name ? mb_strtolower($selectedSb->en_name, 'UTF-8') : null;
                     $filePathLower = mb_strtolower($filePath, 'UTF-8');
-                    
+
                     $match = false;
                     if ($arName && str_contains($filePathLower, str_replace(' ', '_', $arName))) {
                         $match = true;
@@ -668,18 +685,18 @@ class ServiceBodyAgendaController extends Controller
                     if ($enName && str_contains($filePathLower, str_replace(' ', '_', $enName))) {
                         $match = true;
                     }
-                    if (!$match) {
+                    if (! $match) {
                         continue;
                     }
                 }
             }
 
             // If user is RCM (not RSC/SuperAdmin), enforce own service body filter OR approved/released filter on physical files
-            if (!$this->isRsc() && !$this->isRestrictedConsumer($user) && $userSb) {
+            if (! $this->isRsc() && ! $this->isRestrictedConsumer($user) && $userSb) {
                 $arName = $userSb->ar_name ? mb_strtolower($userSb->ar_name, 'UTF-8') : null;
                 $enName = $userSb->en_name ? mb_strtolower($userSb->en_name, 'UTF-8') : null;
                 $filePathLower = mb_strtolower($filePath, 'UTF-8');
-                
+
                 $match = false;
                 if ($arName && str_contains($filePathLower, str_replace(' ', '_', $arName))) {
                     $match = true;
@@ -687,8 +704,8 @@ class ServiceBodyAgendaController extends Controller
                 if ($enName && str_contains($filePathLower, str_replace(' ', '_', $enName))) {
                     $match = true;
                 }
-                if (!$match) {
-                    if (!in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
+                if (! $match) {
+                    if (! in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
                         continue;
                     }
                 }
@@ -696,7 +713,7 @@ class ServiceBodyAgendaController extends Controller
 
             // If user is restricted consumer, only show files that match released database agendas
             if ($this->isRestrictedConsumer($user)) {
-                if (!in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
+                if (! in_array(strtolower($fileInfo['name']), $allowedFilenames)) {
                     continue;
                 }
             }
@@ -705,12 +722,12 @@ class ServiceBodyAgendaController extends Controller
             if ($request->has('search') && $request->search != '') {
                 $search = mb_strtolower($request->search, 'UTF-8');
                 $filename = mb_strtolower($fileInfo['name'], 'UTF-8');
-                if (!str_contains($filename, $search)) {
+                if (! str_contains($filename, $search)) {
                     continue;
                 }
             }
 
-            $prefixedPath = str_starts_with($filePath, 'Archives/') ? $filePath : 'Archives/' . $filePath;
+            $prefixedPath = str_starts_with($filePath, 'Archives/') ? $filePath : 'Archives/'.$filePath;
 
             $filesAndDirs[] = [
                 'is_dir' => false,
@@ -722,14 +739,14 @@ class ServiceBodyAgendaController extends Controller
         }
 
         // Add database virtual files
-        $archiver = app(\App\Services\ServiceBodyAgendaArchiver::class);
+        $archiver = app(ServiceBodyAgendaArchiver::class);
         foreach ($dbAgendas as $agenda) {
             $period = $archiver->getTargetMeetingPeriod($agenda->meeting_date);
             $targetYear = $period['year'];
             $arabicMonth = $period['arabic_month'];
 
             $year = $agenda->meeting_date->format('Y');
-            $monthNum = (int)$agenda->meeting_date->format('m');
+            $monthNum = (int) $agenda->meeting_date->format('m');
             $monthStr = $agenda->meeting_date->format('m');
             $monthArabicName = $this->arabicMonths[$monthNum] ?? $monthStr;
 
@@ -743,7 +760,7 @@ class ServiceBodyAgendaController extends Controller
 
             $filesAndDirs[] = [
                 'is_dir' => false,
-                'name' => ($agenda->serviceBody->ar_name ?? 'Service Body Agenda') . ' - ' . $agenda->meeting_date->format('Y-m-d') . '.pdf',
+                'name' => ($agenda->serviceBody->ar_name ?? 'Service Body Agenda').' - '.$agenda->meeting_date->format('Y-m-d').'.pdf',
                 'path' => $virtualPath,
                 'db_agenda_id' => $agenda->id,
                 'size' => 0,
@@ -767,8 +784,8 @@ class ServiceBodyAgendaController extends Controller
 
             for ($i = 0; $i < count($parts) - 1; $i++) {
                 $dirName = $parts[$i];
-                $accumulatedPath .= '/' . $dirName;
-                if (!isset($currentLevel[$dirName])) {
+                $accumulatedPath .= '/'.$dirName;
+                if (! isset($currentLevel[$dirName])) {
                     $currentLevel[$dirName] = [
                         'is_dir' => true,
                         'name' => $dirName,
@@ -800,8 +817,13 @@ class ServiceBodyAgendaController extends Controller
             }
 
             usort($result, function ($a, $b) {
-                if ($a['is_dir'] && !$b['is_dir']) return -1;
-                if (!$a['is_dir'] && $b['is_dir']) return 1;
+                if ($a['is_dir'] && ! $b['is_dir']) {
+                    return -1;
+                }
+                if (! $a['is_dir'] && $b['is_dir']) {
+                    return 1;
+                }
+
                 return strcasecmp($a['name'], $b['name']);
             });
 
@@ -818,11 +840,11 @@ class ServiceBodyAgendaController extends Controller
         try {
             $sbName = $agenda->serviceBody->ar_name ?? $agenda->serviceBody->en_name ?? 'Unknown Service Body';
             $meetingDate = $agenda->meeting_date->format('Y-m-d');
-            
+
             Mail::send([], [], function ($message) use ($sbName, $meetingDate) {
                 $message->to(['rsc@naegypt.org', 'arsc@naegypt.org'])
-                        ->subject("New Service Body Agenda: {$sbName} ({$meetingDate})")
-                        ->html("
+                    ->subject("New Service Body Agenda: {$sbName} ({$meetingDate})")
+                    ->html("
                             <p>Dear RSC,</p>
                             <p>A new Service Body Agenda has been submitted by the service body <strong>{$sbName}</strong> for the meeting date <strong>{$meetingDate}</strong>.</p>
                             <p>You can view and review this agenda in the dashboard or archive.</p>
@@ -830,7 +852,7 @@ class ServiceBodyAgendaController extends Controller
                         ");
             });
         } catch (Exception $e) {
-            Log::error("Failed to send service body agenda email alert: " . $e->getMessage());
+            Log::error('Failed to send service body agenda email alert: '.$e->getMessage());
         }
     }
 
@@ -839,23 +861,23 @@ class ServiceBodyAgendaController extends Controller
         $attachment = ServiceBodyAgendaAttachment::findOrFail($id);
         $agenda = $attachment->serviceBodyAgenda;
 
-        if (!$this->isAgendaVisibleToUser($agenda)) {
+        if (! $this->isAgendaVisibleToUser($agenda)) {
             abort(403, 'Unauthorized');
         }
 
-        if (!Storage::disk('storagebox')->exists($attachment->file_path)) {
+        if (! Storage::disk('storagebox')->exists($attachment->file_path)) {
             abort(404, 'File not found');
         }
 
         $disposition = request()->query('disposition', 'attachment');
-        if (!in_array($disposition, ['attachment', 'inline'])) {
+        if (! in_array($disposition, ['attachment', 'inline'])) {
             $disposition = 'attachment';
         }
 
         if ($disposition === 'inline') {
             return response()->file(Storage::disk('storagebox')->path($attachment->file_path), [
                 'Content-Type' => $attachment->mime_type,
-                'Content-Disposition' => 'inline; filename="' . $attachment->original_name . '"',
+                'Content-Disposition' => 'inline; filename="'.$attachment->original_name.'"',
                 'X-Content-Type-Options' => 'nosniff',
             ]);
         }
@@ -872,9 +894,9 @@ class ServiceBodyAgendaController extends Controller
         $agenda = $attachment->serviceBodyAgenda;
 
         // Only owner or admin can delete draft attachments
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             $sb = $this->getServiceBody();
-            if (!$sb || $sb->id !== $agenda->service_body_id) {
+            if (! $sb || $sb->id !== $agenda->service_body_id) {
                 abort(403, 'Unauthorized');
             }
         }

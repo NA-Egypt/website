@@ -4,13 +4,16 @@ namespace App\Models;
 
 use App\Traits\FormatedDateTime;
 use App\Traits\MeetingDurationTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Meeting extends Model
 {
-
     use FormatedDateTime;
     use MeetingDurationTrait;
+    use SoftDeletes;
+
     protected $fillable = [
         'group_id',
         'direct_online_group_id',
@@ -22,17 +25,20 @@ class Meeting extends Model
         'type',
         'lang',
         'status',
-        'recurrence'
+        'recurrence',
     ];
-    
+
     protected $casts = [
         'recurrence' => 'array',
     ];
-    public function group() {
+
+    public function group()
+    {
         return $this->belongsTo(Group::class);
     }
 
-    public function directOnlineGroup() {
+    public function directOnlineGroup()
+    {
         return $this->belongsTo(DirectOnlineGroup::class);
     }
 
@@ -41,15 +47,18 @@ class Meeting extends Model
         return $this->group ?: $this->directOnlineGroup;
     }
 
-    public function day() {
+    public function day()
+    {
         return $this->belongsTo(Day::class);
     }
 
-    public function topic() {
+    public function topic()
+    {
         return $this->belongsTo(Topic::class);
     }
 
-    public function topics() {
+    public function topics()
+    {
         return $this->belongsToMany(Topic::class);
     }
 
@@ -77,7 +86,7 @@ class Meeting extends Model
     }
 
     // Accessor for time durations:
-        public function getDurationAttribute()
+    public function getDurationAttribute()
     {
         return $this->calculateMeetingDuration($this->formatted_start_time, $this->formatted_end_time);
     }
@@ -89,9 +98,10 @@ class Meeting extends Model
             return __('messages.Weekly');
         }
 
-        $formatted = array_map(function($item) {
-            $translated = __('messages.' . $item);
-            return $translated !== 'messages.' . $item ? $translated : ucfirst($item);
+        $formatted = array_map(function ($item) {
+            $translated = __('messages.'.$item);
+
+            return $translated !== 'messages.'.$item ? $translated : ucfirst($item);
         }, $this->recurrence);
 
         return implode(', ', $formatted);
@@ -99,7 +109,7 @@ class Meeting extends Model
 
     public function scopeNotMonthlyRecurrent($query)
     {
-        return $query->whereDoesntHave('topics', function($q) {
+        return $query->whereDoesntHave('topics', function ($q) {
             $q->where('en_name', 'Group Business Meeting');
         });
     }
@@ -107,21 +117,21 @@ class Meeting extends Model
     public function scopeInPersonOnly($query)
     {
         return $query->whereNull('direct_online_group_id')
-            ->whereHas('group', function($q) {
+            ->whereHas('group', function ($q) {
                 $q->whereNotIn('group_type', ['online', 'اونلاين', 'اون لاين']);
             });
     }
 
     public function getNextOccurrence()
     {
-        if (!$this->day || !$this->start_time) {
+        if (! $this->day || ! $this->start_time) {
             return null;
         }
 
-        $now = \Carbon\Carbon::now();
+        $now = Carbon::now();
         $dayName = $this->day->en_name; // e.g. 'Sunday'
 
-        if (empty($dayName) || !in_array(strtolower($dayName), ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])) {
+        if (empty($dayName) || ! in_array(strtolower($dayName), ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])) {
             return null;
         }
         $startTime = $this->start_time; // e.g. '19:30:00'
@@ -129,12 +139,13 @@ class Meeting extends Model
         // If recurrence is empty or contains 'weekly', the calculation is simple:
         if (empty($this->recurrence) || in_array('weekly', $this->recurrence)) {
             // Find next occurrence of that weekday:
-            $next = \Carbon\Carbon::parse("next {$dayName} {$startTime}");
+            $next = Carbon::parse("next {$dayName} {$startTime}");
             // If today is the weekday and the start time is in the future, we use today:
-            $today = \Carbon\Carbon::parse("today {$startTime}");
+            $today = Carbon::parse("today {$startTime}");
             if ($now->dayOfWeek === $today->dayOfWeek && $now->lt($today)) {
                 return $today;
             }
+
             return $next;
         }
 
@@ -143,7 +154,7 @@ class Meeting extends Model
 
         foreach ([0, 1] as $monthOffset) {
             $month = $now->copy()->addMonths($monthOffset);
-            
+
             $startOfMonth = $month->copy()->startOfMonth();
             $endOfMonth = $month->copy()->endOfMonth();
 
@@ -184,7 +195,7 @@ class Meeting extends Model
             }
         }
 
-        usort($candidates, function($a, $b) {
+        usort($candidates, function ($a, $b) {
             return $a->timestamp <=> $b->timestamp;
         });
 
@@ -197,4 +208,3 @@ class Meeting extends Model
         return null;
     }
 }
-

@@ -8,12 +8,15 @@ use App\Jobs\SendCommitteeReportSubmissionNotification;
 use App\Models\CommitteeReport;
 use App\Models\CommitteeReportLog;
 use App\Models\ServiceCommittee;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CommitteeReportController extends Controller
 {
+    use PaginatesApi;
+
     protected function isRsc($user): bool
     {
         return $user && ($user->hasRole('super admin') || $user->hasRole('rsc'));
@@ -64,7 +67,7 @@ class CommitteeReportController extends Controller
             $query->whereIn('service_committee_id', $allowedCommitteeIds);
         }
 
-        return CommitteeReportResource::collection($query->get());
+        return CommitteeReportResource::collection($query->paginate($this->resolvePerPage($request)));
     }
 
     /**

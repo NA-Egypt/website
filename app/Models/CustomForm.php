@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Exceptions\UserFacingException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class CustomForm extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'type',
@@ -14,7 +18,7 @@ class CustomForm extends Model
         'slug',
         'views',
         'user_id',
-        'settings'
+        'settings',
     ];
 
     protected $casts = [
@@ -26,6 +30,24 @@ class CustomForm extends Model
         static::creating(function ($form) {
             if (empty($form->slug)) {
                 $form->slug = Str::random(12);
+            }
+        });
+
+        static::deleting(function (CustomForm $form) {
+            if (! $form->isForceDeleting() && ! str_contains($form->slug, '__deleted_')) {
+                $form->slug = $form->slug.'__deleted_'.$form->id;
+                $form->saveQuietly();
+            }
+        });
+
+        static::restoring(function (CustomForm $form) {
+            $suffix = '__deleted_'.$form->id;
+            if (str_ends_with($form->slug, $suffix)) {
+                $originalSlug = substr($form->slug, 0, -strlen($suffix));
+                if (static::where('slug', $originalSlug)->whereNull('deleted_at')->exists()) {
+                    throw new UserFacingException(__('messages.flash.undo.slug_taken'), 'slug_taken', 422);
+                }
+                $form->slug = $originalSlug;
             }
         });
     }
@@ -50,6 +72,7 @@ class CustomForm extends Model
         if ($this->views <= 0) {
             return 0;
         }
+
         return round(($this->submissions()->count() / $this->views) * 100, 1);
     }
 

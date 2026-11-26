@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TopicResource;
 use App\Models\Topic;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class TopicController extends Controller implements HasMiddleware
 {
+    use PaginatesApi;
+
     public static function middleware(): array
     {
         return [
@@ -21,9 +24,11 @@ class TopicController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return TopicResource::collection(Topic::all());
+        return TopicResource::collection(
+            $this->paginateOrAll($request, Topic::query())
+        );
     }
 
     /**

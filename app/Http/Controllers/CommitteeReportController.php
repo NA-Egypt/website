@@ -7,6 +7,8 @@ use App\Models\CommitteeReport;
 use App\Models\CommitteeReportAttachment;
 use App\Models\CommitteeReportLog;
 use App\Models\ServiceCommittee;
+use App\Models\User;
+use App\Notifications\CommitteeReportStatusNotification;
 use App\Services\MpdfService;
 use App\Services\OneDriveSyncService;
 use App\Services\ReportArchiver;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -283,6 +286,10 @@ class CommitteeReportController extends Controller
 
         if ($report->status === 'approved') {
             app(ReportArchiver::class)->archive($report, true);
+
+            if ($report->serviceCommittee?->user) {
+                $report->serviceCommittee->user->notify(new CommitteeReportStatusNotification($report, 'approved'));
+            }
         }
 
         CommitteeReportLog::record(
@@ -564,14 +571,6 @@ class CommitteeReportController extends Controller
             'status' => 'draft',
         ]);
 
-        // Delete physical files
-        foreach ($report->attachments as $attachment) {
-            if (Storage::exists($attachment->file_path)) {
-                Storage::delete($attachment->file_path);
-            }
-            $attachment->delete();
-        }
-
         $report->delete();
 
         CommitteeReportLog::record(
@@ -588,7 +587,23 @@ class CommitteeReportController extends Controller
             ]
         );
 
-        return redirect()->route('committee-reports.index')->with('success', __('messages.report_deleted_success'));
+        return redirect()->route('committee-reports.index')
+            ->with('success', __('messages.report_deleted_success'))
+            ->with('undo_url', route('committee-reports.restore', $reportId));
+    }
+
+    public function restore($id)
+    {
+        $user = Auth::user();
+        if (! $user || ! $user->hasRole('super admin')) {
+            abort(403, 'Unauthorized. Only Super Admin can restore committee reports.');
+        }
+
+        $report = CommitteeReport::withTrashed()->findOrFail($id);
+        $report->restore();
+
+        return redirect()->route('committee-reports.index')
+            ->with('success', __('messages.flash.undo.restored_success'));
     }
 
     public function pdf($id)
@@ -703,6 +718,11 @@ class CommitteeReportController extends Controller
 
         $report->update(['status' => 'submitted']);
         $this->sendNotificationEmail($report);
+
+        $rscUsers = User::whereHas('roles', fn ($q) => $q->where('name', 'rsc'))->get();
+        if ($rscUsers->isNotEmpty()) {
+            Notification::send($rscUsers, new CommitteeReportStatusNotification($report, 'submitted'));
+        }
 
         CommitteeReportLog::record(
             'submitted',
@@ -1717,6 +1737,10 @@ class CommitteeReportController extends Controller
 
         app(ReportArchiver::class)->archive($report, true);
 
+        if ($report->serviceCommittee?->user) {
+            $report->serviceCommittee->user->notify(new CommitteeReportStatusNotification($report, 'approved'));
+        }
+
         CommitteeReportLog::record(
             'approved',
             $report,
@@ -1749,6 +1773,10 @@ class CommitteeReportController extends Controller
             'status' => 'draft',
             'review_notes' => $request->review_notes,
         ]);
+
+        if ($report->serviceCommittee?->user) {
+            $report->serviceCommittee->user->notify(new CommitteeReportStatusNotification($report, 'returned'));
+        }
 
         CommitteeReportLog::record(
             'returned_to_draft',

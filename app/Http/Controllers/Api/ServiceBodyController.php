@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceBodyResource;
 use App\Models\ServiceBody;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class ServiceBodyController extends Controller implements HasMiddleware
 {
+    use PaginatesApi;
+
     public static function middleware(): array
     {
         return [
@@ -21,9 +24,11 @@ class ServiceBodyController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ServiceBodyResource::collection(ServiceBody::with('day')->get());
+        return ServiceBodyResource::collection(
+            $this->paginateOrAll($request, ServiceBody::with('day'))
+        );
     }
 
     /**

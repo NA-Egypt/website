@@ -3449,5 +3449,41 @@ return [
         'whatsapp' => [
             'send_message_failed' => 'فشل إرسال الرسالة.',
         ],
+
+        'undo' => [
+            'restored_success' => 'تم استعادة السجل بنجاح.',
+            'slug_taken' => 'تعذر استعادة النموذج لأن الرابط المختصر مستخدم بالفعل لنموذج آخر نشط.',
+        ],
+
+        'notifications' => [
+            'marked_read' => 'تم تحديد الإشعار كمقروء.',
+            'all_marked_read' => 'تم تحديد جميع الإشعارات كمقروءة.',
+        ],
+    ],
+
+    'notifications' => [
+        'committee_report_submitted_title' => 'تم إرسال تقرير لجنة',
+        'committee_report_submitted_body' => 'تم إرسال تقرير من :committee للمراجعة من قبل اللجنة الإقليمية.',
+        'committee_report_returned_title' => 'تمت إعادة تقرير اللجنة للمسودة',
+        'committee_report_returned_body' => 'تمت إعادة تقرير :committee إلى المسودة. الملاحظات: :notes',
+        'committee_report_approved_title' => 'تم اعتماد تقرير اللجنة',
+        'committee_report_approved_body' => 'تم اعتماد ونشر تقرير :committee.',
+
+        'literature_request_submitted_title' => 'تم إرسال طلب مطبوعات',
+        'literature_request_submitted_body' => 'قدمت مجموعة :group طلب مطبوعات جديد.',
+        'literature_request_approved_title' => 'تم اعتماد طلب المطبوعات',
+        'literature_request_approved_body' => 'تم اعتماد الطلب المجمع لـ :service_body وإرساله إلى لجنة المطبوعات.',
+        'literature_request_returned_title' => 'تم تحديث فاتورة المطبوعات',
+        'literature_request_returned_body' => 'تم تحديث فاتورة طلب المطبوعات رقم #:id وإعادتها.',
+        'literature_request_dispatched_title' => 'تم صرف طلب المطبوعات',
+        'literature_request_dispatched_body' => 'تم إصدار إذن تسليم رقم #:slip لطلب المطبوعات رقم #:id.',
+
+        'inventory_slip_pending_title' => 'إذن مخزون بانتظار تأكيد الاستلام',
+        'inventory_slip_pending_body' => 'إذن المخزون رقم #:slip (:type) بانتظار تأكيد الاستلام منك.',
+
+        'change_request_status_title' => 'تحديث حالة طلب التغيير',
+        'change_request_status_body' => 'أصبحت حالة طلب التغيير ":subject" الآن: :status.',
+
+        'view_action' => 'عرض التفاصيل',
     ],
 ];

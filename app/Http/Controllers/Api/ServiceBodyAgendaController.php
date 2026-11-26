@@ -3,30 +3,36 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceBodyAgenda;
 use App\Http\Resources\ServiceBodyAgendaResource;
+use App\Models\ServiceBodyAgenda;
+use App\Traits\PaginatesApi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ServiceBodyAgendaController extends Controller
 {
+    use PaginatesApi;
+
     protected function isRsc($user)
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
+
         return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
     protected function isRestrictedConsumer($user)
     {
-        if (!$user) {
+        if (! $user) {
             return true;
         }
         if ($user->hasRole('super admin') || $user->hasRole('rsc') || $user->hasRole('ServiceBody')) {
             return false;
         }
+
         return true;
     }
 
@@ -61,99 +67,99 @@ class ServiceBodyAgendaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::guard('sanctum')->user() ?? auth()->user();
         $isRsc = $this->isRsc($user);
         $query = ServiceBodyAgenda::with('serviceBody');
 
-        $daySql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+        $daySql = DB::getDriverName() === 'sqlite'
             ? "cast(strftime('%d', meeting_date) as integer)"
-            : "DAY(meeting_date)";
+            : 'DAY(meeting_date)';
 
         if ($this->isRestrictedConsumer($user)) {
             // Only approved and released
             $query->where('status', 'approved');
-            $query->where(function($q) use ($daySql) {
+            $query->where(function ($q) use ($daySql) {
                 $q->where('is_exceptional', true)
-                  ->orWhere(function($subQ) use ($daySql) {
-                      $now = now();
-                      $subQ->where(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} <= 10")
-                                ->where(function($dateQ) use ($now) {
+                    ->orWhere(function ($subQ) use ($daySql) {
+                        $now = now();
+                        $subQ->where(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} <= 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->whereMonth('meeting_date', '<', $now->month)
-                                                        ->orWhere(function($dQ) use ($now) {
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) use ($now) {
+                                                    $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                        ->orWhere(function ($dQ) use ($now) {
                                                             $dQ->whereMonth('meeting_date', $now->month)
-                                                               ->whereDay('meeting_date', '<=', $now->day);
+                                                                ->whereDay('meeting_date', '<=', $now->day);
                                                         });
-                                                 });
-                                          });
-                                  });
-                      })->orWhere(function($inner) use ($now, $daySql) {
-                          $inner->whereRaw("{$daySql} > 10")
-                                ->where(function($dateQ) use ($now) {
+                                                });
+                                        });
+                                });
+                        })->orWhere(function ($inner) use ($now, $daySql) {
+                            $inner->whereRaw("{$daySql} > 10")
+                                ->where(function ($dateQ) use ($now) {
                                     $dateQ->whereYear('meeting_date', '<', $now->year)
-                                          ->orWhere(function($yQ) use ($now) {
-                                              $yQ->whereYear('meeting_date', $now->year)
-                                                 ->where(function($mQ) use ($now) {
-                                                     $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
-                                                 });
-                                          });
-                                  });
-                      });
-                  });
+                                        ->orWhere(function ($yQ) use ($now) {
+                                            $yQ->whereYear('meeting_date', $now->year)
+                                                ->where(function ($mQ) {
+                                                    $mQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                });
+                                        });
+                                });
+                        });
+                    });
             });
-        } elseif (!$isRsc) {
+        } elseif (! $isRsc) {
             $sbId = $user ? $user->service_body_id : 0;
             // ServiceBody role: sees all of their own, but others' only approved + released
-            $query->where(function($q) use ($sbId, $daySql) {
+            $query->where(function ($q) use ($sbId, $daySql) {
                 if ($sbId) {
                     $q->where('service_body_id', $sbId);
                 }
-                $q->orWhere(function($otherQ) use ($sbId, $daySql) {
+                $q->orWhere(function ($otherQ) use ($sbId, $daySql) {
                     if ($sbId) {
                         $otherQ->where('service_body_id', '!=', $sbId);
                     }
                     $otherQ->where('status', 'approved');
-                    $otherQ->where(function($releaseQ) use ($daySql) {
+                    $otherQ->where(function ($releaseQ) use ($daySql) {
                         $releaseQ->where('is_exceptional', true)
-                                 ->orWhere(function($subQ) use ($daySql) {
-                                     $now = now();
-                                     $subQ->where(function($inner) use ($now, $daySql) {
-                                         $inner->whereRaw("{$daySql} <= 10")
-                                               ->where(function($dateQ) use ($now) {
-                                                   $dateQ->whereYear('meeting_date', '<', $now->year)
-                                                         ->orWhere(function($yQ) use ($now) {
-                                                             $yQ->whereYear('meeting_date', $now->year)
-                                                                ->where(function($mQ) use ($now) {
-                                                                    $mQ->whereMonth('meeting_date', '<', $now->month)
-                                                                       ->orWhere(function($dQ) use ($now) {
-                                                                           $dQ->whereMonth('meeting_date', $now->month)
-                                                                              ->whereDay('meeting_date', '<=', $now->day);
-                                                                       });
+                            ->orWhere(function ($subQ) use ($daySql) {
+                                $now = now();
+                                $subQ->where(function ($inner) use ($now, $daySql) {
+                                    $inner->whereRaw("{$daySql} <= 10")
+                                        ->where(function ($dateQ) use ($now) {
+                                            $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                ->orWhere(function ($yQ) use ($now) {
+                                                    $yQ->whereYear('meeting_date', $now->year)
+                                                        ->where(function ($mQ) use ($now) {
+                                                            $mQ->whereMonth('meeting_date', '<', $now->month)
+                                                                ->orWhere(function ($dQ) use ($now) {
+                                                                    $dQ->whereMonth('meeting_date', $now->month)
+                                                                        ->whereDay('meeting_date', '<=', $now->day);
                                                                 });
-                                                         });
-                                                 });
-                                     })->orWhere(function($inner) use ($now, $daySql) {
-                                         $inner->whereRaw("{$daySql} > 10")
-                                               ->where(function($dateQ) use ($now) {
-                                                   $dateQ->whereYear('meeting_date', '<', $now->year)
-                                                         ->orWhere(function($yQ) use ($now) {
-                                                             $yQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
-                                                         });
-                                               });
-                                     });
-                                 });
+                                                        });
+                                                });
+                                        });
+                                })->orWhere(function ($inner) use ($now, $daySql) {
+                                    $inner->whereRaw("{$daySql} > 10")
+                                        ->where(function ($dateQ) use ($now) {
+                                            $dateQ->whereYear('meeting_date', '<', $now->year)
+                                                ->orWhere(function ($yQ) {
+                                                    $yQ->where('meeting_date', '<', Carbon::now()->startOfMonth()->subMonth()->day(10));
+                                                });
+                                        });
+                                });
+                            });
                     });
                 });
             });
         }
 
-        return ServiceBodyAgendaResource::collection($query->get());
+        return ServiceBodyAgendaResource::collection($query->paginate($this->resolvePerPage($request)));
     }
 
     /**
@@ -164,9 +170,9 @@ class ServiceBodyAgendaController extends Controller
         $user = Auth::guard('sanctum')->user() ?? auth()->user();
         $isRsc = $this->isRsc($user);
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sbId = $user ? $user->service_body_id : 0;
-            if (!$user || !$user->hasPermissionTo('create sb agenda') || !$sbId || $sbId !== (int)$request->service_body_id) {
+            if (! $user || ! $user->hasPermissionTo('create sb agenda') || ! $sbId || $sbId !== (int) $request->service_body_id) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -202,7 +208,7 @@ class ServiceBodyAgendaController extends Controller
     public function show(ServiceBodyAgenda $serviceBodyAgenda)
     {
         $user = Auth::guard('sanctum')->user() ?? auth()->user();
-        if (!$this->isAgendaVisibleToUser($serviceBodyAgenda, $user)) {
+        if (! $this->isAgendaVisibleToUser($serviceBodyAgenda, $user)) {
             abort(403, 'Unauthorized');
         }
 
@@ -217,9 +223,9 @@ class ServiceBodyAgendaController extends Controller
         $user = Auth::guard('sanctum')->user() ?? auth()->user();
         $isRsc = $this->isRsc($user);
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sbId = $user ? $user->service_body_id : 0;
-            if (!$user || !$user->hasPermissionTo('edit sb agenda') || !$sbId || $sbId !== $serviceBodyAgenda->service_body_id || $sbId !== (int)$request->service_body_id) {
+            if (! $user || ! $user->hasPermissionTo('edit sb agenda') || ! $sbId || $sbId !== $serviceBodyAgenda->service_body_id || $sbId !== (int) $request->service_body_id) {
                 abort(403, 'Unauthorized');
             }
             if ($serviceBodyAgenda->status !== 'draft') {
@@ -259,9 +265,9 @@ class ServiceBodyAgendaController extends Controller
         $user = Auth::guard('sanctum')->user() ?? auth()->user();
         $isRsc = $this->isRsc($user);
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $sbId = $user ? $user->service_body_id : 0;
-            if (!$user || !$user->hasPermissionTo('delete sb agenda') || !$sbId || $sbId !== $serviceBodyAgenda->service_body_id) {
+            if (! $user || ! $user->hasPermissionTo('delete sb agenda') || ! $sbId || $sbId !== $serviceBodyAgenda->service_body_id) {
                 abort(403, 'Unauthorized');
             }
             if ($serviceBodyAgenda->status !== 'draft') {
@@ -270,6 +276,7 @@ class ServiceBodyAgendaController extends Controller
         }
 
         $serviceBodyAgenda->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -2,13 +2,17 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\ServiceCommittee;
 use App\Models\CommitteeReport;
-use App\Models\CommitteeReportAttachment;
+use App\Models\ServiceCommittee;
+use App\Models\User;
+use App\Services\ReportArchiver;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CommitteeReportWorkflowTest extends TestCase
@@ -19,17 +23,17 @@ class CommitteeReportWorkflowTest extends TestCase
     {
         parent::setUp();
         Storage::fake('local');
-        
+
         // Disable localization redirect middlewares to prevent redirects to /ar in test environment
         $this->withoutMiddleware([
-            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
-            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+            LocaleSessionRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
         ]);
 
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'ServiceBody', 'guard_name' => 'web']);
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'gsr', 'guard_name' => 'web']);
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'ServiceBody', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'gsr', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'rsc', 'guard_name' => 'web']);
     }
 
     protected function createCommittee($user, $attributes = [])
@@ -65,7 +69,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
             'sections' => [
-                ['headline' => 'Test Headline', 'content' => 'Draft body']
+                ['headline' => 'Test Headline', 'content' => 'Draft body'],
             ],
             'status' => 'draft',
             'is_exceptional' => '1',
@@ -82,8 +86,8 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $report = CommitteeReport::where('service_committee_id', $committee->id)->first();
-        $this->assertEquals('2026-05-20', \Carbon\Carbon::parse($report->meeting_date)->toDateString());
-        $this->assertEquals(now()->toDateString(), \Carbon\Carbon::parse($report->report_date)->toDateString());
+        $this->assertEquals('2026-05-20', Carbon::parse($report->meeting_date)->toDateString());
+        $this->assertEquals(now()->toDateString(), Carbon::parse($report->report_date)->toDateString());
 
         // 2. View Draft
         $this->get(route('committee-reports.show', $report->id))->assertStatus(200);
@@ -94,7 +98,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday Updated',
             'sections' => [
-                ['headline' => 'Test Headline Updated', 'content' => 'Draft body updated']
+                ['headline' => 'Test Headline Updated', 'content' => 'Draft body updated'],
             ],
             'status' => 'draft',
             'is_exceptional' => '0',
@@ -112,7 +116,7 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $report->refresh();
-        $this->assertEquals('2026-05-20', \Carbon\Carbon::parse($report->meeting_date)->toDateString());
+        $this->assertEquals('2026-05-20', Carbon::parse($report->meeting_date)->toDateString());
     }
 
     public function test_unauthorized_user_cannot_view_or_edit_draft()
@@ -347,7 +351,7 @@ class CommitteeReportWorkflowTest extends TestCase
         // Test 3: Filter by Date Range (2026-06-01 to 2026-06-30)
         $response = $this->get(route('committee-reports.archive', [
             'start_date' => '2026-06-01',
-            'end_date' => '2026-06-30'
+            'end_date' => '2026-06-30',
         ]));
         $response->assertStatus(200);
         $response->assertSee('Wednesday Special');
@@ -374,7 +378,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
             'sections' => [
-                ['headline' => null, 'content' => 'Report with attachments']
+                ['headline' => null, 'content' => 'Report with attachments'],
             ],
             'status' => 'draft',
             'attachments' => [$file1, $file2],
@@ -393,7 +397,7 @@ class CommitteeReportWorkflowTest extends TestCase
 
         // Delete attachment from draft
         $this->delete(route('committee-reports.deleteAttachment', $attachment->id))
-             ->assertRedirect();
+            ->assertRedirect();
         $this->assertEquals(1, $report->attachments()->count());
         Storage::disk('local')->assertMissing($attachment->file_path);
     }
@@ -415,7 +419,7 @@ class CommitteeReportWorkflowTest extends TestCase
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
             'sections' => [
-                ['headline' => null, 'content' => 'Report with 5 attachments']
+                ['headline' => null, 'content' => 'Report with 5 attachments'],
             ],
             'status' => 'draft',
             'attachments' => $files,
@@ -426,14 +430,14 @@ class CommitteeReportWorkflowTest extends TestCase
         $this->assertEquals(5, $report->attachments()->count());
 
         // 2. Uploading a 6th attachment should fail validation
-        $extraFile = UploadedFile::fake()->create("doc_6.pdf", 100, 'application/pdf');
+        $extraFile = UploadedFile::fake()->create('doc_6.pdf', 100, 'application/pdf');
         $files[] = $extraFile;
 
         $response = $this->post(route('committee-reports.store'), [
             'meeting_date' => '2026-05-20',
             'meeting_day_description' => 'Wednesday',
             'sections' => [
-                ['headline' => null, 'content' => 'Report with 6 attachments']
+                ['headline' => null, 'content' => 'Report with 6 attachments'],
             ],
             'status' => 'draft',
             'attachments' => $files,
@@ -536,7 +540,7 @@ class CommitteeReportWorkflowTest extends TestCase
 
         // Try to approve
         $this->post(route('committee-reports.approveAndSend', $report->id))
-             ->assertStatus(403);
+            ->assertStatus(403);
 
         // Try to return to draft
         $this->post(route('committee-reports.returnToDraft', $report->id), [
@@ -599,6 +603,7 @@ class CommitteeReportWorkflowTest extends TestCase
             $this->get(route('committee-reports.show', $approvedReportPreviousMonth->id))->assertStatus(200);
         }
     }
+
     public function test_service_committee_logo_and_footers()
     {
         Storage::fake('public');
@@ -622,7 +627,7 @@ class CommitteeReportWorkflowTest extends TestCase
         ]);
 
         $response->assertRedirect(route('serviceCommittee.index'));
-        
+
         $committee->refresh();
         $this->assertNotNull($committee->logo);
         Storage::disk('public')->assertExists($committee->logo);
@@ -675,13 +680,13 @@ class CommitteeReportWorkflowTest extends TestCase
             'status' => 'approved',
         ]);
 
-        $archiver = new \App\Services\ReportArchiver();
+        $archiver = new ReportArchiver;
         $this->assertTrue($archiver->archive($report1));
 
         $baseFolder = 'Archives/أجندة إجتماع لجنة خدمة الاقليم/2026/أجندة أغسطس ٢٠٢٦/التقارير الشهرية حتى ١٠ يوليو ٢٠٢٦/اللجنة الفنية المشتركة';
 
         // Since there is only one report for this committee in June 2026, it should not have a suffix
-        $expectedPath1 = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
+        $expectedPath1 = $baseFolder.'/تقريرـاللجنة_الفنية_المشتركة_06_2026.pdf';
         Storage::disk('storagebox')->assertExists($expectedPath1);
 
         // Add a second approved report in the same month
@@ -698,8 +703,8 @@ class CommitteeReportWorkflowTest extends TestCase
         $this->assertTrue($archiver->archive($report2));
 
         // Now they should have _1 and _2 suffixes
-        $expectedPath1Suffix = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026_1.pdf';
-        $expectedPath2Suffix = $baseFolder . '/تقريرـاللجنة_الفنية_المشتركة_06_2026_2.pdf';
+        $expectedPath1Suffix = $baseFolder.'/تقريرـاللجنة_الفنية_المشتركة_06_2026_1.pdf';
+        $expectedPath2Suffix = $baseFolder.'/تقريرـاللجنة_الفنية_المشتركة_06_2026_2.pdf';
 
         Storage::disk('storagebox')->assertExists($expectedPath1Suffix);
         Storage::disk('storagebox')->assertExists($expectedPath2Suffix);
@@ -831,7 +836,7 @@ class CommitteeReportWorkflowTest extends TestCase
 
         $responseAdmin = $this->delete(route('committee-reports.destroy', $draftReport->id));
         $responseAdmin->assertRedirect(route('committee-reports.index'));
-        $this->assertDatabaseMissing('committee_reports', ['id' => $draftReport->id]);
+        $this->assertSoftDeleted('committee_reports', ['id' => $draftReport->id]);
 
         // Verify audit log recorded for deletion
         $this->assertDatabaseHas('committee_report_logs', [

@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
 class CalendarEvent extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -73,18 +76,24 @@ class CalendarEvent extends Model
             return __('messages.Once') ?? 'Once';
         }
 
-        $weekday = $this->start ? \Carbon\Carbon::parse($this->start)->englishDayOfWeek : '';
+        $weekday = $this->start ? Carbon::parse($this->start)->englishDayOfWeek : '';
 
         $formatted = array_map(function ($item) use ($weekday) {
-            if ($item === 'every_two_months') return __('messages.Every Two Months');
-            if ($item === 'monthly') return __('messages.Monthly (Same Date)');
-            if (in_array($item, ['1st', '2nd', '3rd', '4th', '5th', 'last'])) {
-                $translatedItem = __('messages.' . $item);
-                $translatedWeekday = $weekday ? __('messages.' . strtolower($weekday)) : '';
-                return $translatedItem . ($translatedWeekday ? ' ' . $translatedWeekday : '');
+            if ($item === 'every_two_months') {
+                return __('messages.Every Two Months');
             }
+            if ($item === 'monthly') {
+                return __('messages.Monthly (Same Date)');
+            }
+            if (in_array($item, ['1st', '2nd', '3rd', '4th', '5th', 'last'])) {
+                $translatedItem = __('messages.'.$item);
+                $translatedWeekday = $weekday ? __('messages.'.strtolower($weekday)) : '';
+
+                return $translatedItem.($translatedWeekday ? ' '.$translatedWeekday : '');
+            }
+
             // For weekly or once:
-            return __('messages.' . ucfirst($item));
+            return __('messages.'.ucfirst($item));
         }, $this->recurrence);
 
         return implode(', ', $formatted);
@@ -114,7 +123,7 @@ class CalendarEvent extends Model
         if (preg_match('/https?:\/\/[^\s"\'<>]+/i', $loc, $matches)) {
             $url = $matches[0];
         } elseif (preg_match('/^(?:www\.|(?:[\w-]+\.)*zoom\.us\/|maps\.app\.goo\.gl\/|(?:www\.)?google\.[a-z.]+\/maps|goo\.gl\/maps|maps\.google\.[a-z.]+\/|maps\.apple\.com\/|waze\.com\/)[^\s"\'<>]*/i', $loc, $matches)) {
-            $url = 'https://' . $matches[0];
+            $url = 'https://'.$matches[0];
         }
 
         if ($url) {
@@ -164,10 +173,10 @@ class CalendarEvent extends Model
             ->get();
 
         foreach ($committeesAndWorkgroups as $item) {
-            if (!empty($item->ar_name)) {
+            if (! empty($item->ar_name)) {
                 $names[] = trim($item->ar_name);
             }
-            if (!empty($item->en_name)) {
+            if (! empty($item->en_name)) {
                 $names[] = trim($item->en_name);
             }
         }
@@ -177,10 +186,10 @@ class CalendarEvent extends Model
             ->get();
 
         foreach ($serviceBodies as $sb) {
-            if (!empty($sb->ar_name)) {
+            if (! empty($sb->ar_name)) {
                 $names[] = trim($sb->ar_name);
             }
-            if (!empty($sb->en_name)) {
+            if (! empty($sb->en_name)) {
                 $names[] = trim($sb->en_name);
             }
         }
@@ -209,7 +218,7 @@ class CalendarEvent extends Model
                 'label' => $primary,
                 'ar_name' => trim((string) $item->ar_name),
                 'en_name' => trim((string) $item->en_name),
-                'search_text' => mb_strtolower(trim($item->ar_name . ' ' . $item->en_name)),
+                'search_text' => mb_strtolower(trim($item->ar_name.' '.$item->en_name)),
                 'secondary' => ($secondary && $secondary !== $primary) ? $secondary : '',
             ];
         };
@@ -219,7 +228,7 @@ class CalendarEvent extends Model
             ->orderBy($isAr ? 'ar_name' : 'en_name')
             ->get()
             ->map($formatItem)
-            ->filter(fn ($i) => !empty($i['value']))
+            ->filter(fn ($i) => ! empty($i['value']))
             ->values()
             ->all();
 
@@ -228,7 +237,7 @@ class CalendarEvent extends Model
             ->orderBy($isAr ? 'ar_name' : 'en_name')
             ->get()
             ->map($formatItem)
-            ->filter(fn ($i) => !empty($i['value']))
+            ->filter(fn ($i) => ! empty($i['value']))
             ->values()
             ->all();
 
@@ -236,7 +245,7 @@ class CalendarEvent extends Model
             ->orderBy($isAr ? 'ar_name' : 'en_name')
             ->get()
             ->map($formatItem)
-            ->filter(fn ($i) => !empty($i['value']))
+            ->filter(fn ($i) => ! empty($i['value']))
             ->values()
             ->all();
 

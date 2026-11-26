@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InventoryItem extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'name_en',
@@ -26,17 +29,17 @@ class InventoryItem extends Model
         'Coins',
         'Medallions',
         'Readings',
-        'Others'
+        'Others',
     ];
 
     public function getStoreDisplayNameAttribute()
     {
         $isEnglishCategory = in_array($this->category, ['English Books', 'English IP']);
-        
+
         if ($isEnglishCategory) {
             return $this->name_en ?: $this->name;
         }
-        
+
         return $this->name ?: $this->name_en;
     }
 

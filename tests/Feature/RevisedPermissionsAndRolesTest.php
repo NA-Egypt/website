@@ -2,12 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\YearlyCalendar;
 use App\Models\CalendarEvent;
 use App\Models\InventoryItem;
 use App\Models\InventorySlip;
+use App\Models\ServiceCommittee;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -17,12 +22,19 @@ class RevisedPermissionsAndRolesTest extends TestCase
     use RefreshDatabase;
 
     protected $litUser;
+
     protected $storeManager;
+
     protected $rscUser;
+
     protected $committeesUser;
+
     protected $serviceBodyUser;
+
     protected $gsrUser;
+
     protected $superAdmin;
+
     protected $slip;
 
     protected function setUp(): void
@@ -30,8 +42,8 @@ class RevisedPermissionsAndRolesTest extends TestCase
         parent::setUp();
 
         $this->withoutMiddleware([
-            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
-            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+            LocaleSessionRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
         ]);
 
         // Run the seed migration logic
@@ -143,7 +155,7 @@ class RevisedPermissionsAndRolesTest extends TestCase
      */
     public function test_event_creation_allowed_for_committees_servicebodies_rsc_and_superadmin_only()
     {
-        \App\Models\ServiceCommittee::create([
+        ServiceCommittee::create([
             'ar_name' => 'لجنة الأنشطة',
             'en_name' => 'Activities Committee',
             'status' => 'active',
@@ -232,7 +244,7 @@ class RevisedPermissionsAndRolesTest extends TestCase
             ->deleteJson(route('web-calendar-events.destroy', $event->id))
             ->assertStatus(204);
 
-        $this->assertDatabaseMissing('calendar_events', ['id' => $event->id]);
+        $this->assertSoftDeleted('calendar_events', ['id' => $event->id]);
     }
 
     /**
@@ -257,8 +269,8 @@ class RevisedPermissionsAndRolesTest extends TestCase
         $commResponse->assertSee('data-can-create');
 
         // Livewire saveEvent aborts 403 for GSR
-        \Livewire\Livewire::actingAs($this->gsrUser)
-            ->test(\App\Livewire\YearlyCalendar::class)
+        Livewire::actingAs($this->gsrUser)
+            ->test(YearlyCalendar::class)
             ->set('title', 'GSR Event Attempt')
             ->set('start', '2026-09-10 10:00:00')
             ->set('end', '2026-09-10 12:00:00')

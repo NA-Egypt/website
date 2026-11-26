@@ -49,8 +49,11 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'warning' => fn () => $request->session()->get('warning'),
                 'status' => fn () => $request->session()->get('status'),
+                'undo_url' => fn () => $request->session()->get('undo_url'),
+            ],
+            'notifications' => [
+                'unread_count' => fn () => $request->user() ? $request->user()->unreadNotifications()->count() : 0,
             ],
         ];
     }
 }
-

@@ -17,7 +17,7 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('role:super admin|rsc', only: ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']),
+            new Middleware('role:super admin|rsc', only: ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy', 'restore']),
         ];
     }
 
@@ -127,10 +127,33 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
     {
         $directOnlineGroup->delete();
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json(['success' => true, 'message' => __('messages.direct_online_group_deleted_success')]);
+        $undoUrl = route('direct-online-group.restore', $directOnlineGroup->id);
+        if ($request->hasSession()) {
+            $request->session()->flash('undo_url', $undoUrl);
         }
 
-        return redirect()->route('direct-online-group.index')->with('success', __('messages.direct_online_group_deleted_success'));
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.direct_online_group_deleted_success'),
+                'undo_url' => $undoUrl,
+            ]);
+        }
+
+        return redirect()->route('direct-online-group.index')
+            ->with('success', __('messages.direct_online_group_deleted_success'))
+            ->with('undo_url', $undoUrl);
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $directOnlineGroup = DirectOnlineGroup::withTrashed()->findOrFail($id);
+        $directOnlineGroup->restore();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.flash.undo.restored_success')]);
+        }
+
+        return redirect()->route('direct-online-group.index')->with('success', __('messages.flash.undo.restored_success'));
     }
 }

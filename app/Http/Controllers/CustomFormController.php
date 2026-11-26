@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserFacingException;
+use App\Models\City;
 use App\Models\CustomForm;
 use App\Models\CustomFormField;
 use App\Models\CustomFormSubmission;
+use App\Models\Group;
+use App\Models\Neighborhood;
+use App\Models\ServiceBody;
+use App\Models\ServiceCommittee;
+use App\Services\MpdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Services\MpdfService;
 
 class CustomFormController extends Controller
 {
@@ -124,7 +130,7 @@ class CustomFormController extends Controller
                     'custom_form_id' => $form->id,
                     'label' => $fieldData['label'],
                     'type' => $fieldData['type'],
-                    'required' => !empty($fieldData['required']),
+                    'required' => ! empty($fieldData['required']),
                     'options' => $optionsJSON,
                     'sort_order' => $index,
                 ]);
@@ -139,6 +145,7 @@ class CustomFormController extends Controller
         $this->checkAccess($form);
         $form->load('fields');
         $isArchived = $form->isArchived();
+
         return view('forms.edit', compact('form', 'isArchived'));
     }
 
@@ -213,7 +220,7 @@ class CustomFormController extends Controller
         if ($request->has('fields')) {
             foreach ($request->fields as $index => $fieldData) {
                 $optionsJSON = $this->parseFieldOptions($fieldData);
-                $fieldId = !empty($fieldData['id']) ? (int) $fieldData['id'] : null;
+                $fieldId = ! empty($fieldData['id']) ? (int) $fieldData['id'] : null;
 
                 if ($fieldId && $existingFields->has($fieldId)) {
                     // Update existing field in-place so its ID remains unchanged
@@ -221,7 +228,7 @@ class CustomFormController extends Controller
                     $field->update([
                         'label' => $fieldData['label'],
                         'type' => $fieldData['type'],
-                        'required' => !empty($fieldData['required']),
+                        'required' => ! empty($fieldData['required']),
                         'options' => $optionsJSON,
                         'sort_order' => $index,
                     ]);
@@ -232,7 +239,7 @@ class CustomFormController extends Controller
                         'custom_form_id' => $form->id,
                         'label' => $fieldData['label'],
                         'type' => $fieldData['type'],
-                        'required' => !empty($fieldData['required']),
+                        'required' => ! empty($fieldData['required']),
                         'options' => $optionsJSON,
                         'sort_order' => $index,
                     ]);
@@ -254,7 +261,7 @@ class CustomFormController extends Controller
         $columns = [];
         $optionNotes = [];
 
-        if (!empty($rawOptions)) {
+        if (! empty($rawOptions)) {
             if (($fieldData['type'] ?? '') === 'select') {
                 $items = array_values(array_filter(array_map('trim', preg_split('/[\r\n,]+/', $rawOptions))));
                 foreach ($items as $item) {
@@ -262,9 +269,9 @@ class CustomFormController extends Controller
                         $parts = explode(':', $item, 2);
                         $optName = trim($parts[0]);
                         $optNote = trim($parts[1]);
-                        if (!empty($optName)) {
+                        if (! empty($optName)) {
                             $choices[] = $optName;
-                            if (!empty($optNote)) {
+                            if (! empty($optNote)) {
                                 $optionNotes[$optName] = $optNote;
                             }
                         }
@@ -285,8 +292,8 @@ class CustomFormController extends Controller
             'raw_options' => $rawOptions,
             'placeholder' => $fieldData['placeholder'] ?? null,
             'description' => $fieldData['description'] ?? null,
-            'bold' => !empty($fieldData['bold']),
-            'italic' => !empty($fieldData['italic']),
+            'bold' => ! empty($fieldData['bold']),
+            'italic' => ! empty($fieldData['italic']),
             'align' => $fieldData['align'] ?? 'left',
         ];
     }
@@ -295,7 +302,24 @@ class CustomFormController extends Controller
     {
         $this->checkAccess($form);
         $form->delete();
-        return redirect()->route('forms.index')->with('success', __('messages.form_deleted_success'));
+
+        return redirect()->route('forms.index')
+            ->with('success', __('messages.form_deleted_success'))
+            ->with('undo_url', route('forms.restore', $form->id));
+    }
+
+    public function restore($id)
+    {
+        $form = CustomForm::withTrashed()->findOrFail($id);
+        $this->checkAccess($form);
+
+        try {
+            $form->restore();
+        } catch (UserFacingException $e) {
+            return redirect()->route('forms.index')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('forms.index')->with('success', __('messages.flash.undo.restored_success'));
     }
 
     public function toggleStatus(CustomForm $form)
@@ -335,7 +359,7 @@ class CustomFormController extends Controller
 
         // Copy form details
         $newForm = $form->replicate();
-        $newForm->title = 'Copy of ' . $form->title;
+        $newForm->title = 'Copy of '.$form->title;
         $newForm->slug = Str::random(12);
         $newForm->views = 0;
         $newForm->status = 'draft';
@@ -380,21 +404,21 @@ class CustomFormController extends Controller
 
         foreach ($form->fields as $field) {
             if ($field->type === 'groups') {
-                $groupsMap = \App\Models\Group::pluck($nameField, 'id')->toArray();
+                $groupsMap = Group::pluck($nameField, 'id')->toArray();
             } elseif ($field->type === 'cities') {
-                $citiesMap = \App\Models\City::pluck($nameField, 'id')->toArray();
+                $citiesMap = City::pluck($nameField, 'id')->toArray();
             } elseif ($field->type === 'neighborhoods') {
-                $neighborhoodsMap = \App\Models\Neighborhood::pluck($nameField, 'id')->toArray();
+                $neighborhoodsMap = Neighborhood::pluck($nameField, 'id')->toArray();
             } elseif ($field->type === 'committees') {
-                $committeesMap = \App\Models\ServiceCommittee::pluck($nameField, 'id')->toArray();
+                $committeesMap = ServiceCommittee::pluck($nameField, 'id')->toArray();
             } elseif ($field->type === 'servicebodies') {
-                $serviceBodiesMap = \App\Models\ServiceBody::pluck($nameField, 'id')->toArray();
+                $serviceBodiesMap = ServiceBody::pluck($nameField, 'id')->toArray();
             }
         }
 
         $chartData = [];
         foreach ($form->fields as $field) {
-            if (!in_array($field->type, ['select', 'checkbox', 'groups', 'cities', 'neighborhoods', 'committees', 'servicebodies', 'date', 'yes_no_textbox'])) {
+            if (! in_array($field->type, ['select', 'checkbox', 'groups', 'cities', 'neighborhoods', 'committees', 'servicebodies', 'date', 'yes_no_textbox'])) {
                 continue;
             }
 
@@ -417,11 +441,11 @@ class CustomFormController extends Controller
                     '10+ years' => 0,
                 ];
 
-                $now = new \DateTime();
+                $now = new \DateTime;
 
                 foreach ($submissions as $submission) {
                     $value = $submission->data[$field->id] ?? null;
-                    if ($value === null || $value === '' || !strtotime($value)) {
+                    if ($value === null || $value === '' || ! strtotime($value)) {
                         continue;
                     }
 
@@ -498,7 +522,9 @@ class CustomFormController extends Controller
 
                 foreach ($submissions as $submission) {
                     $value = $submission->data[$field->id] ?? null;
-                    if ($value === null || $value === '') continue;
+                    if ($value === null || $value === '') {
+                        continue;
+                    }
 
                     $ans = is_array($value) ? ($value['answer'] ?? null) : $value;
                     if ($ans === 'yes') {
@@ -521,8 +547,8 @@ class CustomFormController extends Controller
                 // Initialize expected options for select and checkbox
                 if (in_array($field->type, ['select', 'checkbox'])) {
                     $choices = isset($field->options['choices']) ? $field->options['choices'] : (is_array($field->options) ? $field->options : []);
-                    $choices = array_filter($choices, function($val, $key) {
-                        return !in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && !in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
+                    $choices = array_filter($choices, function ($val, $key) {
+                        return ! in_array($key, ['placeholder', 'description', 'bold', 'italic', 'align']) && ! in_array($val, ['placeholder', 'description', 'bold', 'italic', 'align']);
                     }, ARRAY_FILTER_USE_BOTH);
 
                     foreach ($choices as $choice) {
@@ -550,14 +576,20 @@ class CustomFormController extends Controller
 
                 $labels = [];
                 $data = [];
-                
+
                 if (in_array($field->type, ['groups', 'cities', 'neighborhoods', 'committees', 'servicebodies'])) {
                     $map = [];
-                    if ($field->type === 'groups') $map = $groupsMap;
-                    elseif ($field->type === 'cities') $map = $citiesMap;
-                    elseif ($field->type === 'neighborhoods') $map = $neighborhoodsMap;
-                    elseif ($field->type === 'committees') $map = $committeesMap;
-                    elseif ($field->type === 'servicebodies') $map = $serviceBodiesMap;
+                    if ($field->type === 'groups') {
+                        $map = $groupsMap;
+                    } elseif ($field->type === 'cities') {
+                        $map = $citiesMap;
+                    } elseif ($field->type === 'neighborhoods') {
+                        $map = $neighborhoodsMap;
+                    } elseif ($field->type === 'committees') {
+                        $map = $committeesMap;
+                    } elseif ($field->type === 'servicebodies') {
+                        $map = $serviceBodiesMap;
+                    }
 
                     foreach ($counts as $id => $count) {
                         $name = $map[$id] ?? "#$id";
@@ -571,7 +603,7 @@ class CustomFormController extends Controller
                     }
                 }
 
-                if (!empty($labels)) {
+                if (! empty($labels)) {
                     $chartData[$field->id] = [
                         'field_id' => $field->id,
                         'label' => $field->label,
@@ -597,10 +629,10 @@ class CustomFormController extends Controller
         $mpdf->WriteHTML($html);
 
         $filename = "form_{$form->id}_report.pdf";
-        
+
         return response($mpdf->Output($filename, 'S'), 200)
-               ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
     public function exportSubmissionPdf(CustomForm $form, CustomFormSubmission $submission)
@@ -620,8 +652,8 @@ class CustomFormController extends Controller
         $filename = "{$cleanTitle}_Response_{$submission->id}.pdf";
 
         return response($mpdf->Output($filename, 'S'), 200)
-               ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
     public function exportSubmissionCsv(CustomForm $form, CustomFormSubmission $submission)
@@ -637,14 +669,14 @@ class CustomFormController extends Controller
         $filename = "{$cleanTitle}_Response_{$submission->id}.csv";
 
         $headers = [
-            'Content-type'        => 'text/csv; charset=UTF-8',
+            'Content-type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires'             => '0'
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
-        $callback = function() use ($form, $submission) {
+        $callback = function () use ($form, $submission) {
             $file = fopen('php://output', 'w');
             // Write UTF-8 BOM for Excel Arabic / Multilingual compatibility
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
@@ -656,14 +688,15 @@ class CustomFormController extends Controller
             ]);
 
             // Metadata Rows
-            fputcsv($file, [__('messages.Submission ID') ?? 'Submission ID', '#' . $submission->id]);
+            fputcsv($file, [__('messages.Submission ID') ?? 'Submission ID', '#'.$submission->id]);
             fputcsv($file, [__('messages.Submitted At') ?? 'Submitted At', $submission->created_at->format('Y-m-d H:i:s')]);
             fputcsv($file, [__('messages.Submitted By') ?? 'Submitted By', $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest')]);
 
             // Fields Rows
             foreach ($form->fields as $field) {
                 if ($field->type === 'section_header') {
-                    fputcsv($file, ['--- ' . $field->label . ' ---', '']);
+                    fputcsv($file, ['--- '.$field->label.' ---', '']);
+
                     continue;
                 }
                 if ($field->type === 'static_text') {
@@ -676,7 +709,7 @@ class CustomFormController extends Controller
                         $ans = $val['answer'] ?? '';
                         $det = $val['details'] ?? '';
                         $ansText = $ans === 'yes' ? (__('messages.yes') ?? 'Yes') : ($ans === 'no' ? (__('messages.no') ?? 'No') : $ans);
-                        $formattedVal = $ansText . ($det ? " (" . (__('messages.Details / Explanation') ?? 'Details') . ": {$det})" : '');
+                        $formattedVal = $ansText.($det ? ' ('.(__('messages.Details / Explanation') ?? 'Details').": {$det})" : '');
                     } elseif ($field->type === 'table') {
                         $rowStrings = [];
                         foreach ($val as $rIndex => $r) {
@@ -685,16 +718,16 @@ class CustomFormController extends Controller
                                 foreach ($r as $colKey => $colVal) {
                                     $colPairs[] = "{$colKey}: {$colVal}";
                                 }
-                                $rowStrings[] = "[" . implode(', ', $colPairs) . "]";
+                                $rowStrings[] = '['.implode(', ', $colPairs).']';
                             }
                         }
-                        $formattedVal = implode(" ; ", $rowStrings);
+                        $formattedVal = implode(' ; ', $rowStrings);
                     } else {
                         $formattedVal = implode(', ', $val);
                     }
-                } elseif ($field->type === 'date' && !empty($val) && $val !== '-' && strtotime($val)) {
+                } elseif ($field->type === 'date' && ! empty($val) && $val !== '-' && strtotime($val)) {
                     $submittedDate = new \DateTime($val);
-                    $now = new \DateTime();
+                    $now = new \DateTime;
                     $interval = $submittedDate->diff($now);
                     $locale = app()->getLocale();
                     if ($submittedDate > $now) {
@@ -727,18 +760,18 @@ class CustomFormController extends Controller
         $form->load(['fields', 'submissions']);
 
         $headers = [
-            'Content-type'        => 'text/csv; charset=UTF-8',
+            'Content-type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=form_{$form->id}_submissions.csv",
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires'             => '0'
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
-        $callback = function() use ($form) {
+        $callback = function () use ($form) {
             $file = fopen('php://output', 'w');
             // Write UTF-8 BOM for Excel Arabic / Multilingual compatibility
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
+
             // CSV Header row
             $header = [
                 __('messages.Submission ID') ?? 'Submission ID',
@@ -746,7 +779,9 @@ class CustomFormController extends Controller
                 __('messages.Submitted By') ?? 'Submitted By',
             ];
             foreach ($form->fields as $field) {
-                if (in_array($field->type, ['section_header', 'static_text'])) continue;
+                if (in_array($field->type, ['section_header', 'static_text'])) {
+                    continue;
+                }
                 $header[] = $field->label;
             }
             fputcsv($file, $header);
@@ -756,17 +791,19 @@ class CustomFormController extends Controller
                 $row = [
                     $submission->id,
                     $submission->created_at->format('Y-m-d H:i:s'),
-                    $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest')
+                    $submission->user ? $submission->user->name : (__('messages.Guest') ?? 'Guest'),
                 ];
                 foreach ($form->fields as $field) {
-                    if (in_array($field->type, ['section_header', 'static_text'])) continue;
+                    if (in_array($field->type, ['section_header', 'static_text'])) {
+                        continue;
+                    }
                     $val = $submission->data[$field->id] ?? '';
                     if (is_array($val)) {
                         if ($field->type === 'yes_no_textbox') {
                             $ans = $val['answer'] ?? '';
                             $det = $val['details'] ?? '';
                             $ansText = $ans === 'yes' ? (__('messages.yes') ?? 'Yes') : ($ans === 'no' ? (__('messages.no') ?? 'No') : $ans);
-                            $val = $ansText . ($det ? " (" . (__('messages.Details / Explanation') ?? 'Details') . ": {$det})" : '');
+                            $val = $ansText.($det ? ' ('.(__('messages.Details / Explanation') ?? 'Details').": {$det})" : '');
                         } elseif ($field->type === 'table') {
                             $rowStrings = [];
                             foreach ($val as $r) {
@@ -775,16 +812,16 @@ class CustomFormController extends Controller
                                     foreach ($r as $colKey => $colVal) {
                                         $colPairs[] = "$colKey: $colVal";
                                     }
-                                    $rowStrings[] = "[" . implode(', ', $colPairs) . "]";
+                                    $rowStrings[] = '['.implode(', ', $colPairs).']';
                                 }
                             }
                             $val = implode(' ; ', $rowStrings);
                         } else {
                             $val = implode(', ', $val);
                         }
-                    } elseif ($field->type === 'date' && !empty($val) && $val !== '-' && strtotime($val)) {
+                    } elseif ($field->type === 'date' && ! empty($val) && $val !== '-' && strtotime($val)) {
                         $submittedDate = new \DateTime($val);
-                        $now = new \DateTime();
+                        $now = new \DateTime;
                         $interval = $submittedDate->diff($now);
                         $locale = app()->getLocale();
                         if ($submittedDate > $now) {
@@ -799,7 +836,7 @@ class CustomFormController extends Controller
                         }
                         $val = "{$val} {$elapsedStr}";
                     }
-                    $row[] = (string)$val;
+                    $row[] = (string) $val;
                 }
                 fputcsv($file, $row);
             }

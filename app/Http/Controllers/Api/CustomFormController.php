@@ -12,6 +12,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CustomFormController extends Controller implements HasMiddleware
 {
@@ -52,7 +53,7 @@ class CustomFormController extends Controller implements HasMiddleware
             'title' => 'required|string|max:255',
             'type' => 'nullable|string|max:50',
             'status' => 'required|in:draft,published,archived',
-            'slug' => 'nullable|string|max:255|unique:custom_forms,slug',
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('custom_forms', 'slug')->whereNull('deleted_at')],
             'settings' => 'nullable|array',
             'fields' => 'nullable|array',
             'fields.*.label' => 'required_with:fields|string|max:255',
@@ -116,7 +117,7 @@ class CustomFormController extends Controller implements HasMiddleware
             'title' => 'sometimes|required|string|max:255',
             'type' => 'nullable|string|max:50',
             'status' => 'sometimes|required|in:draft,published,archived',
-            'slug' => 'nullable|string|max:255|unique:custom_forms,slug,'.$form->id,
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('custom_forms', 'slug')->ignore($form->id)->whereNull('deleted_at')],
             'settings' => 'nullable|array',
         ]);
 

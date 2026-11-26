@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use App\Models\InventoryItem;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
-    public function up(): void {
+return new class extends Migration
+{
+    public function up(): void
+    {
         $coins = [
             'كوين سنة برونز',
             'كوين سنة ونصف برونز',
@@ -85,7 +87,7 @@ return new class extends Migration {
         ];
 
         foreach ($coins as $coin) {
-            InventoryItem::firstOrCreate([
+            InventoryItem::withoutGlobalScopes()->firstOrCreate([
                 'name' => $coin,
             ], [
                 'selling_price' => 0.00,
@@ -96,7 +98,8 @@ return new class extends Migration {
         }
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         // Safe to leave empty
     }
 };

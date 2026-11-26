@@ -3,25 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
 use App\Http\Resources\EventResource;
+use App\Models\Event;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    use PaginatesApi;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::with(['day', 'servicebody'])->orderBy('date', 'asc')->get();
+        $events = Event::with(['day', 'servicebody'])
+            ->orderBy('date', 'asc')
+            ->paginate($this->resolvePerPage($request));
+
         return EventResource::collection($events);
     }
 
     private function authorizeManageEvents(Request $request): void
     {
         $user = $request->user();
-        if (!$user || (!$user->can('create calendar events') && !$user->hasRole('Committees') && !$user->hasRole('ServiceBody') && !$user->hasRole('rsc') && !$user->hasRole('super admin'))) {
+        if (! $user || (! $user->can('create calendar events') && ! $user->hasRole('Committees') && ! $user->hasRole('ServiceBody') && ! $user->hasRole('rsc') && ! $user->hasRole('super admin'))) {
             abort(403, 'Unauthorized action.');
         }
     }
@@ -42,6 +48,7 @@ class EventController extends Controller
         ]);
 
         $item = Event::create($validated);
+
         return (new EventResource($item->load(['day', 'servicebody'])))->response()->setStatusCode(201);
     }
 
@@ -69,6 +76,7 @@ class EventController extends Controller
         ]);
 
         $event->update($validated);
+
         return new EventResource($event->load(['day', 'servicebody']));
     }
 
@@ -80,7 +88,7 @@ class EventController extends Controller
         $this->authorizeManageEvents($request);
 
         $event->delete();
+
         return response()->noContent();
     }
 }
-

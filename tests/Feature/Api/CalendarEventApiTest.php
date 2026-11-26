@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api;
 
 use App\Models\CalendarEvent;
+use App\Models\ServiceCommittee;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +24,7 @@ class CalendarEventApiTest extends TestCase
         $this->user = User::factory()->create();
         $this->user->assignRole($role);
 
-        \App\Models\ServiceCommittee::create([
+        ServiceCommittee::create([
             'ar_name' => 'لجنة العلاقات العامة',
             'en_name' => 'PR Subcommittee',
             'status' => 'active',
@@ -66,8 +67,8 @@ class CalendarEventApiTest extends TestCase
                         'recurrence',
                         'formatted_recurrence',
                         'is_featured',
-                    ]
-                ]
+                    ],
+                ],
             ]);
     }
 
@@ -114,7 +115,7 @@ class CalendarEventApiTest extends TestCase
                     'title' => 'Regional Assembly',
                     'organizer' => 'Egypt RSC',
                     'location' => 'Cairo',
-                ]
+                ],
             ]);
     }
 
@@ -170,7 +171,7 @@ class CalendarEventApiTest extends TestCase
                     'organizer' => 'PR Subcommittee',
                     'location' => 'Online & Cairo',
                     'is_featured' => true,
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('calendar_events', [
@@ -214,7 +215,7 @@ class CalendarEventApiTest extends TestCase
                     'id' => $event->id,
                     'title' => 'Updated Title',
                     'is_featured' => true,
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('calendar_events', [
@@ -239,7 +240,6 @@ class CalendarEventApiTest extends TestCase
         $response = $this->deleteJson("/api/v1/calendar-events/{$event->id}");
 
         $response->assertStatus(204);
-        $this->assertDatabaseMissing('calendar_events', ['id' => $event->id]);
+        $this->assertSoftDeleted('calendar_events', ['id' => $event->id]);
     }
 }
-

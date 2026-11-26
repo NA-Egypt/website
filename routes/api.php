@@ -1,5 +1,37 @@
 <?php
 
+use App\Http\Controllers\Api\AgendaController;
+use App\Http\Controllers\Api\AzureAuthController;
+use App\Http\Controllers\Api\CalendarEventController;
+use App\Http\Controllers\Api\ChangeRequestController;
+use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\CommitteeReportController;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\CustomFormController;
+use App\Http\Controllers\Api\DayController;
+use App\Http\Controllers\Api\DirectOnlineGroupController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\HelplineCallApiController;
+use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\JftController;
+use App\Http\Controllers\Api\MeetingController;
+use App\Http\Controllers\Api\NeighborhoodController;
+use App\Http\Controllers\Api\NewsletterMemberController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\OptionController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\ScMeetingController;
+use App\Http\Controllers\Api\ServiceBodyAgendaController;
+use App\Http\Controllers\Api\ServiceBodyController;
+use App\Http\Controllers\Api\ServiceCommitteeController;
+use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\TopicController;
+use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WhatsAppWebhookController;
+use App\Http\Controllers\Api\WorkgroupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -8,66 +40,73 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         return $request->user();
     })->middleware('auth:sanctum');
 
-    Route::post('/auth/azure/login', [\App\Http\Controllers\Api\AzureAuthController::class, 'login']);
-    Route::post('/login/azure', [\App\Http\Controllers\Api\AzureAuthController::class, 'login']);
-    Route::post('/auth/logout', [\App\Http\Controllers\Api\AzureAuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::post('/logout', [\App\Http\Controllers\Api\AzureAuthController::class, 'logout'])->middleware('auth:sanctum');
+    // Notifications (Authenticated)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+    });
+
+    Route::post('/auth/azure/login', [AzureAuthController::class, 'login']);
+    Route::post('/login/azure', [AzureAuthController::class, 'login']);
+    Route::post('/auth/logout', [AzureAuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('/logout', [AzureAuthController::class, 'logout'])->middleware('auth:sanctum');
 
     // Public composite & content endpoints
-    Route::get('/home', [\App\Http\Controllers\Api\HomeController::class, 'index'])->name('home');
-    Route::get('/frontpage', [\App\Http\Controllers\Api\HomeController::class, 'index'])->name('frontpage');
-    Route::get('/jft', [\App\Http\Controllers\Api\JftController::class, 'show'])->name('jft');
-    Route::get('/stats', [\App\Http\Controllers\Api\StatsController::class, 'index'])->name('stats');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/frontpage', [HomeController::class, 'index'])->name('frontpage');
+    Route::get('/jft', [JftController::class, 'show'])->name('jft');
+    Route::get('/stats', [StatsController::class, 'index'])->name('stats');
 
     // Public Custom Form access & submission
-    Route::get('/forms/public/{slug}', [\App\Http\Controllers\Api\CustomFormController::class, 'showPublic'])->name('forms.public.show');
-    Route::post('/forms/public/{slug}/submit', [\App\Http\Controllers\Api\CustomFormController::class, 'submitPublic'])->name('forms.public.submit');
+    Route::get('/forms/public/{slug}', [CustomFormController::class, 'showPublic'])->name('forms.public.show');
+    Route::post('/forms/public/{slug}/submit', [CustomFormController::class, 'submitPublic'])->name('forms.public.submit');
 
     // Public Helpline Form Schema & Submission
-    Route::get('/helpline-calls/schema', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'schema'])->name('helpline-calls.schema');
-    Route::post('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'store'])->name('helpline-calls.store');
-    Route::get('/helpline-calls', [\App\Http\Controllers\Api\HelplineCallApiController::class, 'index'])->middleware('auth:sanctum')->name('helpline-calls.index');
+    Route::get('/helpline-calls/schema', [HelplineCallApiController::class, 'schema'])->name('helpline-calls.schema');
+    Route::post('/helpline-calls', [HelplineCallApiController::class, 'store'])->name('helpline-calls.store');
+    Route::get('/helpline-calls', [HelplineCallApiController::class, 'index'])->middleware('auth:sanctum')->name('helpline-calls.index');
 
     // WhatsApp Microservice Inbound Webhook
-    Route::post('/whatsapp/webhook', [\App\Http\Controllers\Api\WhatsAppWebhookController::class, 'handle'])->name('whatsapp.webhook');
+    Route::post('/whatsapp/webhook', [WhatsAppWebhookController::class, 'handle'])->name('whatsapp.webhook');
 
     // Sensitive resources requiring authentication for all operations
     $protectedControllers = [
-        'change-requests'       => \App\Http\Controllers\Api\ChangeRequestController::class,
-        'committee-reports'     => \App\Http\Controllers\Api\CommitteeReportController::class,
-        'contact-requests'      => \App\Http\Controllers\Api\ContactUsController::class,
-        'contact-us'            => \App\Http\Controllers\Api\ContactUsController::class,
-        'forms'                 => \App\Http\Controllers\Api\CustomFormController::class,
-        'newsletter-members'    => \App\Http\Controllers\Api\NewsletterMemberController::class,
-        'permissions'           => \App\Http\Controllers\Api\PermissionController::class,
-        'roles'                 => \App\Http\Controllers\Api\RoleController::class,
-        'transactions'          => \App\Http\Controllers\Api\TransactionController::class,
-        'users'                 => \App\Http\Controllers\Api\UserController::class,
+        'change-requests' => ChangeRequestController::class,
+        'committee-reports' => CommitteeReportController::class,
+        'contact-requests' => ContactUsController::class,
+        'contact-us' => ContactUsController::class,
+        'forms' => CustomFormController::class,
+        'newsletter-members' => NewsletterMemberController::class,
+        'permissions' => PermissionController::class,
+        'roles' => RoleController::class,
+        'transactions' => TransactionController::class,
+        'users' => UserController::class,
     ];
 
     // Public resources allowing unauthenticated index/show operations
     $publicControllers = [
-        'agendas'               => \App\Http\Controllers\Api\AgendaController::class,
-        'calendar-events'       => \App\Http\Controllers\Api\CalendarEventController::class,
-        'cities'                => \App\Http\Controllers\Api\CityController::class,
-        'days'                  => \App\Http\Controllers\Api\DayController::class,
-        'direct-online-groups'  => \App\Http\Controllers\Api\DirectOnlineGroupController::class,
-        'events'                => \App\Http\Controllers\Api\EventController::class,
-        'groups'                => \App\Http\Controllers\Api\GroupController::class,
-        'meetings'              => \App\Http\Controllers\Api\MeetingController::class,
-        'neighborhoods'         => \App\Http\Controllers\Api\NeighborhoodController::class,
-        'options'               => \App\Http\Controllers\Api\OptionController::class,
-        'sc-meetings'           => \App\Http\Controllers\Api\ScMeetingController::class,
-        'service-bodies'        => \App\Http\Controllers\Api\ServiceBodyController::class,
-        'service-body-agendas'  => \App\Http\Controllers\Api\ServiceBodyAgendaController::class,
-        'service-committees'    => \App\Http\Controllers\Api\ServiceCommitteeController::class,
-        'topics'                => \App\Http\Controllers\Api\TopicController::class,
-        'workgroups'            => \App\Http\Controllers\Api\WorkgroupController::class,
+        'agendas' => AgendaController::class,
+        'calendar-events' => CalendarEventController::class,
+        'cities' => CityController::class,
+        'days' => DayController::class,
+        'direct-online-groups' => DirectOnlineGroupController::class,
+        'events' => EventController::class,
+        'groups' => GroupController::class,
+        'meetings' => MeetingController::class,
+        'neighborhoods' => NeighborhoodController::class,
+        'options' => OptionController::class,
+        'sc-meetings' => ScMeetingController::class,
+        'service-bodies' => ServiceBodyController::class,
+        'service-body-agendas' => ServiceBodyAgendaController::class,
+        'service-committees' => ServiceCommitteeController::class,
+        'topics' => TopicController::class,
+        'workgroups' => WorkgroupController::class,
     ];
 
     // Nested / specific actions for protected controllers
-    Route::patch('change-requests/{changeRequest}/status', [\App\Http\Controllers\Api\ChangeRequestController::class, 'updateStatus'])->middleware('auth:sanctum');
-    Route::get('forms/{form}/submissions', [\App\Http\Controllers\Api\CustomFormController::class, 'submissions'])->middleware('auth:sanctum');
+    Route::patch('change-requests/{changeRequest}/status', [ChangeRequestController::class, 'updateStatus'])->middleware('auth:sanctum');
+    Route::get('forms/{form}/submissions', [CustomFormController::class, 'submissions'])->middleware('auth:sanctum');
 
     foreach ($protectedControllers as $uri => $controller) {
         Route::apiResource($uri, $controller)->middleware('auth:sanctum');

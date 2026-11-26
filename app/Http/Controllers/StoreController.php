@@ -370,16 +370,40 @@ class StoreController extends Controller implements HasMiddleware
         $deletedId = $item->id;
         $item->delete();
 
+        $undoUrl = route('store.restore', $deletedId);
+        if ($request->hasSession()) {
+            $request->session()->flash('undo_url', $undoUrl);
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => __('messages.item_deleted_success'),
                 'deleted_id' => $deletedId,
+                'undo_url' => $undoUrl,
                 'live_state' => app(InventoryLedgerService::class)->getLiveInventoryState(),
             ]);
         }
 
-        return redirect()->route('store.index')->with('success', __('messages.item_deleted_success'));
+        return redirect()->route('store.index')
+            ->with('success', __('messages.item_deleted_success'))
+            ->with('undo_url', $undoUrl);
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $item = InventoryItem::withTrashed()->findOrFail($id);
+        $item->restore();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.flash.undo.restored_success'),
+                'live_state' => app(InventoryLedgerService::class)->getLiveInventoryState(),
+            ]);
+        }
+
+        return redirect()->route('store.index')->with('success', __('messages.flash.undo.restored_success'));
     }
 
     public function receive(Request $request, InventoryItem $item)

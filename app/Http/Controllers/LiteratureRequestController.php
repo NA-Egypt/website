@@ -8,6 +8,8 @@ use App\Models\InventoryTransaction;
 use App\Models\LiteratureRequest;
 use App\Models\LiteratureRequestItem;
 use App\Models\ServiceBody;
+use App\Models\User;
+use App\Notifications\LiteratureRequestStageNotification;
 use App\Services\DateNumberHelper;
 use App\Services\InventoryLedgerService;
 use App\Services\MpdfService;
@@ -16,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class LiteratureRequestController extends Controller implements HasMiddleware
 {
@@ -314,6 +317,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         $litRequest->update(['status' => 'submitted']);
 
+        if ($group->service_body_id) {
+            $sbUsers = User::where('service_body_id', $group->service_body_id)->get();
+            if ($sbUsers->isNotEmpty()) {
+                Notification::send($sbUsers, new LiteratureRequestStageNotification($litRequest, 'submitted'));
+            }
+        }
+
         // Auto-sync accumulated invoice if draft exists
         $this->syncAccumulatedInvoice($group->service_body_id, $month);
 
@@ -429,6 +439,11 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $litRequest->update([
             'status' => 'sent_to_committee',
         ]);
+
+        $litUsers = User::whereHas('roles', fn ($q) => $q->where('name', 'Lit User'))->get();
+        if ($litUsers->isNotEmpty()) {
+            Notification::send($litUsers, new LiteratureRequestStageNotification($litRequest, 'approved'));
+        }
 
         return redirect()->back()->with('success', __('messages.flash.literature_requests.accumulated_approved'));
     }
@@ -573,6 +588,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             'total_items_count' => $litRequest->items()->sum('quantity'),
             'total_price' => $litRequest->items()->sum('total'),
         ]);
+
+        if ($litRequest->service_body_id) {
+            $sbUsers = User::where('service_body_id', $litRequest->service_body_id)->get();
+            if ($sbUsers->isNotEmpty()) {
+                Notification::send($sbUsers, new LiteratureRequestStageNotification($litRequest, 'returned'));
+            }
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([

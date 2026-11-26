@@ -3,16 +3,16 @@
 namespace App\Services;
 
 use App\Models\InventoryItem;
-use App\Models\InventoryTransaction;
 use App\Models\InventorySlip;
 use App\Models\InventorySlipItem;
+use App\Models\InventoryTransaction;
 use App\Models\LiteratureRequest;
-use App\Models\LiteratureRequestItem;
-use App\Models\StocktakingSession;
 use App\Models\StocktakingItem;
-use App\Services\DateNumberHelper;
+use App\Models\StocktakingSession;
+use App\Models\User;
+use App\Notifications\InventorySlipPendingNotification;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class InventoryLedgerService
 {
@@ -41,10 +41,14 @@ class InventoryLedgerService
 
         foreach ($itemsData as $row) {
             $qty = (int) ($row['quantity'] ?? 0);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($row['inventory_item_id']);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             $unitPrice = (float) ($row['unit_price'] ?? $item->selling_price);
             $itemTotal = $qty * $unitPrice;
@@ -65,6 +69,8 @@ class InventoryLedgerService
             'total_items_count' => $totalItems,
             'total_value' => $totalValue,
         ]);
+
+        $this->notifyPendingSlip($slip);
 
         return $slip;
     }
@@ -96,10 +102,14 @@ class InventoryLedgerService
 
         foreach ($itemsData as $row) {
             $qty = (int) ($row['quantity'] ?? 0);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($row['inventory_item_id']);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             $unitPrice = (float) ($row['unit_price'] ?? $item->selling_price);
             $itemTotal = $qty * $unitPrice;
@@ -120,6 +130,8 @@ class InventoryLedgerService
             'total_items_count' => $totalItems,
             'total_value' => $totalValue,
         ]);
+
+        $this->notifyPendingSlip($slip);
 
         return $slip;
     }
@@ -153,10 +165,14 @@ class InventoryLedgerService
 
         foreach ($itemsData as $row) {
             $qty = (int) ($row['quantity'] ?? 0);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($row['inventory_item_id']);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             InventorySlipItem::create([
                 'inventory_slip_id' => $slip->id,
@@ -185,6 +201,8 @@ class InventoryLedgerService
             'total_items_count' => $totalItems,
             'total_value' => 0.00,
         ]);
+
+        $this->notifyPendingSlip($slip, $litRequest);
 
         return $slip;
     }
@@ -220,10 +238,14 @@ class InventoryLedgerService
 
         foreach ($itemsData as $row) {
             $qty = (int) ($row['quantity'] ?? 0);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($row['inventory_item_id']);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             InventorySlipItem::create([
                 'inventory_slip_id' => $slip->id,
@@ -253,7 +275,34 @@ class InventoryLedgerService
             'total_value' => 0.00,
         ]);
 
+        $this->notifyPendingSlip($slip, $litRequest);
+
         return $slip;
+    }
+
+    private function notifyPendingSlip(InventorySlip $slip, ?LiteratureRequest $litRequest = null): void
+    {
+        if (! in_array($slip->status, ['pending', 'transferred'], true)) {
+            return;
+        }
+
+        $notification = new InventorySlipPendingNotification($slip);
+
+        if (in_array($slip->type, ['transfer_to_lit', 'return_from_committee'], true)) {
+            $recipients = User::whereHas('roles', fn ($q) => $q->where('name', 'Lit User'))->get();
+            if ($recipients->isNotEmpty()) {
+                Notification::send($recipients, $notification);
+            }
+        } elseif ($slip->type === 'return_to_store') {
+            $recipients = User::whereHas('roles', fn ($q) => $q->where('name', 'Store Manager'))
+                ->orWhereHas('permissions', fn ($q) => $q->where('name', 'manage store'))
+                ->get();
+            if ($recipients->isNotEmpty()) {
+                Notification::send($recipients, $notification);
+            }
+        } elseif ($slip->type === 'issue_to_committee' && $litRequest?->serviceCommittee?->user) {
+            $litRequest->serviceCommittee->user->notify($notification);
+        }
     }
 
     /**
@@ -396,7 +445,7 @@ class InventoryLedgerService
             'total_committee_distributed' => $totalCommitteeDistributed,
             'total_returned' => $totalReturned,
             'total_current_lit' => $totalCurrentLit,
-            'has_stocktaking' => !empty($stocktakingSession),
+            'has_stocktaking' => ! empty($stocktakingSession),
             'stocktaking_date' => $stocktakingSession ? $stocktakingSession->created_at->format('Y-m-d') : null,
         ];
     }
@@ -487,7 +536,7 @@ class InventoryLedgerService
 
             // Aggregate Category Metrics
             $cat = $item->category ?: 'Others';
-            if (!isset($categoriesMap[$cat])) {
+            if (! isset($categoriesMap[$cat])) {
                 $categoriesMap[$cat] = [
                     'category' => $cat,
                     'items_count' => 0,

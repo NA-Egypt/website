@@ -8,6 +8,7 @@ use App\Models\InventorySlip;
 use App\Models\LiteratureRequest;
 use App\Models\LiteratureRequestItem;
 use App\Models\ServiceCommittee;
+use App\Notifications\LiteratureRequestStageNotification;
 use App\Services\InventoryLedgerService;
 use App\Services\MpdfService;
 use Carbon\Carbon;
@@ -298,6 +299,12 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             $litRequest->update([
                 'status' => 'dispatched',
             ]);
+
+            if ($litRequest->serviceCommittee?->user) {
+                $litRequest->serviceCommittee->user->notify(
+                    new LiteratureRequestStageNotification($litRequest, 'dispatched', $slip->slip_number)
+                );
+            }
 
             DB::commit();
 

@@ -289,7 +289,7 @@ class MeetingApiTest extends TestCase
         $deleteResponse = $this->deleteJson("/api/v1/meetings/{$meetingId}");
         $deleteResponse->assertStatus(204);
 
-        $this->assertDatabaseMissing('meetings', ['id' => $meetingId]);
+        $this->assertSoftDeleted('meetings', ['id' => $meetingId]);
     }
 
     public function test_meeting_store_validates_required_fields(): void

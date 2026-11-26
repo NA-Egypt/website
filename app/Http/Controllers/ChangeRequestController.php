@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Models\ChangeRequest;
 use App\Mail\ChangeRequestMail;
+use App\Models\ChangeRequest;
+use App\Notifications\ChangeRequestStatusNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,7 +56,7 @@ class ChangeRequestController extends Controller
         try {
             Mail::to('web@naegypt.org')->send(new ChangeRequestMail($changeRequest));
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to send IT change request email: " . $e->getMessage());
+            Log::error('Failed to send IT change request email: '.$e->getMessage());
         }
 
         return redirect()->route('change-requests.index')->with('success', __('messages.change_request_submitted') ?? 'Change request submitted successfully.');
@@ -65,7 +66,7 @@ class ChangeRequestController extends Controller
     {
         $changeRequest = ChangeRequest::with('user')->findOrFail($id);
 
-        if (!Auth::user()->hasRole('super admin') && $changeRequest->user_id !== Auth::id()) {
+        if (! Auth::user()->hasRole('super admin') && $changeRequest->user_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -74,7 +75,7 @@ class ChangeRequestController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        if (!Auth::user()->hasRole('super admin')) {
+        if (! Auth::user()->hasRole('super admin')) {
             abort(403, 'Unauthorized');
         }
 
@@ -87,6 +88,10 @@ class ChangeRequestController extends Controller
             'status' => $request->status,
         ]);
 
+        if ($changeRequest->user) {
+            $changeRequest->user->notify(new ChangeRequestStatusNotification($changeRequest, $request->status));
+        }
+
         return redirect()->back()->with('success', __('messages.change_request_status_updated') ?? 'Status updated successfully.');
     }
 
@@ -94,11 +99,11 @@ class ChangeRequestController extends Controller
     {
         $changeRequest = ChangeRequest::findOrFail($id);
 
-        if (!Auth::user()->hasRole('super admin') && $changeRequest->user_id !== Auth::id()) {
+        if (! Auth::user()->hasRole('super admin') && $changeRequest->user_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
-        if (!$changeRequest->attachment_path || !Storage::exists($changeRequest->attachment_path)) {
+        if (! $changeRequest->attachment_path || ! Storage::exists($changeRequest->attachment_path)) {
             abort(404, 'File not found');
         }
 

@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use App\Models\InventoryItem;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
-    public function up(): void {
+return new class extends Migration
+{
+    public function up(): void
+    {
         $chips = [
             'Welcome / White',
             '30 Days / Orange',
@@ -18,7 +20,7 @@ return new class extends Migration {
         ];
 
         foreach ($chips as $chip) {
-            InventoryItem::firstOrCreate([
+            InventoryItem::withoutGlobalScopes()->firstOrCreate([
                 'name' => $chip,
             ], [
                 'selling_price' => 0.00,
@@ -29,7 +31,8 @@ return new class extends Migration {
         }
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         // Safe to leave empty
     }
 };

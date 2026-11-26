@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CalendarEventResource;
 use App\Models\CalendarEvent;
 use App\Models\User;
-use App\Http\Resources\CalendarEventResource;
+use App\Traits\EventRecurrenceTrait;
+use App\Traits\PaginatesApi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class CalendarEventController extends Controller
 {
-    use \App\Traits\EventRecurrenceTrait;
+    use EventRecurrenceTrait;
+    use PaginatesApi;
 
     /**
      * Display a listing of the resource.
@@ -22,8 +27,8 @@ class CalendarEventController extends Controller
         $endStr = $request->query('end');
 
         if ($startStr && $endStr) {
-            $windowStart = \Carbon\Carbon::parse($startStr);
-            $windowEnd = \Carbon\Carbon::parse($endStr);
+            $windowStart = Carbon::parse($startStr);
+            $windowEnd = Carbon::parse($endStr);
 
             $baseEvents = CalendarEvent::where('start', '<=', $windowEnd)->get();
             $expandedEvents = collect();
@@ -41,7 +46,9 @@ class CalendarEventController extends Controller
             return CalendarEventResource::collection($expandedEvents);
         }
 
-        return CalendarEventResource::collection(CalendarEvent::orderBy('start', 'asc')->get());
+        return CalendarEventResource::collection(
+            CalendarEvent::orderBy('start', 'asc')->paginate($this->resolvePerPage($request))
+        );
     }
 
     /**
@@ -49,7 +56,7 @@ class CalendarEventController extends Controller
      */
     public function store(Request $request)
     {
-        \Illuminate\Support\Facades\Gate::authorize('create', CalendarEvent::class);
+        Gate::authorize('create', CalendarEvent::class);
 
         $validOrganizers = CalendarEvent::getValidOrganizerNames();
 
@@ -74,6 +81,7 @@ class CalendarEventController extends Controller
         $validated['is_hero'] = $this->canManageHero(auth()->user()) ? (bool) ($validated['is_hero'] ?? false) : false;
 
         $item = CalendarEvent::create($validated);
+
         return (new CalendarEventResource($item))->response()->setStatusCode(201);
     }
 
@@ -90,7 +98,7 @@ class CalendarEventController extends Controller
      */
     public function update(Request $request, CalendarEvent $calendarEvent)
     {
-        \Illuminate\Support\Facades\Gate::authorize('update', $calendarEvent);
+        Gate::authorize('update', $calendarEvent);
 
         $validOrganizers = CalendarEvent::getValidOrganizerNames();
 
@@ -108,28 +116,48 @@ class CalendarEventController extends Controller
             'is_hero' => 'nullable|boolean',
         ]);
 
-        if (array_key_exists('is_hero', $validated) && !$this->canManageHero(auth()->user())) {
+        if (array_key_exists('is_hero', $validated) && ! $this->canManageHero(auth()->user())) {
             unset($validated['is_hero']);
         }
 
         $calendarEvent->update($validated);
+
         return new CalendarEventResource($calendarEvent->fresh());
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CalendarEvent $calendarEvent)
+    public function destroy(Request $request, CalendarEvent $calendarEvent)
     {
-        \Illuminate\Support\Facades\Gate::authorize('delete', $calendarEvent);
+        Gate::authorize('delete', $calendarEvent);
 
         $calendarEvent->delete();
+
+        if ($request->hasSession()) {
+            $request->session()->flash('undo_url', route('web-calendar-events.restore', $calendarEvent->id));
+        }
+
         return response()->noContent();
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $calendarEvent = CalendarEvent::withTrashed()->findOrFail($id);
+        Gate::authorize('delete', $calendarEvent);
+
+        $calendarEvent->restore();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => __('messages.flash.undo.restored_success')]);
+        }
+
+        return redirect()->back()->with('success', __('messages.flash.undo.restored_success'));
     }
 
     protected function canManageHero(?User $user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 

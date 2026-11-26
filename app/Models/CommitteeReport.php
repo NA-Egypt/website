@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CommitteeReport extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'service_committee_id',
@@ -58,7 +60,7 @@ class CommitteeReport extends Model
 
     public function isEmbedded(): bool
     {
-        return $this->status === 'embedded' || !is_null($this->parent_report_id);
+        return $this->status === 'embedded' || ! is_null($this->parent_report_id);
     }
 
     public function scopeUnembeddedDrafts($query)
@@ -96,8 +98,8 @@ class CommitteeReport extends Model
         return [
             [
                 'headline' => null,
-                'content' => $body
-            ]
+                'content' => $body,
+            ],
         ];
     }
 }

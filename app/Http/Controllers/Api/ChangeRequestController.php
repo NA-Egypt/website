@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ChangeRequest;
 use App\Http\Resources\ChangeRequestResource;
 use App\Mail\ChangeRequestMail;
+use App\Models\ChangeRequest;
+use App\Notifications\ChangeRequestStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,7 @@ class ChangeRequestController extends Controller
         $user = Auth::user();
         $query = ChangeRequest::with('user')->latest();
 
-        if (!$user->hasRole('super admin')) {
+        if (! $user->hasRole('super admin')) {
             $query->where('user_id', $user->id);
         }
 
@@ -31,6 +32,7 @@ class ChangeRequestController extends Controller
         }
 
         $perPage = min((int) $request->get('per_page', 15), 100);
+
         return ChangeRequestResource::collection($query->paginate($perPage));
     }
 
@@ -41,9 +43,9 @@ class ChangeRequestController extends Controller
     {
         $validated = $request->validate([
             'request_type' => 'required|string|in:meetings_groups,committee_info,general,other',
-            'subject'      => 'required|string|max:255',
-            'description'  => 'required|string',
-            'attachment'   => 'nullable|file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
+            'attachment' => 'nullable|file|mimes:pdf,png,jpg,jpeg,docx,xlsx|max:5120',
         ]);
 
         $attachmentPath = null;
@@ -52,18 +54,18 @@ class ChangeRequestController extends Controller
         }
 
         $changeRequest = ChangeRequest::create([
-            'user_id'         => Auth::id(),
-            'request_type'    => $validated['request_type'],
-            'subject'         => $validated['subject'],
-            'description'     => $validated['description'],
+            'user_id' => Auth::id(),
+            'request_type' => $validated['request_type'],
+            'subject' => $validated['subject'],
+            'description' => $validated['description'],
             'attachment_path' => $attachmentPath,
-            'status'          => 'pending',
+            'status' => 'pending',
         ]);
 
         try {
             Mail::to('web@naegypt.org')->send(new ChangeRequestMail($changeRequest));
         } catch (\Exception $e) {
-            Log::error("Failed to send IT change request email: " . $e->getMessage());
+            Log::error('Failed to send IT change request email: '.$e->getMessage());
         }
 
         return (new ChangeRequestResource($changeRequest->load('user')))
@@ -77,7 +79,7 @@ class ChangeRequestController extends Controller
     public function show(ChangeRequest $changeRequest)
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && $changeRequest->user_id !== $user->id) {
+        if (! $user->hasRole('super admin') && $changeRequest->user_id !== $user->id) {
             abort(403, 'Unauthorized to view this change request.');
         }
 
@@ -90,7 +92,7 @@ class ChangeRequestController extends Controller
     public function updateStatus(Request $request, ChangeRequest $changeRequest)
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin')) {
+        if (! $user->hasRole('super admin')) {
             abort(403, 'Unauthorized to modify change request status.');
         }
 
@@ -99,6 +101,10 @@ class ChangeRequestController extends Controller
         ]);
 
         $changeRequest->update(['status' => $validated['status']]);
+
+        if ($changeRequest->user) {
+            $changeRequest->user->notify(new ChangeRequestStatusNotification($changeRequest, $validated['status']));
+        }
 
         return new ChangeRequestResource($changeRequest->load('user'));
     }
@@ -109,7 +115,7 @@ class ChangeRequestController extends Controller
     public function destroy(ChangeRequest $changeRequest)
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && ($changeRequest->user_id !== $user->id || $changeRequest->status !== 'pending')) {
+        if (! $user->hasRole('super admin') && ($changeRequest->user_id !== $user->id || $changeRequest->status !== 'pending')) {
             abort(403, 'Unauthorized to delete this change request.');
         }
 

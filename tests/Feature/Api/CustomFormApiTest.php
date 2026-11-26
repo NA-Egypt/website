@@ -3,7 +3,6 @@
 namespace Tests\Feature\Api;
 
 use App\Models\CustomForm;
-use App\Models\CustomFormField;
 use App\Models\CustomFormSubmission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,6 +15,7 @@ class CustomFormApiTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private User $normalUser;
 
     protected function setUp(): void
@@ -33,16 +33,16 @@ class CustomFormApiTest extends TestCase
     public function test_public_can_view_published_form_by_slug(): void
     {
         $form = CustomForm::create([
-            'title'   => 'استبيان مؤتمر مصر',
-            'status'  => 'published',
-            'slug'    => 'egypt-convention-survey',
+            'title' => 'استبيان مؤتمر مصر',
+            'status' => 'published',
+            'slug' => 'egypt-convention-survey',
             'user_id' => $this->adminUser->id,
         ]);
 
         $form->fields()->create([
-            'label'      => 'الاسم بالكامل',
-            'type'       => 'text',
-            'required'   => true,
+            'label' => 'الاسم بالكامل',
+            'type' => 'text',
+            'required' => true,
             'sort_order' => 1,
         ]);
 
@@ -57,9 +57,9 @@ class CustomFormApiTest extends TestCase
     public function test_public_cannot_view_draft_form(): void
     {
         CustomForm::create([
-            'title'   => 'مسودة نموذج',
-            'status'  => 'draft',
-            'slug'    => 'draft-form',
+            'title' => 'مسودة نموذج',
+            'status' => 'draft',
+            'slug' => 'draft-form',
             'user_id' => $this->adminUser->id,
         ]);
 
@@ -70,27 +70,27 @@ class CustomFormApiTest extends TestCase
     public function test_public_can_submit_response_to_published_form(): void
     {
         $form = CustomForm::create([
-            'title'   => 'استبيان التعافي',
-            'status'  => 'published',
-            'slug'    => 'recovery-survey',
+            'title' => 'استبيان التعافي',
+            'status' => 'published',
+            'slug' => 'recovery-survey',
             'user_id' => $this->adminUser->id,
         ]);
 
         $nameField = $form->fields()->create([
-            'label'    => 'الاسم',
-            'type'     => 'text',
+            'label' => 'الاسم',
+            'type' => 'text',
             'required' => true,
         ]);
 
         $emailField = $form->fields()->create([
-            'label'    => 'البريد الإلكتروني',
-            'type'     => 'email',
+            'label' => 'البريد الإلكتروني',
+            'type' => 'email',
             'required' => false,
         ]);
 
         $payload = [
-            'field_' . $nameField->id  => 'أحمد علي',
-            'field_' . $emailField->id => 'ahmed@example.com',
+            'field_'.$nameField->id => 'أحمد علي',
+            'field_'.$emailField->id => 'ahmed@example.com',
         ];
 
         $response = $this->postJson('/api/v1/forms/public/recovery-survey/submit', $payload);
@@ -106,22 +106,22 @@ class CustomFormApiTest extends TestCase
     public function test_public_submit_validates_required_fields(): void
     {
         $form = CustomForm::create([
-            'title'   => 'استبيان إلزامي',
-            'status'  => 'published',
-            'slug'    => 'mandatory-form',
+            'title' => 'استبيان إلزامي',
+            'status' => 'published',
+            'slug' => 'mandatory-form',
             'user_id' => $this->adminUser->id,
         ]);
 
         $nameField = $form->fields()->create([
-            'label'    => 'الاسم',
-            'type'     => 'text',
+            'label' => 'الاسم',
+            'type' => 'text',
             'required' => true,
         ]);
 
         $response = $this->postJson('/api/v1/forms/public/mandatory-form/submit', []);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['field_' . $nameField->id]);
+            ->assertJsonValidationErrors(['field_'.$nameField->id]);
     }
 
     public function test_unauthenticated_user_cannot_access_forms_crud(): void
@@ -130,7 +130,7 @@ class CustomFormApiTest extends TestCase
         $response->assertStatus(401);
 
         $postResponse = $this->postJson('/api/v1/forms', [
-            'title'  => 'نموذج جديد',
+            'title' => 'نموذج جديد',
             'status' => 'draft',
         ]);
         $postResponse->assertStatus(401);
@@ -141,18 +141,18 @@ class CustomFormApiTest extends TestCase
         Sanctum::actingAs($this->adminUser);
 
         $payload = [
-            'title'  => 'نموذج تسجيل متطوعين',
+            'title' => 'نموذج تسجيل متطوعين',
             'status' => 'published',
-            'slug'   => 'volunteers-signup',
+            'slug' => 'volunteers-signup',
             'fields' => [
                 [
-                    'label'    => 'الاسم',
-                    'type'     => 'text',
+                    'label' => 'الاسم',
+                    'type' => 'text',
                     'required' => true,
                 ],
                 [
-                    'label'    => 'سنوات التعافي',
-                    'type'     => 'number',
+                    'label' => 'سنوات التعافي',
+                    'type' => 'number',
                     'required' => true,
                 ],
             ],
@@ -175,15 +175,15 @@ class CustomFormApiTest extends TestCase
         Sanctum::actingAs($this->adminUser);
 
         $form = CustomForm::create([
-            'title'   => 'نموذج مع إجابات',
-            'status'  => 'published',
-            'slug'    => 'form-with-subs',
+            'title' => 'نموذج مع إجابات',
+            'status' => 'published',
+            'slug' => 'form-with-subs',
             'user_id' => $this->adminUser->id,
         ]);
 
         CustomFormSubmission::create([
             'custom_form_id' => $form->id,
-            'data'           => ['1' => 'Answer 1'],
+            'data' => ['1' => 'Answer 1'],
         ]);
 
         $response = $this->getJson("/api/v1/forms/{$form->id}/submissions");
@@ -198,15 +198,15 @@ class CustomFormApiTest extends TestCase
         Sanctum::actingAs($this->adminUser);
 
         $form = CustomForm::create([
-            'title'   => 'نموذج للحذف',
-            'status'  => 'draft',
-            'slug'    => 'form-to-delete',
+            'title' => 'نموذج للحذف',
+            'status' => 'draft',
+            'slug' => 'form-to-delete',
             'user_id' => $this->adminUser->id,
         ]);
 
         $response = $this->deleteJson("/api/v1/forms/{$form->id}");
         $response->assertStatus(204);
 
-        $this->assertDatabaseMissing('custom_forms', ['id' => $form->id]);
+        $this->assertSoftDeleted('custom_forms', ['id' => $form->id]);
     }
 }

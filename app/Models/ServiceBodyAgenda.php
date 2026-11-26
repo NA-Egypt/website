@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\FormatedDateTime;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceBodyAgenda extends Model
 {
     use FormatedDateTime;
+    use SoftDeletes;
 
     protected $fillable = [
         'service_body_id',

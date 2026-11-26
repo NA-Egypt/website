@@ -7,25 +7,27 @@ use App\Http\Resources\MeetingResource;
 use App\Models\Group;
 use App\Models\Meeting;
 use App\Services\MeetingFilterService;
+use App\Traits\PaginatesApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class MeetingController extends Controller
 {
+    use PaginatesApi;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request, MeetingFilterService $filterService)
     {
-        $perPage = $request->query('per_page');
-        $perPageInt = ($perPage && is_numeric($perPage) && (int) $perPage > 0) ? (int) $perPage : null;
+        $perPageInt = $this->resolvePerPage($request);
 
         if ($request->hasAny(['day', 'city', 'serviceBody', 'group', 'neighborhood', 'type', 'search', 'virtualOnly', 'englishOnly'])) {
             $meetings = $filterService->filterMeetings($request->all(), $perPageInt);
         } else {
             $query = Meeting::with(['group.neighborhood.city', 'directOnlineGroup', 'day', 'topics', 'options'])
                 ->where('status', 'available');
-            $meetings = $perPageInt ? $query->paginate($perPageInt) : $query->get();
+            $meetings = $query->paginate($perPageInt);
         }
 
         return MeetingResource::collection($meetings);

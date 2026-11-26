@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Models\CommitteeReport;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class GenericObserver
@@ -28,6 +30,11 @@ class GenericObserver
     public function deleted(Model $model)
     {
         $this->logTransaction($model, 'delete');
+    }
+
+    public function restored(Model $model)
+    {
+        $this->logTransaction($model, 'restore');
     }
 
     private function logTransaction(Model $model, string $operation)
@@ -68,10 +75,13 @@ class GenericObserver
         } elseif ($operation === 'delete') {
             $oldValues = $this->sanitize($model->getRawOriginal(), $model);
             $details = $oldValues;
+        } elseif ($operation === 'restore') {
+            $newValues = $this->sanitize($model->getAttributes(), $model);
+            $details = $newValues;
         }
 
         $userId = auth()->id();
-        if ($userId && !\App\Models\User::where('id', $userId)->exists()) {
+        if ($userId && ! User::where('id', $userId)->exists()) {
             $userId = null;
         }
 
@@ -91,15 +101,17 @@ class GenericObserver
     private function sanitize(array $data, ?Model $model = null): array
     {
         $hidden = ['password', 'remember_token', 'token', 'secret', 'key', 'api_token'];
-        if ($model instanceof \App\Models\CommitteeReport) {
+        if ($model instanceof CommitteeReport) {
             $hidden[] = 'body';
         }
+
         return array_filter($data, function ($key) use ($hidden) {
             foreach ($hidden as $field) {
                 if (stripos($key, $field) !== false) {
                     return false;
                 }
             }
+
             return true;
         }, ARRAY_FILTER_USE_KEY);
     }

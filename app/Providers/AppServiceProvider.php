@@ -5,32 +5,37 @@ namespace App\Providers;
 use App\Models\CalendarEvent;
 use App\Models\City;
 use App\Models\CommitteeReport;
+use App\Models\CustomForm;
+use App\Models\DirectOnlineGroup;
 use App\Models\Event;
 use App\Models\Group;
+use App\Models\InventoryItem;
 use App\Models\Meeting;
 use App\Models\Neighborhood;
 use App\Models\ScMeeting;
 use App\Models\ServiceBody;
+use App\Models\ServiceBodyAgenda;
 use App\Models\ServiceCommittee;
 use App\Models\Topic;
 use App\Models\User;
 use App\Observers\GenericObserver;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Mcamara\LaravelLocalization\Traits\LoadsTranslatedCachedRoutes;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     use LoadsTranslatedCachedRoutes;
+
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.
@@ -49,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
         CommitteeReport::observe(GenericObserver::class);
         ScMeeting::observe(GenericObserver::class);
         CalendarEvent::observe(GenericObserver::class);
+        DirectOnlineGroup::observe(GenericObserver::class);
+        CustomForm::observe(GenericObserver::class);
+        InventoryItem::observe(GenericObserver::class);
+        ServiceBodyAgenda::observe(GenericObserver::class);
 
         // Define the 'is-super-admin' gate
         Gate::define('is-super-admin', function (User $user) {
@@ -61,17 +70,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::useBootstrapFive();
-        RouteServiceProvider::loadCachedRoutesUsing(fn() => $this->loadCachedRoutes());
+        RouteServiceProvider::loadCachedRoutesUsing(fn () => $this->loadCachedRoutes());
 
         if (env('APP_ENV') === 'production' || app()->environment('production')) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            URL::forceScheme('https');
         }
 
-        \Livewire\Livewire::setUpdateRoute(function ($handle) {
-            \Illuminate\Support\Facades\Route::match(['get', 'post'], '/ar/livewire/update', $handle)->middleware('web');
-            \Illuminate\Support\Facades\Route::match(['get', 'post'], '/en/livewire/update', $handle)->middleware('web');
+        Livewire::setUpdateRoute(function ($handle) {
+            Route::match(['get', 'post'], '/ar/livewire/update', $handle)->middleware('web');
+            Route::match(['get', 'post'], '/en/livewire/update', $handle)->middleware('web');
 
-            return \Illuminate\Support\Facades\Route::match(['get', 'post'], '/livewire/update', $handle)
+            return Route::match(['get', 'post'], '/livewire/update', $handle)
                 ->middleware('web')
                 ->name('livewire.update');
         });

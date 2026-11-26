@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\CommitteeReport;
 use App\Models\ServiceCommittee;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -17,8 +20,8 @@ class WorkgroupHierarchyTest extends TestCase
         parent::setUp();
 
         $this->withoutMiddleware([
-            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
-            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+            LocaleSessionRedirect::class,
+            LaravelLocalizationRedirectFilter::class,
         ]);
 
         Role::firstOrCreate(['name' => 'super admin', 'guard_name' => 'web']);
@@ -87,7 +90,7 @@ class WorkgroupHierarchyTest extends TestCase
             'status' => 'active',
             'start_date' => now()->format('Y-m-d'),
             'end_date' => now()->addMonths(6)->format('Y-m-d'),
-            'email' => (string)$workgroupLead->id,
+            'email' => (string) $workgroupLead->id,
             'notes' => 'Weekly Mondays 8 PM',
             'location' => 'https://zoom.us/j/123456',
             'ar_address' => 'أونلاين',
@@ -236,7 +239,7 @@ class WorkgroupHierarchyTest extends TestCase
             'en_name' => 'Workgroup Without Address',
             'workgroup_type' => 'permanent',
             'status' => 'active',
-            'email' => (string)$lead->id,
+            'email' => (string) $lead->id,
             'location' => 'https://zoom.us/j/111222',
             // ar_address and en_address omitted
         ]);
@@ -282,13 +285,13 @@ class WorkgroupHierarchyTest extends TestCase
             'meeting_date' => now()->format('Y-m-d'),
             'meeting_day_description' => 'First WG Meeting',
             'sections' => [
-                ['headline' => 'Sports Event Prep', 'content' => '<p>Planning soccer tournament</p>']
+                ['headline' => 'Sports Event Prep', 'content' => '<p>Planning soccer tournament</p>'],
             ],
             'status' => 'submitted', // Attempt to submit
         ]);
 
         $wgResponse->assertRedirect(route('committee-reports.index'));
-        $wgReport = \App\Models\CommitteeReport::where('service_committee_id', $childWg->id)->first();
+        $wgReport = CommitteeReport::where('service_committee_id', $childWg->id)->first();
         $this->assertNotNull($wgReport);
         // Assert forced to draft
         $this->assertEquals('draft', $wgReport->status);
@@ -311,7 +314,7 @@ class WorkgroupHierarchyTest extends TestCase
             'meeting_day_description' => 'Parent Monthly Meeting',
             'sections' => [
                 ['headline' => 'General Overview', 'content' => '<p>All ongoing activities</p>'],
-                ['headline' => '[Sports Workgroup] Sports Event Prep', 'content' => '<p>Planning soccer tournament - approved by committee</p>']
+                ['headline' => '[Sports Workgroup] Sports Event Prep', 'content' => '<p>Planning soccer tournament - approved by committee</p>'],
             ],
             'status' => 'submitted',
             'embedded_workgroup_report_ids' => [$wgReport->id],
@@ -319,7 +322,7 @@ class WorkgroupHierarchyTest extends TestCase
 
         $commResponse->assertRedirect(route('committee-reports.index'));
 
-        $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
+        $parentReport = CommitteeReport::where('service_committee_id', $parentComm->id)->first();
         $this->assertNotNull($parentReport);
         $this->assertEquals('submitted', $parentReport->status);
 
@@ -423,7 +426,7 @@ class WorkgroupHierarchyTest extends TestCase
             'en_name' => 'Helpline Workgroup',
             'workgroup_type' => 'permanent',
             'status' => 'active',
-            'email' => (string)$newWgLead->id,
+            'email' => (string) $newWgLead->id,
         ]);
         $storeResponse->assertRedirect(route('workgroup.index'));
 
@@ -480,7 +483,7 @@ class WorkgroupHierarchyTest extends TestCase
         ]);
 
         // Create workgroup draft report
-        $wgReport = \App\Models\CommitteeReport::create([
+        $wgReport = CommitteeReport::create([
             'service_committee_id' => $childWg->id,
             'meeting_date' => now()->format('Y-m-d'),
             'meeting_day_description' => 'Weekly WG Sync',
@@ -503,7 +506,7 @@ class WorkgroupHierarchyTest extends TestCase
         ]);
 
         $createResponse->assertRedirect(route('committee-reports.index'));
-        $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
+        $parentReport = CommitteeReport::where('service_committee_id', $parentComm->id)->first();
         $this->assertNotNull($parentReport);
 
         // Verify report is embedded
@@ -554,7 +557,7 @@ class WorkgroupHierarchyTest extends TestCase
             'user_id' => $wgUser->id,
         ]);
 
-        $wgReport = \App\Models\CommitteeReport::create([
+        $wgReport = CommitteeReport::create([
             'service_committee_id' => $childWg->id,
             'meeting_date' => now()->format('Y-m-d'),
             'meeting_day_description' => 'Prison Visit Sync',
@@ -576,7 +579,7 @@ class WorkgroupHierarchyTest extends TestCase
             'embedded_workgroup_report_ids' => [$wgReport->id],
         ]);
 
-        $parentReport = \App\Models\CommitteeReport::where('service_committee_id', $parentComm->id)->first();
+        $parentReport = CommitteeReport::where('service_committee_id', $parentComm->id)->first();
         $this->assertEquals('embedded', $wgReport->fresh()->status);
 
         // Delete parent draft report as super admin
@@ -588,7 +591,7 @@ class WorkgroupHierarchyTest extends TestCase
         $deleteResponse->assertRedirect(route('committee-reports.index'));
 
         // Assert parent report is deleted
-        $this->assertDatabaseMissing('committee_reports', ['id' => $parentReport->id]);
+        $this->assertSoftDeleted('committee_reports', ['id' => $parentReport->id]);
 
         // Assert embedded workgroup report is freed back to draft
         $freedReport = $wgReport->fresh();
@@ -631,7 +634,7 @@ class WorkgroupHierarchyTest extends TestCase
         $wgViewResponse->assertSee(__('messages.Submit to Parent Committee'));
 
         // Parent committee user visits create report (with draft available)
-        $wgDraft = \App\Models\CommitteeReport::create([
+        $wgDraft = CommitteeReport::create([
             'service_committee_id' => $childWg->id,
             'meeting_date' => now()->format('Y-m-d'),
             'meeting_day_description' => 'Weekly Translation Review',
