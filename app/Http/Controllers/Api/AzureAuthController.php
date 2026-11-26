@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class AzureAuthController extends Controller
 {
@@ -20,12 +20,20 @@ class AzureAuthController extends Controller
             // Get user from Azure via provided access token
             $azureUser = Socialite::driver('azure')->userFromToken($request->access_token);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Invalid Azure Token'], 401);
+            return response()->json([
+                'message' => __('errors.invalid_azure_token'),
+                'code' => 'unauthenticated',
+                'errors' => null,
+            ], 401);
         }
 
         $email = $azureUser->getEmail();
-        if (!$email) {
-            return response()->json(['error' => 'Email not found from Azure token'], 400);
+        if (! $email) {
+            return response()->json([
+                'message' => __('errors.azure_email_missing'),
+                'code' => 'azure_email_missing',
+                'errors' => null,
+            ], 400);
         }
 
         // Find or create user
@@ -33,7 +41,7 @@ class AzureAuthController extends Controller
             ['email' => $email],
             [
                 'name' => $azureUser->getName(),
-                'password' => bcrypt(Str::random(16))
+                'password' => bcrypt(Str::random(16)),
             ]
         );
 
@@ -44,7 +52,7 @@ class AzureAuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ]);
     }
 

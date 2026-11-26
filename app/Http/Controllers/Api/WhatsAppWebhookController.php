@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessIncomingWhatsAppMessage;
+use App\Models\WhatsAppMessage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,11 +17,16 @@ class WhatsAppWebhookController extends Controller
     public function handle(Request $request): JsonResponse
     {
         $secret = config('whatsapp.webhook_secret');
-        if (!empty($secret)) {
+        if (! empty($secret)) {
             $headerSecret = $request->header('X-Webhook-Secret') ?? $request->query('token');
             if ($headerSecret !== $secret) {
                 Log::warning('[WhatsAppWebhook] Unauthorized webhook attempt: secret mismatch.');
-                return response()->json(['error' => 'Unauthorized'], 401);
+
+                return response()->json([
+                    'message' => __('errors.unauthenticated'),
+                    'code' => 'unauthenticated',
+                    'errors' => null,
+                ], 401);
             }
         }
 
@@ -49,7 +55,7 @@ class WhatsAppWebhookController extends Controller
                 $newStatus = $statusMap[$ackStatus] ?? null;
 
                 if ($newStatus) {
-                    \App\Models\WhatsAppMessage::where('message_id', $msgId)->update(['status' => $newStatus]);
+                    WhatsAppMessage::where('message_id', $msgId)->update(['status' => $newStatus]);
                 }
             }
 

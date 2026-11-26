@@ -45,12 +45,16 @@ class AuthApiTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-            ->assertJson(['error' => 'Invalid Azure Token']);
+            ->assertJson([
+                'code' => 'unauthenticated',
+                'errors' => null,
+            ])
+            ->assertJsonStructure(['message', 'code', 'errors']);
     }
 
     public function test_azure_login_exchanges_valid_token_and_issues_sanctum_token(): void
     {
-        $socialiteUser = new SocialiteUser();
+        $socialiteUser = new SocialiteUser;
         $socialiteUser->map([
             'id' => '12345',
             'name' => 'John Doe',
@@ -122,7 +126,7 @@ class AuthApiTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token');
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token->plainTextToken)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
             ->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(204);

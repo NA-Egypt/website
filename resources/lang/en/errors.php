@@ -51,6 +51,13 @@ return [
 
     // Generic / Fallback
     'generic' => 'Something went wrong. Please try again.',
+    'unauthenticated' => 'Unauthenticated. Please log in to continue.',
+    'forbidden' => 'You are not authorized to perform this action.',
+    'not_found' => 'The requested resource was not found.',
+    'validation_failed' => 'The given data was invalid.',
+    'too_many_requests' => 'Too many requests. Please slow down and try again later.',
+    'invalid_azure_token' => 'Invalid Azure access token.',
+    'azure_email_missing' => 'Email address was not found in the Azure token.',
     'helpline_workgroup_missing' => 'Helplines Workgroup entity was not found in the database.',
     'generic_title' => 'An Error Occurred',
     'generic_subtitle' => 'Unable to complete the requested action',
