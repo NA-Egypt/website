@@ -2,10 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\HasNormalizedSearchText;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends Model
 {
+    use HasNormalizedSearchText;
+
+    protected $hidden = ['search_text'];
+
+    protected function searchableTextFields(): array
+    {
+        return ['ar_name', 'en_name', 'ar_address', 'en_address'];
+    }
 
     protected $fillable = [
         'ar_name',
@@ -20,24 +31,25 @@ class Group extends Model
         'group_type',
         'service_body_id',
         'neighborhood_id',
-        'capacity'
+        'capacity',
     ];
-    public function serviceBody(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+
+    public function serviceBody(): BelongsTo
     {
         return $this->belongsTo(ServiceBody::class);
     }
 
-    public function neighborhood(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function neighborhood(): BelongsTo
     {
         return $this->belongsTo(Neighborhood::class);
     }
 
-    public function meetings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function meetings(): HasMany
     {
         return $this->hasMany(Meeting::class);
     }
 
-    public function transaction(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transaction(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
@@ -47,12 +59,12 @@ class Group extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function agendas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function agendas(): HasMany
     {
         return $this->hasMany(Agenda::class);
     }
 
-    public function literatureRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function literatureRequests(): HasMany
     {
         return $this->hasMany(LiteratureRequest::class);
     }

@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services;
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\Models\Meeting;
+use App\Services\Search\ArabicNormalizer;
+use Carbon\Carbon;
 
 class MeetingFilterService
 {
@@ -18,120 +19,122 @@ class MeetingFilterService
         if (isset($filters['day'])) {  // Check if day parameter exists (even if empty)
             if ($filters['day'] === 'all' || $filters['day'] === '') {
                 // Explicitly show all days - no day filter applied
-            } elseif (!empty($filters['day'])) {
+            } elseif (! empty($filters['day'])) {
                 // Specific day selected: match ar_name or en_name
-                $query->whereHas('day', fn($q) => $q->where('ar_name', $filters['day'])->orWhere('en_name', $filters['day']));
+                $query->whereHas('day', fn ($q) => $q->where('ar_name', $filters['day'])->orWhere('en_name', $filters['day']));
             }
         } else {
             // No default day filter - show all meetings on initial load
         }
 
-
-        if (!empty($filters['city'])) {
+        if (! empty($filters['city'])) {
             $query->whereHas('group.neighborhood.city', function ($q) use ($filters) {
                 $q->where('ar_name', $filters['city'])->orWhere('en_name', $filters['city']);
             });
         }
 
-        if (!empty($filters['serviceBody'])) {
+        if (! empty($filters['serviceBody'])) {
             $query->whereHas('group.serviceBody', function ($q) use ($filters) {
                 $q->where('ar_name', $filters['serviceBody'])->orWhere('en_name', $filters['serviceBody']);
             });
         }
 
-        if (!empty($filters['group'])) {
+        if (! empty($filters['group'])) {
             $query->whereHas('group', function ($q) use ($filters) {
                 $q->where('ar_name', $filters['group'])->orWhere('en_name', $filters['group']);
             });
         }
 
-        if (!empty($filters['neighborhood'])) {
+        if (! empty($filters['neighborhood'])) {
             $query->whereHas('group.neighborhood', function ($q) use ($filters) {
                 $q->where('ar_name', $filters['neighborhood'])->orWhere('en_name', $filters['neighborhood']);
             });
         }
 
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($bigSearch) use ($search) {
-                $bigSearch->whereHas('group', function ($q) use ($search) {
-                    $q->where('ar_name', 'LIKE', '%' . $search . '%')
-                      ->orWhere('en_name', 'LIKE', '%' . $search . '%')
-                      ->orWhere('ar_address', 'LIKE', '%' . $search . '%')
-                      ->orWhere('en_address', 'LIKE', '%' . $search . '%');
-                })->orWhereHas('directOnlineGroup', function ($q) use ($search) {
-                    $q->where('ar_name', 'LIKE', '%' . $search . '%')
-                      ->orWhere('en_name', 'LIKE', '%' . $search . '%');
+        if (! empty($filters['search'])) {
+            $rawSearch = $filters['search'];
+            $normalizedSearch = ArabicNormalizer::normalize($rawSearch);
+            $likeTerm = '%'.($normalizedSearch !== '' ? $normalizedSearch : $rawSearch).'%';
+
+            $query->where(function ($bigSearch) use ($likeTerm) {
+                $bigSearch->whereHas('group', function ($q) use ($likeTerm) {
+                    $q->where('search_text', 'LIKE', $likeTerm)
+                        ->orWhereHas('neighborhood', function ($nq) use ($likeTerm) {
+                            $nq->where('search_text', 'LIKE', $likeTerm)
+                                ->orWhereHas('city', fn ($cq) => $cq->where('search_text', 'LIKE', $likeTerm));
+                        });
+                })->orWhereHas('directOnlineGroup', function ($q) use ($likeTerm) {
+                    $q->where('search_text', 'LIKE', $likeTerm);
                 });
             });
         }
 
-        if (!empty($filters['virtualOnly'])) {
+        if (! empty($filters['virtualOnly'])) {
             $query->where(function ($bigQ) {
                 $bigQ->whereHas('group', function ($q) {
                     $q->whereIn('group_type', ['اونلاين', 'اون لاين', 'online'])
-                      ->where(function ($sub) {
-                          $sub->whereNull('location')
-                              ->orWhere(function ($sub2) {
-                                  $sub2->where('location', 'not like', '%map%')
-                                       ->where('location', 'not like', '%goo.gl%');
-                              });
-                      });
+                        ->where(function ($sub) {
+                            $sub->whereNull('location')
+                                ->orWhere(function ($sub2) {
+                                    $sub2->where('location', 'not like', '%map%')
+                                        ->where('location', 'not like', '%goo.gl%');
+                                });
+                        });
                 })->orWhereNotNull('direct_online_group_id');
             });
         } else {
             $query->where(function ($q) {
                 $q->whereNull('direct_online_group_id')
-                  ->where(function ($subQ) {
-                      $subQ->whereDoesntHave('group')
-                           ->orWhereHas('group', function ($sub) {
-                               $sub->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
-                           });
-                  });
+                    ->where(function ($subQ) {
+                        $subQ->whereDoesntHave('group')
+                            ->orWhereHas('group', function ($sub) {
+                                $sub->whereNotIn('group_type', ['اونلاين', 'اون لاين', 'online']);
+                            });
+                    });
             });
         }
 
-        if (!empty($filters['englishOnly'])) {
+        if (! empty($filters['englishOnly'])) {
             $query->where('lang', 'english');
         }
 
-        if (!empty($filters['businessMeetingsOnly'])) {
-            $query->whereHas('topics', function($q) {
+        if (! empty($filters['businessMeetingsOnly'])) {
+            $query->whereHas('topics', function ($q) {
                 $q->where('en_name', 'Group Business Meeting');
             });
         } else {
-            $query->whereDoesntHave('topics', function($q) {
+            $query->whereDoesntHave('topics', function ($q) {
                 $q->where('en_name', 'Group Business Meeting');
             });
         }
 
         if ($perPage !== null && $perPage > 0) {
-            if (!empty($filters['type'])) {
+            if (! empty($filters['type'])) {
                 $query->where('type', $filters['type']);
             }
 
-            if (!empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
+            if (! empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
                 if ($filters['recurrence'] === 'weekly') {
                     // 'weekly' is the default "Weekly Meetings" filter which shows both weekly and monthly recurring meetings
                 } elseif ($filters['recurrence'] === 'monthly') {
-                    $query->where(function($q) {
+                    $query->where(function ($q) {
                         $q->whereNotNull('recurrence')
-                          ->where(function($sub) {
-                              foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
-                                  $sub->orWhere('recurrence', 'like', '%"' . $item . '"%');
-                              }
-                          });
+                            ->where(function ($sub) {
+                                foreach (['1st', '2nd', '3rd', '4th', '5th', 'last'] as $item) {
+                                    $sub->orWhere('recurrence', 'like', '%"'.$item.'"%');
+                                }
+                            });
                     });
                 } else {
-                    $query->where('recurrence', 'like', '%"' . $filters['recurrence'] . '"%');
+                    $query->where('recurrence', 'like', '%"'.$filters['recurrence'].'"%');
                 }
             }
 
             return $query->paginate($perPage);
         }
 
-        if (!empty($filters['businessMeetingsOnly'])) {
-            if (!empty($filters['type'])) {
+        if (! empty($filters['businessMeetingsOnly'])) {
+            if (! empty($filters['type'])) {
                 $query->where('type', $filters['type']);
             }
 
@@ -155,10 +158,10 @@ class MeetingFilterService
     {
         $buckets = $candidates->groupBy(function (Meeting $meeting) {
             $groupKey = $meeting->group_id
-                ? 'g_' . $meeting->group_id
-                : ($meeting->direct_online_group_id ? 'dog_' . $meeting->direct_online_group_id : 'm_' . $meeting->id);
+                ? 'g_'.$meeting->group_id
+                : ($meeting->direct_online_group_id ? 'dog_'.$meeting->direct_online_group_id : 'm_'.$meeting->id);
 
-            return $groupKey . '_d_' . $meeting->day_id;
+            return $groupKey.'_d_'.$meeting->day_id;
         });
 
         $mergedCards = collect();
@@ -168,6 +171,7 @@ class MeetingFilterService
                 $single = $bucket->first();
                 $single->setRelation('recurring_variations', collect());
                 $mergedCards->push($single);
+
                 continue;
             }
 
@@ -205,8 +209,8 @@ class MeetingFilterService
             }
         }
 
-        $hasActiveVariantFilter = !empty($filters['type'])
-            || (!empty($filters['recurrence']) && $filters['recurrence'] !== 'weekly');
+        $hasActiveVariantFilter = ! empty($filters['type'])
+            || (! empty($filters['recurrence']) && $filters['recurrence'] !== 'weekly');
 
         return $mergedCards->filter(function (Meeting $card) use ($filters, $hasActiveVariantFilter) {
             $parentMatches = $this->matchesTypeAndRecurrence($card, $filters);
@@ -231,22 +235,22 @@ class MeetingFilterService
 
     protected function matchesTypeAndRecurrence(Meeting $meeting, array $filters): bool
     {
-        if (!empty($filters['type']) && $meeting->type !== $filters['type']) {
+        if (! empty($filters['type']) && $meeting->type !== $filters['type']) {
             return false;
         }
 
-        if (!empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
+        if (! empty($filters['recurrence']) && empty($filters['businessMeetingsOnly'])) {
             $recurrenceFilter = $filters['recurrence'];
             if ($recurrenceFilter === 'weekly') {
                 return true;
             }
 
             if ($recurrenceFilter === 'monthly') {
-                return !empty($meeting->recurrence)
+                return ! empty($meeting->recurrence)
                     && count(array_intersect($meeting->recurrence, ['1st', '2nd', '3rd', '4th', '5th', 'last'])) > 0;
             }
 
-            return !empty($meeting->recurrence) && in_array($recurrenceFilter, $meeting->recurrence, true);
+            return ! empty($meeting->recurrence) && in_array($recurrenceFilter, $meeting->recurrence, true);
         }
 
         return true;
