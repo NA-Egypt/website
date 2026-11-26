@@ -1,4 +1,6 @@
-<?php /** @noinspection ALL */
+<?php
+
+/** @noinspection ALL */
 
 return [
     'List' => 'قائمة',
@@ -733,7 +735,7 @@ return [
     'Not provided' => 'غير متوفر',
     'No agendas found' => 'لم يتم العثور على أجندات',
     'group_data' => 'بيانات المجموعة',
-    
+
     // Tour Strings
     'tour_start' => 'جولة بالصفحة',
     'tour_filter_options' => 'خيارات التصفية',
@@ -818,7 +820,7 @@ return [
         'sNext' => 'التالي',
         'sPrevious' => 'السابق',
         'sSortAscending' => ': تفعيل لترتيب العمود تصاعدياً',
-        'sSortDescending' => ': تفعيل لترتيب العمود تنازلياً'
+        'sSortDescending' => ': تفعيل لترتيب العمود تنازلياً',
     ],
     'Delete Selected' => 'حذف المحدد',
     'Are you sure to delete the selected records?' => 'هل أنت متأكد من حذف السجلات المحددة؟',
@@ -864,7 +866,7 @@ return [
     'Send to RSC' => 'إرسال إلى سكرتير المنطقة',
     'Enter your review notes here...' => 'أدخل ملاحظات المراجعة هنا...',
     'Return to Committee as Draft' => 'إرجاع إلى اللجنة كمسودة',
-    'return_report_desc'=> 'هذا الإجراء سيعيد التقرير إلى اللجنة ليتم تعديله وإعادة إرساله.',
+    'return_report_desc' => 'هذا الإجراء سيعيد التقرير إلى اللجنة ليتم تعديله وإعادة إرساله.',
     'Return to Draft with Notes' => 'إرجاع إلى المسودة مع الملاحظات',
     'meeting_day_desc' => 'مثال: أول أحد',
     'Attended Members' => 'الأعضاء الحاضرون',
@@ -973,7 +975,7 @@ return [
     'Storage Box Archive' => 'أرشيف صندوق التخزين',
     'Size' => 'الحجم',
     'Download' => 'تنزيل',
-    
+
     // Form Builder
     'Form Builder' => 'منشئ النماذج',
     'Forms List' => 'قائمة النماذج',
@@ -1090,7 +1092,7 @@ return [
     'View Details' => 'عرض التفاصيل',
     'Close' => 'إغلاق',
     'Download PDF' => 'تحميل PDF',
-    'Your response for :title has been successfully submitted.'=>'تم استلام بياناتك بنجاح لـ :title',
+    'Your response for :title has been successfully submitted.' => 'تم استلام بياناتك بنجاح لـ :title',
     'New Registration' => 'تسجيل جديد',
     'Form Header Icon' => 'أيقونة ترويسة النموذج',
     'e.g. Annual Member Survey' => 'مثال: استبيان الأعضاء السنوي',
@@ -1102,7 +1104,7 @@ return [
     'Select Committee...' => 'اختر اللجنة...',
     'Select Service Body...' => 'اختر المنتدى أو المنطقة...',
     'Total Views' => 'إجمالي المشاهدات',
-    'Edit User'=>'تعديل المستخدم',
+    'Edit User' => 'تعديل المستخدم',
     'Notification Emails' => 'البريد الإلكتروني للإشعارات (مفصولة بفواصل، بحد أقصى 3)',
     'Phone Number' => 'رقم الهاتف',
     'Static Text Block' => 'كتلة نص ثابتة',
@@ -1185,8 +1187,8 @@ return [
     'Return to Draft' => 'إرجاع للمسودة',
     'Edit Draft' => 'تعديل المسودة',
     'No agendas found.' => 'لم يتم العثور على أجندات.',
-    'Login to your email'=>'الدخول إلى بريدك الإلكتروني',
-    'open_position'=>'ترشيحات',
+    'Login to your email' => 'الدخول إلى بريدك الإلكتروني',
+    'open_position' => 'ترشيحات',
     'Active Filters' => 'المرشحات النشطة',
     'Weekly Meetings' => 'اجتماعات أسبوعية',
     'Monthly Meetings' => 'اجتماعات شهرية',
@@ -3396,4 +3398,56 @@ return [
     'organizer_committees_group' => 'لجان الخدمة (Committees)',
     'organizer_workgroups_group' => 'مجموعات العمل (Workgroups)',
     'organizer_service_bodies_group' => 'مناطق ومنتديات الخدمة (Service Bodies)',
+
+    'flash' => [
+        'direct_online_groups' => [
+            'created' => 'تم إنشاء المجموعة الأونلاين بنجاح.',
+            'updated' => 'تم تحديث المجموعة الأونلاين بنجاح.',
+        ],
+
+        'literature_requests' => [
+            'group_required' => 'يجب أن تكون مرتبطاً بمجموعة لطلب المطبوعات.',
+            'no_group_associated' => 'لا توجد مجموعة مرتبطة بحسابك.',
+            'group_not_found' => 'المجموعة غير موجودة.',
+            'cart_empty' => 'سلة الطلبات فارغة.',
+            'no_service_body' => 'لم يتم تكوين جسم خدمة لهذه المجموعة.',
+            'accumulated_approved' => 'تم اعتماد الطلب المجمع وإرساله إلى لجنة المطبوعات بنجاح.',
+            'invoice_updated_returned' => 'تم تحديث الفاتورة وإعادتها إلى جسم الخدمة بنجاح.',
+        ],
+
+        'committee_literature' => [
+            'committee_required' => 'يجب أن تكون مرتبطاً بلجنة خدمة.',
+            'no_committee_selected' => 'لم يتم اختيار لجنة.',
+            'committee_not_found' => 'لجنة الخدمة غير موجودة.',
+            'select_positive_quantity' => 'يرجى تحديد عنصر واحد على الأقل بكمية أكبر من صفر.',
+            'request_submitted' => 'تم إرسال طلب المطبوعات إلى لجنة المطبوعات بنجاح.',
+            'insufficient_stock' => 'الكمية غير كافية للعنصر: :name. المتاح في مخزون لجنة المطبوعات: :available',
+            'cannot_issue_empty_slip' => 'لا يمكن إصدار إذن تسليم بدون عناصر.',
+            'slip_created' => 'تم إنشاء إذن التسليم رقم #:slip بنجاح وتم خصم الكميات من مخزون لجنة المطبوعات.',
+            'slip_already_acknowledged' => 'تم تأكيد استلام هذا الإذن مسبقاً.',
+            'slip_acknowledged' => 'تم تأكيد استلام إذن التسليم رقم #:slip بنجاح.',
+            'cannot_return_before_delivery' => 'لا يمكن إرجاع المتبقي قبل تسليم المطبوعات.',
+            'no_delivery_slip_found' => 'لم يتم العثور على إذن تسليم.',
+            'return_exceeds_remaining' => 'الكمية المرتجعة للعنصر :name تتجاوز الكمية المتبقية المتاحة (:max).',
+            'specify_return_quantity' => 'يرجى تحديد كمية عنصر واحد على الأقل للإرجاع.',
+            'return_slip_generated' => 'تم إنشاء إذن المرتجع رقم #:slip وإعادة الكميات إلى مخزون لجنة المطبوعات.',
+        ],
+
+        'helpline' => [
+            'workgroup_report_synced' => 'تم إنشاء/تحديث مسودة تقرير مجموعة العمل بنجاح (المعرف: #:id). يمكن للجنة العلاقات العامة الآن مراجعتها وإدراجها ضمن تقريرها الرسمي.',
+            'volunteer_added' => 'تمت إضافة المتطوع بنجاح إلى قائمة خط المساعدة.',
+            'volunteer_updated' => 'تم تحديث بيانات المتطوع بنجاح.',
+            'volunteer_status_toggled' => 'تم تعديل حالة تفعيل المتطوع بنجاح.',
+            'volunteer_deactivated_instead' => 'تم تعطيل المتطوع بدلاً من حذفه لوجود مكالمات مسجلة باسمه لحفظ السجلات.',
+            'volunteer_deleted' => 'تم حذف المتطوع بنجاح.',
+        ],
+
+        'committee_reports' => [
+            'invalid_token_json' => 'بيانات الرمز (JSON) غير صالحة.',
+        ],
+
+        'whatsapp' => [
+            'send_message_failed' => 'فشل إرسال الرسالة.',
+        ],
+    ],
 ];

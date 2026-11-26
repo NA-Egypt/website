@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserFacingException;
 use App\Models\InventoryItem;
 use App\Models\InventorySlip;
 use App\Models\LiteratureRequest;
@@ -35,7 +36,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
     /**
      * Resolve the current committee for the authenticated user
      */
-    private function getCurrentCommittee(Request $request = null): ?ServiceCommittee
+    private function getCurrentCommittee(?Request $request = null): ?ServiceCommittee
     {
         $user = Auth::user();
         if ($user->hasRole('super admin') || $user->hasRole('Lit User')) {
@@ -43,6 +44,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             if ($committeeId) {
                 return ServiceCommittee::find($committeeId);
             }
+
             return ServiceCommittee::committeesOnly()->first();
         }
 
@@ -58,8 +60,8 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $isLitUser = $user->hasRole('super admin') || $user->hasRole('Lit User');
 
         $committee = $this->getCurrentCommittee($request);
-        if (!$committee && !$isLitUser) {
-            return redirect()->route('dashboard')->with('error', 'You must be associated with a Service Committee.');
+        if (! $committee && ! $isLitUser) {
+            return redirect()->route('dashboard')->with('error', __('messages.flash.committee_literature.committee_required'));
         }
 
         $allCommittees = $isLitUser ? ServiceCommittee::orderBy('ar_name')->get() : collect();
@@ -67,7 +69,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $query = LiteratureRequest::with(['serviceCommittee', 'items.item', 'slips'])
             ->where('type', 'committee');
 
-        if ($committee && !$request->boolean('all')) {
+        if ($committee && ! $request->boolean('all')) {
             $query->where('service_committee_id', $committee->id);
         }
 
@@ -82,8 +84,8 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
     public function create(Request $request)
     {
         $committee = $this->getCurrentCommittee($request);
-        if (!$committee) {
-            return redirect()->route('committee-literature.index')->with('error', 'No committee selected.');
+        if (! $committee) {
+            return redirect()->route('committee-literature.index')->with('error', __('messages.flash.committee_literature.no_committee_selected'));
         }
 
         // Available items strictly from Literature Committee inventory (lit_quantity > 0)
@@ -104,8 +106,8 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $committee = $this->getCurrentCommittee($request);
-        if (!$committee) {
-            return redirect()->back()->with('error', 'Service Committee not found.');
+        if (! $committee) {
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.committee_not_found'));
         }
 
         $validated = $request->validate([
@@ -114,10 +116,10 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        $quantities = array_filter($validated['quantities'], fn($qty) => (int) $qty > 0);
+        $quantities = array_filter($validated['quantities'], fn ($qty) => (int) $qty > 0);
 
         if (empty($quantities)) {
-            return redirect()->back()->with('error', 'Please select at least one item with a quantity greater than zero.');
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.select_positive_quantity'));
         }
 
         DB::beginTransaction();
@@ -134,7 +136,9 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             $totalItems = 0;
             foreach ($quantities as $itemId => $qty) {
                 $item = InventoryItem::find($itemId);
-                if (!$item) continue;
+                if (! $item) {
+                    continue;
+                }
 
                 $qty = (int) $qty;
                 LiteratureRequestItem::create([
@@ -155,10 +159,16 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             DB::commit();
 
             return redirect()->route('committee-literature.show', $litRequest->id)
-                ->with('success', 'Literature request submitted successfully to Literature Committee.');
+                ->with('success', __('messages.flash.committee_literature.request_submitted'));
+        } catch (UserFacingException $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to submit literature request: ' . $e->getMessage());
+            report($e);
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
     }
 
@@ -172,9 +182,9 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             ->findOrFail($id);
 
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User')) {
             $userCommittee = ServiceCommittee::where('user_id', $user->id)->first();
-            if (!$userCommittee || $userCommittee->id !== $litRequest->service_committee_id) {
+            if (! $userCommittee || $userCommittee->id !== $litRequest->service_committee_id) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -232,7 +242,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
     public function issueSlip(Request $request, $id)
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User')) {
             abort(403, 'Unauthorized');
         }
 
@@ -249,13 +259,20 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $itemsData = [];
         foreach ($validated['quantities'] as $itemId => $qty) {
             $qty = (int) $qty;
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($itemId);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             if ($item->lit_quantity < $qty) {
-                return redirect()->back()->with('error', "Insufficient stock for item: {$item->name}. Available in Lit stock: {$item->lit_quantity}");
+                return redirect()->back()->with('error', __('messages.flash.committee_literature.insufficient_stock', [
+                    'name' => $item->name,
+                    'available' => $item->lit_quantity,
+                ]));
             }
 
             $itemsData[] = [
@@ -265,7 +282,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         }
 
         if (empty($itemsData)) {
-            return redirect()->back()->with('error', 'Cannot issue slip with 0 items.');
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.cannot_issue_empty_slip'));
         }
 
         DB::beginTransaction();
@@ -285,10 +302,16 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             DB::commit();
 
             return redirect()->route('committee-literature.show', $litRequest->id)
-                ->with('success', "Delivery slip #{$slip->slip_number} created successfully. Items deducted from Lit inventory.");
+                ->with('success', __('messages.flash.committee_literature.slip_created', ['slip' => $slip->slip_number]));
+        } catch (UserFacingException $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error issuing slip: ' . $e->getMessage());
+            report($e);
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
     }
 
@@ -300,15 +323,15 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $slip = InventorySlip::with('literatureRequest')->findOrFail($slipId);
 
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User')) {
             $userCommittee = ServiceCommittee::where('user_id', $user->id)->first();
-            if (!$userCommittee || $userCommittee->id !== $slip->service_committee_id) {
+            if (! $userCommittee || $userCommittee->id !== $slip->service_committee_id) {
                 abort(403, 'Unauthorized');
             }
         }
 
         if ($slip->status === 'received' || $slip->status === 'completed') {
-            return redirect()->back()->with('error', 'Slip is already acknowledged.');
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.slip_already_acknowledged'));
         }
 
         $slip->update([
@@ -321,7 +344,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             $slip->literatureRequest->update(['status' => 'received']);
         }
 
-        return redirect()->back()->with('success', "Receipt of slip #{$slip->slip_number} acknowledged successfully.");
+        return redirect()->back()->with('success', __('messages.flash.committee_literature.slip_acknowledged', ['slip' => $slip->slip_number]));
     }
 
     /**
@@ -334,8 +357,8 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             ->findOrFail($id);
 
         $deliverySlip = $litRequest->slips->where('type', 'issue_to_committee')->sortByDesc('id')->first();
-        if (!$deliverySlip) {
-            return redirect()->back()->with('error', 'Cannot return remains before literature has been delivered.');
+        if (! $deliverySlip) {
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.cannot_return_before_delivery'));
         }
 
         // Calculate available returnable quantities (Delivered - Already Returned)
@@ -382,8 +405,8 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         ]);
 
         $deliverySlip = $litRequest->slips->where('type', 'issue_to_committee')->sortByDesc('id')->first();
-        if (!$deliverySlip) {
-            return redirect()->back()->with('error', 'No delivery slip found.');
+        if (! $deliverySlip) {
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.no_delivery_slip_found'));
         }
 
         // Calculate currently returnable caps
@@ -403,7 +426,9 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $itemsData = [];
         foreach ($validated['quantities'] as $itemId => $qty) {
             $qty = (int) $qty;
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $delivered = $deliveredMap[$itemId] ?? 0;
             $returnedSoFar = $alreadyReturnedMap[$itemId] ?? 0;
@@ -411,7 +436,11 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
 
             if ($qty > $maxReturnable) {
                 $item = InventoryItem::find($itemId);
-                return redirect()->back()->with('error', "Returned quantity for {$item->name} exceeds available remaining quantity ({$maxReturnable}).");
+
+                return redirect()->back()->with('error', __('messages.flash.committee_literature.return_exceeds_remaining', [
+                    'name' => $item->name,
+                    'max' => $maxReturnable,
+                ]));
             }
 
             $itemsData[] = [
@@ -421,7 +450,7 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         }
 
         if (empty($itemsData)) {
-            return redirect()->back()->with('error', 'Please specify at least one item quantity to return.');
+            return redirect()->back()->with('error', __('messages.flash.committee_literature.specify_return_quantity'));
         }
 
         DB::beginTransaction();
@@ -441,10 +470,16 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             DB::commit();
 
             return redirect()->route('committee-literature.show', $litRequest->id)
-                ->with('success', "Return slip #{$slip->slip_number} generated. Items restored to Literature Committee stock.");
+                ->with('success', __('messages.flash.committee_literature.return_slip_generated', ['slip' => $slip->slip_number]));
+        } catch (UserFacingException $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error processing return: ' . $e->getMessage());
+            report($e);
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
     }
 
@@ -457,9 +492,9 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
             ->findOrFail($slipId);
 
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User')) {
             $userCommittee = ServiceCommittee::where('user_id', $user->id)->first();
-            if (!$userCommittee || $userCommittee->id !== $slip->service_committee_id) {
+            if (! $userCommittee || $userCommittee->id !== $slip->service_committee_id) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -469,8 +504,9 @@ class CommitteeLiteratureController extends Controller implements HasMiddleware
         $mpdf->WriteHTML($html);
 
         $filename = "slip_{$slip->slip_number}.pdf";
+
         return response($mpdf->Output($filename, 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 }

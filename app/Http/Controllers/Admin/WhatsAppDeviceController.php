@@ -129,9 +129,10 @@ class WhatsAppDeviceController extends Controller
             $msg = ($res['dev_skipped'] ?? false)
                 ? 'Test message skipped in Dev Mode (phone not in whitelist)'
                 : __('messages.whatsapp_test_success');
+
             return redirect()->route('whatsapp.device.status')->with('success', $msg);
         }
 
-        return redirect()->route('whatsapp.device.status')->with('error', $res['error'] ?? 'Failed to send message.');
+        return redirect()->route('whatsapp.device.status')->with('error', $res['error'] ?? __('messages.flash.whatsapp.send_message_failed'));
     }
 }

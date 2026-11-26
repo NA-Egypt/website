@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\UserFacingException;
 use App\Models\CommitteeReport;
 use App\Models\HelplineCall;
-use App\Models\HelplineVolunteer;
 use App\Models\ServiceCommittee;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class HelplineReportService
 {
@@ -74,6 +73,7 @@ class HelplineReportService
         while ($date->dayOfWeek !== Carbon::TUESDAY) {
             $date->addDay();
         }
+
         return $date->setTime(23, 59, 59);
     }
 
@@ -119,8 +119,8 @@ class HelplineReportService
         return [
             'start' => $cycleStart,
             'end' => $cycleEnd,
-            'key' => $cycleStart->format('Y-m-d') . '_' . $cycleEnd->format('Y-m-d'),
-            'label' => 'دورة ' . $cycleMonth->translatedFormat('F Y') . ' (' . $cycleStart->format('d/m') . ' إلى ' . $cycleEnd->format('d/m/Y') . ')',
+            'key' => $cycleStart->format('Y-m-d').'_'.$cycleEnd->format('Y-m-d'),
+            'label' => 'دورة '.$cycleMonth->translatedFormat('F Y').' ('.$cycleStart->format('d/m').' إلى '.$cycleEnd->format('d/m/Y').')',
             'group' => 'monthly',
             'group_label' => 'الدورات الشهرية الكاملة',
             'is_current' => true,
@@ -150,7 +150,7 @@ class HelplineReportService
             $start = $prevThirdTuesday->copy()->startOfDay();
             $end = $firstTuesday->copy()->subDay()->endOfDay();
             $type = 'first_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $firstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'تقرير اجتماع الثلاثاء الأول - '.$firstTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
         } elseif ($now->lt($thirdTuesday->copy()->startOfDay())) {
             // Between 1st Tuesday 00:00:00 and 3rd Tuesday 00:00:00:
             // Target meeting is this 3rd Tuesday.
@@ -158,7 +158,7 @@ class HelplineReportService
             $start = $firstTuesday->copy()->startOfDay();
             $end = $thirdTuesday->copy()->subDay()->endOfDay();
             $type = 'third_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $thirdTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'تقرير اجتماع الثلاثاء الثالث - '.$thirdTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
         } else {
             // From 3rd Tuesday 00:00:00 onwards:
             // Target meeting is next month's 1st Tuesday.
@@ -168,13 +168,13 @@ class HelplineReportService
             $start = $thirdTuesday->copy()->startOfDay();
             $end = $nextFirstTuesday->copy()->subDay()->endOfDay();
             $type = 'first_tuesday';
-            $label = 'تقرير اجتماع الثلاثاء الأول - ' . $nextFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $label = 'تقرير اجتماع الثلاثاء الأول - '.$nextFirstTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
         }
 
         return [
             'start' => $start,
             'end' => $end,
-            'key' => $start->format('Y-m-d') . '_' . $end->format('Y-m-d'),
+            'key' => $start->format('Y-m-d').'_'.$end->format('Y-m-d'),
             'label' => $label,
             'type' => $type,
             'group' => 'meeting',
@@ -205,7 +205,7 @@ class HelplineReportService
                 $prevMonth = $cursorMonth->copy()->firstOfMonth()->subMonth();
                 $prevThirdTuesday = $this->getThirdTuesdayOfMonth($prevMonth->year, $prevMonth->month);
                 $start = $prevThirdTuesday->copy()->startOfDay();
-                $label = 'تقرير اجتماع الثلاثاء الأول - ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+                $label = 'تقرير اجتماع الثلاثاء الأول - '.$targetMeetingTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
             } else {
                 $cursorMonth = $cursorMonth->copy()->firstOfMonth()->subMonth();
                 $cursorType = 'third_tuesday';
@@ -213,17 +213,17 @@ class HelplineReportService
                 $end = $targetMeetingTuesday->copy()->subDay()->endOfDay();
                 $firstTuesday = $this->getFirstTuesdayOfMonth($cursorMonth->year, $cursorMonth->month);
                 $start = $firstTuesday->copy()->startOfDay();
-                $label = 'تقرير اجتماع الثلاثاء الثالث - ' . $targetMeetingTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+                $label = 'تقرير اجتماع الثلاثاء الثالث - '.$targetMeetingTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
             }
 
-            $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
+            $key = $start->format('Y-m-d').'_'.$end->format('Y-m-d');
 
             if ($onlyWithCalls) {
                 $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
                     ->whereDate('call_date', '<=', $end->toDateString())
                     ->exists();
 
-                if (!$hasCalls) {
+                if (! $hasCalls) {
                     continue;
                 }
             }
@@ -256,6 +256,7 @@ class HelplineReportService
             if ($i === 0) {
                 $cycles[$current['key']] = $current;
                 $cursorTargetTuesday = $current['start']->copy();
+
                 continue;
             }
 
@@ -265,16 +266,17 @@ class HelplineReportService
             $prevFirstTuesday = $this->getFirstTuesdayOfMonth($prevMonth->year, $prevMonth->month);
             $start = $prevFirstTuesday->copy()->startOfDay();
 
-            $key = $start->format('Y-m-d') . '_' . $end->format('Y-m-d');
-            $label = 'دورة ' . $prevFirstTuesday->translatedFormat('F Y') . ' (' . $start->format('d/m') . ' إلى ' . $end->format('d/m/Y') . ')';
+            $key = $start->format('Y-m-d').'_'.$end->format('Y-m-d');
+            $label = 'دورة '.$prevFirstTuesday->translatedFormat('F Y').' ('.$start->format('d/m').' إلى '.$end->format('d/m/Y').')';
 
             if ($onlyWithCalls) {
                 $hasCalls = HelplineCall::whereDate('call_date', '>=', $start->toDateString())
                     ->whereDate('call_date', '<=', $end->toDateString())
                     ->exists();
 
-                if (!$hasCalls) {
+                if (! $hasCalls) {
                     $cursorTargetTuesday = $start->copy();
+
                     continue;
                 }
             }
@@ -357,7 +359,7 @@ class HelplineReportService
         }
         foreach ($calls as $call) {
             $s = $call->call_time_shift;
-            if (!isset($shiftCounts[$s])) {
+            if (! isset($shiftCounts[$s])) {
                 $shiftCounts[$s] = 0;
             }
             $shiftCounts[$s]++;
@@ -422,8 +424,8 @@ class HelplineReportService
         $helplinesWorkgroup = ServiceCommittee::where('email', 'phone@naegypt.org')->first()
             ?? ServiceCommittee::find(85);
 
-        if (!$helplinesWorkgroup) {
-            throw new \RuntimeException('Helplines Workgroup entity not found in database.');
+        if (! $helplinesWorkgroup) {
+            throw new UserFacingException(__('errors.helpline_workgroup_missing'), 'helpline_workgroup_missing');
         }
 
         $reportData = $this->getReportData($start, $end);
@@ -431,16 +433,16 @@ class HelplineReportService
         // Format structured body sections for the report
         $bodySections = [
             [
-                'headline' => 'تقرير مكالمات خط المساعدة (دورة ' . $end->translatedFormat('F Y') . ')',
+                'headline' => 'تقرير مكالمات خط المساعدة (دورة '.$end->translatedFormat('F Y').')',
                 'content' => sprintf(
-                    "<p><strong>الفترة من:</strong> %s &nbsp;|&nbsp; <strong>إلى:</strong> %s</p>" .
-                    "<ul>" .
-                    "<li><strong>إجمالي المكالمات المستلمة:</strong> %d مكالمة</li>" .
-                    "<li><strong>المكالمات أقل من 5 دقائق:</strong> %d (%.1f%%)</li>" .
-                    "<li><strong>المكالمات أكثر من 5 دقائق:</strong> %d (%.1f%%)</li>" .
-                    "<li><strong>مكالمات محولة للخطوة 12:</strong> %d (%.1f%%)</li>" .
-                    "<li><strong>مكالمات تتطلب مناقشة بالاجتماع القادم:</strong> %d</li>" .
-                    "</ul>",
+                    '<p><strong>الفترة من:</strong> %s &nbsp;|&nbsp; <strong>إلى:</strong> %s</p>'.
+                    '<ul>'.
+                    '<li><strong>إجمالي المكالمات المستلمة:</strong> %d مكالمة</li>'.
+                    '<li><strong>المكالمات أقل من 5 دقائق:</strong> %d (%.1f%%)</li>'.
+                    '<li><strong>المكالمات أكثر من 5 دقائق:</strong> %d (%.1f%%)</li>'.
+                    '<li><strong>مكالمات محولة للخطوة 12:</strong> %d (%.1f%%)</li>'.
+                    '<li><strong>مكالمات تتطلب مناقشة بالاجتماع القادم:</strong> %d</li>'.
+                    '</ul>',
                     $start->format('Y-m-d'),
                     $end->format('Y-m-d'),
                     $reportData['total_calls'],
@@ -461,6 +463,7 @@ class HelplineReportService
                         $html .= "<tr><td>{$shift}</td><td>{$cnt}</td></tr>";
                     }
                     $html .= '</tbody></table>';
+
                     return $html;
                 })(),
             ],
@@ -470,16 +473,21 @@ class HelplineReportService
                     $html = '<p><strong>أعلى فئات المتصلين:</strong></p><ul>';
                     $i = 0;
                     foreach ($reportData['caller_type_counts'] as $type => $cnt) {
-                        if ($i++ >= 5) break;
+                        if ($i++ >= 5) {
+                            break;
+                        }
                         $html .= "<li>{$type}: {$cnt} مكالمة</li>";
                     }
                     $html .= '</ul><p><strong>أعلى مصادر معرفة بالزمالة:</strong></p><ul>';
                     $j = 0;
                     foreach ($reportData['referral_counts'] as $ref => $cnt) {
-                        if ($j++ >= 5) break;
+                        if ($j++ >= 5) {
+                            break;
+                        }
                         $html .= "<li>{$ref}: {$cnt} مكالمة</li>";
                     }
                     $html .= '</ul>';
+
                     return $html;
                 })(),
             ],
@@ -492,8 +500,8 @@ class HelplineReportService
             ->where('status', 'draft')
             ->first();
 
-        if (!$report) {
-            $report = new CommitteeReport();
+        if (! $report) {
+            $report = new CommitteeReport;
             $report->service_committee_id = $helplinesWorkgroup->id;
             $report->meeting_date = $meetingDate;
             $report->meeting_day_description = 'اجتماع مجموعة خطوط المساعدة الشهري';

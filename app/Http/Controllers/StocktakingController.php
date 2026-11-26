@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserFacingException;
 use App\Models\InventoryItem;
 use App\Models\InventoryTransaction;
-use App\Models\StocktakingSession;
 use App\Models\StocktakingItem;
+use App\Models\StocktakingSession;
 use App\Services\MpdfService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class StocktakingController extends Controller implements HasMiddleware
 {
@@ -70,18 +71,26 @@ class StocktakingController extends Controller implements HasMiddleware
             }
 
             DB::commit();
+
             return redirect()->route('store.stocktaking.count', $session->id)
                 ->with('success', __('messages.stocktaking_started_success'));
-        } catch (\Exception $e) {
+        } catch (UserFacingException $e) {
             DB::rollBack();
+
             return redirect()->route('store.stocktaking.index')
                 ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            report($e);
+
+            return redirect()->route('store.stocktaking.index')
+                ->with('error', __('errors.generic'));
         }
     }
 
     public function count(StocktakingSession $session)
     {
-        if (!$session->isInProgress()) {
+        if (! $session->isInProgress()) {
             return redirect()->route('store.stocktaking.show', $session->id);
         }
 
@@ -94,7 +103,7 @@ class StocktakingController extends Controller implements HasMiddleware
 
     public function updateCount(Request $request, StocktakingSession $session)
     {
-        if (!$session->isInProgress()) {
+        if (! $session->isInProgress()) {
             return redirect()->route('store.stocktaking.show', $session->id)->with('error', __('messages.session_not_editable'));
         }
 
@@ -113,10 +122,10 @@ class StocktakingController extends Controller implements HasMiddleware
 
                 if ($stocktakingItem) {
                     if (array_key_exists('counted_store_qty', $countData) && $countData['counted_store_qty'] !== null) {
-                        $stocktakingItem->counted_store_qty = (int)$countData['counted_store_qty'];
+                        $stocktakingItem->counted_store_qty = (int) $countData['counted_store_qty'];
                     }
                     if (array_key_exists('counted_lit_qty', $countData) && $countData['counted_lit_qty'] !== null) {
-                        $stocktakingItem->counted_lit_qty = (int)$countData['counted_lit_qty'];
+                        $stocktakingItem->counted_lit_qty = (int) $countData['counted_lit_qty'];
                     }
                     $stocktakingItem->calculateVariances();
                     $stocktakingItem->save();
@@ -135,9 +144,15 @@ class StocktakingController extends Controller implements HasMiddleware
             }
 
             return redirect()->back()->with('success', __('messages.counts_saved_success'));
+        } catch (UserFacingException $e) {
+            DB::rollBack();
+
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', $e->getMessage());
+            report($e);
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
     }
 
@@ -147,9 +162,9 @@ class StocktakingController extends Controller implements HasMiddleware
             ->where('stocktaking_session_id', $session->id)
             ->get();
 
-        $totalSystemQty = $items->sum(fn($i) => $i->system_store_qty + $i->system_lit_qty);
-        $totalCountedQty = $items->sum(fn($i) => ($i->counted_store_qty ?? $i->system_store_qty) + ($i->counted_lit_qty ?? $i->system_lit_qty));
-        $totalVarianceQty = $items->sum(fn($i) => $i->store_variance + $i->lit_variance);
+        $totalSystemQty = $items->sum(fn ($i) => $i->system_store_qty + $i->system_lit_qty);
+        $totalCountedQty = $items->sum(fn ($i) => ($i->counted_store_qty ?? $i->system_store_qty) + ($i->counted_lit_qty ?? $i->system_lit_qty));
+        $totalVarianceQty = $items->sum(fn ($i) => $i->store_variance + $i->lit_variance);
         $totalVarianceValue = $items->sum('variance_value');
 
         return view('store.stocktaking.show', compact('session', 'items', 'totalSystemQty', 'totalCountedQty', 'totalVarianceQty', 'totalVarianceValue'));
@@ -167,7 +182,9 @@ class StocktakingController extends Controller implements HasMiddleware
 
             foreach ($items as $sItem) {
                 $invItem = InventoryItem::find($sItem->inventory_item_id);
-                if (!$invItem) continue;
+                if (! $invItem) {
+                    continue;
+                }
 
                 $newStoreQty = $sItem->counted_store_qty ?? $sItem->system_store_qty;
                 $newLitQty = $sItem->counted_lit_qty ?? $sItem->system_lit_qty;
@@ -182,7 +199,7 @@ class StocktakingController extends Controller implements HasMiddleware
                         'notes' => __('messages.stocktaking_adj_notes', [
                             'session' => $session->id,
                             'location' => __('messages.store_qty'),
-                            'diff' => $sItem->store_variance > 0 ? "+{$sItem->store_variance}" : "{$sItem->store_variance}"
+                            'diff' => $sItem->store_variance > 0 ? "+{$sItem->store_variance}" : "{$sItem->store_variance}",
                         ]),
                     ]);
                 }
@@ -196,7 +213,7 @@ class StocktakingController extends Controller implements HasMiddleware
                         'notes' => __('messages.stocktaking_adj_notes', [
                             'session' => $session->id,
                             'location' => __('messages.lit_qty'),
-                            'diff' => $sItem->lit_variance > 0 ? "+{$sItem->lit_variance}" : "{$sItem->lit_variance}"
+                            'diff' => $sItem->lit_variance > 0 ? "+{$sItem->lit_variance}" : "{$sItem->lit_variance}",
                         ]),
                     ]);
                 }
@@ -216,10 +233,17 @@ class StocktakingController extends Controller implements HasMiddleware
 
             return redirect()->route('store.stocktaking.show', $session->id)
                 ->with('success', __('messages.adjustments_applied_success'));
-        } catch (\Exception $e) {
+        } catch (UserFacingException $e) {
             DB::rollBack();
+
             return redirect()->route('store.stocktaking.show', $session->id)
                 ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            report($e);
+
+            return redirect()->route('store.stocktaking.show', $session->id)
+                ->with('error', __('errors.generic'));
         }
     }
 
@@ -229,14 +253,15 @@ class StocktakingController extends Controller implements HasMiddleware
             ->where('stocktaking_session_id', $session->id)
             ->get();
 
-        $totalSystemQty = $items->sum(fn($i) => $i->system_store_qty + $i->system_lit_qty);
-        $totalCountedQty = $items->sum(fn($i) => ($i->counted_store_qty ?? $i->system_store_qty) + ($i->counted_lit_qty ?? $i->system_lit_qty));
-        $totalVarianceQty = $items->sum(fn($i) => $i->store_variance + $i->lit_variance);
+        $totalSystemQty = $items->sum(fn ($i) => $i->system_store_qty + $i->system_lit_qty);
+        $totalCountedQty = $items->sum(fn ($i) => ($i->counted_store_qty ?? $i->system_store_qty) + ($i->counted_lit_qty ?? $i->system_lit_qty));
+        $totalVarianceQty = $items->sum(fn ($i) => $i->store_variance + $i->lit_variance);
         $totalVarianceValue = $items->sum('variance_value');
 
         $html = view('store.stocktaking.pdf', compact('session', 'items', 'totalSystemQty', 'totalCountedQty', 'totalVarianceQty', 'totalVarianceValue'))->render();
 
-        $pdfService = new MpdfService();
+        $pdfService = new MpdfService;
+
         return $pdfService->generatePdfResponse($html, "Stocktaking_Report_Session_{$session->id}.pdf");
     }
 
@@ -249,16 +274,16 @@ class StocktakingController extends Controller implements HasMiddleware
         $fileName = "Stocktaking_Report_Session_{$session->id}.csv";
 
         $headers = [
-            "Content-type" => "text/csv; charset=UTF-8",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=$fileName",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($items) {
             $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF"); // UTF-8 BOM
+            fwrite($file, "\xEF\xBB\xBF"); // UTF-8 BOM
 
             fputcsv($file, [
                 __('messages.id'),
@@ -277,7 +302,7 @@ class StocktakingController extends Controller implements HasMiddleware
             foreach ($items as $item) {
                 fputcsv($file, [
                     $item->inventory_item_id,
-                    $item->inventoryItem->store_display_name ?? 'Item #' . $item->inventory_item_id,
+                    $item->inventoryItem->store_display_name ?? 'Item #'.$item->inventory_item_id,
                     $item->inventoryItem->category ?? '-',
                     $item->system_store_qty,
                     $item->counted_store_qty ?? $item->system_store_qty,

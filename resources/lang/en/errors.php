@@ -46,10 +46,12 @@ return [
 
     // 503 Service Unavailable / Maintenance
     '503_title' => 'Under Maintenance',
-    '503_subtitle' => "We are upgrading our services to serve you better",
+    '503_subtitle' => 'We are upgrading our services to serve you better',
     '503_message' => 'We are currently performing scheduled maintenance and will be back online shortly. Helplines and meetings remain fully active.',
 
     // Generic / Fallback
+    'generic' => 'Something went wrong. Please try again.',
+    'helpline_workgroup_missing' => 'Helplines Workgroup entity was not found in the database.',
     'generic_title' => 'An Error Occurred',
     'generic_subtitle' => 'Unable to complete the requested action',
     'generic_message' => 'The system encountered an issue while trying to render this page. Please return home or try again later.',

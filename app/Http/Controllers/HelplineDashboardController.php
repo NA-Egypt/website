@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserFacingException;
 use App\Models\HelplineCall;
 use App\Models\HelplineVolunteer;
 use App\Services\HelplineReportService;
@@ -26,7 +27,7 @@ class HelplineDashboardController extends Controller
     protected function authorizeHelpline(): void
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             abort(401);
         }
 
@@ -35,7 +36,7 @@ class HelplineDashboardController extends Controller
             || $user->hasRole('Phoneline')
             || in_array($user->email, ['phone@naegypt.org', 'pr@naegypt.org']);
 
-        if (!$isAuthorized) {
+        if (! $isAuthorized) {
             abort(403, 'غير مصرح لك بالوصول إلى إدارة خطوط المساعدة.');
         }
     }
@@ -60,13 +61,13 @@ class HelplineDashboardController extends Controller
         } elseif ($selectedPeriodType === 'today') {
             $startDate = Carbon::today()->startOfDay();
             $endDate = Carbon::today()->endOfDay();
-            $periodLabel = 'مكالمات اليوم (' . Carbon::today()->translatedFormat('d F Y') . ')';
+            $periodLabel = 'مكالمات اليوم ('.Carbon::today()->translatedFormat('d F Y').')';
         } elseif ($selectedPeriodType === 'custom') {
             $from = $request->input('from_date');
             $to = $request->input('to_date');
             $startDate = $from ? Carbon::parse($from)->startOfDay() : null;
             $endDate = $to ? Carbon::parse($to)->endOfDay() : null;
-            $periodLabel = 'فترة مخصصة' . ($startDate ? ' من ' . $startDate->format('Y-m-d') : '') . ($endDate ? ' إلى ' . $endDate->format('Y-m-d') : '');
+            $periodLabel = 'فترة مخصصة'.($startDate ? ' من '.$startDate->format('Y-m-d') : '').($endDate ? ' إلى '.$endDate->format('Y-m-d') : '');
         } else {
             $selectedPeriodType = 'cycle';
             if (isset($availableCycles[$selectedCycleKey])) {
@@ -111,15 +112,15 @@ class HelplineDashboardController extends Controller
             $search = trim($request->input('search'));
             $callsQuery->where(function ($q) use ($search) {
                 $q->where('call_brief', 'like', "%{$search}%")
-                  ->orWhere('volunteer_name', 'like', "%{$search}%")
-                  ->orWhere('volunteer_name_other', 'like', "%{$search}%")
-                  ->orWhere('caller_type', 'like', "%{$search}%")
-                  ->orWhere('caller_type_other', 'like', "%{$search}%")
-                  ->orWhere('referral_source', 'like', "%{$search}%")
-                  ->orWhere('referral_source_other', 'like', "%{$search}%")
-                  ->orWhere('hospital_name', 'like', "%{$search}%")
-                  ->orWhere('poster_location', 'like', "%{$search}%")
-                  ->orWhere('additional_info', 'like', "%{$search}%");
+                    ->orWhere('volunteer_name', 'like', "%{$search}%")
+                    ->orWhere('volunteer_name_other', 'like', "%{$search}%")
+                    ->orWhere('caller_type', 'like', "%{$search}%")
+                    ->orWhere('caller_type_other', 'like', "%{$search}%")
+                    ->orWhere('referral_source', 'like', "%{$search}%")
+                    ->orWhere('referral_source_other', 'like', "%{$search}%")
+                    ->orWhere('hospital_name', 'like', "%{$search}%")
+                    ->orWhere('poster_location', 'like', "%{$search}%")
+                    ->orWhere('additional_info', 'like', "%{$search}%");
             });
         }
 
@@ -204,7 +205,9 @@ class HelplineDashboardController extends Controller
 
         $callsQuery = $this->buildCallsQuery($request, $period['startDate'], $period['endDate']);
         $perPage = (int) $request->input('per_page', 20);
-        if ($perPage < 5 || $perPage > 100) $perPage = 20;
+        if ($perPage < 5 || $perPage > 100) {
+            $perPage = 20;
+        }
 
         $calls = $callsQuery->latest('call_date')->latest('id')->paginate($perPage);
 
@@ -228,7 +231,7 @@ class HelplineDashboardController extends Controller
     {
         $this->authorizeHelpline();
 
-        $call->discuss_in_meeting = !$call->discuss_in_meeting;
+        $call->discuss_in_meeting = ! $call->discuss_in_meeting;
         $call->save();
 
         return response()->json([
@@ -302,12 +305,12 @@ class HelplineDashboardController extends Controller
             }
         }
 
-        $filename = 'helpline_calls_' . Carbon::now()->format('Y_m_d_His') . '.csv';
+        $filename = 'helpline_calls_'.Carbon::now()->format('Y_m_d_His').'.csv';
 
         return response()->streamDownload(function () use ($query) {
             $output = fopen('php://output', 'w');
             // Write UTF-8 BOM so Arabic displays properly in Microsoft Excel
-            fputs($output, "\xEF\xBB\xBF");
+            fwrite($output, "\xEF\xBB\xBF");
 
             // CSV Header
             fputcsv($output, [
@@ -324,7 +327,7 @@ class HelplineDashboardController extends Controller
                 'تحويل لخطوة 12',
                 'مناقشة بالاجتماع القادم',
                 'نبذة عن المكالمة',
-                'معلومات إضافية'
+                'معلومات إضافية',
             ]);
 
             $query->chunk(200, function ($calls) use ($output) {
@@ -396,12 +399,12 @@ class HelplineDashboardController extends Controller
         ]);
 
         $mpdf->WriteHTML($html);
-        $filename = 'helpline_report_' . $end->format('Y_m') . '.pdf';
+        $filename = 'helpline_report_'.$end->format('Y_m').'.pdf';
         $pdfContent = $mpdf->Output('', 'S');
 
         return response($pdfContent, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"',
         ]);
     }
 
@@ -426,9 +429,14 @@ class HelplineDashboardController extends Controller
 
         try {
             $report = $this->reportService->syncToWorkgroupReport($start, $end, Auth::id());
-            return redirect()->back()->with('success', 'تم إنشاء/تحديث مسودة تقرير مجموعة العمل بنجاح (المعرف: #' . $report->id . '). يمكن للجنة العلاقات العامة الآن مراجعتها وإدراجها ضمن تقريرها الرسمي.');
+
+            return redirect()->back()->with('success', __('messages.flash.helpline.workgroup_report_synced', ['id' => $report->id]));
+        } catch (UserFacingException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء إنشاء مسودة التقرير: ' . $e->getMessage());
+            report($e);
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
     }
 
@@ -471,7 +479,7 @@ class HelplineDashboardController extends Controller
             'is_active' => $request->has('is_active') ? $request->boolean('is_active') : true,
         ]);
 
-        return redirect()->route('helpline.volunteers')->with('success', 'تم إضافة المتطوع بنجاح إلى قائمة خط المساعدة.');
+        return redirect()->route('helpline.volunteers')->with('success', __('messages.flash.helpline.volunteer_added'));
     }
 
     /**
@@ -484,7 +492,7 @@ class HelplineDashboardController extends Controller
         $volunteer = HelplineVolunteer::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:150|unique:helpline_volunteers,name,' . $volunteer->id,
+            'name' => 'required|string|max:150|unique:helpline_volunteers,name,'.$volunteer->id,
             'phone' => 'nullable|string|max:50',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
@@ -497,7 +505,7 @@ class HelplineDashboardController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        return redirect()->route('helpline.volunteers')->with('success', 'تم تحديث بيانات المتطوع بنجاح.');
+        return redirect()->route('helpline.volunteers')->with('success', __('messages.flash.helpline.volunteer_updated'));
     }
 
     /**
@@ -508,10 +516,10 @@ class HelplineDashboardController extends Controller
         $this->authorizeHelpline();
 
         $volunteer = HelplineVolunteer::findOrFail($id);
-        $volunteer->is_active = !$volunteer->is_active;
+        $volunteer->is_active = ! $volunteer->is_active;
         $volunteer->save();
 
-        return redirect()->route('helpline.volunteers')->with('success', 'تم تعديل حالة تفعيل المتطوع بنجاح.');
+        return redirect()->route('helpline.volunteers')->with('success', __('messages.flash.helpline.volunteer_status_toggled'));
     }
 
     /**
@@ -527,10 +535,12 @@ class HelplineDashboardController extends Controller
         if ($volunteer->calls()->count() > 0) {
             $volunteer->is_active = false;
             $volunteer->save();
-            return redirect()->route('helpline.volunteers')->with('warning', 'تم تعطيل المتطوع بدلاً من حذفه لوجود مكالمات مسجلة باسمه لحفظ السجلات.');
+
+            return redirect()->route('helpline.volunteers')->with('warning', __('messages.flash.helpline.volunteer_deactivated_instead'));
         }
 
         $volunteer->delete();
-        return redirect()->route('helpline.volunteers')->with('success', 'تم حذف المتطوع بنجاح.');
+
+        return redirect()->route('helpline.volunteers')->with('success', __('messages.flash.helpline.volunteer_deleted'));
     }
 }

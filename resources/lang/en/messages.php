@@ -701,7 +701,7 @@ return [
     'No agendas found' => 'No agendas found',
     'Actions' => 'Actions',
     'group_data' => 'Group Data',
-    
+
     // Tour Strings
     'tour_start' => 'Take a Tour',
     'tour_filter_options' => 'Filter Options',
@@ -777,7 +777,7 @@ return [
         'sNext' => 'Next',
         'sPrevious' => 'Previous',
         'sSortAscending' => ': activate to sort column ascending',
-        'sSortDescending' => ': activate to sort column descending'
+        'sSortDescending' => ': activate to sort column descending',
     ],
     'forpublicheader' => 'Resources for the Public',
     'servicebody' => 'ASC/GSF',
@@ -813,17 +813,17 @@ return [
     'Max size' => 'Maximum 5MB per file',
     'Max attachments limit reached' => 'Maximum attachments limit reached (5 files). Delete one to upload a new file.',
     'Are you sure you want to delete this attachment?' => 'Are you sure you want to delete this attachment?',
-    'PDF'=>'Download PDF',
+    'PDF' => 'Download PDF',
     'Exceptional Meeting' => 'Exceptional Meeting',
     'Report Date' => 'Report Date',
-    'Approve & Send to RSC'=> 'Approve & Send to ASC',
-    'Are you sure you want to approve and send this report to ASC?'=> 'Are you sure you want to approve and send this report to ASC?',
+    'Approve & Send to RSC' => 'Approve & Send to ASC',
+    'Are you sure you want to approve and send this report to ASC?' => 'Are you sure you want to approve and send this report to ASC?',
     'approve_report_desc' => 'This action will make the report visible to all members in the Reports Archive.',
     'Committee Review Notes' => 'Committee Review Notes',
     'Review Notes' => 'Review Notes',
     'Enter your review notes here...' => 'Enter your review notes here...',
     'Return to Committee as Draft' => 'Return to Committee as Draft',
-    'return_report_desc'=> 'This action will return the report to the committee for revision and resubmission.',
+    'return_report_desc' => 'This action will return the report to the committee for revision and resubmission.',
     'Return to Draft with Notes' => 'Return to Draft with Notes',
     'meeting_day_desc' => 'e.g. first sunday',
     'Attended Members' => 'Attended Members',
@@ -972,7 +972,7 @@ return [
     'Storage Box Archive' => 'Storage Box Archive',
     'Size' => 'Size',
     'Download' => 'Download',
-    
+
     // Form Builder
     'Form Builder' => 'Form Builder',
     'Forms List' => 'Forms List',
@@ -1709,7 +1709,7 @@ return [
     'impersonation_ended' => 'Impersonation ended. Returned to your account.',
     'cannot_impersonate_admin' => 'Cannot impersonate another Super Admin account.',
     'no_archived_literature_requests' => 'No archived literature requests found.',
-    
+
     // Slips, Reconciliation & Ledger Translations
     'inventory_slips' => 'Inventory Slips',
     'inventory_slips_title' => 'Transfer & Return Slips',
@@ -3392,4 +3392,56 @@ return [
     'organizer_committees_group' => 'Service Committees',
     'organizer_workgroups_group' => 'Workgroups',
     'organizer_service_bodies_group' => 'Service Bodies',
+
+    'flash' => [
+        'direct_online_groups' => [
+            'created' => 'Group created successfully.',
+            'updated' => 'Group updated successfully.',
+        ],
+
+        'literature_requests' => [
+            'group_required' => 'You must be associated with a group to request literature.',
+            'no_group_associated' => 'No group associated.',
+            'group_not_found' => 'Group not found.',
+            'cart_empty' => 'Your cart is empty.',
+            'no_service_body' => 'No Service Body configured.',
+            'accumulated_approved' => 'Accumulated request approved and sent to Literature Committee.',
+            'invoice_updated_returned' => 'Invoice updated and returned to Service Body successfully.',
+        ],
+
+        'committee_literature' => [
+            'committee_required' => 'You must be associated with a Service Committee.',
+            'no_committee_selected' => 'No committee selected.',
+            'committee_not_found' => 'Service Committee not found.',
+            'select_positive_quantity' => 'Please select at least one item with a quantity greater than zero.',
+            'request_submitted' => 'Literature request submitted successfully to Literature Committee.',
+            'insufficient_stock' => 'Insufficient stock for item: :name. Available in Lit stock: :available',
+            'cannot_issue_empty_slip' => 'Cannot issue slip with 0 items.',
+            'slip_created' => 'Delivery slip #:slip created successfully. Items deducted from Lit inventory.',
+            'slip_already_acknowledged' => 'Slip is already acknowledged.',
+            'slip_acknowledged' => 'Receipt of slip #:slip acknowledged successfully.',
+            'cannot_return_before_delivery' => 'Cannot return remains before literature has been delivered.',
+            'no_delivery_slip_found' => 'No delivery slip found.',
+            'return_exceeds_remaining' => 'Returned quantity for :name exceeds available remaining quantity (:max).',
+            'specify_return_quantity' => 'Please specify at least one item quantity to return.',
+            'return_slip_generated' => 'Return slip #:slip generated. Items restored to Literature Committee stock.',
+        ],
+
+        'helpline' => [
+            'workgroup_report_synced' => 'Workgroup draft report created/updated successfully (ID: #:id). The PR Committee can now review and embed it into its official report.',
+            'volunteer_added' => 'Volunteer added to the helpline list successfully.',
+            'volunteer_updated' => 'Volunteer details updated successfully.',
+            'volunteer_status_toggled' => 'Volunteer active status updated successfully.',
+            'volunteer_deactivated_instead' => 'Volunteer was deactivated instead of deleted because call records exist under their name.',
+            'volunteer_deleted' => 'Volunteer deleted successfully.',
+        ],
+
+        'committee_reports' => [
+            'invalid_token_json' => 'Invalid token JSON.',
+        ],
+
+        'whatsapp' => [
+            'send_message_failed' => 'Failed to send message.',
+        ],
+    ],
 ];

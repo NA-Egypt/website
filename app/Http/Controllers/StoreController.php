@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserFacingException;
 use App\Models\InventoryItem;
 use App\Models\InventoryTransaction;
+use App\Models\StocktakingSession;
 use App\Services\InventoryLedgerService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Services\MpdfService;
-
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller implements HasMiddleware
 {
@@ -24,12 +25,12 @@ class StoreController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         $query = InventoryItem::with(['damagedTransactions.user', 'lastActiveReceiveTransaction.user']);
-        
+
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('name_en', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                $q->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('name_en', 'like', '%'.$request->search.'%')
+                    ->orWhere('description', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -45,7 +46,7 @@ class StoreController extends Controller implements HasMiddleware
         $sortDirection = strtolower($request->input('direction')) === 'desc' ? 'desc' : 'asc';
 
         $items = $query->orderBy($sortColumn, $sortDirection)->paginate(15)->withQueryString();
-        $activeStocktaking = \App\Models\StocktakingSession::getActiveSession();
+        $activeStocktaking = StocktakingSession::getActiveSession();
 
         $ledgerService = app(InventoryLedgerService::class);
         $allItemsQuery = InventoryItem::with(['damagedTransactions.user', 'lastActiveReceiveTransaction.user'])->orderBy('name');
@@ -89,7 +90,7 @@ class StoreController extends Controller implements HasMiddleware
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
             'initial_store_quantity' => 'nullable|integer|min:0',
-            'category' => 'required|string|in:' . implode(',', InventoryItem::CATEGORIES),
+            'category' => 'required|string|in:'.implode(',', InventoryItem::CATEGORIES),
         ]);
 
         $item = InventoryItem::create([
@@ -116,6 +117,7 @@ class StoreController extends Controller implements HasMiddleware
 
         if ($request->wantsJson() || $request->ajax()) {
             $ledgerService = app(InventoryLedgerService::class);
+
             return response()->json([
                 'success' => true,
                 'message' => __('messages.item_created_success'),
@@ -134,13 +136,14 @@ class StoreController extends Controller implements HasMiddleware
             'name_en' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'selling_price' => 'required|numeric|min:0',
-            'category' => 'required|string|in:' . implode(',', InventoryItem::CATEGORIES),
+            'category' => 'required|string|in:'.implode(',', InventoryItem::CATEGORIES),
         ]);
 
         $item->update($fields);
 
         if ($request->wantsJson() || $request->ajax()) {
             $ledgerService = app(InventoryLedgerService::class);
+
             return response()->json([
                 'success' => true,
                 'message' => __('messages.item_updated_success'),
@@ -169,10 +172,10 @@ class StoreController extends Controller implements HasMiddleware
         if ($request->filled('selling_price')) {
             $newPrice = (float) $request->input('selling_price');
             if ($newPrice != (float) $item->selling_price) {
-                if (!$canEditPrice) {
+                if (! $canEditPrice) {
                     return response()->json([
                         'success' => false,
-                        'message' => __('messages.unauthorized_price_edit')
+                        'message' => __('messages.unauthorized_price_edit'),
                     ], 403);
                 }
                 $item->selling_price = $newPrice;
@@ -204,7 +207,7 @@ class StoreController extends Controller implements HasMiddleware
             if ($item->store_quantity < $transferQty) {
                 return response()->json([
                     'success' => false,
-                    'message' => __('messages.insufficient_store_stock')
+                    'message' => __('messages.insufficient_store_stock'),
                 ], 422);
             }
             $item->decrement('store_quantity', $transferQty);
@@ -223,7 +226,7 @@ class StoreController extends Controller implements HasMiddleware
                     'inventory_item_id' => $item->id,
                     'quantity' => $transferQty,
                     'unit_price' => $item->selling_price,
-                ]
+                ],
             ], Auth::id(), __('messages.inline_transfer'));
             $messages[] = __('messages.stock_transferred_to_lit');
         }
@@ -265,23 +268,26 @@ class StoreController extends Controller implements HasMiddleware
         try {
             foreach ($request->items as $row) {
                 $item = InventoryItem::find($row['id']);
-                if (!$item) continue;
+                if (! $item) {
+                    continue;
+                }
 
                 // Price update
-                if (isset($row['selling_price']) && $row['selling_price'] !== null && (float)$row['selling_price'] != (float)$item->selling_price) {
-                    if (!$canEditPrice) {
+                if (isset($row['selling_price']) && $row['selling_price'] !== null && (float) $row['selling_price'] != (float) $item->selling_price) {
+                    if (! $canEditPrice) {
                         \DB::rollBack();
+
                         return response()->json([
                             'success' => false,
-                            'message' => __('messages.unauthorized_price_edit_item', ['name' => $item->name])
+                            'message' => __('messages.unauthorized_price_edit_item', ['name' => $item->name]),
                         ], 403);
                     }
-                    $item->selling_price = (float)$row['selling_price'];
+                    $item->selling_price = (float) $row['selling_price'];
                     $item->save();
                 }
 
                 // Receive stock
-                $receiveQty = (int)($row['receive_qty'] ?? 0);
+                $receiveQty = (int) ($row['receive_qty'] ?? 0);
                 if ($receiveQty > 0) {
                     $item->increment('store_quantity', $receiveQty);
                     InventoryTransaction::create([
@@ -296,14 +302,15 @@ class StoreController extends Controller implements HasMiddleware
                 }
 
                 // Transfer stock
-                $transferQty = (int)($row['transfer_qty'] ?? 0);
+                $transferQty = (int) ($row['transfer_qty'] ?? 0);
                 if ($transferQty > 0) {
                     $item->refresh();
                     if ($item->store_quantity < $transferQty) {
                         \DB::rollBack();
+
                         return response()->json([
                             'success' => false,
-                            'message' => __('messages.insufficient_store_stock_item', ['name' => $item->store_display_name])
+                            'message' => __('messages.insufficient_store_stock_item', ['name' => $item->store_display_name]),
                         ], 422);
                     }
                     $item->decrement('store_quantity', $transferQty);
@@ -328,14 +335,20 @@ class StoreController extends Controller implements HasMiddleware
                 $updatedItems[] = $ledgerService->formatItemForLiveState($item);
             }
 
-            if (!empty($slipItems)) {
+            if (! empty($slipItems)) {
                 $ledgerService->createTransferSlip($slipItems, Auth::id(), __('messages.bulk_inline_transfer'));
             }
 
             \DB::commit();
+        } catch (UserFacingException $e) {
+            \DB::rollBack();
+
+            return response()->json(['success' => false, 'message' => $e->getMessage()], $e->statusCode);
         } catch (\Exception $e) {
             \DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            report($e);
+
+            return response()->json(['success' => false, 'message' => __('errors.generic')], 500);
         }
 
         $liveState = $ledgerService->getLiveInventoryState();
@@ -390,6 +403,7 @@ class StoreController extends Controller implements HasMiddleware
 
         if ($request->wantsJson() || $request->ajax()) {
             $ledgerService = app(InventoryLedgerService::class);
+
             return response()->json([
                 'success' => true,
                 'message' => __('messages.stock_received_success'),
@@ -416,6 +430,7 @@ class StoreController extends Controller implements HasMiddleware
                     'message' => __('messages.insufficient_store_stock'),
                 ], 422);
             }
+
             return redirect()->route('store.index')->with('error', __('messages.insufficient_store_stock'));
         }
 
@@ -438,7 +453,7 @@ class StoreController extends Controller implements HasMiddleware
                 'inventory_item_id' => $item->id,
                 'quantity' => $fields['quantity'],
                 'unit_price' => $item->selling_price,
-            ]
+            ],
         ], Auth::id(), $fields['notes'] ?? null);
 
         if ($request->wantsJson() || $request->ajax()) {
@@ -467,6 +482,7 @@ class StoreController extends Controller implements HasMiddleware
                     'message' => __('messages.insufficient_lit_stock'),
                 ], 422);
             }
+
             return redirect()->route('store.index')->with('error', __('messages.insufficient_lit_stock'));
         }
 
@@ -489,7 +505,7 @@ class StoreController extends Controller implements HasMiddleware
                 'inventory_item_id' => $item->id,
                 'quantity' => $fields['quantity'],
                 'unit_price' => $item->selling_price,
-            ]
+            ],
         ], Auth::id(), $fields['notes'] ?? null);
 
         if ($request->wantsJson() || $request->ajax()) {
@@ -523,6 +539,7 @@ class StoreController extends Controller implements HasMiddleware
                         'message' => __('messages.insufficient_lit_stock'),
                     ], 422);
                 }
+
                 return redirect()->route('store.index')->with('error', __('messages.insufficient_lit_stock'));
             }
             $item->decrement('lit_quantity', $qty);
@@ -534,6 +551,7 @@ class StoreController extends Controller implements HasMiddleware
                         'message' => __('messages.insufficient_store_stock'),
                     ], 422);
                 }
+
                 return redirect()->route('store.index')->with('error', __('messages.insufficient_store_stock'));
             }
             $item->decrement('store_quantity', $qty);
@@ -571,7 +589,7 @@ class StoreController extends Controller implements HasMiddleware
             'notes' => 'nullable|string|max:500',
         ]);
 
-        if (!empty($fields['transaction_id'])) {
+        if (! empty($fields['transaction_id'])) {
             $tx = InventoryTransaction::where('id', $fields['transaction_id'])
                 ->where('inventory_item_id', $item->id)
                 ->where('type', 'receive')
@@ -580,7 +598,7 @@ class StoreController extends Controller implements HasMiddleware
             $tx = $item->lastActiveReceiveTransaction()->first();
         }
 
-        if (!$tx || $tx->status === 'cancelled') {
+        if (! $tx || $tx->status === 'cancelled') {
             $errMsg = __('messages.no_active_receive_to_cancel');
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
@@ -588,6 +606,7 @@ class StoreController extends Controller implements HasMiddleware
                     'message' => $errMsg,
                 ], 422);
             }
+
             return redirect()->back()->with('error', $errMsg);
         }
 
@@ -599,10 +618,11 @@ class StoreController extends Controller implements HasMiddleware
                     'message' => $errMsg,
                 ], 422);
             }
+
             return redirect()->back()->with('error', $errMsg);
         }
 
-        $reason = !empty($fields['notes']) ? $fields['notes'] : __('messages.wrong_receive_entry_default_note');
+        $reason = ! empty($fields['notes']) ? $fields['notes'] : __('messages.wrong_receive_entry_default_note');
 
         \DB::beginTransaction();
         try {
@@ -630,12 +650,21 @@ class StoreController extends Controller implements HasMiddleware
             ]);
 
             \DB::commit();
-        } catch (\Exception $e) {
+        } catch (UserFacingException $e) {
             \DB::rollBack();
             if ($request->wantsJson() || $request->ajax()) {
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                return response()->json(['success' => false, 'message' => $e->getMessage()], $e->statusCode);
             }
+
             return redirect()->back()->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            report($e);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => __('errors.generic')], 500);
+            }
+
+            return redirect()->back()->with('error', __('errors.generic'));
         }
 
         $ledgerService = app(InventoryLedgerService::class);
@@ -690,7 +719,7 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $transactions = $query->orderBy('created_at', 'desc')->get();
-        
+
         $itemsQuery = InventoryItem::query();
         if ($request->filled('category')) {
             $itemsQuery->where('category', $request->category);
@@ -730,9 +759,10 @@ class StoreController extends Controller implements HasMiddleware
             $store = $catItems->sum('store_quantity');
             $lit = $catItems->sum('lit_quantity');
             $total = $store + $lit;
-            $valuation = $catItems->sum(function($item) {
+            $valuation = $catItems->sum(function ($item) {
                 return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
             });
+
             return [
                 'name' => $catName,
                 'count' => $catItems->count(),
@@ -781,7 +811,7 @@ class StoreController extends Controller implements HasMiddleware
         }
 
         $transactions = $query->orderBy('created_at', 'desc')->get();
-        
+
         $itemsQuery = InventoryItem::query();
         if ($request->filled('category')) {
             $itemsQuery->where('category', $request->category);
@@ -790,7 +820,7 @@ class StoreController extends Controller implements HasMiddleware
             $itemsQuery->where('id', $request->item_id);
         }
         $items = $itemsQuery->orderBy('name')->get();
-        
+
         $totalValuation = $items->sum(function ($item) {
             return ($item->store_quantity + $item->lit_quantity) * $item->selling_price;
         });
@@ -804,10 +834,11 @@ class StoreController extends Controller implements HasMiddleware
         $html = view('store.pdf', compact('transactions', 'items', 'totalValuation', 'totalQty', 'totalValue'))->render();
         $mpdf->WriteHTML($html);
 
-        $filename = 'inventory_report_' . date('Ymd_His') . '.pdf';
+        $filename = 'inventory_report_'.date('Ymd_His').'.pdf';
+
         return response($mpdf->Output($filename, 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
     public function exportCsv(Request $request)
@@ -843,11 +874,11 @@ class StoreController extends Controller implements HasMiddleware
         $transactions = $query->orderBy('created_at', 'desc')->get();
 
         $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=inventory_transactions_" . date('Ymd_His') . ".csv",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=inventory_transactions_'.date('Ymd_His').'.csv',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['ID', 'Date', 'Item Name', 'Transaction Type', 'Quantity', 'Unit Price (EGP)', 'Total Value (EGP)', 'User', 'Notes'];
@@ -857,7 +888,7 @@ class StoreController extends Controller implements HasMiddleware
             return $t->quantity * ($t->item->selling_price ?? 0);
         });
 
-        $callback = function() use($transactions, $columns, $totalQty, $totalValue) {
+        $callback = function () use ($transactions, $columns, $totalQty, $totalValue) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
@@ -871,7 +902,7 @@ class StoreController extends Controller implements HasMiddleware
                     $t->item->selling_price ?? 0,
                     $t->quantity * ($t->item->selling_price ?? 0),
                     $t->user->name ?? 'System',
-                    $t->notes ?? ''
+                    $t->notes ?? '',
                 ]);
             }
 
@@ -884,7 +915,7 @@ class StoreController extends Controller implements HasMiddleware
                 '',
                 $totalValue,
                 '',
-                ''
+                '',
             ]);
 
             fclose($file);
@@ -925,6 +956,7 @@ class StoreController extends Controller implements HasMiddleware
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => __('messages.no_items_selected')], 422);
             }
+
             return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
         }
 
@@ -951,10 +983,11 @@ class StoreController extends Controller implements HasMiddleware
         foreach ($fields['quantities'] as $itemId => $qty) {
             if ($qty > 0) {
                 $item = InventoryItem::find($itemId);
-                if (!$item || $item->store_quantity < $qty) {
+                if (! $item || $item->store_quantity < $qty) {
                     if ($request->wantsJson() || $request->ajax()) {
                         return response()->json(['success' => false, 'message' => __('messages.insufficient_store_stock')], 422);
                     }
+
                     return redirect()->route('store.index')->with('error', __('messages.insufficient_store_stock'));
                 }
             }
@@ -991,11 +1024,12 @@ class StoreController extends Controller implements HasMiddleware
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => __('messages.no_items_selected')], 422);
             }
+
             return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
         }
 
         $ledgerService = app(InventoryLedgerService::class);
-        if (!empty($slipItems)) {
+        if (! empty($slipItems)) {
             $ledgerService->createTransferSlip($slipItems, Auth::id(), $fields['notes'] ?? null);
         }
 
@@ -1022,10 +1056,11 @@ class StoreController extends Controller implements HasMiddleware
         foreach ($fields['quantities'] as $itemId => $qty) {
             if ($qty > 0) {
                 $item = InventoryItem::find($itemId);
-                if (!$item || $item->lit_quantity < $qty) {
+                if (! $item || $item->lit_quantity < $qty) {
                     if ($request->wantsJson() || $request->ajax()) {
                         return response()->json(['success' => false, 'message' => __('messages.insufficient_lit_stock')], 422);
                     }
+
                     return redirect()->route('store.index')->with('error', __('messages.insufficient_lit_stock'));
                 }
             }
@@ -1062,11 +1097,12 @@ class StoreController extends Controller implements HasMiddleware
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => __('messages.no_items_selected')], 422);
             }
+
             return redirect()->route('store.index')->with('error', __('messages.no_items_selected'));
         }
 
         $ledgerService = app(InventoryLedgerService::class);
-        if (!empty($slipItems)) {
+        if (! empty($slipItems)) {
             $ledgerService->createReturnSlip($slipItems, Auth::id(), $fields['notes'] ?? null);
         }
 
@@ -1121,7 +1157,9 @@ class StoreController extends Controller implements HasMiddleware
         try {
             foreach ($fields['items'] as $row) {
                 $item = InventoryItem::find($row['id']);
-                if (!$item) continue;
+                if (! $item) {
+                    continue;
+                }
 
                 $qty = (int) $row['quantity'];
                 $type = $row['type'];
@@ -1135,6 +1173,7 @@ class StoreController extends Controller implements HasMiddleware
                         if ($request->wantsJson() || $request->ajax()) {
                             return response()->json(['success' => false, 'message' => $errMsg], 422);
                         }
+
                         return redirect()->route('store.index')->with('error', $errMsg);
                     }
                     $item->decrement('store_quantity', $qty);
@@ -1151,6 +1190,7 @@ class StoreController extends Controller implements HasMiddleware
                         if ($request->wantsJson() || $request->ajax()) {
                             return response()->json(['success' => false, 'message' => $errMsg], 422);
                         }
+
                         return redirect()->route('store.index')->with('error', $errMsg);
                     }
                     $item->decrement('lit_quantity', $qty);
@@ -1167,6 +1207,7 @@ class StoreController extends Controller implements HasMiddleware
                         if ($request->wantsJson() || $request->ajax()) {
                             return response()->json(['success' => false, 'message' => $errMsg], 422);
                         }
+
                         return redirect()->route('store.index')->with('error', $errMsg);
                     }
                     $item->decrement('store_quantity', $qty);
@@ -1187,20 +1228,29 @@ class StoreController extends Controller implements HasMiddleware
             }
 
             $ledgerService = app(InventoryLedgerService::class);
-            if (!empty($transferSlipItems)) {
+            if (! empty($transferSlipItems)) {
                 $ledgerService->createTransferSlip($transferSlipItems, Auth::id(), $batchNotes);
             }
-            if (!empty($returnSlipItems)) {
+            if (! empty($returnSlipItems)) {
                 $ledgerService->createReturnSlip($returnSlipItems, Auth::id(), $batchNotes);
             }
 
             \DB::commit();
-        } catch (\Exception $e) {
+        } catch (UserFacingException $e) {
             \DB::rollBack();
             if ($request->wantsJson() || $request->ajax()) {
-                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                return response()->json(['success' => false, 'message' => $e->getMessage()], $e->statusCode);
             }
+
             return redirect()->route('store.index')->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            report($e);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => __('errors.generic')], 500);
+            }
+
+            return redirect()->route('store.index')->with('error', __('errors.generic'));
         }
 
         $successMsg = __('messages.batch_movement_success', ['count' => $processedCount]);

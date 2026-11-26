@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\InventoryItem;
+use App\Models\InventoryTransaction;
 use App\Models\LiteratureRequest;
 use App\Models\LiteratureRequestItem;
-use App\Models\Group;
 use App\Models\ServiceBody;
+use App\Services\DateNumberHelper;
+use App\Services\InventoryLedgerService;
+use App\Services\MpdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Services\MpdfService;
-
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 
 class LiteratureRequestController extends Controller implements HasMiddleware
 {
@@ -27,7 +29,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     /**
      * Helper to get group of current user or selected group for admin/treasurer
      */
-    private function getCurrentGroup(Request $request = null)
+    private function getCurrentGroup(?Request $request = null)
     {
         $user = Auth::user();
         if ($user->hasRole('super admin')) {
@@ -35,6 +37,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             if ($groupId) {
                 return Group::find($groupId);
             }
+
             return Group::first();
         }
 
@@ -47,6 +50,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                     return $group;
                 }
             }
+
             return Group::where('service_body_id', $serviceBodyId)->first();
         }
 
@@ -106,20 +110,21 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 $accumulated->items()->delete();
                 $accumulated->update([
                     'total_items_count' => 0,
-                    'total_price' => 0.00
+                    'total_price' => 0.00,
                 ]);
             }
+
             return $accumulated;
         }
 
-        if (!$accumulated) {
+        if (! $accumulated) {
             $accumulated = LiteratureRequest::create([
                 'service_body_id' => $serviceBodyId,
                 'month' => $month,
                 'type' => 'servicebody',
                 'status' => 'draft',
                 'total_items_count' => 0,
-                'total_price' => 0.00
+                'total_price' => 0.00,
             ]);
         }
 
@@ -135,7 +140,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 } else {
                     $compiledItems[$item->inventory_item_id] = [
                         'qty' => $item->quantity,
-                        'price' => $item->price
+                        'price' => $item->price,
                     ];
                 }
             }
@@ -147,7 +152,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 'inventory_item_id' => $itemId,
                 'quantity' => $data['qty'],
                 'price' => $data['price'],
-                'total' => $data['qty'] * $data['price']
+                'total' => $data['qty'] * $data['price'],
             ]);
         }
 
@@ -166,8 +171,8 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function cart(Request $request)
     {
         $group = $this->getCurrentGroup($request);
-        if (!$group) {
-            return redirect()->route('dashboard')->with('error', 'You must be associated with a group to request literature.');
+        if (! $group) {
+            return redirect()->route('dashboard')->with('error', __('messages.flash.literature_requests.group_required'));
         }
 
         $user = Auth::user();
@@ -180,9 +185,9 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             ->first();
 
         // Get available items from store or literature (quantity > 0)
-        $items = InventoryItem::where(function($q) {
+        $items = InventoryItem::where(function ($q) {
             $q->where('store_quantity', '>', 0)
-              ->orWhere('lit_quantity', '>', 0);
+                ->orWhere('lit_quantity', '>', 0);
         })->orderBy('name')->get();
 
         if ($user->hasRole('super admin')) {
@@ -199,7 +204,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             'items' => $items,
             'isLocked' => $isLocked,
             'month' => $month,
-            'allGroups' => $allGroups
+            'allGroups' => $allGroups,
         ]);
     }
 
@@ -209,8 +214,8 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function updateCart(Request $request)
     {
         $group = $this->getCurrentGroup($request);
-        if (!$group) {
-            return redirect()->back()->with('error', 'No group associated.');
+        if (! $group) {
+            return redirect()->back()->with('error', __('messages.flash.literature_requests.no_group_associated'));
         }
 
         $month = Carbon::now()->startOfMonth();
@@ -231,7 +236,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         ], [
             'status' => $newStatus,
             'total_items_count' => 0,
-            'total_price' => 0.00
+            'total_price' => 0.00,
         ]);
 
         // Reset items
@@ -240,7 +245,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $litRequest->save();
 
         $quantities = $request->input('quantities', []); // [item_id => qty]
-        
+
         foreach ($quantities as $itemId => $qty) {
             $qty = intval($qty);
             if ($qty <= 0) {
@@ -248,7 +253,9 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             }
 
             $item = InventoryItem::find($itemId);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             LiteratureRequestItem::create([
                 'literature_request_id' => $litRequest->id,
@@ -284,8 +291,8 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function submitRequest(Request $request)
     {
         $group = $this->getCurrentGroup($request);
-        if (!$group) {
-            return redirect()->back()->with('error', 'Group not found.');
+        if (! $group) {
+            return redirect()->back()->with('error', __('messages.flash.literature_requests.group_not_found'));
         }
 
         $month = Carbon::now()->startOfMonth();
@@ -299,8 +306,8 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             ->where('type', 'group')
             ->first();
 
-        if (!$litRequest || $litRequest->items()->count() === 0) {
-            return redirect()->back()->with('error', 'Your cart is empty.');
+        if (! $litRequest || $litRequest->items()->count() === 0) {
+            return redirect()->back()->with('error', __('messages.flash.literature_requests.cart_empty'));
         }
 
         $isOverride = $litRequest->status === 'submitted';
@@ -310,7 +317,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         // Auto-sync accumulated invoice if draft exists
         $this->syncAccumulatedInvoice($group->service_body_id, $month);
 
-        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success', 
+        return redirect()->route('literature-requests.cart', ['group_id' => $group->id])->with('success',
             $isOverride ? __('messages.request_overridden_success') : __('messages.request_submitted_success')
         );
     }
@@ -321,13 +328,13 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function toggleGroupRequestStatus(Request $request, $id)
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Treasurer') && ! $user->hasRole('ServiceBody')) {
             abort(403);
         }
 
         $litRequest = LiteratureRequest::where('type', 'group')->findOrFail($id);
 
-        if (!$user->hasRole('super admin') && $litRequest->service_body_id !== $user->service_body_id) {
+        if (! $user->hasRole('super admin') && $litRequest->service_body_id !== $user->service_body_id) {
             abort(403);
         }
 
@@ -357,18 +364,18 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function treasurerDashboard(Request $request)
     {
         $user = Auth::user();
-        if (!$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody') && !$user->hasRole('super admin')) {
+        if (! $user->hasRole('Treasurer') && ! $user->hasRole('ServiceBody') && ! $user->hasRole('super admin')) {
             abort(403, 'Unauthorized');
         }
 
         $serviceBodyId = $user->service_body_id;
-        if ($user->hasRole('super admin') || !$serviceBodyId) {
+        if ($user->hasRole('super admin') || ! $serviceBodyId) {
             // Admin or user without fixed service_body_id can select service body
             $serviceBodyId = $request->input('service_body_id', $serviceBodyId ?: (ServiceBody::first()->id ?? null));
         }
 
-        if (!$serviceBodyId) {
-            return redirect()->route('dashboard')->with('error', 'No Service Body configured.');
+        if (! $serviceBodyId) {
+            return redirect()->route('dashboard')->with('error', __('messages.flash.literature_requests.no_service_body'));
         }
 
         $serviceBody = ServiceBody::find($serviceBodyId);
@@ -408,10 +415,10 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function approveAndSend($id)
     {
         $litRequest = LiteratureRequest::findOrFail($id);
-        
+
         $user = Auth::user();
-        if (!$user->hasRole('super admin')) {
-            if (!$user->hasRole('Treasurer') && !$user->hasRole('ServiceBody')) {
+        if (! $user->hasRole('super admin')) {
+            if (! $user->hasRole('Treasurer') && ! $user->hasRole('ServiceBody')) {
                 abort(403);
             }
             if ($litRequest->service_body_id !== $user->service_body_id) {
@@ -420,10 +427,10 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         }
 
         $litRequest->update([
-            'status' => 'sent_to_committee'
+            'status' => 'sent_to_committee',
         ]);
 
-        return redirect()->back()->with('success', 'Accumulated request approved and sent to Literature Committee.');
+        return redirect()->back()->with('success', __('messages.flash.literature_requests.accumulated_approved'));
     }
 
     /**
@@ -432,7 +439,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function committeeDashboard()
     {
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User') && ! $user->hasRole('Store Manager')) {
             abort(403);
         }
 
@@ -455,7 +462,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $litRequest = LiteratureRequest::findOrFail($id);
 
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User') && ! $user->hasRole('Store Manager')) {
             abort(403);
         }
 
@@ -472,7 +479,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $litRequest = LiteratureRequest::with(['items', 'serviceBody'])->findOrFail($id);
 
         $user = Auth::user();
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User') && ! $user->hasRole('Store Manager')) {
             abort(403);
         }
 
@@ -492,17 +499,21 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         foreach ($quantities as $itemId => $qty) {
             $qty = intval($qty);
-            if ($qty <= 0) continue;
+            if ($qty <= 0) {
+                continue;
+            }
 
             $item = InventoryItem::find($itemId);
-            if (!$item) continue;
+            if (! $item) {
+                continue;
+            }
 
             LiteratureRequestItem::create([
                 'literature_request_id' => $litRequest->id,
                 'inventory_item_id' => $item->id,
                 'quantity' => $qty,
                 'price' => $item->selling_price,
-                'total' => $qty * $item->selling_price
+                'total' => $qty * $item->selling_price,
             ]);
 
             $newQuantities[$item->id] = ($newQuantities[$item->id] ?? 0) + $qty;
@@ -512,7 +523,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $affectedItemIds = array_unique(array_merge(array_keys($previousQuantities), array_keys($newQuantities)));
         $sbName = $litRequest->serviceBody
             ? ($litRequest->serviceBody->ar_name ?: $litRequest->serviceBody->en_name)
-            : ('Service Body #' . $litRequest->service_body_id);
+            : ('Service Body #'.$litRequest->service_body_id);
 
         foreach ($affectedItemIds as $itemId) {
             $prevQty = (int) ($previousQuantities[$itemId] ?? 0);
@@ -524,7 +535,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             }
 
             $invItem = InventoryItem::find($itemId);
-            if (!$invItem) {
+            if (! $invItem) {
                 continue;
             }
 
@@ -532,7 +543,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 $invItem->lit_quantity = max(0, (int) $invItem->lit_quantity - $delta);
                 $invItem->save();
 
-                \App\Models\InventoryTransaction::create([
+                InventoryTransaction::create([
                     'inventory_item_id' => $invItem->id,
                     'user_id' => $user->id,
                     'type' => 'lit_sale',
@@ -545,7 +556,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
                 $restoreQty = abs($delta);
                 $invItem->increment('lit_quantity', $restoreQty);
 
-                \App\Models\InventoryTransaction::create([
+                InventoryTransaction::create([
                     'inventory_item_id' => $invItem->id,
                     'user_id' => $user->id,
                     'type' => 'lit_sale_adjustment',
@@ -567,11 +578,11 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             return response()->json([
                 'success' => true,
                 'message' => 'Invoice updated and returned to Service Body successfully.',
-                'live_state' => app(\App\Services\InventoryLedgerService::class)->getLiveInventoryState(),
+                'live_state' => app(InventoryLedgerService::class)->getLiveInventoryState(),
             ]);
         }
 
-        return redirect()->route('literature-requests.committee')->with('success', 'Invoice updated and returned to Service Body successfully.');
+        return redirect()->route('literature-requests.committee')->with('success', __('messages.flash.literature_requests.invoice_updated_returned'));
     }
 
     /**
@@ -580,7 +591,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
     public function archive(Request $request)
     {
         $user = Auth::user();
-        
+
         $query = LiteratureRequest::with(['group', 'serviceBody', 'items.item']);
 
         $targetGroupId = $request->input('group_id');
@@ -593,7 +604,7 @@ class LiteratureRequestController extends Controller implements HasMiddleware
             }
         } elseif ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
             // Service Body roles see requests within their Service Body only
-            if (!$user->service_body_id) {
+            if (! $user->service_body_id) {
                 $query->where('id', 0);
             } else {
                 $query->where('service_body_id', $user->service_body_id);
@@ -624,9 +635,9 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $archiveData = [];
         foreach ($requests as $req) {
             $year = $req->month->format('Y');
-            $monthName = \App\Services\DateNumberHelper::translatedFormat($req->month, 'F');
+            $monthName = DateNumberHelper::translatedFormat($req->month, 'F');
             $monthNum = $req->month->format('m');
-            
+
             $archiveData[$year][$monthNum]['name'] = $monthName;
             $archiveData[$year][$monthNum]['requests'][] = $req;
         }
@@ -643,14 +654,14 @@ class LiteratureRequestController extends Controller implements HasMiddleware
 
         $user = Auth::user();
         // Permission check
-        if (!$user->hasRole('super admin') && !$user->hasRole('Lit User') && !$user->hasRole('Store Manager')) {
+        if (! $user->hasRole('super admin') && ! $user->hasRole('Lit User') && ! $user->hasRole('Store Manager')) {
             if ($user->hasRole('Treasurer') || $user->hasRole('ServiceBody')) {
                 if ($litRequest->service_body_id !== $user->service_body_id) {
                     abort(403);
                 }
             } elseif ($user->hasRole('gsr')) {
                 $group = $this->getCurrentGroup();
-                if (!$group || $litRequest->group_id !== $group->id) {
+                if (! $group || $litRequest->group_id !== $group->id) {
                     abort(403);
                 }
             } else {
@@ -662,9 +673,10 @@ class LiteratureRequestController extends Controller implements HasMiddleware
         $html = view('literature_requests.invoice_pdf', compact('litRequest'))->render();
         $mpdf->WriteHTML($html);
 
-        $filename = 'literature_request_' . $litRequest->id . '_' . $litRequest->month->format('Y_m') . '.pdf';
+        $filename = 'literature_request_'.$litRequest->id.'_'.$litRequest->month->format('Y_m').'.pdf';
+
         return response($mpdf->Output($filename, 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 }

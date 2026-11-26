@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendCommitteeReportSubmissionNotification;
 use App\Models\CommitteeReport;
-use App\Models\ServiceCommittee;
 use App\Models\CommitteeReportAttachment;
 use App\Models\CommitteeReportLog;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ServiceCommittee;
 use App\Services\MpdfService;
-use Illuminate\Support\Facades\Mail;
+use App\Services\OneDriveSyncService;
+use App\Services\ReportArchiver;
+use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CommitteeReportController extends Controller
 {
@@ -21,8 +28,10 @@ class CommitteeReportController extends Controller
     protected function getServiceCommittee()
     {
         $user = Auth::user();
-        if (!$user) return null;
-        
+        if (! $user) {
+            return null;
+        }
+
         if ($user->hasRole('rsc')) {
             $rscCommittee = ServiceCommittee::find(83) ?: ServiceCommittee::where('email', 'RSC@naegypt.org')->first();
             if ($rscCommittee) {
@@ -37,10 +46,11 @@ class CommitteeReportController extends Controller
 
     protected function isRsc()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return false;
         }
         $user = Auth::user();
+
         return $user->hasRole('super admin') || $user->hasRole('rsc');
     }
 
@@ -59,16 +69,16 @@ class CommitteeReportController extends Controller
         if ($this->isRestrictedConsumer($user)) {
             $query->where('status', 'approved');
             $threshold = now()->day >= 10 ? now() : now()->subMonth();
-            $query->where(function($q) use ($threshold) {
+            $query->where(function ($q) use ($threshold) {
                 $q->whereYear('meeting_date', '<', $threshold->year)
-                  ->orWhere(function($sub) use ($threshold) {
-                      $sub->whereYear('meeting_date', $threshold->year)
-                          ->whereMonth('meeting_date', '<', $threshold->month);
-                  });
+                    ->orWhere(function ($sub) use ($threshold) {
+                        $sub->whereYear('meeting_date', $threshold->year)
+                            ->whereMonth('meeting_date', '<', $threshold->month);
+                    });
             });
-        } elseif (!$isRsc) {
+        } elseif (! $isRsc) {
             $committee = $this->getServiceCommittee();
-            if (!$committee) {
+            if (! $committee) {
                 abort(403, 'You are not assigned to any Service Committee.');
             }
 
@@ -87,7 +97,7 @@ class CommitteeReportController extends Controller
                 // Parent committee
                 if ($activeTab === 'workgroups' && $childWorkgroups->isNotEmpty()) {
                     if ($request->has('workgroup_id') && $request->filled('workgroup_id')) {
-                        $query->where('service_committee_id', (int)$request->workgroup_id);
+                        $query->where('service_committee_id', (int) $request->workgroup_id);
                     } else {
                         $query->whereIn('service_committee_id', $childWorkgroups->pluck('id'));
                     }
@@ -97,11 +107,11 @@ class CommitteeReportController extends Controller
             }
         } elseif ($isSuperAdmin) {
             // Super Admin can see drafts, submitted, approved, embedded reports across all committees and workgroups
-            $unembeddedDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn($q) => $q->whereNotNull('parent_id'))
+            $unembeddedDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn ($q) => $q->whereNotNull('parent_id'))
                 ->unembeddedDrafts()
                 ->count();
 
-            $committeeDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn($q) => $q->whereNull('parent_id'))
+            $committeeDraftsCount = CommitteeReport::whereHas('serviceCommittee', fn ($q) => $q->whereNull('parent_id'))
                 ->where('status', 'draft')
                 ->count();
 
@@ -116,22 +126,22 @@ class CommitteeReportController extends Controller
 
             // Tab separation
             if ($activeTab === 'workgroups') {
-                $query->whereHas('serviceCommittee', fn($q) => $q->whereNotNull('parent_id'));
+                $query->whereHas('serviceCommittee', fn ($q) => $q->whereNotNull('parent_id'));
                 if ($request->filled('workgroup_id')) {
-                    $query->where('service_committee_id', (int)$request->workgroup_id);
+                    $query->where('service_committee_id', (int) $request->workgroup_id);
                 } elseif ($request->filled('committee_id')) {
-                    $query->whereHas('serviceCommittee', fn($q) => $q->where('parent_id', (int)$request->committee_id));
+                    $query->whereHas('serviceCommittee', fn ($q) => $q->where('parent_id', (int) $request->committee_id));
                 }
             } else {
-                $query->whereHas('serviceCommittee', fn($q) => $q->whereNull('parent_id'));
+                $query->whereHas('serviceCommittee', fn ($q) => $q->whereNull('parent_id'));
                 if ($request->filled('committee_id')) {
-                    $query->where('service_committee_id', (int)$request->committee_id);
+                    $query->where('service_committee_id', (int) $request->committee_id);
                 }
             }
         } else {
             // RSC review queue should only show official committee reports (not standalone workgroup drafts)
             $query->committeesOnly()->whereIn('status', ['submitted', 'approved']);
-            
+
             // RSC Filters
             if ($request->has('committee_id') && $request->committee_id) {
                 $query->where('service_committee_id', $request->committee_id);
@@ -140,14 +150,14 @@ class CommitteeReportController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('meeting_day_description', 'like', "%$search%")
-                  ->orWhereDate('meeting_date', $search); // exact date match
+                    ->orWhereDate('meeting_date', $search); // exact date match
             });
         }
 
         $reports = $query->latest('meeting_date')->paginate(10);
-        
+
         $committees = $isRsc ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
 
         return view('reports.index', compact(
@@ -171,7 +181,7 @@ class CommitteeReportController extends Controller
 
         if ($isRsc) {
             $committees = ServiceCommittee::committeesOnly()->orderBy('ar_name')->get();
-        } elseif (!$committee) {
+        } elseif (! $committee) {
             abort(403, 'Only Committee members can create reports.');
         }
 
@@ -194,8 +204,8 @@ class CommitteeReportController extends Controller
         $isRsc = $this->isRsc();
         $committee = $this->getServiceCommittee();
 
-        if (!$isRsc && !$committee) {
-             abort(403, 'Unauthorized');
+        if (! $isRsc && ! $committee) {
+            abort(403, 'Unauthorized');
         }
 
         $request->validate([
@@ -272,7 +282,7 @@ class CommitteeReportController extends Controller
         }
 
         if ($report->status === 'approved') {
-            app(\App\Services\ReportArchiver::class)->archive($report, true);
+            app(ReportArchiver::class)->archive($report, true);
         }
 
         CommitteeReportLog::record(
@@ -282,7 +292,7 @@ class CommitteeReportController extends Controller
             [
                 'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
                 'status' => $report->status,
-                'is_exceptional' => (bool)$report->is_exceptional,
+                'is_exceptional' => (bool) $report->is_exceptional,
                 'attachment_count' => $request->hasFile('attachments') ? count($request->file('attachments')) : 0,
             ]
         );
@@ -292,9 +302,10 @@ class CommitteeReportController extends Controller
 
     protected function isRestrictedConsumer($user)
     {
-        if (!$user) {
+        if (! $user) {
             return true;
         }
+
         return $user->hasRole('ServiceBody') || $user->hasRole('gsr');
     }
 
@@ -321,10 +332,11 @@ class CommitteeReportController extends Controller
 
             // Available on the 10th of the month following the meeting date
             $meetingDate = $report->meeting_date;
-            $publishDate = \Carbon\Carbon::parse($meetingDate)->addMonth()->day(10)->startOfDay();
+            $publishDate = Carbon::parse($meetingDate)->addMonth()->day(10)->startOfDay();
             if (now()->lt($publishDate)) {
                 return false;
             }
+
             return true;
         }
 
@@ -335,13 +347,13 @@ class CommitteeReportController extends Controller
     public function show($id)
     {
         $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
-        
+
         if ($this->isRsc()) {
-            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
+            if (! Auth::user()->hasRole('super admin') && ! in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (!$this->isReportVisibleToUser($report)) {
+            if (! $this->isReportVisibleToUser($report)) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -354,21 +366,21 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::with(['serviceCommittee', 'attachments'])->findOrFail($id);
         $isRsc = $this->isRsc();
 
-        if (!$isRsc) {
+        if (! $isRsc) {
             $committee = $this->getServiceCommittee();
-            if (!$committee || $committee->id !== $report->service_committee_id) {
+            if (! $committee || $committee->id !== $report->service_committee_id) {
                 abort(403, 'Unauthorized');
             }
         }
 
         // Only drafts can be edited by committee members
-        if (!$isRsc && $report->status !== 'draft') {
+        if (! $isRsc && $report->status !== 'draft') {
             return redirect()->route('committee-reports.show', $report->id)
                 ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
 
         $committees = $isRsc ? ServiceCommittee::committeesOnly()->orderBy('ar_name')->get() : [];
-        $committee = !$isRsc ? $this->getServiceCommittee() : null;
+        $committee = ! $isRsc ? $this->getServiceCommittee() : null;
 
         $isWorkgroup = ($committee && $committee->isWorkgroup()) || ($report->serviceCommittee && $report->serviceCommittee->isWorkgroup());
         $targetComm = $report->serviceCommittee ?: $committee;
@@ -379,7 +391,7 @@ class CommitteeReportController extends Controller
                 ->whereIn('service_committee_id', $childWorkgroups->pluck('id'))
                 ->where(function ($q) use ($report) {
                     $q->whereNull('parent_report_id')
-                      ->orWhere('parent_report_id', $report->id);
+                        ->orWhere('parent_report_id', $report->id);
                 })
                 ->whereIn('status', ['draft', 'embedded'])
                 ->latest('meeting_date')
@@ -393,14 +405,14 @@ class CommitteeReportController extends Controller
     {
         $report = CommitteeReport::findOrFail($id);
 
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             $committee = $this->getServiceCommittee();
-            if (!$committee || $committee->id !== $report->service_committee_id) {
+            if (! $committee || $committee->id !== $report->service_committee_id) {
                 abort(403, 'Unauthorized');
             }
         }
 
-        if (!$this->isRsc() && $report->status !== 'draft') {
+        if (! $this->isRsc() && $report->status !== 'draft') {
             return redirect()->route('committee-reports.show', $report->id)
                 ->with('error', __('messages.submitted_reports_cannot_be_edited'));
         }
@@ -431,7 +443,7 @@ class CommitteeReportController extends Controller
         $committeeId = $isRsc ? $request->service_committee_id : $report->service_committee_id;
         $targetCommittee = ServiceCommittee::find($committeeId);
         $positionsStatus = $request->positions;
-        
+
         // Workgroup reports can only be saved as draft
         $status = $request->status;
         if ($targetCommittee && $targetCommittee->isWorkgroup()) {
@@ -440,7 +452,7 @@ class CommitteeReportController extends Controller
 
         // Check if adding new attachments exceeds the limit
         if ($request->hasFile('attachments')) {
-            $validFiles = array_filter($request->file('attachments'), function($file) {
+            $validFiles = array_filter($request->file('attachments'), function ($file) {
                 return $file && $file->isValid();
             });
             $currentCount = $report->attachments()->count();
@@ -479,10 +491,10 @@ class CommitteeReportController extends Controller
 
         // Two-way sync of embedded workgroup reports
         $newEmbeddedIds = $request->input('embedded_workgroup_report_ids', []);
-        if (!is_array($newEmbeddedIds)) {
+        if (! is_array($newEmbeddedIds)) {
             $newEmbeddedIds = [];
         }
-        
+
         // Detach any previously embedded workgroup reports that were un-embedded/removed
         CommitteeReport::where('parent_report_id', $report->id)
             ->whereNotIn('id', $newEmbeddedIds)
@@ -492,7 +504,7 @@ class CommitteeReportController extends Controller
             ]);
 
         // Link currently embedded reports
-        if (!empty($newEmbeddedIds)) {
+        if (! empty($newEmbeddedIds)) {
             CommitteeReport::whereIn('id', $newEmbeddedIds)
                 ->update([
                     'parent_report_id' => $report->id,
@@ -505,7 +517,7 @@ class CommitteeReportController extends Controller
         }
 
         if ($report->status === 'approved') {
-            app(\App\Services\ReportArchiver::class)->archive($report->fresh(), true);
+            app(ReportArchiver::class)->archive($report->fresh(), true);
         }
 
         $newDate = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null;
@@ -518,7 +530,7 @@ class CommitteeReportController extends Controller
                 'status' => $report->status,
                 'status_changed' => $oldStatus !== $report->status ? "{$oldStatus} -> {$report->status}" : null,
                 'date_changed' => $oldDate !== $newDate ? "{$oldDate} -> {$newDate}" : null,
-                'is_exceptional' => (bool)$report->is_exceptional,
+                'is_exceptional' => (bool) $report->is_exceptional,
                 'attachments_added' => $request->hasFile('attachments') ? count($request->file('attachments')) : 0,
             ]
         );
@@ -529,7 +541,7 @@ class CommitteeReportController extends Controller
     public function destroy($id)
     {
         $user = Auth::user();
-        if (!$user || !$user->hasRole('super admin')) {
+        if (! $user || ! $user->hasRole('super admin')) {
             abort(403, 'Unauthorized. Only Super Admin can delete committee reports.');
         }
 
@@ -544,7 +556,7 @@ class CommitteeReportController extends Controller
         $committeeName = $report->serviceCommittee ? ($report->serviceCommittee->ar_name ?: $report->serviceCommittee->en_name) : null;
         $meetingDate = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null;
         $attachmentCount = $report->attachments->count();
-        $wasReturnedDraft = !empty($report->review_notes);
+        $wasReturnedDraft = ! empty($report->review_notes);
 
         // Release any embedded workgroup reports back to available drafts
         $report->embeddedWorkgroupReports()->update([
@@ -584,11 +596,11 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::with('serviceCommittee')->findOrFail($id);
 
         if ($this->isRsc()) {
-            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
+            if (! Auth::user()->hasRole('super admin') && ! in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (!$this->isReportVisibleToUser($report)) {
+            if (! $this->isReportVisibleToUser($report)) {
                 abort(403, 'Unauthorized');
             }
         }
@@ -599,47 +611,47 @@ class CommitteeReportController extends Controller
         $html = view('reports.pdf', compact('reports'))->render();
         $mpdf->WriteHTML($html);
 
-        $filename = 'report_' . $report->id . '_' . ($report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d')) . '.pdf';
+        $filename = 'report_'.$report->id.'_'.($report->report_date ? $report->report_date->format('Y-m-d') : $report->created_at->format('Y-m-d')).'.pdf';
 
         $disposition = request()->query('disposition', 'attachment');
-        if (!in_array($disposition, ['attachment', 'inline'])) {
+        if (! in_array($disposition, ['attachment', 'inline'])) {
             $disposition = 'attachment';
         }
 
         return response($mpdf->Output($filename, 'S'), 200)
-               ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', $disposition . '; filename="' . $filename . '"');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
     }
 
     public function exportReportsPdf(Request $request)
     {
         $reportIds = $request->input('report_ids', []);
-        
+
         if (empty($reportIds)) {
             return back()->with('error', __('messages.no_reports_selected') ?? 'No reports selected for export.');
         }
 
         $query = CommitteeReport::whereIn('id', $reportIds)->with('serviceCommittee');
-        
-        if (!$this->isRsc()) {
+
+        if (! $this->isRsc()) {
             $committee = $this->getServiceCommittee();
             $committeeId = $committee ? $committee->id : 0;
             $now = now();
             $user = auth()->user();
-            $query->where(function($q) use ($committeeId, $now, $user) {
+            $query->where(function ($q) use ($committeeId, $now, $user) {
                 if ($committeeId) {
                     $q->where('service_committee_id', $committeeId);
                 }
                 if ($this->isRestrictedConsumer($user)) {
-                    $q->orWhere(function($sub) use ($now) {
+                    $q->orWhere(function ($sub) use ($now) {
                         $sub->where('status', 'approved');
                         $threshold = $now->day >= 10 ? $now : $now->copy()->subMonth();
-                        $sub->where(function($dateQ) use ($threshold) {
+                        $sub->where(function ($dateQ) use ($threshold) {
                             $dateQ->whereYear('meeting_date', '<', $threshold->year)
-                                  ->orWhere(function($inner) use ($threshold) {
-                                      $inner->whereYear('meeting_date', $threshold->year)
-                                            ->whereMonth('meeting_date', '<', $threshold->month);
-                                  });
+                                ->orWhere(function ($inner) use ($threshold) {
+                                    $inner->whereYear('meeting_date', $threshold->year)
+                                        ->whereMonth('meeting_date', '<', $threshold->month);
+                                });
                         });
                     });
                 } else {
@@ -665,11 +677,11 @@ class CommitteeReportController extends Controller
         $html = view('reports.pdf', compact('reports'))->render();
         $mpdf->WriteHTML($html);
 
-        $filename = 'reports_export_' . date('Y-m-d') . '.pdf';
-        
+        $filename = 'reports_export_'.date('Y-m-d').'.pdf';
+
         return response($mpdf->Output($filename, 'S'), 200)
-               ->header('Content-Type', 'application/pdf')
-               ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
     public function send($id)
@@ -677,7 +689,7 @@ class CommitteeReportController extends Controller
         $report = CommitteeReport::findOrFail($id);
 
         $committee = $this->getServiceCommittee();
-        if (!$this->isRsc() && (!$committee || $committee->id !== $report->service_committee_id)) {
+        if (! $this->isRsc() && (! $committee || $committee->id !== $report->service_committee_id)) {
             abort(403, 'Unauthorized');
         }
 
@@ -700,7 +712,7 @@ class CommitteeReportController extends Controller
                 'meeting_date' => $report->meeting_date ? $report->meeting_date->format('Y-m-d') : null,
             ]
         );
-        
+
         return redirect()->back()->with('success', __('messages.report_approved_sent_rsc'));
     }
 
@@ -711,28 +723,28 @@ class CommitteeReportController extends Controller
 
         // Enforce same view permission checks as for the report
         if ($this->isRsc()) {
-            if (!Auth::user()->hasRole('super admin') && !in_array($report->status, ['submitted', 'approved'])) {
+            if (! Auth::user()->hasRole('super admin') && ! in_array($report->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
         } else {
-            if (!$this->isReportVisibleToUser($report)) {
+            if (! $this->isReportVisibleToUser($report)) {
                 abort(403, 'Unauthorized');
             }
         }
 
-        if (!Storage::exists($attachment->file_path)) {
+        if (! Storage::exists($attachment->file_path)) {
             abort(404, 'File not found');
         }
 
         $disposition = request()->query('disposition', 'attachment');
-        if (!in_array($disposition, ['attachment', 'inline'])) {
+        if (! in_array($disposition, ['attachment', 'inline'])) {
             $disposition = 'attachment';
         }
 
         if ($disposition === 'inline') {
             return response()->file(Storage::path($attachment->file_path), [
                 'Content-Type' => $attachment->mime_type,
-                'Content-Disposition' => 'inline; filename="' . $attachment->original_name . '"',
+                'Content-Disposition' => 'inline; filename="'.$attachment->original_name.'"',
                 'X-Content-Type-Options' => 'nosniff',
             ]);
         }
@@ -750,7 +762,7 @@ class CommitteeReportController extends Controller
 
         // Only the owning committee can delete their draft attachments
         $committee = $this->getServiceCommittee();
-        if (!$committee || $committee->id !== $report->service_committee_id) {
+        if (! $committee || $committee->id !== $report->service_committee_id) {
             abort(403, 'Unauthorized');
         }
 
@@ -769,8 +781,8 @@ class CommitteeReportController extends Controller
 
     public function archive(Request $request)
     {
-        $archiver = app(\App\Services\ReportArchiver::class);
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $archiver = app(ReportArchiver::class);
+        $syncService = app(OneDriveSyncService::class);
         $canManageArchive = $this->isRsc();
 
         // 1. Get database reports matching user visibility & filters
@@ -778,7 +790,7 @@ class CommitteeReportController extends Controller
         $now = now();
         $user = auth()->user();
 
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             $committee = $this->getServiceCommittee();
             $committeeId = $committee ? $committee->id : null;
             $query->where(function ($q) use ($committeeId, $now, $user) {
@@ -791,10 +803,10 @@ class CommitteeReportController extends Controller
                         $threshold = $now->day >= 10 ? $now : $now->copy()->subMonth();
                         $sub->where(function ($dateQ) use ($threshold) {
                             $dateQ->whereYear('meeting_date', '<', $threshold->year)
-                                  ->orWhere(function ($inner) use ($threshold) {
-                                      $inner->whereYear('meeting_date', $threshold->year)
-                                            ->whereMonth('meeting_date', '<', $threshold->month);
-                                  });
+                                ->orWhere(function ($inner) use ($threshold) {
+                                    $inner->whereYear('meeting_date', $threshold->year)
+                                        ->whereMonth('meeting_date', '<', $threshold->month);
+                                });
                         });
                     });
                 } else {
@@ -820,7 +832,7 @@ class CommitteeReportController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('meeting_day_description', 'like', "%$search%")
-                  ->orWhere('body', 'like', "%$search%");
+                    ->orWhere('body', 'like', "%$search%");
             });
         }
 
@@ -847,16 +859,16 @@ class CommitteeReportController extends Controller
         $dirsCacheKey = 'storagebox_archive_dirs_list';
 
         if ($request->query('refresh') == '1') {
-            exec('php ' . escapeshellarg(base_path('artisan')) . ' onedrive:sync-archives > /dev/null 2>&1 &');
+            exec('php '.escapeshellarg(base_path('artisan')).' onedrive:sync-archives > /dev/null 2>&1 &');
             session()->flash('info', __('messages.archive_refresh_started'));
         }
 
-        $allStorageboxFiles = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        $allStorageboxFiles = Cache::get($cacheKey);
         if ($allStorageboxFiles === null) {
-            exec('php ' . escapeshellarg(base_path('artisan')) . ' storagebox:cache-archives > /dev/null 2>&1 &');
+            exec('php '.escapeshellarg(base_path('artisan')).' storagebox:cache-archives > /dev/null 2>&1 &');
             $allStorageboxFiles = [];
         }
-        $allStorageboxDirs = \Illuminate\Support\Facades\Cache::get($dirsCacheKey, []);
+        $allStorageboxDirs = Cache::get($dirsCacheKey, []);
 
         // Build lookup maps of all physical files before filtering so DB reports can deduplicate accurately
         $allPhysicalByTreePath = [];
@@ -883,7 +895,7 @@ class CommitteeReportController extends Controller
                 'is_dir' => false,
                 'name' => $fileInfo['name'],
                 'path' => $treePath,
-                'encrypted_path' => \Illuminate\Support\Facades\Crypt::encryptString($diskRelPath),
+                'encrypted_path' => Crypt::encryptString($diskRelPath),
                 'size' => (int) ($fileInfo['size'] ?? 0),
                 'mtime' => $fileInfo['mtime'] ?? null,
                 'source' => 'storagebox',
@@ -895,16 +907,16 @@ class CommitteeReportController extends Controller
 
         // If user is a restricted consumer (ServiceBody / GSR), identify restricted current-month report filenames to hide
         $restrictedFilenames = [];
-        if (!$this->isRsc() && $this->isRestrictedConsumer($user)) {
+        if (! $this->isRsc() && $this->isRestrictedConsumer($user)) {
             $threshold = $now->day >= 10 ? $now : $now->copy()->subMonth();
             $restrictedReports = CommitteeReport::with('serviceCommittee')
                 ->where('status', 'approved')
                 ->where(function ($q) use ($threshold) {
                     $q->whereYear('meeting_date', '>', $threshold->year)
-                      ->orWhere(function ($sub) use ($threshold) {
-                          $sub->whereYear('meeting_date', $threshold->year)
-                              ->whereMonth('meeting_date', '>=', $threshold->month);
-                      });
+                        ->orWhere(function ($sub) use ($threshold) {
+                            $sub->whereYear('meeting_date', $threshold->year)
+                                ->whereMonth('meeting_date', '>=', $threshold->month);
+                        });
                 })
                 ->get();
 
@@ -917,7 +929,7 @@ class CommitteeReportController extends Controller
         $filesByPath = [];
 
         // Filter standalone physical files (skip standalone physical files when filtering strictly by exceptional DB flag)
-        if (!$hasExceptional) {
+        if (! $hasExceptional) {
             foreach ($allPhysicalByTreePath as $treePath => $entry) {
                 $fileName = $entry['name'];
 
@@ -941,7 +953,7 @@ class CommitteeReportController extends Controller
                         if ($normEn && (str_contains(mb_strtolower($treePath, 'UTF-8'), $normEn) || str_contains(mb_strtolower($fileName, 'UTF-8'), $normEn))) {
                             $match = true;
                         }
-                        if (!$match) {
+                        if (! $match) {
                             continue;
                         }
                     }
@@ -952,7 +964,7 @@ class CommitteeReportController extends Controller
                     $normSearch = $archiver->normalizeArabicForMatch($request->search);
                     $normFile = $archiver->normalizeArabicForMatch($fileName);
                     $normPath = $archiver->normalizeArabicForMatch($treePath);
-                    if (!str_contains($normFile, $normSearch) && !str_contains($normPath, $normSearch)) {
+                    if (! str_contains($normFile, $normSearch) && ! str_contains($normPath, $normSearch)) {
                         continue;
                     }
                 }
@@ -985,7 +997,7 @@ class CommitteeReportController extends Controller
         $reportsByCommitteeMonth = [];
         foreach ($dbReports as $rep) {
             if ($rep->status === 'approved' && $rep->meeting_date) {
-                $ymKey = $rep->service_committee_id . '_' . $rep->meeting_date->format('Y_m');
+                $ymKey = $rep->service_committee_id.'_'.$rep->meeting_date->format('Y_m');
                 $reportsByCommitteeMonth[$ymKey][] = $rep->id;
             }
         }
@@ -999,7 +1011,7 @@ class CommitteeReportController extends Controller
             $baseFolder = $archiver->resolveBaseFolder($report->meeting_date, $committeeName, $allIndexedPaths, false);
             $dateStr = $report->meeting_date ? $report->meeting_date->format('Y-m-d') : $report->created_at->format('Y-m-d');
 
-            $ymKey = $report->service_committee_id . '_' . ($report->meeting_date ? $report->meeting_date->format('Y_m') : '');
+            $ymKey = $report->service_committee_id.'_'.($report->meeting_date ? $report->meeting_date->format('Y_m') : '');
             $monthIds = $reportsByCommitteeMonth[$ymKey] ?? null;
             $expectedPdfFilename = $archiver->getExpectedPdfFilename($report, $monthIds);
             $expectedTreePath = "{$baseFolder}/{$expectedPdfFilename}";
@@ -1008,12 +1020,12 @@ class CommitteeReportController extends Controller
             $matchedPhysicalPath = null;
             if (isset($allPhysicalByTreePath[$expectedTreePath])) {
                 $matchedPhysicalPath = $expectedTreePath;
-            } elseif (!empty($allPhysicalByFilename[$expectedPdfFilename])) {
+            } elseif (! empty($allPhysicalByFilename[$expectedPdfFilename])) {
                 $matchedPhysicalPath = $allPhysicalByFilename[$expectedPdfFilename][0];
             }
 
             $reportDisplayTitle = ($report->serviceCommittee->ar_name ?? $report->serviceCommittee->en_name ?? 'Committee Report')
-                . ' - ' . $dateStr . ' (' . $report->meeting_day_description . ').pdf';
+                .' - '.$dateStr.' ('.$report->meeting_day_description.').pdf';
 
             if ($matchedPhysicalPath !== null) {
                 $physicalEntry = $filesByPath[$matchedPhysicalPath] ?? $allPhysicalByTreePath[$matchedPhysicalPath];
@@ -1058,7 +1070,7 @@ class CommitteeReportController extends Controller
                 $matchedAttPath = null;
                 if (isset($allPhysicalByTreePath[$attExpectedPath])) {
                     $matchedAttPath = $attExpectedPath;
-                } elseif (!empty($allPhysicalByFilename[$attFilename])) {
+                } elseif (! empty($allPhysicalByFilename[$attFilename])) {
                     $matchedAttPath = $allPhysicalByFilename[$attFilename][0];
                 }
 
@@ -1087,7 +1099,7 @@ class CommitteeReportController extends Controller
         $tree = [];
 
         // Include indexed directories (including empty folders) when no search filter is narrowing results
-        if (!$isFilterActive) {
+        if (! $isFilterActive) {
             foreach ($allStorageboxDirs as $dirInfo) {
                 $rawDirPath = is_array($dirInfo) ? ($dirInfo['path'] ?? '') : (string) $dirInfo;
                 $dirMtime = is_array($dirInfo) ? ($dirInfo['mtime'] ?? null) : null;
@@ -1110,8 +1122,8 @@ class CommitteeReportController extends Controller
                     if ($dirName === '') {
                         continue;
                     }
-                    $accumulatedPath .= '/' . $dirName;
-                    if (!isset($currentLevel[$dirName])) {
+                    $accumulatedPath .= '/'.$dirName;
+                    if (! isset($currentLevel[$dirName])) {
                         $currentLevel[$dirName] = [
                             'is_dir' => true,
                             'name' => $dirName,
@@ -1146,8 +1158,8 @@ class CommitteeReportController extends Controller
                 if ($dirName === '') {
                     continue;
                 }
-                $accumulatedPath .= '/' . $dirName;
-                if (!isset($currentLevel[$dirName])) {
+                $accumulatedPath .= '/'.$dirName;
+                if (! isset($currentLevel[$dirName])) {
                     $currentLevel[$dirName] = [
                         'is_dir' => true,
                         'name' => $dirName,
@@ -1201,7 +1213,7 @@ class CommitteeReportController extends Controller
                             $recFiles += 1;
                             $recSize += (int) ($child['size'] ?? 0);
                         }
-                        if (!empty($child['mtime']) && $child['mtime'] > $maxMtime) {
+                        if (! empty($child['mtime']) && $child['mtime'] > $maxMtime) {
                             $maxMtime = $child['mtime'];
                         }
                     }
@@ -1214,16 +1226,17 @@ class CommitteeReportController extends Controller
             }
 
             usort($result, function ($a, $b) {
-                if ($a['is_dir'] && !$b['is_dir']) {
+                if ($a['is_dir'] && ! $b['is_dir']) {
                     return -1;
                 }
-                if (!$a['is_dir'] && $b['is_dir']) {
+                if (! $a['is_dir'] && $b['is_dir']) {
                     return 1;
                 }
                 // Sort numeric year folders descending (newest years first)
                 if ($a['is_dir'] && $b['is_dir'] && preg_match('/^\d{4}$/', $a['name']) && preg_match('/^\d{4}$/', $b['name'])) {
                     return strcmp($b['name'], $a['name']);
                 }
+
                 return strcasecmp($a['name'], $b['name']);
             });
 
@@ -1238,26 +1251,28 @@ class CommitteeReportController extends Controller
 
     public function archiveSyncStatus()
     {
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $syncService = app(OneDriveSyncService::class);
+
         return response()->json($syncService->getSyncState());
     }
 
     public function connectOneDrive()
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
-        $state = 'onedrive_rclone_' . Str::random(32);
-        \Illuminate\Support\Facades\Cache::put('onedrive_oauth_state_' . $state, Auth::id(), 600);
+        $state = 'onedrive_rclone_'.Str::random(32);
+        Cache::put('onedrive_oauth_state_'.$state, Auth::id(), 600);
 
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $syncService = app(OneDriveSyncService::class);
+
         return redirect()->away($syncService->buildMicrosoftOAuthUrl($state));
     }
 
     public function saveOneDriveToken(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1267,7 +1282,7 @@ class CommitteeReportController extends Controller
             'drive_type' => 'nullable|string|max:50',
         ]);
 
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $syncService = app(OneDriveSyncService::class);
         $res = $syncService->saveTokenAndConfigureRemote(
             $request->input('token_json'),
             $request->input('drive_id'),
@@ -1275,21 +1290,21 @@ class CommitteeReportController extends Controller
         );
 
         if (empty($res['success'])) {
-            return redirect()->back()->with('error', $res['error'] ?? 'Invalid token JSON.');
+            return redirect()->back()->with('error', $res['error'] ?? __('messages.flash.committee_reports.invalid_token_json'));
         }
 
-        exec('php ' . escapeshellarg(base_path('artisan')) . ' onedrive:sync-archives --force-resync > /dev/null 2>&1 &');
+        exec('php '.escapeshellarg(base_path('artisan')).' onedrive:sync-archives --force-resync > /dev/null 2>&1 &');
 
         return redirect()->route('committee-reports.archive')->with('success', __('messages.sync_started_background'));
     }
 
     public function triggerArchiveSync(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $syncService = app(OneDriveSyncService::class);
         $subPath = $request->input('sub_path');
         $forceResync = $request->boolean('force_resync');
 
@@ -1302,6 +1317,7 @@ class CommitteeReportController extends Controller
                     'state' => $state,
                 ]);
             }
+
             return redirect()->back()->with('success', $state['message'] ?? __('messages.sync_completed_success'));
         }
 
@@ -1312,14 +1328,14 @@ class CommitteeReportController extends Controller
             'error' => null,
         ]);
 
-        $cmd = 'php ' . escapeshellarg(base_path('artisan')) . ' onedrive:sync-archives';
+        $cmd = 'php '.escapeshellarg(base_path('artisan')).' onedrive:sync-archives';
         if ($subPath) {
-            $cmd .= ' --path=' . escapeshellarg($subPath);
+            $cmd .= ' --path='.escapeshellarg($subPath);
         }
         if ($forceResync) {
             $cmd .= ' --force-resync';
         }
-        exec($cmd . ' > /dev/null 2>&1 &');
+        exec($cmd.' > /dev/null 2>&1 &');
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -1340,7 +1356,7 @@ class CommitteeReportController extends Controller
             'paths.*' => 'string|max:1000',
         ]);
 
-        $archiver = app(\App\Services\ReportArchiver::class);
+        $archiver = app(ReportArchiver::class);
         $folderPath = $request->input('folder_path');
         $paths = $request->input('paths', []);
 
@@ -1349,14 +1365,14 @@ class CommitteeReportController extends Controller
         }
 
         $zipDir = storage_path('app/private/tmp');
-        if (!is_dir($zipDir)) {
+        if (! is_dir($zipDir)) {
             @mkdir($zipDir, 0775, true);
         }
 
-        $zipFilename = 'archive_export_' . date('Y-m-d_His') . '.zip';
-        $zipFilePath = $zipDir . '/' . uniqid('archive_', true) . '.zip';
+        $zipFilename = 'archive_export_'.date('Y-m-d_His').'.zip';
+        $zipFilePath = $zipDir.'/'.uniqid('archive_', true).'.zip';
 
-        $zip = new \ZipArchive();
+        $zip = new \ZipArchive;
         if ($zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
             abort(500, 'Could not create ZIP archive.');
         }
@@ -1368,7 +1384,7 @@ class CommitteeReportController extends Controller
             $files = $disk->allFiles($diskRelDir);
             foreach ($files as $f) {
                 $relInside = ltrim(substr($f, strlen($diskRelDir)), '/');
-                $entryName = trim($zipPrefix . '/' . $relInside, '/');
+                $entryName = trim($zipPrefix.'/'.$relInside, '/');
                 $fullPath = $disk->path($f);
                 if (is_file($fullPath) && is_readable($fullPath)) {
                     $zip->addFile($fullPath, $entryName);
@@ -1377,13 +1393,13 @@ class CommitteeReportController extends Controller
             }
         };
 
-        if (!empty($folderPath)) {
+        if (! empty($folderPath)) {
             if (str_contains($folderPath, '..')) {
                 abort(403, 'Invalid folder path.');
             }
             $diskRel = $archiver->toDiskRelativePath($folderPath);
             $folderBase = basename($folderPath) ?: 'Archives';
-            $zipFilename = $folderBase . '_' . date('Y-m-d') . '.zip';
+            $zipFilename = $folderBase.'_'.date('Y-m-d').'.zip';
             $addDiskDirectoryToZip($diskRel, $folderBase);
         } else {
             foreach ($paths as $rawPath) {
@@ -1417,7 +1433,7 @@ class CommitteeReportController extends Controller
 
     public function uploadArchiveFiles(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1432,14 +1448,14 @@ class CommitteeReportController extends Controller
             abort(403, 'Invalid target path.');
         }
 
-        $archiver = app(\App\Services\ReportArchiver::class);
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $archiver = app(ReportArchiver::class);
+        $syncService = app(OneDriveSyncService::class);
         $diskRelFolder = $archiver->toDiskRelativePath($targetPath);
         $treePath = $archiver->toTreePath($targetPath);
 
         $uploadedFiles = [];
         foreach ($request->file('files') as $file) {
-            if (!$file || !$file->isValid()) {
+            if (! $file || ! $file->isValid()) {
                 continue;
             }
             $safeName = str_replace(['/', '\\', "\0", '..'], '', basename($file->getClientOriginalName()));
@@ -1459,9 +1475,9 @@ class CommitteeReportController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\Artisan::call('storagebox:cache-archives');
+            Artisan::call('storagebox:cache-archives');
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not re-index archives after upload: ' . $e->getMessage());
+            Log::warning('Could not re-index archives after upload: '.$e->getMessage());
         }
 
         if ($request->expectsJson()) {
@@ -1479,7 +1495,7 @@ class CommitteeReportController extends Controller
 
     public function createArchiveFolder(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1495,19 +1511,19 @@ class CommitteeReportController extends Controller
             abort(422, 'Invalid folder name or parent path.');
         }
 
-        $archiver = app(\App\Services\ReportArchiver::class);
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $archiver = app(ReportArchiver::class);
+        $syncService = app(OneDriveSyncService::class);
 
-        $newTreePath = $archiver->toTreePath($parentPath . '/' . $folderName);
+        $newTreePath = $archiver->toTreePath($parentPath.'/'.$folderName);
         $diskRelPath = $archiver->toDiskRelativePath($newTreePath);
 
         Storage::disk('storagebox')->makeDirectory($diskRelPath);
         $syncService->pushPathToOneDrive($diskRelPath);
 
         try {
-            \Illuminate\Support\Facades\Artisan::call('storagebox:cache-archives');
+            Artisan::call('storagebox:cache-archives');
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not re-index archives after folder creation: ' . $e->getMessage());
+            Log::warning('Could not re-index archives after folder creation: '.$e->getMessage());
         }
 
         if ($request->expectsJson()) {
@@ -1524,7 +1540,7 @@ class CommitteeReportController extends Controller
 
     public function renameArchiveItem(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1540,27 +1556,27 @@ class CommitteeReportController extends Controller
             abort(422, 'Invalid path or new name.');
         }
 
-        $archiver = app(\App\Services\ReportArchiver::class);
+        $archiver = app(ReportArchiver::class);
         $oldTreePath = $archiver->toTreePath($rawPath);
         $parentTreePath = dirname($oldTreePath);
         if ($parentTreePath === '.' || $parentTreePath === '') {
             $parentTreePath = 'Archives';
         }
-        $newTreePath = $parentTreePath . '/' . $newName;
+        $newTreePath = $parentTreePath.'/'.$newName;
 
         $oldDiskRel = $archiver->toDiskRelativePath($oldTreePath);
         $newDiskRel = $archiver->toDiskRelativePath($newTreePath);
 
-        if (!Storage::disk('storagebox')->exists($oldDiskRel)) {
+        if (! Storage::disk('storagebox')->exists($oldDiskRel)) {
             abort(404, 'Archive item not found on StorageBox.');
         }
 
         Storage::disk('storagebox')->move($oldDiskRel, $newDiskRel);
 
         try {
-            \Illuminate\Support\Facades\Artisan::call('storagebox:cache-archives');
+            Artisan::call('storagebox:cache-archives');
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not re-index archives after rename: ' . $e->getMessage());
+            Log::warning('Could not re-index archives after rename: '.$e->getMessage());
         }
 
         if ($request->expectsJson()) {
@@ -1578,7 +1594,7 @@ class CommitteeReportController extends Controller
 
     public function deleteArchiveItem(Request $request)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1592,8 +1608,8 @@ class CommitteeReportController extends Controller
             abort(422, 'Cannot delete root archive folder.');
         }
 
-        $archiver = app(\App\Services\ReportArchiver::class);
-        $syncService = app(\App\Services\OneDriveSyncService::class);
+        $archiver = app(ReportArchiver::class);
+        $syncService = app(OneDriveSyncService::class);
 
         $treePath = $archiver->toTreePath($rawPath);
         $parentTreePath = dirname($treePath);
@@ -1604,7 +1620,7 @@ class CommitteeReportController extends Controller
         $diskRel = $archiver->toDiskRelativePath($treePath);
         $disk = Storage::disk('storagebox');
 
-        if (!$disk->exists($diskRel)) {
+        if (! $disk->exists($diskRel)) {
             abort(404, 'Archive item not found on StorageBox.');
         }
 
@@ -1620,9 +1636,9 @@ class CommitteeReportController extends Controller
         $syncService->deletePathFromOneDrive($diskRel, $isDir);
 
         try {
-            \Illuminate\Support\Facades\Artisan::call('storagebox:cache-archives');
+            Artisan::call('storagebox:cache-archives');
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not re-index archives after delete: ' . $e->getMessage());
+            Log::warning('Could not re-index archives after delete: '.$e->getMessage());
         }
 
         if ($request->expectsJson()) {
@@ -1640,56 +1656,56 @@ class CommitteeReportController extends Controller
     public function downloadStorageboxFile(Request $request)
     {
         $encryptedPath = $request->query('file');
-        if (!$encryptedPath) {
+        if (! $encryptedPath) {
             abort(400, 'Missing file parameter.');
         }
 
         try {
-            $filePath = \Illuminate\Support\Facades\Crypt::decryptString($encryptedPath);
-            
+            $filePath = Crypt::decryptString($encryptedPath);
+
             // Check if file exists on storagebox disk
-            if (!\Illuminate\Support\Facades\Storage::disk('storagebox')->exists($filePath)) {
+            if (! Storage::disk('storagebox')->exists($filePath)) {
                 abort(404, 'File not found on storage box.');
             }
 
             // Path & File System Security check: ensure path is safe
             $safePath = basename($filePath);
-            
+
             $disposition = request()->query('disposition', 'attachment');
-            if (!in_array($disposition, ['attachment', 'inline'])) {
+            if (! in_array($disposition, ['attachment', 'inline'])) {
                 $disposition = 'attachment';
             }
 
             if ($disposition === 'inline') {
-                return response()->file(\Illuminate\Support\Facades\Storage::disk('storagebox')->path($filePath), [
-                    'Content-Type' => \Illuminate\Support\Facades\Storage::disk('storagebox')->mimeType($filePath) ?? 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="' . $safePath . '"',
+                return response()->file(Storage::disk('storagebox')->path($filePath), [
+                    'Content-Type' => Storage::disk('storagebox')->mimeType($filePath) ?? 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="'.$safePath.'"',
                     'X-Content-Type-Options' => 'nosniff',
                 ]);
             }
 
-            return \Illuminate\Support\Facades\Storage::disk('storagebox')->download(
+            return Storage::disk('storagebox')->download(
                 $filePath,
                 $safePath,
                 [
-                    'Content-Type' => \Illuminate\Support\Facades\Storage::disk('storagebox')->mimeType($filePath) ?? 'application/octet-stream',
+                    'Content-Type' => Storage::disk('storagebox')->mimeType($filePath) ?? 'application/octet-stream',
                     'X-Content-Type-Options' => 'nosniff',
                 ]
             );
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to decrypt or download file from storagebox: " . $e->getMessage());
+            Log::error('Failed to decrypt or download file from storagebox: '.$e->getMessage());
             abort(403, 'Invalid download request.');
         }
     }
 
     public function approveAndSend($id)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
         $report = CommitteeReport::findOrFail($id);
-        
+
         if ($report->status !== 'submitted') {
             return redirect()->back()->with('error', __('messages.only_submitted_reports_approved'));
         }
@@ -1699,7 +1715,7 @@ class CommitteeReportController extends Controller
             'review_notes' => null, // clear notes upon approval
         ]);
 
-        app(\App\Services\ReportArchiver::class)->archive($report, true);
+        app(ReportArchiver::class)->archive($report, true);
 
         CommitteeReportLog::record(
             'approved',
@@ -1715,7 +1731,7 @@ class CommitteeReportController extends Controller
 
     public function returnToDraft(Request $request, $id)
     {
-        if (!$this->isRsc()) {
+        if (! $this->isRsc()) {
             abort(403, 'Unauthorized');
         }
 
@@ -1750,7 +1766,7 @@ class CommitteeReportController extends Controller
     public function logs(Request $request)
     {
         $user = Auth::user();
-        if (!$user || !$user->hasRole('super admin')) {
+        if (! $user || ! $user->hasRole('super admin')) {
             abort(403, 'Unauthorized. Only Super Admin can view committee report logs.');
         }
 
@@ -1766,12 +1782,12 @@ class CommitteeReportController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('summary', 'like', "%{$search}%")
-                  ->orWhere('user_name', 'like', "%{$search}%")
-                  ->orWhere('user_email', 'like', "%{$search}%")
-                  ->orWhere('committee_name', 'like', "%{$search}%")
-                  ->orWhere('committee_report_id', $search);
+                    ->orWhere('user_name', 'like', "%{$search}%")
+                    ->orWhere('user_email', 'like', "%{$search}%")
+                    ->orWhere('committee_name', 'like', "%{$search}%")
+                    ->orWhere('committee_report_id', $search);
             });
         }
 
@@ -1792,9 +1808,9 @@ class CommitteeReportController extends Controller
     protected function sendNotificationEmail($report)
     {
         try {
-            \App\Jobs\SendCommitteeReportSubmissionNotification::dispatch($report->id);
+            SendCommitteeReportSubmissionNotification::dispatch($report->id);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error("Failed to dispatch committee report submission notification: " . $e->getMessage());
+            Log::error('Failed to dispatch committee report submission notification: '.$e->getMessage());
         }
     }
 }

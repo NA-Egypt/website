@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DirectOnlineGroupsRequest;
 use App\Models\DirectOnlineGroup;
+use App\Models\Meeting;
+use App\Traits\PaginatesDataTables;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-
-use App\Traits\PaginatesDataTables;
 
 class DirectOnlineGroupController extends Controller implements HasMiddleware
 {
@@ -38,7 +38,7 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
                 if ($request->input('has_link') === 'yes') {
                     $query->whereNotNull('location')->where('location', '!=', '');
                 } elseif ($request->input('has_link') === 'no') {
-                    $query->where(function($q) {
+                    $query->where(function ($q) {
                         $q->whereNull('location')->orWhere('location', '');
                     });
                 }
@@ -47,19 +47,19 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
             $directOnlineGroups = $this->paginateDataTable($query, $request, ['ar_name', 'en_name', 'user.email', 'location', 'ar_gsr_name', 'en_gsr_name']);
 
             $locale = app()->getLocale();
-            $directOnlineGroups->getCollection()->transform(function($g) use ($locale) {
+            $directOnlineGroups->getCollection()->transform(function ($g) use ($locale) {
                 $g->primary_name = $locale === 'ar' ? ($g->ar_name ?: $g->en_name) : ($g->en_name ?: $g->ar_name);
                 $g->secondary_name = $locale === 'ar' ? $g->en_name : $g->ar_name;
                 $g->gsr_name = $locale === 'ar' ? ($g->ar_gsr_name ?: $g->en_gsr_name) : ($g->en_gsr_name ?: $g->ar_gsr_name);
                 $g->gsr_email = $g->user ? $g->user->email : null;
                 $g->location_link = $g->location;
-                $g->meetings_summary = $g->meetings ? $g->meetings->map(function($m) use ($locale) {
+                $g->meetings_summary = $g->meetings ? $g->meetings->map(function ($m) use ($locale) {
                     return [
                         'id' => $m->id,
                         'day' => $m->day ? ($locale === 'ar' ? $m->day->ar_name : $m->day->en_name) : 'N/A',
                         'time' => $m->formatted_start_time,
                         'topic' => $m->topic ? ($locale === 'ar' ? ($m->topic->ar_name ?: $m->topic->en_name) : ($m->topic->en_name ?: $m->topic->ar_name)) : 'N/A',
-                        'status' => $m->status
+                        'status' => $m->status,
                     ];
                 }) : [];
 
@@ -70,14 +70,14 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
         }
 
         $kpiStats = [
-            'total_online_groups'   => DirectOnlineGroup::count(),
-            'total_online_meetings' => \App\Models\Meeting::whereNotNull('direct_online_group_id')->count(),
-            'active_links_count'    => DirectOnlineGroup::whereNotNull('location')->where('location', '!=', '')->count(),
+            'total_online_groups' => DirectOnlineGroup::count(),
+            'total_online_meetings' => Meeting::whereNotNull('direct_online_group_id')->count(),
+            'active_links_count' => DirectOnlineGroup::whereNotNull('location')->where('location', '!=', '')->count(),
         ];
 
         return view('direct-online-group.index', [
             'directOnlineGroups' => collect(),
-            'kpiStats'           => $kpiStats
+            'kpiStats' => $kpiStats,
         ]);
     }
 
@@ -93,7 +93,7 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
 
         DirectOnlineGroup::create($validatedData);
 
-        return redirect()->route('direct-online-group.index')->with('success', 'Group created successfully.');
+        return redirect()->route('direct-online-group.index')->with('success', __('messages.flash.direct_online_groups.created'));
     }
 
     public function edit(DirectOnlineGroup $directOnlineGroup)
@@ -106,7 +106,7 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
         $validatedData = $request->validated();
         $directOnlineGroup->update($validatedData);
 
-        return redirect()->route('direct-online-group.index')->with('success', 'Group updated successfully.');
+        return redirect()->route('direct-online-group.index')->with('success', __('messages.flash.direct_online_groups.updated'));
     }
 
     public function show(DirectOnlineGroup $directOnlineGroup)
@@ -119,7 +119,7 @@ class DirectOnlineGroupController extends Controller implements HasMiddleware
 
         return view('direct-online-group.show', [
             'directOnlineGroup' => $directOnlineGroup,
-            'meetings' => $meetings
+            'meetings' => $meetings,
         ]);
     }
 
