@@ -334,11 +334,18 @@ class ProtectedManagementApiTest extends TestCase
             'week_number' => 1,
             'time' => '19:00',
         ]);
-        $event = Event::create(['name' => 'Event', 'description' => 'Desc']);
+        $event = Event::create([
+            'name' => 'Event',
+            'description' => 'Desc',
+            'date' => '2026-08-01',
+            'service_body_id' => $this->cairoArea->id,
+            'day_id' => $this->saturday->id,
+        ]);
         $calendarEvent = CalendarEvent::create([
             'title' => 'Cal',
-            'start_date' => '2026-08-01',
-            'end_date' => '2026-08-01',
+            'start' => '2026-08-01 10:00:00',
+            'end' => '2026-08-01 12:00:00',
+            'color' => '#3788d8',
             'user_id' => $this->user->id,
         ]);
         $sbAgenda = ServiceBodyAgenda::create([

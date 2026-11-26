@@ -136,7 +136,7 @@ class CommitteeReportController extends Controller
             return new CommitteeReportResource($committeeReport);
         }
 
-        if ($isRsc) {
+        if ($isRsc || ($user && $user->hasRole('ServiceBody'))) {
             if (! in_array($committeeReport->status, ['submitted', 'approved'])) {
                 abort(403, 'Unauthorized');
             }
