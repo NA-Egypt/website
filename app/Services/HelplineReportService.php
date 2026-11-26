@@ -63,6 +63,76 @@ class HelplineReportService
         'أخرى',
     ];
 
+    public const CALLER_TYPE_ENUMS = [
+        'potential_members' => 'أعضاء محتملة',
+        'isolated_potential_member' => 'عضو محتمل منعزل',
+        'meeting_info' => 'بيانات اجتماعات',
+        'current_member' => 'عضو حالي',
+        'fellowship_info' => 'معلومات عن الزمالة',
+        'family_relatives' => 'أهالي وأقارب المدمنين',
+        'isolated_current_member' => 'عضو حالي منعزل',
+        'other_fellowships_info' => 'معلومات عن زمالات أخرى',
+        'wrong_number' => 'مكالمة بالخطأ',
+        'transferred_to_pr' => 'محولة للجنة العلاقات العامة',
+        'other' => 'أخرى',
+    ];
+
+    public const REFERRAL_SOURCE_ENUMS = [
+        'meeting_schedule' => 'جدول الاجتماعات',
+        'friend' => 'صديق',
+        'website' => 'الموقع الالكتروني',
+        'fellowship_posters' => 'ملصقات الزمالة',
+        'current_member' => 'عضو حالي',
+        'google_search' => 'بحث جوجل',
+        'doctor' => 'طبيب',
+        'treatment_center' => 'مكان علاجي',
+        'hospitals_committee' => 'لجنة المستشفيات',
+        'content_creator' => 'صانع محتوى',
+        'yellow_pages' => 'Yellow Pages',
+        'facebook' => 'Facebook',
+        'tiktok' => 'TikTok',
+        'chatgpt' => 'ChatGPT',
+        'instagram' => 'Instagram',
+        'youtube' => 'YouTube',
+        'other' => 'أخرى',
+    ];
+
+    public static function callerTypeOptions(): array
+    {
+        $options = [];
+        foreach (array_keys(self::CALLER_TYPE_ENUMS) as $key) {
+            $options[] = [
+                'value' => $key,
+                'label' => __('messages.helpline_enums.caller_types.'.$key),
+            ];
+        }
+
+        return $options;
+    }
+
+    public static function referralSourceOptions(): array
+    {
+        $options = [];
+        foreach (array_keys(self::REFERRAL_SOURCE_ENUMS) as $key) {
+            $options[] = [
+                'value' => $key,
+                'label' => __('messages.helpline_enums.referral_sources.'.$key),
+            ];
+        }
+
+        return $options;
+    }
+
+    public static function normalizeCallerType(string $value): string
+    {
+        return self::CALLER_TYPE_ENUMS[$value] ?? $value;
+    }
+
+    public static function normalizeReferralSource(string $value): string
+    {
+        return self::REFERRAL_SOURCE_ENUMS[$value] ?? $value;
+    }
+
     /**
      * Get the first Tuesday of a specific month and year at 23:59:59.
      */

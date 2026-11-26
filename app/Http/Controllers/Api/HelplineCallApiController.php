@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Validation\Rule;
 
 class HelplineCallApiController extends Controller implements HasMiddleware
 {
@@ -33,7 +34,9 @@ class HelplineCallApiController extends Controller implements HasMiddleware
             'locale' => 'ar',
             'shifts' => HelplineReportService::SHIFTS,
             'caller_types' => HelplineReportService::CALLER_TYPES,
+            'caller_type_options' => HelplineReportService::callerTypeOptions(),
             'referral_sources' => HelplineReportService::REFERRAL_SOURCES,
+            'referral_source_options' => HelplineReportService::referralSourceOptions(),
             'durations' => [
                 ['value' => 'less_than_5', 'label' => 'أقل من 5 دقائق'],
                 ['value' => 'more_than_5', 'label' => 'أكثر من 5 دقائق'],
@@ -85,58 +88,33 @@ class HelplineCallApiController extends Controller implements HasMiddleware
      */
     public function store(Request $request): JsonResponse
     {
+        $callerType = HelplineReportService::normalizeCallerType((string) $request->input('caller_type', ''));
+        $referralSource = HelplineReportService::normalizeReferralSource((string) $request->input('referral_source', ''));
+        $volunteerName = $request->input('volunteer_name') === 'other'
+            ? 'أخرى'
+            : (string) $request->input('volunteer_name', '');
+
         $validated = $request->validate([
             'duration' => 'required|in:less_than_5,more_than_5',
             'call_date' => 'required|date|before_or_equal:today',
             'call_time_shift' => 'required|string|max:100',
             'caller_type' => 'required|string|max:100',
-            'caller_type_other' => 'nullable|string|max:255',
+            'caller_type_other' => [Rule::requiredIf($callerType === 'أخرى'), 'nullable', 'string', 'max:255'],
             'referral_source' => 'required|string|max:100',
-            'referral_source_other' => 'nullable|string|max:255',
-            'hospital_name' => 'required_if:referral_source,لجنة المستشفيات|nullable|string|max:255',
-            'poster_location' => 'required_if:referral_source,ملصقات الزمالة|nullable|string|max:255',
+            'referral_source_other' => [Rule::requiredIf($referralSource === 'أخرى'), 'nullable', 'string', 'max:255'],
+            'hospital_name' => [Rule::requiredIf($referralSource === 'لجنة المستشفيات'), 'nullable', 'string', 'max:255'],
+            'poster_location' => [Rule::requiredIf($referralSource === 'ملصقات الزمالة'), 'nullable', 'string', 'max:255'],
             'volunteer_name' => 'required|string|max:150',
-            'volunteer_name_other' => 'nullable|string|max:150',
+            'volunteer_name_other' => [Rule::requiredIf($volunteerName === 'أخرى'), 'nullable', 'string', 'max:150'],
             'is_step_12' => 'required|boolean',
-            'call_brief' => 'required_unless:caller_type,عضو حالي,مكالمة بالخطأ|nullable|string',
+            'call_brief' => [Rule::requiredIf(! in_array($callerType, ['عضو حالي', 'مكالمة بالخطأ'], true)), 'nullable', 'string'],
             'discuss_in_meeting' => 'required|boolean',
             'additional_info' => 'nullable|string',
         ]);
 
-        if ($validated['caller_type'] === 'أخرى' && empty($validated['caller_type_other'])) {
-            return response()->json([
-                'message' => 'The caller_type_other field is required when caller_type is أخرى.',
-                'errors' => ['caller_type_other' => ['Please specify caller type.']],
-            ], 422);
-        }
-
-        if ($validated['referral_source'] === 'أخرى' && empty($validated['referral_source_other'])) {
-            return response()->json([
-                'message' => 'The referral_source_other field is required when referral_source is أخرى.',
-                'errors' => ['referral_source_other' => ['Please specify referral source.']],
-            ], 422);
-        }
-
-        if ($validated['referral_source'] === 'لجنة المستشفيات' && empty($validated['hospital_name'])) {
-            return response()->json([
-                'message' => 'The hospital_name field is required when referral_source is لجنة المستشفيات.',
-                'errors' => ['hospital_name' => ['Please specify hospital name.']],
-            ], 422);
-        }
-
-        if ($validated['referral_source'] === 'ملصقات الزمالة' && empty($validated['poster_location'])) {
-            return response()->json([
-                'message' => 'The poster_location field is required when referral_source is ملصقات الزمالة.',
-                'errors' => ['poster_location' => ['Please specify poster location.']],
-            ], 422);
-        }
-
-        if ($validated['volunteer_name'] === 'أخرى' && empty($validated['volunteer_name_other'])) {
-            return response()->json([
-                'message' => 'The volunteer_name_other field is required when volunteer_name is أخرى.',
-                'errors' => ['volunteer_name_other' => ['Please specify volunteer name.']],
-            ], 422);
-        }
+        $validated['caller_type'] = $callerType;
+        $validated['referral_source'] = $referralSource;
+        $validated['volunteer_name'] = $volunteerName;
 
         $volunteerId = null;
         if ($validated['volunteer_name'] !== 'أخرى') {

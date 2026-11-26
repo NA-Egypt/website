@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\CustomForm;
 use App\Models\CustomFormSubmission;
 use App\Models\Group;
-use App\Models\City;
 use App\Models\Neighborhood;
-use App\Models\ServiceCommittee;
 use App\Models\ServiceBody;
+use App\Models\ServiceCommittee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PublicFormController extends Controller
 {
@@ -24,11 +26,11 @@ class PublicFormController extends Controller
 
         // Draft/unpublished forms are only viewable by owner/admin
         if ($form->status !== 'published') {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 abort(403, 'This form is currently a draft and not open to the public.');
             }
             $user = auth()->user();
-            if (!$user->hasRole('super admin') && $form->user_id !== $user->id) {
+            if (! $user->hasRole('super admin') && $form->user_id !== $user->id) {
                 abort(403, 'This form is currently a draft.');
             }
         }
@@ -39,19 +41,19 @@ class PublicFormController extends Controller
         // Load fields
         $form->load('fields');
 
-        // Fetch dynamic option data if any fields require them
+        // Fetch initial limited option data if any fields require them (full search via GET /lookup/{entity}?q=)
         $entities = [];
         foreach ($form->fields as $field) {
             if ($field->type === 'groups') {
-                $entities['groups'] = Group::all();
+                $entities['groups'] = Group::orderBy('ar_name')->limit(50)->get();
             } elseif ($field->type === 'cities') {
-                $entities['cities'] = City::all();
+                $entities['cities'] = City::orderBy('ar_name')->limit(50)->get();
             } elseif ($field->type === 'neighborhoods') {
-                $entities['neighborhoods'] = Neighborhood::all();
+                $entities['neighborhoods'] = Neighborhood::orderBy('ar_name')->limit(50)->get();
             } elseif ($field->type === 'committees') {
-                $entities['committees'] = ServiceCommittee::all();
+                $entities['committees'] = ServiceCommittee::orderBy('ar_name')->limit(50)->get();
             } elseif ($field->type === 'servicebodies') {
-                $entities['servicebodies'] = ServiceBody::all();
+                $entities['servicebodies'] = ServiceBody::orderBy('ar_name')->limit(50)->get();
             }
         }
 
@@ -68,11 +70,11 @@ class PublicFormController extends Controller
         }
 
         if ($form->status !== 'published') {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 abort(403, 'This form is not active.');
             }
             $user = auth()->user();
-            if (!$user->hasRole('super admin') && $form->user_id !== $user->id) {
+            if (! $user->hasRole('super admin') && $form->user_id !== $user->id) {
                 abort(403, 'This form is not active.');
             }
         }
@@ -86,21 +88,21 @@ class PublicFormController extends Controller
             if (in_array($field->type, ['section_header', 'static_text'])) {
                 continue;
             }
-            $fieldName = 'field_' . $field->id;
+            $fieldName = 'field_'.$field->id;
 
             if ($field->type === 'yes_no_textbox') {
                 $hasAnswerDirect = $request->has($fieldName);
-                $answerFieldKey = $hasAnswerDirect ? $fieldName : ($fieldName . '_answer');
+                $answerFieldKey = $hasAnswerDirect ? $fieldName : ($fieldName.'_answer');
                 if ($field->required) {
                     $rules[$answerFieldKey] = 'required|in:yes,no';
-                    $messages[$answerFieldKey . '.required'] = "The field '{$field->label}' is required.";
+                    $messages[$answerFieldKey.'.required'] = "The field '{$field->label}' is required.";
                 } else {
                     $rules[$answerFieldKey] = 'nullable|in:yes,no';
                 }
             } elseif ($field->type === 'table') {
                 if ($field->required) {
                     $rules[$fieldName] = 'required|array|min:1';
-                    $messages[$fieldName . '.required'] = "The field '{$field->label}' is required.";
+                    $messages[$fieldName.'.required'] = "The field '{$field->label}' is required.";
                 } else {
                     $rules[$fieldName] = 'nullable|array';
                 }
@@ -121,12 +123,12 @@ class PublicFormController extends Controller
                 }
 
                 $rules[$fieldName] = implode('|', $rule);
-                $messages[$fieldName . '.required'] = "The field '{$field->label}' is required.";
+                $messages[$fieldName.'.required'] = "The field '{$field->label}' is required.";
 
                 // If "Other" is chosen for dynamic or select field, validate other text input if field is required
                 if ($field->required && $request->input($fieldName) === '__other__') {
-                    $rules[$fieldName . '_other'] = 'required|string|max:255';
-                    $messages[$fieldName . '_other.required'] = "Please specify a value for '{$field->label}'.";
+                    $rules[$fieldName.'_other'] = 'required|string|max:255';
+                    $messages[$fieldName.'_other.required'] = "Please specify a value for '{$field->label}'.";
                 }
             }
         }
@@ -139,11 +141,11 @@ class PublicFormController extends Controller
             if (in_array($field->type, ['section_header', 'static_text'])) {
                 continue;
             }
-            $fieldName = 'field_' . $field->id;
+            $fieldName = 'field_'.$field->id;
 
             if ($field->type === 'yes_no_textbox') {
-                $answer = $request->input($fieldName . '_answer', $request->input($fieldName));
-                $details = $request->input($fieldName . '_details');
+                $answer = $request->input($fieldName.'_answer', $request->input($fieldName));
+                $details = $request->input($fieldName.'_details');
                 if ($answer) {
                     $submissionData[$field->id] = [
                         'answer' => $answer,
@@ -161,7 +163,7 @@ class PublicFormController extends Controller
                             // Filter out empty rows
                             $hasContent = false;
                             foreach ($row as $cell) {
-                                if (trim((string)$cell) !== '') {
+                                if (trim((string) $cell) !== '') {
                                     $hasContent = true;
                                     break;
                                 }
@@ -176,8 +178,8 @@ class PublicFormController extends Controller
             } else {
                 $val = $request->input($fieldName);
                 if ($val === '__other__') {
-                    $otherText = $request->input($fieldName . '_other');
-                    $submissionData[$field->id] = !empty($otherText) ? trim($otherText) : 'Other';
+                    $otherText = $request->input($fieldName.'_other');
+                    $submissionData[$field->id] = ! empty($otherText) ? trim($otherText) : 'Other';
                 } else {
                     $submissionData[$field->id] = $val;
                 }
@@ -190,19 +192,24 @@ class PublicFormController extends Controller
             'data' => $submissionData,
         ]);
 
-        // Fetch dynamic option data if any fields require them for email / display
+        // Fetch only the referenced entity records for email / display
         $entities = [];
         foreach ($form->fields as $field) {
+            $selectedIds = array_filter((array) ($submissionData[$field->id] ?? []));
+            if (empty($selectedIds)) {
+                continue;
+            }
+
             if ($field->type === 'groups') {
-                $entities['groups'] = Group::all()->keyBy('id');
+                $entities['groups'] = Group::whereIn('id', $selectedIds)->get()->keyBy('id');
             } elseif ($field->type === 'cities') {
-                $entities['cities'] = City::all()->keyBy('id');
+                $entities['cities'] = City::whereIn('id', $selectedIds)->get()->keyBy('id');
             } elseif ($field->type === 'neighborhoods') {
-                $entities['neighborhoods'] = Neighborhood::all()->keyBy('id');
+                $entities['neighborhoods'] = Neighborhood::whereIn('id', $selectedIds)->get()->keyBy('id');
             } elseif ($field->type === 'committees') {
-                $entities['committees'] = ServiceCommittee::all()->keyBy('id');
+                $entities['committees'] = ServiceCommittee::whereIn('id', $selectedIds)->get()->keyBy('id');
             } elseif ($field->type === 'servicebodies') {
-                $entities['servicebodies'] = ServiceBody::all()->keyBy('id');
+                $entities['servicebodies'] = ServiceBody::whereIn('id', $selectedIds)->get()->keyBy('id');
             }
         }
 
@@ -234,9 +241,9 @@ class PublicFormController extends Controller
         $recipientEmails = array_values(array_unique($recipientEmails));
 
         // Send submission notifications if configured
-        if (!empty($recipientEmails)) {
+        if (! empty($recipientEmails)) {
             try {
-                \Illuminate\Support\Facades\Mail::send(
+                Mail::send(
                     'emails.form_submitted',
                     [
                         'form' => $form,
@@ -245,12 +252,12 @@ class PublicFormController extends Controller
                     ],
                     function ($message) use ($recipientEmails, $form) {
                         $message->to($recipientEmails)
-                                ->subject('New Submission for Form: ' . $form->title);
+                            ->subject('New Submission for Form: '.$form->title);
                     }
                 );
-                \Illuminate\Support\Facades\Log::info("Form submission notification email successfully sent for Form [ID: {$form->id}, Title: {$form->title}] to: " . implode(', ', $recipientEmails));
+                Log::info("Form submission notification email successfully sent for Form [ID: {$form->id}, Title: {$form->title}] to: ".implode(', ', $recipientEmails));
             } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error("Failed to send form submission email for Form [ID: {$form->id}, Title: {$form->title}]: " . $e->getMessage(), [
+                Log::error("Failed to send form submission email for Form [ID: {$form->id}, Title: {$form->title}]: ".$e->getMessage(), [
                     'exception' => $e,
                     'recipients' => $recipientEmails,
                 ]);

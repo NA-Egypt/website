@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MeetingRequest;
 use App\Http\Resources\MeetingResource;
 use App\Models\Group;
 use App\Models\Meeting;
@@ -36,24 +37,11 @@ class MeetingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(MeetingRequest $request)
     {
         Gate::authorize('create', Meeting::class);
 
-        $fields = $request->validate([
-            'group_id' => 'required|exists:groups,id',
-            'topics' => 'nullable|array|max:3',
-            'topics.*' => 'exists:topics,id',
-            'day_id' => 'required|exists:days,id',
-            'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
-            'notes' => 'nullable|string',
-            'type' => 'required',
-            'lang' => 'required|in:arabic,english',
-            'status' => 'required|in:suspended,available',
-            'options' => 'nullable|array',
-            'options.*' => 'exists:options,id',
-        ]);
+        $fields = $request->validated();
 
         if (isset($fields['group_id']) && ! $request->user()->hasRole('super admin')) {
             $group = Group::findOrFail($fields['group_id']);
@@ -90,24 +78,11 @@ class MeetingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Meeting $meeting)
+    public function update(MeetingRequest $request, Meeting $meeting)
     {
         Gate::authorize('update', $meeting);
 
-        $fields = $request->validate([
-            'group_id' => 'sometimes|required|exists:groups,id',
-            'topics' => 'nullable|array|max:3',
-            'topics.*' => 'exists:topics,id',
-            'day_id' => 'sometimes|required|exists:days,id',
-            'start_time' => 'sometimes|required',
-            'end_time' => 'sometimes|required|after:start_time',
-            'notes' => 'nullable|string',
-            'type' => 'sometimes|required',
-            'lang' => 'sometimes|required|in:arabic,english',
-            'status' => 'sometimes|required|in:suspended,available',
-            'options' => 'nullable|array',
-            'options.*' => 'exists:options,id',
-        ]);
+        $fields = $request->validated();
 
         if ($request->has('topics')) {
             $topics = empty($fields['topics']) ? [6] : $fields['topics'];

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Role;
+use App\Http\Requests\UserRequest;
 use App\Models\Permission;
-use App\Models\User;
 use App\Models\ServiceBody;
+use App\Models\User;
+use App\Traits\PaginatesDataTables;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
-use App\Traits\PaginatesDataTables;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -23,7 +22,7 @@ class UserController extends Controller
             $query = User::with(['roles', 'serviceBody']);
 
             if ($request->filled('role_name')) {
-                $query->whereHas('roles', function($q) use ($request) {
+                $query->whereHas('roles', function ($q) use ($request) {
                     $q->where('name', $request->input('role_name'));
                 });
             }
@@ -39,7 +38,7 @@ class UserController extends Controller
             $users = $this->paginateDataTable($query, $request, ['display_name', 'name', 'email', 'roles.name']);
 
             $locale = app()->getLocale();
-            $users->getCollection()->transform(function($u) use ($locale) {
+            $users->getCollection()->transform(function ($u) use ($locale) {
                 $u->formatted_name = $u->display_name ?: $u->name;
                 $u->is_verified = (bool) $u->email_verified_at;
                 $u->last_login_at_formatted = $u->last_login_at ? $u->last_login_at->format('Y-m-d H:i') : null;
@@ -48,6 +47,7 @@ class UserController extends Controller
                 $u->service_body_name = $u->serviceBody ? ($locale === 'ar' ? ($u->serviceBody->ar_name ?: $u->serviceBody->en_name) : ($u->serviceBody->en_name ?: $u->serviceBody->ar_name)) : null;
                 $u->created_at_formatted = $u->created_at ? $u->created_at->format('Y-m-d H:i') : null;
                 $u->is_super_admin = $u->hasRole('super admin');
+
                 return $u;
             });
 
@@ -55,18 +55,18 @@ class UserController extends Controller
         }
 
         $kpiStats = [
-            'total_users'           => User::count(),
-            'active_recently'       => User::where('last_login_at', '>=', now()->subDays(30))->count(),
-            'never_logged_in'       => User::whereNull('last_login_at')->count(),
+            'total_users' => User::count(),
+            'active_recently' => User::where('last_login_at', '>=', now()->subDays(30))->count(),
+            'never_logged_in' => User::whereNull('last_login_at')->count(),
             'service_body_officers' => User::whereNotNull('service_body_id')->count(),
         ];
 
         $roles = Role::all(['id', 'name']);
 
         return view('users.index', [
-            'users'    => collect(),
+            'users' => collect(),
             'kpiStats' => $kpiStats,
-            'roles'    => $roles
+            'roles' => $roles,
         ]);
     }
 
@@ -75,18 +75,13 @@ class UserController extends Controller
         $roles = Role::all();
         $permissions = Permission::all();
         $serviceBodies = ServiceBody::all();
+
         return view('users.create', compact('roles', 'permissions', 'serviceBodies'));
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $request->validate([
-            'display_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'roles' => 'array',
-            'permissions' => 'array',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-        ]);
+        $request->validated();
 
         $user = User::create([
             'name' => explode('@', $request->email)[0],
@@ -112,18 +107,13 @@ class UserController extends Controller
         $roles = Role::all();
         $permissions = Permission::all();
         $serviceBodies = ServiceBody::all();
+
         return view('users.edit', compact('user', 'roles', 'permissions', 'serviceBodies'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $request->validate([
-            'display_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'roles' => 'array',
-            'permissions' => 'array',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-        ]);
+        $request->validated();
 
         $user->update([
             'name' => explode('@', $request->email)[0],
@@ -134,6 +124,7 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles ?? []);
         $user->syncPermissions($request->permissions ?? []);
+
         return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));
     }
 
@@ -160,10 +151,11 @@ class UserController extends Controller
 
         if ($action === 'delete') {
             $users = User::whereIn('id', $userIds)->get();
-            /** @var \App\Models\User $user */
+            /** @var User $user */
             foreach ($users as $user) {
                 $user->delete();
             }
+
             return redirect()->route('users.index')->with('success', __('messages.selected_users_deleted'));
         }
 
@@ -175,7 +167,7 @@ class UserController extends Controller
         $currentUser = Auth::user();
 
         // Security check: Only Super Admin can impersonate
-        if (!$currentUser || !$currentUser->hasRole('super admin')) {
+        if (! $currentUser || ! $currentUser->hasRole('super admin')) {
             return redirect()->route('dashboard')->with('error', __('messages.unauthorized_impersonation'));
         }
 
@@ -199,7 +191,7 @@ class UserController extends Controller
     {
         $adminId = session('impersonated_by');
 
-        if (!$adminId) {
+        if (! $adminId) {
             return redirect()->route('dashboard');
         }
 

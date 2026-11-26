@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\HelplineCallApiController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\JftController;
+use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\MeetingController;
 use App\Http\Controllers\Api\NeighborhoodController;
 use App\Http\Controllers\Api\NewsletterMemberController;
@@ -40,8 +41,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         return $request->user();
     })->middleware('auth:sanctum');
 
-    // Notifications (Authenticated)
+    // Notifications & Profile (Authenticated)
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [MeController::class, 'show'])->name('me');
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
         Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');

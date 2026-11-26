@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Group;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class GroupsRequest extends FormRequest
 {
@@ -11,33 +14,58 @@ class GroupsRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $group = $this->route('group');
+        if ($this->is('api/*') && $group instanceof Group) {
+            return Gate::allows('update', $group);
+        }
+
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        if ($this->is('api/*')) {
+            $req = ($this->isMethod('PUT') || $this->isMethod('PATCH')) ? 'sometimes|required' : 'required';
+
+            return [
+                'ar_name' => $req.'|string|max:255',
+                'en_name' => 'nullable|string|max:255',
+                'ar_gsr_name' => 'nullable|string|max:255',
+                'en_gsr_name' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:50',
+                'location' => 'nullable|string',
+                'ar_address' => 'nullable|string',
+                'en_address' => 'nullable|string',
+                'group_type' => 'nullable|string|max:50',
+                'service_body_id' => 'nullable|exists:service_bodies,id',
+                'neighborhood_id' => 'nullable|exists:neighborhoods,id',
+                'capacity' => 'nullable|integer',
+                'user_id' => 'nullable|exists:users,id',
+            ];
+        }
+
         return [
-            'ar_name'           =>'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
-            'en_name'           =>'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
-            'ar_gsr_name'       =>'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
-            'en_gsr_name'       =>'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
-            'user_id'           =>'required',
-            'phone'             => 'required|numeric',
-            'location'          => [
+            'ar_name' => 'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
+            'en_name' => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
+            'ar_gsr_name' => 'required|min:3|regex:/^[\p{Arabic}0-9 ]+$/u',
+            'en_gsr_name' => 'required|min:3|regex:/^[A-Za-z0-9 ]+$/u',
+            'user_id' => 'required',
+            'phone' => 'required|numeric',
+            'location' => [
                 'nullable',
-                'regex:~^(https?://)?(www\.)?(google\.com/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl/maps)[^\s]*$|^https?://[^\s]+$~'
+                'regex:~^(https?://)?(www\.)?(google\.com/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl/maps)[^\s]*$|^https?://[^\s]+$~',
             ],
-            'ar_address'        => 'required|min:3',
-            'en_address'        => 'required|min:3',
-            'group_type'        => 'required',
-            'service_body_id'   => 'required',
-            'neighborhood_id'   => 'required',
-            'capacity'          => 'nullable|integer',
+            'ar_address' => 'required|min:3',
+            'en_address' => 'required|min:3',
+            'group_type' => 'required',
+            'service_body_id' => 'required',
+            'neighborhood_id' => 'required',
+            'capacity' => 'nullable|integer',
         ];
     }
 

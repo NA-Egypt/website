@@ -14,6 +14,7 @@ use App\Http\Controllers\AzureAuthController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CommitteeLiteratureController;
+use App\Http\Controllers\CommitteeReportArchiveController;
 use App\Http\Controllers\CommitteeReportController;
 use App\Http\Controllers\CommitteeReportsGuideController;
 use App\Http\Controllers\ContactUsController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\LitController;
 use App\Http\Controllers\LiteratureRequestController;
 use App\Http\Controllers\LitLedgerController;
 use App\Http\Controllers\LitReconciliationController;
+use App\Http\Controllers\LookupController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MeetingExportController;
 use App\Http\Controllers\MeetingFilterController;
@@ -78,6 +80,9 @@ Route::get('/auth/azure/callback', [\App\Http\Controllers\Auth\AzureAuthControll
 // Committee Reports & Workgroups Documentation (External Public & Standard Routes):
 Route::get('/reports-guide', [CommitteeReportsGuideController::class, 'publicIndex'])->name('reports.guide.public');
 Route::get('/committee-reports-guide', [CommitteeReportsGuideController::class, 'index'])->name('reports.guide');
+
+// Public Entity Lookup (Normalized Search):
+Route::get('/lookup/{entity}', [LookupController::class, 'search'])->name('lookup.search');
 
 // Notifications (any authenticated user):
 Route::middleware(['auth'])->group(function () {
@@ -444,17 +449,17 @@ Route::group(
 
             // Committee Reports:
             Route::get('committee-reports/logs', [CommitteeReportController::class, 'logs'])->name('committee-reports.logs');
-            Route::get('committee-reports/archive', [CommitteeReportController::class, 'archive'])->name('committee-reports.archive');
-            Route::get('committee-reports/archive/sync-status', [CommitteeReportController::class, 'archiveSyncStatus'])->name('committee-reports.archive.syncStatus');
-            Route::post('committee-reports/archive/sync', [CommitteeReportController::class, 'triggerArchiveSync'])->name('committee-reports.archive.sync');
-            Route::get('committee-reports/archive/onedrive-connect', [CommitteeReportController::class, 'connectOneDrive'])->name('committee-reports.archive.onedriveConnect');
-            Route::post('committee-reports/archive/onedrive-token', [CommitteeReportController::class, 'saveOneDriveToken'])->name('committee-reports.archive.onedriveToken');
-            Route::post('committee-reports/archive/download-zip', [CommitteeReportController::class, 'downloadArchiveZip'])->name('committee-reports.archive.downloadZip');
-            Route::post('committee-reports/archive/upload', [CommitteeReportController::class, 'uploadArchiveFiles'])->name('committee-reports.archive.upload');
-            Route::post('committee-reports/archive/folder', [CommitteeReportController::class, 'createArchiveFolder'])->name('committee-reports.archive.createFolder');
-            Route::post('committee-reports/archive/rename', [CommitteeReportController::class, 'renameArchiveItem'])->name('committee-reports.archive.rename');
-            Route::delete('committee-reports/archive/item', [CommitteeReportController::class, 'deleteArchiveItem'])->name('committee-reports.archive.delete');
-            Route::get('committee-reports/storagebox/download', [CommitteeReportController::class, 'downloadStorageboxFile'])->name('committee-reports.downloadStorageboxFile');
+            Route::get('committee-reports/archive', [CommitteeReportArchiveController::class, 'archive'])->name('committee-reports.archive');
+            Route::get('committee-reports/archive/sync-status', [CommitteeReportArchiveController::class, 'archiveSyncStatus'])->name('committee-reports.archive.syncStatus');
+            Route::post('committee-reports/archive/sync', [CommitteeReportArchiveController::class, 'triggerArchiveSync'])->name('committee-reports.archive.sync');
+            Route::get('committee-reports/archive/onedrive-connect', [CommitteeReportArchiveController::class, 'connectOneDrive'])->name('committee-reports.archive.onedriveConnect');
+            Route::post('committee-reports/archive/onedrive-token', [CommitteeReportArchiveController::class, 'saveOneDriveToken'])->name('committee-reports.archive.onedriveToken');
+            Route::post('committee-reports/archive/download-zip', [CommitteeReportArchiveController::class, 'downloadArchiveZip'])->name('committee-reports.archive.downloadZip');
+            Route::post('committee-reports/archive/upload', [CommitteeReportArchiveController::class, 'uploadArchiveFiles'])->name('committee-reports.archive.upload');
+            Route::post('committee-reports/archive/folder', [CommitteeReportArchiveController::class, 'createArchiveFolder'])->name('committee-reports.archive.createFolder');
+            Route::post('committee-reports/archive/rename', [CommitteeReportArchiveController::class, 'renameArchiveItem'])->name('committee-reports.archive.rename');
+            Route::delete('committee-reports/archive/item', [CommitteeReportArchiveController::class, 'deleteArchiveItem'])->name('committee-reports.archive.delete');
+            Route::get('committee-reports/storagebox/download', [CommitteeReportArchiveController::class, 'downloadStorageboxFile'])->name('committee-reports.downloadStorageboxFile');
             Route::get('committee-reports/attachments/{id}', [CommitteeReportController::class, 'downloadAttachment'])->name('committee-reports.downloadAttachment');
             Route::delete('committee-reports/attachments/{id}', [CommitteeReportController::class, 'deleteAttachment'])->name('committee-reports.deleteAttachment');
             Route::resource('committee-reports', CommitteeReportController::class);

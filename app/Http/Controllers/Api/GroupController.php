@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GroupsRequest;
 use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use App\Services\BotDetectionService;
@@ -40,23 +41,9 @@ class GroupController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GroupsRequest $request)
     {
-        $validated = $request->validate([
-            'ar_name' => 'required|string|max:255',
-            'en_name' => 'nullable|string|max:255',
-            'ar_gsr_name' => 'nullable|string|max:255',
-            'en_gsr_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'location' => 'nullable|string',
-            'ar_address' => 'nullable|string',
-            'en_address' => 'nullable|string',
-            'group_type' => 'nullable|string|max:50',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-            'neighborhood_id' => 'nullable|exists:neighborhoods,id',
-            'capacity' => 'nullable|integer',
-            'user_id' => 'nullable|exists:users,id',
-        ]);
+        $validated = $request->validated();
 
         $validated['user_id'] = $validated['user_id'] ?? auth()->id();
         $item = Group::create($validated);
@@ -82,25 +69,11 @@ class GroupController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Group $group)
+    public function update(GroupsRequest $request, Group $group)
     {
         Gate::authorize('update', $group);
 
-        $validated = $request->validate([
-            'ar_name' => 'sometimes|required|string|max:255',
-            'en_name' => 'nullable|string|max:255',
-            'ar_gsr_name' => 'nullable|string|max:255',
-            'en_gsr_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'location' => 'nullable|string',
-            'ar_address' => 'nullable|string',
-            'en_address' => 'nullable|string',
-            'group_type' => 'nullable|string|max:50',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-            'neighborhood_id' => 'nullable|exists:neighborhoods,id',
-            'capacity' => 'nullable|integer',
-            'user_id' => 'nullable|exists:users,id',
-        ]);
+        $validated = $request->validated();
 
         $group->update($validated);
 

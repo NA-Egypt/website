@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MeetingRequest;
 use App\Models\Day;
 use App\Models\DirectOnlineGroup;
 use App\Models\Group;
@@ -151,27 +152,11 @@ class MeetingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(MeetingRequest $request)
     {
         Gate::authorize('create', Meeting::class);
 
-        $fields = request()->validate([
-            'group_id' => 'required_without:direct_online_group_id|nullable|exists:groups,id',
-            'direct_online_group_id' => 'required_without:group_id|nullable|exists:direct_online_groups,id',
-            'topics' => 'nullable|array|max:3',
-            'topics.*' => 'exists:topics,id',
-            'day_id' => 'required',
-            'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
-            'notes' => 'nullable|string|not_regex:/https?:\/\/[^\s]+/',
-            'type' => 'required',
-            'lang' => 'required|in:'.($request->filled('direct_online_group_id') ? 'arabic' : 'arabic,english'),
-            'status' => 'required|in:suspended,available',
-            'options' => 'nullable|array',
-            'options.*' => 'exists:options,id',
-            'recurrence' => 'required|array',
-            'recurrence.*' => 'in:weekly,1st,2nd,3rd,4th,5th,last',
-        ]);
+        $fields = $request->validated();
 
         if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
             return back()->withErrors(['recurrence' => 'Weekly recurrence cannot be selected with specific weeks.'])->withInput();
@@ -241,26 +226,10 @@ class MeetingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Meeting $meeting)
+    public function update(MeetingRequest $request, Meeting $meeting)
     {
         Gate::authorize('update', $meeting);
-        $fields = $request->validate([
-            'group_id' => 'required_without:direct_online_group_id|nullable|exists:groups,id',
-            'direct_online_group_id' => 'required_without:group_id|nullable|exists:direct_online_groups,id',
-            'topics' => 'nullable|array|max:3',
-            'topics.*' => 'exists:topics,id',
-            'day_id' => 'required|exists:days,id',
-            'start_time' => 'required',
-            'end_time' => 'required|after:start_time',
-            'notes' => 'nullable|string',
-            'type' => 'required',
-            'lang' => 'required|in:'.($request->filled('direct_online_group_id') ? 'arabic' : 'arabic,english'),
-            'status' => 'required|in:suspended,available',
-            'options' => 'nullable|array',
-            'options.*' => 'exists:options,id',
-            'recurrence' => 'required|array',
-            'recurrence.*' => 'in:weekly,1st,2nd,3rd,4th,5th,last',
-        ]);
+        $fields = $request->validated();
 
         if (in_array('weekly', $fields['recurrence']) && count($fields['recurrence']) > 1) {
             return back()->withErrors(['recurrence' => 'Weekly recurrence cannot be selected with specific weeks.'])->withInput();

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -29,14 +29,9 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'nullable|string|min:8',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-        ]);
+        $validated = $request->validated();
 
         if (! empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
@@ -58,14 +53,9 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,'.$user->id,
-            'password' => 'nullable|string|min:8',
-            'service_body_id' => 'nullable|exists:service_bodies,id',
-        ]);
+        $validated = $request->validated();
 
         if (! empty($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
