@@ -6,6 +6,7 @@ use App\Models\CalendarEvent;
 use App\Models\City;
 use App\Models\Day;
 use App\Models\DirectOnlineGroup;
+use App\Models\Group;
 use App\Models\Meeting;
 use App\Models\WhatsAppBroadcastLog;
 use App\Models\WhatsAppConversation;
@@ -241,6 +242,17 @@ class WhatsAppBotService
             return;
         }
 
+        if (in_array($lowerBody, ['online', 'zoom', 'زووم', 'زوم', 'اونلاين', 'أونلاين', 'اجتماعات اونلاين', 'اجتماعات أونلاين'])) {
+            $conversation->update(['current_step' => null, 'step_data' => null]);
+            $this->handleOnlineMeetings($conversation);
+            return;
+        }
+
+        // 7. Match group name anywhere in the chat -> return today's meetings for that group
+        if ($this->handleGroupNameSearch($conversation, $normalizedBody)) {
+            return;
+        }
+
         // Default: Show main interactive menu
         $conversation->update(['current_step' => null, 'step_data' => null]);
         $this->replyAndLog($conversation, $this->getMainMenuText(), 'menu');
@@ -371,7 +383,7 @@ class WhatsAppBotService
             $targetCityName = 'الجيزة';
         } elseif ($input === '3' || str_contains($input, 'إسكندرية') || str_contains($input, 'اسكندرية') || str_contains($input, 'alex')) {
             $targetCityName = 'الإسكندرية';
-        } elseif ($input === '4' || str_contains($input, 'اونلاين') || str_contains($input, 'أونلاين') || str_contains($input, 'online')) {
+        } elseif ($input === '4' || str_contains($input, 'اونلاين') || str_contains($input, 'أونلاين') || str_contains($input, 'online') || str_contains($input, 'zoom') || str_contains($input, 'زووم') || str_contains($input, 'زوم')) {
             $isOnline = true;
         } elseif ($input === '5' || str_contains($input, 'باقي') || str_contains($input, 'محافظات') || str_contains($input, 'other')) {
             $isOther = true;
@@ -380,12 +392,16 @@ class WhatsAppBotService
         $conversation->update(['current_step' => null, 'step_data' => null]);
 
         if ($isOnline) {
-            $this->handleOnlineMeetings($conversation, $dayId);
+            $this->handleOnlineMeetings($conversation);
+            return;
+        }
+
+        if (!$targetCityName && !$isOther && $this->handleGroupNameSearch($conversation, $input)) {
             return;
         }
 
         $query = Meeting::with(['group.neighborhood.city', 'day'])
-            ->where('status', 'active');
+            ->whereIn('status', ['available', 'active']);
 
         if ($dayId) {
             $query->where('day_id', $dayId);
@@ -405,7 +421,7 @@ class WhatsAppBotService
             });
         }
 
-        $meetings = $query->take(8)->get();
+        $meetings = $query->orderBy('start_time', 'asc')->take(8)->get();
 
         if ($meetings->isEmpty()) {
             $cityNameLabel = $targetCityName ?: ($isOther ? 'باقي المحافظات' : 'المحافظة المختارة');
@@ -444,19 +460,50 @@ class WhatsAppBotService
     }
 
     /**
-     * Handle online meetings lookup.
+     * Handle online / Zoom meetings lookup (nearest 3 upcoming meetings arranged by earliest).
      */
-    protected function handleOnlineMeetings(WhatsAppConversation $conversation, ?int $dayId): void
+    protected function handleOnlineMeetings(WhatsAppConversation $conversation): void
     {
-        $onlineMeetings = Meeting::with(['directOnlineGroup', 'day'])
-            ->whereNotNull('direct_online_group_id')
-            ->where('status', 'active');
+        $now = Carbon::now('Africa/Cairo');
+        $todayDay = Day::where('en_name', $now->format('l'))->first();
+        $tomorrowDay = Day::where('en_name', $now->copy()->addDay()->format('l'))->first();
+        $currentTime = $now->format('H:i');
 
-        if ($dayId) {
-            $onlineMeetings->where('day_id', $dayId);
+        $results = collect();
+
+        if ($todayDay) {
+            $todayMeetings = Meeting::with(['directOnlineGroup', 'day'])
+                ->whereNotNull('direct_online_group_id')
+                ->whereIn('status', ['available', 'active'])
+                ->where('day_id', $todayDay->id)
+                ->where('start_time', '>=', $currentTime)
+                ->orderBy('start_time', 'asc')
+                ->take(3)
+                ->get()
+                ->map(function ($m) {
+                    $m->relative_day_label = 'اليوم';
+                    return $m;
+                });
+
+            $results = $results->merge($todayMeetings);
         }
 
-        $results = $onlineMeetings->take(6)->get();
+        if ($results->count() < 3 && $tomorrowDay) {
+            $needed = 3 - $results->count();
+            $tomorrowMeetings = Meeting::with(['directOnlineGroup', 'day'])
+                ->whereNotNull('direct_online_group_id')
+                ->whereIn('status', ['available', 'active'])
+                ->where('day_id', $tomorrowDay->id)
+                ->orderBy('start_time', 'asc')
+                ->take($needed)
+                ->get()
+                ->map(function ($m) {
+                    $m->relative_day_label = 'غداً';
+                    return $m;
+                });
+
+            $results = $results->merge($tomorrowMeetings);
+        }
 
         if ($results->isEmpty()) {
             $this->replyAndLog(
@@ -467,14 +514,16 @@ class WhatsAppBotService
             return;
         }
 
-        $message = "💻 *اجتماعات الأونلاين اليوم (عبر الإنترنت)*\n\n";
+        $message = "💻 *أقرب 3 اجتماعات أونلاين (Zoom)*\n\n";
         foreach ($results as $idx => $m) {
             $num = $idx + 1;
-            $name = $m->directOnlineGroup ? $m->directOnlineGroup->name : 'اجتماع أونلاين';
+            $group = $m->directOnlineGroup;
+            $name = $group ? ($group->ar_name ?: $group->en_name ?: 'اجتماع أونلاين') : 'اجتماع أونلاين';
             $time = $m->start_time ? substr($m->start_time, 0, 5) : '';
-            $link = $m->directOnlineGroup ? $m->directOnlineGroup->link : '';
+            $dayLabel = $m->relative_day_label ?? ($m->day ? $m->day->ar_name : '');
+            $link = $group ? ($group->location ?? '') : '';
 
-            $message .= "{$num}️⃣ *{$name}*\n⏰ الميعاد: {$time}\n";
+            $message .= "{$num}️⃣ *{$name}*\n⏰ الميعاد: {$dayLabel} - {$time}\n";
             if ($link) {
                 $message .= "🔗 رابط الحضور: {$link}\n";
             }
@@ -484,6 +533,112 @@ class WhatsAppBotService
         $message .= "\n🌐 لمزيد من اجتماعات الأونلاين:\nhttps://naegypt.org/meetings?type=online";
 
         $this->replyAndLog($conversation, $message, 'meetings');
+    }
+
+    /**
+     * Search for physical or online groups by name and return today's meetings for them.
+     */
+    protected function handleGroupNameSearch(WhatsAppConversation $conversation, string $rawInput): bool
+    {
+        $term = trim($rawInput);
+        if (mb_strlen($term) < 2) {
+            return false;
+        }
+
+        $physicalGroups = Group::with(['neighborhood.city'])
+            ->where(function ($q) use ($term) {
+                $q->where('ar_name', 'like', "%{$term}%")
+                    ->orWhere('en_name', 'like', "%{$term}%");
+            })
+            ->take(5)
+            ->get();
+
+        $onlineGroups = DirectOnlineGroup::where(function ($q) use ($term) {
+            $q->where('ar_name', 'like', "%{$term}%")
+                ->orWhere('en_name', 'like', "%{$term}%");
+        })
+            ->take(5)
+            ->get();
+
+        if ($physicalGroups->isEmpty() && $onlineGroups->isEmpty()) {
+            return false;
+        }
+
+        $conversation->update(['current_step' => null, 'step_data' => null]);
+
+        $now = Carbon::now('Africa/Cairo');
+        $day = Day::where('en_name', $now->format('l'))->first();
+        $dayId = $day ? $day->id : null;
+        $dayArName = $day ? $day->ar_name : 'اليوم';
+
+        $physicalIds = $physicalGroups->pluck('id')->all();
+        $onlineIds = $onlineGroups->pluck('id')->all();
+
+        $meetingsQuery = Meeting::with(['group.neighborhood.city', 'directOnlineGroup', 'day'])
+            ->whereIn('status', ['available', 'active'])
+            ->where(function ($q) use ($physicalIds, $onlineIds) {
+                if (!empty($physicalIds)) {
+                    $q->orWhereIn('group_id', $physicalIds);
+                }
+                if (!empty($onlineIds)) {
+                    $q->orWhereIn('direct_online_group_id', $onlineIds);
+                }
+            })
+            ->orderBy('start_time', 'asc');
+
+        if ($dayId) {
+            $meetingsQuery->where('day_id', $dayId);
+        }
+
+        $meetings = $meetingsQuery->get();
+
+        if ($meetings->isEmpty()) {
+            $matchedNames = $physicalGroups->map(fn($g) => $g->ar_name ?: $g->en_name)
+                ->merge($onlineGroups->map(fn($g) => $g->ar_name ?: $g->en_name))
+                ->filter()
+                ->unique()
+                ->implode('، ');
+
+            $this->replyAndLog(
+                $conversation,
+                "📍 *{$matchedNames}*\n\nلا توجد اجتماعات مسجلة لهذه المجموعة اليوم ({$dayArName}).\n\n🔗 يمكنك مراجعة مواعيد المجموعة باقي أيام الأسبوع عبر:\nhttps://naegypt.org/meetings",
+                'meetings'
+            );
+            return true;
+        }
+
+        $message = "📍 *اجتماعات اليوم ({$dayArName}) لنتائج البحث: \"{$term}\"*\n\n";
+        foreach ($meetings as $idx => $m) {
+            $num = $idx + 1;
+            $time = $m->start_time ? substr($m->start_time, 0, 5) : '';
+
+            if ($m->directOnlineGroup) {
+                $name = $m->directOnlineGroup->ar_name ?: $m->directOnlineGroup->en_name ?: 'اجتماع أونلاين';
+                $link = $m->directOnlineGroup->location ?? '';
+                $message .= "{$num}️⃣ *{$name}* (أونلاين)\n⏰ الميعاد: {$time}\n";
+                if ($link) {
+                    $message .= "🔗 رابط الحضور: {$link}\n";
+                }
+            } else {
+                $groupName = $m->group ? ($m->group->ar_name ?: $m->group->en_name) : 'اجتماع';
+                $neighborhood = $m->group && $m->group->neighborhood ? $m->group->neighborhood->ar_name : '';
+                $address = $m->group ? ($m->group->ar_address ?: $m->group->en_address ?: '') : '';
+
+                $locLabel = $neighborhood ? " ({$neighborhood})" : '';
+                $message .= "{$num}️⃣ *مجموعة {$groupName}*{$locLabel}\n⏰ الميعاد: {$time}\n";
+                if ($address) {
+                    $message .= "🏢 العنوان: {$address}\n";
+                }
+                if ($m->group && $m->group->location && (str_starts_with($m->group->location, 'http://') || str_starts_with($m->group->location, 'https://'))) {
+                    $message .= "🗺️ الموقع: {$m->group->location}\n";
+                }
+            }
+            $message .= "───────────────\n";
+        }
+
+        $message .= "\n🔗 دليل الاجتماعات الكامل:\nhttps://naegypt.org/meetings";
+        $this->replyAndLog($conversation, $message, 'meetings');
+        return true;
     }
 
     /**
