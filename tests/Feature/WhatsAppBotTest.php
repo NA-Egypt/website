@@ -527,6 +527,7 @@ class WhatsAppBotTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('https://wa.me/201006979198', false);
+        $response->assertSee(route('frontend.whatsapp_bot'), false);
         $response->assertDontSee('messages.Contact Us');
 
         $sitemap = $this->get('/sitemap.xml');

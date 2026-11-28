@@ -61,6 +61,11 @@
                 </a>
               </li>
               <li>
+                <a href="{{ route('frontend.whatsapp_bot') }}" class="submenu-item {{ Route::currentRouteName() === 'frontend.whatsapp_bot' ? 'active' : '' }}">
+                  <i class="bi bi-whatsapp me-2 text-success"></i> {{ __('messages.whatsapp_bot_guide_link') }}
+                </a>
+              </li>
+              <li>
                 <a href="https://outlook.com/naegypt.org" target="_blank" rel="noopener noreferrer" class="submenu-item">
                   <i class="bi bi-envelope-fill me-2 text-primary"></i> {{ __('messages.Login to your email') }}
                 </a>
@@ -281,6 +286,11 @@
               <li class="mb-2">
                 <a href="{{ route('frontend.events') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.events' ? 'active' : '' }}">
                   {{ __('messages.Events') ?? 'Events' }}
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="{{ route('frontend.whatsapp_bot') }}" class="mobile-sub-link {{ Route::currentRouteName() === 'frontend.whatsapp_bot' ? 'active' : '' }}">
+                  <i class="bi bi-whatsapp me-1 text-success"></i> {{ __('messages.whatsapp_bot_guide_link') }}
                 </a>
               </li>
               <li class="mb-2">
