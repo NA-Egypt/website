@@ -3521,4 +3521,9 @@ return [
             'other' => 'أخرى',
         ],
     ],
+    'whatsapp_bot_guide_title' => 'دليل استخدام بوت الواتساب',
+    'whatsapp_bot_guide_subtitle' => 'وصول فوري على مدار 24 ساعة لقراءة لليوم فقط، مواعيد الاجتماعات اليومية، روابط زووم، أرقام خط المساعدة، وتطبيق الأندرويد.',
+    'whatsapp_bot_guide_badge' => 'خدمة الواتساب الرسمية',
+    'whatsapp_bot_guide_link' => 'دليل بوت الواتساب',
+    'whatsapp_bot_start_chat' => 'ابدأ المحادثة على واتساب',
 ];

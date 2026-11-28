@@ -64,9 +64,13 @@
                             <i class="bi bi-telephone-fill"></i>
                             <span>{{ __('messages.call_now') }}</span>
                         </a>
-                        <a href="https://wa.me/201060933888" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                        <a href="https://wa.me/201006979198" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
                             <i class="bi bi-whatsapp"></i>
                             <span>{{ __('messages.chat_whatsapp') }}</span>
+                        </a>
+                        <a href="{{ route('frontend.whatsapp_bot') }}" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                            <i class="bi bi-book"></i>
+                            <span>{{ __('messages.whatsapp_bot_guide_link') }}</span>
                         </a>
                     </div>
                 </div>

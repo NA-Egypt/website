@@ -723,6 +723,10 @@ Route::group(
             return view('frontend.privacy');
         })->name('privacy.policy');
 
+        Route::get('/whatsapp-bot', function () {
+            return view('frontend.whatsapp_bot');
+        })->name('frontend.whatsapp_bot');
+
         // Public Custom Forms
         Route::get('/f/{slug}', [PublicFormController::class, 'show'])->name('forms.show.public');
         Route::post('/f/{slug}', [PublicFormController::class, 'submit'])->name('forms.submit.public');
@@ -803,6 +807,7 @@ Route::get('/sitemap.xml', function () {
         ['loc' => '/forpublic', 'changefreq' => 'monthly', 'priority' => '0.7'],
         ['loc' => '/contactus', 'changefreq' => 'monthly', 'priority' => '0.6'],
         ['loc' => '/questions', 'changefreq' => 'monthly', 'priority' => '0.6'],
+        ['loc' => '/whatsapp-bot', 'changefreq' => 'monthly', 'priority' => '0.7'],
         ['loc' => '/clean-time', 'changefreq' => 'weekly', 'priority' => '0.85'],
     ];
 

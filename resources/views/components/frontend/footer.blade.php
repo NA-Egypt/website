@@ -61,6 +61,7 @@
           <li><a href="{{ route('frontend.forpublic') }}">{{ __('messages.helpline_committee') ?? 'فريق خطوط الهاتف' }}</a></li>
           <li><a href="{{ route('frontend.meetings', ['type' => 'online']) }}">{{ __('messages.direct_online_groups') ?? 'مجموعات الإنترنت المباشرة (زووم)' }}</a></li>
           <li><a href="{{ route('frontend.events') }}">{{ __('messages.calendar_events_nav') ?? 'تقويم الفعاليات والمؤتمرات' }}</a></li>
+          <li><a href="{{ route('frontend.whatsapp_bot') }}">{{ __('messages.whatsapp_bot_guide_link') }}</a></li>
         </ul>
       </div>
 

@@ -517,4 +517,20 @@ class WhatsAppBotTest extends TestCase
         $this->assertLessThan(strpos($outgoing->body, 'https://zoom.us/j/222'), strpos($outgoing->body, 'https://zoom.us/j/111'));
         $this->assertLessThan(strpos($outgoing->body, 'https://zoom.us/j/333'), strpos($outgoing->body, 'https://zoom.us/j/222'));
     }
+
+    public function test_public_whatsapp_bot_documentation_page_renders_and_is_in_sitemap(): void
+    {
+        $response = $this->withoutMiddleware([
+            \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+            \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        ])->get(route('frontend.whatsapp_bot'));
+
+        $response->assertStatus(200);
+        $response->assertSee('https://wa.me/201006979198', false);
+        $response->assertDontSee('messages.Contact Us');
+
+        $sitemap = $this->get('/sitemap.xml');
+        $sitemap->assertStatus(200);
+        $sitemap->assertSee('/whatsapp-bot', false);
+    }
 }

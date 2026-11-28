@@ -3515,4 +3515,9 @@ return [
             'other' => 'Other',
         ],
     ],
+    'whatsapp_bot_guide_title' => 'WhatsApp Bot User Guide',
+    'whatsapp_bot_guide_subtitle' => 'Instant 24/7 automated access to Just For Today readings, daily meetings, Zoom links, helpline numbers, and the Android app.',
+    'whatsapp_bot_guide_badge' => 'Official WhatsApp Service',
+    'whatsapp_bot_guide_link' => 'WhatsApp Bot Guide',
+    'whatsapp_bot_start_chat' => 'Start Chat on WhatsApp',
 ];
