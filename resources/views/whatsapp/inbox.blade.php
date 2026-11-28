@@ -342,8 +342,8 @@
                             <button type="button" class="btn btn-light btn-xs rounded-pill text-nowrap py-1 px-2 quick-chip shadow-xs border" data-text="أرقام هواتف خط المساعدة المباشر لزمالة NA مصر:&#10;📞 01119565544&#10;📞 01221444490&#10;📞 01004445585">
                                 📞 الهواتف
                             </button>
-                            <button type="button" class="btn btn-light btn-xs rounded-pill text-nowrap py-1 px-2 quick-chip shadow-xs border" data-text="تأمل اليوم من كتاب فقط لليوم متاح على الرابط: https://naegypt.org/jft">
-                                🌅 فقط لليوم
+                            <button type="button" class="btn btn-light btn-xs rounded-pill text-nowrap py-1 px-2 quick-chip shadow-xs border" data-text="تأمل اليوم من كتاب لليوم فقط متاح على الرابط: https://naegypt.org/jft">
+                                🌅 لليوم فقط
                             </button>
                             <button type="button" class="btn btn-light btn-xs rounded-pill text-nowrap py-1 px-2 quick-chip shadow-xs border" data-text="شكراً لتواصلك مع الزمالة. نأمل لك يوماً نظيفاً وموفقاً. ✨">
                                 ✨ ختام

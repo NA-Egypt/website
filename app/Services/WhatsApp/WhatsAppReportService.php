@@ -186,7 +186,7 @@ class WhatsAppReportService
             ->toArray();
 
         $labelsMap = [
-            'jft' => __('messages.whatsapp_cat_jft') ?? 'قراءة فقط لليوم (JFT)',
+            'jft' => __('messages.whatsapp_cat_jft') ?? 'قراءة لليوم فقط (JFT)',
             'meetings' => __('messages.whatsapp_cat_meetings') ?? 'اجتماعات التعافي',
             'helpline' => __('messages.whatsapp_cat_helpline') ?? 'خط المساعدة',
             'events' => __('messages.whatsapp_cat_events') ?? 'الفعاليات والمؤتمرات',

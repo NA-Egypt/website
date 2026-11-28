@@ -27,7 +27,7 @@ class BroadcastDailyJftCommand extends Command
         $this->info('Fetching today\'s Just For Today reading...');
 
         $reading = $jftService->getReading();
-        $title = $reading['title'] ?? 'فقط لليوم';
+        $title = $reading['title'] ?? 'لليوم فقط';
         $pageDate = $reading['page_date'] ?? Carbon::now('Africa/Cairo')->translatedFormat('j F');
         $thought = $reading['thought'] ?? ($reading['thought_for_the_day'] ?? '');
         $quote = $reading['quote'] ?? '';
@@ -44,7 +44,7 @@ class BroadcastDailyJftCommand extends Command
             $cleanContent = mb_substr($cleanContent, 0, 1400) . "...\n\n(لقراءة الموضوع كاملاً يرجى زيارة موقعنا)";
         }
 
-        $message = "🌅 *رسالة فقط لليوم - {$pageDate}*\n"
+        $message = "🌅 *رسالة لليوم فقط - {$pageDate}*\n"
             . "زمالة المدمنين المجهولين - مصر 🇪🇬\n\n"
             . "📌 *{$title}*\n\n";
 
@@ -57,7 +57,7 @@ class BroadcastDailyJftCommand extends Command
 
         if ($thought) {
             $cleanThought = strip_tags($thought);
-            $message .= "✨ *تذكرة اليوم:* {$cleanThought}\n\n";
+            $message .= "✨ {$cleanThought}\n\n";
         }
 
         $message .= "🔗 للقراءة كاملة عبر الموقع: https://naegypt.org/jft\n"

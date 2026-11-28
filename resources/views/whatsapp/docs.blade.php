@@ -164,7 +164,7 @@
                                     <tr>
                                         <td class="fw-bold text-center">1️⃣</td>
                                         <td><code>1</code>, <code>jft</code>, <code>فقط لليوم</code>, <code>قراءة اليوم</code>, <code>today</code></td>
-                                        <td>جلب قراءة "فقط لليوم" لتاريخ اليوم بتوقيت القاهرة وتنسيقها بشكل مريح للقراءة مع رابط الموقع.</td>
+                                        <td>جلب قراءة "لليوم فقط" لتاريخ اليوم بتوقيت القاهرة وتنسيقها بشكل مريح للقراءة مع رابط الموقع.</td>
                                         <td><span class="badge bg-success-subtle text-success">jft</span></td>
                                     </tr>
                                     <tr>
@@ -200,7 +200,7 @@
                                     <tr>
                                         <td class="fw-bold text-center">7️⃣</td>
                                         <td><code>7</code>, <code>اشتراك</code>, <code>subscribe</code></td>
-                                        <td>تسجيل رقم المتصل في خدمة البث الصباحي اليومي لرسائل "فقط لليوم" تلقائياً.</td>
+                                        <td>تسجيل رقم المتصل في خدمة البث الصباحي اليومي لرسائل "لليوم فقط" تلقائياً.</td>
                                         <td><span class="badge bg-success">subscription</span></td>
                                     </tr>
                                     <tr>

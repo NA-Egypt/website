@@ -22,7 +22,10 @@ class WhatsAppBroadcastTest extends TestCase
             ->assertExitCode(0);
 
         Queue::assertPushed(SendWhatsAppBroadcast::class, function ($job) {
-            return $job->channel === 'jft';
+            return $job->channel === 'jft'
+                && str_contains($job->messageText, 'رسالة لليوم فقط')
+                && !str_contains($job->messageText, 'رسالة فقط لليوم')
+                && !str_contains($job->messageText, 'تذكرة اليوم');
         });
     }
 
